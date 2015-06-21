@@ -1,9 +1,8 @@
-﻿# /web/.htaccess
 <IfModule mod_rewrite.c>
     Options -MultiViews
 
     RewriteEngine On
-	RewriteBase /larp-manager/
+	RewriteBase /larp-manager-php/
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [QSA,L]
 </IfModule>
