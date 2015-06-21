@@ -1,3 +1,49 @@
-h1 {
-	color: purple;
+body {
+	font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+	font-size: 14px;
+  	line-height: 1.42857143;
+  	color: #333;
+	background-color: #fff;
+	padding: 0;
+	margin: 0;
+}
+
+div#menu {
+	padding-right: 10px;
+	padding-left: 10px;
+	height: 59px;
+	border-bottom : 1px solid #ccc;
+	
+}
+
+div#menu ul {
+	float: right!important;
+  	margin-right: -15px;
+  	display: table;
+}
+
+div#menu ul li {
+  float: left;
+  position: relative;
+  display: block;
+  box-sizing: border-box;
+}
+
+div#menu ul a {
+	text-decoration: none;
+	padding-top: 15px;
+  	padding-bottom: 15px;
+  	height : 39px;
+ 	margin-right : 20px;
+}
+
+div#content {
+	padding : 10px;
+}
+
+div#footer {
+	padding-right: 10px;
+	padding-left: 10px;
+	border-top : 1px solid #ccc;
+	height : 30px;
 }
