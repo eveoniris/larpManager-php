@@ -4,3 +4,4 @@
 .project
 /.settings/
 composer.phar
+/database/larpmanager.mwb.bak
