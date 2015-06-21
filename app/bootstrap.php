@@ -81,11 +81,11 @@ $app['user.options'] = array(
     ),
 );
 
-// Mount SimpleUser routes.
-$app->mount('/user', $userServiceProvider);
-
 // Define firewall
 $app['security.firewalls'] = array(
+	'install' => array(	// temporaire : install doit être accessible à tous
+		'pattern' => '^/install$',
+	),
     'login' => array(	// login doit être accessible à tous
         'pattern' => '^/user/login$',
     ),
@@ -93,8 +93,8 @@ $app['security.firewalls'] = array(
         'pattern' => '^/user/register$',
     ),
     'secured_area' => array(	// le reste necessite d'être connecté
-		'pattern' => '^.*$',
-        'anonymous' => false,
+		'pattern' => '^/.*$',
+        'anonymous' => true,
 		'remember_me' => array(),
         'form' => array(
             'login_path' => '/user/login',
@@ -110,14 +110,13 @@ $app['security.firewalls'] = array(
 // Gestion des urls
 $app->register(new UrlGeneratorServiceProvider());
 
+
 /**
  * Définition des routes
  */
- 
-// la page d'acceuil
-$app->get('/', function() use($app) {	
-	return $app['twig']->render('index.twig');
-})
-->bind('homepage');
+
+$app->mount('/', new LarpManager\HomepageControllerProvider());
+$app->mount('/user', $userServiceProvider);
+$app->mount('/install', new LarpManager\InstallControllerProvider());
 
 return $app;

@@ -1,0 +1,11 @@
+{% extends "install/layout.twig" %}
+
+{% block title %}Installation{% endblock %}
+
+{% block content %}
+	<form action="{{ path('install') }}" method ="POST">
+		<p>Installation de LarpManager</p>
+		<p>Cette opération va créer les tables necessaires au fonctionnement de LarpManager dans votre base de données</p>		
+		<input type="submit" value="Installer" />
+	</form>
+{% endblock %}
