@@ -1,0 +1,47 @@
+{% extends layout_template  %}
+
+{% block title %}List users{% endblock %}
+
+{% block content %}
+
+    <h1>List users</h1>
+
+    {% if paginator.totalItems == 1 %}
+        <strong>1</strong> user found.
+    {% else %}
+        <strong>{{ paginator.totalItems }}</strong> users found.
+    {% endif %}
+
+    Showing <strong>{{ paginator.currentPageFirstItem }} - {{ paginator.currentPageLastItem }}</strong>.
+
+    {% for user in users %}
+
+        <div class="media">
+            <a class="media-object pull-left" href="{{ path('user.view', {'id': user.id}) }}">
+                <img src="{{ user.imageUrl }}" width="40" height="40" border=0>
+            </a>
+
+            <div class="media-body">
+                <h4 class="media-heading">
+                    <a href="{{ path('user.view', {'id': user.id}) }}">{{ user.displayName }}</a>
+                </h4>
+
+                {% if not user.isEnabled %}
+                    <div>
+                        <span class="label label-danger">Pending email confirmation</span>
+                    </div>
+                {% endif %}
+
+                {% if is_granted('ROLE_ADMIN') %}
+                    <div class="text-muted">
+                        {{ user.email }}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+    {% endfor %}
+
+    {{ paginator|raw }}
+
+{% endblock %}

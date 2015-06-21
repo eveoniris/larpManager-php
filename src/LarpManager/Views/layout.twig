@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        {% block head %}
+            <link rel="stylesheet" href="{{ app.request.basepath }}/css/style.css" />
+            <title>{% block title %}{% endblock %} - LarpManager</title>
+        {% endblock %}
+    </head>
+    <body>
+		<div id="menu">
+			<a href="{{ path('homepage') }}">Accueil</a>
+			{% if is_granted('IS_AUTHENTICATED_FULLY') %}
+				<a href="{{ path('user.logout') }}">Logout</a>
+			{% else %}
+				<a href="{{ path('user.login') }}">Login</a>
+			{% endif %}
+		</div>
+		
+        <div id="content">{% block content %}{% endblock %}</div>
+		
+        <div id="footer">
+            {% block footer %}
+                &copy; Copyright 2015 by eve-oniris.
+            {% endblock %}
+        </div>
+    </body>
+</html>
