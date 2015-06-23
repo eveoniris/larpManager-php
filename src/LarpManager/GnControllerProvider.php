@@ -14,7 +14,9 @@ class GnControllerProvider implements ControllerProviderInterface
 
 		$controllers->get('/','LarpManager\Controllers\GnController::indexAction')->bind('gn_list');
 		$controllers->get('/add','LarpManager\Controllers\GnController::addAction')->bind('gn_add');
+		$controllers->post('/add','LarpManager\Controllers\GnController::addAction');
 		$controllers->get('/{index}/remove','LarpManager\Controllers\GnController::removeAction')->bind('gn_remove');
+		$controllers->post('/{index}/remove','LarpManager\Controllers\GnController::removeAction');
 		$controllers->get('/{index}','LarpManager\Controllers\GnController::detailAction');
 		
 		return $controllers;

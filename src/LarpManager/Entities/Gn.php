@@ -22,7 +22,7 @@ class Gn
 	private $name;
 	
     /**
-     * @ManyToMany(targetEntity="Personne", mappedBy="gnCollection")
+     * @ManyToMany(targetEntity="Personne", mappedBy="gns")
      **/
 	private $personnes;
 	

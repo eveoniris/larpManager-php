@@ -23,9 +23,9 @@ class Personne
 	private $user;
 	
 	/**
-	 * @ManyToMany(targetEntity="Gn", inversedBy="users")
-	 * @JoinTable(name="users_gn",
-	 *      joinColumns={@JoinColumn(name="users_id", referencedColumnName="id")},
+	 * @ManyToMany(targetEntity="Gn", inversedBy="personnes")
+	 * @JoinTable(name="personnes_gn",
+	 *      joinColumns={@JoinColumn(name="personne_id", referencedColumnName="id")},
 	 *      inverseJoinColumns={@JoinColumn(name="gn_id", referencedColumnName="id")}
 	 *      )
 	 */
