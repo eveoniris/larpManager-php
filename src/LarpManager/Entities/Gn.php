@@ -22,13 +22,14 @@ class Gn
 	private $name;
 	
     /**
-     * @ManyToMany(targetEntity="Users", mappedBy="gnCollection")
+     * @ManyToMany(targetEntity="Personne", mappedBy="gnCollection")
      **/
-	private $users;
+	private $personnes;
 	
 	public function __construct() {
-		$this->users = new \Doctrine\Common\Collections\ArrayCollection();
+		$this->personnes = new \Doctrine\Common\Collections\ArrayCollection();
 	}
+
 
     /**
      * Get id
@@ -65,70 +66,36 @@ class Gn
     }
 
     /**
-     * Add userCollection
+     * Add personne
      *
-     * @param \LarpManager\Entities\Users $userCollection
+     * @param \LarpManager\Entities\Personne $personne
      *
      * @return Gn
      */
-    public function addUserCollection(\LarpManager\Entities\Users $userCollection)
+    public function addPersonne(\LarpManager\Entities\Personne $personne)
     {
-        $this->userCollection[] = $userCollection;
+        $this->personnes[] = $personne;
 
         return $this;
     }
 
     /**
-     * Remove userCollection
+     * Remove personne
      *
-     * @param \LarpManager\Entities\Users $userCollection
+     * @param \LarpManager\Entities\Personne $personne
      */
-    public function removeUserCollection(\LarpManager\Entities\Users $userCollection)
+    public function removePersonne(\LarpManager\Entities\Personne $personne)
     {
-        $this->userCollection->removeElement($userCollection);
+        $this->personnes->removeElement($personne);
     }
 
     /**
-     * Get userCollection
+     * Get personnes
      *
      * @return \Doctrine\Common\Collections\Collection
      */
-    public function getUserCollection()
+    public function getPersonnes()
     {
-        return $this->userCollection;
-    }
-
-    /**
-     * Add user
-     *
-     * @param \LarpManager\Entities\Users $user
-     *
-     * @return Gn
-     */
-    public function addUser(\LarpManager\Entities\Users $user)
-    {
-        $this->users[] = $user;
-
-        return $this;
-    }
-
-    /**
-     * Remove user
-     *
-     * @param \LarpManager\Entities\Users $user
-     */
-    public function removeUser(\LarpManager\Entities\Users $user)
-    {
-        $this->users->removeElement($user);
-    }
-
-    /**
-     * Get users
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getUsers()
-    {
-        return $this->users;
+        return $this->personnes;
     }
 }

@@ -70,21 +70,12 @@ class Users
 	 * @column (type="integer")
 	 */
 	private $timePasswordResetRequested;
-
+	
 	/**
-	 * @ManyToMany(targetEntity="Gn", inversedBy="users")
-	 * @JoinTable(name="users_gn",
-     *      joinColumns={@JoinColumn(name="users_id", referencedColumnName="id")},
-     *      inverseJoinColumns={@JoinColumn(name="gn_id", referencedColumnName="id")}
-     *      )
+	 * @OneToOne(targetEntity="Personne", mappedBy="user")
 	 */
-	private $gns;
-	
-	
-	public function __construct() {
-		$this->gns = new \Doctrine\Common\Collections\ArrayCollection();
-	}
-	
+	private $personne;
+
 
     /**
      * Get id
@@ -337,70 +328,26 @@ class Users
     }
 
     /**
-     * Add gnCollection
+     * Set personne
      *
-     * @param \LarpManager\Entities\Gn $gnCollection
+     * @param \LarpManager\Entities\Personne $personne
      *
      * @return Users
      */
-    public function addGnCollection(\LarpManager\Entities\Gn $gnCollection)
+    public function setPersonne(\LarpManager\Entities\Personne $personne = null)
     {
-        $this->gnCollection[] = $gnCollection;
+        $this->personne = $personne;
 
         return $this;
     }
 
     /**
-     * Remove gnCollection
+     * Get personne
      *
-     * @param \LarpManager\Entities\Gn $gnCollection
+     * @return \LarpManager\Entities\Personne
      */
-    public function removeGnCollection(\LarpManager\Entities\Gn $gnCollection)
+    public function getPersonne()
     {
-        $this->gnCollection->removeElement($gnCollection);
-    }
-
-    /**
-     * Get gnCollection
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getGnCollection()
-    {
-        return $this->gnCollection;
-    }
-
-    /**
-     * Add gn
-     *
-     * @param \LarpManager\Entities\Gn $gn
-     *
-     * @return Users
-     */
-    public function addGn(\LarpManager\Entities\Gn $gn)
-    {
-        $this->gns[] = $gn;
-
-        return $this;
-    }
-
-    /**
-     * Remove gn
-     *
-     * @param \LarpManager\Entities\Gn $gn
-     */
-    public function removeGn(\LarpManager\Entities\Gn $gn)
-    {
-        $this->gns->removeElement($gn);
-    }
-
-    /**
-     * Get gns
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getGns()
-    {
-        return $this->gns;
+        return $this->personne;
     }
 }

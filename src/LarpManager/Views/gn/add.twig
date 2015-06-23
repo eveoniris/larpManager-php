@@ -1,0 +1,13 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+	
+	<form action="{{ path('gn_add') }}" action="POST">
+		<div>
+			<label for="name">Nom du GN</label>
+			<input type="text" name="name" />
+		</div>
+		<input type="submit" value="Enregistrer" />
+	</form>
+	
+{% endblock %}

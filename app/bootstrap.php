@@ -118,5 +118,6 @@ $app->register(new UrlGeneratorServiceProvider());
 $app->mount('/', new LarpManager\HomepageControllerProvider());
 $app->mount('/user', $userServiceProvider);
 $app->mount('/install', new LarpManager\InstallControllerProvider());
+$app->mount('/gn', new LarpManager\GnControllerProvider());
 
 return $app;
