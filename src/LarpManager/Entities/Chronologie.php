@@ -9,13 +9,13 @@
 
 namespace LarpManager\Entities;
 
-use LarpManager\Entities\BaseGn;
+use LarpManager\Entities\BaseChronologie;
 
 /**
- * LarpManager\Entities\Gn
+ * LarpManager\Entities\Chronologie
  *
  * @Entity()
  */
-class Gn extends BaseGn
+class Chronologie extends BaseChronologie
 {
 }

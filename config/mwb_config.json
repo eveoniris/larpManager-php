@@ -1,0 +1,19 @@
+{
+    "export": "doctrine2-annotation",
+    "zip": false,
+    "dir": "src/LarpManager/Entities",
+    "params": {
+        "backupExistingFile": true,
+        "skipPluralNameChecking": true,
+        "enhanceManyToManyDetection": true,
+        "bundleNamespace": "LarpManager",
+        "entityNamespace": "Entities",
+        "generateExtendableEntity": true,
+        "repositoryNamespace": "",
+        "useAnnotationPrefix": "",
+        "useAutomaticRepository": false,
+        "indentation": 4,
+        "filename": "%entity%.%extension%",
+        "quoteIdentifier": false
+    }
+}

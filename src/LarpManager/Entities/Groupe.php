@@ -9,13 +9,13 @@
 
 namespace LarpManager\Entities;
 
-use LarpManager\Entities\BaseGn;
+use LarpManager\Entities\BaseGroupe;
 
 /**
- * LarpManager\Entities\Gn
+ * LarpManager\Entities\Groupe
  *
  * @Entity()
  */
-class Gn extends BaseGn
+class Groupe extends BaseGroupe
 {
 }

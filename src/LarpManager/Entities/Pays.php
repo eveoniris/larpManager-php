@@ -9,13 +9,13 @@
 
 namespace LarpManager\Entities;
 
-use LarpManager\Entities\BaseGn;
+use LarpManager\Entities\BasePays;
 
 /**
- * LarpManager\Entities\Gn
+ * LarpManager\Entities\Pays
  *
  * @Entity()
  */
-class Gn extends BaseGn
+class Pays extends BasePays
 {
 }

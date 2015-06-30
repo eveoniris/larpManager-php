@@ -1,27 +1,30 @@
 {
-    "name": "eveoniris/larp-manager",
-    "description": "Larp Manager",
-    "require": {
-        "silex/silex": "^1.3",
-        "twig/twig": "^1.18",
-        "symfony/twig-bridge": "^2.7",
-		"doctrine/dbal": "^2.5",
-		"doctrine/orm": "^2.5",
-		"doctrine/annotations": "~1.2",
-        "doctrine/common": "~2.5",
-		"dflydev/doctrine-orm-service-provider": "1.0.*",
-        "symfony/security": "^2.7",
-        "jasongrimes/silex-simpleuser": "^2.0"
-    },
-	"autoload": {
-		"psr-0": {
-			"LarpManager": "src/"
+	"name" : "eveoniris/larp-manager",
+	"description" : "Larp Manager",
+	"require" : {
+		"silex/silex" : "^1.3",
+		"twig/twig" : "^1.18",
+		"symfony/twig-bridge" : "^2.7",
+		"doctrine/dbal" : "^2.5",
+		"doctrine/orm" : "^2.5",
+		"doctrine/annotations" : "~1.2",
+		"doctrine/common" : "~2.5",
+		"dflydev/doctrine-orm-service-provider" : "1.0.*",
+		"symfony/security" : "^2.7",
+		"jasongrimes/silex-simpleuser" : "^2.0",
+		"mysql-workbench-schema-exporter/mysql-workbench-schema-exporter" : "dev-master"
+	},
+	"autoload" : {
+		"psr-0" : {
+			"LarpManager" : "src/"
 		}
-    },
-    "authors": [
-        {
-            "name": "Eve Oniris",
-            "email": "kevinpolez@gmail.com"
-        }
-    ]
+	},
+	"authors" : [{
+			"name" : "Eve Oniris",
+			"email" : "kevinpolez@gmail.com"
+		}
+	],
+	"require-dev" : {
+		"mysql-workbench-schema-exporter/mysql-workbench-schema-exporter" : "dev-master"
+	}
 }
