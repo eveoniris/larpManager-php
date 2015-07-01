@@ -1,0 +1,39 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+	
+	<table>
+		<caption>Liste des pays</caption>
+		<thead>
+			<tr>
+				<th>ID</th>
+				<th>Nom</th>
+				<th>Description</th>
+				<th>Impôt</th>
+				<th>Richesse</th>
+				<th>Histoire</th>
+				<th>Capitale</th>
+				<th/>
+			</tr>
+		</thead>
+		<tbody>
+			{% for ce_pays in pays %}
+				<tr>
+					<td>{{ ce_pays.id }}</td>
+					<td>{{ ce_pays.nom }}</td>
+					<td>{{ ce_pays.description }}</td>
+					<td>{{ ce_pays.impot }}</td>
+					<td>{{ ce_pays.richesse }}</td>
+					<td>{{ ce_pays.histoire }}</td>
+					<td>{{ ce_pays.capitale }}</td>
+					<td><a href="{{ path('pays_remove', {index: ce_pays.id}) }}">Delete</a></td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	
+	<div>
+		<a href="{{ path('pays_add') }}">Ajouter un pays</a>
+	</div>
+	
+{% endblock %}

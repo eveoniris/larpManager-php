@@ -20,6 +20,13 @@ $app = new Silex\Application();
 
 $app['debug'] = true;
 
+if(true == $app['debug'])
+{
+	$app->register(new Silex\Provider\MonologServiceProvider(), array(
+			'monolog.logfile' => __DIR__.'/development.log',
+	));
+}
+
 /**
  * Enregistrer les libs dans l'application 
  */
@@ -119,5 +126,7 @@ $app->mount('/', new LarpManager\HomepageControllerProvider());
 $app->mount('/user', $userServiceProvider);
 $app->mount('/install', new LarpManager\InstallControllerProvider());
 $app->mount('/gn', new LarpManager\GnControllerProvider());
+$app->mount('/chronologie', new LarpManager\ChronologieControllerProvider());
+$app->mount('/pays', new LarpManager\PaysControllerProvider());
 
 return $app;

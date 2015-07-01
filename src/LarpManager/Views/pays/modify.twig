@@ -1,0 +1,23 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+	
+	<form action="{{ path('chrono_modify') }}" method="POST">
+		<div>
+			<label for="nom">Nom du pays</label>
+			<input type="text" name="nom">{{ pays.nom }}</input>
+			<label for="description">Description</label>
+			<input type="text" name="description">{{ pays.description }}</input>
+			<label for="impot">Impôt</label>
+			<input type="text" name="impot">{{ pays.impot }}</input>
+			<label for="richesse">Richesse</label>
+			<input type="text" name="richesse">{{ pays.richesse }}</input>
+			<label for="histoire">Histoire</label>
+			<input type="text" name="histoire">{{ pays.histoire }}</input>
+			<label for="nom">Capitale</label>
+			<input type="text" name="capitale">{{ pays.capitale }}</input>
+		</div>
+		<input type="submit" value="Modifier" />
+	</form>
+	
+{% endblock %}

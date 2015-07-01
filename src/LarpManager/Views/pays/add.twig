@@ -1,0 +1,23 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+	
+	<form action="{{ path('pays_add') }}" method="POST">
+		<div>
+			<label for="nom">Nom du pays</label>
+			<input type="text" name="nom">
+			<label for="description">Description</label>
+			<input type="text" name="description" />
+			<label for="impot">Impôt</label>
+			<input type="text" name="impot" />
+			<label for="richesse">Richesse</label>
+			<input type="text" name="richesse" />
+			<label for="hisoire">Histoire</label>
+			<input type="text" name="histoire" />
+			<label for="capitale">Capitale</label>
+			<input type="text" name="capitale" />
+		</div>
+		<input type="submit" value="Enregistrer" />
+	</form>
+	
+{% endblock %}

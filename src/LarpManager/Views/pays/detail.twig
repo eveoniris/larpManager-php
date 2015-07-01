@@ -1,0 +1,28 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+<table>
+	<thead>
+		<tr>
+			<th>ID</th>
+			<th>Nom</th>
+			<th>Description</th>
+			<th>Impôt</th>
+			<th>Richesse</th>
+			<th>Histoire</th>
+			<th>Capitale</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>{{ pays.id }}</td>
+			<td>{{ pays.nom }}</td>
+			<td>{{ pays.description }}</td>
+			<td>{{ pays.impot }}</td>
+			<td>{{ pays.richesse }}</td>
+			<td>{{ pays.histoire }}</td>
+			<td>{{ pays.capitale }}</td>
+		</tr>
+	</tbody>
+</table>
+{% endblock %}

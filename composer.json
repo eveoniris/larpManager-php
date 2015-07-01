@@ -26,6 +26,7 @@
 	],
 	"require-dev" : {
 		"mysql-workbench-schema-exporter/mysql-workbench-schema-exporter" : "dev-master",
-		"phpunit/phpunit" : "4.7.*"
+		"phpunit/phpunit" : "4.7.*",
+		"monolog/monolog" : "dev-master"
 	}
 }

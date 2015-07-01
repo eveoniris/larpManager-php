@@ -1,0 +1,16 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+	
+	<form action="{{ path('chrono_remove', {index: chronologie.id}) }}" method="POST">
+		<h1>Etes vous certain de vouloir supprimer cette chronologie ?</h1>
+		<ul>
+		<li>Identifiant : {{ chronologie.id }}</li>
+		<li>Pays : {{ chronologie.pays.nom }}</li>
+		<li>Date : {{ chronologie.date|date('Y-m-d') }}</li>
+		<li>Description : {{ chronologie.description }}</li>
+		</ul>
+		<input type="submit" value="Supprimer" />
+	</form>
+	
+{% endblock %}

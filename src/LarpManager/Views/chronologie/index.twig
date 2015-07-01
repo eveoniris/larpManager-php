@@ -1,0 +1,33 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+	
+	<table>
+		<caption>Liste des chronologies</caption>
+		<thead>
+			<tr>
+				<th>ID</th>
+				<th>Pays</th>
+				<th>Date</th>
+				<th>Description</th>
+				<th/>
+			</tr>
+		</thead>
+		<tbody>
+			{% for chrono in chronologies %}
+				<tr>
+					<td>{{ chrono.id }}</td>
+					<td>{{ chrono.pays.nom }}</td>
+					<td>{{ chrono.date|date('Y-m-d') }}</td>
+					<td>{{ chrono.description }}</td>
+					<td><a href="{{ path('chrono_remove', {index: chrono.id}) }}">Delete</a></td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	
+	<div>
+		<a href="{{ path('chrono_add') }}">Ajouter une chronologie</a>
+	</div>
+	
+{% endblock %}
