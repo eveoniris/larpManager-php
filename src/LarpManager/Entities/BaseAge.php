@@ -12,30 +12,35 @@ namespace LarpManager\Entities;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * LarpManager\Entities\Gn
+ * LarpManager\Entities\Age
  *
  * @Entity()
- * @Table(name="gn", uniqueConstraints={@UniqueConstraint(name="name_UNIQUE", columns={"`name`"})})
+ * @Table(name="age")
  * @InheritanceType("SINGLE_TABLE")
  * @DiscriminatorColumn(name="discr", type="string")
- * @DiscriminatorMap({"base":"BaseGn", "extended":"Gn"})
+ * @DiscriminatorMap({"base":"BaseAge", "extended":"Age"})
  */
-class BaseGn
+class BaseAge
 {
     /**
      * @Id
      * @Column(type="integer")
-     * @GeneratedValue(strategy="AUTO")
      */
     protected $id;
 
     /**
-     * @Column(name="`name`", type="string", length=100)
+     * @Column(type="string", length=100, nullable=true)
      */
-    protected $name;
+    protected $label;
 
     /**
-     * @ManyToMany(targetEntity="Personnage", mappedBy="gns")
+     * @Column(type="string", length=450, nullable=true)
+     */
+    protected $description;
+
+    /**
+     * @OneToMany(targetEntity="Personnage", mappedBy="age")
+     * @JoinColumn(name="id", referencedColumnName="age_id")
      */
     protected $personnages;
 
@@ -48,7 +53,7 @@ class BaseGn
      * Set the value of id.
      *
      * @param integer $id
-     * @return \LarpManager\Entities\Gn
+     * @return \LarpManager\Entities\Age
      */
     public function setId($id)
     {
@@ -68,33 +73,56 @@ class BaseGn
     }
 
     /**
-     * Set the value of name.
+     * Set the value of label.
      *
-     * @param string $name
-     * @return \LarpManager\Entities\Gn
+     * @param string $label
+     * @return \LarpManager\Entities\Age
      */
-    public function setName($name)
+    public function setLabel($label)
     {
-        $this->name = $name;
+        $this->label = $label;
 
         return $this;
     }
 
     /**
-     * Get the value of name.
+     * Get the value of label.
      *
      * @return string
      */
-    public function getName()
+    public function getLabel()
     {
-        return $this->name;
+        return $this->label;
     }
 
     /**
-     * Add Personnage entity to collection.
+     * Set the value of description.
+     *
+     * @param string $description
+     * @return \LarpManager\Entities\Age
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of description.
+     *
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    /**
+     * Add Personnage entity to collection (one to many).
      *
      * @param \LarpManager\Entities\Personnage $personnage
-     * @return \LarpManager\Entities\Gn
+     * @return \LarpManager\Entities\Age
      */
     public function addPersonnage(Personnage $personnage)
     {
@@ -104,10 +132,10 @@ class BaseGn
     }
 
     /**
-     * Remove Personnage entity from collection.
+     * Remove Personnage entity from collection (one to many).
      *
      * @param \LarpManager\Entities\Personnage $personnage
-     * @return \LarpManager\Entities\Gn
+     * @return \LarpManager\Entities\Age
      */
     public function removePersonnage(Personnage $personnage)
     {
@@ -117,7 +145,7 @@ class BaseGn
     }
 
     /**
-     * Get Personnage entity collection.
+     * Get Personnage entity collection (one to many).
      *
      * @return \Doctrine\Common\Collections\Collection
      */
@@ -128,6 +156,6 @@ class BaseGn
 
     public function __sleep()
     {
-        return array('id', 'name');
+        return array('id', 'label', 'description');
     }
 }
