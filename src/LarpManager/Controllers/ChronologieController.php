@@ -89,7 +89,7 @@ class ChronologieController
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Pays');
 		$pays = $repo->findAll();
 		$chrono->getPays();
-		return $app['twig']->render('chronologie/modify.twig', array('chrono' => $chrono, 'pays' => $pays));
+		return $app['twig']->render('chronologie/modify.twig', array('chronologie' => $chrono, 'pays' => $pays));
 	}
 	
 	/**

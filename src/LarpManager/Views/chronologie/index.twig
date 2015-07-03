@@ -11,6 +11,7 @@
 				<th>Date</th>
 				<th>Description</th>
 				<th/>
+				<th/>
 			</tr>
 		</thead>
 		<tbody>
@@ -20,6 +21,7 @@
 					<td>{{ chrono.pays.nom }}</td>
 					<td>{{ chrono.date|date('Y-m-d') }}</td>
 					<td>{{ chrono.description }}</td>
+					<td><a href="{{ path('chrono_modify', {index: chrono.id}) }}">Modify</a></td>
 					<td><a href="{{ path('chrono_remove', {index: chrono.id}) }}">Delete</a></td>
 				</tr>
 			{% endfor %}

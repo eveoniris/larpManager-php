@@ -11,9 +11,9 @@
             {% endfor %}
         	</select>
 			<label for="date">Date</label>
-			<input type="text" name="date">{{ chronologie.date|date('Y-m-d') }}</input>
+			<input type="text" name="date" value="{{ chronologie.date|date('Y-m-d') }}"></input>
 			<label for="description">Description</label>
-			<input type="text" name="description">{{ chronologie.description }}</input>
+			<input type="text" name="description" value="{{ chronologie.description }}"></input>
 		</div>
 		<input type="submit" value="Modifier" />
 	</form>

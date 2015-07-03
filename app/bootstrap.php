@@ -22,8 +22,10 @@ $app['debug'] = true;
 
 if(true == $app['debug'])
 {
+	//Ces logs ne contiennent pas que des infos de debug, il serait aussi possible de les activer
+	//en prod si nécessaire.
 	$app->register(new Silex\Provider\MonologServiceProvider(), array(
-			'monolog.logfile' => __DIR__.'/development.log',
+			'monolog.logfile' => __DIR__.'/../logs/development.log',
 	));
 }
 

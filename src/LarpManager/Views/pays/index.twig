@@ -14,6 +14,7 @@
 				<th>Histoire</th>
 				<th>Capitale</th>
 				<th/>
+				<th/>
 			</tr>
 		</thead>
 		<tbody>
@@ -26,6 +27,7 @@
 					<td>{{ ce_pays.richesse }}</td>
 					<td>{{ ce_pays.histoire }}</td>
 					<td>{{ ce_pays.capitale }}</td>
+					<td><a href="{{ path('pays_modify', {index: ce_pays.id}) }}">Modify</a></td>
 					<td><a href="{{ path('pays_remove', {index: ce_pays.id}) }}">Delete</a></td>
 				</tr>
 			{% endfor %}
