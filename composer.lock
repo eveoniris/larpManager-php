@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "c62ad0c11ef6447f74b6c71813858d60",
+    "hash": "c15d9c69724550b368af542eb34f8465",
     "packages": [
         {
             "name": "dflydev/doctrine-orm-service-provider",
@@ -1686,16 +1686,16 @@
     "packages-dev": [
         {
             "name": "monolog/monolog",
-            "version": "dev-master",
+            "version": "1.14.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Seldaek/monolog.git",
-                "reference": "ceeb33f5213d8ef383bb8f1d46a5922b4666c8aa"
+                "reference": "b287fbbe1ca27847064beff2bad7fb6920bf08cc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/ceeb33f5213d8ef383bb8f1d46a5922b4666c8aa",
-                "reference": "ceeb33f5213d8ef383bb8f1d46a5922b4666c8aa",
+                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/b287fbbe1ca27847064beff2bad7fb6920bf08cc",
+                "reference": "b287fbbe1ca27847064beff2bad7fb6920bf08cc",
                 "shasum": ""
             },
             "require": {
@@ -1758,7 +1758,7 @@
                 "logging",
                 "psr-3"
             ],
-            "time": "2015-06-30 22:26:19"
+            "time": "2015-06-19 13:29:54"
         },
         {
             "name": "phpdocumentor/reflection-docblock",
@@ -2183,16 +2183,16 @@
         },
         {
             "name": "phpunit/phpunit-mock-objects",
-            "version": "2.3.4",
+            "version": "2.3.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit-mock-objects.git",
-                "reference": "92408bb1968a81b3217a6fdf6c1a198da83caa35"
+                "reference": "1c330b1b6e1ea8fd15f2fbea46770576e366855c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit-mock-objects/zipball/92408bb1968a81b3217a6fdf6c1a198da83caa35",
-                "reference": "92408bb1968a81b3217a6fdf6c1a198da83caa35",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit-mock-objects/zipball/1c330b1b6e1ea8fd15f2fbea46770576e366855c",
+                "reference": "1c330b1b6e1ea8fd15f2fbea46770576e366855c",
                 "shasum": ""
             },
             "require": {
@@ -2234,7 +2234,7 @@
                 "mock",
                 "xunit"
             ],
-            "time": "2015-06-11 15:55:48"
+            "time": "2015-07-04 05:41:32"
         },
         {
             "name": "sebastian/comparator",
@@ -2606,13 +2606,173 @@
             "description": "Library that helps with managing the version number of Git-hosted PHP projects",
             "homepage": "https://github.com/sebastianbergmann/version",
             "time": "2015-06-21 13:59:46"
+        },
+        {
+            "name": "symfony/browser-kit",
+            "version": "v2.7.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/BrowserKit.git",
+                "reference": "d0a144a1a96d5dc90bed2814b2096a1322761672"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/BrowserKit/zipball/d0a144a1a96d5dc90bed2814b2096a1322761672",
+                "reference": "d0a144a1a96d5dc90bed2814b2096a1322761672",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.9",
+                "symfony/dom-crawler": "~2.0,>=2.0.5"
+            },
+            "require-dev": {
+                "symfony/css-selector": "~2.0,>=2.0.5",
+                "symfony/phpunit-bridge": "~2.7",
+                "symfony/process": "~2.0,>=2.0.5"
+            },
+            "suggest": {
+                "symfony/process": ""
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.7-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\BrowserKit\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony BrowserKit Component",
+            "homepage": "https://symfony.com",
+            "time": "2015-06-04 20:11:48"
+        },
+        {
+            "name": "symfony/css-selector",
+            "version": "v2.7.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/CssSelector.git",
+                "reference": "0b5c07b516226b7dd32afbbc82fe547a469c5092"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/CssSelector/zipball/0b5c07b516226b7dd32afbbc82fe547a469c5092",
+                "reference": "0b5c07b516226b7dd32afbbc82fe547a469c5092",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.9"
+            },
+            "require-dev": {
+                "symfony/phpunit-bridge": "~2.7"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.7-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\CssSelector\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jean-François Simon",
+                    "email": "jeanfrancois.simon@sensiolabs.com"
+                },
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony CssSelector Component",
+            "homepage": "https://symfony.com",
+            "time": "2015-05-15 13:33:16"
+        },
+        {
+            "name": "symfony/dom-crawler",
+            "version": "v2.7.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/DomCrawler.git",
+                "reference": "11d8eb8ccc1533f4c2d89a025f674894fda520b3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/DomCrawler/zipball/11d8eb8ccc1533f4c2d89a025f674894fda520b3",
+                "reference": "11d8eb8ccc1533f4c2d89a025f674894fda520b3",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.9"
+            },
+            "require-dev": {
+                "symfony/css-selector": "~2.3",
+                "symfony/phpunit-bridge": "~2.7"
+            },
+            "suggest": {
+                "symfony/css-selector": ""
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.7-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\DomCrawler\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony DomCrawler Component",
+            "homepage": "https://symfony.com",
+            "time": "2015-05-22 14:54:25"
         }
     ],
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "mysql-workbench-schema-exporter/mysql-workbench-schema-exporter": 20,
-        "monolog/monolog": 20
+        "mysql-workbench-schema-exporter/mysql-workbench-schema-exporter": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
