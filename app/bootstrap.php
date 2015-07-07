@@ -130,5 +130,6 @@ $app->mount('/install', new LarpManager\InstallControllerProvider());
 $app->mount('/gn', new LarpManager\GnControllerProvider());
 $app->mount('/chronologie', new LarpManager\ChronologieControllerProvider());
 $app->mount('/pays', new LarpManager\PaysControllerProvider());
+$app->mount('/stock', new LarpManager\StockControllerProvider());
 
 return $app;

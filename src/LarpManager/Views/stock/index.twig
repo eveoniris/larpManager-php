@@ -1,0 +1,13 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+
+<h2>Gestion du stock</h2>
+
+<a href="{{ path('stock_objet_add') }}">Ajouter un objet dans le stock</a>
+<a href="{{ path('stock_etat_add') }}">Ajouter un etat</a>
+<a href="{{ path('stock_tag_add') }}">Ajouter un tag</a>
+<a href="{{ path('stock_localisation_add') }}">Ajouter une localisation</a>
+<a href="{{ path('stock_possesseur_add') }}">Ajouter un possesseur</a>
+
+{%  endblock %}

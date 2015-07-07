@@ -12,15 +12,15 @@ namespace LarpManager\Entities;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * LarpManager\Entities\Sexe
+ * LarpManager\Entities\Localisation
  *
  * @Entity()
- * @Table(name="sexe")
+ * @Table(name="localisation")
  * @InheritanceType("SINGLE_TABLE")
  * @DiscriminatorColumn(name="discr", type="string")
- * @DiscriminatorMap({"base":"BaseSexe", "extended":"Sexe"})
+ * @DiscriminatorMap({"base":"BaseLocalisation", "extended":"Localisation"})
  */
-class BaseSexe
+class BaseLocalisation
 {
     /**
      * @Id
@@ -29,31 +29,31 @@ class BaseSexe
     protected $id;
 
     /**
-     * @Column(type="string", length=100, nullable=true)
+     * @Column(type="string", length=45, nullable=true)
      */
     protected $label;
 
     /**
-     * @Column(type="string", length=450, nullable=true)
+     * @Column(name="`precision`", type="string", length=45, nullable=true)
      */
-    protected $description;
+    protected $precision;
 
     /**
-     * @OneToMany(targetEntity="Personnage", mappedBy="sexe")
-     * @JoinColumn(name="id", referencedColumnName="sexe_id")
+     * @OneToMany(targetEntity="Objet", mappedBy="localisation")
+     * @JoinColumn(name="id", referencedColumnName="localisation_id")
      */
-    protected $personnages;
+    protected $objets;
 
     public function __construct()
     {
-        $this->personnages = new ArrayCollection();
+        $this->objets = new ArrayCollection();
     }
 
     /**
      * Set the value of id.
      *
      * @param integer $id
-     * @return \LarpManager\Entities\Sexe
+     * @return \LarpManager\Entities\Localisation
      */
     public function setId($id)
     {
@@ -76,7 +76,7 @@ class BaseSexe
      * Set the value of label.
      *
      * @param string $label
-     * @return \LarpManager\Entities\Sexe
+     * @return \LarpManager\Entities\Localisation
      */
     public function setLabel($label)
     {
@@ -96,66 +96,66 @@ class BaseSexe
     }
 
     /**
-     * Set the value of description.
+     * Set the value of precision.
      *
-     * @param string $description
-     * @return \LarpManager\Entities\Sexe
+     * @param string $precision
+     * @return \LarpManager\Entities\Localisation
      */
-    public function setDescription($description)
+    public function setPrecision($precision)
     {
-        $this->description = $description;
+        $this->precision = $precision;
 
         return $this;
     }
 
     /**
-     * Get the value of description.
+     * Get the value of precision.
      *
      * @return string
      */
-    public function getDescription()
+    public function getPrecision()
     {
-        return $this->description;
+        return $this->precision;
     }
 
     /**
-     * Add Personnage entity to collection (one to many).
+     * Add Objet entity to collection (one to many).
      *
-     * @param \LarpManager\Entities\Personnage $personnage
-     * @return \LarpManager\Entities\Sexe
+     * @param \LarpManager\Entities\Objet $objet
+     * @return \LarpManager\Entities\Localisation
      */
-    public function addPersonnage(Personnage $personnage)
+    public function addObjet(Objet $objet)
     {
-        $this->personnages[] = $personnage;
+        $this->objets[] = $objet;
 
         return $this;
     }
 
     /**
-     * Remove Personnage entity from collection (one to many).
+     * Remove Objet entity from collection (one to many).
      *
-     * @param \LarpManager\Entities\Personnage $personnage
-     * @return \LarpManager\Entities\Sexe
+     * @param \LarpManager\Entities\Objet $objet
+     * @return \LarpManager\Entities\Localisation
      */
-    public function removePersonnage(Personnage $personnage)
+    public function removeObjet(Objet $objet)
     {
-        $this->personnages->removeElement($personnage);
+        $this->objets->removeElement($objet);
 
         return $this;
     }
 
     /**
-     * Get Personnage entity collection (one to many).
+     * Get Objet entity collection (one to many).
      *
      * @return \Doctrine\Common\Collections\Collection
      */
-    public function getPersonnages()
+    public function getObjets()
     {
-        return $this->personnages;
+        return $this->objets;
     }
 
     public function __sleep()
     {
-        return array('id', 'label', 'description');
+        return array('id', 'label', 'precision');
     }
 }
