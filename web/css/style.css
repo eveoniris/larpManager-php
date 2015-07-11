@@ -47,3 +47,24 @@ div#footer {
 	border-top : 1px solid #ccc;
 	height : 30px;
 }
+
+div#form {
+	display: table;
+	border-collapse: separate;
+	border-spacing: 10px;
+	
+}
+
+div#form div {
+	display: table-row;
+}
+
+div#form div label {
+	display: table-cell;
+}
+
+div#form div input {
+	display: table-cell;
+}
+
+

@@ -9,20 +9,54 @@
 <li><a href="{{ path('stock_etat_add') }}">Ajouter un etat</a></li>
 <li><a href="{{ path('stock_tag_add') }}">Ajouter un tag</a></li>
 <li><a href="{{ path('stock_localisation_add') }}">Ajouter une localisation</a></li>
-<li><a href="{{ path('stock_possesseur_add') }}">Ajouter un possesseur</a></li>
+<li><a href="{{ path('stock_proprietaire_add') }}">Ajouter un proprietaire</a></li>
+</ul>
+
+<ul>
+<li><a href="{{ path('stock_objet_list') }}">Liste des objets</a></li>
+<li><a href="{{ path('stock_etat_list') }}">Liste des états</a></li>
+<li><a href="{{ path('stock_tag_list') }}">Liste des tags</a></li>
+<li><a href="{{ path('stock_localisation_list') }}">Liste des localisations</a></li>
+<li><a href="{{ path('stock_proprietaire_list') }}">Liste des propriétaires</a></li>
 </ul>
 
 <div>
-Liste des derniers objets ajoutés dans le stock
+Liste des derniers objets ajoutés dans le stock.
 </div>
 
 <div>
-Liste des objets à fabriquer
+Liste des objets à fabriquer.
+Télécharger la liste.
 </div>
 
+<div>
+<fieldset>
+<p>Afin d'éviter les mauvaises surprises, tous les objets doivent avoir un responsable. Cela permet de qui est en charge de tel objet (fabrication, rammener sur le gn, etc ...).
+La liste ci-dessous présente les objets n'ayant pas de responsable.</p>
+
+Liste des objets sans responsables.
+Télécharger la liste
+</fieldset>
+</div>
 
 <div>
-Liste des objets sans responsables
+<fieldset>
+<p>Afin d'obtenir un stock cohérent, tous les objets doivent appartenir à quelqu'un.
+La liste ci-dessous présente les objets n'ayant pas de propriétaires.</p>
+
+Liste des objets sans propriétaires.
+Télécharger la liste.
+</fieldset>
+</div>
+
+<div>
+<fieldset>
+<p>Afin de savoir précisemment ou se trouvent les objets, tous les objets doivent avoir une localisation.
+La liste ci-dessous présente les objets n'ayant pas de localisations définie.</p>
+
+Liste des objets sans localisations.
+Télécharger la liste.
+</fieldset>
 </div>
 
 {%  endblock %}

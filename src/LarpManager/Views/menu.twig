@@ -1,0 +1,13 @@
+<ul>
+	<li><a href="http://www.eveoniris.com"">Eve-Oniris</a></li>
+	<li><a href="{{ path('homepage') }}">Accueil</a></li>
+	{% if is_granted('IS_AUTHENTICATED_FULLY') %}
+		<li><a href="{{ path('stock_homepage') }}">Gestion du stock</a></li>
+		<li><a href="{{ path('user') }}">My account</a></li>
+		<li><a href="{{ path('user.list') }}">User list</a></li>
+		<li><a href="{{ path('user.logout') }}">Logout</a></li>
+	{% else %}
+		<li><a href="{{ path('user.login') }}">Sign in</a></li>
+		<li><a href="{{ path('user.register') }}">Create acount</a></li>
+	{% endif %}
+</ul>

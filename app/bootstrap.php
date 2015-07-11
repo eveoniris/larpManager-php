@@ -6,9 +6,14 @@ use Silex\Provider\ServiceControllerServiceProvider;
 use Silex\Provider\RememberMeServiceProvider;
 use SimpleUser\UserServiceProvider;
 use Silex\Provider\UrlGeneratorServiceProvider;
+use Silex\Provider\FormServiceProvider;
+use Silex\Provider\ValidatorServiceProvider;
+use Silex\Provider\TranslationServiceProvider;
 use Silex\Provider\TwigServiceProvider;
 use Silex\Provider\DoctrineServiceProvider;
+use Silex\Provider\HttpCacheServiceProvider;
 use Dflydev\Silex\Provider\DoctrineOrm\DoctrineOrmServiceProvider;
+use Saxulum\DoctrineOrmManagerRegistry\Silex\Provider\DoctrineOrmManagerRegistryProvider;
 
 $loader = require_once __DIR__.'/../vendor/autoload.php';
 
@@ -18,7 +23,7 @@ $app = new Silex\Application();
  * A décommenter pour passer en mode debug 
  */
 
-$app['debug'] = true;
+$app['debug'] = false;
 
 if(true == $app['debug'])
 {
@@ -32,10 +37,33 @@ if(true == $app['debug'])
 /**
  * Enregistrer les libs dans l'application 
  */
+ 
+// cache
+$app->register(new HttpCacheServiceProvider(), array(
+		'http_cache.cache_dir' => __DIR__.'/../cache/',
+		'http_cache.esi'       => null,
+));
+
+// Formulaires
+$app->register(new FormServiceProvider());
+
+// add entity type on forms
+$app->register(new DoctrineOrmManagerRegistryProvider());
+
+// validation
+$app->register(new ValidatorServiceProvider());
+
+// traduction
+$app->register(new TranslationServiceProvider(), array(
+		'translator.domains' => array(),
+));
 
 // Twig
 $app->register(new TwigServiceProvider(), array(
-    'twig.path' => __DIR__.'/../src/LarpManager/Views'
+    'twig.path' => __DIR__.'/../src/LarpManager/Views',
+    'twig.options'    => array(
+        'cache' => __DIR__ . '/../cache/',
+    ),
 ));
 
 // Doctrine DBAL

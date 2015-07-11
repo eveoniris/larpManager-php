@@ -1,0 +1,12 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+
+	<h2>Saisie d'un tag</h2>
+	<form action="{{ path('stock_possesseur_add') }}" method="POST">
+		{{ form_start(form) }}
+	    {{ form_widget(form) }}
+	    {{ form_end(form) }}
+	</form>
+
+{%  endblock %}

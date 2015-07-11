@@ -1,0 +1,12 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+
+	<h2>Saisie d'un état</h2>
+	<form action="{{ path('stock_etat_update', {index:etat.id} ) }}" method="POST">
+		{{ form_start(form) }}
+	    {{ form_widget(form) }}
+	    {{ form_end(form) }}
+	</form>
+
+{%  endblock %}
