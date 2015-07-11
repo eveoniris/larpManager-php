@@ -12,11 +12,11 @@ class InstallControllerProvider implements ControllerProviderInterface
 		// creates a new controller based on the default route
 		$controllers = $app['controllers_factory'];
 
-		$controllers->get('/','LarpManager\Controllers\InstallController::indexAction')
-					->bind('install');
+		$controllers->get('/','LarpManager\Controllers\InstallController::indexAction')->bind('install');
 		
-		$controllers->post('/','LarpManager\Controllers\InstallController::indexAction');
-
+		$controllers->post('/usercreate','LarpManager\Controllers\InstallController::createUserAction')->bind('create_user');
+		$controllers->post('/larpupdate','LarpManager\Controllers\InstallController::createOrUpdateAction')->bind('create_or_update_larp');
+		
 		return $controllers;
 	}
 }

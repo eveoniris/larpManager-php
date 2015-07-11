@@ -15,6 +15,13 @@ $loader = require_once __DIR__.'/../vendor/autoload.php';
 $app = new Silex\Application();
 
 /**
+ * Chemin pour le sql d'installation de larpmanager
+ * 
+ */
+$app['db_user_install_path'] = __DIR__ . '/../vendor/jasongrimes/silex-simpleuser/sql/';
+$app['db_install_path'] = __DIR__ . '/../database/sql/';
+
+/**
  * A décommenter pour passer en mode debug 
  */
 
@@ -38,7 +45,7 @@ $app->register(new TwigServiceProvider(), array(
 ));
 
 // Doctrine DBAL
-if($_ENV['env'] && $_ENV['env'] == 'test')
+if(isset($_ENV['env']) && $_ENV['env'] == 'test')
 {
 	$app->register(new DoctrineServiceProvider(), array(
 			'db.options' => array(

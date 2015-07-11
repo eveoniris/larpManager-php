@@ -12,7 +12,8 @@
 		"dflydev/doctrine-orm-service-provider" : "1.0.*",
 		"symfony/security" : "^2.7",
 		"jasongrimes/silex-simpleuser" : "^2.0",
-		"mysql-workbench-schema-exporter/mysql-workbench-schema-exporter" : "dev-master"
+		"mysql-workbench-schema-exporter/mysql-workbench-schema-exporter" : "dev-master",
+		"jdorn/sql-formatter": "^1.2"
 	},
 	"autoload" : {
 		"psr-0" : {
