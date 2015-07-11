@@ -1,7 +1,7 @@
 <?php
 namespace LarpManager\Tests\Controller;
 
-require(__DIR__ . "\..\..\BaseTestCase.php");
+require_once(__DIR__ . "\..\..\BaseTestCase.php");
 use LarpManager\Tests\BaseTestCase;
 
 

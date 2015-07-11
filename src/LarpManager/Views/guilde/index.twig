@@ -1,0 +1,33 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+	
+	<table>
+		<caption>Liste des guildes</caption>
+		<thead>
+			<tr>
+				<th>ID</th>
+				<th>Label</th>
+				<th>Description</th>
+				<th/>
+				<th/>
+			</tr>
+		</thead>
+		<tbody>
+			{% for guilde in guildes %}
+				<tr>
+					<td>{{ guilde.id }}</td>
+					<td>{{ guilde.label }}</td>
+					<td>{{ guilde.description }}</td>
+					<td><a href="{{ path('chrono_modify', {index: guilde.id}) }}">Modify</a></td>
+					<td><a href="{{ path('chrono_remove', {index: guilde.id}) }}">Delete</a></td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	
+	<div>
+		<a href="{{ path('guilde_add') }}">Ajouter une guilde</a>
+	</div>
+	
+{% endblock %}

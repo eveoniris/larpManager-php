@@ -1,0 +1,15 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+	
+	<form action="{{ path('guilde_add') }}" method="POST">
+		<div>
+			<label for="label">Nom de la guilde</label>
+			<input type="text" name="label" />
+			<label for="description">Description</label>
+			<input type="text" name="description" />
+		</div>
+		<input type="submit" value="Enregistrer" />
+	</form>
+	
+{% endblock %}

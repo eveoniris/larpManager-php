@@ -25,10 +25,9 @@ if(true == $app['debug'])
 	//Ces logs ne contiennent pas que des infos de debug, il serait aussi possible de les activer
 	//en prod si nécessaire.
 	$app->register(new Silex\Provider\MonologServiceProvider(), array(
-			'monolog.logfile' => __DIR__.'/../logs/development.log',
+	'monolog.logfile' => __DIR__.'/../logs/development.log',
 	));
 }
-
 /**
  * Enregistrer les libs dans l'application 
  */
@@ -39,15 +38,31 @@ $app->register(new TwigServiceProvider(), array(
 ));
 
 // Doctrine DBAL
-$app->register(new DoctrineServiceProvider(), array(
-    'db.options' => array(
-        'driver'   => 'pdo_mysql',
-		'host'   => '127.0.0.1',
-		'dbname'   => 'larpmanager',	// update with your own database name
-		'user'   => 'root',				// update with yout own database user
-		'password'   => ''				// update with yout own database password
-    ),
-));
+if($_ENV['env'] && $_ENV['env'] == 'test')
+{
+	$app->register(new DoctrineServiceProvider(), array(
+			'db.options' => array(
+					'driver'   => 'pdo_mysql' //TODO resoudre le probleme de creation d'index pour passer en sqlite
+					,'host'   => '127.0.0.1'
+					,'dbname'   => 'db_test'
+					,'user'   => 'root'
+					,'password'   => ''
+					//,'memory'	=> true //pour sqlite in memory (rapide !)
+			),
+	));
+}
+else 
+{
+	$app->register(new DoctrineServiceProvider(), array(
+	    'db.options' => array(
+	        'driver'   => 'pdo_mysql',
+			'host'   => '127.0.0.1',
+			'dbname'   => 'larpmanager',	// update with your own database name
+			'user'   => 'root',				// update with yout own database user
+			'password'   => ''				// update with yout own database password
+	    ),
+	));
+}
 
 // Doctrine ORM
 $app->register(new DoctrineOrmServiceProvider(), array(
@@ -130,5 +145,6 @@ $app->mount('/install', new LarpManager\InstallControllerProvider());
 $app->mount('/gn', new LarpManager\GnControllerProvider());
 $app->mount('/chronologie', new LarpManager\ChronologieControllerProvider());
 $app->mount('/pays', new LarpManager\PaysControllerProvider());
+$app->mount('/guilde', new LarpManager\GuildeControllerProvider());
 
 return $app;
