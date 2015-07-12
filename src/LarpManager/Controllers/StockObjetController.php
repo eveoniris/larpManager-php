@@ -19,9 +19,36 @@ class StockObjetController
 	public function indexAction(Request $request, Application $app)
 	{
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Objet');
-		$objets = $repo->findAll();
-	
-		return $app['twig']->render('stock/objet/index.twig', array('objets' => $objets));
+		
+		$perPage = $request->get('perPage');
+		$page = $request->get('page');
+		
+		if ( ! $page ) $page = 1;
+		if ( ! $perPage ) $perPage = 20;
+		
+		if ( $request->getMethod() == 'POST') {
+			$perPage = $request->get('perPage');
+		}
+				
+		$qb = $repo->createQueryBuilder('objet');
+		$qb->select('COUNT(objet)');
+		$objet_count = $qb->getQuery()->getSingleScalarResult();
+		
+		$pageCount = ceil($objet_count / $perPage);
+		
+		if ( $page > $pageCount) $page = $pageCount;
+		if ( $page < 1 ) $page = 1;
+		
+		$objets = $repo->findBy(array(), array('creation_date' => 'DESC'),$perPage,($page -1 )* $perPage);
+		
+		return $app['twig']->render('stock/objet/index.twig', array(
+					'objets' => $objets,
+					'nextPage' => $page + 1,
+					'prevPage' => $page - 1,
+					'currentPage' => $page,
+					'perPage' => $perPage,
+					'pageCount' => $pageCount
+		));
 	}
 
 	/**

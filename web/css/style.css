@@ -148,8 +148,20 @@ div#ajax_result{
 	background-position:0 -72px;
 }
 .icon-document{
-	background-position:-25px -25px;
+	background-position:-24px -24px;
 }
 .icon-plus{
 	background-position:-408px -96px;
+}
+.icon-next-page{
+	background-position:-336px -72px;
+}
+.icon-prev-page{
+	background-position:-240px -72px;
+}
+.icon-first-page{
+	background-position:-192px -72px;
+}
+.icon-last-page{
+	background-position:-384px -72px;
 }

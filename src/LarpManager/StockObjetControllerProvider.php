@@ -13,7 +13,14 @@ class StockObjetControllerProvider implements ControllerProviderInterface
 
 		$controllers->match('/','LarpManager\Controllers\StockObjetController::indexAction')
 			->bind("stock_objet_index")
-			->method('GET');
+			->method('GET|POST');
+		
+		$controllers->match('/page/{page}/{perPage}','LarpManager\Controllers\StockObjetController::indexAction')
+			->assert('page', '\d+')
+			->assert('perPage', '5|10|20|50')
+			->value('perPage', '20')
+			->bind("stock_objet_index_nav")
+			->method('GET|POST');
 		
 		$controllers->match('/{index}','LarpManager\Controllers\StockObjetController::detailAction')
 			->assert('index', '\d+')
