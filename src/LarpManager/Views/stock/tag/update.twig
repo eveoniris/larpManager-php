@@ -1,0 +1,7 @@
+<form action="{{ path('stock_tag_update', {index:tag.id} ) }}" method="POST" class="pure-form">
+	<fieldset>
+	<legend>Modification d'un tag</legend>
+		{% form_theme form 'Form/fields.twig' %}
+		{{ form(form) }}
+	</fieldset>
+</form>

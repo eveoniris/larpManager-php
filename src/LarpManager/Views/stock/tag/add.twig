@@ -1,0 +1,7 @@
+<form action="{{ path('stock_tag_add') }}" method="POST" class="pure-form">
+	<fieldset>
+		<legend>Ajout d'un tag</legend>
+		{% form_theme form 'Form/fields.twig' %}
+		{{ form(form) }}
+	</fieldset>
+</form>

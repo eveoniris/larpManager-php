@@ -1,0 +1,76 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+
+	<div id="ajax_entity">
+		
+		<table class="pure-table pure-table-bordered">
+		<caption>Détail de {{ objet.code }} - {{ objet.nom }}</caption>
+		<thead>
+			<tr>
+				<th colspan=2>
+					<a class="ajax_action" href="{{  path('stock_objet_add') }}"><i class="icon-plus-sign"></i></a>
+					<a class="ajax_action" href="{{ path('stock_objet_update', {index : objet.id} ) }}"><i class="icon-pencil"></i></a>
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+		<tr>
+			<th>Nom</th>
+			<td>{{ objet.nom }}</td>
+		</tr>
+		<tr>
+			<th>Code</th>
+			<td>{{ objet.code }}</td></tr>
+		<tr>
+			<th>Date de création</th>
+			<td>{{ objet.creationDate|date('Y-m-d H:i:s') }}</td></tr>
+		<tr>
+			<th>Description</th>
+			<td>{{ objet.description }}</td></tr>
+		<tr>
+			<th>Photo</th>
+			<td>{{ objet.photo }}</td></tr>
+		<tr>
+			<th>Localisation</th>
+			<td>{% if objet.localisation %}{{ objet.localisation.label }}{%  endif %}</td></tr>
+		<tr>
+			<th>Etat</th>
+			<td>{% if objet.etat %}{{ objet.etat.label }}{%  endif %}</td></tr>
+		<tr>
+			<th>Taille</th>
+			<td>{{ objet.taille }}</td></tr>
+		<tr>
+			<th>Poid</th>
+			<td>{{ objet.poid }}</td></tr>
+		<tr>
+			<th>Couleur</th>
+			<td>{{ objet.couleur }}</td></tr>
+		<tr>
+			<th>Propriétaire</th>
+			<td>{% if objet.proprietaire %}{{ objet.proprietaire.nom }}{%  endif %}</td></tr>
+		<tr>
+			<th>Responsable</th>
+			<td>{% if objet.responsable %}{{ objet.responsable.username }}{%  endif %}</td></tr>
+		<tr>
+			<th>Cout</th>
+			<td>{{ objet.cout }}</td></tr>
+		<tr>
+			<th>Nombre</th>
+			<td>{{ objet.nombre }}</td></tr>
+		<tr>
+			<th>Budget</th>
+			<td>{{ objet.budget }}</td></tr>
+		<tr>
+			<th>Investissement</th>
+			<td>{{ objet.investissement }}</td>
+		</tr>
+		</tbody>
+		</table>
+		
+		
+	</div>
+	
+	<div id="ajax_result"></div>
+
+{% endblock %}
