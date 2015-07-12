@@ -23,7 +23,7 @@ $app = new Silex\Application();
  * A décommenter pour passer en mode debug 
  */
 
-$app['debug'] = false;
+$app['debug'] = true;
 
 if(true == $app['debug'])
 {
@@ -159,5 +159,10 @@ $app->mount('/gn', new LarpManager\GnControllerProvider());
 $app->mount('/chronologie', new LarpManager\ChronologieControllerProvider());
 $app->mount('/pays', new LarpManager\PaysControllerProvider());
 $app->mount('/stock', new LarpManager\StockControllerProvider());
+$app->mount('/stock/objet', new LarpManager\StockObjetControllerProvider());
+$app->mount('/stock/tag', new LarpManager\StockTagControllerProvider());
+$app->mount('/stock/etat', new LarpManager\StockEtatControllerProvider());
+$app->mount('/stock/proprietaire', new LarpManager\StockProprietaireControllerProvider());
+$app->mount('/stock/localisation', new LarpManager\StockLocalisationControllerProvider());
 
 return $app;

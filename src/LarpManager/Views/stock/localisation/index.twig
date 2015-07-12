@@ -1,0 +1,32 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+
+	<div id="ajax_entity">
+		<table class="pure-table pure-table-horizontal pure-table-striped">
+		<caption>Liste des localisations</caption>
+		<thead>
+			<tr>
+				<th>Label</th>
+				<th>Précision</th>
+				<th>Nombre d'objets</th>
+				<th colspan="2"><a class="ajax_action" href="{{  path('stock_localisation_add') }}"><i class="icon-plus-sign"></i></a></th>
+			</tr>
+		</thead>
+		<tbody>
+		{% for localisation in localisations %}
+		<tr>
+		<td>{{ localisation.label }}</td>
+		<td>{{ localisation.precision }}</td>
+		<td>{{ localisation.objets|length }}</td>
+		<td><a href=""><i class="icon-document"></i></a></td>
+		<td><a class="ajax_action" href="{{ path('stock_localisation_update', {index : localisation.id} ) }}"><i class="icon-pencil"></i></a></td>
+		</tr>
+		{% endfor %}
+		</tbody>
+		</table>
+	</div>
+	
+	<div id="ajax_result"></div>
+
+{% endblock %}

@@ -1,12 +1,7 @@
-{% extends "layout.twig" %}
-
-{% block content %}
-
-	<h2>Saisie d'un état</h2>
-	<form action="{{ path('stock_etat_update', {index:etat.id} ) }}" method="POST">
-		{{ form_start(form) }}
-	    {{ form_widget(form) }}
-	    {{ form_end(form) }}
-	</form>
-
-{%  endblock %}
+<form action="{{ path('stock_etat_update', {index:etat.id} ) }}" method="POST" class="pure-form">
+	<fieldset>
+	<legend>Modification d'un état</legend>
+		{% form_theme form 'Form/fields.twig' %}
+		{{ form(form) }}
+	</fieldset>
+</form>

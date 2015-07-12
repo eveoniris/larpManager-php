@@ -1,0 +1,36 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+
+	<div id="ajax_entity">
+		<table class="pure-table pure-table-horizontal pure-table-striped">
+		<caption>Liste des proprietaire</caption>
+		<thead>
+			<tr>
+				<th>Nom</th>
+				<th>Adresse</th>
+				<th>Mail</th>
+				<th>Tel</th>
+				<th>Nombre d'objets</th>
+				<th colspan="2"><a class="ajax_action" href="{{  path('stock_proprietaire_add') }}"><i class="icon-plus-sign"></i></a></th>
+			</tr>
+		</thead>
+		<tbody>
+		{% for proprietaire in proprietaires %}
+		<tr>
+		<td>{{ proprietaire.nom }}</td>
+		<td>{{ proprietaire.adresse }}</td>
+		<td>{{ proprietaire.mail }}</td>
+		<td>{{ proprietaire.tel }}</td>
+		<td>{{ proprietaire.objets|length }}</td>
+		<td><a href=""><i class="icon-document"></i></a></td>
+		<td><a class="ajax_action" href="{{ path('stock_proprietaire_update', {index : proprietaire.id} ) }}"><i class="icon-pencil"></i></a></td>
+		</tr>
+		{% endfor %}
+		</tbody>
+		</table>
+	</div>
+	
+	<div id="ajax_result"></div>
+
+{% endblock %}

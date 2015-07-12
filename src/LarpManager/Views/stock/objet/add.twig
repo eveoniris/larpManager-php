@@ -1,12 +1,7 @@
-{% extends "layout.twig" %}
-
-{% block content %}
-
-	<h2>Saisie d'un objet</h2>
-	<form action="{{ path('stock_objet_add') }}" method="POST">
-		{{ form_start(form) }}
-	    {{ form_widget(form) }}
-	    {{ form_end(form) }}
-	</form>
-
-{%  endblock %}
+<form action="{{ path('stock_objet_add') }}" method="POST" class="pure-form">
+	<fieldset>
+		<legend>Ajout d'un objet</legend>
+		{% form_theme form 'Form/fields.twig' %}
+		{{ form(form) }}
+	</fieldset>
+</form>

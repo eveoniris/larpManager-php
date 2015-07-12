@@ -1,0 +1,7 @@
+<form action="{{ path('stock_proprietaire_update', {index:proprietaire.id} ) }}" method="POST" class="pure-form">
+	<fieldset>
+	<legend>Modification d'un proprietaire</legend>
+		{% form_theme form 'Form/fields.twig' %}
+		{{ form(form) }}
+	</fieldset>
+</form>

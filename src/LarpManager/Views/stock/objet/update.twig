@@ -1,0 +1,7 @@
+<form action="{{ path('stock_objet_update', {index:objet.id} ) }}" method="POST" class="pure-form">
+	<fieldset>
+	<legend>Modification d'un objet</legend>
+		{% form_theme form 'Form/fields.twig' %}
+		{{ form(form) }}
+	</fieldset>
+</form>

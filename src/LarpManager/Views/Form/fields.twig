@@ -1,0 +1,14 @@
+{# src/Acme/TaskBundle/Resources/views/Form/fields.html.twig #}
+{% block form_row %}
+{% spaceless %}
+    <div class="form_row">
+        {{ form_label(form) }}
+        {{ form_errors(form) }}
+        {{ form_widget(form) }}
+    </div>
+{% endspaceless %}
+{% endblock form_row %}
+
+{% block button_row %}
+    {{ form_widget(form) }}
+{% endblock button_row %}

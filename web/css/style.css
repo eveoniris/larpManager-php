@@ -8,33 +8,14 @@ body {
 	margin: 0;
 }
 
+html, button, input, select, textarea,
+.pure-g [class *= "pure-u"] {
+    /* Set your content font stack here: */
+    font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
 div#menu {
-	padding-right: 10px;
-	padding-left: 10px;
-	height: 59px;
 	border-bottom : 1px solid #ccc;
-	
-}
-
-div#menu ul {
-	float: right!important;
-  	margin-right: -15px;
-  	display: table;
-}
-
-div#menu ul li {
-  float: left;
-  position: relative;
-  display: block;
-  box-sizing: border-box;
-}
-
-div#menu ul a {
-	text-decoration: none;
-	padding-top: 15px;
-  	padding-bottom: 15px;
-  	height : 39px;
- 	margin-right : 20px;
 }
 
 div#content {
@@ -46,6 +27,31 @@ div#footer {
 	padding-left: 10px;
 	border-top : 1px solid #ccc;
 	height : 30px;
+}
+
+/**
+ *
+ */
+h1,h2 {
+	margin-top:0;	
+}
+
+div.warning {
+	border : 2px solid red;
+	padding-left: 5px;
+	padding-right : 5px;
+}
+
+/** 
+ *	Formulaires 
+ */
+
+fieldset {
+	border : 1px solid #ccc;
+}
+
+fieldset legend {
+	font-size : 1.4em;
 }
 
 div#form {
@@ -67,4 +73,83 @@ div#form div input {
 	display: table-cell;
 }
 
+div#form button{
+	display: inline-block;
+	margin-right : 20px;
+	display: inline-block;
+}
 
+.button-primary,
+.button-success,
+.button-error,
+.button-warning,
+.button-secondary {
+    color: white;
+    border-radius: 4px;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+}
+
+.button-success {
+    background: rgb(28, 184, 65); /* this is a green */
+}
+
+.button-error {
+    background: rgb(202, 60, 60); /* this is a maroon */
+}
+
+.button-warning {
+    background: rgb(223, 117, 20); /* this is an orange */
+}
+
+.button-secondary {
+    background: rgb(66, 184, 221); /* this is a light blue */
+}
+        
+/** 
+ *	Présentation d'une entity 
+ */
+ 
+div#ajax_entity{
+	display:inline-block;
+	vertical-align:top;	
+	margin-right: 20px;
+	padding: 10px;
+}
+
+div#ajax_result{
+	display:inline-block;
+	vertical-align:top;	
+	padding: 10px;
+}
+
+/** 
+ *	Icones 
+ */
+
+[class^="icon-"],[class*=" icon-"]{
+	display:inline-block;
+	width:14px;
+	height:14px;
+	line-height:14px;
+	vertical-align:text-top;
+	background-image:url("../img/glyphicons-halflings.png");
+	background-position:14px 14px;
+	background-repeat:no-repeat;
+	*margin-right:.3em;
+}
+
+[class^="icon-"]:last-child,[class*=" icon-"]:last-child{
+	*margin-left:0;
+}
+.icon-plus-sign{
+	background-position:0 -96px;
+}
+.icon-pencil{
+	background-position:0 -72px;
+}
+.icon-document{
+	background-position:-25px -25px;
+}
+.icon-plus{
+	background-position:-408px -96px;
+}
