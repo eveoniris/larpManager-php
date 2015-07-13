@@ -12,6 +12,7 @@ use Silex\Provider\TranslationServiceProvider;
 use Silex\Provider\TwigServiceProvider;
 use Silex\Provider\DoctrineServiceProvider;
 use Silex\Provider\HttpCacheServiceProvider;
+use Silex\Provider\SwiftmailerServiceProvider;
 use Dflydev\Silex\Provider\DoctrineOrm\DoctrineOrmServiceProvider;
 use Saxulum\DoctrineOrmManagerRegistry\Silex\Provider\DoctrineOrmManagerRegistryProvider;
 
@@ -71,6 +72,18 @@ $app->register(new TwigServiceProvider(), array(
         'cache' => __DIR__ . '/../cache/',
     ),
 ));
+
+// Email
+$app->register(new SwiftmailerServiceProvider());
+
+$app['swiftmailer.options'] = array(
+		'host' => 'host',
+		'port' => '25',
+		'username' => 'username',
+		'password' => 'password',
+		'encryption' => null,
+		'auth_mode' => null
+);
 
 // Doctrine DBAL
 if(isset($_ENV['env']) && $_ENV['env'] == 'test')
