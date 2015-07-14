@@ -25,8 +25,8 @@ $app = new Silex\Application();
  */
 $app['db_user_install_path'] = __DIR__ . '/../vendor/jasongrimes/silex-simpleuser/sql/';
 $app['db_install_path'] = __DIR__ . '/../database/sql/';
-//$app['maintenance'] = file_exists($app['db_user_install_path'] . 'create_or_update.sql');
-$app['maintenance'] = true;
+$app['maintenance'] = file_exists($app['db_user_install_path'] . 'create_or_update.sql');
+//$app['maintenance'] = true;
 /**
  * A décommenter pour passer en mode debug 
  */
@@ -175,28 +175,29 @@ $app->register(new UrlGeneratorServiceProvider());
  * Définition des routes
  */
 
-$app->mount('/', new LarpManager\HomepageControllerProvider());
-$app->mount('/user', $userServiceProvider);
-//$app->mount('/install', new LarpManager\InstallControllerProvider());
-$app->mount('/gn', new LarpManager\GnControllerProvider());
-$app->mount('/chronologie', new LarpManager\ChronologieControllerProvider());
-$app->mount('/pays', new LarpManager\PaysControllerProvider());
-$app->mount('/guilde', new LarpManager\GuildeControllerProvider());
-$app->mount('/stock', new LarpManager\StockControllerProvider());
-$app->mount('/stock/objet', new LarpManager\StockObjetControllerProvider());
-$app->mount('/stock/tag', new LarpManager\StockTagControllerProvider());
-$app->mount('/stock/etat', new LarpManager\StockEtatControllerProvider());
-$app->mount('/stock/proprietaire', new LarpManager\StockProprietaireControllerProvider());
-$app->mount('/stock/localisation', new LarpManager\StockLocalisationControllerProvider());
-
 if($app['maintenance'])
 {
 	$app->mount('/install', new LarpManager\InstallControllerProvider());
-	$app->method('GET|POST')->match('^/.*$', function(Application $app)
+	
+	$app->error(function (\Exception $e, $code) use ($app) 
 	{
-		return $app->render('maintenance.twig');
+		return $app['twig']->render('maintenance.twig');
 	});
 }
-
+else
+{
+	$app->mount('/', new LarpManager\HomepageControllerProvider());
+	$app->mount('/user', $userServiceProvider);
+	$app->mount('/gn', new LarpManager\GnControllerProvider());
+	$app->mount('/chronologie', new LarpManager\ChronologieControllerProvider());
+	$app->mount('/pays', new LarpManager\PaysControllerProvider());
+	$app->mount('/guilde', new LarpManager\GuildeControllerProvider());
+	$app->mount('/stock', new LarpManager\StockControllerProvider());
+	$app->mount('/stock/objet', new LarpManager\StockObjetControllerProvider());
+	$app->mount('/stock/tag', new LarpManager\StockTagControllerProvider());
+	$app->mount('/stock/etat', new LarpManager\StockEtatControllerProvider());
+	$app->mount('/stock/proprietaire', new LarpManager\StockProprietaireControllerProvider());
+	$app->mount('/stock/localisation', new LarpManager\StockLocalisationControllerProvider());
+}
 
 return $app;
