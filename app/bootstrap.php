@@ -20,7 +20,8 @@ $app = new Silex\Application();
  */
 $app['db_user_install_path'] = __DIR__ . '/../vendor/jasongrimes/silex-simpleuser/sql/';
 $app['db_install_path'] = __DIR__ . '/../database/sql/';
-
+//$app['maintenance'] = file_exists($app['db_user_install_path'] . 'create_or_update.sql');
+$app['maintenance'] = true;
 /**
  * A décommenter pour passer en mode debug 
  */
@@ -148,10 +149,20 @@ $app->register(new UrlGeneratorServiceProvider());
 
 $app->mount('/', new LarpManager\HomepageControllerProvider());
 $app->mount('/user', $userServiceProvider);
-$app->mount('/install', new LarpManager\InstallControllerProvider());
+//$app->mount('/install', new LarpManager\InstallControllerProvider());
 $app->mount('/gn', new LarpManager\GnControllerProvider());
 $app->mount('/chronologie', new LarpManager\ChronologieControllerProvider());
 $app->mount('/pays', new LarpManager\PaysControllerProvider());
 $app->mount('/guilde', new LarpManager\GuildeControllerProvider());
+
+if($app['maintenance'])
+{
+	$app->mount('/install', new LarpManager\InstallControllerProvider());
+	$app->method('GET|POST')->match('^/.*$', function(Application $app)
+	{
+		return $app->render('maintenance.twig');
+	});
+}
+
 
 return $app;
