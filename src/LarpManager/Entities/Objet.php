@@ -10,19 +10,29 @@
 namespace LarpManager\Entities;
 
 use LarpManager\Entities\BaseObjet;
+use JsonSerializable;
 
 /**
  * LarpManager\Entities\Objet
  *
  * @Entity()
  */
-class Objet extends BaseObjet
+class Objet extends BaseObjet implements JsonSerializable
 {
 
-	public function findAllCounted() {
-		return $this->getEntityManager()
-		->createQuery('SELECT COUNT(a) FROM Objet a')
-		->getSingleScalarResult();
+	public function jsonSerialize() {
+		return array(
+			'nom' => ( $this->getNom() ) ? $this->getNom() : '',
+			'code' => ( $this->getcode() ) ? $this->getCode() : '',
+			'description' => ($this->getDescription() ) ? $this->getDescription(): '',
+			'photo' => $this->getPhoto(),
+			'localisation' => ( $this->getLocalisation() ) ? $this->getLocalisation()->getLabel() : '', 
+			'etat' => ( $this->getEtat() ) ? $this->getEtat()->getLabel() : '',
+			'proprietaire' => ( $this->getProprietaire() ) ? $this->getProprietaire()->getNom() : '',
+			'responsable' => ( $this->getResponsable() ) ? $this->getResponsable()->getUserName() : '',
+			'nombre' => $this->getNombre(),
+			'creation_date' => ( $this->getCreationDate() ) ? $this->getCreationDate()->format('Y-m-d H:i:s') : '',
+		);
 	}
 	
 	/**

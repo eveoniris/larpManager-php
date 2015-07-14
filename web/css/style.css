@@ -1,108 +1,24 @@
+html {
+  position: relative;
+  min-height: 100%;	
+}
+
 body {
 	font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 	font-size: 14px;
   	line-height: 1.42857143;
   	color: #333;
 	background-color: #fff;
-	padding: 0;
-	margin: 0;
+	margin-bottom: 60px;
 }
 
-html, button, input, select, textarea,
-.pure-g [class *= "pure-u"] {
-    /* Set your content font stack here: */
-    font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-}
-
-div#menu {
-	border-bottom : 1px solid #ccc;
-}
-
-div#content {
-	padding : 10px;
-}
-
-div#footer {
-	padding-right: 10px;
-	padding-left: 10px;
-	border-top : 1px solid #ccc;
-	height : 30px;
-}
-
-/**
- *
- */
-h1,h2 {
-	margin-top:0;	
-}
-
-div.warning {
-	border : 2px solid red;
-	padding-left: 5px;
-	padding-right : 5px;
-}
-
-/** 
- *	Formulaires 
- */
-
-fieldset {
-	border : 1px solid #ccc;
-}
-
-fieldset legend {
-	font-size : 1.4em;
-}
-
-div#form {
-	display: table;
-	border-collapse: separate;
-	border-spacing: 10px;
-	
-}
-
-div#form div {
-	display: table-row;
-}
-
-div#form div label {
-	display: table-cell;
-}
-
-div#form div input {
-	display: table-cell;
-}
-
-div#form button{
-	display: inline-block;
-	margin-right : 20px;
-	display: inline-block;
-}
-
-.button-primary,
-.button-success,
-.button-error,
-.button-warning,
-.button-secondary {
-    color: white;
-    border-radius: 4px;
-    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
-}
-
-.button-success {
-    background: rgb(28, 184, 65); /* this is a green */
-}
-
-.button-error {
-    background: rgb(202, 60, 60); /* this is a maroon */
-}
-
-.button-warning {
-    background: rgb(223, 117, 20); /* this is an orange */
-}
-
-.button-secondary {
-    background: rgb(66, 184, 221); /* this is a light blue */
+#footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  /* Set the fixed height of the footer here */
+  height: 60px;
+  background-color: #f5f5f5;
 }
         
 /** 

@@ -2,64 +2,63 @@
 
 {% block content %}
 
-	<div id="ajax_entity">
-		<table class="pure-table pure-table-horizontal pure-table-striped">
-		<caption>
-			<p>Liste des objets</p>
+<ol class="breadcrumb">
+  <li><a href="{{ path('stock_homepage')}}">Stock</a></li>
+  <li class="active"><a href="#">Objets</a></li>
+  <li><a href="{{ path('stock_objet_add') }}">Add</a></li>
+</ol>
 
-				<a title="Première page" href="{{ path('stock_objet_index_nav',{page: 1, perPage: perPage}) }}"><li class="icon-first-page"></li></a>
-				<a title="Page précédente" href="{{ path('stock_objet_index_nav',{page: prevPage, perPage: perPage}) }}"><li class="icon-prev-page"></li></a>
-				page {{currentPage }} sur {{ pageCount }}			
-				<a title="Page suivante" href="{{ path('stock_objet_index_nav',{page: nextPage, perPage: perPage}) }}"><li class="icon-next-page"></li></a>
-				<a title="Dernière page" href="{{ path('stock_objet_index_nav',{page: pageCount, perPage: perPage}) }}"><li class="icon-last-page"></li></a>
-
-			<form action="{{ path('stock_objet_index') }}" method="POST">
-				<select name="perPage">
-					<option value="5" {%  if 5 == perPage %} selected {% endif %}>5</option>
-					<option value="10" {%  if 10 == perPage %} selected {% endif %}>10</option>
-					<option value="20" {%  if 20 == perPage %} selected {% endif %}>20</option>
-					<option value="50" {%  if 50 == perPage %} selected {% endif %}>50</option>
-				</select> objets présentés par page
-				<input type="submit" value="Recharger" />
-			</form>
-		</caption>
-		
-		<thead>
-			<tr>
-				<th>Nom</th>
-				<th>Code</th>
-				<th>Date de création</th>
-				<th>Description</th>
-				<th>Photo</th>
-				<th>Localisation</th>
-				<th>Etat</th>
-				<th>Proprietaire</th>
-				<th>Responsable</th>
-				<th>Nombre</th>
-				<th colspan="2"><a class="ajax_action" href="{{  path('stock_objet_add') }}"><i class="icon-plus-sign"></i></a></th>
-			</tr>
-		</thead>
-		<tbody>
-		{% for objet in objets %}
-		<tr>
-		<td>{{ objet.nom }}</td>
-		<td>{{ objet.code }}</td>
-		<td>{{ objet.creationDate|date('Y-m-d H:i:s') }}</td>
-		<td>{{ objet.description }}</td>
-		<td>{{ objet.photo }}</td>
-		<td>{% if objet.localisation %}{{ objet.localisation.label }}{%  endif %}</td>
-		<td>{% if objet.etat %}{{ objet.etat.label }}{%  endif %}</td>
-		<td>{% if objet.proprietaire %}{{ objet.proprietaire.nom }}{%  endif %}</td>
-		<td>{% if objet.responsable %}{{ objet.responsable.username }}{%  endif %}</td>
-		<td>{{ objet.nombre }}</td>
-		<td><a href="{{ path('stock_objet_detail', {index : objet.id} ) }}"><i class="icon-document"></i></a></td>
-		<td><a class="ajax_action" href="{{ path('stock_objet_update', {index : objet.id} ) }}"><i class="icon-pencil"></i></a></td>
-		</tr>
-		{% endfor %}
-		</tbody>
-		</table>
+	<div class="page-header">
+	<h1>
+		Liste des objets
+	</h1>
 	</div>
 	
-	<div id="ajax_result"></div>
+	<table id="liste_objet" class="table table-condensed table-hover table-striped">
+	<caption>Liste des objets</caption>
+	<thead>
+		<tr>
+			<th data-column-id="nom">Nom</th>
+			<th data-column-id="code">Code</th>
+			<th data-column-id="creation_date" data-type="datetime">Création</th>
+			<th data-column-id="description">Description</th>
+			<th data-column-id="photo">Photo</th>
+			<th data-column-id="localisation">Localisation</th>
+			<th data-column-id="etat">Etat</th>
+			<th data-column-id="proprietaire">Proprietaire</th>
+			<th data-column-id="responsable">Responsable</th>
+			<th data-column-id="nombe">Nombre</th>
+			<th data-column-id="commands" data-formatter="commands" data-sortable="false">Commands</th>
+		</tr>
+	</thead>
+	</table>
+	
+{% endblock content %}
 
-{% endblock %}
+{% block javascript %}
+	{{ parent() }}
+	<script>
+	$(document).ready(function() {
+		
+		$("#liste_objet").bootgrid({
+			ajax: true,
+			url: "{{ path('stock_objet_index') }}",
+			converters: {
+				datetime: {
+		            from: function (value) { return moment(value); },
+		            to: function (value) { if ( value ) {return moment(value).format("lll");} else return value; }
+		        }
+		    },
+			formatters: {
+		        "commands": function(column, row)
+		        {
+		            return "<button type=\"button\" class=\"btn btn-xs btn-default command-edit\" data-row-id=\"" + row.id + "\"><span class=\"fa fa-pencil\"></span></button> " + 
+		                "<button type=\"button\" class=\"btn btn-xs btn-default command-delete\" data-row-id=\"" + row.id + "\"><span class=\"fa fa-trash-o\"></span></button>";
+		        }
+		    }
+		});
+	});
+	</script>
+{% endblock javascript %}
+
+

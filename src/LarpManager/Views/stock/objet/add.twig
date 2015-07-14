@@ -1,7 +1,20 @@
-<form action="{{ path('stock_objet_add') }}" method="POST" class="pure-form">
-	<fieldset>
-		<legend>Ajout d'un objet</legend>
-		{% form_theme form 'Form/fields.twig' %}
-		{{ form(form) }}
-	</fieldset>
+{% extends "layout.twig" %}
+
+{% block content %}
+
+<ol class="breadcrumb">
+  <li><a href="{{ path('stock_homepage')}}">Stock</a></li>
+  <li><a href="{{ path('stock_objet_index') }}">Objets</a></li>
+  <li class="active"><a href="#">Add</a></li>
+</ol>
+
+<fieldset>
+<legend>Ajout d'un objet</legend>
+<form class="form-horizontal" action="{{ path('stock_objet_add') }}" method="POST">
+
+	{% form_theme form 'Form/fields.twig' %}
+	{{ form(form) }}
+	
 </form>
+</fieldset>
+{% endblock content %}

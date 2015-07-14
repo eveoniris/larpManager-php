@@ -1,8 +1,11 @@
 {% extends "layout.twig" %}
 
 {% block content %}
-	<h1>LarpManager</h1>
-	{% if app.user %}
-		<p>Bienvenue {{ app.user.name }}</p>
-	{% endif %}
+	<div class="page-header">
+	<h1>LarpManager
+		{% if app.user %}
+			<small>Bienvenue {{ app.user.name }}</small>
+		{% endif %}
+	</h1>
+	</div>
 {% endblock %}

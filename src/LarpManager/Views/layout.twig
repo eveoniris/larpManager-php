@@ -3,32 +3,41 @@
     <head>
         {% block head %}
         	<meta name="viewport" content="width=device-width, initial-scale=1">
-        	<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
-			<!--[if lte IE 8]>
-			    <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/grids-responsive-old-ie-min.css">
-			<![endif]-->
-			<!--[if gt IE 8]><!-->
-			    <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/grids-responsive-min.css">
-			<!--<![endif]-->
-            <link rel="stylesheet" href="{{ app.request.basepath }}/css/style.css" />
-            <title>{% block title %}{% endblock %} - LarpManager</title>
-            <script src="{{ app.request.basepath }}/js/jquery-1.11.3.min.js"></script>
-            <script src="{{ app.request.basepath }}/js/larpManagerAjax.js"></script>
-        {% endblock %}
+			
+			
+			<link rel="stylesheet" href="{{ app.request.basepath }}/css/style.css" />
+            <link rel="stylesheet" href="{{ app.request.basepath }}/css/normalize.css" />			                        
+            <link rel="stylesheet" href="{{ app.request.basepath }}/css/font-awesome.min.css" />
+            <link rel="stylesheet" href="{{ app.request.basepath }}/css/bootstrap.min.css" />
+            <link rel="stylesheet" href="{{ app.request.basepath }}/css/bootstrap-theme.min.css" />
+            <link rel="stylesheet" href="{{ app.request.basepath }}/css/jquery.bootgrid.min.css" />
+            
+            <title>{% block title %}{% endblock title %} - LarpManager</title>
+        {% endblock head %}
     </head>
     <body>
-    	<div>
-	    	<div id="menu">
-	    	{% include 'menu.twig' %}
-			</div>
+    
+    	<div id="menu" >
+    		{% block menu %}
+    			{% include 'menu.twig' %}
+    		{% endblock menu %}
+    	</div>
+	
+        <div id="content" class="container-fluid">
+        	{% block content %}{% endblock content %}
+        </div>
 			
-	        <div id="content">{% block content %}{% endblock %}</div>
-			
-	        <div id="footer">
-	            {% block footer %}
-	                &copy; Copyright 2015 by eve-oniris.
-	            {% endblock %}
-	        </div>
-	    </div>
+         
+         {% block javascript %}
+	         <script src="{{ app.request.basepath }}/js/jquery-1.11.3.min.js"></script>
+	         <script src="{{ app.request.basepath }}/js/bootstrap.min.js"></script>
+	         <script src="{{ app.request.basepath }}/js/jquery.bootgrid.min.js"></script>
+	         <script src="{{ app.request.basepath }}/js/jquery.bootgrid.fa.min.js"></script>
+	         <script src="{{ app.request.basepath }}/js/moment.js"></script>
+	         <script src="{{ app.request.basepath }}/js/larpManagerAjax.js"></script>
+	         <script>
+	         	moment.locale('fr');
+	         </script>
+		{% endblock javascript %}
     </body>
 </html>

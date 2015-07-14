@@ -201,4 +201,23 @@ $app->mount('/stock/etat', new LarpManager\StockEtatControllerProvider());
 $app->mount('/stock/proprietaire', new LarpManager\StockProprietaireControllerProvider());
 $app->mount('/stock/localisation', new LarpManager\StockLocalisationControllerProvider());
 
+/**
+ * API
+ */
+ 
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\ParameterBag;
+ 
+/**
+ * Permet de formatter correctement la requête de l'utilisateur si celui-ci
+ * indique content-type = application/json 
+ */
+$app->before(function (Request $request) {
+	if (0 === strpos($request->headers->get('Content-Type'), 'application/json')) {
+		$data = json_decode($request->getContent(), true);
+		$request->request->replace(is_array($data) ? $data : array());
+	}
+});
+
+
 return $app;

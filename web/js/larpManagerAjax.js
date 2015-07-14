@@ -1,5 +1,5 @@
 $(document).ready(function() {
-	$('a.ajax_action','#ajax_entity').on("click", function(event) {
+	$('a.ajax_action','#ajax_entity_list').on("click", function(event) {
 		$('#ajax_result').fadeOut()
 		$.ajax({
 			url: $(this).attr("href"), 
@@ -10,4 +10,8 @@ $(document).ready(function() {
 		});
 		return false;
 	});
+	
+
+	
 });
+

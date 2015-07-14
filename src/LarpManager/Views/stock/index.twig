@@ -2,39 +2,60 @@
 
 {% block content %}
 
-<h1>Gestion du stock</h1>
+<ol class="breadcrumb">
+  <li class="active"><a href="{{ path('stock_homepage')}}">Stock</a></li>
+  <li><a href="{{ path('stock_objet_index') }}">Objets</a></li>
+  <li><a href="{{ path('stock_objet_add') }}">Add</a></li>
+</ol>
 
-<p>Il y a actuellement {{ objet_count }} objet(s) enregistré(s) dans le stock</p>
+<div class="page-header">
+<h1>
+	Gestion du stock
+	<small>
+		( {{ objet_count }} objets en stock )
+	</small>
+</h1>
+</div>
+
 
 {% if objet_without_proprio_count != 0 or objet_without_responsable_count != 0 or objet_without_localisation_count != 0 %}
-<div class="warning">
-<h2>Des problèmes sont à régler !</h2>
-<ul>
-{% if objet_without_proprio_count != 0 %}
-<li>Attention, {{ objet_without_proprio_count }} objet(s) sans propriétaire.</li>
-{%  endif %}
 
-{% if objet_without_responsable_count != 0 %}
-<li>Attention, {{ objet_without_responsable_count }} objet(s) sans responsable.</li>
-{%  endif %}
-
-{% if objet_without_localisation_count != 0 %}
-<li>Attention, {{ objet_without_localisation_count }} objet(s) sans localisation.</li>
-{%  endif %}
-</ul>
+<div class="panel panel-warning">
+	<div class="panel-heading">
+		Des problèmes sont à régler !
+	</div>
+  	<div class="panel-body">
+		<ul>
+		{% if objet_without_proprio_count != 0 %}
+		<li>Attention, {{ objet_without_proprio_count }} objet(s) sans propriétaire.</li>
+		{%  endif %}
+		
+		{% if objet_without_responsable_count != 0 %}
+		<li>Attention, {{ objet_without_responsable_count }} objet(s) sans responsable.</li>
+		{%  endif %}
+		
+		{% if objet_without_localisation_count != 0 %}
+		<li>Attention, {{ objet_without_localisation_count }} objet(s) sans localisation.</li>
+		{%  endif %}
+		</ul>
+	</div>
 </div>
 {% endif %}
 
-<div>
-<h3>Liste des derniers objets ajoutés dans le stock.</h3>
-<ul>
-{% for objet in last_add %}
-	<li><a href="{{ path('stock_objet_detail',{index:objet.id}) }}">{{ objet.nom }}</a></li>
-{% endfor %}
-</ul>
-
-Télécharger la liste.
+<div class="panel panel-default">
+	<div class="panel-heading">
+		Liste des derniers objets ajoutés dans le stock.
+	</div>
+	
+	<div class="panel-body">
+		<ul>
+		{% for objet in last_add %}
+			<li><a href="{{ path('stock_objet_detail',{index:objet.id}) }}">{{ objet.nom }}</a></li>
+		{% endfor %}
+		</ul>
+	</div>
 </div>
+
 
 
 {%  endblock %}

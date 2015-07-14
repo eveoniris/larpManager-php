@@ -13,42 +13,75 @@ use Silex\Application;
  */
 class StockObjetController
 {
+
+	/**
+	 * Fetch objet from database with user constraint
+	 * 
+	 * @param array $params
+	 */
+	private function getObjets(Array $params, Application $app)
+	{
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Objet');
+		
+		// recherche du nombre d'objet total
+		$qb = $repo->createQueryBuilder('objet')
+					->select('COUNT(objet)');
+		$objetCount = $qb->getQuery()->getSingleScalarResult();
+
+		
+		$qb = $repo->createQueryBuilder('objet');
+		
+		// recherche
+		if ( $params['searchPhrase'] ) {
+			$qb->where("objet.nom LIKE :search");
+			$qb->setParameter('search','%'.$params['searchPhrase'].'%');
+		}
+		
+		// tri
+		if ( $params['sort'] ) {
+			foreach ( $params['sort'] as $sort => $order ) {
+				$qb->orderBy('objet.'.$sort, $order);
+			}
+		}
+
+		// set of result
+		if ( $params['rowCount'] != -1 ) {	
+			$qb->setFirstResult( ($params['current'] -1 )* $params['rowCount'] );
+			$qb->setMaxResults( $params['rowCount'] );
+		}
+		
+		return array(
+				'objets' => $qb->getQuery()->getResult(),
+				'total' => $objetCount,
+				);
+	}
+	
 	/**
 	 * @description affiche la liste des objets
 	 */
 	public function indexAction(Request $request, Application $app)
 	{
-		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Objet');
+		if ( $request->isXmlHttpRequest() ) {
+			
+			$post = array(
+				'current' => $request->get('current'),
+				'rowCount' => $request->get('rowCount'),
+				'searchPhrase' => $request->get('searchPhrase'),
+				'sort' => $request->get('sort'),
+			);
+			
+			$data = $this->getObjets($post, $app);
+
+			
+			return $app->json(array(
+					'current' => $post['current'],
+					'rowCount' => $post['rowCount'],
+					'total' => $data['total'],
+					'rows' => $data['objets']
+					),200);
+		}	
 		
-		$perPage = $request->get('perPage');
-		$page = $request->get('page');
-		
-		if ( ! $page ) $page = 1;
-		if ( ! $perPage ) $perPage = 20;
-		
-		if ( $request->getMethod() == 'POST') {
-			$perPage = $request->get('perPage');
-		}
-				
-		$qb = $repo->createQueryBuilder('objet');
-		$qb->select('COUNT(objet)');
-		$objet_count = $qb->getQuery()->getSingleScalarResult();
-		
-		$pageCount = ceil($objet_count / $perPage);
-		
-		if ( $page > $pageCount) $page = $pageCount;
-		if ( $page < 1 ) $page = 1;
-		
-		$objets = $repo->findBy(array(), array('creation_date' => 'DESC'),$perPage,($page -1 )* $perPage);
-		
-		return $app['twig']->render('stock/objet/index.twig', array(
-					'objets' => $objets,
-					'nextPage' => $page + 1,
-					'prevPage' => $page - 1,
-					'currentPage' => $page,
-					'perPage' => $perPage,
-					'pageCount' => $pageCount
-		));
+		return $app['twig']->render('stock/objet/index.twig');
 	}
 
 	/**
@@ -89,7 +122,8 @@ class StockObjetController
 		->add('nombre','integer', array('required' => false))
 		->add('budget','integer', array('required' => false))
 		->add('investissement','choice', array('choices' => array('false' =>'usage unique','true' => 'ré-utilisable')))
-		->add('save','submit', array('attr' => array('class' => 'pure-button pure-button-primary button-primary')))
+		->add('save','submit')
+		->add('save_continue','submit')
 		->getForm();
 	
 		// on passe la requête de l'utilisateur au formulaire
