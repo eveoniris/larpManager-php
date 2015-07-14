@@ -2,4 +2,9 @@
 
 $app = require_once __DIR__.'/../app/bootstrap.php';
 
-$app->run();
+if ($app['debug']) {
+	$app->run();
+}
+else{
+	$app['http_cache']->run();
+}

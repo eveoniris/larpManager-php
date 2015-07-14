@@ -1,0 +1,58 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+
+	<div id="ajax_entity">
+		<table class="pure-table pure-table-horizontal pure-table-striped">
+		<caption>Liste des objets</caption>
+		<thead>
+			<tr>
+				<th>Nom</th>
+				<th>Code</th>
+				<th>Date de création</th>
+				<th>Description</th>
+				<th>Photo</th>
+				<th>Localisation</th>
+				<th>Etat</th>
+				<th>Taille</th>
+				<th>Poid</th>
+				<th>Couleur</th>
+				<th>Proprietaire</th>
+				<th>Responsable</th>
+				<th>Cout</th>
+				<th>Nombre</th>
+				<th>Budget</th>
+				<th>Investissement</th>
+				<th colspan="2"><a class="ajax_action" href="{{  path('stock_objet_add') }}"><i class="icon-plus-sign"></i></a></th>
+			</tr>
+		</thead>
+		<tbody>
+		{% for objet in objets %}
+		<tr>
+		<td>{{ objet.nom }}</td>
+		<td>{{ objet.code }}</td>
+		<td>{{ objet.creationDate|date('Y-m-d H:i:s') }}</td>
+		<td>{{ objet.description }}</td>
+		<td>{{ objet.photo }}</td>
+		<td>{% if objet.localisation %}{{ objet.localisation.label }}{%  endif %}</td>
+		<td>{% if objet.etat %}{{ objet.etat.label }}{%  endif %}</td>
+		<td>{{ objet.taille }}</td>
+		<td>{{ objet.poid }}</td>
+		<td>{{ objet.couleur }}</td>
+		<td>{% if objet.proprietaire %}{{ objet.proprietaire.nom }}{%  endif %}</td>
+		<td>{% if objet.responsable %}{{ objet.responsable.username }}{%  endif %}</td>
+		<td>{{ objet.cout }}</td>
+		<td>{{ objet.nombre }}</td>
+		<td>{{ objet.budget }}</td>
+		<td>{{ objet.investissement }}</td>
+		<td><a href=""><i class="icon-document"></i></a></td>
+		<td><a class="ajax_action" href="{{ path('stock_objet_update', {index : objet.id} ) }}"><i class="icon-pencil"></i></a></td>
+		</tr>
+		{% endfor %}
+		</tbody>
+		</table>
+	</div>
+	
+	<div id="ajax_result"></div>
+
+{% endblock %}

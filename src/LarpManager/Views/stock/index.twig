@@ -1,0 +1,40 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+
+<h1>Gestion du stock</h1>
+
+<p>Il y a actuellement {{ objet_count }} objet(s) enregistré(s) dans le stock</p>
+
+{% if objet_without_proprio_count != 0 or objet_without_responsable_count != 0 or objet_without_localisation_count != 0 %}
+<div class="warning">
+<h2>Des problèmes sont à régler !</h2>
+<ul>
+{% if objet_without_proprio_count != 0 %}
+<li>Attention, {{ objet_without_proprio_count }} objet(s) sans propriétaire.</li>
+{%  endif %}
+
+{% if objet_without_responsable_count != 0 %}
+<li>Attention, {{ objet_without_responsable_count }} objet(s) sans responsable.</li>
+{%  endif %}
+
+{% if objet_without_localisation_count != 0 %}
+<li>Attention, {{ objet_without_localisation_count }} objet(s) sans localisation.</li>
+{%  endif %}
+</ul>
+</div>
+{% endif %}
+
+<div>
+<h3>Liste des derniers objets ajoutés dans le stock.</h3>
+<ul>
+{% for objet in last_add %}
+	<li><a href="{{ path('stock_objet_detail',{index:objet.id}) }}">{{ objet.nom }}</a></li>
+{% endfor %}
+</ul>
+
+Télécharger la liste.
+</div>
+
+
+{%  endblock %}

@@ -6,9 +6,14 @@ use Silex\Provider\ServiceControllerServiceProvider;
 use Silex\Provider\RememberMeServiceProvider;
 use SimpleUser\UserServiceProvider;
 use Silex\Provider\UrlGeneratorServiceProvider;
+use Silex\Provider\FormServiceProvider;
+use Silex\Provider\ValidatorServiceProvider;
+use Silex\Provider\TranslationServiceProvider;
 use Silex\Provider\TwigServiceProvider;
 use Silex\Provider\DoctrineServiceProvider;
+use Silex\Provider\HttpCacheServiceProvider;
 use Dflydev\Silex\Provider\DoctrineOrm\DoctrineOrmServiceProvider;
+use Saxulum\DoctrineOrmManagerRegistry\Silex\Provider\DoctrineOrmManagerRegistryProvider;
 
 $loader = require_once __DIR__.'/../vendor/autoload.php';
 
@@ -39,10 +44,33 @@ if(true == $app['debug'])
 /**
  * Enregistrer les libs dans l'application 
  */
+ 
+// cache
+$app->register(new HttpCacheServiceProvider(), array(
+		'http_cache.cache_dir' => __DIR__.'/../cache/',
+		'http_cache.esi'       => null,
+));
+
+// Formulaires
+$app->register(new FormServiceProvider());
+
+// add entity type on forms
+$app->register(new DoctrineOrmManagerRegistryProvider());
+
+// validation
+$app->register(new ValidatorServiceProvider());
+
+// traduction
+$app->register(new TranslationServiceProvider(), array(
+		'translator.domains' => array(),
+));
 
 // Twig
 $app->register(new TwigServiceProvider(), array(
-    'twig.path' => __DIR__.'/../src/LarpManager/Views'
+    'twig.path' => __DIR__.'/../src/LarpManager/Views',
+    'twig.options'    => array(
+        'cache' => __DIR__ . '/../cache/',
+    ),
 ));
 
 // Doctrine DBAL
@@ -154,6 +182,12 @@ $app->mount('/gn', new LarpManager\GnControllerProvider());
 $app->mount('/chronologie', new LarpManager\ChronologieControllerProvider());
 $app->mount('/pays', new LarpManager\PaysControllerProvider());
 $app->mount('/guilde', new LarpManager\GuildeControllerProvider());
+$app->mount('/stock', new LarpManager\StockControllerProvider());
+$app->mount('/stock/objet', new LarpManager\StockObjetControllerProvider());
+$app->mount('/stock/tag', new LarpManager\StockTagControllerProvider());
+$app->mount('/stock/etat', new LarpManager\StockEtatControllerProvider());
+$app->mount('/stock/proprietaire', new LarpManager\StockProprietaireControllerProvider());
+$app->mount('/stock/localisation', new LarpManager\StockLocalisationControllerProvider());
 
 if($app['maintenance'])
 {

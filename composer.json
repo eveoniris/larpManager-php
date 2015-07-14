@@ -13,7 +13,15 @@
 		"symfony/security" : "^2.7",
 		"jasongrimes/silex-simpleuser" : "^2.0",
 		"mysql-workbench-schema-exporter/mysql-workbench-schema-exporter" : "dev-master",
-		"jdorn/sql-formatter": "^1.2"
+		"jdorn/sql-formatter": "^1.2",
+		"symfony/config" : "~2.7",
+		"symfony/validator" : "~2.7",
+		"symfony/translation" : "~2.7",
+		"symfony/form" : "~2.7",
+		"symfony/security-csrf" : "~2.7",
+		"symfony/locale" : "~2.7",
+		"symfony/doctrine-bridge" : "~2.7",
+		"saxulum/saxulum-doctrine-orm-manager-registry-provider" : "2.2.1@stable"
 	},
 	"autoload" : {
 		"psr-0" : {

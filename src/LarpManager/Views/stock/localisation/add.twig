@@ -1,0 +1,7 @@
+<form action="{{ path('stock_localisation_add') }}" method="POST" class="pure-form">
+	<fieldset>
+		<legend>Ajout d'une localisation</legend>
+		{% form_theme form 'Form/fields.twig' %}
+		{{ form(form) }}
+	</fieldset>
+</form>

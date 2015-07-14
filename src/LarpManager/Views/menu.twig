@@ -1,0 +1,23 @@
+<div class="pure-menu pure-menu-horizontal">
+	<a href="{{ path('homepage') }}" class="pure-menu-heading pure-menu-link">Accueil</a></li>
+ 
+	<ul class="pure-menu-list">
+		<li class="pure-menu-item"><a href="http://www.eveoniris.com" class="pure-menu-link">Eve-Oniris</a></li>
+		<li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
+			<a href="{{ path('stock_homepage') }}" class="pure-menu-link">Gestion du stock</a>
+			<ul class="pure-menu-children">
+				<li class="pure-menu-item"><a href="{{ path('stock_etat_index') }}" class="pure-menu-link">Etats</a></li>
+				<li class="pure-menu-item"><a href="{{ path('stock_tag_index') }}" class="pure-menu-link">Tags</a></li>
+				<li class="pure-menu-item"><a href="{{ path('stock_localisation_index') }}" class="pure-menu-link">Localisations</a></li>
+				<li class="pure-menu-item"><a href="{{ path('stock_proprietaire_index') }}" class="pure-menu-link">Proprietaires</a></li>
+				<li class="pure-menu-item"><a href="{{ path('stock_objet_index') }}" class="pure-menu-link">Objets</a></li>
+			</ul>
+		</li>
+		<li class="pure-menu-item"><a href="{{ path('install') }}" class="pure-menu-link">Installation</a></li>
+		<li class="pure-menu-item"><a href="{{ path('user') }}" class="pure-menu-link">My account</a></li>
+		<li class="pure-menu-item"><a href="{{ path('user.list') }}" class="pure-menu-link">User list</a></li>
+		<li class="pure-menu-item"><a href="{{ path('user.logout') }}" class="pure-menu-link">Logout</a></li>
+		<li class="pure-menu-item"><a href="{{ path('user.login') }}" class="pure-menu-link">Sign in</a></li>
+		<li class="pure-menu-item"><a href="{{ path('user.register') }}" class="pure-menu-link">Create acount</a></li>
+	</ul>
+</div>
