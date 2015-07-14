@@ -14,6 +14,7 @@ use Silex\Provider\DoctrineServiceProvider;
 use Silex\Provider\HttpCacheServiceProvider;
 use Dflydev\Silex\Provider\DoctrineOrm\DoctrineOrmServiceProvider;
 use Saxulum\DoctrineOrmManagerRegistry\Silex\Provider\DoctrineOrmManagerRegistryProvider;
+use Symfony\Component\HttpFoundation\Response;
 
 $loader = require_once __DIR__.'/../vendor/autoload.php';
 
@@ -25,8 +26,11 @@ $app = new Silex\Application();
  */
 $app['db_user_install_path'] = __DIR__ . '/../vendor/jasongrimes/silex-simpleuser/sql/';
 $app['db_install_path'] = __DIR__ . '/../database/sql/';
-$app['maintenance'] = file_exists($app['db_user_install_path'] . 'create_or_update.sql');
-//$app['maintenance'] = true;
+//*
+$app['maintenance'] = file_exists($app['db_install_path'] . 'create_or_update.sql');
+/*/
+$app['maintenance'] = false;
+/*/
 /**
  * A décommenter pour passer en mode debug 
  */
@@ -177,12 +181,66 @@ $app->register(new UrlGeneratorServiceProvider());
 
 if($app['maintenance'])
 {
+	
 	$app->mount('/install', new LarpManager\InstallControllerProvider());
+	
+	$app->match('/user/register', function(Silex\Application $app) {
+		return new Response('Sorry, registration has been disabled.');
+	});
+	
+	$app->match('/user/list', function(Silex\Application $app) {
+		return new Response('Sorry, user list has been disabled.');
+	});
+	
+	//$app->match('/user/{id}', function(Silex\Application $app) {
+	//	return new Response('Sorry, user view has been disabled.');
+	//});
+	
+	$app->match('/user/{id}/edit', function(Silex\Application $app) {
+		return new Response('Sorry, user edit has been disabled.');
+	});
+	
+	$app->mount('/user', $userServiceProvider);
+	
+	$app['user.options'] = array(
+			// ...
+			'templates' => array(
+					'layout' => 'user/layout_maintenance.twig',
+					'login' => 'user/login_maintenance.twig',
+					'forgot-password' => 'user/forgot-password.twig',
+					'reset-password' => 'user/reset-password.twig'
+			),
+	);
+	
+	$app['security.firewalls'] = array(
+			'install' => array(	// install doit être accessible à tous
+					'pattern' => '^/install$',
+			),
+			'login' => array(	// login doit être accessible à tous
+					'pattern' => '^/user/login$',
+			),
+			'secured_area' => array(	// le reste necessite d'être connecté
+					'pattern' => '^/.*$',
+					'anonymous' => true,
+					'remember_me' => array(),
+					'form' => array(
+							'login_path' => '/user/login',
+							'check_path' => '/user/login_check',
+							'default_target_path' => '/install'
+					),
+					'logout' => array(
+							'logout_path' => '/user/logout',
+					),
+					'users' => $app->share(function($app) { return $app['user.manager']; }),
+					),
+					);
 	
 	$app->error(function (\Exception $e, $code) use ($app) 
 	{
-		return $app['twig']->render('maintenance.twig');
+		if($code == 404)
+			return $app['twig']->render('maintenance.twig');
 	});
+
 }
 else
 {
@@ -198,6 +256,9 @@ else
 	$app->mount('/stock/etat', new LarpManager\StockEtatControllerProvider());
 	$app->mount('/stock/proprietaire', new LarpManager\StockProprietaireControllerProvider());
 	$app->mount('/stock/localisation', new LarpManager\StockLocalisationControllerProvider());
+	
+
 }
+
 
 return $app;

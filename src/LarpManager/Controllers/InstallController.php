@@ -63,8 +63,13 @@ class InstallController
 		{
 			$is_to_install_simpleuser = true;
 		}
+		else if(!($app['security']->isGranted('ROLE_ADMIN')))
+		{
+			return $app->redirect($app['url_generator']->generate('user.login'));
+		}
 		else if(file_exists($app['db_install_path'].'/create_or_update.sql')) //que si simple user est deja installe
 		{
+			//test droit admin
 			$is_to_create_or_update=true;
 			$sql = file_get_contents($app['db_install_path'].'create_or_update.sql');
 		}
