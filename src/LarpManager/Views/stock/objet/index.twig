@@ -14,51 +14,159 @@
 	</h1>
 	</div>
 	
-	<table id="liste_objet" class="table table-condensed table-hover table-striped">
-	<caption>Liste des objets</caption>
-	<thead>
-		<tr>
-			<th data-column-id="nom">Nom</th>
-			<th data-column-id="code">Code</th>
-			<th data-column-id="creation_date" data-type="datetime">Création</th>
-			<th data-column-id="description">Description</th>
-			<th data-column-id="photo">Photo</th>
-			<th data-column-id="localisation">Localisation</th>
-			<th data-column-id="etat">Etat</th>
-			<th data-column-id="proprietaire">Proprietaire</th>
-			<th data-column-id="responsable">Responsable</th>
-			<th data-column-id="nombe">Nombre</th>
-			<th data-column-id="commands" data-formatter="commands" data-sortable="false">Commands</th>
-		</tr>
-	</thead>
-	</table>
+	<nav class="navbar navbar-default">
+  		<div class="container-fluid">
+  		
+	  		 <form class="navbar-form navbar-left" role="search">
+				<div class="form-group">
+					<div class="btn-group" role="group" aria-label="...">
+						<div class="input-group">
+							<select class="form-control" id="searchType">
+								<option value="nom">Nom</option>
+								<option value="code">Code</option>
+							</select>
+						 	<div class="input-group-btn"></div>
+					    	<input id="search" type="text" class="form-control" placeholder="Search">
+					    	<span class="input-group-btn">
+					    		<button class="btn btn-default" id="doSearch" type="button"><span class="icon fa fa-search"></span></button>
+					    	</span>
+					    </div>
+				    </div>
+				</div>
+				
+				<div class="form-group">
+					<div class="btn-group" role="group" aria-label="...">
+					  <button id="reset" type="button" class="btn btn-default"><span class="icon fa fa-refresh"></span></button>
+					</div>
+				</div>
+	      	</form>
+      	  		
+  		</div>
+  	</nav>
+  	
+  		<nav>
+	  <ul class="pager">
+	    <li><a class="previous" href="#">Previous</a></li>
+	    <li><span class="page"></span></li>
+	    <li><a class="next" href="#">Next</a></li>
+	  </ul>
+	</nav>
 	
+	<div id="liste_objet" class="row"></div>
+	
+	<nav>
+	  <ul class="pager">
+	    <li><a class="previous" href="#">Previous</a></li>
+	    <li><span class="page"></span></li>
+	    <li><a class="next" href="#">Next</a></li>
+	  </ul>
+	</nav>
+			
 {% endblock content %}
 
 {% block javascript %}
 	{{ parent() }}
 	<script>
-	$(document).ready(function() {
+
+	var paramDefault = {
+			'current' : 1,
+			'rowCount' : 2,
+			'searchPhrase' : '',
+			'searchType' : '',
+			'sort': {},
+			'thumbnail' : true
+		}; 
+	var param = $.extend({},paramDefault);
+
+	var result = null;
+	
+	var search_timeout = null;
+	var myXHR = null;
+	
+	var ajax_request = function() {
+		if(myXHR) myXHR.abort();
+		 myXHR = $.ajax({
+			url: '{{ path('stock_objet_index') }}',
+			method: 'POST',
+			dataType: 'json',
+			data: param,
+			success : function(data) {
+				result = data;
+				
+				if ( result['total'] != 0 ) {
+					result['pageCount'] = Math.ceil(result['total'] / result['rowCount']);
+					$(".page").html(result['current'] + "/" + result['pageCount']);
+					$('#liste_objet').html(data.thumbnails);
+				}
+				else {
+					result['pageCount'] = 0;
+					$('#liste_objet').html("<p>No result, sorry</p>");
+					
+				}
+					
+				
+			},
+			error : function(err) {}
+		});
+	};
 		
-		$("#liste_objet").bootgrid({
-			ajax: true,
-			url: "{{ path('stock_objet_index') }}",
-			converters: {
-				datetime: {
-		            from: function (value) { return moment(value); },
-		            to: function (value) { if ( value ) {return moment(value).format("lll");} else return value; }
-		        }
-		    },
-			formatters: {
-		        "commands": function(column, row)
-		        {
-		            return "<button type=\"button\" class=\"btn btn-xs btn-default command-edit\" data-row-id=\"" + row.id + "\"><span class=\"fa fa-pencil\"></span></button> " + 
-		                "<button type=\"button\" class=\"btn btn-xs btn-default command-delete\" data-row-id=\"" + row.id + "\"><span class=\"fa fa-trash-o\"></span></button>";
-		        }
-		    }
+	$(document).ready(function() {
+
+		ajax_request();
+
+		$("form").on('submit', function() {
+			return false;
+		});
+		
+		$("#searchType").on('change', function(e) {
+			param['searchType'] = $(this).val();
+		});
+		
+		$("#search").on('keyup', function(e) {
+			e.preventDefault();
+			clearTimeout(search_timeout);
+			
+			param['searchPhrase'] = this.value;
+				
+			if (param['searchPhrase'].length >= 3) {
+				search_timeout = setTimeout(ajax_request(), 250);
+			}
+			return false;
+		});
+
+		$("#doSearch").on('click', function(e) {
+			param['searchPhrase'] = $("#search").val();
+			param['searchType'] = $("#searchType").val();
+			ajax_request();
+			return false;
+		});
+
+		$("#reset").on('click', function(e) {
+			param = $.extend({},paramDefault);
+			console.log(paramDefault);
+			ajax_request();
+			return false;
+		});
+
+		$(".next").on('click', function(e) {
+			if ( param['current'] != result['pageCount'] ) {
+				param['current'] += 1;
+				ajax_request();
+			}
+			return false;
+		});
+
+		$(".previous").on('click', function(e) {
+			if ( param['current'] != 1 ) {
+				param['current'] -= 1;
+				ajax_request();
+			}
+			return false;
 		});
 	});
 	</script>
 {% endblock javascript %}
+
+
 
 

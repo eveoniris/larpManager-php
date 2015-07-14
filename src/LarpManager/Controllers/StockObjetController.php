@@ -13,6 +13,25 @@ use Silex\Application;
  */
 class StockObjetController
 {
+	
+	private function addWhere($qb, $searchPhrase, $searchType) {
+		if ( $searchPhrase !== null ) {
+				
+			switch($searchType) {
+				case 'tag':
+					break;
+				case 'code':
+					$qb->where("objet.code LIKE :search");
+					break;
+				default:
+					$qb->where("objet.nom LIKE :search");
+					break;
+			}
+				
+			$qb->setParameter('search','%'.$searchPhrase.'%');
+		}
+		return $qb;
+	}
 
 	/**
 	 * Fetch objet from database with user constraint
@@ -26,16 +45,13 @@ class StockObjetController
 		// recherche du nombre d'objet total
 		$qb = $repo->createQueryBuilder('objet')
 					->select('COUNT(objet)');
+		$qb = $this->addWhere($qb, $params['searchPhrase'], $params['searchType']);
 		$objetCount = $qb->getQuery()->getSingleScalarResult();
 
 		
-		$qb = $repo->createQueryBuilder('objet');
-		
-		// recherche
-		if ( $params['searchPhrase'] ) {
-			$qb->where("objet.nom LIKE :search");
-			$qb->setParameter('search','%'.$params['searchPhrase'].'%');
-		}
+		// selection des objets
+		$qb = $repo->createQueryBuilder('objet');		
+		$qb = $this->addWhere($qb, $params['searchPhrase'], $params['searchType']); 
 		
 		// tri
 		if ( $params['sort'] ) {
@@ -44,7 +60,7 @@ class StockObjetController
 			}
 		}
 
-		// set of result
+		// pagination
 		if ( $params['rowCount'] != -1 ) {	
 			$qb->setFirstResult( ($params['current'] -1 )* $params['rowCount'] );
 			$qb->setMaxResults( $params['rowCount'] );
@@ -63,25 +79,41 @@ class StockObjetController
 	{
 		if ( $request->isXmlHttpRequest() ) {
 			
-			$post = array(
+			$params = array(
 				'current' => $request->get('current'),
 				'rowCount' => $request->get('rowCount'),
 				'searchPhrase' => $request->get('searchPhrase'),
+				'searchType' => $request->get('searchType'),
 				'sort' => $request->get('sort'),
+				'thumbnail' => $request->get('thumbnail'),
 			);
 			
-			$data = $this->getObjets($post, $app);
-
+			$data = $this->getObjets($params, $app);
+			
+			// create thnumbnail if requested
+			$thumbnails = array();
+			if ( $params['thumbnail'] ) {
+				foreach ( $data['objets'] as $objet ) {
+					$thumbnails[] = $app['twig']->render('stock/objet/thumbnail.twig', array('objet' => $objet));
+				}
+			}
 			
 			return $app->json(array(
-					'current' => $post['current'],
-					'rowCount' => $post['rowCount'],
+					'current' => $params['current'],
+					'rowCount' => $params['rowCount'],
 					'total' => $data['total'],
-					'rows' => $data['objets']
+					'rows' => $data['objets'],
+					'thumbnails' => $thumbnails
 					),200);
 		}	
 		
-		return $app['twig']->render('stock/objet/index.twig');
+		// creation du formulaire de recherche/tri
+		$form = $app['form.factory']->createBuilder('form', array())
+			->add('search','text')
+			->add('save','submit')
+			->getForm();
+		
+		return $app['twig']->render('stock/objet/index.twig', array('form_search' => $form->createView()));
 	}
 
 	/**
