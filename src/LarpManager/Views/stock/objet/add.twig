@@ -10,7 +10,7 @@
 
 <fieldset>
 <legend>Ajout d'un objet</legend>
-<form class="form-horizontal" action="{{ path('stock_objet_add') }}" method="POST">
+<form class="form-horizontal" action="{{ path('stock_objet_add') }}" method="POST" {{ form_enctype(form) }}>
 
 	{% form_theme form 'Form/fields.twig' %}
 	{{ form(form) }}

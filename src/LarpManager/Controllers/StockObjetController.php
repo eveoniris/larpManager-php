@@ -142,7 +142,7 @@ class StockObjetController
 		->add('nom','text')
 		->add('code','text')
 		->add('description','textarea', array('required' => false))
-		->add('photo', 'text', array('required' => false))
+		->add('photo', 'file', array('required' => false, 'attr' => array( 'accept' => "image/*", 'capture' => "camera")))
 		->add('localisation','entity', array('required' => false, 'class' => 'LarpManager\Entities\Localisation', 'property' => 'label'))
 		->add('etat','entity', array('required' => false, 'class' => 'LarpManager\Entities\Etat', 'property' => 'label'))
 		->add('taille','integer', array('required' => false))
@@ -166,26 +166,56 @@ class StockObjetController
 		{
 			// on récupére les data de l'utilisateur
 			$data = $form->getData();
-				
+			
 			$objet = new \LarpManager\Entities\Objet();
+							
 			$objet->setNom($data['nom']);
 			$objet->setCode($data['code']);
 			$objet->setDescription($data['description']);
-			$objet->setPhoto($data['photo']);
 			$objet->setLocalisation($data['localisation']);
-			$objet->setEtat($data['etat']);
-			$objet->setTaille($data['taille']);
-			$objet->setPoid($data['poid']);
-			$objet->setCouleur($data['couleur']);
+			$objet->setEtat($data['etat']);			
 			$objet->setProprietaire($data['proprietaire']);
 			$objet->setResponsable($data['responsable']);
 			$objet->setCout($data['cout']);
 			$objet->setNombre($data['nombre']);
 			$objet->setBudget($data['budget']);
 			$objet->setInvestissement($data['investissement']);
-			//$objet->setUsersRelatedByCreateurId(new \LarpManager\Entities\Users()); //TODO use current connected user
-
+			//$objet->setCreateur(new \LarpManager\Entities\Users()); //TODO use current connected user
 			$app['orm.em']->persist($objet);
+			$app['orm.em']->flush();
+			
+			// caractèristiques de l'objet
+			$carac = new \LarpManager\Entities\ObjetCarac();
+			$carac->setObjet($objet);
+			$carac->setObjetId($objet->getId());
+			$carac->setTaille($data['taille']);
+			$carac->setPoid($data['poid']);
+			$carac->setCouleur($data['couleur']);
+			$app['orm.em']->persist($carac);
+			
+			
+			// photo de l'objet
+			if ( $data['photo'] ) {
+				$files = $request->files->get($form->getName());
+				$path = __DIR__.'/../../../web/upload/';
+			
+				// create a unique filename
+				$date = new \Datetime('NOW');
+				$hash = hash('sha1',$files['photo']->getClientOriginalName().$date->format('Y-m-d H:i:s'));
+			
+				// store photo on upload dir
+				$files['photo']->move($path,$hash);
+			
+				// store file information on database
+				$photo = new \LarpManager\Entities\ObjetPhoto();
+				$photo->setObjet($objet);
+				$photo->setObjetId($objet->getId());
+				$photo->setLabel($files['photo']->getClientOriginalName());
+				$photo->setCreationDate($date);
+				$photo->setRealName($hash);
+				$app['orm.em']->persist($photo);			
+			}
+			
 			$app['orm.em']->flush();
 			
 			return $app->redirect($app['url_generator']->generate('stock_objet_index'));

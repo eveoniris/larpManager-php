@@ -2,7 +2,9 @@
 
 <div class="col-sm-6 col-md-4">
 	<div class="thumbnail">
-		<!--  <img src="..." alt="..."> -->
+        {% if objet.objetPhoto %}
+        	<img src=" {{ app.request.basepath }}/upload/{{ objet.objetPhoto.realName }}" />
+        {% endif %}
 		<div class="caption">
 	        <h3>{{ objet.nom }}</h3>
 	        <small>{{ objet.code }}</small>
