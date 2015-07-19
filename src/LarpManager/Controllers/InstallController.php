@@ -25,8 +25,21 @@ class InstallController
 		$statement->execute();
 	}
 	
+	private function noUserInUserTable($app)
+	{
+		$usersCount = $app['user.manager']->findCount();
+		
+		return $usersCount == 0 ? true : false;
+	}
+	
 	public function createOrUpdateAction(Request $request, Application $app)
 	{
+		//$app['security.access_rules'] dans le bootstrap definit deja ce comportement, ce check n'est la que
+		//comme double securite
+		if(!($app['security.authorization_checker']->isGranted('ROLE_ADMIN')))
+		{
+			return $app->redirect($app['url_generator']->generate('user.login'));
+		}
 		
 		if ( $request->getMethod() === 'POST' )
 		{
@@ -46,6 +59,18 @@ class InstallController
 		return $app->redirect($app['url_generator']->generate('homepage'));
 	}
 	
+	public function registerInstallUserAction(Request $request, Application $app)
+	{
+		$name = $request->get('name');
+		$email = $request->get('email');
+		$password = $request->get('password');
+		
+		$user = $app['user.manager']->createUser($email, $password, $name, array('ROLE_ADMIN'));
+		$app['user.manager']->insert($user);
+		
+		return $app->redirect($app['url_generator']->generate('install'));
+	}
+	
 	/**
 	 * @description Affiche la page d'installation de LarpManager
 	 * @param Request $request
@@ -54,28 +79,28 @@ class InstallController
 	public function indexAction(Request $request, Application $app) 
 	{
 		$schemaManager = $app['orm.em']->getConnection()->getSchemaManager();
-		$is_to_install_simpleuser = false;
 		$is_to_create_or_update = false;
 		$sql = "";
 		//$error = true;
 		//$error_description = "Unknown error.";
 		if ($schemaManager->tablesExist(array('users')) == false) 
 		{
-			$is_to_install_simpleuser = true;
+			return $app['twig']->render('install/installsimpleuser.twig');
 		}
-		else if(!($app['security']->isGranted('ROLE_ADMIN')))
+		else if($this->noUserInUserTable($app))
+		{
+			return $app['twig']->render('install/installfirstuser.twig');
+		}
+		else if(!($app['security.authorization_checker']->isGranted('ROLE_ADMIN')))
 		{
 			return $app->redirect($app['url_generator']->generate('user.login'));
 		}
 		else if(file_exists($app['db_install_path'].'/create_or_update.sql')) //que si simple user est deja installe
 		{
 			//test droit admin
-			$is_to_create_or_update=true;
 			$sql = file_get_contents($app['db_install_path'].'create_or_update.sql');
 		}
 		return $app['twig']->render('install/index.twig',array(
-				'is_to_install_simpleuser'=>$is_to_install_simpleuser,
-				'is_to_create_or_update'=>$is_to_create_or_update,
 				'sql_content'=>SqlFormatter::format($sql)
 		));
 		

@@ -19,13 +19,20 @@ use Symfony\Component\HttpFoundation\Response;
 $loader = require_once __DIR__.'/../vendor/autoload.php';
 
 $app = new Silex\Application();
-
+if(isset($_ENV['env']) && $_ENV['env'] == 'test')
+{
+	$app->register(new DerAlex\Silex\YamlConfigServiceProvider(__DIR__ . '/../config/test_settings.yml'));
+}
+else
+{
+	$app->register(new DerAlex\Silex\YamlConfigServiceProvider(__DIR__ . '/../config/normal_settings.yml'));
+}
 /**
  * Chemin pour le sql d'installation de larpmanager
  * 
  */
 $app['db_user_install_path'] = __DIR__ . '/../vendor/jasongrimes/silex-simpleuser/sql/';
-$app['db_install_path'] = __DIR__ . '/../database/sql/';
+$app['db_install_path'] = __DIR__ . $app['config']['db_install_path'];
 //*
 $app['maintenance'] = file_exists($app['db_install_path'] . 'create_or_update.sql');
 /*/
@@ -43,6 +50,7 @@ if(true == $app['debug'])
 	//en prod si nécessaire.
 	$app->register(new Silex\Provider\MonologServiceProvider(), array(
 	'monolog.logfile' => __DIR__.'/../logs/development.log',
+	'monolog.level' => \Monolog\Logger::DEBUG
 	));
 }
 /**
@@ -78,31 +86,9 @@ $app->register(new TwigServiceProvider(), array(
 ));
 
 // Doctrine DBAL
-if(isset($_ENV['env']) && $_ENV['env'] == 'test')
-{
-	$app->register(new DoctrineServiceProvider(), array(
-			'db.options' => array(
-					'driver'   => 'pdo_mysql' //TODO resoudre le probleme de creation d'index pour passer en sqlite
-					,'host'   => '127.0.0.1'
-					,'dbname'   => 'db_test'
-					,'user'   => 'root'
-					,'password'   => ''
-					//,'memory'	=> true //pour sqlite in memory (rapide !)
-			),
+$app->register(new DoctrineServiceProvider(), array(
+	    'db.options' => $app['config']['database'] //voir les settings yaml 
 	));
-}
-else 
-{
-	$app->register(new DoctrineServiceProvider(), array(
-	    'db.options' => array(
-	        'driver'   => 'pdo_mysql',
-			'host'   => '127.0.0.1',
-			'dbname'   => 'larpmanager',	// update with your own database name
-			'user'   => 'root',				// update with yout own database user
-			'password'   => ''				// update with yout own database password
-	    ),
-	));
-}
 
 // Doctrine ORM
 $app->register(new DoctrineOrmServiceProvider(), array(
@@ -184,6 +170,8 @@ if($app['maintenance'])
 	
 	$app->mount('/install', new LarpManager\InstallControllerProvider());
 	
+	//On n'enregistre qu'un utilisateur admin, s'il n'existe pas, et via une fonction particuliere.
+	//cf. install controller
 	$app->match('/user/register', function(Silex\Application $app) {
 		return new Response('Sorry, registration has been disabled.');
 	});
@@ -226,7 +214,7 @@ if($app['maintenance'])
 					'form' => array(
 							'login_path' => '/user/login',
 							'check_path' => '/user/login_check',
-							'default_target_path' => '/install'
+							'default_target_path' => '/install/'
 					),
 					'logout' => array(
 							'logout_path' => '/user/logout',
@@ -234,16 +222,31 @@ if($app['maintenance'])
 					'users' => $app->share(function($app) { return $app['user.manager']; }),
 					),
 					);
+	$app['security.access_rules'] = array(
+  	  	array('^/install/larpupdate', 'ROLE_ADMIN')
+	);
 	
 	$app->error(function (\Exception $e, $code) use ($app) 
 	{
-		if($code == 404)
+		if ($e instanceof Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException)
+		{
+			return $app['twig']->render('denied.twig');
+		}
+		if($e instanceof Symfony\Component\HttpKernel\Exception\NotFoundHttpException)
+		{
 			return $app['twig']->render('maintenance.twig');
+		}
 	});
 
 }
 else
 {
+	$app->error(function (\Exception $e, $code) use ($app)
+	{
+		if($code == 404)
+			return $app->redirect($app['url_generator']->generate('homepage'));
+	});
+	
 	$app->mount('/', new LarpManager\HomepageControllerProvider());
 	$app->mount('/user', $userServiceProvider);
 	$app->mount('/gn', new LarpManager\GnControllerProvider());

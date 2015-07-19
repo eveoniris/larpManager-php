@@ -10,11 +10,11 @@
 
     {% else %}
         <h1>
-            Sign in
+            Connexion, mode maintenance
         </h1>
 
         <p class="text-muted lead">
-            You can't register now.</a>
+            <a href="{{ path('user.register') }}">Register disabled.</a>
         </p>
 
         {% if error %}
@@ -49,7 +49,7 @@
 
             <div class="form-group">
                 <div class="col-sm-8 col-sm-offset-2">
-                    <button type="submit" class="btn btn-primary">Sign in</button>
+                    <button type="submit" class="btn btn-primary">Se connecter</button>
                     {% if allowPasswordReset %}
                         <a style="margin-left: 10px;" href="{{ path('user.forgot-password') }}">Forgot your password?</a>
                     {% endif %}
