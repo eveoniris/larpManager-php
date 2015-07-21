@@ -31,14 +31,9 @@ else
 /**
  * Chemin pour le sql d'installation de larpmanager
  * 
- */
-$app['db_user_install_path'] = __DIR__ . '/../vendor/jasongrimes/silex-simpleuser/sql/';
-$app['db_install_path'] = __DIR__ . $app['config']['db_install_path'];
-//*
-$app['maintenance'] = file_exists($app['db_install_path'] . 'create_or_update.sql');
-/*/
+ */		
+$app['maintenance'] = file_exists('/../cache/' . 'install.tag');
 $app['maintenance'] = false;
-/*/
 /**
  * A décommenter pour passer en mode debug 
  */
@@ -117,88 +112,17 @@ $app->register(new DoctrineOrmServiceProvider(), array(
     ),
 ));
 
-// Sessions
-$app->register(new SessionServiceProvider());
 
-// Security
-$app->register(new SecurityServiceProvider());
-
-// User management
-$app->register(new ServiceControllerServiceProvider());
-$app->register(new RememberMeServiceProvider());
-$userServiceProvider = new UserServiceProvider();
-$app->register($userServiceProvider);
-
-$app['user.options'] = array(
-      'templates' => array(
-        'layout' => 'user/layout.twig',
-        'register' => 'user/register.twig',
-        'register-confirmation-sent' => 'user/register-confirmation-sent.twig',
-        'login' => 'user/login.twig',
-        'login-confirmation-needed' => 'user/login-confirmation-needed.twig',
-        'forgot-password' => 'user/forgot-password.twig',
-        'reset-password' => 'user/reset-password.twig',
-        'view' => 'user/view.twig',
-        'edit' => 'user/edit.twig',
-        'list' => 'user/list.twig',
-    ),
-	'mailer' => array(
-		'enabled' => true,
-		'fromEmail' => array(
-			'address' => 'do-not-reply@'. (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : gethostname()),
-			'name' => null,
-		)
-	),
-	'emailConfirmation' => array(
-			'required' => false, // Whether to require email confirmation before enabling new accounts.
-			'template' => '@user/email/confirm-email.twig',
-	),
 	
-	'passwordReset' => array(
-			'template' => '@user/email/reset-password.twig',
-			'tokenTTL' => 86400, // How many seconds the reset token is valid for. Default: 1 day.
-	),
-	// Set this to use a custom User class.
-	'userClass' => 'LarpManager\Entities\Users',
-	
-	// Whether to require that users have a username (default: false).
-	// By default, users sign in with their email address instead.
-	'isUsernameRequired' => false,
-);
 
-
-// Define firewall
-$app['security.firewalls'] = array(
-    'public_area' => array(
-		'pattern' => '^.*$',
-        'anonymous' => true,
-		'remember_me' => array(),
-        'form' => array(
-            'login_path' => '/user/login',
-            'check_path' => '/user/login_check',
-        ),
-        'logout' => array(
-            'logout_path' => '/user/logout',
-        ),
-        'users' => $app->share(function($app) { return $app['user.manager']; }),
-    ),
-    'secured_area' => array(	// le reste necessite d'être connecté
-    		'pattern' => '^/stock/.*$',
-    		'anonymous' => false,
-    		'remember_me' => array(),
-    		'form' => array(
-    				'login_path' => '/user/login',
-    				'check_path' => '/user/login_check',
-    		),
-    		'logout' => array(
-    				'logout_path' => '/user/logout',
-    		),
-    		'users' => $app->share(function($app) { return $app['user.manager']; }),
-    		),
-);
 
 // Gestion des urls
 $app->register(new UrlGeneratorServiceProvider());
+
+// Sessions
+$app->register(new SessionServiceProvider());
+
+
 
 
 /**
@@ -207,86 +131,87 @@ $app->register(new UrlGeneratorServiceProvider());
 
 if($app['maintenance'])
 {
-	
 	$app->mount('/install', new LarpManager\InstallControllerProvider());
-	
-	//On n'enregistre qu'un utilisateur admin, s'il n'existe pas, et via une fonction particuliere.
-	//cf. install controller
-	$app->match('/user/register', function(Silex\Application $app) {
-		return new Response('Sorry, registration has been disabled.');
-	});
-	
-	$app->match('/user/list', function(Silex\Application $app) {
-		return new Response('Sorry, user list has been disabled.');
-	});
-	
-	//$app->match('/user/{id}', function(Silex\Application $app) {
-	//	return new Response('Sorry, user view has been disabled.');
-	//});
-	
-	$app->match('/user/{id}/edit', function(Silex\Application $app) {
-		return new Response('Sorry, user edit has been disabled.');
-	});
-	
-	$app->mount('/user', $userServiceProvider);
-	
-	$app['user.options'] = array(
-			// ...
-			'templates' => array(
-					'layout' => 'user/layout_maintenance.twig',
-					'login' => 'user/login_maintenance.twig',
-					'forgot-password' => 'user/forgot-password.twig',
-					'reset-password' => 'user/reset-password.twig'
-			),
-	);
-	
-	$app['security.firewalls'] = array(
-			'install' => array(	// install doit être accessible à tous
-					'pattern' => '^/install$',
-			),
-			'login' => array(	// login doit être accessible à tous
-					'pattern' => '^/user/login$',
-			),
-			'secured_area' => array(	// le reste necessite d'être connecté
-					'pattern' => '^/.*$',
-					'anonymous' => true,
-					'remember_me' => array(),
-					'form' => array(
-							'login_path' => '/user/login',
-							'check_path' => '/user/login_check',
-							'default_target_path' => '/install/'
-					),
-					'logout' => array(
-							'logout_path' => '/user/logout',
-					),
-					'users' => $app->share(function($app) { return $app['user.manager']; }),
-					),
-					);
-	$app['security.access_rules'] = array(
-  	  	array('^/install/larpupdate', 'ROLE_ADMIN')
-	);
-	
-	$app->error(function (\Exception $e, $code) use ($app) 
-	{
-		if ($e instanceof Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException)
-		{
-			return $app['twig']->render('denied.twig');
-		}
-		if($e instanceof Symfony\Component\HttpKernel\Exception\NotFoundHttpException)
-		{
-			return $app['twig']->render('maintenance.twig');
-		}
-	});
-
 }
 else
-{
-	$app->error(function (\Exception $e, $code) use ($app)
-	{
-		if($code == 404)
-			return $app->redirect($app['url_generator']->generate('homepage'));
-	});
+{	
 	
+	// Security
+	$app->register(new SecurityServiceProvider());
+	
+	// User management
+	$app->register(new ServiceControllerServiceProvider());
+	$app->register(new RememberMeServiceProvider());
+	$userServiceProvider = new UserServiceProvider();
+	$app->register($userServiceProvider);
+	
+	$app['user.options'] = array(
+			'templates' => array(
+					'layout' => 'user/layout.twig',
+					'register' => 'user/register.twig',
+					'register-confirmation-sent' => 'user/register-confirmation-sent.twig',
+					'login' => 'user/login.twig',
+					'login-confirmation-needed' => 'user/login-confirmation-needed.twig',
+					'forgot-password' => 'user/forgot-password.twig',
+					'reset-password' => 'user/reset-password.twig',
+					'view' => 'user/view.twig',
+					'edit' => 'user/edit.twig',
+					'list' => 'user/list.twig',
+			),
+			'mailer' => array(
+					'enabled' => true,
+					'fromEmail' => array(
+							'address' => 'do-not-reply@'. (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : gethostname()),
+							'name' => null,
+					)
+			),
+			'emailConfirmation' => array(
+					'required' => false, // Whether to require email confirmation before enabling new accounts.
+					'template' => '@user/email/confirm-email.twig',
+			),
+	
+			'passwordReset' => array(
+					'template' => '@user/email/reset-password.twig',
+					'tokenTTL' => 86400, // How many seconds the reset token is valid for. Default: 1 day.
+			),
+			// Set this to use a custom User class.
+			//'userClass' => 'LarpManager\Entities\Users',
+	
+			// Whether to require that users have a username (default: false).
+			// By default, users sign in with their email address instead.
+			'isUsernameRequired' => false,
+		);
+	
+	
+	// Define firewall
+	$app['security.firewalls'] = array(
+		'public_area' => array(
+		'pattern' => '^.*$',
+		'anonymous' => true,
+		'remember_me' => array(),
+		'form' => array(
+		'login_path' => '/user/login',
+		'check_path' => '/user/login_check',
+		),
+		'logout' => array(
+		'logout_path' => '/user/logout',
+		),
+		'users' => $app->share(function($app) { return $app['user.manager']; }),
+		),
+		'secured_area' => array(	// le reste necessite d'être connecté
+				'pattern' => '^/stock/.*$',
+				'anonymous' => false,
+				'remember_me' => array(),
+				'form' => array(
+						'login_path' => '/user/login',
+						'check_path' => '/user/login_check',
+				),
+				'logout' => array(
+						'logout_path' => '/user/logout',
+				),
+				'users' => $app->share(function($app) { return $app['user.manager']; }),
+			),
+		);
 	$app->mount('/', new LarpManager\HomepageControllerProvider());
 	$app->mount('/user', $userServiceProvider);
 	$app->mount('/gn', new LarpManager\GnControllerProvider());
@@ -300,9 +225,36 @@ else
 	$app->mount('/stock/proprietaire', new LarpManager\StockProprietaireControllerProvider());
 	$app->mount('/stock/localisation', new LarpManager\StockLocalisationControllerProvider());
 	
-
+	/**
+	 * Gestion des droits d'accés
+	 */
+	$app['security.access_rules'] = array(
+		array('^/stock/.*$', 'ROLE_ADMIN'),
+	);
 }
 
+
+
+
+/**
+ * Gestion des erreurs
+ */
+ 
+$app->error(function (\Exception $e, $code) use ($app)
+{	
+	if ($e instanceof Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException)
+	{
+		return $app['twig']->render('error/denied.twig');
+	}
+	if($e instanceof Symfony\Component\HttpKernel\Exception\NotFoundHttpException)
+	{
+		return $app['twig']->render('error/notfound.twig');
+	}		
+	if($e instanceof Symfony\Component\Routing\Exception\RouteNotFoundException)
+	{
+		return $app['twig']->render('error/notfound.twig');
+	}
+});
 
 /**
  * API

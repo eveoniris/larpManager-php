@@ -9,19 +9,11 @@
 
 namespace LarpManager\Entities;
 
-// utilisation de la classe SimpleUser\User au lieu de celle du modéle de donnée
-use SimpleUser\User as BaseUser;
-
 /**
  * LarpManager\Entities\Users
  *
  * @Entity()
  */
-class Users extends BaseUser
-{
-	public function __construct($email)
-	{
-		parent::__construct($email);
-	}
-	
+class Users extends BaseUsers
+{	
 }

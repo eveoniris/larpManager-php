@@ -2,12 +2,14 @@
 namespace LarpManager\Controllers;
 
 use Silex\Application;
+use Silex\Provider\SecurityServiceProvider;
+use SimpleUser\UserServiceProvider;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use SqlFormatter;
 
 class InstallController
-{
+{	
 	/**
 	 * @description Charge les tables necessaires à simpleuser dans la base de données
 	 */
@@ -49,26 +51,61 @@ class InstallController
 		return $app->redirect($app['url_generator']->generate('homepage'));
 	}
 	
-	public function createUserAction(Request $request, Application $app)
-	{
-		if ( $request->getMethod() === 'POST' )
-		{
-			$this->loadUserTables($app['orm.em']->getConnection(), $app['db_user_install_path']);
-			return $app->redirect($app['url_generator']->generate('install'));
-		}
-		return $app->redirect($app['url_generator']->generate('homepage'));
+	/**
+	 * Fin de l'installation
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function doneAction(Request $request, Application $app) {
+		return $app['twig']->render('install/installdone.twig');
 	}
 	
-	public function registerInstallUserAction(Request $request, Application $app)
+	
+	/**
+	 * Création de l'utilisateur admin
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function createUserAction(Request $request, Application $app)
 	{
-		$name = $request->get('name');
-		$email = $request->get('email');
-		$password = $request->get('password');
+		// valeur par défaut lorsque le formulaire est chargé pour la premiere fois
+		$defaultData = array();
+	
+		// preparation du formulaire
+		$form = $app['form.factory']->createBuilder('form', $defaultData)
+		->add('email','email')
+		->add('password','password')
+		->add('create','submit')
+		->getForm();
 		
-		$user = $app['user.manager']->createUser($email, $password, $name, array('ROLE_ADMIN'));
-		$app['user.manager']->insert($user);
+		$form->handleRequest($request);
 		
-		return $app->redirect($app['url_generator']->generate('install'));
+		// si la requête est valide
+		if ( $form->isValid() )
+		{
+			// on récupére les data de l'utilisateur
+			$data = $form->getData();
+			
+			$name = 'admin';
+			$email = $data['email'];
+			$password = $data['password'];
+	
+			// ajoute les services necessaire pour créer l'utilisateur
+			$app->register(new SecurityServiceProvider());
+			$userServiceProvider = new UserServiceProvider();
+			$app->register($userServiceProvider);
+			
+			$user = $app['user.manager']->createUser($email, $password, $name, array('ROLE_ADMIN'));
+			$app['user.manager']->insert($user);
+			
+			// supprimer le fichier de cache pour lancer larpmanager en mode normal		
+				
+			return $app->redirect($app['url_generator']->generate('install_done'));
+		}
+		
+		return $app['twig']->render('install/installfirstuser.twig', array('form' => $form->createView()));
 	}
 	
 	/**
@@ -78,31 +115,35 @@ class InstallController
 	 */
 	public function indexAction(Request $request, Application $app) 
 	{
-		$schemaManager = $app['orm.em']->getConnection()->getSchemaManager();
-		$is_to_create_or_update = false;
-		$sql = "";
-		//$error = true;
-		//$error_description = "Unknown error.";
-		if ($schemaManager->tablesExist(array('users')) == false) 
+		// valeur par défaut lorsque le formulaire est chargé pour la premiere fois
+		$defaultData = array();
+		
+		// preparation du formulaire
+		$form = $app['form.factory']->createBuilder('form', $defaultData)
+			->add('create','submit')
+			->getForm();
+		
+		$form->handleRequest($request);
+		
+		// si la requête est valide
+		if ( $form->isValid() )
 		{
-			return $app['twig']->render('install/installsimpleuser.twig');
+			$tool = new \Doctrine\ORM\Tools\SchemaTool($app['orm.em']);
+		
+			// l'opération peut prendre du temps, il faut donc régler le temps maximum d'execution
+			set_time_limit(120);
+			
+			// on récupére les méta-data de toutes les tables
+			$classes = $app['orm.em']->getMetadataFactory()->getAllMetadata();
+			
+			// on créé la base de donnée
+			$tool->createSchema($classes);
+			
+			// création de l'utilisateur admin
+			return $app->redirect($app['url_generator']->generate('install_create_user'));
 		}
-		else if($this->noUserInUserTable($app))
-		{
-			return $app['twig']->render('install/installfirstuser.twig');
-		}
-		else if(!($app['security.authorization_checker']->isGranted('ROLE_ADMIN')))
-		{
-			return $app->redirect($app['url_generator']->generate('user.login'));
-		}
-		else if(file_exists($app['db_install_path'].'/create_or_update.sql')) //que si simple user est deja installe
-		{
-			//test droit admin
-			$sql = file_get_contents($app['db_install_path'].'create_or_update.sql');
-		}
-		return $app['twig']->render('install/index.twig',array(
-				'sql_content'=>SqlFormatter::format($sql)
-		));
+		
+		return $app['twig']->render('install/index.twig',array('form' => $form->createView()));
 		
 	}
 }

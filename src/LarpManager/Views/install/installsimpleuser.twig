@@ -3,8 +3,13 @@
 {% block title %}Installation{% endblock %}
 
 {% block content %}
+
 	<p>Installation de LarpManager, première étape</p>
-	<p>Cette opération va créer les tables necessaires au fonctionnement de LarpManager dans votre base de données</p>		
+	<p>Cette opération va créer les tables necessaires au fonctionnement de LarpManager dans votre base de données</p>
+	
+	
+	
+			
 	<form action="{{ path('create_user') }}" method ="POST">
 	<p>Première étape, installation de la gestion des utilisateurs</p>
 	<input type="submit" value="Installer" />
