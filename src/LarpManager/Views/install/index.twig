@@ -4,16 +4,6 @@
 
 {% block content %}
 	<p>Installation de LarpManager</p>
-	<p>Cette opération va créer les tables necessaires au fonctionnement de LarpManager dans votre base de données</p>		
-	{%  if true == is_to_install_simpleuser %}
-		<form action="{{ path('create_user') }}" method ="POST">
-		<p>Première étape, installation de la gestion des utilisateurs</p>
-		<input type="submit" value="Installer" />
-		</form>
-	{% else %}
-		<p>SimpleUser est installé.</p>
-	{% endif %}
-	{% if true == is_to_create_or_update %}
 		<form action="{{ path('create_or_update_larp') }}" method ="POST">
 		<p>Il existe un fichier d'installation ou mise à jour des tables nécessaires au fonctionnement de LarpManager</p>
 		<p>Veuillez vérifier le contenu : </p>
@@ -22,9 +12,6 @@
 		</div>
 		<input type="submit" value="Installer" />
 		</form>
-	{% else %}
-		<p>Aucun fichier de mise a jour n'est présent.</p>
-	{% endif %}
 		
 	
 {% endblock %}

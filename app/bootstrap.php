@@ -15,18 +15,30 @@ use Silex\Provider\HttpCacheServiceProvider;
 use Silex\Provider\SwiftmailerServiceProvider;
 use Dflydev\Silex\Provider\DoctrineOrm\DoctrineOrmServiceProvider;
 use Saxulum\DoctrineOrmManagerRegistry\Silex\Provider\DoctrineOrmManagerRegistryProvider;
+use Symfony\Component\HttpFoundation\Response;
 
 $loader = require_once __DIR__.'/../vendor/autoload.php';
 
 $app = new Silex\Application();
-
+if(isset($_ENV['env']) && $_ENV['env'] == 'test')
+{
+	$app->register(new DerAlex\Silex\YamlConfigServiceProvider(__DIR__ . '/../config/test_settings.yml'));
+}
+else
+{
+	$app->register(new DerAlex\Silex\YamlConfigServiceProvider(__DIR__ . '/../config/normal_settings.yml'));
+}
 /**
  * Chemin pour le sql d'installation de larpmanager
  * 
  */
 $app['db_user_install_path'] = __DIR__ . '/../vendor/jasongrimes/silex-simpleuser/sql/';
-$app['db_install_path'] = __DIR__ . '/../database/sql/';
-
+$app['db_install_path'] = __DIR__ . $app['config']['db_install_path'];
+//*
+$app['maintenance'] = file_exists($app['db_install_path'] . 'create_or_update.sql');
+/*/
+$app['maintenance'] = false;
+/*/
 /**
  * A décommenter pour passer en mode debug 
  */
@@ -39,6 +51,7 @@ if(true == $app['debug'])
 	//en prod si nécessaire.
 	$app->register(new Silex\Provider\MonologServiceProvider(), array(
 	'monolog.logfile' => __DIR__.'/../logs/development.log',
+	'monolog.level' => \Monolog\Logger::DEBUG
 	));
 }
 /**
@@ -86,31 +99,9 @@ $app['swiftmailer.options'] = array(
 );
 
 // Doctrine DBAL
-if(isset($_ENV['env']) && $_ENV['env'] == 'test')
-{
-	$app->register(new DoctrineServiceProvider(), array(
-			'db.options' => array(
-					'driver'   => 'pdo_mysql' //TODO resoudre le probleme de creation d'index pour passer en sqlite
-					,'host'   => '127.0.0.1'
-					,'dbname'   => 'db_test'
-					,'user'   => 'root'
-					,'password'   => ''
-					//,'memory'	=> true //pour sqlite in memory (rapide !)
-			),
+$app->register(new DoctrineServiceProvider(), array(
+	    'db.options' => $app['config']['database'] //voir les settings yaml 
 	));
-}
-else 
-{
-	$app->register(new DoctrineServiceProvider(), array(
-	    'db.options' => array(
-	        'driver'   => 'pdo_mysql',
-			'host'   => '127.0.0.1',
-			'dbname'   => 'larpmanager',	// update with your own database name
-			'user'   => 'root',				// update with yout own database user
-			'password'   => ''				// update with yout own database password
-	    ),
-	));
-}
 
 // Doctrine ORM
 $app->register(new DoctrineOrmServiceProvider(), array(
@@ -214,19 +205,104 @@ $app->register(new UrlGeneratorServiceProvider());
  * Définition des routes
  */
 
-$app->mount('/', new LarpManager\HomepageControllerProvider());
-$app->mount('/user', $userServiceProvider);
-$app->mount('/install', new LarpManager\InstallControllerProvider());
-$app->mount('/gn', new LarpManager\GnControllerProvider());
-$app->mount('/chronologie', new LarpManager\ChronologieControllerProvider());
-$app->mount('/pays', new LarpManager\PaysControllerProvider());
-$app->mount('/guilde', new LarpManager\GuildeControllerProvider());
-$app->mount('/stock', new LarpManager\StockControllerProvider());
-$app->mount('/stock/objet', new LarpManager\StockObjetControllerProvider());
-$app->mount('/stock/tag', new LarpManager\StockTagControllerProvider());
-$app->mount('/stock/etat', new LarpManager\StockEtatControllerProvider());
-$app->mount('/stock/proprietaire', new LarpManager\StockProprietaireControllerProvider());
-$app->mount('/stock/localisation', new LarpManager\StockLocalisationControllerProvider());
+if($app['maintenance'])
+{
+	
+	$app->mount('/install', new LarpManager\InstallControllerProvider());
+	
+	//On n'enregistre qu'un utilisateur admin, s'il n'existe pas, et via une fonction particuliere.
+	//cf. install controller
+	$app->match('/user/register', function(Silex\Application $app) {
+		return new Response('Sorry, registration has been disabled.');
+	});
+	
+	$app->match('/user/list', function(Silex\Application $app) {
+		return new Response('Sorry, user list has been disabled.');
+	});
+	
+	//$app->match('/user/{id}', function(Silex\Application $app) {
+	//	return new Response('Sorry, user view has been disabled.');
+	//});
+	
+	$app->match('/user/{id}/edit', function(Silex\Application $app) {
+		return new Response('Sorry, user edit has been disabled.');
+	});
+	
+	$app->mount('/user', $userServiceProvider);
+	
+	$app['user.options'] = array(
+			// ...
+			'templates' => array(
+					'layout' => 'user/layout_maintenance.twig',
+					'login' => 'user/login_maintenance.twig',
+					'forgot-password' => 'user/forgot-password.twig',
+					'reset-password' => 'user/reset-password.twig'
+			),
+	);
+	
+	$app['security.firewalls'] = array(
+			'install' => array(	// install doit être accessible à tous
+					'pattern' => '^/install$',
+			),
+			'login' => array(	// login doit être accessible à tous
+					'pattern' => '^/user/login$',
+			),
+			'secured_area' => array(	// le reste necessite d'être connecté
+					'pattern' => '^/.*$',
+					'anonymous' => true,
+					'remember_me' => array(),
+					'form' => array(
+							'login_path' => '/user/login',
+							'check_path' => '/user/login_check',
+							'default_target_path' => '/install/'
+					),
+					'logout' => array(
+							'logout_path' => '/user/logout',
+					),
+					'users' => $app->share(function($app) { return $app['user.manager']; }),
+					),
+					);
+	$app['security.access_rules'] = array(
+  	  	array('^/install/larpupdate', 'ROLE_ADMIN')
+	);
+	
+	$app->error(function (\Exception $e, $code) use ($app) 
+	{
+		if ($e instanceof Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException)
+		{
+			return $app['twig']->render('denied.twig');
+		}
+		if($e instanceof Symfony\Component\HttpKernel\Exception\NotFoundHttpException)
+		{
+			return $app['twig']->render('maintenance.twig');
+		}
+	});
+
+}
+else
+{
+	$app->error(function (\Exception $e, $code) use ($app)
+	{
+		if($code == 404)
+			return $app->redirect($app['url_generator']->generate('homepage'));
+	});
+	
+	$app->mount('/', new LarpManager\HomepageControllerProvider());
+	$app->mount('/user', $userServiceProvider);
+	$app->mount('/gn', new LarpManager\GnControllerProvider());
+	$app->mount('/chronologie', new LarpManager\ChronologieControllerProvider());
+	$app->mount('/pays', new LarpManager\PaysControllerProvider());
+	$app->mount('/guilde', new LarpManager\GuildeControllerProvider());
+	$app->mount('/stock', new LarpManager\StockControllerProvider());
+	$app->mount('/stock/objet', new LarpManager\StockObjetControllerProvider());
+	$app->mount('/stock/tag', new LarpManager\StockTagControllerProvider());
+	$app->mount('/stock/etat', new LarpManager\StockEtatControllerProvider());
+	$app->mount('/stock/proprietaire', new LarpManager\StockProprietaireControllerProvider());
+	$app->mount('/stock/localisation', new LarpManager\StockLocalisationControllerProvider());
+	
+
+}
+
 
 /**
  * API

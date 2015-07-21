@@ -22,6 +22,7 @@
 		"symfony/locale" : "~2.7",
 		"symfony/doctrine-bridge" : "~2.7",
 		"saxulum/saxulum-doctrine-orm-manager-registry-provider" : "2.2.1@stable",
+		"deralex/yaml-config-service-provider" : "^1.0",
 		"swiftmailer/swiftmailer" : "5.*@stable"
 	},
 	"autoload" : {
