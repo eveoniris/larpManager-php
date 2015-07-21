@@ -1,4 +1,4 @@
-{% extends layout_template  %}
+{% extends "layout.twig"  %}
 
 {% block title %}Sign in{% endblock %}
 
@@ -7,14 +7,15 @@
     {% if app.user %}
         <p>Hello, {{ app.user.displayName }}.</p>
         <p><a href="{{ path('user.logout') }}">Sign out</a></p>
-
     {% else %}
-        <h1>
-            Sign in
-        </h1>
+    	<div class="page-header">
+	        <h1>
+	            Se connecter
+	        </h1>
+	     </div>
 
         <p class="text-muted lead">
-            Don't have an account? <a href="{{ path('user.register') }}">Register now.</a>
+            Vous n'avez pas de compte ? <a href="{{ path('user.register') }}">Enregistrez-vous.</a>
         </p>
 
         {% if error %}
@@ -31,9 +32,9 @@
             </div>
 
             <div class="form-group">
-                <label class="col-sm-2 control-label" for="inputPassword">Password</label>
+                <label class="col-sm-2 control-label" for="inputPassword">Mot de passe</label>
                 <div class="col-sm-6">
-                    <input class="form-control" name="_password" type="password" id="inputPassword" required placeholder="Password">
+                    <input class="form-control" name="_password" type="password" id="inputPassword" required placeholder="Mot de passe">
                 </div>
             </div>
 
@@ -41,7 +42,7 @@
                 <div class="form-group">
                     <div class="col-sm-6 col-sm-offset-2 checkbox">
                         <label>
-                            <input type="checkbox" name="_remember_me" value="true" checked> Remember me on this computer
+                            <input type="checkbox" name="_remember_me" value="true" checked> Se rappeler de moi sur cet ordinateur
                         </label>
                     </div>
                 </div>
@@ -49,9 +50,9 @@
 
             <div class="form-group">
                 <div class="col-sm-8 col-sm-offset-2">
-                    <button type="submit" class="btn btn-primary">Sign in</button>
+                    <button type="submit" class="btn btn-primary">Se connecter</button>
                     {% if allowPasswordReset %}
-                        <a style="margin-left: 10px;" href="{{ path('user.forgot-password') }}">Forgot your password?</a>
+                        <a style="margin-left: 10px;" href="{{ path('user.forgot-password') }}">Mot de passe oublié ?</a>
                     {% endif %}
                 </div>
             </div>

@@ -15,23 +15,52 @@
 	<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 		<ul class="nav navbar-nav">
 			<li><a href="http://www.eveoniris.com">Eve-Oniris</a></li>
+			
+			{% if is_granted('ADMIN_USER', app.user) %}
+				<li class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Gestion du stock</a>
+					<ul class="dropdown-menu">
+						<li><a href="{{ path('stock_homepage') }}">Tableau de bord</a></li>
+						<li><a href="{{ path('stock_etat_index') }}">Etats</a></li>
+						<li><a href="{{ path('stock_tag_index') }}">Tags</a></li>
+						<li><a href="{{ path('stock_localisation_index') }}">Localisations</a></li>
+						<li><a href="{{ path('stock_proprietaire_index') }}">Proprietaires</a></li>
+						<li><a href="{{ path('stock_objet_index') }}">Objets</a></li>
+					</ul>
+				</li>
+			{% endif %}
+			
 			<li class="dropdown">
-				<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Gestion du stock</a>
+				<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Compte</a>
 				<ul class="dropdown-menu">
-					<li><a href="{{ path('stock_homepage') }}">Tableau de bord</a></li>
-					<li><a href="{{ path('stock_etat_index') }}">Etats</a></li>
-					<li><a href="{{ path('stock_tag_index') }}">Tags</a></li>
-					<li><a href="{{ path('stock_localisation_index') }}">Localisations</a></li>
-					<li><a href="{{ path('stock_proprietaire_index') }}">Proprietaires</a></li>
-					<li><a href="{{ path('stock_objet_index') }}">Objets</a></li>
+					{%  if app.user %}			
+						<li><a href="{{ path('user') }}">My account</a></li>
+						<li><a href="{{ path('user.list') }}">User list</a></li>
+						<li><a href="{{ path('user.logout') }}">Logout</a></li>
+					{%  else %}
+						<li><a href="{{ path('user.login') }}">Connection</a></li>
+						<li><a href="{{ path('user.register') }}">Créer un compte</a></li>
+					{%  endif %}
 				</ul>
 			</li>
-			<li><a href="{{ path('install') }}">Installation</a></li>
-			<li><a href="{{ path('user') }}">My account</a></li>
-			<li><a href="{{ path('user.list') }}">User list</a></li>
-			<li><a href="{{ path('user.logout') }}">Logout</a></li>
-			<li><a href="{{ path('user.login') }}">Sign in</a></li>
-			<li><a href="{{ path('user.register') }}">Create acount</a></li>
+			
+			{% if is_granted('ADMIN_USER', app.user) %}
+			<li class="dropdown">
+				<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Admin</a>
+				<ul class="dropdown-menu">			
+					<li><a href="{{ path('install') }}">Installation</a></li>
+				</ul>
+			</li>
+			{% endif %}
+			
+			{% if is_granted('ADMIN_USER', app.user) %}
+			<li class="dropdown">
+				<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Larp</a>
+				<ul class="dropdown-menu">			
+					<li><a href="{{ path('install') }}">Tableau de bord</a></li>
+				</ul>
+			</li>
+			{% endif %}
 		</ul>
 	</div>
 </div>

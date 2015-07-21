@@ -151,21 +151,35 @@ $app['user.options'] = array(
         'edit' => 'user/edit.twig',
         'list' => 'user/list.twig',
     ),
+	'mailer' => array(
+		'enabled' => true,
+		'fromEmail' => array(
+			'address' => 'do-not-reply@'. (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : gethostname()),
+			'name' => null,
+		)
+	),
+	'emailConfirmation' => array(
+			'required' => false, // Whether to require email confirmation before enabling new accounts.
+			'template' => '@user/email/confirm-email.twig',
+	),
+	
+	'passwordReset' => array(
+			'template' => '@user/email/reset-password.twig',
+			'tokenTTL' => 86400, // How many seconds the reset token is valid for. Default: 1 day.
+	),
+	// Set this to use a custom User class.
+	'userClass' => 'LarpManager\Entities\Users',
+	
+	// Whether to require that users have a username (default: false).
+	// By default, users sign in with their email address instead.
+	'isUsernameRequired' => false,
 );
+
 
 // Define firewall
 $app['security.firewalls'] = array(
-	'install' => array(	// temporaire : install doit être accessible à tous
-		'pattern' => '^/install$',
-	),
-    'login' => array(	// login doit être accessible à tous
-        'pattern' => '^/user/login$',
-    ),
-	'register' => array( // register doit être accessible à tous
-        'pattern' => '^/user/register$',
-    ),
-    'secured_area' => array(	// le reste necessite d'être connecté
-		'pattern' => '^/.*$',
+    'public_area' => array(
+		'pattern' => '^.*$',
         'anonymous' => true,
 		'remember_me' => array(),
         'form' => array(
@@ -177,6 +191,19 @@ $app['security.firewalls'] = array(
         ),
         'users' => $app->share(function($app) { return $app['user.manager']; }),
     ),
+    'secured_area' => array(	// le reste necessite d'être connecté
+    		'pattern' => '^/stock/.*$',
+    		'anonymous' => false,
+    		'remember_me' => array(),
+    		'form' => array(
+    				'login_path' => '/user/login',
+    				'check_path' => '/user/login_check',
+    		),
+    		'logout' => array(
+    				'logout_path' => '/user/logout',
+    		),
+    		'users' => $app->share(function($app) { return $app['user.manager']; }),
+    		),
 );
 
 // Gestion des urls
@@ -210,7 +237,8 @@ use Symfony\Component\HttpFoundation\ParameterBag;
  
 /**
  * Permet de formatter correctement la requête de l'utilisateur si celui-ci
- * indique content-type = application/json 
+ * indique content-type = application/json
+ * Important pour les requêtes HTTP sur l'API
  */
 $app->before(function (Request $request) {
 	if (0 === strpos($request->headers->get('Content-Type'), 'application/json')) {

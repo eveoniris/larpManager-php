@@ -8,4 +8,25 @@
 		{% endif %}
 	</h1>
 	</div>
+	
+	{% if not app.user %}
+	<div class="panel panel-warning">
+		<div class="panel-heading">
+			Vous n'êtes pas connecté
+		</div>
+	  	<div class="panel-body">
+	  		<p>Si vous disposez d'un compte, <a href="{{ path('user.login') }}">connectez-vous</a>.</p>
+	  		<p>Sinon <a href="{{ path('user.register') }}">créez un compte</a>.</p>
+	  	</div>
+  	</div>
+	{%  endif %}
+	
+	<div class="panel panel-info">
+		<div class="panel-heading">
+			Une annonce publique
+		</div>
+		<div class="panel-body">
+			La page d'acceuil présentera des annonces publiques
+		</div>
+	</div>
 {% endblock %}

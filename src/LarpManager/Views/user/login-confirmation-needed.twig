@@ -1,22 +1,22 @@
-{% extends layout_template  %}
+{% extends "layout.twig"  %}
 
-{% block title %}Email confirmation needed{% endblock %}
+{% block title %}Confirmation de l'email necessaire{% endblock %}
 
 {% block content %}
 
-    <h1>Your account is not yet active</h1>
+    <h1>Votre compte n'est pas encore actif</h1>
 
-    <p>An email should have been sent to you at <strong>{{ email }}</strong> when you registered.</p>
+    <p>Un email a du vous être envoyé à l'adresse <strong>{{ email }}</strong> lorsque vous vous être enregistré.</p>
 
-    <p>Please click the link in that message to confirm your email address and activate your account.</p>
+    <p>Merci de cliquer sur le lien présent dans ce message pour activer votre compte.</p>
 
     <div style="margin: 20px 0px;">
         <form method="POST" action="{{ resendUrl }}">
             <input type="hidden" name="email" value="{{ email }}">
-            <button type="submit" class="btn btn-default">Resend the message</button>
+            <button type="submit" class="btn btn-default">Renvoyer le message</button>
         </form>
     </div>
 
-    <p>Make sure to check your junk or spam folder. The sender is <strong>{{ fromAddress }}</strong>.</p>
+    <p>Vérifier votre corbeille ou vos spams. L'expéditeur est <strong>{{ fromAddress }}</strong>.</p>
 
 {% endblock %}
