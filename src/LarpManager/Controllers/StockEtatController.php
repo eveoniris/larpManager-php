@@ -18,24 +18,11 @@ class StockEtatController
 	 * @description affiche la liste des etats
 	 */
 	public function indexAction(Request $request, Application $app)
-	{
+	{		
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Etat');
 		$etats = $repo->findAll();
 	
 		return $app['twig']->render('stock/etat/index.twig', array('etats' => $etats));
-	}
-
-	/**
-	 * @description affiche le détail d'un etat
-	 */
-	public function detailAction(Request $request, Application $app)
-	{
-		$id = $request->get('index');
-			
-		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Etat');
-		$etat = $repo->find($id);
-	
-		return $app['twig']->render('stock/etat/detail.twig', array('etat' => $etat));
 	}
 	
 	/**
@@ -49,7 +36,7 @@ class StockEtatController
 		// preparation du formulaire
 		$form = $app['form.factory']->createBuilder('form', $defaultData)
 		->add('label','text')
-		->add('save','submit', array('attr' => array('class' => 'pure-button pure-button-primary button-primary')))
+		->add('save','submit')
 		->getForm();
 	
 		// on passe la requête de l'utilisateur au formulaire

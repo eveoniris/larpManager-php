@@ -14,12 +14,7 @@ class StockTagControllerProvider implements ControllerProviderInterface
 		$controllers->match('/','LarpManager\Controllers\StockTagController::indexAction')
 			->bind("stock_tag_index")
 			->method('GET');
-		
-		$controllers->match('/{index}','LarpManager\Controllers\StockTagController::detailAction')
-			->assert('index', '\d+')
-			->bind("stock_tag_detail")
-			->method('GET');
-		
+				
 		$controllers->match('/add','LarpManager\Controllers\StockTagController::addAction')
 			->bind("stock_tag_add")
 			->method('GET|POST');
@@ -28,12 +23,7 @@ class StockTagControllerProvider implements ControllerProviderInterface
 			->assert('index', '\d+')
 			->bind("stock_tag_update")
 			->method('GET|POST');
-			
-		$controllers->match('/{index}/delete','LarpManager\Controllers\StockTagController::deleteAction')
-			->assert('index', '\d+')
-			->bind("stock_tag_delete")
-			->method('GET|POST');
-		
+					
 		return $controllers;
 	}
 }

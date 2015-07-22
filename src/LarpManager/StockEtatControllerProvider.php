@@ -14,12 +14,7 @@ class StockEtatControllerProvider implements ControllerProviderInterface
 		$controllers->match('/','LarpManager\Controllers\StockEtatController::indexAction')
 			->bind("stock_etat_index")
 			->method('GET');
-		
-		$controllers->match('/{index}','LarpManager\Controllers\StockEtatController::detailAction')
-			->assert('index', '\d+')
-			->bind("stock_etat_detail")
-			->method('GET');
-		
+				
 		$controllers->match('/add','LarpManager\Controllers\StockEtatController::addAction')
 			->bind("stock_etat_add")
 			->method('GET|POST');
@@ -29,11 +24,6 @@ class StockEtatControllerProvider implements ControllerProviderInterface
 			->bind("stock_etat_update")
 			->method('GET|POST');
 			
-		$controllers->match('/{index}/delete','LarpManager\Controllers\StockEtatController::deleteAction')
-			->assert('index', '\d+')
-			->bind("stock_etat_delete")
-			->method('GET|POST');
-				
 		return $controllers;
 	}
 }

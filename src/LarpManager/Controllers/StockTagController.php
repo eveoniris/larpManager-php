@@ -26,19 +26,6 @@ class StockTagController
 	}
 	
 	/**
-	 * @description affiche la détail d'un tag
-	 */
-	public function detailAction(Request $request, Application $app)
-	{
-		$id = $request->get('index');
-			
-		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Tag');
-		$tag = $repo->find($id);
-	
-		return $app['twig']->render('stock/tag/detail.twig', array('tag' => $tag));
-	}
-	
-	/**
 	 * @description ajoute un tag
 	 */
 	public function addAction(Request $request, Application $app)

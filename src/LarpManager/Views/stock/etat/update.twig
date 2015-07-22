@@ -1,7 +1,16 @@
-<form action="{{ path('stock_etat_update', {index:etat.id} ) }}" method="POST" class="pure-form">
-	<fieldset>
-	<legend>Modification d'un état</legend>
+{% extends "layout.twig" %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+	  <li><a href="{{ path('stock_homepage')}}">Stock</a></li>
+	  <li><a href="{{ path('stock_etat_index') }}">Etats</a></li>
+	  <li class="active"><a href="#">Modification</a></li>
+	</ol>
+
+	<form action="{{ path('stock_etat_update', {index:etat.id} ) }}" method="POST">
 		{% form_theme form 'Form/fields.twig' %}
 		{{ form(form) }}
-	</fieldset>
-</form>
+	</form>
+	
+{%  endblock %}

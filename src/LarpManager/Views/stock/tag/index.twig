@@ -2,29 +2,37 @@
 
 {% block content %}
 
-	<div id="ajax_entity">
-		<table class="pure-table pure-table-horizontal pure-table-striped">
-		<caption>Liste des tags</caption>
-		<thead>
-			<tr>
-				<th>Nom</th>
-				<th>Nombre d'objets</th>
-				<th colspan="2"><a class="ajax_action" href="{{  path('stock_tag_add') }}"><i class="icon-plus-sign"></i></a></th>
-			</tr>
-		</thead>
-		<tbody>
-		{% for tag in tags %}
-		<tr>
-		<td>{{ tag.nom }}</td>
-		<td>{{ tag.objets|length }}</td>
-		<td><a href=""><i class="icon-document"></i></a></td>
-		<td><a class="ajax_action" href="{{ path('stock_tag_update', {index : tag.id} ) }}"><i class="icon-pencil"></i></a></td>
-		</tr>
-		{% endfor %}
-		</tbody>
-		</table>
+	<ol class="breadcrumb">
+	  <li><a href="{{ path('stock_homepage')}}">Stock</a></li>
+	  <li class="active"><a href="#">Tags</a></li>
+	</ol>
+
+
+	<div class="page-header">
+		<h1>Liste des tags</h1>
 	</div>
 	
-	<div id="ajax_result"></div>
-
+	<div class="panel panel-info">
+		<div class="panel-heading">Qu'est-ce qu'un tag ?</div>
+		<div class="panel-body">Les tags permettent de regrouper les objets afin d'avoir plus de faciliter à parcourir le stock d'objet. Voici quelques exemples de tags : Armes, décors, tentes, etc ...</div>
+	</div>
+	
+	{% if tags|length == 0 %}
+		<div class="panel panel-warning">
+			<div class="panel-heading">Attention !</div>
+			<div class="panel-body">Aucun tag n'est défini ! Vous devez définir au moins un tag.</div>
+		</div>
+	{% endif %}
+	<ul class="list-group">
+		<a href="{{ path('stock_tag_add') }}" class="list-group-item active">
+			<h4 class="list-group-item-heading">Ajouter un tag</h4>
+		</a>
+		{%  for tag in tags %}
+			<a href="{{ path('stock_tag_update', {index: tag.id}) }}" class="list-group-item">
+				<span class="badge">{{ tag.objets|length }}</span>
+				<h4 class="list-group-item-heading">{{ tag.nom }}</h4>
+			</a>
+		{%  endfor %}
+	</ul>
+	
 {% endblock %}

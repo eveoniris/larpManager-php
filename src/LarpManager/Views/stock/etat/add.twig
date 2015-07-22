@@ -1,7 +1,20 @@
-<form action="{{ path('stock_etat_add') }}" method="POST" class="pure-form">
-	<fieldset>
-		<legend>Ajout d'un état</legend>
-		{% form_theme form 'Form/fields.twig' %}
-		{{ form(form) }}
-	</fieldset>
-</form>
+{% extends "layout.twig" %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+	  <li><a href="{{ path('stock_homepage')}}">Stock</a></li>
+	  <li><a href="{{ path('stock_etat_index') }}">Etats</a></li>
+	  <li class="active"><a href="#">Ajout</a></li>
+	</ol>
+
+	<div class="page-header">
+		<h1>Ajout d'un état</h1>
+	</div>
+
+	<form action="{{ path('stock_etat_add') }}" method="POST">
+			{% form_theme form 'Form/fields.twig' %}
+			{{ form(form) }}
+	</form>
+
+{% endblock %}
