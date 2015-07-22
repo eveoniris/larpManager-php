@@ -1,18 +1,20 @@
-{% extends layout_template  %}
+{% extends "layout.twig"  %}
 
-{% block title %}List users{% endblock %}
+{% block title %}Liste des utilisateurs{% endblock %}
 
 {% block content %}
 
-    <h1>List users</h1>
-
+	<div class="page-header">    
+    	<h1>Liste des utilisateurs</h1>
+	</div>
+	
     {% if paginator.totalItems == 1 %}
-        <strong>1</strong> user found.
+        <strong>1</strong> utilisateur trouvé.
     {% else %}
-        <strong>{{ paginator.totalItems }}</strong> users found.
+        <strong>{{ paginator.totalItems }}</strong> utilisateurs trouvé.
     {% endif %}
 
-    Showing <strong>{{ paginator.currentPageFirstItem }} - {{ paginator.currentPageLastItem }}</strong>.
+    Montre <strong>{{ paginator.currentPageFirstItem }} - {{ paginator.currentPageLastItem }}</strong>.
 
     {% for user in users %}
 
@@ -28,7 +30,7 @@
 
                 {% if not user.isEnabled %}
                     <div>
-                        <span class="label label-danger">Pending email confirmation</span>
+                        <span class="label label-danger">Mail de confirmation en attente</span>
                     </div>
                 {% endif %}
 

@@ -16,7 +16,7 @@
 		<ul class="nav navbar-nav">
 			<li><a href="http://www.eveoniris.com">Eve-Oniris</a></li>
 			
-			{% if is_granted('ADMIN_USER', app.user) %}
+			{% if is_granted('ROLE_ADMIN', app.user) %}
 				<li class="dropdown">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Gestion du stock</a>
 					<ul class="dropdown-menu">
@@ -34,9 +34,9 @@
 				<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Compte</a>
 				<ul class="dropdown-menu">
 					{%  if app.user %}			
-						<li><a href="{{ path('user') }}">My account</a></li>
-						<li><a href="{{ path('user.list') }}">User list</a></li>
-						<li><a href="{{ path('user.logout') }}">Logout</a></li>
+						<li><a href="{{ path('user') }}">Mon compte</a></li>
+						<li><a href="{{ path('user.list') }}">Liste des utilisateurs</a></li>
+						<li><a href="{{ path('user.logout') }}">Déconnection</a></li>
 					{%  else %}
 						<li><a href="{{ path('user.login') }}">Connection</a></li>
 						<li><a href="{{ path('user.register') }}">Créer un compte</a></li>

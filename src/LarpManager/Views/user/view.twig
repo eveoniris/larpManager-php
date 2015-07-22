@@ -32,7 +32,7 @@
 
         {% if is_granted('EDIT_USER', user) %}
             <div>
-                <a href="{{ path('user.edit', {'id': user.id}) }}"><span class="glyphicon glyphicon-edit" style="margin-right: 5px;"></span>Edit</a>
+                <a href="{{ path('user.edit', {'id': user.id}) }}"><span class="glyphicon glyphicon-edit" style="margin-right: 5px;"></span>Modifier</a>
             </div>
         {% endif %}
     </div>
