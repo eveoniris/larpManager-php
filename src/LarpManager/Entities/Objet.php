@@ -25,7 +25,7 @@ class Objet extends BaseObjet implements JsonSerializable
 			'nom' => ( $this->getNom() ) ? $this->getNom() : '',
 			'code' => ( $this->getcode() ) ? $this->getCode() : '',
 			'description' => ($this->getDescription() ) ? $this->getDescription(): '',
-			'photo' => ($this->getObjetPhoto() ) ? $this->getObjetPhoto()->getRealName(): '',
+			'photo' => ($this->getPhoto() ) ? $this->getPhoto()->getRealName(): '',
 			'localisation' => ( $this->getLocalisation() ) ? $this->getLocalisation()->getLabel() : '', 
 			'etat' => ( $this->getEtat() ) ? $this->getEtat()->getLabel() : '',
 			'proprietaire' => ( $this->getProprietaire() ) ? $this->getProprietaire()->getNom() : '',

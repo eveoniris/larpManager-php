@@ -2,35 +2,28 @@
 
 {% block content %}
 
-	<div id="ajax_entity">
-		<table class="pure-table pure-table-horizontal pure-table-striped">
-		<caption>Liste des proprietaire</caption>
-		<thead>
-			<tr>
-				<th>Nom</th>
-				<th>Adresse</th>
-				<th>Mail</th>
-				<th>Tel</th>
-				<th>Nombre d'objets</th>
-				<th colspan="2"><a class="ajax_action" href="{{  path('stock_proprietaire_add') }}"><i class="icon-plus-sign"></i></a></th>
-			</tr>
-		</thead>
-		<tbody>
-		{% for proprietaire in proprietaires %}
-		<tr>
-		<td>{{ proprietaire.nom }}</td>
-		<td>{{ proprietaire.adresse }}</td>
-		<td>{{ proprietaire.mail }}</td>
-		<td>{{ proprietaire.tel }}</td>
-		<td>{{ proprietaire.objets|length }}</td>
-		<td><a href=""><i class="icon-document"></i></a></td>
-		<td><a class="ajax_action" href="{{ path('stock_proprietaire_update', {index : proprietaire.id} ) }}"><i class="icon-pencil"></i></a></td>
-		</tr>
-		{% endfor %}
-		</tbody>
-		</table>
+	<div class="page-header">
+		<h1>Liste des propriétaires</h1>
 	</div>
 	
-	<div id="ajax_result"></div>
+	<div class="panel panel-info">
+		<div class="panel-heading">
+			<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+			Qu'est-ce qu'un propriétaire ?
+		</div>
+		<div class="panel-body">Les propriétaires sont les personnes (morale ou physique) qui possédent l'objet.</div>
+	</div>
+	
+	{% if proprietaires|length == 0 %}
+		<div class="panel panel-warning">
+			<div class="panel-heading">
+				<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+				Attention !
+			</div>
+			<div class="panel-body">Aucun propriétaire n'est défini ! Vous devez définir au moins un propriétaire.</div>
+		</div>
+	{% endif %}
 
+{{ include("stock/proprietaire/list.twig", {'proprietaires' : proprietaires}) }}
+	
 {% endblock %}

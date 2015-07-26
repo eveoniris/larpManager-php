@@ -15,11 +15,6 @@ class StockProprietaireControllerProvider implements ControllerProviderInterface
 			->bind("stock_proprietaire_index")
 			->method('GET');
 		
-		$controllers->match('/{index}','LarpManager\Controllers\StockProprietaireController::detailAction')
-			->assert('index', '\d+')
-			->bind("stock_proprietaire_detail")
-			->method('GET');
-		
 		$controllers->match('/add','LarpManager\Controllers\StockProprietaireController::addAction')
 			->bind("stock_proprietaire_add")
 			->method('GET|POST');
@@ -27,11 +22,6 @@ class StockProprietaireControllerProvider implements ControllerProviderInterface
 		$controllers->match('/{index}/update','LarpManager\Controllers\StockProprietaireController::updateAction')
 			->assert('index', '\d+')
 			->bind("stock_proprietaire_update")
-			->method('GET|POST');
-			
-		$controllers->match('/{index}/delete','LarpManager\Controllers\StockProprietaireController::deleteAction')
-			->assert('index', '\d+')
-			->bind("stock_proprietaire_delete")
 			->method('GET|POST');
 		
 		return $controllers;

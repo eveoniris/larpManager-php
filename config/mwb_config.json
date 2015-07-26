@@ -14,6 +14,7 @@
         "useAutomaticRepository": false,
         "indentation": 4,
         "filename": "%entity%.%extension%",
-        "quoteIdentifier": false
+        "quoteIdentifier": false,
+        "skipColumnWithRelation": true
     }
 }

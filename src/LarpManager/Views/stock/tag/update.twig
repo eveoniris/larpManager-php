@@ -2,19 +2,16 @@
 
 {% block content %}
 
-	<ol class="breadcrumb">
-	  <li><a href="{{ path('stock_homepage')}}">Stock</a></li>
-	  <li><a href="{{ path('stock_tag_index') }}">Tags</a></li>
-	  <li class="active"><a href="#">Modification</a></li>
-	</ol>
-
 	<div class="page-header">
 		<h1>Modification d'un tag</h1>
 	</div>
 	
-	<form action="{{ path('stock_tag_update', {index:tag.id} ) }}" method="POST">
-		{% form_theme form 'Form/fields.twig' %}
-		{{ form(form) }}
-	</form>
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-xs-12 col-md-8">
+				{{ include("stock/tag/form.twig",{'action': path('stock_tag_update', {index:tag.id} ), 'form' : form}) }}
+			</div>
+		</div>
+	</div>
 	
 {%  endblock %}

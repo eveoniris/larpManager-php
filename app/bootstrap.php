@@ -13,6 +13,7 @@ use Silex\Provider\TwigServiceProvider;
 use Silex\Provider\DoctrineServiceProvider;
 use Silex\Provider\HttpCacheServiceProvider;
 use Silex\Provider\SwiftmailerServiceProvider;
+use Silex\Provider\HttpFragmentServiceProvider;
 use Dflydev\Silex\Provider\DoctrineOrm\DoctrineOrmServiceProvider;
 use Saxulum\DoctrineOrmManagerRegistry\Silex\Provider\DoctrineOrmManagerRegistryProvider;
 use Symfony\Component\HttpFoundation\Response;
@@ -72,6 +73,9 @@ $app->register(new ValidatorServiceProvider());
 $app->register(new TranslationServiceProvider(), array(
 		'translator.domains' => array(),
 ));
+
+// http fragment
+$app->register(new HttpFragmentServiceProvider());
 
 // Twig
 $app->register(new TwigServiceProvider(), array(

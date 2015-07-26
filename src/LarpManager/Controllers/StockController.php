@@ -26,21 +26,33 @@ class StockController
 		
 		$qb = $repo->createQueryBuilder('o');
 		$qb->select('COUNT(o)');
-		$qb->where('o.proprietaire_id IS NULL');
+		$qb->where('o.proprietaire IS NULL');
 		$objet_without_proprio_count = $qb->getQuery()->getSingleScalarResult();
 		
 		$qb = $repo->createQueryBuilder('o');
 		$qb->select('COUNT(o)');
-		$qb->where('o.responsable_id IS NULL');
+		$qb->where('o.usersRelatedByResponsableId IS NULL');
 		$objet_without_responsable_count = $qb->getQuery()->getSingleScalarResult();
 		
 		$qb = $repo->createQueryBuilder('o');
 		$qb->select('COUNT(o)');
-		$qb->where('o.localisation_id IS NULL');
+		$qb->where('o.localisation IS NULL');
 		$objet_without_localisation_count = $qb->getQuery()->getSingleScalarResult();
 		
 		
 		$last_add = $repo->findBy(array(), array('creation_date' => 'DESC'),10,0);
+		
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Etat');
+		$etats = $repo->findAll();
+		
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Tag');
+		$tags = $repo->findAll();
+		
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Localisation');
+		$localisations = $repo->findAll();
+		
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Proprietaire');
+		$proprietaires = $repo->findAll();
 		
 		return $app['twig']->render('stock/index.twig', array(
 				'objet_count' => $objet_count,
@@ -48,6 +60,10 @@ class StockController
 				'objet_without_proprio_count' => $objet_without_proprio_count,
 				'objet_without_responsable_count' => $objet_without_responsable_count,
 				'objet_without_localisation_count' => $objet_without_localisation_count,
+				'etats' => $etats,
+				'tags' => $tags,
+				'localisations' => $localisations,
+				'proprietaires' => $proprietaires,
 		));
 	}	
 }

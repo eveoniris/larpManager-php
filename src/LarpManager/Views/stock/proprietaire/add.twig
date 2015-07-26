@@ -1,7 +1,18 @@
-<form action="{{ path('stock_proprietaire_add') }}" method="POST" class="pure-form">
-	<fieldset>
-		<legend>Ajout d'un proprietaire</legend>
-		{% form_theme form 'Form/fields.twig' %}
-		{{ form(form) }}
-	</fieldset>
-</form>
+{% extends "layout.twig" %}
+
+{% block content %}
+
+	<div class="page-header">
+		<h1>Ajout d'un proprietaire</h1>
+	</div>
+
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-xs-12 col-md-8">
+				{{ include("stock/proprietaire/form.twig",{'action': path('stock_proprietaire_add'), 'form' : form}) }}
+			</div>
+		</div>
+	</div>
+			
+
+{% endblock %}

@@ -26,6 +26,11 @@
     	</div>
 	
         <div id="content" class="container-fluid">
+        
+        	{% for message in app.session.getFlashBag.get('success') %}
+    			<div class="alert alert-success" role="alert">{{ message }}</div>
+			{% endfor %}
+			
         	{% block content %}{% endblock content %}
         </div>
 			

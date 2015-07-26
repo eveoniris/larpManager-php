@@ -2,31 +2,28 @@
 
 {% block content %}
 
-	<div id="ajax_entity">
-		<table class="pure-table pure-table-horizontal pure-table-striped">
-		<caption>Liste des localisations</caption>
-		<thead>
-			<tr>
-				<th>Label</th>
-				<th>Précision</th>
-				<th>Nombre d'objets</th>
-				<th colspan="2"><a class="ajax_action" href="{{  path('stock_localisation_add') }}"><i class="icon-plus-sign"></i></a></th>
-			</tr>
-		</thead>
-		<tbody>
-		{% for localisation in localisations %}
-		<tr>
-		<td>{{ localisation.label }}</td>
-		<td>{{ localisation.precision }}</td>
-		<td>{{ localisation.objets|length }}</td>
-		<td><a href=""><i class="icon-document"></i></a></td>
-		<td><a class="ajax_action" href="{{ path('stock_localisation_update', {index : localisation.id} ) }}"><i class="icon-pencil"></i></a></td>
-		</tr>
-		{% endfor %}
-		</tbody>
-		</table>
+	<div class="page-header">
+		<h1>Liste des localisation</h1>
 	</div>
 	
-	<div id="ajax_result"></div>
-
+	<div class="panel panel-info">
+		<div class="panel-heading">
+			<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+			Qu'est-ce qu'une localisation ?
+		</div>
+		<div class="panel-body">Une localisation permet de définir précisemment ou se trouve l'objet.</div>
+	</div>
+	
+	{% if localisations|length == 0 %}
+		<div class="panel panel-warning">
+			<div class="panel-heading">
+				<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+				Attention !
+			</div>
+			<div class="panel-body">Aucune localisations n'est définie ! Vous devez définir au moins une localisation.</div>
+		</div>
+	{% endif %}
+	
+	{{ include("stock/localisation/list.twig", {'localisations' : localisations}) }}
+	
 {% endblock %}

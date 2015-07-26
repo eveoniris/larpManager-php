@@ -2,6 +2,7 @@
 
 namespace LarpManager\Controllers;
 
+use LarpManager\Form\Type\LocalisationType;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,32 +26,15 @@ class StockLocalisationController
 	}
 	
 	/**
-	 * @description affiche la détail d'une localisation
-	 */
-	public function detailAction(Request $request, Application $app)
-	{
-		$id = $request->get('index');
-			
-		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Localisation');
-		$localisation = $repo->find($id);
-	
-		return $app['twig']->render('stock/localisation/detail.twig', array('localisation' => $localisation));
-	}
-	
-	/**
 	 * @description ajoute une localisation
 	 */
 	public function addAction(Request $request, Application $app)
 	{
-		// valeur par défaut lorsque le formulaire est chargé pour la premiere fois
-		$defaultData = array();
+		$localisation = new \LarpManager\Entities\Localisation();
 	
-		// preparation du formulaire
-		$form = $app['form.factory']->createBuilder('form', $defaultData)
-		->add('label','text')
-		->add('precision','textarea')
-		->add('save','submit', array('attr' => array('class' => 'pure-button pure-button-primary button-primary')))
-		->getForm();
+		$form = $app['form.factory']->createBuilder(new LocalisationType(), $localisation)
+				->add('save','submit')
+				->getForm();
 	
 		// on passe la requête de l'utilisateur au formulaire
 		$form->handleRequest($request);
@@ -59,15 +43,11 @@ class StockLocalisationController
 		if ( $form->isValid() )
 		{
 			// on récupére les data de l'utilisateur
-			$data = $form->getData();
-				
-			$localisation = new \LarpManager\Entities\Localisation();
-			$localisation->setLabel($data['label']);
-			$localisation->setPrecision($data['precision']);
-	
+			$localisation = $form->getData();
 			$app['orm.em']->persist($localisation);
 			$app['orm.em']->flush();
 				
+			$app['session']->getFlashBag()->add('success', 'La localisation a été ajoutée.');
 			return $app->redirect($app['url_generator']->generate('stock_localisation_index'));
 		}
 	
@@ -84,42 +64,32 @@ class StockLocalisationController
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Localisation');
 		$localisation = $repo->find($id);
 	
-		$defaultData = array(
-				'id' => $localisation->getId(),
-				'label' => $localisation->getLabel(),
-				'precision' => $localisation->getPrecision()				
-		);
-	
-		$form = $app['form.factory']->createBuilder('form', $defaultData)
-		->add('id','hidden')
-		->add('label','text')
-		->add('precision','textarea')
-		->add('update','submit', array('attr' => array('class' => 'pure-button pure-button-primary button-primary')))
-		->add('delete','submit', array('attr' => array('class' => 'pure-button button-warning')))
-		->getForm();
-	
+		$form = $app['form.factory']->createBuilder(new LocalisationType(), $localisation)
+			->add('update','submit')
+			->add('delete','submit')
+			->getForm();
+				
 		$form->handleRequest($request);
 	
 		if ( $form->isValid() )
 		{
-			$data = $form->getData();
+			$localisation = $form->getData();
 	
-			if ( $localisation->getId() == $data['id']) {
-	
-				if ($form->get('update')->isClicked()) {
-					$localisation->setLabel($data['label']);
-					$localisation->setPrecision($data['precision']);
-					$app['orm.em']->persist($localisation);
-					$app['orm.em']->flush();					
-				}
-				else if ($form->get('delete')->isClicked()) {
-					$app['orm.em']->remove($localisation);
-					$app['orm.em']->flush();
-				}
-				
-	
-				return $app->redirect($app['url_generator']->generate('stock_localisation_index'));
+			if ($form->get('update')->isClicked()) 
+			{
+				$app['orm.em']->persist($localisation);
+				$app['orm.em']->flush();
+				$app['session']->getFlashBag()->add('success', 'La localisation a été mise à jour');
 			}
+			else if ($form->get('delete')->isClicked()) 
+			{
+				$app['orm.em']->remove($localisation);
+				$app['orm.em']->flush();
+				$app['session']->getFlashBag()->add('success', 'La localisation a été suprimée');
+			}
+			
+
+			return $app->redirect($app['url_generator']->generate('stock_localisation_index'));
 		}
 		return $app['twig']->render('stock/localisation/update.twig', array(
 				'localisation' => $localisation,

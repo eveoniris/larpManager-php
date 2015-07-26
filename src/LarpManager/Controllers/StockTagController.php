@@ -2,6 +2,8 @@
 
 namespace LarpManager\Controllers;
 
+use LarpManager\Form\Type\TagType;
+
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -30,31 +32,21 @@ class StockTagController
 	 */
 	public function addAction(Request $request, Application $app)
 	{
-		// valeur par défaut lorsque le formulaire est chargé pour la premiere fois
-		$defaultData = array();
+		$tag = new \LarpManager\Entities\Tag();
 	
-		// preparation du formulaire
-		$form = $app['form.factory']->createBuilder('form', $defaultData)
-		->add('nom','text')
-		->add('save','submit', array('attr' => array('class' => 'pure-button pure-button-primary button-primary')))
-		->getForm();
+		$form = $app['form.factory']->createBuilder(new TagType(), $tag)
+				->add('save','submit')
+				->getForm();
 	
-		// on passe la requête de l'utilisateur au formulaire
 		$form->handleRequest($request);
 	
-		// si la requête est valide
 		if ( $form->isValid() )
 		{
-			// on récupére les data de l'utilisateur
-			$data = $form->getData();
-				
-			// traitement des data
-			$tag = new \LarpManager\Entities\Tag();
-			$tag->setNom($data['nom']);
-				
+			$tag = $form->getData();				
 			$app['orm.em']->persist($tag);
 			$app['orm.em']->flush();
-	
+
+			$app['session']->getFlashBag()->add('success', 'Le tag a été ajouté.');
 			return $app->redirect($app['url_generator']->generate('stock_tag_index'));
 		}
 	
@@ -71,39 +63,35 @@ class StockTagController
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Tag');
 		$tag = $repo->find($id);
 	
-		$defaultData = array(
-				'id' => $tag->getId(),
-				'nom' => $tag->getNom()
-		);
-	
-		$form = $app['form.factory']->createBuilder('form', $defaultData)
-		->add('id','hidden')
-		->add('nom','text')
-		->add('update','submit', array('attr' => array('class' => 'pure-button pure-button-primary button-primary')))
-		->add('delete','submit', array('attr' => array('class' => 'pure-button button-warning')))
-		->getForm();
+		$form = $app['form.factory']->createBuilder(new TagType(), $tag)
+			->add('update','submit')
+			->add('delete','submit')
+			->getForm();
 	
 		$form->handleRequest($request);
 	
 		if ( $form->isValid() )
 		{
-			$data = $form->getData();
+			$tag = $form->getData();
 	
-			if ( $tag->getId() == $data['id']) {
-	
-				if ($form->get('update')->isClicked()) {
-					$tag->setNom($data['nom']);
-					$app['orm.em']->persist($tag);
-					$app['orm.em']->flush();
-				}
-				else if ($form->get('delete')->isClicked()) {
-					$app['orm.em']->remove($tag);
-					$app['orm.em']->flush();
-				}
-	
-				return $app->redirect($app['url_generator']->generate('stock_tag_index'));
+			if ($form->get('update')->isClicked()) 
+			{
+				$app['orm.em']->persist($tag);
+				$app['orm.em']->flush();
+				
+				$app['session']->getFlashBag()->add('success', 'Le tag a été modifié.');
 			}
+			else if ($form->get('delete')->isClicked()) 
+			{
+				$app['orm.em']->remove($tag);
+				$app['orm.em']->flush();
+				
+				$app['session']->getFlashBag()->add('success', 'Le tag a été supprimé.');
+			}
+	
+			return $app->redirect($app['url_generator']->generate('stock_tag_index'));
 		}
+		
 		return $app['twig']->render('stock/tag/update.twig', array(
 				'tag' => $tag,
 				'form' => $form->createView()));

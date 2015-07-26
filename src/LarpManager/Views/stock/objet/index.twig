@@ -2,12 +2,6 @@
 
 {% block content %}
 
-<ol class="breadcrumb">
-  <li><a href="{{ path('stock_homepage')}}">Stock</a></li>
-  <li class="active"><a href="#">Objets</a></li>
-  <li><a href="{{ path('stock_objet_add') }}">Add</a></li>
-</ol>
-
 	<div class="page-header">
 	<h1>
 		Liste des objets
@@ -37,6 +31,7 @@
 				<div class="form-group">
 					<div class="btn-group" role="group" aria-label="...">
 					  <button id="reset" type="button" class="btn btn-default"><span class="icon fa fa-refresh"></span></button>
+					  <button id="add" type="button" class="btn btn-default"><span class="icon fa fa-plus"></span></button>
 					</div>
 				</div>
 	      	</form>
@@ -70,7 +65,7 @@
 
 	var paramDefault = {
 			'current' : 1,
-			'rowCount' : 2,
+			'rowCount' : 20,
 			'searchPhrase' : '',
 			'searchType' : '',
 			'sort': {},
@@ -100,11 +95,9 @@
 				}
 				else {
 					result['pageCount'] = 0;
-					$('#liste_objet').html("<p>No result, sorry</p>");
+					$('#liste_objet').html("<p>Aucun résultat, désolé</p>");
 					
 				}
-					
-				
 			},
 			error : function(err) {}
 		});
@@ -143,9 +136,12 @@
 
 		$("#reset").on('click', function(e) {
 			param = $.extend({},paramDefault);
-			console.log(paramDefault);
 			ajax_request();
 			return false;
+		});
+
+		$("#add").on('click', function(e) {
+			window.location.href = "{{ path('stock_objet_add') }}";
 		});
 
 		$(".next").on('click', function(e) {

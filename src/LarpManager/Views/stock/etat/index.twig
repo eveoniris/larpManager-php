@@ -2,37 +2,28 @@
 
 {% block content %}
 
-	<ol class="breadcrumb">
-	  <li><a href="{{ path('stock_homepage')}}">Stock</a></li>
-	  <li class="active"><a href="#">Etats</a></li>
-	</ol>
-
-
 	<div class="page-header">
 		<h1>Liste des états</h1>
 	</div>
 	
 	<div class="panel panel-info">
-		<div class="panel-heading">Qu'est-ce qu'un état ?</div>
+		<div class="panel-heading">
+			<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+			Qu'est-ce qu'un état ?
+		</div>
 		<div class="panel-body">Un objet peut prendre un état (casser, à réparer, à fabriquer, etc ..). Cette page permet de définir les différents états pouvant s'appliquer à un objet.</div>
 	</div>
 	
 	{% if etats|length == 0 %}
 		<div class="panel panel-warning">
-			<div class="panel-heading">Attention !</div>
+			<div class="panel-heading">
+				<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+				Attention !
+			</div>
 			<div class="panel-body">Aucun état n'est défini ! Vous devez définir au moins un état.</div>
 		</div>
 	{% endif %}
-	<ul class="list-group">
-		<a href="{{ path('stock_etat_add') }}" class="list-group-item active">
-			<h4 class="list-group-item-heading">Ajouter un état</h4>
-		</a>
-		{%  for etat in etats %}
-			<a href="{{ path('stock_etat_update', {index: etat.id}) }}" class="list-group-item">
-				<span class="badge">{{ etat.objets|length }}</span>
-				<h4 class="list-group-item-heading">{{ etat.label }}</h4>
-			</a>
-		{%  endfor %}
-	</ul>
+	
+	{{ include("stock/etat/list.twig", {'etats' : etats}) }}
 	
 {% endblock %}
