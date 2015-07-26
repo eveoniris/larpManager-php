@@ -4,8 +4,59 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "fa714bcdda2cf7ebb4020056212bbf08",
+    "hash": "bffccfcd13d74fb0e0f30b194791707e",
     "packages": [
+        {
+            "name": "deralex/yaml-config-service-provider",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/deralex/YamlConfigServiceProvider.git",
+                "reference": "20857a6f34a6276429c548ab67be6fa138457f1a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/deralex/YamlConfigServiceProvider/zipball/20857a6f34a6276429c548ab67be6fa138457f1a",
+                "reference": "20857a6f34a6276429c548ab67be6fa138457f1a",
+                "shasum": ""
+            },
+            "require": {
+                "silex/silex": ">=1.0 <=1.3",
+                "symfony/yaml": "~2.4"
+            },
+            "require-dev": {
+                "phpspec/phpspec": "2.0.*@dev"
+            },
+            "suggest": {
+                "symfony/yaml": "~2.4"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "DerAlex\\Silex": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Alexander Kluth",
+                    "email": "contact@alexanderkluth.com"
+                }
+            ],
+            "description": "Silex ServiceProvider for using YAML configuration files",
+            "keywords": [
+                "silex"
+            ],
+            "time": "2015-03-10 15:57:39"
+        },
         {
             "name": "dflydev/doctrine-orm-service-provider",
             "version": "v1.0.6",
@@ -3495,6 +3546,7 @@
     "stability-flags": {
         "mysql-workbench-schema-exporter/mysql-workbench-schema-exporter": 20,
         "saxulum/saxulum-doctrine-orm-manager-registry-provider": 0,
+        "deralex/yaml-config-service-provider": 20,
         "swiftmailer/swiftmailer": 0,
         "monolog/monolog": 0
     },

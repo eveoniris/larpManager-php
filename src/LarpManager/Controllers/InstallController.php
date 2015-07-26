@@ -3,10 +3,12 @@ namespace LarpManager\Controllers;
 
 use Silex\Application;
 use Silex\Provider\SecurityServiceProvider;
+use Silex\Provider\DoctrineServiceProvider;
 use SimpleUser\UserServiceProvider;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use SqlFormatter;
+use Symfony\Component\Yaml\Dumper;
 
 class InstallController
 {	
@@ -70,13 +72,8 @@ class InstallController
 	 */
 	public function createUserAction(Request $request, Application $app)
 	{
-		// valeur par défaut lorsque le formulaire est chargé pour la premiere fois
-		$defaultData = array();
-	
 		// preparation du formulaire
-		$form = $app['form.factory']->createBuilder('form', $defaultData)
-		->add('email','email')
-		->add('password','password')
+		$form = $app['form.factory']->createBuilder(new \LarpManager\Form\InstallUserAdminForm())
 		->add('create','submit')
 		->getForm();
 		
@@ -88,7 +85,7 @@ class InstallController
 			// on récupére les data de l'utilisateur
 			$data = $form->getData();
 			
-			$name = 'admin';
+			$name = $data['name'];
 			$email = $data['email'];
 			$password = $data['password'];
 	
@@ -101,8 +98,11 @@ class InstallController
 			$app['user.manager']->insert($user);
 			
 			// supprimer le fichier de cache pour lancer larpmanager en mode normal		
-				
-			return $app->redirect($app['url_generator']->generate('install_done'));
+			unlink(__DIR__.'/../../../cache/maintenance.tag');
+			
+			$app->mount('/', new \LarpManager\HomepageControllerProvider());
+			$app['session']->getFlashBag()->add('success', 'L\'installation c\'est déroulée avec succès.');
+			return $app->redirect($app['url_generator']->generate('homepage'),301);
 		}
 		
 		return $app['twig']->render('install/installfirstuser.twig', array('form' => $form->createView()));
@@ -114,12 +114,16 @@ class InstallController
 	 * @param Application $app
 	 */
 	public function indexAction(Request $request, Application $app) 
-	{
-		// valeur par défaut lorsque le formulaire est chargé pour la premiere fois
-		$defaultData = array();
+	{		
+		// valeur par défaut
+		$default = array(
+			'database_host' => $app['config']['database']['host'],
+			'database_name' => $app['config']['database']['dbname'],
+			'database_user' => $app['config']['database']['user'],
+		);
 		
 		// preparation du formulaire
-		$form = $app['form.factory']->createBuilder('form', $defaultData)
+		$form = $app['form.factory']->createBuilder(new \LarpManager\Form\InstallDatabaseForm(), $default)
 			->add('create','submit')
 			->getForm();
 		
@@ -128,6 +132,28 @@ class InstallController
 		// si la requête est valide
 		if ( $form->isValid() )
 		{
+			$databaseConfig = $form->getData();
+			
+			$newConfig = $app['config'];
+			
+			$newConfig['database'] = array(
+					'host' => $databaseConfig['database_host'],
+					'dbname' => $databaseConfig['database_name'], 
+					'user' =>  $databaseConfig['database_user'],
+					'password' => $databaseConfig['database_password'],
+			);
+						
+			// write the new config
+			$dumper = new Dumper();
+			$yaml = $dumper->dump($newConfig);
+			file_put_contents(__DIR__ . '/../../../config/settings.yml', $yaml);
+			
+			// reload doctrine with the new configuration
+			$app->register(new DoctrineServiceProvider(), array(
+	   			'db.options' => $newConfig['database'] 
+			));
+
+			// load doctrine tools
 			$tool = new \Doctrine\ORM\Tools\SchemaTool($app['orm.em']);
 		
 			// l'opération peut prendre du temps, il faut donc régler le temps maximum d'execution

@@ -3,16 +3,14 @@
 {% block title %}Installation{% endblock %}
 
 {% block content %}
-	<p>Installation de LarpManager</p>
+
+	<div class="page-header">
+		<h1>Installation de LarpManager</h1>
+	</div>
 	
-	<fieldset>
-	<legend>Installation de la base de données</legend>
-	<form class="form-vertical" action="{{ path('install_index') }}" method="POST" {{ form_enctype(form) }}>
-	
-		{% form_theme form 'Form/fields.twig' %}
+	<form action="{{ path('install_index') }}" method="POST" {{ form_enctype(form) }}>
+		{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
 		{{ form(form) }}
-		
 	</form>
-	</fieldset>
-	
+		
 {% endblock %}

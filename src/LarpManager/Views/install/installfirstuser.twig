@@ -9,11 +9,9 @@
 	
 	<fieldset>
 	<legend>Création de l'utilisateur admin</legend>
-	<form class="form-horizontal" action="{{ path('install_create_user') }}" method="POST" {{ form_enctype(form) }}>
-	
-		{% form_theme form 'Form/fields.twig' %}
+	<form action="{{ path('install_create_user') }}" method="POST" {{ form_enctype(form) }}>
+		{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
 		{{ form(form) }}
-		
 	</form>
 	</fieldset>   
 	

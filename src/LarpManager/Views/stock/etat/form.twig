@@ -1,4 +1,4 @@
-<form action="{{ action }}" method="POST">
+<form action="{{ action }}" method="POST" {{ form_enctype(form) }}>
 		{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
 		{{ form(form) }}
 </form>

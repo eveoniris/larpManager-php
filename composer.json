@@ -23,6 +23,7 @@
 		"symfony/doctrine-bridge" : "~2.7",
 		"saxulum/saxulum-doctrine-orm-manager-registry-provider" : "2.2.1@stable",
 		"symfony/yaml" : "^2.5",
+		"deralex/yaml-config-service-provider": "1.0.x-dev",
 		"swiftmailer/swiftmailer" : "5.*@stable",
 		"monolog/monolog" : "1.15.0@stable"
 	},

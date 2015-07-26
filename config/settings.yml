@@ -1,16 +1,1 @@
-env: dev
-
-database:
-    driver: pdo_mysql
-    host: 127.0.0.1
-    dbname: larpmanager
-    user: myuser
-    password: mypassword
-
-swiftmailler:
-   host: host
-   port: 25
-   username: username
-   password: password
-   encryption: null
-   auth_mode: null
+{ env: dev, database: { host: 127.0.0.1, dbname: larpmanager, user: root, password: null }, swiftmailler: { host: host, port: 25, username: username, password: password, encryption: null, auth_mode: null } }
