@@ -21,35 +21,44 @@ use Symfony\Component\HttpFoundation\Response;
 $loader = require_once __DIR__.'/../vendor/autoload.php';
 
 $app = new Silex\Application();
-if(isset($_ENV['env']) && $_ENV['env'] == 'test')
+
+/**
+ * Indique si le site est en mode maintenance ou pas.
+ * Pour passser le site en mode maintenance, il faut ajouter manuellement
+ * le fichier maintenance.tag dans le répertoire cache.
+ * Cela permet d'acceder au fonctionnalités suivantes :
+ * Installation, Mise à jour.
+ */
+$app['maintenance'] = file_exists(__DIR__.'/../cache/' . 'maintenance.tag');
+
+/**
+ * Lecture du fichier de configuration
+ */
+$app->register(new DerAlex\Silex\YamlConfigServiceProvider(__DIR__ . '/../config/settings.yml'));
+
+/**
+ * Préparation des logs en fonction de l'environnement
+ * (le niveau de logs est plus élevé en mode dev.)
+ */
+if ( $app['config']['env'] == 'prod' )
 {
-	$app->register(new DerAlex\Silex\YamlConfigServiceProvider(__DIR__ . '/../config/test_settings.yml'));
+	$app['debug'] = false;
+	
+	$app->register(new Silex\Provider\MonologServiceProvider(), array(
+			'monolog.logfile' => __DIR__.'/../logs/production.log',
+			'monolog.level' => \Monolog\Logger::ERROR
+	));
 }
 else
 {
-	$app->register(new DerAlex\Silex\YamlConfigServiceProvider(__DIR__ . '/../config/normal_settings.yml'));
-}
-/**
- * Chemin pour le sql d'installation de larpmanager
- * 
- */		
-$app['maintenance'] = file_exists('/../cache/' . 'install.tag');
-$app['maintenance'] = false;
-/**
- * A décommenter pour passer en mode debug 
- */
-
-$app['debug'] = true;
-
-if(true == $app['debug'])
-{
-	//Ces logs ne contiennent pas que des infos de debug, il serait aussi possible de les activer
-	//en prod si nécessaire.
+	$app['debug'] = true;
+	
 	$app->register(new Silex\Provider\MonologServiceProvider(), array(
-	'monolog.logfile' => __DIR__.'/../logs/development.log',
-	'monolog.level' => \Monolog\Logger::DEBUG
+			'monolog.logfile' => __DIR__.'/../logs/development.log',
+			'monolog.level' => \Monolog\Logger::DEBUG
 	));
 }
+
 /**
  * Enregistrer les libs dans l'application 
  */
@@ -116,30 +125,22 @@ $app->register(new DoctrineOrmServiceProvider(), array(
     ),
 ));
 
-
-	
-
-
 // Gestion des urls
 $app->register(new UrlGeneratorServiceProvider());
 
 // Sessions
 $app->register(new SessionServiceProvider());
 
-
-
-
 /**
  * Définition des routes
  */
-
-if($app['maintenance'])
+ 
+if( $app['maintenance'] )
 {
 	$app->mount('/install', new LarpManager\InstallControllerProvider());
 }
 else
 {	
-	
 	// Security
 	$app->register(new SecurityServiceProvider());
 	
@@ -246,15 +247,19 @@ else
  
 $app->error(function (\Exception $e, $code) use ($app)
 {	
-	if ($e instanceof Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException)
+	if( $app['maintenance'] ) 
+	{
+		return $app['twig']->render('error/maintenance.twig');
+	}	
+	else if ($e instanceof Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException)
 	{
 		return $app['twig']->render('error/denied.twig');
 	}
-	if($e instanceof Symfony\Component\HttpKernel\Exception\NotFoundHttpException)
+	else if($e instanceof Symfony\Component\HttpKernel\Exception\NotFoundHttpException)
 	{
 		return $app['twig']->render('error/notfound.twig');
 	}		
-	if($e instanceof Symfony\Component\Routing\Exception\RouteNotFoundException)
+	else if($e instanceof Symfony\Component\Routing\Exception\RouteNotFoundException)
 	{
 		return $app['twig']->render('error/notfound.twig');
 	}

@@ -1,12 +1,60 @@
-{% extends "error/layout.twig" %}
-
-{% block content %}
-	<div class="panel panel-warning">
-		<div class="panel-heading">
-			Maintenance
-		</div>
-	  	<div class="panel-body">
-		  <p>Le site est en maintenance.</p>
-		</div>
-	</div>
-{% endblock %}
+<!DOCTYPE html>
+<html>
+    <head>
+            <meta charset="utf-8">
+        	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+        	<meta name="viewport" content="width=device-width, initial-scale=1">
+			
+			
+			<link rel="stylesheet" href="{{ app.request.basepath }}/css/style.css" />
+            <link rel="stylesheet" href="{{ app.request.basepath }}/css/normalize.css" />			                        
+            <link rel="stylesheet" href="{{ app.request.basepath }}/css/font-awesome.min.css" />
+            <link rel="stylesheet" href="{{ app.request.basepath }}/css/bootstrap.min.css" />
+            <link rel="stylesheet" href="{{ app.request.basepath }}/css/bootstrap-theme.min.css" />
+            <link rel="stylesheet" href="{{ app.request.basepath }}/css/jquery.bootgrid.min.css" />
+            
+            <title>Site en maintenance - LarpManager</title>
+    </head>
+    <body>
+	
+	<nav class="navbar navbar-default">
+	  <div class="container-fluid">
+	  
+	  	<!-- Brand and toggle get grouped for better mobile display -->
+	    <div class="navbar-header">
+	      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+	        <span class="sr-only">Toggle navigation</span>
+	        <span class="icon-bar"></span>
+	        <span class="icon-bar"></span>
+	        <span class="icon-bar"></span>
+	      </button>
+	      <a class="navbar-brand" href="#">LarpManager</a>
+	    </div>
+	    </div>
+	   </nav>
+	
+        <div id="content" class="container-fluid">
+        		<div class="panel panel-warning">
+					<div class="panel-heading">
+						Maintenance
+					</div>
+				  	<div class="panel-body">
+					  <p>Le site est en maintenance.</p>
+					</div>
+				</div>
+        </div>
+			
+         
+         {% block javascript %}
+	         <script src="{{ app.request.basepath }}/js/jquery-1.11.3.min.js"></script>
+	         <script src="{{ app.request.basepath }}/js/bootstrap.min.js"></script>
+	         <script src="{{ app.request.basepath }}/js/jquery.bootgrid.min.js"></script>
+	         <script src="{{ app.request.basepath }}/js/jquery.bootgrid.fa.min.js"></script>
+	         <script src="{{ app.request.basepath }}/js/moment.js"></script>
+	         <script src="{{ app.request.basepath }}/js/larpManagerAjax.js"></script>
+	         <script>
+	         	moment.locale('fr');
+	         </script>
+		{% endblock javascript %}
+    </body>
+</html>

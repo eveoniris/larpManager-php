@@ -22,8 +22,9 @@
 		"symfony/locale" : "~2.7",
 		"symfony/doctrine-bridge" : "~2.7",
 		"saxulum/saxulum-doctrine-orm-manager-registry-provider" : "2.2.1@stable",
-		"deralex/yaml-config-service-provider" : "^1.0",
-		"swiftmailer/swiftmailer" : "5.*@stable"
+		"symfony/yaml" : "^2.5",
+		"swiftmailer/swiftmailer" : "5.*@stable",
+		"monolog/monolog" : "1.15.0@stable"
 	},
 	"autoload" : {
 		"psr-0" : {
@@ -38,7 +39,6 @@
 	"require-dev" : {
 		"mysql-workbench-schema-exporter/mysql-workbench-schema-exporter" : "dev-master",
 		"phpunit/phpunit" : "4.7.*",
-		"monolog/monolog" : "^1.14",
 		"symfony/browser-kit" : "^2.7",
 		"symfony/css-selector" : "^2.7"
 	}
