@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use Silex\Provider\SessionServiceProvider;
 use Silex\Provider\SecurityServiceProvider;
