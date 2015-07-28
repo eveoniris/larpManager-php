@@ -11,16 +11,16 @@ class ObjetType extends AbstractType
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
 		$builder->add('nom','text')
-				->add('code','text')
+				->add('numero','text')
 				->add('description','textarea', array('required' => false))
 				
 				->add('photo', new PhotoType(),  array('required' => false))
 				
 				->add('proprietaire','entity', array('required' => false, 'class' => 'LarpManager\Entities\Proprietaire', 'property' => 'nom'))
 				->add('responsable','entity', array('required' => false, 'class' => 'LarpManager\Entities\Users', 'property' => 'name'))
-				->add('localisation','entity', array('required' => false, 'class' => 'LarpManager\Entities\Localisation', 'property' => 'label'))
+				->add('rangement','entity', array('required' => false, 'class' => 'LarpManager\Entities\Rangement', 'property' => 'adresse'))
 				->add('etat','entity', array('required' => false, 'class' => 'LarpManager\Entities\Etat', 'property' => 'label'))				
-				->add('tags','entity', array('required' => false, 'class' => 'LarpManager\Entities\tag', 'property' => 'nom', 'multiple' => true, 'expanded' => true))
+				->add('tags','entity', array('required' => false, 'class' => 'LarpManager\Entities\Tag', 'property' => 'nom', 'multiple' => true))
 				
 				->add('objetCarac', new ObjetCaracType(), array('required' => false))
 				

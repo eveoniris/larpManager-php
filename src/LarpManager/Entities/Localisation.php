@@ -18,4 +18,11 @@ use LarpManager\Entities\BaseLocalisation;
  */
 class Localisation extends BaseLocalisation
 {
+	/**
+	 * Retourne le compte de tous les objets dans cette localisation
+	 */
+	public function objets()
+	{
+		return 0;
+	}
 }

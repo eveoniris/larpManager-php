@@ -229,6 +229,7 @@ else
 	$app->mount('/stock/etat', new LarpManager\StockEtatControllerProvider());
 	$app->mount('/stock/proprietaire', new LarpManager\StockProprietaireControllerProvider());
 	$app->mount('/stock/localisation', new LarpManager\StockLocalisationControllerProvider());
+	$app->mount('/stock/rangement', new LarpManager\StockRangementControllerProvider());
 	
 	/**
 	 * Gestion des droits d'accés

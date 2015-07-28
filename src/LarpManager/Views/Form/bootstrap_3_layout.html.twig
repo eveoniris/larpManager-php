@@ -182,6 +182,11 @@
     <div class="form-group{% if (not compound or force_error|default(false)) and not valid %} has-error{% endif %}">
         {{- form_label(form) -}}
         {{- form_widget(form) -}}
+        {%  for attrname, attrvalue in attr %}
+        	{% if attrname =='help'  %}
+        		<span class="help-block">{{ attrvalue }}</span>
+        	{% endif %}
+        {%  endfor %}
         {{- form_errors(form) -}}
     </div>
 {%- endblock form_row %}

@@ -96,7 +96,7 @@ class InstallController
 			
 			$user = $app['user.manager']->createUser($email, $password, $name, array('ROLE_ADMIN'));
 			$app['user.manager']->insert($user);
-			
+						
 			// supprimer le fichier de cache pour lancer larpmanager en mode normal		
 			unlink(__DIR__.'/../../../cache/maintenance.tag');
 			
@@ -165,6 +165,27 @@ class InstallController
 			// on créé la base de donnée
 			$tool->createSchema($classes);
 			
+			// on ajoute des éléments de base
+			$etat = new \LarpManager\Entities\Etat();
+			$etat->setLabel("En stock");
+			$app['orm.em']->persist($etat);
+			$app['orm.em']->flush();
+				
+			$etat = new \LarpManager\Entities\Etat();
+			$etat->setLabel("Hors stock");
+			$app['orm.em']->persist($etat);
+			$app['orm.em']->flush();
+			
+			$etat = new \LarpManager\Entities\Etat();
+			$etat->setLabel("A fabriquer");
+			$app['orm.em']->persist($etat);
+			$app['orm.em']->flush();
+			
+			$etat = new \LarpManager\Entities\Etat();
+			$etat->setLabel("A acheter");
+			$app['orm.em']->persist($etat);
+			$app['orm.em']->flush();
+						
 			// création de l'utilisateur admin
 			return $app->redirect($app['url_generator']->generate('install_create_user'));
 		}

@@ -20,10 +20,11 @@
 	<div class="col-xs-12 col-md-8">
 		{% if objet_without_proprio_count != 0 
 			or objet_without_responsable_count != 0 
-			or objet_without_localisation_count != 0 
+			or objet_without_rangement_count != 0 
 			or etats|length == 0
 			or tags|length == 0
 			or localisations|length == 0
+			or rangements|length == 0
 			or proprietaires|length == 0 %}
 			
 		<div class="panel panel-warning">
@@ -41,8 +42,8 @@
 				<li>Attention, {{ objet_without_responsable_count }} objet(s) sans responsable.</li>
 				{%  endif %}
 				
-				{% if objet_without_localisation_count != 0 %}
-				<li>Attention, {{ objet_without_localisation_count }} objet(s) sans localisation.</li>
+				{% if objet_without_rangement_count != 0 %}
+				<li>Attention, {{ objet_without_rangement_count }} objet(s) sans rangement.</li>
 				{%  endif %}
 				
 				{% if etats|length == 0 %}
@@ -55,6 +56,10 @@
 				
 				{% if localisations|length == 0 %}
 				<li>Aucune localisation n'est définie. Vous devriez en définir au moins un.</li>
+				{%  endif %}
+				
+				{% if rangements|length == 0 %}
+				<li>Aucun rangement n'est défini. Vous devriez en définir au moins un.</li>
 				{%  endif %}
 				
 				{% if proprietaires|length == 0 %}
@@ -82,6 +87,7 @@
 		{{ include("stock/etat/list.twig", {'etats' : etats}) }}
 		{{ include("stock/tag/list.twig", {'tags' : tags}) }}
 		{{ include("stock/localisation/list.twig", {'localisations' : localisations}) }}
+		{{ include("stock/rangement/list.twig", {'localisations' : rangements}) }}
 		{{ include("stock/proprietaire/list.twig", {'proprietaires' : proprietaires}) }}
 	</div>
 </div>

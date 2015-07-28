@@ -12,15 +12,15 @@ namespace LarpManager\Entities;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * LarpManager\Entities\Localisation
+ * LarpManager\Entities\Rangement
  *
  * @Entity()
- * @Table(name="localisation")
+ * @Table(name="rangement", indexes={@Index(name="fk_rangement_localisation1_idx", columns={"localisation_id"})})
  * @InheritanceType("SINGLE_TABLE")
  * @DiscriminatorColumn(name="discr", type="string")
- * @DiscriminatorMap({"base":"BaseLocalisation", "extended":"Localisation"})
+ * @DiscriminatorMap({"base":"BaseRangement", "extended":"Rangement"})
  */
-class BaseLocalisation
+class BaseRangement
 {
     /**
      * @Id
@@ -30,7 +30,7 @@ class BaseLocalisation
     protected $id;
 
     /**
-     * @Column(type="string", length=45)
+     * @Column(type="string", length=45, nullable=true)
      */
     protected $label;
 
@@ -40,21 +40,27 @@ class BaseLocalisation
     protected $precision;
 
     /**
-     * @OneToMany(targetEntity="Rangement", mappedBy="localisation")
-     * @JoinColumn(name="id", referencedColumnName="localisation_id")
+     * @OneToMany(targetEntity="Objet", mappedBy="rangement")
+     * @JoinColumn(name="id", referencedColumnName="rangement_id")
      */
-    protected $rangements;
+    protected $objets;
+
+    /**
+     * @ManyToOne(targetEntity="Localisation", inversedBy="rangements")
+     * @JoinColumn(name="localisation_id", referencedColumnName="id", nullable=true)
+     */
+    protected $localisation;
 
     public function __construct()
     {
-        $this->rangements = new ArrayCollection();
+        $this->objets = new ArrayCollection();
     }
 
     /**
      * Set the value of id.
      *
      * @param integer $id
-     * @return \LarpManager\Entities\Localisation
+     * @return \LarpManager\Entities\Rangement
      */
     public function setId($id)
     {
@@ -77,7 +83,7 @@ class BaseLocalisation
      * Set the value of label.
      *
      * @param string $label
-     * @return \LarpManager\Entities\Localisation
+     * @return \LarpManager\Entities\Rangement
      */
     public function setLabel($label)
     {
@@ -100,7 +106,7 @@ class BaseLocalisation
      * Set the value of precision.
      *
      * @param string $precision
-     * @return \LarpManager\Entities\Localisation
+     * @return \LarpManager\Entities\Rangement
      */
     public function setPrecision($precision)
     {
@@ -120,43 +126,66 @@ class BaseLocalisation
     }
 
     /**
-     * Add Rangement entity to collection (one to many).
+     * Add Objet entity to collection (one to many).
      *
-     * @param \LarpManager\Entities\Rangement $rangement
-     * @return \LarpManager\Entities\Localisation
+     * @param \LarpManager\Entities\Objet $objet
+     * @return \LarpManager\Entities\Rangement
      */
-    public function addRangement(Rangement $rangement)
+    public function addObjet(Objet $objet)
     {
-        $this->rangements[] = $rangement;
+        $this->objets[] = $objet;
 
         return $this;
     }
 
     /**
-     * Remove Rangement entity from collection (one to many).
+     * Remove Objet entity from collection (one to many).
      *
-     * @param \LarpManager\Entities\Rangement $rangement
-     * @return \LarpManager\Entities\Localisation
+     * @param \LarpManager\Entities\Objet $objet
+     * @return \LarpManager\Entities\Rangement
      */
-    public function removeRangement(Rangement $rangement)
+    public function removeObjet(Objet $objet)
     {
-        $this->rangements->removeElement($rangement);
+        $this->objets->removeElement($objet);
 
         return $this;
     }
 
     /**
-     * Get Rangement entity collection (one to many).
+     * Get Objet entity collection (one to many).
      *
      * @return \Doctrine\Common\Collections\Collection
      */
-    public function getRangements()
+    public function getObjets()
     {
-        return $this->rangements;
+        return $this->objets;
+    }
+
+    /**
+     * Set Localisation entity (many to one).
+     *
+     * @param \LarpManager\Entities\Localisation $localisation
+     * @return \LarpManager\Entities\Rangement
+     */
+    public function setLocalisation(Localisation $localisation = null)
+    {
+        $this->localisation = $localisation;
+
+        return $this;
+    }
+
+    /**
+     * Get Localisation entity (many to one).
+     *
+     * @return \LarpManager\Entities\Localisation
+     */
+    public function getLocalisation()
+    {
+        return $this->localisation;
     }
 
     public function __sleep()
     {
-        return array('id', 'label', 'precision');
+        return array('id', 'localisation_id', 'label', 'precision');
     }
 }

@@ -1,0 +1,29 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+
+	<div class="page-header">
+		<h1>Liste des rangements</h1>
+	</div>
+	
+	<div class="panel panel-info">
+		<div class="panel-heading">
+			<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+			Qu'est-ce qu'un rangement ?
+		</div>
+		<div class="panel-body">Un rangement correspond à une étagère, un carton, un emplacement. Un rangement appartient à une localisation.</div>
+	</div>
+	
+	{% if rangements|length == 0 %}
+		<div class="panel panel-warning">
+			<div class="panel-heading">
+				<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+				Attention !
+			</div>
+			<div class="panel-body">Aucun rangement n'est défini ! Vous devez définir au moins un rangement.</div>
+		</div>
+	{% endif %}
+	
+	{{ include("stock/rangement/list.twig", {'rangements' : rangements}) }}
+	
+{% endblock %}

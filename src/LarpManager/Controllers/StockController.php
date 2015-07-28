@@ -36,8 +36,8 @@ class StockController
 		
 		$qb = $repo->createQueryBuilder('o');
 		$qb->select('COUNT(o)');
-		$qb->where('o.localisation IS NULL');
-		$objet_without_localisation_count = $qb->getQuery()->getSingleScalarResult();
+		$qb->where('o.rangement IS NULL');
+		$objet_without_rangement_count = $qb->getQuery()->getSingleScalarResult();
 		
 		
 		$last_add = $repo->findBy(array(), array('creation_date' => 'DESC'),10,0);
@@ -51,6 +51,9 @@ class StockController
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Localisation');
 		$localisations = $repo->findAll();
 		
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Rangement');
+		$rangements = $repo->findAll();
+		
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Proprietaire');
 		$proprietaires = $repo->findAll();
 		
@@ -59,10 +62,11 @@ class StockController
 				'last_add' => $last_add,
 				'objet_without_proprio_count' => $objet_without_proprio_count,
 				'objet_without_responsable_count' => $objet_without_responsable_count,
-				'objet_without_localisation_count' => $objet_without_localisation_count,
+				'objet_without_rangement_count' => $objet_without_rangement_count,
 				'etats' => $etats,
 				'tags' => $tags,
 				'localisations' => $localisations,
+				'rangements' => $rangements,
 				'proprietaires' => $proprietaires,
 		));
 	}	

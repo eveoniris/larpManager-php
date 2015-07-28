@@ -7,6 +7,9 @@
 	</div>
 
 	<div class="container-fluid">
+	    {% if objet.photo %}
+        	<img src="{{ app.request.basepath }}/uploads/img/{{ objet.photo.realName }}" alt="{{ objet.photo.name }}" height="50" width="50"/>
+        {% endif %}
 		<div class="row">
 			<div class="col-xs-12 col-md-8">
 				{{ include("stock/objet/form.twig",{'action': path('stock_objet_update',{'index':objet.id}), 'form' : form}) }}

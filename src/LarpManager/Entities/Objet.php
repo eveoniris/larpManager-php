@@ -26,13 +26,24 @@ class Objet extends BaseObjet implements JsonSerializable
 			'code' => ( $this->getcode() ) ? $this->getCode() : '',
 			'description' => ($this->getDescription() ) ? $this->getDescription(): '',
 			'photo' => ($this->getPhoto() ) ? $this->getPhoto()->getRealName(): '',
-			'localisation' => ( $this->getLocalisation() ) ? $this->getLocalisation()->getLabel() : '', 
+			'rangement' => ( $this->getRangement() ) ? $this->getRangement()->getAdresse() : '', 
 			'etat' => ( $this->getEtat() ) ? $this->getEtat()->getLabel() : '',
 			'proprietaire' => ( $this->getProprietaire() ) ? $this->getProprietaire()->getNom() : '',
 			'responsable' => ( $this->getResponsable() ) ? $this->getResponsable()->getUserName() : '',
 			'nombre' => $this->getNombre(),
 			'creation_date' => ( $this->getCreationDate() ) ? $this->getCreationDate()->format('Y-m-d H:i:s') : '',
 		);
+	}
+	
+	/**
+	 * Fabrique le code d'un objet en fonction de son rangement et de son numéro
+	 */
+	public function getCode() {
+		$code = '';
+		if ( $this->getRangement() )
+			$code .= substr($this->getRangement()->getLabel(),0,3); 
+		$code .= $this->getNumero();
+		return $code;
 	}
 	
 	/**
