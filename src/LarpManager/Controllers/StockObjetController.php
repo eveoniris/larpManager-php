@@ -136,11 +136,17 @@ class StockObjetController
 	 */
 	public function addAction(Request $request, Application $app)
 	{
-		$objet = new \LarpManager\Entities\Objet();		
+		$objet = new \LarpManager\Entities\Objet();
+		
+		$objet->setNombre(1);
+		
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Etat');
+		$etat = $repo->find(1);
+		$objet->setEtat($etat);
 		
 		$form = $app['form.factory']->createBuilder(new ObjetType(), $objet)
-				->add('save','submit')
-				->add('save_continue','submit')
+				->add('save','submit', array('label' => 'Sauvegarder et fermer'))
+				->add('save_continue','submit',array('label' => 'Sauvegarder et nouveau'))
 				->getForm();
 	
 		$form->handleRequest($request);
