@@ -10,14 +10,14 @@ class ObjetType extends AbstractType
 {
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
-		$builder->add('nom','text')
-				->add('numero','text')
+		$builder->add('nom','text',  array('required' => true))
+				->add('numero','text', array('required' => true))
 				->add('description','textarea', array('required' => false))
 				
 				->add('photo', new PhotoType(),  array('required' => false))
 				
-				->add('proprietaire','entity', array('required' => false, 'class' => 'LarpManager\Entities\Proprietaire', 'property' => 'nom'))
-				->add('responsable','entity', array('required' => false, 'class' => 'LarpManager\Entities\Users', 'property' => 'name'))
+				->add('proprietaire','entity', array('required' => false, 'class' => 'LarpManager\Entities\Proprietaire', 'property' => 'nom'))	
+				->add('responsable','entity', array('required' => false, 'class' => 'LarpManager\Entities\Users', 'property' => 'name'))		
 				->add('rangement','entity', array('required' => false, 'class' => 'LarpManager\Entities\Rangement', 'property' => 'adresse'))
 				->add('etat','entity', array('required' => false, 'class' => 'LarpManager\Entities\Etat', 'property' => 'label'))				
 				->add('tags','entity', array('required' => false, 'class' => 'LarpManager\Entities\Tag', 'property' => 'nom', 'multiple' => true))

@@ -142,7 +142,7 @@ class StockObjetController
 		
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Etat');
 		$etat = $repo->find(1);
-		$objet->setEtat($etat);
+		if ( $etat ) $objet->setEtat($etat);
 		
 		$form = $app['form.factory']->createBuilder(new ObjetType(), $objet)
 				->add('save','submit', array('label' => 'Sauvegarder et fermer'))
@@ -196,8 +196,8 @@ class StockObjetController
 		
 		
 		$form = $form = $app['form.factory']->createBuilder(new ObjetType(), $objet)
-				->add('update','submit')
-				->add('delete','submit')
+				->add('update','submit', array('label' => "Sauvegarder et fermer"))
+				->add('delete','submit', array('label' => "Supprimer"))
 				->getForm();
 	
 		$form->handleRequest($request);
