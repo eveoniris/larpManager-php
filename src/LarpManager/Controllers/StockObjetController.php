@@ -238,4 +238,48 @@ class StockObjetController
 		return $app['twig']->render('stock/objet/update.twig', array('objet' => $objet, 'form' => $form->createView()));
 	}
 	
+	/**
+	 * @description Exporte la liste des objets en fichier csv.
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function exportAction(Request $request, Application $app)
+	{
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Objet');
+		$objets = $repo->findAll();
+		
+		
+		header("Content-Type: text/csv");
+		header("Content-Disposition: attachment; filename=eveoniris_stock_".date("Ymd").".csv");
+		header("Pragma: no-cache");
+		header("Expires: 0");
+		
+		$output = fopen("php://output", "w");
+		
+		// header
+		fputcsv($output,
+					array(
+						'nom',
+						'code',
+						'description',
+						'photo',
+						'rangement',
+						'etat',
+						'proprietaire',
+						'responsable',
+						'nombre',
+						'creation_date'), ',');
+		
+		foreach ($objets as $objet)
+		{
+			fputcsv($output, $objet->getExportValue(), ',');			
+		}
+		
+		fclose($output);
+		exit();
+		
+	}
+	
+	
 }

@@ -34,6 +34,24 @@ class Objet extends BaseObjet implements JsonSerializable
 			'creation_date' => ( $this->getCreationDate() ) ? $this->getCreationDate()->format('Y-m-d H:i:s') : '',
 		);
 	}
+		
+	/**
+	 * Fourni un tableau pour exporter l'objet dans un fichier CSV
+	 */
+	public function getExportValue() {
+		return array(
+				'nom' => ( $this->getNom() ) ? $this->getNom() : '',
+				'code' => ( $this->getcode() ) ? $this->getCode() : '',
+				'description' => ($this->getDescription() ) ? $this->getDescription(): '',
+				'photo' => ($this->getPhoto() ) ? $this->getPhoto()->getRealName(): '',
+				'rangement' => ( $this->getRangement() ) ? $this->getRangement()->getAdresse() : '',
+				'etat' => ( $this->getEtat() ) ? $this->getEtat()->getLabel() : '',
+				'proprietaire' => ( $this->getProprietaire() ) ? $this->getProprietaire()->getNom() : '',
+				'responsable' => ( $this->getResponsable() ) ? $this->getResponsable()->getUserName() : '',
+				'nombre' => $this->getNombre(),
+				'creation_date' => ( $this->getCreationDate() ) ? $this->getCreationDate()->format('Y-m-d H:i:s') : '',
+		);
+	}
 	
 	/**
 	 * Fabrique le code d'un objet en fonction de son rangement et de son numéro

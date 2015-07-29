@@ -15,6 +15,10 @@ class StockObjetControllerProvider implements ControllerProviderInterface
 			->bind("stock_objet_index")
 			->method('GET|POST');
 		
+		$controllers->match('/export','LarpManager\Controllers\StockObjetController::exportAction')
+			->bind("stock_objet_export")
+			->method('GET');
+		
 		$controllers->match('/{index}','LarpManager\Controllers\StockObjetController::detailAction')
 			->assert('index', '\d+')
 			->bind("stock_objet_detail")
