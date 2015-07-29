@@ -28,11 +28,6 @@ class StockObjetControllerProvider implements ControllerProviderInterface
 			->assert('index', '\d+')
 			->bind("stock_objet_update")
 			->method('GET|POST');
-			
-		$controllers->match('/{index}/delete','LarpManager\Controllers\StockObjetController::deleteAction')
-			->assert('index', '\d+')
-			->bind("stock_objet_delete")
-			->method('GET|POST');
 		
 		return $controllers;
 	}

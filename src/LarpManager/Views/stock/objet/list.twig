@@ -4,7 +4,7 @@
 		<h4 class="list-group-item-heading">Ajouter un objet</h4>
 	</a>
 	{%  for objet in objets %}
-		<a href="{{ path('stock_objet_update', {index: objet.id}) }}" class="list-group-item">
+		<a href="{{ path('stock_objet_detail', {index: objet.id}) }}" class="list-group-item">
 			<h4 class="list-group-item-heading">
 				{{ objet.code }} 
 			</h4>
