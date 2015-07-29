@@ -96,7 +96,7 @@ class StockObjetController
 			$thumbnails = array();
 			if ( $params['thumbnail'] ) {
 				foreach ( $data['objets'] as $objet ) {
-					$thumbnails[] = $app['twig']->render('stock/objet/thumbnail.twig', array('objet' => $objet));
+					$thumbnails[] = $app['twig']->render('stock/objet/fragment/thumbnail.twig', array('objet' => $objet));
 				}
 			}
 			
@@ -116,6 +116,49 @@ class StockObjetController
 			->getForm();
 		
 		return $app['twig']->render('stock/objet/index.twig', array('form_search' => $form->createView()));
+	}
+	
+	/**
+	 * Fourni la liste des objets sans proprietaire
+	 */
+	public function listWithoutProprioAction(Request $request, Application $app)
+	{
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Objet');
+		
+		$qb = $repo->createQueryBuilder('objet')
+					->where('objet.proprietaire is null');
+		$objets = $qb->getQuery()->getResult();
+		
+		return $app['twig']->render('stock/objet/list.twig', array('objets' => $objets, 'titre' => "Liste des objets sans propriétaires"));
+	}
+	
+	/**
+	 * Fourni la liste des objets sans responsable
+	 */
+	public function listWithoutResponsableAction(Request $request, Application $app)
+	{
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Objet');
+		
+		$qb = $repo->createQueryBuilder('objet')
+					->where('objet.usersRelatedByResponsableId is null');
+		$objets = $qb->getQuery()->getResult();
+		
+		return $app['twig']->render('stock/objet/list.twig', array('objets' => $objets, 'titre' => "Liste des objets sans responsables"));
+	
+	}
+	
+	/**
+	 * Fourni la liste des objets sans rangement
+	 */
+	public function listWithoutRangementAction(Request $request, Application $app)
+	{
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Objet');
+		
+		$qb = $repo->createQueryBuilder('objet')
+					->where('objet.rangement is null');
+		$objets = $qb->getQuery()->getResult();
+		
+		return $app['twig']->render('stock/objet/list.twig', array('objets' => $objets, 'titre' => "Liste des objets sans rangements"));
 	}
 
 	/**

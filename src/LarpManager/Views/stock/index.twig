@@ -35,15 +35,15 @@
 		  	<div class="panel-body">
 				<ul>
 				{% if objet_without_proprio_count != 0 %}
-				<li>Attention, {{ objet_without_proprio_count }} objet(s) sans propriétaire.</li>
+				<li>Attention, {{ objet_without_proprio_count }} objet(s) sans propriétaire. (<a href="{{ path('stock_objet_list_without_proprio') }}" >Voir la liste</a>)</li>
 				{%  endif %}
 				
 				{% if objet_without_responsable_count != 0 %}
-				<li>Attention, {{ objet_without_responsable_count }} objet(s) sans responsable.</li>
+				<li>Attention, {{ objet_without_responsable_count }} objet(s) sans responsable. (<a href="{{ path('stock_objet_list_without_responsable') }}" >Voir la liste</a>)</li>
 				{%  endif %}
 				
 				{% if objet_without_rangement_count != 0 %}
-				<li>Attention, {{ objet_without_rangement_count }} objet(s) sans rangement.</li>
+				<li>Attention, {{ objet_without_rangement_count }} objet(s) sans rangement. (<a href="{{ path('stock_objet_list_without_rangement') }}" >Voir la liste</a>)</li>
 				{%  endif %}
 				
 				{% if etats|length == 0 %}
@@ -73,7 +73,7 @@
 		
 
 		<h3>Liste des 10 derniers objets ajoutés dans le stock.</h3>
-		{{ include("stock/objet/list.twig", {'objets' : last_add}) }}
+		{{ include("stock/objet/fragment/list.twig", {'objets' : last_add, 'add' : true}) }}
 		
 	</div>
 

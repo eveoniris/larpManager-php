@@ -15,6 +15,18 @@ class StockObjetControllerProvider implements ControllerProviderInterface
 			->bind("stock_objet_index")
 			->method('GET|POST');
 		
+		$controllers->match('/list/withoutProprio','LarpManager\Controllers\StockObjetController::listWithoutProprioAction')
+			->bind("stock_objet_list_without_proprio")
+			->method('GET');
+		
+		$controllers->match('/list/withoutResponsable','LarpManager\Controllers\StockObjetController::listWithoutResponsableAction')
+			->bind("stock_objet_list_without_responsable")
+			->method('GET');
+			
+		$controllers->match('/list/withoutRangement','LarpManager\Controllers\StockObjetController::listWithoutRangementAction')
+			->bind("stock_objet_list_without_rangement")
+			->method('GET');
+		
 		$controllers->match('/export','LarpManager\Controllers\StockObjetController::exportAction')
 			->bind("stock_objet_export")
 			->method('GET');

@@ -1,0 +1,16 @@
+<ul class="list-group">
+	{%  if add != false %}
+		<a href="{{ path('stock_objet_add') }}" class="list-group-item active">
+			<span class="badge"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></span>
+			<h4 class="list-group-item-heading">Ajouter un objet</h4>
+		</a>
+	{%  endif %}
+	{%  for objet in objets %}
+		<a href="{{ path('stock_objet_detail', {index: objet.id}) }}" class="list-group-item">
+			<h4 class="list-group-item-heading">
+				{{ objet.code }} 
+			</h4>
+			<p>{{ objet.nom }} : {{ objet.description }}</p>
+		</a>
+	{%  endfor %}
+</ul>
