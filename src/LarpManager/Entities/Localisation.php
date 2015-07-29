@@ -10,6 +10,7 @@
 namespace LarpManager\Entities;
 
 use LarpManager\Entities\BaseLocalisation;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * LarpManager\Entities\Localisation
@@ -19,10 +20,16 @@ use LarpManager\Entities\BaseLocalisation;
 class Localisation extends BaseLocalisation
 {
 	/**
-	 * Retourne le compte de tous les objets dans cette localisation
+	 * Retourne la liste de tous les objets dans cette localisation
 	 */
 	public function objets()
 	{
-		return 0;
+		$objets = array();
+		foreach ( $this->getRangements() as $rangement)
+		{
+			$objets = array_merge($objets, $rangement->getObjets()->toArray());
+		}
+		 
+		return new ArrayCollection($objets);
 	}
 }
