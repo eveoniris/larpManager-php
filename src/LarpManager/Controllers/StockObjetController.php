@@ -147,6 +147,7 @@ class StockObjetController
 		$form = $app['form.factory']->createBuilder(new ObjetType(), $objet)
 				->add('save','submit', array('label' => 'Sauvegarder et fermer'))
 				->add('save_continue','submit',array('label' => 'Sauvegarder et nouveau'))
+				->add('save_clone','submit',array('label' => 'Sauvegarder et cloner'))
 				->getForm();
 	
 		$form->handleRequest($request);
@@ -175,10 +176,15 @@ class StockObjetController
 			{
 				return $app->redirect($app['url_generator']->generate('stock_objet_index'),301);
 			}
-			else
+			else if ( $form->get('save_continue')->isClicked())
 			{
 				return $app->redirect($app['url_generator']->generate('stock_objet_add'),301);
 			}
+			else if ( $form->get('save_clone')->isClicked())
+			{
+				return $app->redirect($app['url_generator']->generate('stock_objet_clone', array('index' => $objet->getId())),301);
+			}
+			
 		}
 	
 		return $app['twig']->render('stock/objet/add.twig', array('form' => $form->createView()));
@@ -198,7 +204,7 @@ class StockObjetController
 
 		$form = $app['form.factory']->createBuilder(new ObjetType(), $objet)
 			->add('save','submit', array('label' => 'Sauvegarder et fermer'))
-			->add('save_continue','submit',array('label' => 'Sauvegarder et cloner'))
+			->add('save_clone','submit',array('label' => 'Sauvegarder et cloner'))
 			->getForm();
 		
 		$form->handleRequest($request);
