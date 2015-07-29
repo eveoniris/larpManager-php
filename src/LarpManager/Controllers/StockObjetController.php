@@ -185,6 +185,60 @@ class StockObjetController
 	}
 	
 	/**
+	 * Créé un objet à partir d'un autre
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function cloneAction(Request $request, Application $app)
+	{
+		$id = $request->get('index');
+			
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Objet');
+		$objet = $repo->find($id);
+
+		$form = $app['form.factory']->createBuilder(new ObjetType(), $objet)
+			->add('save','submit', array('label' => 'Sauvegarder et fermer'))
+			->add('save_continue','submit',array('label' => 'Sauvegarder et cloner'))
+			->getForm();
+		
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
+		{
+			$objet = $form->getData();
+			$newObjet = clone $objet;
+			$newObjet->setId(null);
+			
+			if ($newObjet->getObjetCarac() )
+			{
+				$app['orm.em']->persist($newObjet->getObjetCarac());
+			}
+		
+			if ( $newObjet->getPhoto() )
+			{
+				$newObjet->getPhoto()->upload();
+				$app['orm.em']->persist($newObjet->getPhoto());
+			}
+				
+			$app['orm.em']->persist($newObjet);
+			$app['orm.em']->flush();
+				
+			$app['session']->getFlashBag()->add('success', 'L\'objet a été ajouté dans le stock');
+				
+			if ( $form->get('save')->isClicked())
+			{
+				return $app->redirect($app['url_generator']->generate('stock_objet_index'),301);
+			}
+			else
+			{
+				return $app->redirect($app['url_generator']->generate('stock_objet_clone', array('index' => $newObjet->getId())),301);
+			}
+		}
+		
+		return $app['twig']->render('stock/objet/clone.twig', array('objet' => $objet, 'form' => $form->createView()));
+	}
+	
+	/**
 	 * @description Met à jour un objet
 	 */
 	public function updateAction(Request $request, Application $app)

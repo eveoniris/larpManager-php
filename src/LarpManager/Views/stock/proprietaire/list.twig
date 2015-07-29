@@ -7,7 +7,7 @@
 		<a href="{{ path('stock_proprietaire_update', {index: proprietaire.id}) }}" class="list-group-item">
 			<span class="badge">{{ proprietaire.objets|length }}</span>
 			<h4 class="list-group-item-heading">{{ proprietaire.nom }}</h4>
-			{{ proprietaire.mail }}&nbsp;{{ proprietaire.tel }}
+			<p>{{ proprietaire.mail }}&nbsp;{{ proprietaire.tel }}</p>
 		</a>
 	{%  endfor %}
 </ul>

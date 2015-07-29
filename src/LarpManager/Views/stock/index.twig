@@ -71,15 +71,10 @@
 		</div>
 		{% endif %}
 		
-		<div class="panel panel-default">
-			<div class="panel-heading">
-				Liste des 10 derniers objets ajoutés dans le stock.
-			</div>
-			
-			<div class="panel-body">
-				{{ include("stock/objet/list.twig", {'objets' : last_add}) }}
-			</div>
-		</div>
+
+		<h3>Liste des 10 derniers objets ajoutés dans le stock.</h3>
+		{{ include("stock/objet/list.twig", {'objets' : last_add}) }}
+		
 	</div>
 
 

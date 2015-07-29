@@ -7,7 +7,7 @@
 		<a href="{{ path('stock_rangement_update', {index: rangement.id}) }}" class="list-group-item">
 			<span class="badge">{{ rangement.objets|length }}</span>
 			<h4 class="list-group-item-heading">{{ rangement.label }}</h4>
-			{{ rangement.precision }} / {%  if rangement.localisation %} {{ rangement.localisation.label }} {%  endif %}
+			<p>{{ rangement.precision }} / {%  if rangement.localisation %} {{ rangement.localisation.label }} {%  endif %}</p>
 		</a>
 	{%  endfor %}
 </ul>

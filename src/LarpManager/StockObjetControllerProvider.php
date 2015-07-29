@@ -33,6 +33,11 @@ class StockObjetControllerProvider implements ControllerProviderInterface
 			->bind("stock_objet_update")
 			->method('GET|POST');
 		
+		$controllers->match('/{index}/clone','LarpManager\Controllers\StockObjetController::cloneAction')
+			->assert('index', '\d+')
+			->bind("stock_objet_clone")
+			->method('GET|POST');
+		
 		return $controllers;
 	}
 }

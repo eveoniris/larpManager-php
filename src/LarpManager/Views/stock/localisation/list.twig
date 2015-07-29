@@ -7,7 +7,7 @@
 		<a href="{{ path('stock_localisation_update', {index: localisation.id}) }}" class="list-group-item">
 			<span class="badge">{{ localisation.objets|length }}</span>
 			<h4 class="list-group-item-heading">{{ localisation.label }}</h4>
-			{{ localisation.precision }}
+			<p>{{ localisation.precision }}</p>
 		</a>
 	{%  endfor %}
 </ul>
