@@ -61,7 +61,7 @@ class StockProprietaireController
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Proprietaire');
 		$proprietaire = $repo->find($id);
 	
-		$form = $app['form.factory']->createBuilder(new ProprietaireType(), $tag)
+		$form = $app['form.factory']->createBuilder(new ProprietaireType(), $proprietaire)
 				->add('update','submit')
 				->add('delete','submit')
 				->getForm();
