@@ -12,7 +12,7 @@ class ObjetCaracType extends AbstractType
 	{
 		$builder->add('taille','integer', array('required' => false))
 				->add('poid','integer', array('required' => false))
-				->add('couleur','choice', array('required' => false));
+				->add('couleur','text', array('required' => false));
 	}
 
 	public function setDefaultOptions(OptionsResolverInterface $resolver)
