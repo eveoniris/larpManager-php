@@ -285,7 +285,7 @@ class StockObjetController
 			
 			if ( $form->get('save')->isClicked())
 			{
-				return $app->redirect($app['url_generator']->generate('stock_objet_index'),301);
+				return $app->redirect($app['url_generator']->generate('stock_homepage'),301);
 			}
 			else if ( $form->get('save_continue')->isClicked())
 			{
@@ -344,7 +344,7 @@ class StockObjetController
 				
 			if ( $form->get('save')->isClicked())
 			{
-				return $app->redirect($app['url_generator']->generate('stock_objet_index'),301);
+				return $app->redirect($app['url_generator']->generate('stock_homepage'),301);
 			}
 			else
 			{
@@ -403,7 +403,7 @@ class StockObjetController
 				$app['session']->getFlashBag()->add('success', 'L\'objet a été supprimé');
 			}
 			
-			return $app->redirect($app['url_generator']->generate('stock_objet_index'));
+			return $app->redirect($app['url_generator']->generate('stock_homepage'));
 		}
 	
 		return $app['twig']->render('stock/objet/update.twig', array('objet' => $objet, 'form' => $form->createView()));

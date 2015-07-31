@@ -19,6 +19,13 @@ use JsonSerializable;
  */
 class Objet extends BaseObjet
 {
+	
+	public function __construct()
+	{
+		parent::__construct();
+		$this->setCreationDate(new \Datetime('NOW'));
+	}
+	
 	/**
 	 * Manage relation when clone entity
 	 */
@@ -36,6 +43,8 @@ class Objet extends BaseObjet
 		{
 			$this->photo = null; // on ne clone pas la photo par comodité
 		}	
+		
+		$this->setCreationDate(new \Datetime('NOW'));
 	}
 		
 	/**
