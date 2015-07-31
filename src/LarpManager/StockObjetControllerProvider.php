@@ -15,6 +15,10 @@ class StockObjetControllerProvider implements ControllerProviderInterface
 			->bind("stock_objet_index")
 			->method('GET|POST');
 		
+		$controllers->match('/list/{page}','LarpManager\Controllers\StockObjetController::listAction')
+			->bind("stock_objet_list")
+			->method('GET|POST');
+		
 		$controllers->match('/list/withoutProprio','LarpManager\Controllers\StockObjetController::listWithoutProprioAction')
 			->bind("stock_objet_list_without_proprio")
 			->method('GET');
@@ -34,6 +38,11 @@ class StockObjetControllerProvider implements ControllerProviderInterface
 		$controllers->match('/{index}','LarpManager\Controllers\StockObjetController::detailAction')
 			->assert('index', '\d+')
 			->bind("stock_objet_detail")
+			->method('GET');
+		
+		$controllers->match('/{index}/photo','LarpManager\Controllers\StockObjetController::photoAction')
+			->assert('index', '\d+')
+			->bind("stock_objet_photo")
 			->method('GET');
 		
 		$controllers->match('/add','LarpManager\Controllers\StockObjetController::addAction')

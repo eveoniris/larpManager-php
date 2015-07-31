@@ -23,7 +23,7 @@
 						</ul>
 						
 						{% if objet.photo %}
-        					<img src="{{ app.request.basepath }}/uploads/img/{{ objet.photo.realName }}" alt="{{ objet.photo.name }}" class="img-responsive" />
+        					<img src="{{ path('stock_objet_photo',{index: objet.id}) }}" alt="{{ objet.photo.name }}" class="img-responsive" />
         				{% endif %}
 					</div>
 				</div>

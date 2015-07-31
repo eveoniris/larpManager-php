@@ -7,6 +7,9 @@
 	</div>
 
 	<div class="container-fluid">
+		{% if objet.photo %}
+        	<img src="{{ path('stock_objet_photo',{index: objet.id}) }}" alt="{{ objet.photo.name }}" class="img-responsive" />
+        {% endif %}
 		<div class="row">
 			<div class="col-xs-12 col-md-8">
 				{{ include("stock/objet/fragment/form.twig",{'action':  path('stock_objet_clone',{'index':objet.id}), 'form' : form}) }}

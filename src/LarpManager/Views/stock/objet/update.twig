@@ -8,7 +8,7 @@
 
 	<div class="container-fluid">
 	    {% if objet.photo %}
-        	<img src="{{ app.request.basepath }}/uploads/img/{{ objet.photo.realName }}" alt="{{ objet.photo.name }}" class="img-responsive" />
+        	<img src="{{ path('stock_objet_photo',{index: objet.id}) }}" alt="{{ objet.photo.name }}" class="img-responsive" />
         {% endif %}
 		<div class="row">
 			<div class="col-xs-12 col-md-8">

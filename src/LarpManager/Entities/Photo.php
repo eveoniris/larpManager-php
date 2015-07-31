@@ -22,17 +22,10 @@ class Photo extends BasePhoto
 	 * @Assert\File(maxSize="6000000")
 	 */
 	public $file;
-	
-	public function getAbsolutePath()
-	{
-		return null === $this->path ? null : $this->getUploadRootDir().'/'.$this->path;
-	}
-	
-	public function getWebPath()
-	{
-		return null === $this->path ? null : $this->getUploadDir().'/'.$this->path;
-	}
-	
+		
+	/**
+	 * Upload file on database
+	 */
 	public function upload()
 	{
 		// la propriété « file » peut être vide si le champ n'est pas requis
@@ -45,28 +38,16 @@ class Photo extends BasePhoto
 		$hash = hash('sha1',$this->file->getClientOriginalName().$date->format('Y-m-d H:i:s'));
 		$hash .= '.'.$this->file->guessExtension();
 		
-	
-		// store photo on upload dir
-		$this->file->move($this->getUploadRootDir(), $hash);
-	
+		
+		$this->setExtension($this->file->guessExtension());
+		$stream = fopen($this->file->getRealPath(),'rb');
+		$this->setData(stream_get_contents($stream));
+		
 		$this->setCreationDate($date);
 		$this->setName($this->file->getClientOriginalName());
 		$this->setRealName($hash);
 	
 		// « nettoie » la propriété « file » comme vous n'en aurez plus besoin
 		$this->file = null;
-	}
-	
-	protected function getUploadRootDir()
-	{
-		// le chemin absolu du répertoire où les documents uploadés doivent être sauvegardés
-		return __DIR__.'/../../../web/'.$this->getUploadDir();
-	}
-	
-	protected function getUploadDir()
-	{
-		// on se débarrasse de « __DIR__ » afin de ne pas avoir de problème lorsqu'on affiche
-		// le document/image dans la vue.
-		return 'uploads/img';
 	}
 }

@@ -3,6 +3,7 @@
 namespace LarpManager\Controllers;
 
 use LarpManager\Form\Type\ObjetType;
+use LarpManager\Form\SearchObjetForm;
 
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,8 +23,8 @@ class StockObjetController
 			switch($searchType) {
 				case 'tag':
 					break;
-				case 'code':
-					$qb->where("objet.code LIKE :search");
+				case 'numero':
+					$qb->where("objet.numero LIKE :search");
 					break;
 				default:
 					$qb->where("objet.nom LIKE :search");
@@ -68,54 +69,93 @@ class StockObjetController
 			$qb->setMaxResults( $params['rowCount'] );
 		}
 		
+		$objets = $qb->getQuery()->getResult();
+		
 		return array(
-				'objets' => $qb->getQuery()->getResult(),
-				'total' => $objetCount,
-				);
+				'objets' => $objets,
+				'total' => $objetCount, 
+		);
 	}
 	
 	/**
 	 * @description affiche la liste des objets
 	 */
 	public function indexAction(Request $request, Application $app)
+	{	
+		$params = array(
+				'searchPhrase' => null,
+				'searchType' => null,
+				'sort' => null,
+				'rowCount' => 20,
+				'current' => 1,
+		);
+		
+		$form = $app['form.factory']->createBuilder(new SearchObjetForm(), array())
+				->add('search','submit', array('label' => 'Rechercher'))
+				->getForm();
+		
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
+		{
+			$data = $form->getData();
+			$params['searchPhrase'] = $data["value"];
+			$params['searchType'] = $data["type"];
+		}
+		
+		$res = $this->getObjets($params, $app);
+		
+		$pagination = array(
+				'page' => 1,
+				'route' => 'stock_objet_list',
+				'pages_count' => ceil($res['total'] / $params['rowCount']),
+				'route_params' => array()
+		);
+		
+		return $app['twig']->render('stock/objet/index.twig', array(
+				'form' => $form->createView(),
+				'pagination' => $pagination,
+				'objets' => $res['objets']));
+	}
+	
+	public function listAction(Request $request, Application $app)
 	{
-		if ( $request->isXmlHttpRequest() ) {
-			
-			$params = array(
-				'current' => $request->get('current'),
-				'rowCount' => $request->get('rowCount'),
-				'searchPhrase' => $request->get('searchPhrase'),
-				'searchType' => $request->get('searchType'),
-				'sort' => $request->get('sort'),
-				'thumbnail' => $request->get('thumbnail'),
-			);
-			
-			$data = $this->getObjets($params, $app);
-			
-			// create thnumbnail if requested
-			$thumbnails = array();
-			if ( $params['thumbnail'] ) {
-				foreach ( $data['objets'] as $objet ) {
-					$thumbnails[] = $app['twig']->render('stock/objet/fragment/thumbnail.twig', array('objet' => $objet));
-				}
-			}
-			
-			return $app->json(array(
-					'current' => $params['current'],
-					'rowCount' => $params['rowCount'],
-					'total' => $data['total'],
-					'rows' => $data['objets'],
-					'thumbnails' => $thumbnails
-					),200);
-		}	
+		$page = $request->get('page');
 		
-		// creation du formulaire de recherche/tri
-		$form = $app['form.factory']->createBuilder('form', array())
-			->add('search','text')
-			->add('save','submit')
-			->getForm();
+		$params = array(
+				'searchPhrase' => null,
+				'searchType' => null,
+				'sort' => null,
+				'rowCount' => 20,
+				'current' => 1,
+		);
 		
-		return $app['twig']->render('stock/objet/index.twig', array('form_search' => $form->createView()));
+		$form = $app['form.factory']->createBuilder(new SearchObjetForm(), array())
+				->add('search','submit', array('label' => 'Rechercher'))
+				->getForm();
+		
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
+		{
+			$data = $form->getData();
+			$params['searchPhrase'] = $data["value"];
+			$params['searchType'] = $data["type"];
+		}
+				
+		$res = $this->getObjets($params, $app);
+				
+		$pagination = array(
+				'page' => $page,
+				'route' => 'stock_objet_list',
+				'pages_count' => ceil($res['total'] /  $params['rowCount']),
+				'route_params' => array()
+		);
+		
+		return $app['twig']->render('stock/objet/index.twig', array(
+				'form' => $form->createView(),
+				'pagination' => $pagination,
+				'objets' => $res['objets']));
 	}
 	
 	/**
@@ -162,7 +202,8 @@ class StockObjetController
 	}
 
 	/**
-	 * @description affiche la détail d'un objet
+	 * /stock/objet/{index}
+	 * affiche la détail d'un objet
 	 */
 	public function detailAction(Request $request, Application $app)
 	{
@@ -172,6 +213,33 @@ class StockObjetController
 		$objet = $repo->find($id);
 	
 		return $app['twig']->render('stock/objet/detail.twig', array('objet' => $objet));
+	}
+	
+	/**
+	 * /stock/objet/{index}/photo
+	 * Fourni les données de la photo lié à l'objet
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function photoAction(Request $request, Application $app)
+	{
+		$id = $request->get('index');
+			
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Objet');
+		$objet = $repo->find($id);
+		
+		$photo = $objet->getPhoto();
+		
+		if ( ! $photo ) {
+			return null;
+		}
+
+		header("Content-Type: image/".$photo->getExtension());
+		$output = fopen("php://output", "w");
+		fputs($output, stream_get_contents($photo->getData()));
+		fclose($output);
+		exit();
 	}
 	
 	/**
@@ -244,8 +312,10 @@ class StockObjetController
 			
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Objet');
 		$objet = $repo->find($id);
-
-		$form = $app['form.factory']->createBuilder(new ObjetType(), $objet)
+		
+		$newObjet = clone($objet);
+		
+		$form = $app['form.factory']->createBuilder(new ObjetType(), $newObjet)
 			->add('save','submit', array('label' => 'Sauvegarder et fermer'))
 			->add('save_clone','submit',array('label' => 'Sauvegarder et cloner'))
 			->getForm();
@@ -255,21 +325,19 @@ class StockObjetController
 		if ( $form->isValid() )
 		{
 			$objet = $form->getData();
-			$newObjet = clone $objet;
-			$newObjet->setId(null);
-			
-			if ($newObjet->getObjetCarac() )
+
+			if ($objet->getObjetCarac() ) 
 			{
-				$app['orm.em']->persist($newObjet->getObjetCarac());
+				$app['orm.em']->persist($objet->getObjetCarac());
 			}
-		
-			if ( $newObjet->getPhoto() )
+
+			if ( $objet->getPhoto() )
 			{
-				$newObjet->getPhoto()->upload();
-				$app['orm.em']->persist($newObjet->getPhoto());
+				$objet->getPhoto()->upload();
+				$app['orm.em']->persist($objet->getPhoto());
 			}
 				
-			$app['orm.em']->persist($newObjet);
+			$app['orm.em']->persist($objet);
 			$app['orm.em']->flush();
 				
 			$app['session']->getFlashBag()->add('success', 'L\'objet a été ajouté dans le stock');
@@ -284,7 +352,7 @@ class StockObjetController
 			}
 		}
 		
-		return $app['twig']->render('stock/objet/clone.twig', array('objet' => $objet, 'form' => $form->createView()));
+		return $app['twig']->render('stock/objet/clone.twig', array('objet' => $newObjet, 'form' => $form->createView()));
 	}
 	
 	/**
