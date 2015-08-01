@@ -120,18 +120,23 @@ class StockObjetController
 				'objets' => $res['objets']));
 	}
 	
+	/**
+	 * Liste des tous les objets
+	 * @param Request $request
+	 * @param Application $app
+	 */
 	public function listAction(Request $request, Application $app)
 	{
 		$page = $request->get('page');
 		
-		$params = array(
-				'searchPhrase' => null,
-				'searchType' => null,
-				'sort' => null,
-				'rowCount' => 20,
-				'current' => 1,
-		);
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Objet');
 		
+		// recherche de tout les objets en fonction de la pagination
+		$qb = $repo->createQueryBuilder('objet');
+		$qb->setFirstResult( ($page -1 )* $this->maxPerPage );
+		$qb->setMaxResults( $this->maxPerPage );
+		$objets = $qb->getQuery()->getResult();
+				
 		$form = $app['form.factory']->createBuilder(new SearchObjetForm(), array())
 				->add('search','submit', array('label' => 'Rechercher'))
 				->getForm();
@@ -145,19 +150,24 @@ class StockObjetController
 			$params['searchType'] = $data["type"];
 		}
 				
-		$res = $this->getObjets($params, $app);
+		// recherche du nombre d'objet total
+		$qb = $repo->createQueryBuilder('objet')
+					->select('COUNT(objet)');
+					
+		$objetsCountTotal = $qb->getQuery()->getSingleScalarResult();
 				
 		$pagination = array(
 				'page' => $page,
 				'route' => 'stock_objet_list',
-				'pages_count' => ceil($res['total'] /  $params['rowCount']),
+				'pages_count' => ceil($objetsCountTotal /  $this->maxPerPage),
 				'route_params' => array()
 		);
 		
-		return $app['twig']->render('stock/objet/index.twig', array(
+		return $app['twig']->render('stock/objet/list.twig', array(
+				'titre' => 'Liste des objets',
 				'form' => $form->createView(),
 				'pagination' => $pagination,
-				'objets' => $res['objets']));
+				'objets' => $objets));
 	}
 	
 	/**

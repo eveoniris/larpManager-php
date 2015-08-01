@@ -16,6 +16,7 @@ class StockObjetControllerProvider implements ControllerProviderInterface
 			->method('GET|POST');
 		
 		$controllers->match('/list/{page}','LarpManager\Controllers\StockObjetController::listAction')
+			->assert('page', '\d+')
 			->bind("stock_objet_list")
 			->method('GET|POST');
 		

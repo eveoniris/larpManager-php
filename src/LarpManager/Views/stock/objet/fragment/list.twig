@@ -6,13 +6,24 @@
 		</a>
 	{%  endif %}
 	{%  for objet in objets %}
-		<a href="{{ path('stock_objet_detail', {index: objet.id}) }}" class="list-group-item">
-			<h4 class="list-group-item-heading">
-				{{ objet.code }} 
-			</h4>
-			<p>{{ objet.nom }} : {{ objet.description }}.
-			<small class="pull-right" >Créé le {{ objet.creationDate|date('Y-m-d H:i:s') }}</small></p>
+	<li class="list-group-item">
+		<h4 class="list-group-item-heading">
+			{{ objet.code }} 
+		</h4>
+		<p class="list-group-item-text">
+			{{ objet.nom }} : {{ objet.description }}.
 			
-		</a>
+			<div class="pull-right btn-group" role="group" aria-label="...">
+				<a href="{{ path('stock_objet_detail', {index: objet.id}) }}" class="btn btn-primary" role="button">Voir</a>
+			    <a href="{{ path('stock_objet_update', {index: objet.id}) }}" class="btn btn-default" role="button">Modifier</a>
+			    <a href="{{ path('stock_objet_clone', {index: objet.id}) }}" class="btn btn-default" role="button">Cloner</a>
+			</div>
+		</p>
+		<p class="list-group-item-text">
+			Créé par :
+			<small>, le {{ objet.creationDate|date('Y-m-d H:i:s') }}</small>
+		</p>
+		
+	</li>
 	{%  endfor %}
 </ul>
