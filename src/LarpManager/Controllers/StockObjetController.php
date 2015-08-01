@@ -17,6 +17,8 @@ use Silex\Application;
 class StockObjetController
 {
 	
+	private $maxPerPage = 10;
+	
 	private function addWhere($qb, $searchPhrase, $searchType) {
 		if ( $searchPhrase !== null ) {
 				
@@ -163,13 +165,35 @@ class StockObjetController
 	 */
 	public function listWithoutProprioAction(Request $request, Application $app)
 	{
+		$page = $request->get('page');
+		
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Objet');
 		
+		// recherche de tout les objets en fonction de la pagination
 		$qb = $repo->createQueryBuilder('objet')
 					->where('objet.proprietaire is null');
+		$qb->setFirstResult( ($page -1 )* $this->maxPerPage );
+		$qb->setMaxResults( $this->maxPerPage );
+					
 		$objets = $qb->getQuery()->getResult();
+				
+		// recherche du nombre d'objet total
+		$qb = $repo->createQueryBuilder('objet')
+					->where('objet.proprietaire is null')
+					->select('COUNT(objet)');
+		$objetsCountTotal = $qb->getQuery()->getSingleScalarResult();
+
+		$pagination = array(
+				'page' => $page,
+				'route' => 'stock_objet_list_without_proprio',
+				'pages_count' => ceil($objetsCountTotal /  $this->maxPerPage),
+				'route_params' => array()
+		);
 		
-		return $app['twig']->render('stock/objet/list.twig', array('objets' => $objets, 'titre' => "Liste des objets sans propriétaires"));
+		return $app['twig']->render('stock/objet/list.twig', array(
+				'objets' => $objets, 
+				'pagination' => $pagination,
+				'titre' => "Liste des objets sans propriétaires"));
 	}
 	
 	/**
@@ -177,13 +201,34 @@ class StockObjetController
 	 */
 	public function listWithoutResponsableAction(Request $request, Application $app)
 	{
+		$page = $request->get('page');
+		
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Objet');
 		
 		$qb = $repo->createQueryBuilder('objet')
 					->where('objet.usersRelatedByResponsableId is null');
+		$qb->setFirstResult( ($page -1 )* $this->maxPerPage );
+		$qb->setMaxResults( $this->maxPerPage );
 		$objets = $qb->getQuery()->getResult();
 		
-		return $app['twig']->render('stock/objet/list.twig', array('objets' => $objets, 'titre' => "Liste des objets sans responsables"));
+		// recherche du nombre d'objet total
+		$qb = $repo->createQueryBuilder('objet')
+					->where('objet.usersRelatedByResponsableId is null')
+					->select('COUNT(objet)');
+					
+		$objetsCountTotal = $qb->getQuery()->getSingleScalarResult();
+		
+		$pagination = array(
+				'page' => $page,
+				'route' => 'stock_objet_list_without_responsable',
+				'pages_count' => ceil($objetsCountTotal /  $this->maxPerPage),
+				'route_params' => array()
+		);
+		
+		return $app['twig']->render('stock/objet/list.twig', array(
+				'objets' => $objets,
+				'pagination' => $pagination,
+				'titre' => "Liste des objets sans responsables"));
 	
 	}
 	
@@ -192,13 +237,33 @@ class StockObjetController
 	 */
 	public function listWithoutRangementAction(Request $request, Application $app)
 	{
+		$page = $request->get('page');
+		
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Objet');
 		
 		$qb = $repo->createQueryBuilder('objet')
 					->where('objet.rangement is null');
+		$qb->setFirstResult( ($page -1 )* $this->maxPerPage );
+		$qb->setMaxResults( $this->maxPerPage );
 		$objets = $qb->getQuery()->getResult();
 		
-		return $app['twig']->render('stock/objet/list.twig', array('objets' => $objets, 'titre' => "Liste des objets sans rangements"));
+		// recherche du nombre d'objet total
+		$qb = $repo->createQueryBuilder('objet')
+					->where('objet.rangement is null')
+					->select('COUNT(objet)');
+		$objetsCountTotal = $qb->getQuery()->getSingleScalarResult();
+		
+		$pagination = array(
+				'page' => $page,
+				'route' => 'stock_objet_list_without_rangement',
+				'pages_count' => ceil($objetsCountTotal /  $this->maxPerPage),
+				'route_params' => array()
+		);
+		
+		return $app['twig']->render('stock/objet/list.twig', array(
+				'objets' => $objets,
+				'pagination' => $pagination,
+				'titre' => "Liste des objets sans rangements"));
 	}
 
 	/**
@@ -278,10 +343,16 @@ class StockObjetController
 				$app['orm.em']->persist($objet->getPhoto());
 			}
 			
+			/**$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Users');
+			$user = $repo->find(1);
+			$user->addObjetRelatedByCreateurId($objet);
+			$objet->setUsersRelatedByCreateurId($user);**/
+			
+			
 			$app['orm.em']->persist($objet);				
 			$app['orm.em']->flush();
-			
-			$app['session']->getFlashBag()->add('success', 'L\'objet a été ajouté dans le stock');
+		
+			$app['session']->getFlashBag()->add('success','L\'objet a été ajouté dans le stock');
 			
 			if ( $form->get('save')->isClicked())
 			{

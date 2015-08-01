@@ -35,15 +35,15 @@
 		  	<div class="panel-body">
 				<ul>
 				{% if objet_without_proprio_count != 0 %}
-				<li>Attention, {{ objet_without_proprio_count }} objet(s) sans propriétaire. (<a href="{{ path('stock_objet_list_without_proprio') }}" >Voir la liste</a>)</li>
+				<li>Attention, {{ objet_without_proprio_count }} objet(s) sans propriétaire. (<a href="{{ path('stock_objet_list_without_proprio',{'page':1}) }}" >Voir la liste</a>)</li>
 				{%  endif %}
 				
 				{% if objet_without_responsable_count != 0 %}
-				<li>Attention, {{ objet_without_responsable_count }} objet(s) sans responsable. (<a href="{{ path('stock_objet_list_without_responsable') }}" >Voir la liste</a>)</li>
+				<li>Attention, {{ objet_without_responsable_count }} objet(s) sans responsable. (<a href="{{ path('stock_objet_list_without_responsable',{'page':1}) }}" >Voir la liste</a>)</li>
 				{%  endif %}
 				
 				{% if objet_without_rangement_count != 0 %}
-				<li>Attention, {{ objet_without_rangement_count }} objet(s) sans rangement. (<a href="{{ path('stock_objet_list_without_rangement') }}" >Voir la liste</a>)</li>
+				<li>Attention, {{ objet_without_rangement_count }} objet(s) sans rangement. (<a href="{{ path('stock_objet_list_without_rangement',{'page':1}) }}" >Voir la liste</a>)</li>
 				{%  endif %}
 				
 				{% if etats|length == 0 %}

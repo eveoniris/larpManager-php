@@ -10,7 +10,9 @@
 			<h4 class="list-group-item-heading">
 				{{ objet.code }} 
 			</h4>
-			<p>{{ objet.nom }} : {{ objet.description }}</p>
+			<p>{{ objet.nom }} : {{ objet.description }}.
+			<small class="pull-right" >Créé le {{ objet.creationDate|date('Y-m-d H:i:s') }}</small></p>
+			
 		</a>
 	{%  endfor %}
 </ul>
