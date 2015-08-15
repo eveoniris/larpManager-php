@@ -66,7 +66,7 @@ class UserController
 			throw new NotFoundHttpException('That user is disabled (pending email confirmation).');
 		}
 	
-		return $app['twig']->render('User/view.twig', array(
+		return $app['twig']->render('user/view.twig', array(
 				'user' => $user,
 				'imageUrl' => $this->getGravatarUrl($user->getEmail()),
 		));
@@ -122,7 +122,7 @@ class UserController
 			
 		}
 	
-		return $app['twig']->render('User/edit.twig', array(
+		return $app['twig']->render('user/edit.twig', array(
 				'error' => implode("\n", $errors),
 				'user' => $user,
 				'available_roles' => $this->getAvailableRoles(),
@@ -146,14 +146,14 @@ class UserController
 			// The Security system throws this exception before actually checking if the password was valid.
 			$user = $app['user.manager']->refreshUser($authException->getUser());
 		
-			return $app['twig']->render('User/login-confirmation-needed.twig', array(
+			return $app['twig']->render('user/login-confirmation-needed.twig', array(
 					'email' => $user->getEmail(),
 					'fromAddress' => $app['user.mailer']->getFromAddress(),
 					'resendUrl' => $app['url_generator']->generate('user.resend-confirmation'),
 			));
 		}
 		
-		return $app['twig']->render('User/login.twig', array(
+		return $app['twig']->render('user/login.twig', array(
 				'error' => $authException ? $authException->getMessageKey() : null,
 				'last_username' => $app['session']->get('_security.last_username'),
 				'allowRememberMe' => isset($app['security.remember_me.response_listener']),
@@ -189,7 +189,7 @@ class UserController
 			$user->imageUrl = $this->getGravatarUrl($user->getEmail(), 40);
 		}
 		
-		return $app['twig']->render('User/list.twig', array(
+		return $app['twig']->render('user/list.twig', array(
 				'users' => $users,
 				'paginator' => $paginator,
 		
@@ -272,7 +272,7 @@ class UserController
 			}
 		}
 		
-		return $app['twig']->render('User/register.twig', array(
+		return $app['twig']->render('user/register.twig', array(
 				'error' => isset($error) ? $error : null,
 				'name' => $request->request->get('name'),
 				'email' => $request->request->get('email'),
@@ -303,7 +303,7 @@ class UserController
 		}
 		
 		// trouve tous les rôles
-		return $app['twig']->render('User/right.twig', array(
+		return $app['twig']->render('user/right.twig', array(
 				'users' => $users,
 				'roles' => $this->getAvailableRoles())
 		);

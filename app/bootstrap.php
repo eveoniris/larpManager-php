@@ -149,44 +149,6 @@ else
 	$app->register(new RememberMeServiceProvider());
 	$app->register(new UserServiceProvider());
 	
-	/*$app['user.options'] = array(
-			'templates' => array(
-					'layout' => 'user/layout.twig',
-					'register' => 'user/register.twig',
-					'register-confirmation-sent' => 'user/register-confirmation-sent.twig',
-					'login' => 'user/login.twig',
-					'login-confirmation-needed' => 'user/login-confirmation-needed.twig',
-					'forgot-password' => 'user/forgot-password.twig',
-					'reset-password' => 'user/reset-password.twig',
-					'view' => 'user/view.twig',
-					'edit' => 'user/edit.twig',
-					'list' => 'user/list.twig',
-			),
-			'mailer' => array(
-					'enabled' => true,
-					'fromEmail' => array(
-							'address' => 'do-not-reply@'. (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : gethostname()),
-							'name' => null,
-					)
-			),
-			'emailConfirmation' => array(
-					'required' => false, // Whether to require email confirmation before enabling new accounts.
-					'template' => '@user/email/confirm-email.twig',
-			),
-	
-			'passwordReset' => array(
-					'template' => '@user/email/reset-password.twig',
-					'tokenTTL' => 86400, // How many seconds the reset token is valid for. Default: 1 day.
-			),
-			// Set this to use a custom User class.
-			//'userClass' => 'LarpManager\Entities\Users',
-	
-			// Whether to require that users have a username (default: false).
-			// By default, users sign in with their email address instead.
-			'isUsernameRequired' => false,
-		);*/
-	
-	
 	// Define firewall
 	$app['security.firewalls'] = array(
 		'public_area' => array(
@@ -273,7 +235,7 @@ else
  * Gestion des erreurs
  */
  
-/*$app->error(function (\Exception $e, $code) use ($app)
+$app->error(function (\Exception $e, $code) use ($app)
 {	
 	if( $app['maintenance'] ) 
 	{
@@ -291,7 +253,7 @@ else
 	{
 		return $app['twig']->render('error/notfound.twig');
 	}
-});*/
+});
 
 /**
  * API

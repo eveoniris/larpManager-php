@@ -224,7 +224,7 @@ class User extends BaseUser implements AdvancedUserInterface, \Serializable
 		return true;
 	}
 	
-	public function equals(UserInterface $user)
+	public function equals(User $user)
 	{
 		
 	}
