@@ -1,41 +1,26 @@
 {% extends "layout.twig" %}
 
 {% block content %}
-	
-	<table>
-		<caption>Liste des pays</caption>
-		<thead>
-			<tr>
-				<th>ID</th>
-				<th>Nom</th>
-				<th>Description</th>
-				<th>Impôt</th>
-				<th>Richesse</th>
-				<th>Histoire</th>
-				<th>Capitale</th>
-				<th/>
-				<th/>
-			</tr>
-		</thead>
-		<tbody>
-			{% for ce_pays in pays %}
-				<tr>
-					<td>{{ ce_pays.id }}</td>
-					<td>{{ ce_pays.nom }}</td>
-					<td>{{ ce_pays.description }}</td>
-					<td>{{ ce_pays.impot }}</td>
-					<td>{{ ce_pays.richesse }}</td>
-					<td>{{ ce_pays.histoire }}</td>
-					<td>{{ ce_pays.capitale }}</td>
-					<td><a href="{{ path('pays_modify', {index: ce_pays.id}) }}">Modify</a></td>
-					<td><a href="{{ path('pays_remove', {index: ce_pays.id}) }}">Delete</a></td>
-				</tr>
-			{% endfor %}
-		</tbody>
-	</table>
-	
-	<div>
-		<a href="{{ path('pays_add') }}">Ajouter un pays</a>
+
+<div class="page-header">
+<h1>
+	Gestion des pays
+	<small>
+		( {{ listPays|length }} pays )
+	</small>
+</h1>
+</div>
+
+<div class="container-fluid">
+
+	<div class="row">
+
+		<div class="col-xs-12 col-md-12">
+			<h3>Liste des pays.</h3>
+			{{ include("pays/fragment/list.twig", {'listPays' : listPays, 'add' : true}) }}
+		</div>
 	</div>
+
+</div>
 	
 {% endblock %}

@@ -30,6 +30,10 @@
     			<div class="alert alert-success" role="alert">{{ message }}</div>
 			{% endfor %}
 			
+			{% for message in app.session.getFlashBag.get('error') %}
+    			<div class="alert alert-warning" role="alert">{{ message }}</div>
+			{% endfor %}
+			
         	{% block content %}{% endblock content %}
         </div>
 			
@@ -38,7 +42,6 @@
 	         <script src="{{ app.request.basepath }}/js/jquery-1.11.3.min.js"></script>
 	         <script src="{{ app.request.basepath }}/js/bootstrap.min.js"></script>
 	         <script src="{{ app.request.basepath }}/js/moment.js"></script>
-
 	         <script>
 	         	moment.locale('fr');
 	         </script>

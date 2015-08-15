@@ -4,7 +4,7 @@ use Silex\Provider\SessionServiceProvider;
 use Silex\Provider\SecurityServiceProvider;
 use Silex\Provider\ServiceControllerServiceProvider;
 use Silex\Provider\RememberMeServiceProvider;
-use SimpleUser\UserServiceProvider;
+use LarpManager\User\UserServiceProvider;
 use Silex\Provider\UrlGeneratorServiceProvider;
 use Silex\Provider\FormServiceProvider;
 use Silex\Provider\ValidatorServiceProvider;
@@ -147,10 +147,9 @@ else
 	// User management
 	$app->register(new ServiceControllerServiceProvider());
 	$app->register(new RememberMeServiceProvider());
-	$userServiceProvider = new UserServiceProvider();
-	$app->register($userServiceProvider);
+	$app->register(new UserServiceProvider());
 	
-	$app['user.options'] = array(
+	/*$app['user.options'] = array(
 			'templates' => array(
 					'layout' => 'user/layout.twig',
 					'register' => 'user/register.twig',
@@ -185,40 +184,45 @@ else
 			// Whether to require that users have a username (default: false).
 			// By default, users sign in with their email address instead.
 			'isUsernameRequired' => false,
-		);
+		);*/
 	
 	
 	// Define firewall
 	$app['security.firewalls'] = array(
 		'public_area' => array(
-		'pattern' => '^.*$',
-		'anonymous' => true,
-		'remember_me' => array(),
-		'form' => array(
-		'login_path' => '/user/login',
-		'check_path' => '/user/login_check',
-		),
-		'logout' => array(
-		'logout_path' => '/user/logout',
-		),
-		'users' => $app->share(function($app) { return $app['user.manager']; }),
+			'pattern' => '^.*$',
+			'anonymous' => true,
+			'remember_me' => array(),
+			'form' => array(
+				'login_path' => '/user/login',
+				'check_path' => '/user/login_check',
+				),
+			'logout' => array(
+				'logout_path' => '/user/logout',
+				),
+			'users' => $app->share(function($app) { 
+				return $app['user.manager']; 
+			   }),
 		),
 		'secured_area' => array(	// le reste necessite d'être connecté
-				'pattern' => '^/stock/.*$',
-				'anonymous' => false,
-				'remember_me' => array(),
-				'form' => array(
-						'login_path' => '/user/login',
-						'check_path' => '/user/login_check',
-				),
-				'logout' => array(
-						'logout_path' => '/user/logout',
-				),
-				'users' => $app->share(function($app) { return $app['user.manager']; }),
+			'pattern' => '^/[stock|groupe|pays|region]/.*$',
+			'anonymous' => false,
+			'remember_me' => array(),
+			'form' => array(
+					'login_path' => '/user/login',
+					'check_path' => '/user/login_check',
 			),
-		);
+			'logout' => array(
+					'logout_path' => '/user/logout',
+			),
+			'users' => $app->share(function($app) { 
+				return $app['user.manager'];  
+			    }),
+		),
+	);
+	
 	$app->mount('/', new LarpManager\HomepageControllerProvider());
-	$app->mount('/user', $userServiceProvider);
+	$app->mount('/user',  new LarpManager\UserControllerProvider());
 	$app->mount('/gn', new LarpManager\GnControllerProvider());
 	$app->mount('/chronologie', new LarpManager\ChronologieControllerProvider());
 	$app->mount('/pays', new LarpManager\PaysControllerProvider());
@@ -230,12 +234,35 @@ else
 	$app->mount('/stock/proprietaire', new LarpManager\StockProprietaireControllerProvider());
 	$app->mount('/stock/localisation', new LarpManager\StockLocalisationControllerProvider());
 	$app->mount('/stock/rangement', new LarpManager\StockRangementControllerProvider());
+	$app->mount('/groupe', new LarpManager\GroupeControllerProvider());
+	$app->mount('/pays', new LarpManager\PaysControllerProvider());
+	$app->mount('/region', new LarpManager\RegionControllerProvider());
+	$app->mount('/competence', new LarpManager\CompetenceControllerProvider());
+	$app->mount('/niveau', new LarpManager\NiveauControllerProvider());
+	$app->mount('/classe', new LarpManager\ClasseControllerProvider());
+	
 	
 	/**
 	 * Gestion des droits d'accés
 	 */
+	
+	$app['security.role_hierarchy'] = array(
+		'ROLE_USER' => array('ROLE_USER'),
+		'ROLE_STOCK' => array('ROLE_USER', 'ROLE_STOCK'),
+		'ROLE_SCENARISTE' => array('ROLE_USER', 'ROLE_SCENARISTE'),
+		'ROLE_REGLE' => array('ROLE_USER', 'ROLE_REGLE'),
+		'ROLE_ADMIN' => array('ROLE_USER', 'ROLE_STOCK','ROLE_SCENARISTE','ROLE_REGLE'),
+	);
+	
 	$app['security.access_rules'] = array(
-		array('^/stock/.*$', 'ROLE_ADMIN'),
+		array('^/pays/.*$', 'ROLE_SCENARISTE'),
+		array('^/region/.*$', 'ROLE_SCENARISTE'),
+		array('^/groupe/.*$', 'ROLE_SCENARISTE'),
+		array('^/competence/.*$', 'ROLE_REGLE'),
+		array('^/niveau/.*$', 'ROLE_REGLE'),
+		array('^/classe/.*$', 'ROLE_REGLE'),
+		array('^/stock/.*$', 'ROLE_STOCK'),
+
 	);
 }
 
@@ -246,7 +273,7 @@ else
  * Gestion des erreurs
  */
  
-$app->error(function (\Exception $e, $code) use ($app)
+/*$app->error(function (\Exception $e, $code) use ($app)
 {	
 	if( $app['maintenance'] ) 
 	{
@@ -264,7 +291,7 @@ $app->error(function (\Exception $e, $code) use ($app)
 	{
 		return $app['twig']->render('error/notfound.twig');
 	}
-});
+});*/
 
 /**
  * API

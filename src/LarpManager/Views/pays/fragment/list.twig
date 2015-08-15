@@ -1,0 +1,32 @@
+<ul class="list-group">
+	{%  if add != false %}
+		<a href="{{ path('pays.add') }}" class="list-group-item active">
+			<span class="badge"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></span>
+			<h4 class="list-group-item-heading">Ajouter un pays</h4>
+		</a>
+	{%  endif %}
+	{%  for pays in listPays %}
+	<li class="list-group-item">
+		<h4 class="list-group-item-heading">
+			{{ pays.nom }} 
+		</h4>
+		<p class="list-group-item-text">
+			<div class="pull-right btn-group" role="group" aria-label="...">
+				<a href="{{ path('pays.detail', {index: pays.id}) }}" class="btn btn-primary" role="button">Voir</a>
+			    <a href="{{ path('pays.update', {index: pays.id}) }}" class="btn btn-default" role="button">Modifier</a>
+			</div>
+			
+			{% if pays.description %}
+				<p class="text-info">{{ pays.description }}</p>
+			{% else %}
+				<p class="text-warning">Attention, ce pays n'a pas description</p>
+			{%  endif %}
+		</p>
+		
+		<p class="list-group-item-text">
+			<small>Créé par {{ pays.creator.username }} le {{ pays.creationDate|date('Y-m-d H:i:s') }}. Dernière mise à jour le {{ pays.updateDate|date('Y-m-d H:i:s') }}</small>
+		</p>
+		
+	</li>
+	{%  endfor %}
+</ul>

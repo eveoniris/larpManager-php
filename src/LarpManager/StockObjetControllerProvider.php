@@ -23,17 +23,17 @@ class StockObjetControllerProvider implements ControllerProviderInterface
 		$controllers->match('/listWithoutProprio/{page}','LarpManager\Controllers\StockObjetController::listWithoutProprioAction')
 			->assert('page', '\d+')
 			->bind("stock_objet_list_without_proprio")
-			->method('GET');
+			->method('GET|POST');
 		
 		$controllers->match('/listWithoutResponsable/{page}','LarpManager\Controllers\StockObjetController::listWithoutResponsableAction')
 			->assert('page', '\d+')
 			->bind("stock_objet_list_without_responsable")
-			->method('GET');
+			->method('GET|POST');
 			
 		$controllers->match('/listWithoutRangement/{page}','LarpManager\Controllers\StockObjetController::listWithoutRangementAction')
 			->assert('page', '\d+')
 			->bind("stock_objet_list_without_rangement")
-			->method('GET');
+			->method('GET|POST');
 		
 		$controllers->match('/export','LarpManager\Controllers\StockObjetController::exportAction')
 			->bind("stock_objet_export")

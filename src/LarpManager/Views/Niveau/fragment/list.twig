@@ -1,0 +1,24 @@
+<ul class="list-group">
+	{%  if add != false %}
+		<a href="{{ path('niveau.add') }}" class="list-group-item active">
+			<span class="badge"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></span>
+			<h4 class="list-group-item-heading">Ajouter un niveau</h4>
+		</a>
+	{%  endif %}
+	{%  for niveau in niveaux %}
+	<li class="list-group-item">
+		<h4 class="list-group-item-heading">
+			{{ niveau.label }}
+		</h4>
+		<p class="list-group-item-text">
+			<div class="btn-group" role="group" aria-label="...">
+				<a href="{{ path('niveau.detail', {index: niveau.id}) }}" class="btn btn-primary" role="button">Voir</a>
+			    <a href="{{ path('niveau.update', {index: niveau.id}) }}" class="btn btn-default" role="button">Modifier</a>
+			</div>
+			
+		</p>
+		
+		
+	</li>
+	{%  endfor %}
+</ul>

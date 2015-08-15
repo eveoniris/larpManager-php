@@ -1,0 +1,17 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+
+	<div class="page-header">
+		<h1>Modification de {{ region.nom }}</h1>
+	</div>
+
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-xs-12 col-md-8">
+				{{ include("region/fragment/form.twig",{'action': path('region.update',{'index': region.id}), 'form' : form}) }}
+			</div>
+		</div>
+	</div>
+	
+{% endblock content %}

@@ -78,40 +78,40 @@ class Objet extends BaseObjet
 	}
 	
 	/**
-	 * Get Users entity related by `responsable_id` (many to one).
+	 * Get User entity related by `responsable_id` (many to one).
 	 *
-	 * @return \LarpManager\Entities\Users
+	 * @return \LarpManager\Entities\User
 	 */
 	public function getResponsable() {
-		return $this->getUsersRelatedByResponsableId();
+		return $this->getUserRelatedByResponsableId();
 	}
 	
 	/**
 	 * Set Users entity related by `responsable_id` (many to one).
 	 *
-	 * @param \LarpManager\Entities\Users $users
+	 * @param \LarpManager\Entities\Users $user
 	 * @return \LarpManager\Entities\Objet
 	 */
-	function setResponsable(Users $users = null) {
-		return $this->setUsersRelatedByResponsableId($users);
+	function setResponsable(User $user = null) {
+		return $this->setUserRelatedByResponsableId($user);
 	}
 	
 	/**
-	 * Get Users entity related by `createur_id` (many to one).
+	 * Get User entity related by `createur_id` (many to one).
 	 *
 	 * @return \LarpManager\Entities\Users
 	 */
 	function getCreateur() {
-		return $this->getUsersRelatedByResponsableId();
+		return $this->getUserRelatedByCreateurId();
 	}
 
 	/**
-	 * Set Users entity related by `createur_id` (many to one).
+	 * Set User entity related by `createur_id` (many to one).
 	 *
 	 * @param \LarpManager\Entities\Users $users
 	 * @return \LarpManager\Entities\Objet
 	 */
-	function setCreateur(Users $users = null) {
-		return $this->setUsersRelatedByCreateurId($users);
+	function setCreateur(User $user = null) {
+		return $this->setUsersRelatedByCreateurId($user);
 	}
 }

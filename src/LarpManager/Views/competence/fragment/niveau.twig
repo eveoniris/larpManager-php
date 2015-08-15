@@ -1,0 +1,31 @@
+<ul class="list-group">
+	{%  if add != false %}
+		<a class="list-group-item active" href="{{ path('competence.niveau.add', {index: competence.id}) }}" class="btn btn-default" role="button">
+			<span class="badge"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></span>
+			<h4 class="list-group-item-heading">Ajouter un niveau</h4>
+		</a>
+	{% endif %}
+	
+	{% for niveau in competence.niveaux %}
+		<li class="list-group-item">
+			<h4 class="list-group-item-heading">
+				{{ niveau.label }}
+			</h4>
+			{%  if add != false %}
+				<p class="list-group-item-text">
+					<div class="pull-right btn-group" role="group" aria-label="...">
+				    	<a href="{{ path('competence.niveau.update', {index: niveau.id}) }}" class="btn btn-primary" role="button">Modifier</a>
+					</div>
+				</p>
+			{%  endif %}
+			{% if niveau.description %}
+				<p class="list-group-item-text text-info">{{ niveau.description }}</p>
+			{% else %}
+				<p class="list-group-item-text text-warning">Attention, ce niveau n'a pas description</p>
+			{%  endif %}
+		</li>
+	{% endfor %}
+</ul>
+
+
+	

@@ -1,0 +1,25 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+
+
+<div class="page-header">
+<h1>
+	{{ region.nom }}
+</h1>
+</div>
+
+<p class="bg-info">Créé par {{ region.creator.username }} le {{ region.creationDate|date('Y-m-d H:i:s') }}. Dernière mise à jour le {{ region.updateDate|date('Y-m-d H:i:s') }}</p>
+<p class="bg-primary">{{ region.description }}</p>
+
+<div>
+<h3>Jeu stratégique</h3>
+<ul>
+<li>Protection : {{ region.protection }}</li>
+<li>Puissance : {{ region.puissance }}</li>
+<li>Puissance maximum : {{ region.puissanceMax }}</li>
+</ul>
+</div>
+<a href="{{ path('region.update', {index : region.id}) }}">Modifier</a>
+<a href="{{ path('region.detail.export', {index : region.id}) }}">Exporter</a>
+{% endblock %}

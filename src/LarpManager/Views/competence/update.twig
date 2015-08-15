@@ -1,0 +1,24 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+
+	<a href="{{ path("competence") }}">Retour à la liste des compétences</a>
+	
+	<div class="page-header">
+		<h1>Modification de {{ competence.nom }}</h1>
+	</div>
+
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-xs-12 col-md-8">
+				{{ include("competence/fragment/form.twig",{'action': path('competence.update',{'index': competence.id}), 'form' : form}) }}
+			</div>
+
+			<div class="col-xs-12 col-md-4">
+				<h3>Niveaux</h3>	
+				{{ include("competence/fragment/niveau.twig",{'competence': competence,'add' : true}) }}
+			</div>
+		</div>
+	</div>
+		
+{% endblock content %}

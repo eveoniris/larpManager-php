@@ -17,7 +17,7 @@ use Silex\Application;
 class StockObjetController
 {
 	
-	private $maxPerPage = 10;
+	private $maxPerPage = 20;
 	
 	private function addWhere($qb, $searchPhrase, $searchType) {
 		if ( $searchPhrase !== null ) {
@@ -128,6 +128,8 @@ class StockObjetController
 	public function listAction(Request $request, Application $app)
 	{
 		$page = $request->get('page');
+		$searchPhrase = null;
+		$searchType = null;
 		
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Objet');
 		
@@ -135,8 +137,8 @@ class StockObjetController
 		$qb = $repo->createQueryBuilder('objet');
 		$qb->setFirstResult( ($page -1 )* $this->maxPerPage );
 		$qb->setMaxResults( $this->maxPerPage );
-		$objets = $qb->getQuery()->getResult();
-				
+
+		// traitement du formulaire de recherche
 		$form = $app['form.factory']->createBuilder(new SearchObjetForm(), array())
 				->add('search','submit', array('label' => 'Rechercher'))
 				->getForm();
@@ -146,14 +148,21 @@ class StockObjetController
 		if ( $form->isValid() )
 		{
 			$data = $form->getData();
-			$params['searchPhrase'] = $data["value"];
-			$params['searchType'] = $data["type"];
+			$searchPhrase = $data["value"];
+			$searchType = $data["type"];
+			$qb = $this->addWhere($qb, $searchPhrase, $searchType);
 		}
+		
+		$objets = $qb->getQuery()->getResult();
 				
 		// recherche du nombre d'objet total
 		$qb = $repo->createQueryBuilder('objet')
 					->select('COUNT(objet)');
 					
+		if ( $searchPhrase && $searchType)
+		{
+			$qb = $this->addWhere($qb, $searchPhrase, $searchType);
+		}
 		$objetsCountTotal = $qb->getQuery()->getSingleScalarResult();
 				
 		$pagination = array(
@@ -176,6 +185,8 @@ class StockObjetController
 	public function listWithoutProprioAction(Request $request, Application $app)
 	{
 		$page = $request->get('page');
+		$searchPhrase = null;
+		$searchType = null;
 		
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Objet');
 		
@@ -184,13 +195,32 @@ class StockObjetController
 					->where('objet.proprietaire is null');
 		$qb->setFirstResult( ($page -1 )* $this->maxPerPage );
 		$qb->setMaxResults( $this->maxPerPage );
-					
+		
+		// traitement du formulaire de recherche
+		$form = $app['form.factory']->createBuilder(new SearchObjetForm(), array())
+		->add('search','submit', array('label' => 'Rechercher'))
+		->getForm();
+		
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
+		{
+			$data = $form->getData();
+			$searchPhrase = $data["value"];
+			$searchType = $data["type"];
+			$qb = $this->addWhere($qb, $searchPhrase, $searchType);
+		}
+		
 		$objets = $qb->getQuery()->getResult();
 				
 		// recherche du nombre d'objet total
 		$qb = $repo->createQueryBuilder('objet')
 					->where('objet.proprietaire is null')
 					->select('COUNT(objet)');
+		if ( $searchPhrase && $searchType)
+		{
+			$qb = $this->addWhere($qb, $searchPhrase, $searchType);
+		}
 		$objetsCountTotal = $qb->getQuery()->getSingleScalarResult();
 
 		$pagination = array(
@@ -202,6 +232,7 @@ class StockObjetController
 		
 		return $app['twig']->render('stock/objet/list.twig', array(
 				'objets' => $objets, 
+				'form' => $form->createView(),
 				'pagination' => $pagination,
 				'titre' => "Liste des objets sans propriétaires"));
 	}
@@ -212,20 +243,42 @@ class StockObjetController
 	public function listWithoutResponsableAction(Request $request, Application $app)
 	{
 		$page = $request->get('page');
+		$searchPhrase = null;
+		$searchType = null;
 		
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Objet');
 		
 		$qb = $repo->createQueryBuilder('objet')
-					->where('objet.usersRelatedByResponsableId is null');
+					->where('objet.userRelatedByResponsableId is null');
 		$qb->setFirstResult( ($page -1 )* $this->maxPerPage );
 		$qb->setMaxResults( $this->maxPerPage );
+		
+		// traitement du formulaire de recherche
+		$form = $app['form.factory']->createBuilder(new SearchObjetForm(), array())
+				->add('search','submit', array('label' => 'Rechercher'))
+				->getForm();
+		
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
+		{
+			$data = $form->getData();
+			$searchPhrase = $data["value"];
+			$searchType = $data["type"];
+			$qb = $this->addWhere($qb, $searchPhrase, $searchType);
+		}
+		
 		$objets = $qb->getQuery()->getResult();
 		
 		// recherche du nombre d'objet total
 		$qb = $repo->createQueryBuilder('objet')
-					->where('objet.usersRelatedByResponsableId is null')
+					->where('objet.userRelatedByResponsableId is null')
 					->select('COUNT(objet)');
-					
+				
+		if ( $searchPhrase && $searchType)
+		{
+			$qb = $this->addWhere($qb, $searchPhrase, $searchType);
+		}
 		$objetsCountTotal = $qb->getQuery()->getSingleScalarResult();
 		
 		$pagination = array(
@@ -237,6 +290,7 @@ class StockObjetController
 		
 		return $app['twig']->render('stock/objet/list.twig', array(
 				'objets' => $objets,
+				'form' => $form->createView(),
 				'pagination' => $pagination,
 				'titre' => "Liste des objets sans responsables"));
 	
@@ -248,6 +302,8 @@ class StockObjetController
 	public function listWithoutRangementAction(Request $request, Application $app)
 	{
 		$page = $request->get('page');
+		$searchPhrase = null;
+		$searchType = null;
 		
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Objet');
 		
@@ -255,12 +311,34 @@ class StockObjetController
 					->where('objet.rangement is null');
 		$qb->setFirstResult( ($page -1 )* $this->maxPerPage );
 		$qb->setMaxResults( $this->maxPerPage );
+		
+		// traitement du formulaire de recherche
+		$form = $app['form.factory']->createBuilder(new SearchObjetForm(), array())
+				->add('search','submit', array('label' => 'Rechercher'))
+				->getForm();
+		
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
+		{
+			$data = $form->getData();
+			$searchPhrase = $data["value"];
+			$searchType = $data["type"];
+			$qb = $this->addWhere($qb, $searchPhrase, $searchType);
+		}
+		
 		$objets = $qb->getQuery()->getResult();
 		
 		// recherche du nombre d'objet total
 		$qb = $repo->createQueryBuilder('objet')
 					->where('objet.rangement is null')
 					->select('COUNT(objet)');
+		
+		if ( $searchPhrase && $searchType) 
+		{
+			$qb = $this->addWhere($qb, $searchPhrase, $searchType);
+		}
+		
 		$objetsCountTotal = $qb->getQuery()->getSingleScalarResult();
 		
 		$pagination = array(
@@ -272,6 +350,7 @@ class StockObjetController
 		
 		return $app['twig']->render('stock/objet/list.twig', array(
 				'objets' => $objets,
+				'form' => $form->createView(),
 				'pagination' => $pagination,
 				'titre' => "Liste des objets sans rangements"));
 	}
@@ -353,10 +432,10 @@ class StockObjetController
 				$app['orm.em']->persist($objet->getPhoto());
 			}
 			
-			/**$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Users');
+			/**$repo = $app['orm.em']->getRepository('\LarpManager\Entities\User');
 			$user = $repo->find(1);
 			$user->addObjetRelatedByCreateurId($objet);
-			$objet->setUsersRelatedByCreateurId($user);**/
+			$objet->setUserRelatedByCreateurId($user);**/
 			
 			
 			$app['orm.em']->persist($objet);				

@@ -18,4 +18,10 @@ use LarpManager\Entities\BaseGroupe;
  */
 class Groupe extends BaseGroupe
 {
+
+	public function __construct()
+	{
+		parent::__construct();
+		$this->setCreationDate(new \Datetime('NOW'));
+	}
 }

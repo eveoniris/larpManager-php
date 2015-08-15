@@ -6,16 +6,20 @@
 		<h1>{{ titre }}</h1>
 	</div>
 
-	<div class="btn-group" role="group" aria-label="...">
-		{{ include("stock/objet/fragment/pagination.twig",{'pagination': pagination}) }}
+	<form class="form-inline" action="{{ path(pagination.route, {'page':1}) }}" method="POST" {{ form_enctype(form) }}>
+		{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+		{{ form(form) }}
+	</form>
+					
+	<div>		
+	{{ include("stock/objet/fragment/pagination.twig",{'pagination': pagination}) }}
 	</div>
-	
+											
 	<div class="btn-group" role="group" aria-label="...">
-		<a href="" aria-label="First">
 		<a href="{{ path(pagination.route, pagination.route_params|merge({'page': 1})) }}" class="btn btn-default"><span class="icon fa fa-refresh"></span></a>
 		<a href="{{ path('stock_objet_add') }}" class="btn btn-default"><span class="icon fa fa-plus"></span></a>
 	</div>
-				
+	
 	<div class="container-fluid">
 		<div class="row">
 			<div class="col-xs-12 ">

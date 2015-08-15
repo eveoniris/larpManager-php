@@ -18,4 +18,32 @@ use LarpManager\Entities\BaseRegion;
  */
 class Region extends BaseRegion
 {
+	/**
+	 * Permet de définir la date de création
+	 */
+	public function __construct()
+	{
+		$this->setCreationDate(new \DateTime('NOW'));
+		$this->setUpdateDate(new \DateTime('NOW'));
+		parent::__construct();
+	}
+	
+	/**
+	 * Helper pour récupérer l'utilisateur qui a créé la région
+	 */
+	public function getCreator()
+	{
+		$creator = $this->getUser();
+	
+		return $creator;
+	}
+	
+	/**
+	 * Helper pour définir l'utilisateur qui a créé la région
+	 * @param User $user
+	 */
+	public function setCreator($user)
+	{
+		return $this->setUser($user);
+	}
 }

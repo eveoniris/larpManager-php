@@ -1,0 +1,43 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+
+	<div class="page-header">
+		<h1>
+			Liste des groupes
+		</h1>
+	</div>
+
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-xs-12 col-md-8">
+			
+				{% if last_add|length == 0 %}
+					<div class="panel panel-warning">
+						<div class="panel-heading">
+							<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+							Des problèmes sont à régler !
+						</div>
+						
+		  				<div class="panel-body">
+							<ul>
+								{% if last_add|length == 0 %}
+									<li>Attention, aucun groupe n'est défini.</li>
+								{%  endif %}
+							</ul>
+						</div>
+					</div>
+				{% endif %} 
+
+				<h3>Liste des 10 derniers groupes ajoutés.</h3>
+				{{ include("groupe/fragment/list.twig", {'groupes' : last_add, 'add' : true}) }}
+			</div>
+		</div>
+	</div>
+
+{% endblock content %}
+
+
+
+
+

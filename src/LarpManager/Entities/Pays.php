@@ -18,4 +18,32 @@ use LarpManager\Entities\BasePays;
  */
 class Pays extends BasePays
 {
+	/**
+	 * Permet de définir la date de création
+	 */
+	public function __construct()
+	{
+		$this->setCreationDate(new \DateTime('NOW'));
+		$this->setUpdateDate(new \DateTime('NOW'));
+		parent::__construct();
+	}
+	
+	/**
+	 * Helper pour récupérer l'utilisateur qui a créé le pays
+	 */
+	public function getCreator()
+	{
+		$creator = $this->getUser();
+		
+		return $creator;
+	}
+	
+	/**
+	 * Helper pour définir l'utilisateur qui a créé le pays 
+	 * @param User $user
+	 */
+	public function setCreator($user)
+	{
+		return $this->setUser($user);
+	}
 }

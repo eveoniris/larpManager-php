@@ -4,7 +4,9 @@ namespace LarpManager\Controllers;
 use Silex\Application;
 use Silex\Provider\SecurityServiceProvider;
 use Silex\Provider\DoctrineServiceProvider;
-use SimpleUser\UserServiceProvider;
+use Silex\Provider\ServiceControllerServiceProvider;
+use Silex\Provider\RememberMeServiceProvider;
+use LarpManager\User\UserServiceProvider;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use SqlFormatter;
@@ -88,15 +90,14 @@ class InstallController
 			$name = $data['name'];
 			$email = $data['email'];
 			$password = $data['password'];
-	
-			// ajoute les services necessaire pour créer l'utilisateur
+
 			$app->register(new SecurityServiceProvider());
-			$userServiceProvider = new UserServiceProvider();
-			$app->register($userServiceProvider);
+			$app->register(new UserServiceProvider());
 			
+			// on ajoute des éléments de base
 			$user = $app['user.manager']->createUser($email, $password, $name, array('ROLE_ADMIN'));
 			$app['user.manager']->insert($user);
-						
+			
 			// supprimer le fichier de cache pour lancer larpmanager en mode normal		
 			unlink(__DIR__.'/../../../cache/maintenance.tag');
 			
@@ -184,6 +185,37 @@ class InstallController
 			$etat = new \LarpManager\Entities\Etat();
 			$etat->setLabel("A acheter");
 			$app['orm.em']->persist($etat);
+			$app['orm.em']->flush();
+			
+			// Création des niveaux de compétence
+			$niveau = new \LarpManager\Entities\Niveau();
+			$niveau->setLabel("Apprenti");
+			$niveau->setNiveau("1");
+			$app['orm.em']->persist($niveau);
+			$app['orm.em']->flush();
+			
+			$niveau = new \LarpManager\Entities\Niveau();
+			$niveau->setLabel("Initié");
+			$niveau->setNiveau("2");
+			$app['orm.em']->persist($niveau);
+			$app['orm.em']->flush();
+			
+			$niveau = new \LarpManager\Entities\Niveau();
+			$niveau->setLabel("Expert");
+			$niveau->setNiveau("3");
+			$app['orm.em']->persist($niveau);
+			$app['orm.em']->flush();
+			
+			$niveau = new \LarpManager\Entities\Niveau();
+			$niveau->setLabel("Maître");
+			$niveau->setNiveau("4");
+			$app['orm.em']->persist($niveau);
+			$app['orm.em']->flush();
+			
+			$niveau = new \LarpManager\Entities\Niveau();
+			$niveau->setLabel("Secret");
+			$niveau->setNiveau("4");
+			$app['orm.em']->persist($niveau);
 			$app['orm.em']->flush();
 						
 			// création de l'utilisateur admin

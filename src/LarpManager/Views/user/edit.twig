@@ -40,7 +40,7 @@
             </div>
         </div>
 
-        {% if isUsernameRequired or user.hasRealUsername %}
+        {% if user.hasRealUsername %}
             <div class="form-group">
                 <label class="col-sm-2 control-label" for="input-name">Username</label>
                 <div class="col-sm-8">
@@ -73,22 +73,11 @@
                 <div class="col-sm-8">
                     <select class="form-control" multiple id="input-roles" name="roles[]">
                         {% for role in available_roles %}
-                            <option value="{{ role }}" {% if user.hasRole(role) %}selected{% endif %}>{{ role }}</option>
+                            <option value="{{ role.label }}" {% if user.hasRole(role.label) %}selected{% endif %}>{{ role.label }}</option>
                         {% endfor %}
                     </select>
                 </div>
             </div>
-        {% endif %}
-
-        {% if customFields %}
-            {% for field,label in customFields %}
-                <div class="form-group">
-                    <label class="col-sm-2 control-label" for="input-{{ field }}">{{ label }}</label>
-                    <div class="col-sm-8">
-                        <input class="form-control" id="input-{{ field }}" name="{{ field }}" value="{{ user.getCustomField(field) }}">
-                    </div>
-                </div>
-            {% endfor %}
         {% endif %}
 
         <div class="form-group">

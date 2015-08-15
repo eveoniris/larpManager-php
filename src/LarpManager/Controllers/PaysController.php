@@ -4,8 +4,9 @@ namespace LarpManager\Controllers;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Silex\Application;
+use LarpManager\Form\PaysMinimalForm;
+use LarpManager\Form\PaysForm;
 
-// Chronologie d'un pays
 class PaysController
 {
 	/**
@@ -15,7 +16,7 @@ class PaysController
 	{
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Pays');
 		$pays = $repo->findAll();
-		return $app['twig']->render('pays/index.twig', array('pays' => $pays));
+		return $app['twig']->render('pays/index.twig', array('listPays' => $pays));
 	}
 
 	/**
@@ -23,92 +24,85 @@ class PaysController
 	 */
 	public function addAction(Request $request, Application $app)
 	{
-		if ( $request->getMethod() === 'POST' )
+		$pays = new \LarpManager\Entities\Pays();
+		
+		$form = $app['form.factory']->createBuilder(new PaysMinimalForm(), $pays)
+			->add('save','submit', array('label' => "Sauvegarder"))
+			->add('save_continue','submit', array('label' => "Sauvegarder & continuer"))
+			->getForm();
+		
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
 		{
-			$nom = $request->get('nom');
-			$description = $request->get('description');
-			$impot = $request->get('impot');
-			$richesse = $request->get('richesse');
-			$histoire = $request->get('histoire');
-			$capitale = $request->get('capitale');
+			$pays = $form->getData();
+			$pays->setCreator($app['user']);
 			
-			$pays = new \LarpManager\Entities\Pays();
-			$pays->setNom($nom);
-			$pays->setDescription($description);
-			$pays->setImpot($impot);
-			$pays->setRichesse($richesse);
-			$pays->setHistoire($histoire);
-			$pays->setCapitale($capitale);
-				
 			$app['orm.em']->persist($pays);
 			$app['orm.em']->flush();
 				
-			return $app->redirect($app['url_generator']->generate('pays_list'));
+			$app['session']->getFlashBag()->add('success', 'Le pays a été ajouté.');
+			
+			if ( $form->get('save')->isClicked())
+			{
+				return $app->redirect($app['url_generator']->generate('pays'),301);
+			}
+			else if ( $form->get('save_continue')->isClicked())
+			{
+				return $app->redirect($app['url_generator']->generate('pays.add'),301);
+			}
 		}
-		return $app['twig']->render('pays/add.twig');
+		
+		return $app['twig']->render('pays/add.twig', array(
+				'form' => $form->createView(),	
+			));			
 	}
 
 	/**
 	 * @description affiche le formulaire de modification d'une chrono
 	 */
-	public function modifyAction(Request $request, Application $app)
+	public function updateAction(Request $request, Application $app)
 	{
 		$id = $request->get('index');
+		
 		$pays = $app['orm.em']->find('\LarpManager\Entities\Pays',$id);
-		if(!$pays)
+		
+		$form = $app['form.factory']->createBuilder(new PaysForm(), $pays)
+			->add('update','submit', array('label' => "Sauvegarder"))
+			->add('delete','submit', array('label' => "Supprimer"))
+			->getForm();
+		
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
 		{
-			return $app->redirect($app['url_generator']->generate('pays_list'));
+			$pays = $form->getData();
+			
+			if ($form->get('update')->isClicked())
+			{
+				$pays->setUpdateDate(new \DateTime('NOW'));
+				
+				$app['orm.em']->persist($pays);
+				$app['orm.em']->flush();
+				$app['session']->getFlashBag()->add('success', 'Le pays a été mis à jour.');
+			}
+			else if ($form->get('delete')->isClicked())
+			{
+				$app['orm.em']->remove($pays);
+				$app['orm.em']->flush();
+			
+				$app['session']->getFlashBag()->add('success', 'Le pays a été supprimé.');
+			}
+				
+			return $app->redirect($app['url_generator']->generate('pays'));
 		}
 		
-		if ( $request->getMethod() === 'POST' )
-		{
-			$nom = $request->get('nom');
-			$description = $request->get('description');
-			$impot = $request->get('impot');
-			$richesse = $request->get('richesse');
-			$histoire = $request->get('histoire');
-			$capitale = $request->get('capitale');
-				
-			$pays->setNom($nom);
-			$pays->setDescription($description);
-			$pays->setImpot($impot);
-			$pays->setRichesse($richesse);
-			$pays->setHistoire($histoire);
-			$pays->setCapitale($capitale);
-				
-			$app['orm.em']->flush();
-			//todo notif que ca s'est bien passe
-			return $app->redirect($app['url_generator']->generate('pays_list'));
-		}
-		
-		return $app['twig']->render('pays/modify.twig', array('pays' => $pays));
+		return $app['twig']->render('pays/update.twig', array(
+				'pays' => $pays,
+				'form' => $form->createView(),
+		));
 	}
 	
-	/**
-	 * @description affiche le formulaire de suppresion d'une chrono
-	 */
-	public function removeAction(Request $request, Application $app)
-	{
-		$id = $request->get('index');
-
-		$pays = $app['orm.em']->find('\LarpManager\Entities\Pays',$id);
-
-		if ( $pays )
-		{
-			if ( $request->getMethod() === 'POST' )
-			{
-				
-				$app['orm.em']->remove($pays); //je suppose un OnDelete cascade
-				$app['orm.em']->flush();
-				return $app->redirect($app['url_generator']->generate('pays_list'));
-			}
-			return $app['twig']->render('pays/remove.twig', array('pays' => $pays));
-		}
-		else
-		{
-			return $app->redirect($app['url_generator']->generate('pays_list'));
-		}
-	}
 
 	/**
 	 * @description affiche la détail d'une chronologie
@@ -121,11 +115,22 @@ class PaysController
 
 		if ( $pays )
 		{
-			return $app['twig']->render('pays/detail.twig', array('pays',$pays));
+			return $app['twig']->render('pays/detail.twig', array('pays' => $pays));
 		}
 		else
 		{
-			return $app->redirect($app['url_generator']->generate('pays_list'));
+			$app['session']->getFlashBag()->add('error', 'Le pays n\'a pas été trouvé.');
+			return $app->redirect($app['url_generator']->generate('pays'));
 		}
+	}
+	
+	public function detailExportAction(Request $request, Application $app)
+	{
+		$id = $request->get('index');
+	}
+	
+	public function exportAction(Request $request, Application $app)
+	{
+		
 	}
 }

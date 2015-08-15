@@ -51,9 +51,7 @@
             <div class="form-group">
                 <div class="col-sm-8 col-sm-offset-2">
                     <button type="submit" class="btn btn-primary">Se connecter</button>
-                    {% if allowPasswordReset %}
-                        <a style="margin-left: 10px;" href="{{ path('user.forgot-password') }}">Mot de passe oublié ?</a>
-                    {% endif %}
+                    <a style="margin-left: 10px;" href="{{ path('user.forgot-password') }}">Mot de passe oublié ?</a>
                 </div>
             </div>
 

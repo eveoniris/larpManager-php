@@ -17,7 +17,7 @@ class ObjetType extends AbstractType
 				->add('photo', new PhotoType(),  array('required' => false))
 				
 				->add('proprietaire','entity', array('required' => false, 'class' => 'LarpManager\Entities\Proprietaire', 'property' => 'nom'))	
-				->add('responsable','entity', array('required' => false, 'class' => 'LarpManager\Entities\Users', 'property' => 'name'))		
+				->add('responsable','entity', array('required' => false, 'class' => 'LarpManager\Entities\User', 'property' => 'name'))		
 				->add('rangement','entity', array('required' => false, 'class' => 'LarpManager\Entities\Rangement', 'property' => 'adresse'))
 				->add('etat','entity', array('required' => false, 'class' => 'LarpManager\Entities\Etat', 'property' => 'label'))				
 				->add('tags','entity', array('required' => false, 'class' => 'LarpManager\Entities\Tag', 'property' => 'nom', 'multiple' => true))
