@@ -214,7 +214,7 @@ class InstallController
 			
 			$niveau = new \LarpManager\Entities\Niveau();
 			$niveau->setLabel("Secret");
-			$niveau->setNiveau("4");
+			$niveau->setNiveau("5");
 			$app['orm.em']->persist($niveau);
 			$app['orm.em']->flush();
 						

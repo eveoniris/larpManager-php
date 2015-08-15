@@ -15,6 +15,18 @@ class NiveauForm extends AbstractType
 				)
 				->add('niveau','integer', array(
 					'required' => true,	)
+				)
+				->add('cout_favori','integer', array(
+						'label' => "Coût favori",
+						'required' => true,	)
+				)
+				->add('cout','integer', array(
+					'label' => "Coût normal",
+					'required' => true,	)
+				)
+				->add('cout_meconu','integer', array(
+					'label' => "Coût méconnu",
+					'required' => true,	)
 				);
 	}
 	

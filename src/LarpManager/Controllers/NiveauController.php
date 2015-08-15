@@ -81,7 +81,7 @@ class NiveauController
 				$app['session']->getFlashBag()->add('success', 'Le niveau a été supprimé.');
 			}
 		
-			return $app->redirect($app['url_generator']->generate('classe'));
+			return $app->redirect($app['url_generator']->generate('niveau'));
 		}
 				
 		return $app['twig']->render('niveau/update.twig', array(

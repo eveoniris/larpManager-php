@@ -11,6 +11,7 @@
 			{{ niveau.label }}
 		</h4>
 		<p class="list-group-item-text">
+			<p>Coût : {{ niveau.coutFavori }} / {{ niveau.cout }} / {{ niveau.coutMeconu }}</p>
 			<div class="btn-group" role="group" aria-label="...">
 				<a href="{{ path('niveau.detail', {index: niveau.id}) }}" class="btn btn-primary" role="button">Voir</a>
 			    <a href="{{ path('niveau.update', {index: niveau.id}) }}" class="btn btn-default" role="button">Modifier</a>

@@ -15,13 +15,14 @@
 				<a href="{{ path('competence.detail', {index: competence.id}) }}" class="btn btn-primary" role="button">Voir</a>
 			    <a href="{{ path('competence.update', {index: competence.id}) }}" class="btn btn-default" role="button">Modifier</a>
 			</div>
-			
+		
+		</p>	
 			{% if competence.description %}
-				<p class="text-info">{{ competence.description }}</p>
+				<p class="list-group-item-text text-info">{{ competence.description }}</p>
 			{% else %}
-				<p class="text-warning">Attention, cette compétence n'a pas description</p>
+				<p class="list-group-item-text text-warning">Attention, cette compétence n'a pas description</p>
 			{%  endif %}
-		</p>
+		
 		
 		<p class="list-group-item-text">
 			<small>Créé par {{ competence.creator.username }} le {{ competence.creationDate|date('Y-m-d H:i:s') }}. Dernière mise à jour le {{ competence.updateDate|date('Y-m-d H:i:s') }}</small>
