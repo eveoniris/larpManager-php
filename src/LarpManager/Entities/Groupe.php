@@ -12,16 +12,85 @@ namespace LarpManager\Entities;
 use LarpManager\Entities\BaseGroupe;
 
 /**
+ * Je définie les relations ManyToMany içi au lieu de le faire dans Mysql Workbench
+ * car l'exporteur ne sait pas gérer correctement les relations ManyToMany ayant des 
+ * paramètres autre que les identifiant des tables concernés (c'est dommage ...)
+ * 
  * LarpManager\Entities\Groupe
  *
  * @Entity()
  */
 class Groupe extends BaseGroupe
 {
-
+	
 	public function __construct()
-	{
-		parent::__construct();
+	{		
 		$this->setCreationDate(new \Datetime('NOW'));
+		$this->setUpdateDate(new \Datetime('NOW'));
+		$this->setClasseOpen(0);
+		parent::__construct();
+	}
+	
+	/**
+	 * Get User entity related by `creator_id` (many to one).
+	 *
+	 * @return \LarpManager\Entities\User
+	 */
+	public function getCreator()
+	{
+		return $this->getUserRelatedByCreatorId();
+	}
+	
+	/**
+	 * Set User entity related by `creator_id` (many to one).
+	 *
+	 * @param \LarpManager\Entities\User $user
+	 * @return \LarpManager\Entities\Groupe
+	 */
+	public function setCreator(User $user)
+	{
+		return $this->setUserRelatedByCreatorId($user);
+	}
+	
+	/**
+	 * Get User entity related by `scenariste_id` (many to one).
+	 *
+	 * @return \LarpManager\Entities\User
+	 */
+	public function getScenariste()
+	{
+		return $this->getUserRelatedByScenaristeId();
+	}
+	
+	/**
+	 * Set User entity related by `scenariste_id` (many to one).
+	 *
+	 * @param \LarpManager\Entities\User $user
+	 * @return \LarpManager\Entities\Groupe
+	 */
+	public function setScenariste(User $user)
+	{
+		return $this->setUserRelatedByScenaristeId($user);
+	}
+	
+	public function getClasses()
+	{
+		$classes = array();
+		$groupeClasses =  $this->getGroupeClasses();
+		foreach ( $groupeClasses as $groupeClasse)
+		{
+			$classes[] = $groupeClasse->getClasse();
+		}
+		return $classes;
+	}
+	
+	public function addGroupeClass(GroupeClasse $groupeClasse)
+	{
+		return $this->addGroupeClasse($groupeClasse);
+	}
+	
+	public function removeGroupeClass(GroupeClasse $groupeClasse)
+	{
+		return $this->removeGroupeClasse($groupeClasse);
 	}
 }

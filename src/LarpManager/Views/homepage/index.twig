@@ -29,4 +29,20 @@
 			La page d'acceuil présentera des annonces publiques
 		</div>
 	</div>
+	
+	{% if is_granted('ROLE_SCENARISTE', app.user) %}
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				Liste des groupes dont vous avez la charge :
+			</div>
+			<div class="panel-body">
+				<ul>
+				{% for groupe in app.user.groupeScenariste %}
+					<li><a href="{{ path('groupe.detail',{'index':groupe.id}) }}">{{ groupe.nom }}</a></li>
+				{% endfor %}
+				</ul>
+			</div>
+		</div>
+	{% endif %}
+	
 {% endblock %}

@@ -1,5 +1,7 @@
 {% extends "layout.twig" %}
 
+{% block title %}Région{% endblock title %}
+
 {% block content %}
 
 
@@ -9,17 +11,61 @@
 </h1>
 </div>
 
-<p class="bg-info">Créé par {{ region.creator.username }} le {{ region.creationDate|date('Y-m-d H:i:s') }}. Dernière mise à jour le {{ region.updateDate|date('Y-m-d H:i:s') }}</p>
-<p class="bg-primary">{{ region.description }}</p>
-
-<div>
-<h3>Jeu stratégique</h3>
-<ul>
-<li>Protection : {{ region.protection }}</li>
-<li>Puissance : {{ region.puissance }}</li>
-<li>Puissance maximum : {{ region.puissanceMax }}</li>
-</ul>
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-xs-12 col-md-8">
+			<div class="panel panel-primary">
+  				<div class="panel-heading">
+					{{ region.nom }}			
+  				</div>
+				<div class="panel-body">
+  					<div class="list-group">
+		    		
+		    			<div class="list-group-item">
+			    			<h4 class="list-group-item-heading">Description</h4>
+	    					<p class="list-group-item-text">
+	    					{% if not region.description %}
+	    						<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+	    						Attention, cette région n'a pas de description.
+	    					{% else %}
+	    						{{ region.description }}
+	    					{% endif %}
+	    					</p>
+		    			</div>
+		    			
+		    			<div class="list-group-item">
+			    			<h4 class="list-group-item-heading">Jeu stratégique</h4>
+	    					<p class="list-group-item-text">
+		    					<ul>
+								<li>Protection : {{ region.protection }}</li>
+								<li>Puissance : {{ region.puissance }}</li>
+								<li>Puissance maximum : {{ region.puissanceMax }}</li>
+								</ul>
+							</p>
+						</div>
+					</div>
+				</div>
+				<div class="panel-footer">
+  					<div class="btn-group" role="group" aria-label="...">
+  						<a  class="btn btn-primary" role="button" href="{{ path('region.update', {index : region.id}) }}">Modifier</a>
+						<a  class="btn btn-default" role="button" href="{{ path('region.detail.export', {index : region.id}) }}">Exporter</a>
+					</div>
+  				</div>
+  				
+			</div>
+		</div>
+		
+  				
+		<div class="col-xs-12 col-md-4">
+			<div class="panel panel-default">
+  				<div class="panel-heading">Informations</div>
+  				<div class="panel-body">
+  					<p>Créé par {{ region.creator.username }} le {{ region.creationDate|date('Y-m-d H:i:s') }}.</p>
+  					<p>Dernière mise à jour le {{ region.updateDate|date('Y-m-d H:i:s') }}</p>
+  				</div>
+			</div>		
+		</div>
+	</div>
 </div>
-<a href="{{ path('region.update', {index : region.id}) }}">Modifier</a>
-<a href="{{ path('region.detail.export', {index : region.id}) }}">Exporter</a>
+
 {% endblock %}

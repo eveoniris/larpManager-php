@@ -1,5 +1,45 @@
 <form action="{{ action }}" method="POST" {{ form_enctype(form) }}>
 		{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
 		
-		{{ form(form) }}
+		{{ form_row(form.nom) }}
+		
+		{{ form_row(form.numero) }}
+		
+		{{ form_row(form.description) }}
+		
+		{{ form_row(form.region) }}
+		
+		{{ form_row(form.code) }}
+		
+		{{ form_row(form.scenariste) }}
+		
+
+		
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<label class="control-label">Type de jeu</label>
+			</div>
+			<div class="panel-body">
+				{{ form_row(form.jeuStrategique) }}
+				{{ form_row(form.jeuMaritime) }}
+			</div>
+		</div>
+		
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				{{ form_label(form.groupeClasses) }}
+			</div>
+			<div class="panel-body">
+				<p>Composez votre groupe avec une ou plusieurs classes. Ces classes seront disponibles pour les joueurs.
+				</p>
+			</div>
+			<ul class="list-group groupeClasses" data-prototype="{{ form_widget(form.groupeClasses.vars.prototype)|e }}">
+				<li class="list-group-item">{{ form_row(form.classeOpen) }}</li>
+		    	{% for groupeClasse in form.groupeClasses %}
+		           	<li class="list-group-item">{{ form_widget(groupeClasse.classe) }}</li>
+		       	{% endfor %}
+			</ul>
+		</div>
+		
+		{{ form_rest(form) }}
 </form>

@@ -20,23 +20,18 @@ body {
   height: 60px;
   background-color: #f5f5f5;
 }
-        
-/** 
- *	Présentation d'une entity 
- */
- 
-div#ajax_entity{
-	display:inline-block;
-	vertical-align:top;	
-	margin-right: 20px;
-	padding: 10px;
+
+/**
+ * Ajoute un asterix rouge si le champ est obligatoire
+ */        
+.control-label.required:after {
+	font-family: 'FontAwesome';
+	font-weight: normal;
+	content: "\f069";
+	color: red;
+	margin-left: 5px;
 }
 
-div#ajax_result{
-	display:inline-block;
-	vertical-align:top;	
-	padding: 10px;
-}
 
 /** 
  *	Icones 

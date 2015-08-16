@@ -26,6 +26,13 @@ class User extends BaseUser implements AdvancedUserInterface, \Serializable
 		parent::__construct();
 	}
 	
+	
+	public function getGroupeScenariste()
+	{
+		return $this->getGroupeRelatedByScenaristeIds();	
+	}
+	
+	
 	/**
 	 * Returns the roles granted to the user. Note that all users have the ROLE_USER role.
 	 *

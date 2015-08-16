@@ -4,19 +4,22 @@
 
 {% block content %}
 
+	<a href="{{ path("groupe") }}">Retour à la liste des groupes</a>
+	
 	<div class="page-header">
-		<h1>Ajout d'un groupe</h1>
+		<h1>Modification de {{ groupe.nom }}</h1>
 	</div>
 
 	<div class="container-fluid">
 		<div class="row">
 			<div class="col-xs-12 col-md-8">
-				{{ include("groupe/fragment/form.twig",{'action': path('groupe.add'), 'form' : form}) }}
+				{{ include("groupe/fragment/form.twig",{'action': path('groupe.update',{'index': groupe.id}), 'form' : form}) }}
 			</div>
 		</div>
 	</div>
-	
+		
 {% endblock content %}
+
 
 {% block javascript %}
 
@@ -32,7 +35,7 @@
 		    var newForm = prototype.replace(/__name__/g, collectionHolder.children().length);
 	
 		    // Affiche le formulaire dans la page dans un li, avant le lien "ajouter un tag"
-		    var $newFormLi = $('<li></li>').append(newForm);
+		    var $newFormLi = $('<li class="list-group-item"></li>').append(newForm);
 		    $newLinkLi.before($newFormLi);
 
 			 // ajoute un lien de suppression au nouveau formulaire
@@ -40,8 +43,9 @@
 		}
 
 		function addGroupeClasseFormDeleteLink($groupeClasseFormLi) {
-		    var $removeFormA = $('<a href="#">Supprimer cette classe</a>');
-		    $groupeClasseFormLi.append($removeFormA);
+		    var $removeFormA = $('<span class="input-group-btn"><a class="btn btn-link" href="#"><span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span></a></span>');
+		    $('select',$groupeClasseFormLi).wrap('<div class="input-group"></div>');
+		    $('select',$groupeClasseFormLi).after($removeFormA);
 
 		    $removeFormA.on('click', function(e) {
 		        // empêche le lien de créer un « # » dans l'URL
@@ -57,7 +61,7 @@
 		
 		// ajoute un lien « add a tag »
 		var $addGroupeClasseLink = $('<a href="#" class="add_groupeClasse_link">Ajouter une classe</a>');
-		var $newLinkLi = $('<li></li>').append($addGroupeClasseLink);
+		var $newLinkLi = $('<li class="list-group-item"></li>').append($addGroupeClasseLink);
 		
 		jQuery(document).ready(function() {
 

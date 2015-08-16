@@ -50,12 +50,18 @@ class Classe extends BaseClasse
 	 */
 	protected $competenceCreations;
 	
+	
 	public function __construct()
 	{
 		$this->competenceFavorites = new ArrayCollection();
 		$this->competenceNormales = new ArrayCollection();
 		$this->competenceCreations = new ArrayCollection();
 		parent::__construct();
+	}
+	
+	public function __toString()
+	{
+		return $this->getLabel();	
 	}
 	
 	public function getLabel()

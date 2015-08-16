@@ -1,6 +1,6 @@
 <ul class="list-group">
 	{%  if add != false %}
-		<a href="{{ path('groupe_add') }}" class="list-group-item active">
+		<a href="{{ path('groupe.add') }}" class="list-group-item active">
 			<span class="badge"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></span>
 			<h4 class="list-group-item-heading">Ajouter un groupe</h4>
 		</a>
@@ -14,13 +14,12 @@
 			{{ groupe.nom }} : {{ groupe.description }}.
 			
 			<div class="pull-right btn-group" role="group" aria-label="...">
-				<a href="{{ path('groupe_detail', {index: groupe.id}) }}" class="btn btn-primary" role="button">Voir</a>
-			    <a href="{{ path('groupe_update', {index: groupe.id}) }}" class="btn btn-default" role="button">Modifier</a>
+				<a href="{{ path('groupe.detail', {index: groupe.id}) }}" class="btn btn-primary" role="button">Voir</a>
+			    <a href="{{ path('groupe.update', {index: groupe.id}) }}" class="btn btn-default" role="button">Modifier</a>
 			</div>
 		</p>
 		<p class="list-group-item-text">
-			Créé par :
-			<small>, le {{ groupe.creationDate|date('Y-m-d H:i:s') }}</small>
+			<small>Créé par {{ groupe.creator.username }} le {{ groupe.creationDate|date('Y-m-d H:i:s') }}. Dernière mise à jour le {{ groupe.updateDate|date('Y-m-d H:i:s') }}</small>
 		</p>
 		
 	</li>
