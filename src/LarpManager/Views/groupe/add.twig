@@ -26,13 +26,13 @@
 		function addGroupeClasseForm(collectionHolder, $newLinkLi) {
 		    // Récupère l'élément ayant l'attribut data-prototype comme expliqué plus tôt
 		    var prototype = collectionHolder.attr('data-prototype');
-			console.log(prototype);
+
 		    // Remplace '__name__' dans le HTML du prototype par un nombre basé sur
 		    // la longueur de la collection courante
 		    var newForm = prototype.replace(/__name__/g, collectionHolder.children().length);
 	
 		    // Affiche le formulaire dans la page dans un li, avant le lien "ajouter un tag"
-		    var $newFormLi = $('<li></li>').append(newForm);
+		    var $newFormLi = $('<li class="list-group-item"></li>').append(newForm);
 		    $newLinkLi.before($newFormLi);
 
 			 // ajoute un lien de suppression au nouveau formulaire
@@ -40,8 +40,9 @@
 		}
 
 		function addGroupeClasseFormDeleteLink($groupeClasseFormLi) {
-		    var $removeFormA = $('<a href="#">Supprimer cette classe</a>');
-		    $groupeClasseFormLi.append($removeFormA);
+		    var $removeFormA = $('<span class="input-group-btn"><a class="btn btn-link" href="#"><span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span></a></span>');
+		    $('select',$groupeClasseFormLi).wrap('<div class="input-group"></div>');
+		    $('select',$groupeClasseFormLi).after($removeFormA);
 
 		    $removeFormA.on('click', function(e) {
 		        // empêche le lien de créer un « # » dans l'URL
@@ -57,7 +58,7 @@
 		
 		// ajoute un lien « add a tag »
 		var $addGroupeClasseLink = $('<a href="#" class="add_groupeClasse_link">Ajouter une classe</a>');
-		var $newLinkLi = $('<li></li>').append($addGroupeClasseLink);
+		var $newLinkLi = $('<li class="list-group-item"></li>').append($addGroupeClasseLink);
 		
 		jQuery(document).ready(function() {
 

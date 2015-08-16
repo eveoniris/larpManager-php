@@ -31,6 +31,11 @@ class Groupe extends BaseGroupe
 		parent::__construct();
 	}
 	
+	public function __toString()
+	{
+		return $this->getNom();	
+	}
+	
 	/**
 	 * Get User entity related by `creator_id` (many to one).
 	 *

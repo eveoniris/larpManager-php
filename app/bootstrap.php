@@ -202,6 +202,7 @@ else
 	$app->mount('/competence', new LarpManager\CompetenceControllerProvider());
 	$app->mount('/niveau', new LarpManager\NiveauControllerProvider());
 	$app->mount('/classe', new LarpManager\ClasseControllerProvider());
+	$app->mount('/ressource', new LarpManager\RessourceControllerProvider());
 	
 	
 	/**
@@ -220,6 +221,7 @@ else
 		array('^/pays/.*$', 'ROLE_SCENARISTE'),
 		array('^/region/.*$', 'ROLE_SCENARISTE'),
 		array('^/groupe/.*$', 'ROLE_SCENARISTE'),
+		array('^/ressource/.*$', 'ROLE_SCENARISTE'),			
 		array('^/competence/.*$', 'ROLE_REGLE'),
 		array('^/niveau/.*$', 'ROLE_REGLE'),
 		array('^/classe/.*$', 'ROLE_REGLE'),

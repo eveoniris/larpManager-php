@@ -29,7 +29,7 @@
 		function addGroupeClasseForm(collectionHolder, $newLinkLi) {
 		    // Récupère l'élément ayant l'attribut data-prototype comme expliqué plus tôt
 		    var prototype = collectionHolder.attr('data-prototype');
-			console.log(prototype);
+
 		    // Remplace '__name__' dans le HTML du prototype par un nombre basé sur
 		    // la longueur de la collection courante
 		    var newForm = prototype.replace(/__name__/g, collectionHolder.children().length);

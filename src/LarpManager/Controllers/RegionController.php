@@ -4,8 +4,8 @@ namespace LarpManager\Controllers;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Silex\Application;
-use LarpManager\Form\RegionMinimalForm;
 use LarpManager\Form\RegionForm;
+
 
 class RegionController
 {
@@ -26,7 +26,7 @@ class RegionController
 	{
 		$region = new \LarpManager\Entities\Region();
 		
-		$form = $app['form.factory']->createBuilder(new RegionMinimalForm(), $region)
+		$form = $app['form.factory']->createBuilder(new RegionForm(), $region)
 			->add('save','submit', array('label' => "Sauvegarder"))
 			->add('save_continue','submit', array('label' => "Sauvegarder & continuer"))
 			->getForm();
@@ -37,7 +37,7 @@ class RegionController
 		{
 			$region = $form->getData();
 			$region->setCreator($app['user']);
-			
+						
 			$app['orm.em']->persist($region);
 			$app['orm.em']->flush();
 				
@@ -66,7 +66,7 @@ class RegionController
 		$id = $request->get('index');
 		
 		$region = $app['orm.em']->find('\LarpManager\Entities\Region',$id);
-		
+				
 		$form = $app['form.factory']->createBuilder(new RegionForm(), $region)
 			->add('update','submit', array('label' => "Sauvegarder"))
 			->add('delete','submit', array('label' => "Supprimer"))
@@ -77,7 +77,7 @@ class RegionController
 		if ( $form->isValid() )
 		{
 			$region = $form->getData();
-			
+						
 			if ($form->get('update')->isClicked())
 			{
 				$region->setUpdateDate(new \DateTime('NOW'));
@@ -85,6 +85,7 @@ class RegionController
 				$app['orm.em']->persist($region);
 				$app['orm.em']->flush();
 				$app['session']->getFlashBag()->add('success', 'La région a été mise à jour.');
+				return $app->redirect($app['url_generator']->generate('region.detail',array('index' => $id)));
 			}
 			else if ($form->get('delete')->isClicked())
 			{
@@ -92,9 +93,8 @@ class RegionController
 				$app['orm.em']->flush();
 			
 				$app['session']->getFlashBag()->add('success', 'La région a été supprimée.');
+				return $app->redirect($app['url_generator']->generate('region'));
 			}
-				
-			return $app->redirect($app['url_generator']->generate('region'));
 		}
 		
 		return $app['twig']->render('region/update.twig', array(

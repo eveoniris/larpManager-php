@@ -217,6 +217,18 @@ class InstallController
 			$niveau->setNiveau("5");
 			$app['orm.em']->persist($niveau);
 			$app['orm.em']->flush();
+			
+			$rarete = new \LarpManager\Entities\Rarete();
+			$rarete->setLabel("Commun");
+			$rarete->setValue("1");
+			$app['orm.em']->persist($rarete);
+			$app['orm.em']->flush();
+			
+			$rarete = new \LarpManager\Entities\Rarete();
+			$rarete->setLabel("Rare");
+			$rarete->setValue("2");
+			$app['orm.em']->persist($rarete);
+			$app['orm.em']->flush();
 						
 			// création de l'utilisateur admin
 			return $app->redirect($app['url_generator']->generate('install_create_user'));

@@ -12,15 +12,15 @@ namespace LarpManager\Entities;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * LarpManager\Entities\Ressource
+ * LarpManager\Entities\Rarete
  *
  * @Entity()
- * @Table(name="ressource", indexes={@Index(name="fk_ressource_rarete1_idx", columns={"rarete_id"})})
+ * @Table(name="rarete")
  * @InheritanceType("SINGLE_TABLE")
  * @DiscriminatorColumn(name="discr", type="string")
- * @DiscriminatorMap({"base":"BaseRessource", "extended":"Ressource"})
+ * @DiscriminatorMap({"base":"BaseRarete", "extended":"Rarete"})
  */
-class BaseRessource
+class BaseRarete
 {
     /**
      * @Id
@@ -30,31 +30,31 @@ class BaseRessource
     protected $id;
 
     /**
-     * @Column(type="string", length=100)
+     * @Column(type="string", length=45)
      */
     protected $label;
 
     /**
-     * @ManyToOne(targetEntity="Rarete", inversedBy="ressources")
-     * @JoinColumn(name="rarete_id", referencedColumnName="id")
+     * @Column(name="`value`", type="integer")
      */
-    protected $rarete;
+    protected $value;
 
     /**
-     * @ManyToMany(targetEntity="Region", mappedBy="ressources")
+     * @OneToMany(targetEntity="Ressource", mappedBy="rarete")
+     * @JoinColumn(name="id", referencedColumnName="rarete_id")
      */
-    protected $regions;
+    protected $ressources;
 
     public function __construct()
     {
-        $this->regions = new ArrayCollection();
+        $this->ressources = new ArrayCollection();
     }
 
     /**
      * Set the value of id.
      *
      * @param integer $id
-     * @return \LarpManager\Entities\Ressource
+     * @return \LarpManager\Entities\Rarete
      */
     public function setId($id)
     {
@@ -77,7 +77,7 @@ class BaseRessource
      * Set the value of label.
      *
      * @param string $label
-     * @return \LarpManager\Entities\Ressource
+     * @return \LarpManager\Entities\Rarete
      */
     public function setLabel($label)
     {
@@ -97,66 +97,66 @@ class BaseRessource
     }
 
     /**
-     * Set Rarete entity (many to one).
+     * Set the value of value.
      *
-     * @param \LarpManager\Entities\Rarete $rarete
-     * @return \LarpManager\Entities\Ressource
-     */
-    public function setRarete(Rarete $rarete = null)
-    {
-        $this->rarete = $rarete;
-
-        return $this;
-    }
-
-    /**
-     * Get Rarete entity (many to one).
-     *
+     * @param integer $value
      * @return \LarpManager\Entities\Rarete
      */
-    public function getRarete()
+    public function setValue($value)
     {
-        return $this->rarete;
-    }
-
-    /**
-     * Add Region entity to collection.
-     *
-     * @param \LarpManager\Entities\Region $region
-     * @return \LarpManager\Entities\Ressource
-     */
-    public function addRegion(Region $region)
-    {
-        $this->regions[] = $region;
+        $this->value = $value;
 
         return $this;
     }
 
     /**
-     * Remove Region entity from collection.
+     * Get the value of value.
      *
-     * @param \LarpManager\Entities\Region $region
-     * @return \LarpManager\Entities\Ressource
+     * @return integer
      */
-    public function removeRegion(Region $region)
+    public function getValue()
     {
-        $this->regions->removeElement($region);
+        return $this->value;
+    }
+
+    /**
+     * Add Ressource entity to collection (one to many).
+     *
+     * @param \LarpManager\Entities\Ressource $ressource
+     * @return \LarpManager\Entities\Rarete
+     */
+    public function addRessource(Ressource $ressource)
+    {
+        $this->ressources[] = $ressource;
 
         return $this;
     }
 
     /**
-     * Get Region entity collection.
+     * Remove Ressource entity from collection (one to many).
+     *
+     * @param \LarpManager\Entities\Ressource $ressource
+     * @return \LarpManager\Entities\Rarete
+     */
+    public function removeRessource(Ressource $ressource)
+    {
+        $this->ressources->removeElement($ressource);
+
+        return $this;
+    }
+
+    /**
+     * Get Ressource entity collection (one to many).
      *
      * @return \Doctrine\Common\Collections\Collection
      */
-    public function getRegions()
+    public function getRessources()
     {
-        return $this->regions;
+        return $this->ressources;
     }
 
     public function __sleep()
     {
-        return array('id', 'label', 'rarete_id');
+        return array('id', 'label', 'value');
     }
 }

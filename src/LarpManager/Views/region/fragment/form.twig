@@ -1,5 +1,24 @@
 <form action="{{ action }}" method="POST" {{ form_enctype(form) }}>
 		{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
 		
-		{{ form(form) }}
+		{{ form_row(form.nom) }}
+		
+		{{ form_row(form.description) }}
+		
+		{{ form_row(form.pays) }}
+		
+		{{ form_row(form.dirigeant) }}
+		
+		{{ form_row(form.capitale) }}
+		
+		{{ form_row(form.protection) }}
+		
+		{{ form_row(form.puissance) }}
+		
+		{{ form_row(form.puissanceMax) }}
+		
+		{{ form_row(form.ressources) }}
+		
+
+		{{ form_rest(form) }}
 </form>

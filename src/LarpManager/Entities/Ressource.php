@@ -18,4 +18,8 @@ use LarpManager\Entities\BaseRessource;
  */
 class Ressource extends BaseRessource
 {
+	public function __toString()
+	{
+		return $this->getLabel();
+	}
 }

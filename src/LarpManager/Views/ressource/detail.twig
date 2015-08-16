@@ -1,0 +1,37 @@
+{% extends "layout.twig" %}
+
+{% block title %}Ressource{% endblock title %}
+
+{% block content %}
+
+<a href="{{ path("niveau") }}">Retour à la liste des ressources</a>
+
+<div class="page-header">
+	<h1>Détail de {{ ressource.label }}</h1>
+</div>
+	
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-xs-12 col-md-8">
+			
+			<div class="panel panel-primary">
+  				<div class="panel-heading">
+  					{{ ressource.label }}				
+  				</div>
+  				<div class="panel-body">
+  					{{ ressource.rarete.label }}
+  				</div>
+
+  				<div class="panel-footer">
+  					<div class="btn-group" role="group" aria-label="...">
+  						<a  class="btn btn-primary" role="button" href="{{ path('ressource.update', {index : ressource.id}) }}">Modifier</a>
+						<a  class="btn btn-default" role="button" href="{{ path('ressource.detail.export', {index : ressource.id}) }}">Exporter</a>
+					</div>
+  				</div>
+			</div>			
+		</div>
+	</div>
+</div>
+	
+			
+{% endblock %}

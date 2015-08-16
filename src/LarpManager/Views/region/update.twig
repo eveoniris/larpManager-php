@@ -15,3 +15,67 @@
 	</div>
 	
 {% endblock content %}
+
+{% block javascript %}
+
+	{{  parent() }}
+	<script>
+
+		function addRessourceForm(collectionHolder, $newLinkLi) {
+		    // Récupère l'élément ayant l'attribut data-prototype comme expliqué plus tôt
+		    var prototype = collectionHolder.attr('data-prototype');
+
+		    // Remplace '__name__' dans le HTML du prototype par un nombre basé sur
+		    // la longueur de la collection courante
+		    var newForm = prototype.replace(/__name__/g, collectionHolder.children().length);
+	
+		    // Affiche le formulaire dans la page dans un li, avant le lien "ajouter un tag"
+		    var $newFormLi = $('<li class="list-group-item"></li>').append(newForm);
+		    $newLinkLi.before($newFormLi);
+
+			 // ajoute un lien de suppression au nouveau formulaire
+		    addRessourceFormDeleteLink($newFormLi);
+		}
+
+		function addRessourceFormDeleteLink($ressourceFormLi) {
+		    var $removeFormA = $('<span class="input-group-btn"><a class="btn btn-link" href="#"><span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span></a></span>');
+		    $('select',$ressourceFormLi).wrap('<div class="input-group"></div>');
+		    $('select',$ressourceFormLi).after($removeFormA);
+
+		    $removeFormA.on('click', function(e) {
+		        // empêche le lien de créer un « # » dans l'URL
+		        e.preventDefault();
+
+		        // supprime l'élément li pour le formulaire de tag
+		        $ressourceFormLi.remove();
+		    });
+		}
+	
+		// Récupère le div qui contient la collection de tags
+		var collectionHolder = $('ul.ressources');
+		
+		// ajoute un lien « add a tag »
+		var $addRessourceLink = $('<a href="#" class="add_ressource_link">Ajouter une production</a>');
+		var $newLinkLi = $('<li class="list-group-item"></li>').append($addRessourceLink);
+		
+		jQuery(document).ready(function() {
+
+			// ajoute un lien de suppression à tous les éléments li de
+		    // formulaires de tag existants
+		    collectionHolder.find('li').each(function() {
+		        addRessourceFormDeleteLink($(this));
+		    });
+		    
+		    // ajoute l'ancre « ajouter un tag » et li à la balise ul
+		    collectionHolder.append($newLinkLi);
+		
+		    $addRessourceLink.on('click', function(e) {
+		        // empêche le lien de créer un « # » dans l'URL
+		        e.preventDefault();
+		
+		        // ajoute un nouveau formulaire tag (voir le prochain bloc de code)
+		        addRessourceForm(collectionHolder, $newLinkLi);
+		    });
+		});
+</script>
+{% endblock javascript %}

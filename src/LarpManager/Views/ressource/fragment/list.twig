@@ -1,0 +1,25 @@
+<ul class="list-group">
+	{%  if add != false %}
+		<a href="{{ path('ressource.add') }}" class="list-group-item active">
+			<span class="badge"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></span>
+			<h4 class="list-group-item-heading">Ajouter une ressource</h4>
+		</a>
+	{%  endif %}
+	{%  for ressource in ressources %}
+	<li class="list-group-item">
+		<h4 class="list-group-item-heading">
+			{{ ressource.label }}
+		</h4>
+		<p class="list-group-item-text">
+			<p>Rareté : {{ ressource.rarete.label }}</p>
+			<div class="btn-group" role="group" aria-label="...">
+				<a href="{{ path('ressource.detail', {index: ressource.id}) }}" class="btn btn-primary" role="button">Voir</a>
+			    <a href="{{ path('ressource.update', {index: ressource.id}) }}" class="btn btn-default" role="button">Modifier</a>
+			</div>
+			
+		</p>
+		
+		
+	</li>
+	{%  endfor %}
+</ul>

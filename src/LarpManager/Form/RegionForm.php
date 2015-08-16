@@ -6,6 +6,8 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
+use LarpManager\Form\Type\RessourceType;
+
 class RegionForm extends AbstractType
 {
 	public function buildForm(FormBuilderInterface $builder, array $options)
@@ -20,7 +22,13 @@ class RegionForm extends AbstractType
 					'required' => true,
 					'class' => 'LarpManager\Entities\Pays',
 					'property' => 'nom', )
-				)				
+				)
+				->add('dirigeant','text', array(
+						'required' => false,	)
+				)
+				->add('capitale','text', array(
+						'required' => false,	)
+				)
 				->add('protection','integer', array(
 					'label' => "Valeur de protection",
 					'required' => false,	)
@@ -29,10 +37,16 @@ class RegionForm extends AbstractType
 					'label' => "Valeur de puissance actuelle",
 					'required' => false,	)
 				)
-				->add('puissance_max','integer', array(
+				->add('puissanceMax','integer', array(
 					'label' => "Valeur de puissance maximum",
-					'required' => false,	)
-				);
+					'required' => false,
+				))
+				->add('ressources','entity', array(
+						'required' => false,
+						'multiple' => true,
+						'class' => 'LarpManager\Entities\Ressource',
+						'property' => 'label', 
+				));
 	}
 	
 	public function getName()

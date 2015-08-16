@@ -7,6 +7,8 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Doctrine\ORM\EntityRepository;
 
+use LarpManager\Form\Type\ClasseType;
+
 class GroupeForm extends AbstractType
 {
 	public function buildForm(FormBuilderInterface $builder, array $options)
@@ -58,7 +60,7 @@ class GroupeForm extends AbstractType
 						'allow_add' => true,
 						'allow_delete' => true,
 						'by_reference' => false,
-						'type' => new GroupeClasseForm()
+						'type' => new ClasseType()
 				));
 	}
 
