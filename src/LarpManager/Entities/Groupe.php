@@ -46,12 +46,23 @@ class Groupe extends BaseGroupe
 	
 	/**
 	 * Fourni la liste des classes disponibles (non actuellement utilisé par un personnage)
+	 * Ce type de liste est utile pour le formulaire de création d'un personnage
 	 */
-	public function getClasseAvailables()
+	public function getAvailableClasses()
 	{
-		return null;	
-	}
+		$availableClasses = $this->getClasses();
+		
+		foreach ( $this->getPersonnages() as $personnage)
+		{
+			$key = array_search($personnage->getClasse(),$availableClasses);
 			
+			if ( $key !== false )
+			{
+				array_splice($availableClasses, $key,1);
+			}
+		}
+		return $availableClasses;	
+	}			
 	
 	/**
 	 * Get User entity related by `creator_id` (many to one).

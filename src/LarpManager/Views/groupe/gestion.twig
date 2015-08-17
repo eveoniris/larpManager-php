@@ -38,10 +38,13 @@
 					<ul class="list-group">
 						<li class="list-group-item">
 							<strong>Composition du groupe : </strong>{{ groupe.classes|length }} personnages.<br />
-							<strong>Nombre de personnages vacants : </strong>{{ groupe.classes|length }} personnages.<br />
-							<a href="{{ path('groupe.personnage',{'index':groupe.id}) }}">Mon personnage</a>
+							<strong>Nombre de personnages vacants : </strong>{{ groupe.availableClasses|length }} personnages.<br />
+							<a href="{{ path('groupe.joueur',{'index':groupe.id}) }}">Mon personnage</a>
 						</li>
 						<li class="list-group-item">
+							{% if groupe.classes|length - groupe.availableClasses|length >= groupe.classeOpen %}
+							<p class="warning">Attention ! des places sont encore disponibles, mais l'état de vos paiements à eve-oniris ne permet pas aux joueurs de les selectionner</p>
+							{% endif %}
 							<strong>Nombre de place ouverte : </strong>{{ groupe.classeOpen }}
 							<small>(Le nombre de places ouvertes dépend de vos paiements à eve-oniris)</small>
 						</li>

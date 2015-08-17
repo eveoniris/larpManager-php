@@ -13,16 +13,28 @@ class PersonnageForm extends AbstractType
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
 		$builder->add('nom','text', array(
+					'required' => true,
 					'label' => '' 
 				))
-				->add('intrigue','checkbox', array(
-					'label' => 'Participer aux intrigues'
+				->add('surnom','text', array(
+						'required' => false,
+						'label' => ''
 				))
-				->add('classe','entity', array(
-					'label' =>  'Classe',
-					'property' => 'label',
-					'class' => 'LarpManager\Entities\Classe',
-					'query_builder' => function()
+				->add('age','entity', array(
+						'required' => true,
+						'label' => '',
+						'class' => 'LarpManager\Entities\Age',
+						'property' => 'label',
+				))
+				->add('sexe','entity', array(
+						'required' => true,
+						'label' => '',
+						'class' => 'LarpManager\Entities\Sexe',
+						'property' => 'label',
+				))
+				->add('intrigue','checkbox', array(
+					'required' => true,
+					'label' => 'Participer aux intrigues'
 				));
 	}
 	

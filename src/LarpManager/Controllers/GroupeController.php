@@ -80,12 +80,18 @@ class GroupeController
 		if (  ! $groupe->hasEnoughPlace() )
 		{
 			$app['session']->getFlashBag()->add('error','Désolé, ce groupe ne contient plus de classes disponible');
-			return $app->redirect($app['url_generator']->generate('groupe.joueur',array('index',groupe.id)),301);
+			return $app->redirect($app['url_generator']->generate('groupe.joueur',array('index'=>$id)),301);
 		}
 		
 		$personnage = new \LarpManager\Entities\Personnage();
 		
 		$form = $app['form.factory']->createBuilder(new PersonnageForm(), $personnage)
+			->add('classe','entity', array(
+					'label' =>  'Classe',
+					'property' => 'label',
+					'class' => 'LarpManager\Entities\Classe',
+					'choices' => array_unique($groupe->getAvailableClasses()),
+				))
 			->add('save','submit', array('label' => 'Sauvegarder mon personnage'))
 			->getForm();
 		
@@ -101,7 +107,7 @@ class GroupeController
 			$app['orm.em']->flush($personnage);
 			
 			$app['session']->getFlashBag()->add('success','Votre personnage a été sauvegardé');
-			return $app->redirect($app['url_generator']->generate('groupe.joueur',array('index',groupe.id)),301);
+			return $app->redirect($app['url_generator']->generate('groupe.joueur',array('index'=>$id())),301);
 		}
 		
 		return $app['twig']->render('groupe/personnage/add.twig', array(

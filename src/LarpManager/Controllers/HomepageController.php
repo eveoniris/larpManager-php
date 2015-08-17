@@ -46,7 +46,7 @@ class HomepageController
 				$app['groupe.manager']->addOnGroupe($app['user'],$groupe);
 				
 				$app['session']->getFlashBag()->add('success', 'Vous êtes maintenant inscrit au groupe.');
-				return $app->redirect($app['url_generator']->generate('groupe.personnage',array('index' => $groupe->getId())),301);
+				return $app->redirect($app['url_generator']->generate('groupe.joueur',array('index' => $groupe->getId())),301);
 			}
 			else
 			{

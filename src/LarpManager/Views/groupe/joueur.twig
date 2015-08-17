@@ -72,9 +72,7 @@
 						<label class="control-label">Classes disponibles</label>
 					</div>
 					<div class="panel-body">
-						{% for classe in groupe.classes %}
-							{{ classe.label }}
-						{% endfor %}
+						{{ groupe.availableClasses|join(', ') }}
 					</div>
 				</div>
 			
