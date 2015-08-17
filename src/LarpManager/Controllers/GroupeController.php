@@ -9,6 +9,7 @@ use Silex\Application;
 use Doctrine\Common\Collections\ArrayCollection;
 
 use LarpManager\Form\GroupeForm;
+use LarpManager\Form\PersonnageForm;
 
 /**
  * Gestion des groupes
@@ -16,6 +17,11 @@ use LarpManager\Form\GroupeForm;
  */
 class GroupeController
 {
+	/**
+	 * Liste des groupes
+	 * @param Request $request
+	 * @param Application $app
+	 */
 	public function indexAction(Request $request, Application $app)
 	{
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Groupe');
@@ -28,6 +34,80 @@ class GroupeController
 				
 		return $app['twig']->render('groupe/index.twig', array(
 				'last_add' => $groupes));
+	}
+	
+	/**
+	 * Page de gestion d'un groupe pour son responsable
+	 * @param unknown $request
+	 * @param unknown $app
+	 */
+	public function gestionAction(Request $request, Application $app)
+	{
+		$id = $request->get('index');
+		
+		$groupe = $app['orm.em']->find('\LarpManager\Entities\Groupe',$id);
+		
+		return $app['twig']->render('groupe/gestion.twig', array(
+				'groupe' => $groupe));
+	}
+	
+	/**
+	 * Page de gestion d'un groupe pour un membre du groupe
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function joueurAction(Request $request, Application $app)
+	{
+		$id = $request->get('index');
+		
+		$groupe = $app['orm.em']->find('\LarpManager\Entities\Groupe',$id);
+		
+		return $app['twig']->render('groupe/joueur.twig', array(
+				'groupe' => $groupe));
+	}
+	
+	/**
+	 * Page de création d'un personnage
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function personnageAddAction(Request $request, Application $app)
+	{
+		$id = $request->get('index');
+		
+		$groupe = $app['orm.em']->find('\LarpManager\Entities\Groupe',$id);
+		
+		if (  ! $groupe->hasEnoughPlace() )
+		{
+			$app['session']->getFlashBag()->add('error','Désolé, ce groupe ne contient plus de classes disponible');
+			return $app->redirect($app['url_generator']->generate('groupe.joueur',array('index',groupe.id)),301);
+		}
+		
+		$personnage = new \LarpManager\Entities\Personnage();
+		
+		$form = $app['form.factory']->createBuilder(new PersonnageForm(), $personnage)
+			->add('save','submit', array('label' => 'Sauvegarder mon personnage'))
+			->getForm();
+		
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
+		{
+			$personnage = $form->getData();
+			$personnage->setUser($app['user']);
+			$personnage->setGroupe($groupe);
+			
+			$app['orm.em']->persist($personnage);
+			$app['orm.em']->flush($personnage);
+			
+			$app['session']->getFlashBag()->add('success','Votre personnage a été sauvegardé');
+			return $app->redirect($app['url_generator']->generate('groupe.joueur',array('index',groupe.id)),301);
+		}
+		
+		return $app['twig']->render('groupe/personnage/add.twig', array(
+				'form' => $form->createView(),
+				'groupe' => $groupe,
+		));
 	}
 	
 	/**

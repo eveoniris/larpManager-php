@@ -59,10 +59,10 @@
 				<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Compte</a>
 				<ul class="dropdown-menu">
 					{%  if app.user %}			
-						<li><a href="{{ path('user') }}">Mon compte</a></li>
-						<li><a href="{{ path('user.list') }}">Liste des utilisateurs</a></li>
+						<li><a href="{{ path('user') }}">Mon compte</a></li>					
 						<li><a href="{{ path('user.logout') }}">Déconnection</a></li>
 						{% if is_granted('ROLE_ADMIN', app.user) %}
+							<li><a href="{{ path('user.list') }}">Liste des utilisateurs</a></li>
 							<li><a href="{{ path('user.right') }}">Gestion des droits</a></li>
 						{% endif %}
 					{%  else %}

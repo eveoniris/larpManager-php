@@ -5,6 +5,8 @@ namespace LarpManager;
 use Silex\Application;
 use Silex\ControllerProviderInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+
 
 class UserControllerProvider implements ControllerProviderInterface
 {
@@ -22,25 +24,52 @@ class UserControllerProvider implements ControllerProviderInterface
 			}
 		});
 		
-		$controllers->get('/{id}', 'LarpManager\Controllers\UserController::viewAction')
+		$controllers->match('/{id}', 'LarpManager\Controllers\UserController::viewAction')
 			->bind('user.view')
-			->assert('id', '\d+');
+			->assert('id', '\d+')
+			->method('GET')
+			->before(function(Request $request) use ($app) {
+				if (!$app['security.authorization_checker']->isGranted('VIEW_USER_ID', $request->get('id'))) {
+					throw new AccessDeniedException();
+				}				
+			});
 			
-		$controllers->match('/{id}/edit', 'LarpManager\Controllers\UserController::editAction')
-			->bind('user.edit')
+		$controllers->match('/add', 'LarpManager\Controllers\UserController::addAction')
+			->bind('user.add')
 			->method('GET|POST')
 			->before(function(Request $request) use ($app) {
-				if (!$app['security']->isGranted('EDIT_USER_ID', $request->get('id'))) {
+				if (!$app['security.authorization_checker']->isGranted('ROLE_SCENARISTE')) {
 					throw new AccessDeniedException();
 				}
 			});
 			
-		$controllers->get('/list', 'LarpManager\Controllers\UserController::listAction')
-			->bind('user.list');
+		$controllers->match('/{id}/edit', 'LarpManager\Controllers\UserController::editAction')
+			->bind('user.edit')
+			->assert('id', '\d+')
+			->method('GET|POST')
+			->before(function(Request $request) use ($app) {
+				if (!$app['security.authorization_checker']->isGranted('EDIT_USER_ID', $request->get('id'))) {
+					throw new AccessDeniedException();
+				}
+			});
+			
+		$controllers->match('/list', 'LarpManager\Controllers\UserController::listAction')
+			->bind('user.list')
+			->method('GET')
+			->before(function(Request $request) use ($app) {
+				if (!$app['security.authorization_checker']->isGranted('ROLE_ADMIN')) {
+					throw new AccessDeniedException();
+				}				
+			});
 		
 		$controllers->match('/right', 'LarpManager\Controllers\UserController::rightAction')
 			->bind('user.right')
-			->method('GET|POST');
+			->method('GET|POST')
+			->before(function(Request $request) use ($app) {
+				if (!$app['security.authorization_checker']->isGranted('ROLE_ADMIN')) {
+					throw new AccessDeniedException();
+				}
+			});
 
 		$controllers->match('/login','LarpManager\Controllers\UserController::loginAction')
 			->bind("user.login")

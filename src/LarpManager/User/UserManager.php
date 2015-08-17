@@ -395,6 +395,13 @@ class UserManager implements UserProviderInterface
 		return $users;
 	}
 	
+	public function findCount()
+	{
+		return  $this->app['orm.em']
+        	->createQuery('SELECT COUNT(user) FROM \LarpManager\Entities\User user')
+        	->getSingleScalarResult();
+	}
+	
 	/**
 	 * Reconstitute a User object from stored data.
 	 *

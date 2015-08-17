@@ -37,6 +37,23 @@ class Groupe extends BaseGroupe
 	}
 	
 	/**
+	 * Vérifie si le groupe dispose de suffisement de place disponible
+	 */
+	public function hasEnoughPlace()
+	{
+		return $this->getClasseOpen() > count($this->getPersonnages());
+	}
+	
+	/**
+	 * Fourni la liste des classes disponibles (non actuellement utilisé par un personnage)
+	 */
+	public function getClasseAvailables()
+	{
+		return null;	
+	}
+			
+	
+	/**
 	 * Get User entity related by `creator_id` (many to one).
 	 *
 	 * @return \LarpManager\Entities\User
@@ -55,6 +72,29 @@ class Groupe extends BaseGroupe
 	public function setCreator(User $user)
 	{
 		return $this->setUserRelatedByCreatorId($user);
+	}
+	
+	/**
+	 * Get User entity related by `responsable_id` (many to one).
+	 *
+	 * @return \LarpManager\Entities\User
+	 */
+	public function getResponsable()
+	{
+		return $this->getUserRelatedByResponsableId();
+	}
+	
+	/**
+	 * Set User entity related by `responsable_id` (many to one).
+	 * Le responsable est aussi membre du groupe
+	 *
+	 * @param \LarpManager\Entities\User $user
+	 * @return \LarpManager\Entities\Groupe
+	 */
+	public function setResponsable(User $user)
+	{
+		$user->addGroupe($this);
+		return $this->setUserRelatedByResponsableId($user);
 	}
 	
 	/**
@@ -78,6 +118,9 @@ class Groupe extends BaseGroupe
 		return $this->setUserRelatedByScenaristeId($user);
 	}
 	
+	/**
+	 * Fourni la liste des classes
+	 */
 	public function getClasses()
 	{
 		$classes = array();
@@ -89,11 +132,19 @@ class Groupe extends BaseGroupe
 		return $classes;
 	}
 	
+	/**
+	 * Ajoute une classe dans le groupe
+	 * @param GroupeClasse $groupeClasse
+	 */
 	public function addGroupeClass(GroupeClasse $groupeClasse)
 	{
 		return $this->addGroupeClasse($groupeClasse);
 	}
 	
+	/**
+	 * Retire une classe du groupe
+	 * @param GroupeClasse $groupeClasse
+	 */
 	public function removeGroupeClass(GroupeClasse $groupeClasse)
 	{
 		return $this->removeGroupeClasse($groupeClasse);

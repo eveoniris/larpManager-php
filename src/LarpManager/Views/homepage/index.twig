@@ -31,16 +31,42 @@
 	</div>
 	
 	{% if is_granted('ROLE_SCENARISTE', app.user) %}
+		{% if app.user.groupeScenariste|length > 0 %}
 		<div class="panel panel-default">
 			<div class="panel-heading">
 				Liste des groupes dont vous avez la charge :
 			</div>
 			<div class="panel-body">
-				<ul>
-				{% for groupe in app.user.groupeScenariste %}
-					<li><a href="{{ path('groupe.detail',{'index':groupe.id}) }}">{{ groupe.nom }}</a></li>
-				{% endfor %}
-				</ul>
+				<div class="col-xs-6 col-md-3">
+					{% for groupe in app.user.groupeScenariste %}
+					<div class="thumbnail">
+						<div class="caption">
+							<h3>{{ groupe.nom }}</h3>
+							<p><a class="btn btn-primary" role="button" href="{{ path('groupe.detail',{'index':groupe.id}) }}">Détail</a></p>
+						</div>
+					</div>			
+					{% endfor %}
+				</div>	
+			</div>
+		</div>
+		{%  endif %}
+	{% endif %}
+	
+	{% if is_granted('ROLE_USER', app.user) %}		
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				Votre groupe
+			</div>
+			<div class="panel-body">
+				{% if app.user.groupes|length > 0 %}
+					{% for groupe in app.user.groupes %}
+						{{ include("homepage/fragment/groupe.twig",{'groupe' : groupe}) }}
+					{% endfor %}
+				{% else %}
+					<p>Vous n'êtes pour le moment inscrit dans aucun groupe. Entrez le code de votre groupe dans le formulaire ci-dessous.
+					Le code doit vous être transmis par le responsable de votre groupe.</p>
+					{{ include("homepage/fragment/form_groupe.twig",{'form': form_groupe,'action': path('homepage.inscription')}) }}
+				{% endif %}
 			</div>
 		</div>
 	{% endif %}

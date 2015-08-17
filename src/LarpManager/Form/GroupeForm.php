@@ -30,17 +30,23 @@ class GroupeForm extends AbstractType
 						'required' => false,
 				))
 				->add('scenariste','entity', array(
-							'label' => 'Scénariste',
-							'required' => false, 
-							'class' => 'LarpManager\Entities\User',
-							'property' => 'name',
-							'query_builder' => function(EntityRepository $er) {
-								$qb = $er->createQueryBuilder('u');
-								$qb->where($qb->expr()->orX(
-										$qb->expr()->like('u.rights', $qb->expr()->literal('%ROLE_SCENARISTE%')),
-										$qb->expr()->like('u.rights', $qb->expr()->literal('%ROLE_ADMIN%'))));
-								return $qb;
-							}
+						'label' => 'Scénariste',
+						'required' => false, 
+						'class' => 'LarpManager\Entities\User',
+						'property' => 'name',
+						'query_builder' => function(EntityRepository $er) {
+							$qb = $er->createQueryBuilder('u');
+							$qb->where($qb->expr()->orX(
+									$qb->expr()->like('u.rights', $qb->expr()->literal('%ROLE_SCENARISTE%')),
+									$qb->expr()->like('u.rights', $qb->expr()->literal('%ROLE_ADMIN%'))));
+							return $qb;
+						}
+				))
+				->add('responsable', 'entity', array(
+						'label' => 'Responsable',
+						'required' => false,
+						'class' => 'LarpManager\Entities\User',
+						'property' => 'name',
 				))
 				->add('jeuStrategique','checkbox', array(
 						'label' => "Participe au jeu stratégique ?",

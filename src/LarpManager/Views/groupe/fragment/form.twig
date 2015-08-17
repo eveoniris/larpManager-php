@@ -1,19 +1,45 @@
 <form action="{{ action }}" method="POST" {{ form_enctype(form) }}>
 		{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
 		
-		{{ form_row(form.nom) }}
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<label class="control-label">Informations générales</label>
+			</div>
+			<div class="panel-body">
+				{{ form_row(form.nom) }}
+				{{ form_row(form.description) }}
+				{{ form_row(form.region) }}
+			</div>
+		</div>
 		
-		{{ form_row(form.numero) }}
-		
-		{{ form_row(form.description) }}
-		
-		{{ form_row(form.region) }}
-		
-		{{ form_row(form.code) }}
-		
-		{{ form_row(form.scenariste) }}
-		
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<label class="control-label">Informations techniques</label>
+			</div>
+			<div class="panel-body">
+				{{ form_row(form.numero) }}
+				{{ form_row(form.scenariste) }}
+			</div>
+		</div>
 
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<label class="control-label">Membres du groupe</label>
+			</div>
+			<div class="panel-body">
+				<p>Vous devez choisir au moins un responsable du groupe. C'est ce joueur qui aura la charge d'inviter les autres membres du groupe en leur communiquant le code défini ci-dessous.</p>
+			</div>
+			<ul class="list-group">
+				<li class="list-group-item">
+					{{ form_row(form.responsable) }}
+					<a href="{{ path('user.add') }}">Créer un nouvel utilisateur</a>
+				</li>
+				<li class="list-group-item">
+					{{ form_row(form.code) }}
+					<a href="#">Envoyer un mail avec le code au responsable</a>
+				</li>
+			</ul>
+		</div>
 		
 		<div class="panel panel-default">
 			<div class="panel-heading">

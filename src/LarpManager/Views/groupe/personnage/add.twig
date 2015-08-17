@@ -1,0 +1,17 @@
+{% extends "layout.twig" %}
+
+{% block title %}{{ groupe.nom }}{% endblock title %}
+
+{% block content %}
+	<div class="page-header">
+		<h1>
+			{{ groupe.nom }} - <small>Création d'un personnage</small>
+		</h1>
+	</div>
+	
+	<form action="{{ path('groupe.personnage.add',{'index':groupe.id}) }}" method="POST" {{ form_enctype(form) }}>
+		{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+
+		{{ form(form) }}
+	</form>
+{% endblock content %}

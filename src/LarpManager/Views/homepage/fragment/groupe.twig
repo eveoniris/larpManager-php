@@ -1,0 +1,13 @@
+<div class="thumbnail">
+	<div class="caption">
+		<h3>{{ groupe.nom }}</h3>
+   		<p>Pays : {{ groupe.region.pays.nom }}</p>
+   		<p>Fief : {{ groupe.region.nom }}</p>
+   		<p>
+   			{% if app.user.isResponsable(groupe) %}
+   				<a href="{{ path('groupe.gestion', {'index':groupe.id}) }}" class="btn btn-primary" role="button">Gérer</a>
+   			{%  endif %}
+   			<a href="{{ path('groupe.joueur', {'index':groupe.id}) }}" class="btn btn-primary" role="button">Détail</a>
+   		</p>
+    </div>
+</div>

@@ -6,6 +6,9 @@ use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use InvalidArgumentException;
+use LarpManager\Form\UserForm;
+
+use JasonGrimes\Paginator;
 
 class UserController
 {
@@ -31,6 +34,57 @@ class UserController
 		return '//www.gravatar.com/avatar/' . md5(strtolower(trim($email))) . '?s=' . $size . '&d=identicon';
 	}
 	
+	/**
+	 * @param Request $request
+	 * @return User
+	 * @throws InvalidArgumentException
+	 */
+	protected function createUserFromRequest(Application $app, Request $request)
+	{
+		if ($request->request->get('password') != $request->request->get('confirm_password')) {
+			throw new InvalidArgumentException('Passwords don\'t match.');
+		}
+	
+		$user = $app['user.manager']->createUser(
+				$request->request->get('email'),
+				$request->request->get('password'),
+				$request->request->get('name') ?: null,
+				array('ROLE_USER'));
+	
+		if ($username = $request->request->get('username')) {
+			$user->setUsername($username);
+		}
+	
+		$errors = $app['user.manager']->validate($user);
+	
+		if (!empty($errors)) {
+			throw new InvalidArgumentException(implode("\n", $errors));
+		}
+	
+		return $user;
+	}
+	
+	/**
+	 * Genere un mot de passe aléatoire
+	 * @param number $length
+	 */
+	protected function generatePassword($length = 10)
+	{
+		$alphabets = range('A','Z');
+		$numbers = range('0','9');
+		$additional_characters = array('_','.');
+		
+		$final_array = array_merge($alphabets,$numbers,$additional_characters);
+		
+		$password = '';
+		
+		while($length--) {
+			$key = array_rand($final_array);
+			$password .= $final_array[$key];
+		}
+		
+		return $password;
+	}
 
 	/**
 	 * @param Application $app
@@ -69,6 +123,42 @@ class UserController
 		return $app['twig']->render('user/view.twig', array(
 				'user' => $user,
 				'imageUrl' => $this->getGravatarUrl($user->getEmail()),
+		));
+	}
+	
+	/**
+	 * Ajoute un utilisateur (mot de passe généré aléatoirement)
+	 * @param Application $app
+	 * @param Request $request
+	 */
+	public function addAction(Application $app, Request $request)
+	{
+		$form = $app['form.factory']->createBuilder(new UserForm(), array())
+			->add('save','submit', array('label' => "Créer l'utilisateur"))
+			->getForm();
+		
+		$form->handleRequest($request);
+			
+		if ($request->isMethod('POST'))
+		{
+			$password = $this->generatePassword();
+			$data = $form->getData();
+			
+			$user = $app['user.manager']->createUser(
+					$data['email'],
+					$password,
+					$data['name'],
+					array('ROLE_USER'));
+			
+			$app['user.manager']->insert($user);
+			
+			$app['session']->getFlashBag()->set('alert', 'L\'utilisateur a été créé. TEMPORAIRE : son mot de passe est '.$password);
+			
+			return $app->redirect($app['url_generator']->generate('user.list'));
+		}
+		
+		return $app['twig']->render('user/add.twig', array(
+				'form' => $form->createView(),
 		));
 	}
 	
@@ -202,37 +292,7 @@ class UserController
 				'lastResult' => $paginator->getCurrentPageLastItem(),*/
 		));
 	}
-	
-	/**
-	 * @param Request $request
-	 * @return User
-	 * @throws InvalidArgumentException
-	 */
-	protected function createUserFromRequest(Application $app, Request $request)
-	{
-		if ($request->request->get('password') != $request->request->get('confirm_password')) {
-			throw new InvalidArgumentException('Passwords don\'t match.');
-		}
-	
-		$user = $app['user.manager']->createUser(
-				$request->request->get('email'),
-				$request->request->get('password'),
-				$request->request->get('name') ?: null,
-				array('ROLE_USER'));
-	
-		if ($username = $request->request->get('username')) {
-			$user->setUsername($username);
-		}
-	
-		$errors = $app['user.manager']->validate($user);
 		
-		if (!empty($errors)) {
-			throw new InvalidArgumentException(implode("\n", $errors));
-		}
-	
-		return $user;
-	}
-	
 	public function registerAction(Application $app, Request $request)
 	{
 		if ($request->isMethod('POST')) {

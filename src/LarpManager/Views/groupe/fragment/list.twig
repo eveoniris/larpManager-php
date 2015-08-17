@@ -11,7 +11,17 @@
 			{{ groupe.nom }} 
 		</h4>
 		<p class="list-group-item-text">
-			{{ groupe.nom }} : {{ groupe.description }}.
+			<p>{{ groupe.description }}</p>
+			
+			<ul>
+			{% if groupe.scenariste %}
+				<li><strong>Scénariste : </strong>{{ groupe.scenariste.username }}</li>
+			{% endif %}
+			
+			{% if groupe.responsable %}
+				<li><strong>Responsable : </strong>{{ groupe.responsable.username }}</li>
+			{% endif %}
+			</ul>
 			
 			<div class="pull-right btn-group" role="group" aria-label="...">
 				<a href="{{ path('groupe.detail', {index: groupe.id}) }}" class="btn btn-primary" role="button">Voir</a>

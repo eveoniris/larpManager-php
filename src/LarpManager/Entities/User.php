@@ -19,6 +19,12 @@ use Symfony\Component\Security\Core\User\AdvancedUserInterface;
  */
 class User extends BaseUser implements AdvancedUserInterface, \Serializable
 {
+	/**
+	 * Lors de la création d'un nouvel utilisateur, on lui détermine aléatoirement
+	 * la valeur salt.
+	 * 
+	 * @param unknown $email
+	 */
 	public function __construct($email)
 	{
 		$this->salt = base_convert(sha1(uniqid(mt_rand(), true)), 16, 36);
@@ -26,7 +32,47 @@ class User extends BaseUser implements AdvancedUserInterface, \Serializable
 		parent::__construct();
 	}
 	
+	public function __toString()
+	{
+		return $this->getUsername();
+	}
 	
+	/**
+	 * Determine si l'utilisateur est responsable du groupe
+	 * @param LarpManager\Entities\Groupe $groupe
+	 */
+	public function isResponsable(\LarpManager\Entities\Groupe $groupe)
+	{
+		return $this == $groupe->getResponsable();
+	}
+	
+	
+	/**
+	 * Determine si l'utilisateur dispose d'un personnage dans un groupe
+	 * 
+	 * @param LarpManager\Entities\Groupe $groupe
+	 * @return LarpManager\Entities\Personnage $personnage
+	 */
+	public function personnageOn(\LarpManager\Entities\Groupe $groupe)
+	{
+		foreach ( $groupe->getPersonnages() as $personnage)
+		{
+			if ( $personnage->getUser() == $this ) return $personnage;
+		}
+		return null;
+	}
+	
+	/**
+	 * Fourni la liste des groupes dont l'utilisateur est le responsable
+	 */
+	public function getGroupeResponsable()
+	{
+		return $this->getGroupeRelatedByResponsableIds();
+	}
+	
+	/**
+	 * Fourni la liste des groupes dont l'utilisateur est le scénariste
+	 */
 	public function getGroupeScenariste()
 	{
 		return $this->getGroupeRelatedByScenaristeIds();	

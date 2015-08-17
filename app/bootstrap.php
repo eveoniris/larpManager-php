@@ -4,7 +4,6 @@ use Silex\Provider\SessionServiceProvider;
 use Silex\Provider\SecurityServiceProvider;
 use Silex\Provider\ServiceControllerServiceProvider;
 use Silex\Provider\RememberMeServiceProvider;
-use LarpManager\User\UserServiceProvider;
 use Silex\Provider\UrlGeneratorServiceProvider;
 use Silex\Provider\FormServiceProvider;
 use Silex\Provider\ValidatorServiceProvider;
@@ -17,6 +16,9 @@ use Silex\Provider\HttpFragmentServiceProvider;
 use Dflydev\Silex\Provider\DoctrineOrm\DoctrineOrmServiceProvider;
 use Saxulum\DoctrineOrmManagerRegistry\Silex\Provider\DoctrineOrmManagerRegistryProvider;
 use Symfony\Component\HttpFoundation\Response;
+
+use LarpManager\User\UserServiceProvider;
+use LarpManager\Groupe\GroupeServiceProvider;
 
 $loader = require_once __DIR__.'/../vendor/autoload.php';
 
@@ -148,6 +150,7 @@ else
 	$app->register(new ServiceControllerServiceProvider());
 	$app->register(new RememberMeServiceProvider());
 	$app->register(new UserServiceProvider());
+	$app->register(new GroupeServiceProvider());
 	
 	// Define firewall
 	$app['security.firewalls'] = array(
@@ -167,7 +170,7 @@ else
 			   }),
 		),
 		'secured_area' => array(	// le reste necessite d'être connecté
-			'pattern' => '^/[stock|groupe|pays|region]/.*$',
+			'pattern' => '^/[stock|groupe|pays|region|ressource]/.*$',
 			'anonymous' => false,
 			'remember_me' => array(),
 			'form' => array(
@@ -185,10 +188,6 @@ else
 	
 	$app->mount('/', new LarpManager\HomepageControllerProvider());
 	$app->mount('/user',  new LarpManager\UserControllerProvider());
-	$app->mount('/gn', new LarpManager\GnControllerProvider());
-	$app->mount('/chronologie', new LarpManager\ChronologieControllerProvider());
-	$app->mount('/pays', new LarpManager\PaysControllerProvider());
-	$app->mount('/guilde', new LarpManager\GuildeControllerProvider());
 	$app->mount('/stock', new LarpManager\StockControllerProvider());
 	$app->mount('/stock/objet', new LarpManager\StockObjetControllerProvider());
 	$app->mount('/stock/tag', new LarpManager\StockTagControllerProvider());
@@ -203,6 +202,10 @@ else
 	$app->mount('/niveau', new LarpManager\NiveauControllerProvider());
 	$app->mount('/classe', new LarpManager\ClasseControllerProvider());
 	$app->mount('/ressource', new LarpManager\RessourceControllerProvider());
+	$app->mount('/personnage', new LarpManager\PersonnageControllerProvider());
+	//$app->mount('/gn', new LarpManager\GnControllerProvider());
+	//$app->mount('/chronologie', new LarpManager\ChronologieControllerProvider());
+	//$app->mount('/guilde', new LarpManager\GuildeControllerProvider());
 	
 	
 	/**
@@ -218,9 +221,10 @@ else
 	);
 	
 	$app['security.access_rules'] = array(
+		array('^/groupe/.*$', 'ROLE_USER'),
+		array('^/personnage/.*$', 'ROLE_SCENARISTE'),
 		array('^/pays/.*$', 'ROLE_SCENARISTE'),
 		array('^/region/.*$', 'ROLE_SCENARISTE'),
-		array('^/groupe/.*$', 'ROLE_SCENARISTE'),
 		array('^/ressource/.*$', 'ROLE_SCENARISTE'),			
 		array('^/competence/.*$', 'ROLE_REGLE'),
 		array('^/niveau/.*$', 'ROLE_REGLE'),

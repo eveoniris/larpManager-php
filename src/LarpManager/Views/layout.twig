@@ -30,8 +30,12 @@
     			<div class="alert alert-success" role="alert">{{ message }}</div>
 			{% endfor %}
 			
-			{% for message in app.session.getFlashBag.get('error') %}
+			{% for message in app.session.getFlashBag.get('alert') %}
     			<div class="alert alert-warning" role="alert">{{ message }}</div>
+			{% endfor %}
+			
+			{% for message in app.session.getFlashBag.get('error') %}
+    			<div class="alert alert-danger" role="alert">{{ message }}</div>
 			{% endfor %}
 			
         	{% block content %}{% endblock content %}

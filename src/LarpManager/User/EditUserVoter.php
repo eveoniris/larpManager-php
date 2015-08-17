@@ -29,7 +29,11 @@ class EditUserVoter implements VoterInterface
      */
     public function supportsAttribute($attribute)
     {
-        return in_array($attribute, array('EDIT_USER', 'EDIT_USER_ID'));
+        return in_array($attribute, array(
+        		'EDIT_USER', 
+        		'EDIT_USER_ID',
+        		'VIEW_USER_ID',
+        ));
     }
 
     /**
@@ -59,16 +63,16 @@ class EditUserVoter implements VoterInterface
     public function vote(TokenInterface $token, $object, array $attributes)
     {
         $user = $token->getUser();
-
+		
         foreach ($attributes as $attribute) {
             if (!$this->supportsAttribute($attribute)) {
                 continue;
             }
-
+            
             if ($this->hasRole($token, 'ROLE_ADMIN')) {
                 return VoterInterface::ACCESS_GRANTED;
             }
-
+            
             if ($attribute == 'EDIT_USER') {
                 $user2 = $object;
                 return $this->usersHaveSameId($user, $user2) ? VoterInterface::ACCESS_GRANTED : VoterInterface::ACCESS_DENIED;
@@ -77,6 +81,11 @@ class EditUserVoter implements VoterInterface
             if ($attribute == 'EDIT_USER_ID') {
                 $id = $object;
                 return $this->hasUserId($user, $id) ? VoterInterface::ACCESS_GRANTED : VoterInterface::ACCESS_DENIED;
+            }
+            
+            if ($attribute == 'VIEW_USER_ID') {
+            	$id = $object;
+            	return $this->hasUserId($user, $id) ? VoterInterface::ACCESS_GRANTED : VoterInterface::ACCESS_DENIED;
             }
         }
 
@@ -90,15 +99,15 @@ class EditUserVoter implements VoterInterface
 
     protected function hasUserId($user, $id)
     {
-        return $user instanceof User
+        return $user instanceof \LarpManager\Entities\User
             && $id > 0
             && $user->getId() == $id;
     }
 
     protected function usersHaveSameId($user1, $user2)
     {
-        return $user1 instanceof User
-            && $user2 instanceof User
+        return $user1 instanceof \LarpManager\Entities\User
+            && $user2 instanceof \LarpManager\Entities\User
             && $user1->getId() > 0
             && $user1->getId() == $user2->getId();
     }
