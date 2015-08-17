@@ -107,7 +107,7 @@ class GroupeController
 			$app['orm.em']->flush($personnage);
 			
 			$app['session']->getFlashBag()->add('success','Votre personnage a été sauvegardé');
-			return $app->redirect($app['url_generator']->generate('groupe.joueur',array('index'=>$id())),301);
+			return $app->redirect($app['url_generator']->generate('groupe.joueur',array('index'=>$id),301));
 		}
 		
 		return $app['twig']->render('groupe/personnage/add.twig', array(

@@ -49,18 +49,30 @@ class Groupe extends BaseGroupe
 	 * Ce type de liste est utile pour le formulaire de création d'un personnage
 	 */
 	public function getAvailableClasses()
-	{
-		$availableClasses = $this->getClasses();
+	{		
+		$groupeClasses = $this->getGroupeClasses();
 		
 		foreach ( $this->getPersonnages() as $personnage)
 		{
-			$key = array_search($personnage->getClasse(),$availableClasses);
+			$id = $personnage->getClasse()->getId();
 			
-			if ( $key !== false )
+			foreach (  $groupeClasses as $key => $groupeClasse)
 			{
-				array_splice($availableClasses, $key,1);
+				if ( $groupeClasse->getClasse()->getId() == $id )
+				{
+					unset($groupeClasses[$key]);
+					break;
+				}
 			}
 		}
+
+		$availableClasses = array();
+		
+		foreach ( $groupeClasses as $groupeClasse)
+		{
+			$availableClasses[] = $groupeClasse->getClasse();
+		}
+		
 		return $availableClasses;	
 	}			
 	
