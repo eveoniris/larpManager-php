@@ -1,0 +1,35 @@
+{% extends "layout.twig" %}
+
+{% block title %}Ages{% endblock title %}
+
+{% block content %}
+
+<a href="{{ path("age") }}">Retour à la liste des ages</a>
+
+<div class="page-header">
+	<h1>Détail de {{ age.label }}</h1>
+</div>
+	
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-xs-12 col-md-8">
+			
+			<div class="panel panel-primary">
+  				<div class="panel-heading">
+  					{{ age.label }}				
+  				</div>
+  				<div class="panel-body">
+    				<p>{{ age.description }}</p>
+  				</div>
+  				<div class="panel-footer">
+  					<div class="btn-group" role="group" aria-label="...">
+  						<a  class="btn btn-primary" role="button" href="{{ path('age.update', {index : age.id}) }}">Modifier</a>
+					</div>
+  				</div>
+			</div>
+		</div>
+	</div>
+</div>
+	
+			
+{% endblock %}

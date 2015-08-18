@@ -26,10 +26,10 @@ class PersonnageForm extends AbstractType
 						'class' => 'LarpManager\Entities\Age',
 						'property' => 'label',
 				))
-				->add('sexe','entity', array(
+				->add('genre','entity', array(
 						'required' => true,
 						'label' => '',
-						'class' => 'LarpManager\Entities\Sexe',
+						'class' => 'LarpManager\Entities\Genre',
 						'property' => 'label',
 				))
 				->add('intrigue','checkbox', array(

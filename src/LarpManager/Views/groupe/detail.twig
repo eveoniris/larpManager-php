@@ -60,6 +60,11 @@
 		    				<p class="list-group-item-text">
 		    					<ul>
 		    						{% if groupe.responsable %}<li><strong>{{ groupe.responsable.username }}</strong>&nbsp;(Responsable du groupe)</li>{% endif %}
+									{% for user in groupe.users %}
+										<li>
+											<strong>{{ user.username }} </strong>: {{ user.email }}
+										</li>
+									{% endfor %}
 		    					</ul>
 		    				</p>
 		    			</div>

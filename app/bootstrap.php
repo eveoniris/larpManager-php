@@ -203,6 +203,8 @@ else
 	$app->mount('/classe', new LarpManager\ClasseControllerProvider());
 	$app->mount('/ressource', new LarpManager\RessourceControllerProvider());
 	$app->mount('/personnage', new LarpManager\PersonnageControllerProvider());
+	$app->mount('/age', new LarpManager\AgeControllerProvider());
+	$app->mount('/genre', new LarpManager\GenreControllerProvider());
 	//$app->mount('/gn', new LarpManager\GnControllerProvider());
 	//$app->mount('/chronologie', new LarpManager\ChronologieControllerProvider());
 	//$app->mount('/guilde', new LarpManager\GuildeControllerProvider());
@@ -222,6 +224,8 @@ else
 	
 	$app['security.access_rules'] = array(
 		array('^/groupe/.*$', 'ROLE_USER'),
+		array('^/age/.*$', 'ROLE_SCENARISTE'),
+		array('^/genre/.*$', 'ROLE_SCENARISTE'),
 		array('^/personnage/.*$', 'ROLE_SCENARISTE'),
 		array('^/pays/.*$', 'ROLE_SCENARISTE'),
 		array('^/region/.*$', 'ROLE_SCENARISTE'),
