@@ -229,7 +229,42 @@ class InstallController
 			$rarete->setValue("2");
 			$app['orm.em']->persist($rarete);
 			$app['orm.em']->flush();
-						
+			
+			$genre = new \LarpManager\Entities\Genre();
+			$genre->setLabel("Masculin");
+			$app['orm.em']->persist($genre);
+			$app['orm.em']->flush();
+			
+			$genre = new \LarpManager\Entities\Genre();
+			$genre->setLabel("Feminin");
+			$app['orm.em']->persist($genre);
+			$app['orm.em']->flush();
+			
+			$age = new \LarpManager\Entities\Age();
+			$age->setLabel("Jeune adulte");
+			$app['orm.em']->persist($age);
+			$app['orm.em']->flush();
+			
+			$age = new \LarpManager\Entities\Age();
+			$age->setLabel("Adulte");
+			$app['orm.em']->persist($age);
+			$app['orm.em']->flush();
+			
+			$age = new \LarpManager\Entities\Age();
+			$age->setLabel("Mur");
+			$app['orm.em']->persist($age);
+			$app['orm.em']->flush();
+			
+			$age = new \LarpManager\Entities\Age();
+			$age->setLabel("Vieux");
+			$app['orm.em']->persist($age);
+			$app['orm.em']->flush();
+			
+			$age = new \LarpManager\Entities\Age();
+			$age->setLabel("Ancien");
+			$app['orm.em']->persist($age);
+			$app['orm.em']->flush();
+									
 			// création de l'utilisateur admin
 			return $app->redirect($app['url_generator']->generate('install_create_user'));
 		}
