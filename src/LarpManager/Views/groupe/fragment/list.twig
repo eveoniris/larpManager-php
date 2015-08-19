@@ -11,22 +11,32 @@
 			{{ groupe.nom }} 
 		</h4>
 		<p class="list-group-item-text">
-			<p>{{ groupe.description }}</p>
-			
-			<ul>
-			{% if groupe.scenariste %}
-				<li><strong>Scénariste : </strong>{{ groupe.scenariste.username }}</li>
-			{% endif %}
-			
-			{% if groupe.responsable %}
-				<li><strong>Responsable : </strong>{{ groupe.responsable.username }}</li>
-			{% endif %}
-			</ul>
-			
 			<div class="pull-right btn-group" role="group" aria-label="...">
 				<a href="{{ path('groupe.detail', {index: groupe.id}) }}" class="btn btn-primary" role="button">Voir</a>
 			    <a href="{{ path('groupe.update', {index: groupe.id}) }}" class="btn btn-default" role="button">Modifier</a>
 			</div>
+			
+			<p>{{ groupe.description }}</p>
+			
+			<ul>
+				<li>
+				{% if groupe.scenariste %}
+					<strong>Scénariste : </strong>{{ groupe.scenariste.username }}
+				{% else %}
+					<p class="text-warning">Attention, ce groupe n'a pas de scénariste.</p>
+				{% endif %}
+				</li>
+				
+				<li>
+				{% if groupe.responsable %}
+					<strong>Responsable : </strong>{{ groupe.responsable.username }}
+				{% else %}
+					<p class="text-warning">Attention, ce groupe n'a pas de responsable (chef de groupe)</p>
+				{% endif %}
+				</li>
+			</ul>
+			
+
 		</p>
 		<p class="list-group-item-text">
 			<small>Créé par {{ groupe.creator.username }} le {{ groupe.creationDate|date('Y-m-d H:i:s') }}. Dernière mise à jour le {{ groupe.updateDate|date('Y-m-d H:i:s') }}</small>

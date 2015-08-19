@@ -3,16 +3,21 @@
 {% block title %}Première étape terminée{% endblock %}
 
 {% block content %}
-	<p>Installation de LarpManager, deuxième étape</p>
-	<p>L'installation de la table user s'est déroulée avec succès</p>
-	<p>Veuillez créer le premier utilisateur, comme ceci est le premier user, il aura les droits d'administration.</p>
+	<div class="well bs-component">
+		<p>Installation de LarpManager, deuxième étape</p>
+		<p>L'installation de la table user s'est déroulée avec succès</p>
+		<p>Veuillez créer le premier utilisateur, comme ceci est le premier user, il aura les droits d'administration.</p>
+	</div>	
 	
-	<fieldset>
-	<legend>Création de l'utilisateur admin</legend>
+	<div class="well bs-component">
 	<form action="{{ path('install_create_user') }}" method="POST" {{ form_enctype(form) }}>
-		{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
-		{{ form(form) }}
+		<fieldset>
+		<legend>Création de l'utilisateur admin</legend>
+			{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+			{{ form(form) }}
+		</fieldset>
 	</form>
-	</fieldset>   
+	</div>
+	   
 	
 {% endblock %}

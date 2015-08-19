@@ -10,6 +10,7 @@
 namespace LarpManager\Entities;
 
 use LarpManager\Entities\BaseRessource;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * LarpManager\Entities\Ressource
@@ -18,6 +19,24 @@ use LarpManager\Entities\BaseRessource;
  */
 class Ressource extends BaseRessource
 {
+	/**
+	 * @ManyToMany(targetEntity="Territoire", mappedBy="exportations")
+	 */
+	protected $exporteurs;
+	
+	/**
+	 * @ManyToMany(targetEntity="Territoire", mappedBy="importations")
+	 */
+	protected $importeurs;
+	
+	public function __construct()
+	{
+		$this->exporteurs = new ArrayCollection();
+		$this->importeurs = new ArrayCollection();
+	
+		parent::__construct();
+	}
+	
 	public function __toString()
 	{
 		return $this->getLabel();

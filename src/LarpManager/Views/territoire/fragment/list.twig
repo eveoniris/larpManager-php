@@ -1,0 +1,31 @@
+<ul class="list-group">
+	{%  if add != false %}
+		<a href="{{ path('territoire.add') }}" class="list-group-item active">
+			<span class="badge"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></span>
+			<h4 class="list-group-item-heading">Ajouter un territoire</h4>
+		</a>
+	{%  endif %}
+	{%  for territoire in territoires %}
+	<li class="list-group-item">
+		<h4 class="list-group-item-heading">
+			{{ territoire.nom }} 
+			<div class="btn-group pull-right" role="group" aria-label="...">
+				<a href="{{ path('territoire.detail', {index: territoire.id}) }}" class="btn btn-primary" role="button">Détail</a>
+			    <a href="{{ path('territoire.update', {index: territoire.id}) }}" class="btn btn-default" role="button">Modifier</a>
+			</div>
+		</h4>
+		<p class="list-group-item-text">		
+			{% if territoire.description %}
+				<p class="text-default">{{ territoire.description|slice(0,500) }} ...</p>
+			{% else %}
+				<p class="text-warning">Attention, ce territoire n'a pas description</p>
+			{%  endif %}
+		</p>
+		{%  if territoire.territoires|length > 0 %}
+			<p class="list-group-item-text">
+				Ce territoire est composé des territoires suivants : {{ territoire.territoires|join(', ') }}
+			</p>
+		{% endif %}
+	</li>
+	{%  endfor %}
+</ul>

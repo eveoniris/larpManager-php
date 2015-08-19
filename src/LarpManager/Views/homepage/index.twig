@@ -1,13 +1,14 @@
 {% extends "layout.twig" %}
 
 {% block content %}
-	<div class="page-header">
-	<h1>LarpManager
-		{% if app.user %}
-			<small>Bienvenue {{ app.user.name }}</small>
-		{% endif %}
-	</h1>
+
+	{% if app.user %}	
+	<div class="well well-sm">
+		<h4>
+			Bienvenue {{ app.user.name }}
+		</h4>
 	</div>
+	{% endif %}
 	
 	{% if not app.user %}
 	<div class="panel panel-warning">
@@ -21,7 +22,7 @@
   	</div>
 	{%  endif %}
 	
-	<div class="panel panel-info">
+	<div class="panel panel-default">
 		<div class="panel-heading">
 			Une annonce publique
 		</div>
@@ -34,7 +35,7 @@
 		{% if app.user.groupeScenariste|length > 0 %}
 		<div class="panel panel-default">
 			<div class="panel-heading">
-				Liste des groupes dont vous avez la charge :
+				Scénariste : groupes dont vous avez la charge
 			</div>
 			<div class="panel-body">
 				<div class="col-xs-6 col-md-3">
@@ -50,25 +51,25 @@
 			</div>
 		</div>
 		{%  endif %}
-	{% endif %}
-	
-	{% if is_granted('ROLE_USER', app.user) %}		
-		<div class="panel panel-default">
-			<div class="panel-heading">
-				Votre groupe
-			</div>
-			<div class="panel-body">
-				{% if app.user.groupes|length > 0 %}
-					{% for groupe in app.user.groupes %}
-						{{ include("homepage/fragment/groupe.twig",{'groupe' : groupe}) }}
-					{% endfor %}
-				{% else %}
-					<p>Vous n'êtes pour le moment inscrit dans aucun groupe. Entrez le code de votre groupe dans le formulaire ci-dessous.
-					Le code doit vous être transmis par le responsable de votre groupe.</p>
-					{{ include("homepage/fragment/form_groupe.twig",{'form': form_groupe,'action': path('homepage.inscription')}) }}
-				{% endif %}
-			</div>
-		</div>
+	{% else %}
+		{% if is_granted('ROLE_USER', app.user) %}
+
+			{% if app.user.groupes|length > 0 %}
+				{% for groupe in app.user.groupes %}
+					{{ include("homepage/fragment/groupe.twig",{'groupe' : groupe}) }}
+				{% endfor %}
+			{% else %}
+				<div class="panel panel-default">
+					<div class="panel-heading">
+					</div>
+					<div class="panel-body">
+						<p>Vous n'êtes pour le moment inscrit dans aucun groupe. Entrez le code de votre groupe dans le formulaire ci-dessous.
+							Le code doit vous être transmis par le responsable de votre groupe.</p>
+						{{ include("homepage/fragment/form_groupe.twig",{'form': form_groupe,'action': path('homepage.inscription')}) }}
+					</div>
+				</div>
+			{% endif %}
+		{% endif %}
 	{% endif %}
 	
 {% endblock %}

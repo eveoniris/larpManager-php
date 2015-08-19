@@ -18,4 +18,45 @@ use LarpManager\Entities\BaseLangue;
  */
 class Langue extends BaseLangue
 {
+	
+	/**
+	 * @ManyToMany(targetEntity="Territoire", mappedBy="langues")
+	 */
+	protected $territoireSecondaires;
+	
+	public function __construct()
+	{
+		$this->territoireSecondaires = new ArrayCollection();
+		parent::__construct();
+	}
+	public function __toString()
+	{
+		return $this->getLabel();
+	}
+	
+	public function getTerritoireSecondaires()
+	{
+		return $this->territoireSecondaires;
+	}
+	
+	public function addTerritoireSecondaire(Territoire $territoire)
+	{
+		$this->territoireSecondaires[] = $territoire;
+		return $this;
+	}
+	
+	public function removeTerritoireSecondaire(Territoire $territoire)
+	{
+		$this->territoireSecondaires->removeElement($territoire);
+		return $this;
+		
+	}
+		
+	/**
+	 * Fourni la liste des territoires ou la langue est la langue principale.
+	 */
+	public function getTerritoirePricipaux()
+	{
+		return $this->getTerritoires();
+	}
 }

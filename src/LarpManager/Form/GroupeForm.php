@@ -20,10 +20,10 @@ class GroupeForm extends AbstractType
 				->add('description','textarea', array(
 						'required' => false,
 				))
-				->add('region','entity', array(
+				->add('fief','entity', array(
 						'label' => 'Fief',
 						'required' => false,
-						'class' => 'LarpManager\Entities\Region',
+						'class' => 'LarpManager\Entities\Fief',
 						'property' => 'nom',
 				))
 				->add('code','text', array(

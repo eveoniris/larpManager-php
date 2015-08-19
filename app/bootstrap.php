@@ -19,6 +19,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 use LarpManager\User\UserServiceProvider;
 use LarpManager\Groupe\GroupeServiceProvider;
+use LarpManager\Territoire\TerritoireServiceProvider;
+use LarpManager\Appelation\AppelationServiceProvider;
 
 $loader = require_once __DIR__.'/../vendor/autoload.php';
 
@@ -150,7 +152,11 @@ else
 	$app->register(new ServiceControllerServiceProvider());
 	$app->register(new RememberMeServiceProvider());
 	$app->register(new UserServiceProvider());
+	
+	// Other management
 	$app->register(new GroupeServiceProvider());
+	$app->register(new TerritoireServiceProvider());
+	$app->register(new AppelationServiceProvider());
 	
 	// Define firewall
 	$app['security.firewalls'] = array(
@@ -170,7 +176,7 @@ else
 			   }),
 		),
 		'secured_area' => array(	// le reste necessite d'être connecté
-			'pattern' => '^/[stock|groupe|pays|region|ressource]/.*$',
+			'pattern' => '^/[stock|groupe|territoire|appelation|langue|ressource|age|genre|niveau]/.*$',
 			'anonymous' => false,
 			'remember_me' => array(),
 			'form' => array(
@@ -196,8 +202,9 @@ else
 	$app->mount('/stock/localisation', new LarpManager\StockLocalisationControllerProvider());
 	$app->mount('/stock/rangement', new LarpManager\StockRangementControllerProvider());
 	$app->mount('/groupe', new LarpManager\GroupeControllerProvider());
-	$app->mount('/pays', new LarpManager\PaysControllerProvider());
-	$app->mount('/region', new LarpManager\RegionControllerProvider());
+	$app->mount('/territoire', new LarpManager\TerritoireControllerProvider());
+	$app->mount('/appelation', new LarpManager\AppelationControllerProvider());
+	$app->mount('/langue', new LarpManager\LangueControllerProvider());
 	$app->mount('/competence', new LarpManager\CompetenceControllerProvider());
 	$app->mount('/niveau', new LarpManager\NiveauControllerProvider());
 	$app->mount('/classe', new LarpManager\ClasseControllerProvider());
@@ -224,11 +231,12 @@ else
 	
 	$app['security.access_rules'] = array(
 		array('^/groupe/.*$', 'ROLE_USER'),
-		array('^/age/.*$', 'ROLE_SCENARISTE'),
-		array('^/genre/.*$', 'ROLE_SCENARISTE'),
+		array('^/age/.*$', 'ROLE_REGLE'),
+		array('^/genre/.*$', 'ROLE_REGLE'),
 		array('^/personnage/.*$', 'ROLE_SCENARISTE'),
-		array('^/pays/.*$', 'ROLE_SCENARISTE'),
-		array('^/region/.*$', 'ROLE_SCENARISTE'),
+		array('^/territoire/.*$', 'ROLE_SCENARISTE'),
+		array('^/appelation/.*$', 'ROLE_SCENARISTE'),
+		array('^/langue/.*$', 'ROLE_SCENARISTE'),
 		array('^/ressource/.*$', 'ROLE_SCENARISTE'),			
 		array('^/competence/.*$', 'ROLE_REGLE'),
 		array('^/niveau/.*$', 'ROLE_REGLE'),

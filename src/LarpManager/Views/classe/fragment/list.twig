@@ -11,15 +11,19 @@
 			{{ classe.label }}
 		</h4>
 		<p class="list-group-item-text">
-
+			<div class="btn-group pull-right" role="group" aria-label="...">
+				<a href="{{ path('classe.detail', {index: classe.id}) }}" class="btn btn-primary" role="button">Voir</a>
+			    <a href="{{ path('classe.update', {index: classe.id}) }}" class="btn btn-default" role="button">Modifier</a>
+			</div>
+			
 			{% if classe.description %}
-				<p class="text-info">{{ classe.description }}</p>
+				<p>{{ classe.description }}</p>
 			{% else %}
 				<p class="text-warning">Attention, cette classe n'a pas description</p>
 			{%  endif %}
 			
 			{% if classe.competenceFavorites|length != 0 %}
-				<p class="text-info">
+				<p>
 					<strong>Compétences favorites : </strong>{{ classe.competenceFavorites|join(', ') }}
 				</p>
 			{% else %}
@@ -27,25 +31,20 @@
 			{% endif %}
 		
 			{% if classe.competenceNormales|length != 0 %}
-				<p class="text-info">
+				<p>
 					<strong>Compétences normales : </strong>{{ classe.competenceNormales|join(', ') }}
 				</p>
 			{% else %}
-				<p class="list-group-item-text text-warning">Attention, cette classe n'a pas de compétences normales</p>
+				<p class="text-warning">Attention, cette classe n'a pas de compétences normales</p>
 			{% endif %}
 		
 			{% if classe.competenceCreations|length != 0 %}
-				<p class="list-group-item-text text-info">
+				<p>
 					<strong>Compétences acquises à la création : </strong>{{ classe.competenceCreations|join(', ') }}
 				</p>
 			{% else %}
-				<p class="list-group-item-text text-warning">Attention, cette classe n'a pas de compétences acquises à la créations</p>
+				<p class="text-warning">Attention, cette classe n'a pas de compétences acquises à la créations</p>
 			{% endif %}
-		
-			<div class="btn-group" role="group" aria-label="...">
-				<a href="{{ path('classe.detail', {index: classe.id}) }}" class="btn btn-primary" role="button">Voir</a>
-			    <a href="{{ path('classe.update', {index: classe.id}) }}" class="btn btn-default" role="button">Modifier</a>
-			</div>
 		</p>
 	</li>
 	{%  endfor %}

@@ -10,6 +10,10 @@ body {
   	color: #333;
 	background-color: #fff;
 	margin-bottom: 60px;
+	background: url("../img/landscape2.jpg")no-repeat;
+	background-size: cover !important;
+	background-attachment: fixed;
+	border-top: 0 !important;
 }
 
 #footer {

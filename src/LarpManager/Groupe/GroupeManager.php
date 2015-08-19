@@ -3,7 +3,6 @@
 namespace LarpManager\Groupe;
 
 use Silex\Application;
-use Doctrine\DBAL\Connection;
 use LarpManager\Entities\Groupe;
 use LarpManager\Entities\User;
 

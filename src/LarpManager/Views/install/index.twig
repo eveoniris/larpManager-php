@@ -8,9 +8,13 @@
 		<h1>Installation de LarpManager</h1>
 	</div>
 	
-	<form action="{{ path('install_index') }}" method="POST" {{ form_enctype(form) }}>
-		{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
-		{{ form(form) }}
-	</form>
-		
+	<div class="well bs-component">
+		<form action="{{ path('install_index') }}" method="POST" {{ form_enctype(form) }}>
+			<fieldset>
+	    	<legend>Configuration de la base de données</legend>
+				{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+				{{ form(form) }}
+			</fieldset>
+		</form>
+	</div>
 {% endblock %}

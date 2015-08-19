@@ -1,0 +1,86 @@
+{% extends "layout.twig" %}
+
+{% block title %}Territoire{% endblock title %}
+
+{% block content %}
+
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-xs-12 col-md-8">
+		
+			<div class="well well-sm bs-component">
+			<a href="{{ path('territoire') }}">Retour à la liste des territoires</a>
+				<h4>
+					{{ territoire.nom }}
+				</h4>
+			</div>
+		
+  			<div class="list-group">
+		    		
+		    	<div class="list-group-item">
+			    	<h4 class="list-group-item-heading">Description</h4>
+	    			<p class="list-group-item-text">
+	    			{% if not territoire.description %}
+    				<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+    				Attention, ce territoire n'a pas de description.
+    				{% else %}
+    					{{ territoire.description }}
+    				{% endif %}
+    				</p>
+	    		</div>
+	    		
+	    		<div class="list-group-item">
+	    			<h4 class="list-group-item-heading">Informations politiques</h4>
+	    			<p class="list-group-item-text">
+	    				<ul>
+	    					<li>Capitale : {{ territoire.capitale|default('Aucune') }}</li>
+	    					<li>Système politique : {{ territoire.politique|default('Inconnu') }}</li>
+	    					<li>Dirigeant : {{ territoire.dirigeant|default('Aucun') }}</li>
+	    				</ul>
+	    			</p>
+	    		</div>
+	    		
+	    		<div class="list-group-item">
+	    			<h4 class="list-group-item-heading">Autres informations</h4>
+	    			<p class="list-group-item-text">
+	    				<ul>
+	    					<li>Population : {{ territoire.population|default('Inconnue') }}</li>
+	    					<li>Symbole : {{ territoire.symbole|default('Aucun') }}</li>
+	    					<li>Niveau technologique : {{ territoire.techLevel|default('Aucun') }}</li>
+	    					<li>Langues parlée : {{ territoire.langues|join(', ') }}</li>
+	    					<li>Langue principale : {{ territoire.langue }}</li> 
+	    				</ul>
+	    			</p>
+	    		</div>
+	    		
+	    		{% if territoire.territoire %}	
+	    		<div class="list-group-item">
+		    		<h4 class="list-group-item-heading">Ce territoire dépend de</h4>
+    				<p class="list-group-item-text">
+    					{{ territoire.territoire.nom }}
+    				</p>
+    			</div>
+    			{% endif %}
+    			
+	    		<div class="list-group-item">
+		    		<h4 class="list-group-item-heading">Liste des territoires rattachés à ce territoire ({{ territoire.territoires|length }} territoires)</h4>
+    				<p class="list-group-item-text">
+						<ul>
+						{% for territoire in territoire.territoires %}
+							<li><a href="{{ path('territoire.detail',{'index': territoire.id}) }}">{{ territoire.nomTree }}</a></li>
+						{% endfor %}
+						</ul>
+					</p>
+				</div>
+				
+				<div class="list-group-item">
+  					<div class="btn-group" role="group" aria-label="...">
+  						<a  class="btn btn-primary" role="button" href="{{ path('territoire.update', {index : territoire.id}) }}">Modifier</a>
+					</div>
+  				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+{% endblock %}
