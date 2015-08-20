@@ -16,6 +16,59 @@ class AppelationManager
 	}
 	
 	/**
+	 * Classement des appelations par groupe
+	 *
+	 * @param Array $territoires
+	 * @return Array $territoires
+	 */
+	public function sort( Array $appelations)
+	{
+		$root = array();
+		$result = array();
+	
+		// recherche des racines ( appelations n'ayant pas de parent
+		// dans la liste des appelations fournis)
+		foreach ( $appelations as $appelation)
+		{
+			if ( ! in_array($appelation->getAppelation(),$appelations) )
+			{
+				$root[] = $appelation;
+			}
+		}
+	
+		foreach ( $root as $appelation)
+		{
+			if ( count($appelation->getAppelations()) > 0 )
+			{
+				$childs = array_merge(
+						array($appelation),
+						$this->sort($appelation->getAppelations()->toArray())
+						);
+	
+				$result = array_merge($result, $childs);
+			}
+			else
+			{
+				$result[] = $appelation;
+			}
+		}
+	
+		return $result;
+	}
+	
+	/**
+	 * Calcule le nombre d'étape necessaire pour revenir au parent le plus ancien
+	 */
+	public function stepCount(Appelation $appelation, $count = 0)
+	{
+		if ( $appelation->getAppelation() )
+		{
+			return $this->stepCount($appelation->getAppelation(),$count+1);
+		}
+		return $count;
+	}
+	
+	/**
 	 * Fourni la liste des appelations n'étant pas dépendant d'une autre appelation
 	 * @return \Doctrine\Common\Collections\Collection
 	 */

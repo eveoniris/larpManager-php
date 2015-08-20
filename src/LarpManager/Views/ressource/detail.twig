@@ -3,32 +3,55 @@
 {% block title %}Ressource{% endblock title %}
 
 {% block content %}
-
-<a href="{{ path("niveau") }}">Retour à la liste des ressources</a>
-
-<div class="page-header">
-	<h1>Détail de {{ ressource.label }}</h1>
-</div>
 	
 <div class="container-fluid">
 	<div class="row">
 		<div class="col-xs-12 col-md-8">
 			
-			<div class="panel panel-primary">
-  				<div class="panel-heading">
-  					{{ ressource.label }}				
+			<div class="well well-sm bs-component">
+				<a href="{{ path("ressource") }}">Retour à la liste des ressources</a>
+				<h4>
+					{{ ressource.label }}
+				</h4>
+			</div>
+						
+			<div class="list-group">
+				<div class="list-group-item">
+			    	<h4 class="list-group-item-heading">Description</h4>
+			    	<p class="list-group-item-text">
+			 			{{ ressource.label }} ({{ ressource.rarete.label }})
+  					</p>
   				</div>
-  				<div class="panel-body">
-  					{{ ressource.rarete.label }}
+  				
+  				<div class="list-group-item">
+			    	<h4 class="list-group-item-heading">Importateurs</h4>
+			    	<p class="list-group-item-text">
+			    		<ul>
+			    		{% for territoire in ressource.importateurs %}
+			    			<li><a href="{{ path('territoire.detail',{'index':territoire.id}) }}">{{ territoire.nom }}</a></li>
+			    		{% endfor %}
+			    		</ul>
+  					</p>
+  				</div>
+  				
+  				<div class="list-group-item">
+			    	<h4 class="list-group-item-heading">Exportateurs</h4>
+			    	<p class="list-group-item-text">
+			 			<ul>
+			    		{% for territoire in ressource.exportateurs %}
+			    			<li><a href="{{ path('territoire.detail',{'index':territoire.id}) }}">{{ territoire.nom }}</a></li>
+			    		{% endfor %}
+			    		</ul>
+  					</p>
   				</div>
 
-  				<div class="panel-footer">
+  				<div class="list-group-item">
   					<div class="btn-group" role="group" aria-label="...">
   						<a  class="btn btn-primary" role="button" href="{{ path('ressource.update', {index : ressource.id}) }}">Modifier</a>
-						<a  class="btn btn-default" role="button" href="{{ path('ressource.detail.export', {index : ressource.id}) }}">Exporter</a>
 					</div>
   				</div>
-			</div>			
+			</div>	
+					
 		</div>
 	</div>
 </div>

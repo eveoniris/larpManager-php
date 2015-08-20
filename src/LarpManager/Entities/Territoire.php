@@ -64,6 +64,18 @@ class Territoire extends BaseTerritoire
 	}
 	
 	/**
+	 * Calcule le nombre d'étape necessaire pour revenir au parent le plus ancien
+	 */
+	public function stepCount($count = 0)
+	{
+		if ( $this->getTerritoire() )
+		{
+			return $this->getTerritoire()->stepCount($count+1);
+		}
+		return $count;
+	}
+	
+	/**
 	 * Fourni la langue principale du territoire
 	 */
 	public function getLanguePrincipale()

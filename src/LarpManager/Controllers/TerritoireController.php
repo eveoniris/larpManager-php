@@ -15,6 +15,7 @@ class TerritoireController
 	public function indexAction(Request $request, Application $app)
 	{
 		$territoires = $app['territoire.manager']->findAll();
+		$territoires = $app['territoire.manager']->sort($territoires);
 		
 		return $app['twig']->render('territoire/index.twig', array('territoires' => $territoires));
 	}

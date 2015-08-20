@@ -6,9 +6,11 @@
 		</a>
 	{%  endif %}
 	{%  for territoire in territoires %}
-	<li class="list-group-item">
+		
+	{%  set step = territoire.stepCount %}
+	<li class="list-group-item" {% if step > 0 %} style="padding-left: {{ step * 50 }}px"{% endif %}>
 		<h4 class="list-group-item-heading">
-			{{ territoire.nom }} 
+			{{ territoire.nom }} ({% if territoire.appelation %}{{ territoire.appelation.label }}{% else %}<span class="text-warning">Attention, ce territoire n'a d'appelation</span>{% endif %})
 			<div class="btn-group pull-right" role="group" aria-label="...">
 				<a href="{{ path('territoire.detail', {index: territoire.id}) }}" class="btn btn-primary" role="button">Détail</a>
 			    <a href="{{ path('territoire.update', {index: territoire.id}) }}" class="btn btn-default" role="button">Modifier</a>
@@ -23,7 +25,7 @@
 		</p>
 		{%  if territoire.territoires|length > 0 %}
 			<p class="list-group-item-text">
-				Ce territoire est composé des territoires suivants : {{ territoire.territoires|join(', ') }}
+				Contient les territoires suivants : {{ territoire.territoires|join(', ') }}
 			</p>
 		{% endif %}
 	</li>

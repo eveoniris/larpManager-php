@@ -24,7 +24,7 @@
 		
 		<p class="list-group-item-text">
 		{%  if langue.territoires|length > 0 %}
-			Cette langue est parlée dans les territoires suivants : {{ territoire.territoires|join(', ') }}	
+			Cette langue est parlée dans les territoires suivants : {{ langue.territoires|join(', ') }}	
 		{% else %}
 			Cette langue n'est parlée dans aucun territoire.	
 		{% endif %}

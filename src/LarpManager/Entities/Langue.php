@@ -9,6 +9,7 @@
 
 namespace LarpManager\Entities;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use LarpManager\Entities\BaseLangue;
 
 /**
@@ -55,7 +56,7 @@ class Langue extends BaseLangue
 	/**
 	 * Fourni la liste des territoires ou la langue est la langue principale.
 	 */
-	public function getTerritoirePricipaux()
+	public function getTerritoirePrincipaux()
 	{
 		return $this->getTerritoires();
 	}

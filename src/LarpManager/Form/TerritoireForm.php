@@ -56,16 +56,18 @@ class TerritoireForm extends AbstractType
 					'label' => 'Importations',
 					'class' => 'LarpManager\Entities\Ressource',
 					'multiple' => true,
+					'expanded' => true,
 					'mapped' => true,
-					'property' => 'nom', 						
+					'property' => 'label', 						
 				))
 				->add('exportations','entity', array(
 					'required' => false,
 					'label' => 'Exportations',
 					'class' => 'LarpManager\Entities\Ressource',
 					'multiple' => true,
+					'expanded' => true,
 					'mapped' => true,
-					'property' => 'nom',
+					'property' => 'label',
 				))
 				->add('languePrincipale','entity', array(
 					'required' => false,

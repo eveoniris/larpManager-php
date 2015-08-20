@@ -22,17 +22,17 @@ class Ressource extends BaseRessource
 	/**
 	 * @ManyToMany(targetEntity="Territoire", mappedBy="exportations")
 	 */
-	protected $exporteurs;
+	protected $exportateurs;
 	
 	/**
 	 * @ManyToMany(targetEntity="Territoire", mappedBy="importations")
 	 */
-	protected $importeurs;
+	protected $importateurs;
 	
 	public function __construct()
 	{
-		$this->exporteurs = new ArrayCollection();
-		$this->importeurs = new ArrayCollection();
+		$this->exportateurs = new ArrayCollection();
+		$this->importateurs = new ArrayCollection();
 	
 		parent::__construct();
 	}
@@ -40,5 +40,15 @@ class Ressource extends BaseRessource
 	public function __toString()
 	{
 		return $this->getLabel();
+	}
+	
+	public function getExportateurs()
+	{
+		return $this->exportateurs;
+	}
+	
+	public function getImportateurs()
+	{
+		return $this->importateurs;
 	}
 }

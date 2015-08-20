@@ -15,10 +15,16 @@ class AppelationController
 	public function indexAction(Request $request, Application $app)
 	{
 		$appelations = $app['appelation.manager']->findAll();
+		$appelations = $app['appelation.manager']->sort($appelations);
 		
 		return $app['twig']->render('appelation/index.twig', array('appelations' => $appelations));
 	}
 	
+	/**
+	 * Detail d'une appelation
+	 * @param Request $request
+	 * @param Application $app
+	 */
 	public function detailAction(Request $request, Application $app)
 	{
 		$id = $request->get('index');
@@ -28,6 +34,11 @@ class AppelationController
 		return $app['twig']->render('appelation/detail.twig', array('appelation' => $appelation));
 	}
 	
+	/**
+	 * Ajoute une appelation
+	 * @param Request $request
+	 * @param Application $app
+	 */
 	public function addAction(Request $request, Application $app)
 	{
 		$appelation = new \LarpManager\Entities\Appelation();
@@ -61,6 +72,11 @@ class AppelationController
 		));
 	}
 	
+	/**
+	 * Modifie une appelation
+	 * @param Request $request
+	 * @param Application $app
+	 */
 	public function updateAction(Request $request, Application $app)
 	{
 		$id = $request->get('index');

@@ -23,6 +23,19 @@ class Appelation extends BaseAppelation
 		return $this->getLabelTree();
 	}
 	
+
+	/**
+	 * Calcule le nombre d'étape necessaire pour revenir au parent le plus ancien
+	 */
+	public function stepCount($count = 0)
+	{
+		if ( $this->getAppelation() )
+		{
+			return $this->getAppelation()->stepCount($count+1);
+		}
+		return $count;
+	}
+	
 	public function getLabelTree()
 	{
 		$string = $this->getLabel();

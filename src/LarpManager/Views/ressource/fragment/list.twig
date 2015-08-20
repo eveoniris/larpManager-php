@@ -9,14 +9,27 @@
 	<li class="list-group-item">
 		<h4 class="list-group-item-heading">
 			{{ ressource.label }}
-		</h4>
-		<p class="list-group-item-text">
-			<p>Rareté : {{ ressource.rarete.label }}</p>
-			<div class="btn-group" role="group" aria-label="...">
+			<div class="btn-group pull-right" role="group" aria-label="...">
 				<a href="{{ path('ressource.detail', {index: ressource.id}) }}" class="btn btn-primary" role="button">Voir</a>
 			    <a href="{{ path('ressource.update', {index: ressource.id}) }}" class="btn btn-default" role="button">Modifier</a>
 			</div>
-			
+		</h4>
+		<p class="list-group-item-text">
+			<p>Rareté : {{ ressource.rarete.label }}</p>			
+		</p>
+		<p class="list-group-item-text">
+			{%  if ressource.importateurs|length > 0 %}
+				{{ ressource.label }} est importé par : {{ ressource.importateurs|join(', ') }}	
+			{% else %}
+				Personne n'importe de {{ ressource.label }}.	
+			{% endif %}
+		</p>
+		<p class="list-group-item-text">
+			{%  if ressource.exportateurs|length > 0 %}
+				{{ ressource.label }} est exporté par : {{ ressource.exportateurs|join(', ') }}	
+			{% else %}
+				Personne n'exporte de {{ ressource.label }}.	
+			{% endif %}
 		</p>
 		
 		

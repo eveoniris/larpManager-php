@@ -6,7 +6,8 @@
 		</a>
 	{%  endif %}
 	{%  for appelation in appelations %}
-	<li class="list-group-item">
+	{%  set step = appelation.stepCount %}
+	<li class="list-group-item"{% if step > 0 %} style="padding-left: {{ step * 50 }}px"{% endif %}>
 		<h4 class="list-group-item-heading">
 			{{ appelation.label }} 
 			<div class="btn-group pull-right" role="group" aria-label="...">

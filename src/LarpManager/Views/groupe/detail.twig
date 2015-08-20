@@ -37,18 +37,25 @@
 		    				<h4 class="list-group-item-heading">Fief</h4>
 		    				
 		    				<p class="list-group-item-text">
-		    					{% if not groupe.region %}
+		    					{% if not groupe.territoire %}
 		    						<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
-		    						Attention, ce groupe n'a pas de fief.
+		    						Attention, ce groupe n'a pas de territoire.
 		    					{% else %}
-		    						{{ groupe.region.nom }}
+		    						{{ groupe.territoire.nom }}
 		    					{% endif %}
 		    				</p>
 		    			</div>
 		    			
 		    			<div class="list-group-item">
 			    			<h4 class="list-group-item-heading">Scénariste</h4>
-	    					<p class="list-group-item-text">{{ groupe.scenariste.username }}</p>
+	    					<p class="list-group-item-text">
+	    						{% if not groupe.scenariste %}
+	    							<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+		    						Attention, ce groupe n'a pas de scénariste.
+	    						{% else %}
+	    							{{ groupe.scenariste.username }}
+	    						{% endif %}
+	    					</p>
 	    					<p class="list-group-item-text">
 	    						<span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>
 	    						<a href="#">Contacter par mail</a>
