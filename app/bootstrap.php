@@ -176,7 +176,7 @@ else
 			   }),
 		),
 		'secured_area' => array(	// le reste necessite d'être connecté
-			'pattern' => '^/[stock|groupe|territoire|appelation|langue|ressource|age|genre|niveau]/.*$',
+			'pattern' => '^/[stock|groupe|personnage|territoire|appelation|langue|ressource|age|genre|niveau]/.*$',
 			'anonymous' => false,
 			'remember_me' => array(),
 			'form' => array(
@@ -231,9 +231,9 @@ else
 	
 	$app['security.access_rules'] = array(
 		array('^/groupe/.*$', 'ROLE_USER'),
+		array('^/personnage/.*$', 'ROLE_USER'),
 		array('^/age/.*$', 'ROLE_REGLE'),
 		array('^/genre/.*$', 'ROLE_REGLE'),
-		array('^/personnage/.*$', 'ROLE_SCENARISTE'),
 		array('^/territoire/.*$', 'ROLE_SCENARISTE'),
 		array('^/appelation/.*$', 'ROLE_SCENARISTE'),
 		array('^/langue/.*$', 'ROLE_SCENARISTE'),

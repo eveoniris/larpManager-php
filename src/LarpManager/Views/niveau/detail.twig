@@ -3,28 +3,26 @@
 {% block title %}Niveaux{% endblock title %}
 
 {% block content %}
-
-<a href="{{ path("niveau") }}">Retour à la liste des niveaux</a>
-
-<div class="page-header">
-	<h1>Détail de {{ niveau.label }}</h1>
-</div>
 	
 <div class="container-fluid">
 	<div class="row">
 		<div class="col-xs-12 col-md-8">
 			
-			<div class="panel panel-primary">
-  				<div class="panel-heading">
-  					{{ niveau.label }}				
-  				</div>
-
-  				<div class="panel-footer">
+			<a href="{{ path("niveau") }}">Retour à la liste des niveau</a>
+						
+			<div class="well well-sm bs-component">
+				<h4>
+					{{ niveau.label }}
+				</h4>
+			</div>
+			
+			<div class="list-group">
+				<div class="list-group-item">
   					<div class="btn-group" role="group" aria-label="...">
   						<a  class="btn btn-primary" role="button" href="{{ path('niveau.update', {index : niveau.id}) }}">Modifier</a>
-						<a  class="btn btn-default" role="button" href="{{ path('niveau.detail.export', {index : niveau.id}) }}">Exporter</a>
 					</div>
   				</div>
+  			
 			</div>			
 		</div>
 	</div>

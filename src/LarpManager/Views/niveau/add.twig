@@ -4,14 +4,13 @@
 
 {% block content %}
 
-	<div class="page-header">
-		<h1>Ajout d'un niveau</h1>
-	</div>
-
 	<div class="container-fluid">
 		<div class="row">
 			<div class="col-xs-12 col-md-8">
-				{{ include("niveau/fragment/form.twig",{'action': path('niveau.add'), 'form' : form}) }}
+				{{ include("niveau/fragment/form.twig",{
+					'legend': 'Ajout d\'un niveau',
+					'action': path('niveau.add'), 
+					'form' : form}) }}
 			</div>
 		</div>
 	</div>

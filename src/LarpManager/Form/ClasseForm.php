@@ -22,10 +22,11 @@ class ClasseForm extends AbstractType
 					'required' => false,)
 				)
 				->add('competenceFavorites','entity', array(
-					'label' => "Compétences favorites",
+					'label' => "Compétences favorites (n'oubliez pas de cochez aussi la/les compétences acquises à la création)",
 					'required' => false,
 					'property' => 'nom',
 					'multiple' => true,
+					'expanded' => true,
 					'mapped' => true,
 					'class' => 'LarpManager\Entities\Competence',	)
 				)
@@ -34,6 +35,7 @@ class ClasseForm extends AbstractType
 					'required' => false,
 					'property' => 'nom',
 					'multiple' => true,
+					'expanded' => true,
 					'mapped' => true,
 					'class' => 'LarpManager\Entities\Competence',	)
 				)
@@ -42,6 +44,7 @@ class ClasseForm extends AbstractType
 					'required' => false,
 					'property' => 'nom',
 					'multiple' => true,
+					'expanded' => true,
 					'mapped' => true,
 					'class' => 'LarpManager\Entities\Competence',	)
 				);

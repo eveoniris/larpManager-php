@@ -3,84 +3,88 @@
 {% block title %}{{ groupe.nom }}{% endblock title %}
 
 {% block content %}
-
-
-	<div class="page-header">
-		<h1>
-			{{ groupe.nom }} - <small>Informations pour les joueurs</small>
-		</h1>
-	</div>
 	
 	<div class="container-fluid">
 		<div class="row">
 			<div class="col-xs-12 col-md-8">
 			
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						<label class="control-label">Informations générales</label>
-					</div>
-					<div class="panel-body">
-						<p>Bienvenue en <strong>{{ groupe.nom }}</strong> !</p>
-						<p>Cette page va vous permettre de créer un personnage.</p>
-					</div>
-					<ul class="list-group">
-						<li class="list-group-item">
-						{{ include("groupe/fragment/scenariste.twig",{'scenariste': groupe.scenariste}) }}
-						</li>
-						<li class="list-group-item">
-						{% if app.user.isResponsable(groupe) %}
-							Vous êtes le responsable du groupe : <a href="{{ path('groupe.gestion',{'index':groupe.id}) }}">Gestion du groupe</a>
-						{% else %}
-							Votre responsable est {{ groupe.responsable.username }} ({{ groupe.responsable.email }}).
-							<a href="#">Envoyer un mail à votre responsable</a>&nbsp;<span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>
-						{% endif %}
-						</li>
-					</ul>
+				<div class="well well-sm bs-component">
+					<h4>
+						{{ groupe.nom }} - <small>Informations pour les joueurs</small>
+					</h4>
 				</div>
-				
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						<label class="control-label">Composition du groupe</label>
-					</div>
-					<div class="panel-body">
-						{% if groupe.personnages|length == 0 %}
-							<p>Ce groupe ne contient pas encore de personnage, créez vite le votre !</p>
-						{% else %}
+							
+						<div class="list-group">
 						
-						{% endif %}
-					</div>
-					<ul class="list-group">	
-						<li class="list-group-item">
-						{% set personnage = app.user.personnageOn(groupe) %}
-						{% if personnage %}
-							Vous êtes <strong>{{ personnage.nom }} </strong>: {{ personnage.classe.label }} 
-						{% else %}
-							<a href="{{ path('groupe.personnage.add',{'index':groupe.id}) }}">Créer votre personnage</a>
-						{% endif %}
-						</li>
-						
-						{% for personnage in groupe.personnages %}
-							<li class="list-group-item">
-								<strong>{{ personnage.nom }} </strong>: {{ personnage.classe.label }}
-							</li>
-						{% endfor %}
-					</ul>
-				</div>
-				
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						<label class="control-label">Classes disponibles</label>
-					</div>
-					<div class="panel-body">
-						{{ groupe.availableClasses|join(', ') }}
-					</div>
-				</div>
-			
+							<div class="list-group-item">
+								<h4 class="list-group-item-heading">Bienvenue en <strong>{{ groupe.nom }}</strong> !</h4>
+								<p class="list-group-item-text">
+								{{ include("groupe/fragment/scenariste.twig",{'scenariste': groupe.scenariste}) }}
+								</p>
+								<p class="list-group-item-text">
+									Votre territoire est : {{ groupe.territoire.nom }}
+								</p>
+								{% if groupe.territoire.description %}
+								<p class="list-group-item-text">
+									{{ groupe.territoire.description }}
+								</p>
+								{% endif %}
+							</div>
+							
+							<div class="list-group-item">
+								<h4 class="list-group-item-heading">Responsable du groupe</h4>
+								<p class="list-group-item-text">
+									{% if app.user.isResponsable(groupe) %}
+										Vous êtes le responsable du groupe : <a href="{{ path('groupe.gestion',{'index':groupe.id}) }}">Gestion du groupe</a>
+									{% else %}
+										{% if groupe.responsable %} 
+										Votre responsable est {{ groupe.responsable.username }} ({{ groupe.responsable.email }}).
+										<a href="#">Envoyer un mail à votre responsable</a>&nbsp;<span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>
+										{% else %}
+										Votre groupe ne dispose pas encore de responsable (chef de groupe). Il/elle sera choisie en accord avec votre scénariste.
+										{% endif %}
+									{% endif %}
+								</p>
+							</div>
+							
+							<div class="list-group-item">
+								<h4 class="list-group-item-heading">Membres du groupe</h4>
+								<p class="list-group-item-text">
+									{{ groupe.users|join(', ') }}
+								</p>
+							</div>
+							
+							<div class="list-group-item">
+								<h4 class="list-group-item-heading">Composition du groupe</h4>
+								<p class="list-group-item-text">
+									{% if groupe.personnages|length == 0 %}
+										<p>Ce groupe ne contient pas encore de personnage, créez vite le votre !</p>
+									{% endif %}
+									
+									{% set personnage = app.user.personnageOn(groupe) %}
+									{% if personnage %}
+										Vous êtes <strong>{{ personnage.nom }} </strong>: {{ personnage.classe.label }} 
+									{% else %}
+										<a href="{{ path('groupe.personnage.add',{'index':groupe.id}) }}">Créer votre personnage</a>
+									{% endif %}
+																		
+									{% for personnage in groupe.personnages %}
+										<li >
+											<strong>{{ personnage.nom }} </strong>: {{ personnage.classe.label }}
+										</li>
+									{% endfor %}
+								</p>
+							</div>
+							
+							<div class="list-group-item">
+								<h4 class="list-group-item-heading">Classes disponibles</h4>
+								<p class="list-group-item-text">
+									{{ groupe.availableClasses|join(', ') }}
+								</p>
+							</div>
+						</div>
 			</div>
 		</div>
-	</div>
-			
-			
-	
+	</div>	
 	
 {% endblock %}

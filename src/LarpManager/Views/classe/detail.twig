@@ -3,64 +3,66 @@
 {% block title %}Classes{% endblock title %}
 
 {% block content %}
-
-<a href="{{ path("classe") }}">Retour à la liste des classes</a>
-
-<div class="page-header">
-	<h1>Détail de {{ classe.label }}</h1>
-</div>
 	
 <div class="container-fluid">
 	<div class="row">
 		<div class="col-xs-12 col-md-8">
 			
-			<div class="panel panel-primary">
-  				<div class="panel-heading">
-  					{{ classe.label }}				
+			<a href="{{ path("classe") }}">Retour à la liste des classes</a>
+			<div class="well well-sm bs-component">
+				<h4>
+					{{ classe.label }}
+				</h4>
+			</div>
+			
+  			<div class="list-group">
+		    		
+		    	<div class="list-group-item">
+			    	<h4 class="list-group-item-heading">Description</h4>
+	    			<p class="list-group-item-text">
+	    			{% if not classe.description %}
+    				<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+    				Attention, cette classe n'a pas de description.
+    				{% else %}
+    					{{ classe.description }}
+    				{% endif %}
+    				</p>
+	    		</div>
+	    		
+				<div class="list-group-item">
+	  				<h4 class="list-group-item-heading">
+	  					Compétences acquises à la création		
+	  				</h4>
+  					<p class="list-group-item-text">
+						{{ classe.competenceCreations|join(', ') }}
+  					</p>
   				</div>
-  				<div class="panel-body">
-    				<p>{{ classe.description }}</p>
+  				
+				<div class="list-group-item">
+	  				<h4 class="list-group-item-heading">
+	  					Compétences favorites		
+	  				</h4>
+  					<p class="list-group-item-text">
+						{{ classe.competenceFavorites|join(', ') }}
+  					</p>
   				</div>
-  				<div class="panel-footer">
+  				
+  				<div class="list-group-item">
+	  				<h4 class="list-group-item-heading">
+	  					Compétences normales		
+	  				</h4>
+  					<p class="list-group-item-text">
+						{{ classe.competenceNormales|join(', ') }}
+  					</p>
+  				</div>
+  				
+  				<div class="list-group-item">
   					<div class="btn-group" role="group" aria-label="...">
   						<a  class="btn btn-primary" role="button" href="{{ path('classe.update', {index : classe.id}) }}">Modifier</a>
-						<a  class="btn btn-default" role="button" href="{{ path('classe.detail.export', {index : classe.id}) }}">Exporter</a>
 					</div>
-  				</div>
+				</div>
+				
 			</div>
-		</div>
-		
-		<div class="col-xs-12 col-md-4">
-			<div class="panel panel-default">
-  				<div class="panel-heading">
-  					Compétences favorites		
-  				</div>
-  				<div class="panel-body">
-					{{ classe.competenceFavorites|join(', ') }}
-  				</div>
-  			</div>
-		</div>
-		
-		<div class="col-xs-12 col-md-4">
-			<div class="panel panel-default">
-  				<div class="panel-heading">
-  					Compétences normales		
-  				</div>
-  				<div class="panel-body">			
-					{{ classe.competenceNormales|join(', ') }}
-  				</div>
-  			</div>
-		</div>
-		
-		<div class="col-xs-12 col-md-4">
-			<div class="panel panel-default">
-  				<div class="panel-heading">
-  					Compétences acquises à la création		
-  				</div>
-  				<div class="panel-body">
-					{{ classe.competenceCreations|join(', ') }}
-  				</div>
-  			</div>
 		</div>
 	</div>
 </div>

@@ -3,43 +3,41 @@
 {% block title %}Compétences{% endblock title %}
 
 {% block content %}
-
-<a href="{{ path("competence") }}">Retour à la liste des compétences</a>
-
-<div class="page-header">
-	<h1>Détail de {{ competence.nom }}</h1>
-</div>
 	
 <div class="container-fluid">
 	<div class="row">
 		<div class="col-xs-12 col-md-8">
-			
-			<div class="panel panel-primary">
-  				<div class="panel-heading">
-  					{{ competence.nom }}				
-  				</div>
-  				<div class="panel-body">
-    				<p>{{ competence.description }}</p>
-  				</div>
-  				<div class="panel-footer">
+		
+			<a href="{{ path("competence") }}">Retour à la liste des compétences</a>
+						
+			<div class="well well-sm bs-component">
+				<h4>
+					{{ competence.nom }}
+				</h4>
+			</div>
+
+			<div class="list-group">				
+
+				<div class="list-group-item">
+			    	<h4 class="list-group-item-heading">Description</h4>
+	    			<p class="list-group-item-text">
+	    			{% if not competence.description %}
+    				<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+    				Attention, cette compétence n'a pas de description.
+    				{% else %}
+    					{{ competence.description }}
+    				{% endif %}
+    				</p>
+	    		</div>
+	    		
+  				<div class="list-group-item">
   					<div class="btn-group" role="group" aria-label="...">
   						<a  class="btn btn-primary" role="button" href="{{ path('competence.update', {index : competence.id}) }}">Modifier</a>
-						<a  class="btn btn-default" role="button" href="{{ path('competence.detail.export', {index : competence.id}) }}">Exporter</a>
 					</div>
   				</div>
 			</div>
 			
 			{{ include("competence/fragment/niveau.twig",{'competence': competence,'add' : false}) }}
-		</div>
-
-		<div class="col-xs-12 col-md-4">
-			<div class="panel panel-default">
-  				<div class="panel-heading">Informations</div>
-  				<div class="panel-body">
-  					<p>Créé par {{ competence.creator.username }} le {{ competence.creationDate|date('Y-m-d H:i:s') }}.</p>
-  					<p>Dernière mise à jour le {{ competence.updateDate|date('Y-m-d H:i:s') }}</p>
-  				</div>
-			</div>		
 		</div>
 	</div>
 </div>

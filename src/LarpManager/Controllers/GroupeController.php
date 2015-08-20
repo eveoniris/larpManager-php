@@ -10,6 +10,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 use LarpManager\Form\GroupeForm;
 use LarpManager\Form\PersonnageForm;
+use LarpManager\Form\Type\CompetenceType;
 
 /**
  * Gestion des groupes
@@ -33,7 +34,7 @@ class GroupeController
 		$groupes = $query->getResult();
 				
 		return $app['twig']->render('groupe/index.twig', array(
-				'last_add' => $groupes));
+				'groupes' => $groupes));
 	}
 	
 	/**
@@ -85,6 +86,11 @@ class GroupeController
 		
 		$personnage = new \LarpManager\Entities\Personnage();
 		
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Competence');
+		$competences = $repo->findAll();
+		
+		// j'ajoute içi certain champs du formulaires
+		// car j'ai besoin des informations du groupes pour les alimenter
 		$form = $app['form.factory']->createBuilder(new PersonnageForm(), $personnage)
 			->add('classe','entity', array(
 					'label' =>  'Classe',
@@ -94,7 +100,7 @@ class GroupeController
 				))
 			->add('save','submit', array('label' => 'Sauvegarder mon personnage'))
 			->getForm();
-		
+			
 		$form->handleRequest($request);
 		
 		if ( $form->isValid() )
@@ -113,6 +119,7 @@ class GroupeController
 		return $app['twig']->render('groupe/personnage/add.twig', array(
 				'form' => $form->createView(),
 				'groupe' => $groupe,
+				'competences' => $competences,
 		));
 	}
 	

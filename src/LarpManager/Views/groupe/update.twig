@@ -4,16 +4,14 @@
 
 {% block content %}
 
-	<a href="{{ path("groupe") }}">Retour à la liste des groupes</a>
-	
-	<div class="page-header">
-		<h1>Modification de {{ groupe.nom }}</h1>
-	</div>
-
 	<div class="container-fluid">
 		<div class="row">
 			<div class="col-xs-12 col-md-8">
-				{{ include("groupe/fragment/form.twig",{'action': path('groupe.update',{'index': groupe.id}), 'form' : form}) }}
+				<a href="{{ path("groupe") }}">Retour à la liste des groupes</a>
+				{{ include("groupe/fragment/form.twig",{
+					'legend': 'Modification d\'un groupe',
+					'action': path('groupe.update',{'index': groupe.id}), 
+					'form' : form}) }}
 			</div>
 		</div>
 	</div>

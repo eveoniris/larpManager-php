@@ -3,17 +3,15 @@
 {% block title %}Compétences{% endblock title %}
 
 {% block content %}
-
-	<a href="{{ path("competence") }}">Retour à la liste des compétences</a>
 	
-	<div class="page-header">
-		<h1>Modification de {{ competence.nom }}</h1>
-	</div>
-
 	<div class="container-fluid">
 		<div class="row">
 			<div class="col-xs-12 col-md-8">
-				{{ include("competence/fragment/form.twig",{'action': path('competence.update',{'index': competence.id}), 'form' : form}) }}
+				<a href="{{ path("competence") }}">Retour à la liste des compétences</a>
+				{{ include("competence/fragment/form.twig",{
+					'legend': 'modification d\'une compétence',
+					'action': path('competence.update',{'index': competence.id}), 
+					'form' : form}) }}
 			</div>
 
 			<div class="col-xs-12 col-md-4">

@@ -8,14 +8,13 @@
 	{%  for groupe in groupes %}
 	<li class="list-group-item">
 		<h4 class="list-group-item-heading">
-			{{ groupe.nom }} 
-		</h4>
-		<p class="list-group-item-text">
+			{{ groupe.numero|default('?') }} - {{ groupe.nom }} 
 			<div class="pull-right btn-group" role="group" aria-label="...">
 				<a href="{{ path('groupe.detail', {index: groupe.id}) }}" class="btn btn-primary" role="button">Voir</a>
 			    <a href="{{ path('groupe.update', {index: groupe.id}) }}" class="btn btn-default" role="button">Modifier</a>
 			</div>
-			
+		</h4>
+		<p class="list-group-item-text">			
 			<p>{{ groupe.description }}</p>
 			
 			<ul>
@@ -23,7 +22,7 @@
 				{% if groupe.scenariste %}
 					<strong>Scénariste : </strong>{{ groupe.scenariste.username }}
 				{% else %}
-					<p class="text-warning">Attention, ce groupe n'a pas de scénariste.</p>
+					<span class="text-warning">Attention, ce groupe n'a pas de scénariste.</span>
 				{% endif %}
 				</li>
 				
@@ -31,17 +30,18 @@
 				{% if groupe.responsable %}
 					<strong>Responsable : </strong>{{ groupe.responsable.username }}
 				{% else %}
-					<p class="text-warning">Attention, ce groupe n'a pas de responsable (chef de groupe)</p>
+					<span class="text-warning">Attention, ce groupe n'a pas de responsable (chef de groupe)</span>
+				{% endif %}
+				</li>
+				<li>
+				{% if groupe.code %}
+					<strong>Code : </strong>{{ groupe.code }}
+				{% else %}
+					<span class="text-warning">Attention, ce groupe n'a pas code.</span>
 				{% endif %}
 				</li>
 			</ul>
-			
-
 		</p>
-		<p class="list-group-item-text">
-			<small>Créé par {{ groupe.creator.username }} le {{ groupe.creationDate|date('Y-m-d H:i:s') }}. Dernière mise à jour le {{ groupe.updateDate|date('Y-m-d H:i:s') }}</small>
-		</p>
-		
 	</li>
 	{%  endfor %}
 </ul>

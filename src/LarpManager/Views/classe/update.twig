@@ -6,14 +6,13 @@
 
 	<a href="{{ path("classe") }}">Retour à la liste des classes</a>
 	
-	<div class="page-header">
-		<h1>Modification de {{ classe.label }}</h1>
-	</div>
-
 	<div class="container-fluid">
 		<div class="row">
 			<div class="col-xs-12 col-md-8">
-				{{ include("classe/fragment/form.twig",{'action': path('classe.update',{'index': classe.id}), 'form' : form}) }}
+				{{ include("classe/fragment/form.twig",{
+					'legend': 'Modification d\'une classe',
+					'action': path('classe.update',{'index': classe.id}), 
+					'form' : form}) }}
 			</div>
 		</div>
 	</div>

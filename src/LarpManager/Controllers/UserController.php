@@ -321,10 +321,9 @@ class UserController
 					// Log the user in to the new account.
 					$app['user.manager']->loginAsUser($user);
 		
-					$app['session']->getFlashBag()->set('alert', 'Account created.');
+					$app['session']->getFlashBag()->set('alert', 'Le compte a été créé.');
 		
-					// Redirect to user's new profile page.
-					return $app->redirect($app['url_generator']->generate('user.view', array('id' => $user->getId())));
+					return $app->redirect($app['url_generator']->generate('homepage'));
 				//}
 		
 			} catch (InvalidArgumentException $e) {

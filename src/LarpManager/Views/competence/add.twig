@@ -3,15 +3,14 @@
 {% block title %}Compétences{% endblock title %}
 
 {% block content %}
-
-	<div class="page-header">
-		<h1>Ajout d'une compétence</h1>
-	</div>
-
 	<div class="container-fluid">
 		<div class="row">
 			<div class="col-xs-12 col-md-8">
-				{{ include("competence/fragment/form.twig",{'action': path('competence.add'), 'form' : form}) }}
+				<a href="{{ path("competence") }}">Retour à la liste des compétences</a>
+				{{ include("competence/fragment/form.twig",{
+					'legend': 'Ajout d\'une compétence',
+					'action': path('competence.add'), 
+					'form' : form}) }}
 			</div>
 		</div>
 	</div>

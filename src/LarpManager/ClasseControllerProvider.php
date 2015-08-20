@@ -18,7 +18,7 @@ class ClasseControllerProvider implements ControllerProviderInterface
 		$controllers->match('/add','LarpManager\Controllers\ClasseController::addAction')
 			->bind("classe.add")
 			->method('GET|POST');
-		
+				
 		$controllers->match('/{index}/update','LarpManager\Controllers\ClasseController::updateAction')
 			->assert('index', '\d+')
 			->bind("classe.update")

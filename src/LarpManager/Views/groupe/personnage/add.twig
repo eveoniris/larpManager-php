@@ -3,15 +3,92 @@
 {% block title %}{{ groupe.nom }}{% endblock title %}
 
 {% block content %}
-	<div class="page-header">
-		<h1>
-			{{ groupe.nom }} - <small>Création d'un personnage</small>
-		</h1>
-	</div>
-	
-	<form action="{{ path('groupe.personnage.add',{'index':groupe.id}) }}" method="POST" {{ form_enctype(form) }}>
-		{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
 
-		{{ form(form) }}
+<div class="well bs-component">	
+	<form action="{{ path('groupe.personnage.add',{'index':groupe.id}) }}" method="POST" {{ form_enctype(form) }}>
+		<fieldset>
+			<legend>{{ groupe.nom }} - <small>Création d'un personnage</small></legend>
+			{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+
+			{{ form_row(form.nom) }}
+			{{ form_row(form.surnom) }}
+			{{ form_row(form.age) }}
+			{{ form_row(form.genre) }}
+			{{ form_row(form.intrigue) }}
+			
+			<div class="row">
+				<div class="col-md-4">
+					{{ form_row(form.classe) }}
+			
+					<div id="classeInfo">
+					</div>
+				</div>
+				<div class="col-md-8">
+			
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							Compétences
+						</div>
+						
+						<div class="panel-body">
+							<p>Composez votre personnage avec une ou plusieurs compétences.</p>
+							<div class="list-group">
+								<div class="form-group">
+								{% for competence in competences %}
+									<div class="checkbox">
+										<label class>
+											<input type="checkbox"><span  data-toggle="tooltip" title="{{ competence.description}}">{{ competence.nom }}</span>
+										</label>
+									</div>
+								{% endfor %}
+								</div>
+							</div>
+						</div>
+						
+					</div>
+				</div>
+			
+			{{ form_rest(form) }}
+		</fieldset>
 	</form>
+</div>
 {% endblock content %}
+
+{% block javascript %}
+
+	{{  parent() }}
+	<script>
+		var xp_initial = 15;
+		var competences_favorite = {};
+		var competences_normales = {};
+
+		var update_class_info = function(classeId) {
+			
+			
+			$.ajax({
+				'url' : "{{ path('personnage.classe') }}",
+				'type' :  'get',
+				'data' : {classeId: classeId},
+				})
+				.done(function(result) {
+					$('#classeInfo').fadeToggle("slow", function() {
+						$('#classeInfo').html(result);
+						$('#classeInfo').fadeToggle("slow");
+					});
+				});
+			
+		};
+		
+		
+		// lorsque l'on choisi une classe, la liste des compétences doit ce mettre à jour
+		jQuery(document).ready(function() {
+			$("#personnage_classe option:selected").each(function() {
+				update_class_info($(this).val());
+			});
+			$("#personnage_classe").on('change',function(){
+				update_class_info($(this).val());
+			});
+		});
+		
+	</script>
+{% endblock javascript %}

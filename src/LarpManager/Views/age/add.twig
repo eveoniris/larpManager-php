@@ -4,14 +4,13 @@
 
 {% block content %}
 
-	<div class="page-header">
-		<h1>Ajout d'un age</h1>
-	</div>
-
 	<div class="container-fluid">
 		<div class="row">
 			<div class="col-xs-12 col-md-8">
-				{{ include("age/fragment/form.twig",{'action': path('age.add'), 'form' : form}) }}
+				{{ include("age/fragment/form.twig",{
+					'legend': 'Ajout d\'un age',
+					'action': path('age.add'), 
+					'form' : form}) }}
 			</div>
 		</div>
 	</div>

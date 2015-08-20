@@ -8,11 +8,6 @@
         <p>Hello, {{ app.user.displayName }}.</p>
         <p><a href="{{ path('user.logout') }}">Sign out</a></p>
     {% else %}
-    	<div class="page-header">
-	        <h1>
-	            Se connecter
-	        </h1>
-	     </div>
 		<div class="well">
 	        <p class="text-muted lead">
 	            Vous n'avez pas de compte ? <a href="{{ path('user.register') }}">Enregistrez-vous.</a>
