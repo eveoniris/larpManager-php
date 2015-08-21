@@ -75,13 +75,13 @@
 					</div>
 					<ul class="list-group">
 						<li class="list-group-item">
-							{% if groupe.region %}
-								Votre fief est <strong>{{ groupe.region.nom }}</strong>. Ce fief fait partit de <strong>{{groupe.region.pays.nom }}</strong>.
-								{{ groupe.region.description }}
-								{{ groupe.region.dirigeant }}
-								{{ groupe.region.capitale }}
+							{% if groupe.territoire %}
+								Votre fief est <strong>{{ groupe.territoire.nom }}</strong>
+								{{ groupe.territoire.description }}
+								{{ groupe.territoire.dirigeant }}
+								{{ groupe.territoire.capitale }}
 							{% else %}
-								Votre groupe ne dispose pas de fief.
+								Votre groupe ne dispose pas de territoire.
 							{% endif %}
 						</li>
 					</ul>

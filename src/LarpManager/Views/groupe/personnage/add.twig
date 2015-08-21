@@ -16,38 +16,49 @@
 			{{ form_row(form.genre) }}
 			{{ form_row(form.intrigue) }}
 			
-			<div class="row">
-				<div class="col-md-4">
-					{{ form_row(form.classe) }}
+			{{ form_row(form.classe) }}
+	
+			<div id="classeInfo">
+			</div>
 			
-					<div id="classeInfo">
-					</div>
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					Compétences
 				</div>
-				<div class="col-md-8">
-			
-					<div class="panel panel-default">
-						<div class="panel-heading">
-							Compétences
-						</div>
-						
-						<div class="panel-body">
-							<p>Composez votre personnage avec une ou plusieurs compétences.</p>
-							<div class="list-group">
-								<div class="form-group">
-								{% for competence in competences %}
+				
+				<div class="panel-body">
+					<p>Composez votre personnage avec une ou plusieurs compétences.</p>
+					<ul>
+					<li>Les compétences surlignées en vert correspondent aux compétences favorites de votre classe</li>
+					<li>Les compétences surlignées en violet correspondent aux compétences normales de votre classe</li>
+					<li>Les compétences acquises à la création ne peuvent pas être dés-selectionnée.</li>
+					</ul>
+					<div class="col-sm-6">
+					
+						<div class="list-group">
+							<div class="form-group">
+							{% for competence in competences %}
+								<div class="col-sm-6">
 									<div class="checkbox">
 										<label class>
-											<input type="checkbox"><span  data-toggle="tooltip" title="{{ competence.description}}">{{ competence.nom }}</span>
+											<input name="competence[{{ competence.id }}]" id="{{ competence.id }}" type="checkbox" class="competence"><span  data-toggle="tooltip" title="{{ competence.description}}">{{ competence.nom }}</span>
 										</label>
 									</div>
-								{% endfor %}
 								</div>
+							{% endfor %}
 							</div>
 						</div>
 						
 					</div>
+					<div class="col-sm-6">
+						<div id="competenceList">
+							<h5>Vos compétences</h5>
+						</div>
+					</div>
+					
 				</div>
-			
+			</div>
+							
 			{{ form_rest(form) }}
 		</fieldset>
 	</form>
@@ -58,13 +69,13 @@
 
 	{{  parent() }}
 	<script>
-		var xp_initial = 15;
-		var competences_favorite = {};
-		var competences_normales = {};
+		var xp_initial = 10;
+		var competencesFavorites = {};
+		var competencesNormales = {};
+		var competenceCreations = {};
 
+		// mise à jour du panneau d'information sur la classe
 		var update_class_info = function(classeId) {
-			
-			
 			$.ajax({
 				'url' : "{{ path('personnage.classe') }}",
 				'type' :  'get',
@@ -72,23 +83,73 @@
 				})
 				.done(function(result) {
 					$('#classeInfo').fadeToggle("slow", function() {
-						$('#classeInfo').html(result);
+						competenceCreations = result.competenceCreations;
+						competenceNormales = result.competenceNormales;
+						competenceFavorites = result.competenceFavorites;
+						
+						select_competence_creation();
+						$('#classeInfo').html(result.html);
 						$('#classeInfo').fadeToggle("slow");
 					});
-				});
+				});			
+		};
+
+		var select_competence_creation = function() {
+
+			// nettoie la liste des competences 
+			$('input.competence').removeAttr('disabled');
+			$('input.competence').prop('checked', false);
+			$('input.competence').parent().removeClass('bg-success');
+
+			// passe en vert les competences favorites
+			for (var i = 0; i < competenceFavorites.length; i++) {
+				var checkbox = $('input.competence[name="competence['+competenceFavorites[i]+']"]');
+				$(checkbox).parent().addClass('bg-success');
+			}
+
+			// passe en bleu les competences normales
+			for (var i = 0; i < competenceNormales.length; i++) {
+				var checkbox = $('input.competence[name="competence['+competenceNormales[i]+']"]');
+				$(checkbox).parent().addClass('bg-info');
+			}
 			
+			// coche les competences acquises à la creation
+			// et déclenche l'évenement "competence selectionné"
+			for (var i = 0; i < competenceCreations.length; i++) {
+				var checkbox = $('input.competence[name="competence['+competenceCreations[i]+']"]');
+				$(checkbox).parent().addClass('bg-success');
+				$(checkbox).prop("checked", true);
+				$(checkbox).attr("disabled",true);
+				$(checkbox).trigger('change');
+			}
 		};
 		
-		
-		// lorsque l'on choisi une classe, la liste des compétences doit ce mettre à jour
+		// lorsque l'on choisi une classe, le panneau d'information de la classe doit ce mettre à jour
+		// de plus la/les compétences acquise à la création de cette classe doivent être cochée
 		jQuery(document).ready(function() {
 			$("#personnage_classe option:selected").each(function() {
 				update_class_info($(this).val());
+				
 			});
 			$("#personnage_classe").on('change',function(){
 				update_class_info($(this).val());
 			});
+
+			$('input.competence').on('change', function() {
+				if ($(this).is(':checked')) {
+					var competence = $(this).siblings('span').clone();
+					$("#competenceList").append($(competence));
+					$(competence).wrap('<div class="competence_'+$(this).attr('id')+'"></div>');
+				}
+				else {
+					$('div.competence_'+$(this).attr('id')).remove();
+				}
+				
+			});
 		});
+
+		// lorsque l'on choisi une compétence, celle-ci doit fournir le niveau "apprentit" au joueur
+		// et mettre à jour son compte de XP en fonction de la classe (compétences favorites, normales, acquise à la création)
 		
 	</script>
 {% endblock javascript %}

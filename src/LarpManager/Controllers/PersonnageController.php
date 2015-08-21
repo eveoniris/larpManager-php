@@ -21,7 +21,30 @@ class PersonnageController
 		
 		$classe = $app['orm.em']->find('\LarpManager\Entities\Classe',$id);
 		
-		return $app['twig']->render('classe/info.twig', array('classe' => $classe));
+		$competenceCreations = array();
+		foreach ( $classe->getCompetenceCreations() as $competence)
+		{
+			$competenceCreations[] = $competence->getId();
+		}
+		
+		$competenceFavorites = array();
+		foreach ( $classe->getCompetenceFavorites() as $competence)
+		{
+			$competenceFavorites[] = $competence->getId();
+		}
+		
+		$competenceNormales = array();
+		foreach ( $classe->getCompetenceNormales() as $competence)
+		{
+			$competenceNormales[] = $competence->getId();
+		}
+		
+		return $app->json(array(
+					'competenceCreations' => $competenceCreations,
+					'competenceFavorites' => $competenceFavorites,
+					'competenceNormales' => $competenceNormales,
+					'html' => $app['twig']->render('classe/info.twig', array('classe' => $classe))
+				));
 		
 	}
 	

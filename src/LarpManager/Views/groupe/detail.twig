@@ -4,12 +4,11 @@
 
 {% block content %}
 
-<a href="{{ path("groupe") }}">Retour à la liste des groupes</a>
-	
 <div class="container-fluid">
 	<div class="row">
 		<div class="col-xs-12 col-md-8">
-			
+		
+			<a href="{{ path("groupe") }}">Retour à la liste des groupes</a>			
 			<div class="well well-sm bs-component">
 				<h4>
 					{{ groupe.numero|default('?') }} - {{ groupe.nom }}
