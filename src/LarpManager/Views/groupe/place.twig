@@ -1,0 +1,33 @@
+{% extends "layout.twig" %}
+
+{% block title %}Places disponibles{% endblock %}
+
+{% block content %}
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-xs-12 col-md-12">
+			
+				<div class="well bs-component">
+				<form class="form-horizontal" action="{{ path('groupe.place') }}" method="POST">
+					<fieldset>
+						<legend>Places disponibles</legend>
+						{% for groupe in groupes %}
+							<div class="form-group">
+								<label class="col-sm-2 control-label">{{groupe.numero|default('?')}} - {{ groupe.nom }}</label>
+								<div class="col-sm-6">
+									<input class="form-control" name="place[{{ groupe.id }}]" type="number" value="{{ groupe.classeOpen|default(0) }}" />
+								</div>
+							</div>
+						{% endfor %}
+						<div class="form-group">
+							<div class="col-sm-8 col-sm-offset-2">
+								<input class="btn btn-primary" type="submit" value="Enregistrer" />
+							</div>
+						</div>
+					</fieldset>
+				</form>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock content %}

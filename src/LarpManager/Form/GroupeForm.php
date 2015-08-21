@@ -56,10 +56,10 @@ class GroupeForm extends AbstractType
 						'label' => "Participe au jeu maritime ?",
 						'required' => false,
 				))
-				->add('classeOpen','integer', array(
+				/*->add('classeOpen','integer', array(
 						'label' => "Nombre de place ouverte",
 						'required' => false,
-				))
+				))*/ // seul l'admin peux modifier le nombre de classe ouverte
 				->add('groupeClasses', 'collection', array(
 						'label' => "Composition",
 						'required' => false,

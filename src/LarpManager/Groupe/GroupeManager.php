@@ -16,6 +16,20 @@ class GroupeManager
 		$this->app = $app;
 	}
 	
+	/**
+	 * Fourni la liste de tous les groupes classé par numéro
+	 */
+	public function findAllOrderByNumero()
+	{
+		$repo = $this->app['orm.em']->getRepository('\LarpManager\Entities\Groupe');
+		
+		$query = $repo->createQueryBuilder('g')
+				->orderBy('g.numero','ASC')
+				->getQuery();
+		
+		$groupes = $query->getResult();
+		return $groupes;
+	}
 	
 	/**
 	 * Trouve un groupe en fonction de son code

@@ -24,14 +24,8 @@ class GroupeController
 	 * @param Application $app
 	 */
 	public function indexAction(Request $request, Application $app)
-	{
-		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Groupe');
-		
-		$query = $repo->createQueryBuilder('g')
-			->orderBy('g.numero','ASC')
-			->getQuery();
-		
-		$groupes = $query->getResult();
+	{	
+		$groupes = $app['groupe.manager']->findAllOrderByNumero();
 				
 		return $app['twig']->render('groupe/index.twig', array(
 				'groupes' => $groupes));
@@ -121,6 +115,35 @@ class GroupeController
 				'groupe' => $groupe,
 				'competences' => $competences,
 		));
+	}
+	
+	/**
+	 * Modification du nombre de place disponibles dans un groupe
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function placeAction(Request $request, Application $app)
+	{
+		$groupes = $app['groupe.manager']->findAllOrderByNumero();
+		
+		if ( $request->getMethod() == 'POST')
+		{
+			$newPlaces = $request->get('place');
+				
+			foreach( $groupes as $groupe )
+			{
+				if ( $groupe->getClasseOpen() != $newPlaces[$groupe->getId()])
+				{
+					$groupe->setClasseOpen($newPlaces[$groupe->getId()]);
+					$app['orm.em']->persist($groupe);
+				}
+			}
+			$app['orm.em']->flush();
+		}
+		
+		return $app['twig']->render('groupe/place.twig', array(
+				'groupes' => $groupes));
 	}
 	
 	/**

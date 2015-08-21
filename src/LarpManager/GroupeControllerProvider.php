@@ -52,6 +52,7 @@ class GroupeControllerProvider implements ControllerProviderInterface
 				}
 			});
 			
+		// Ajout d'un personnage (membre du groupe uniquement)
 		$controllers->match('/{index}/personnage/add','LarpManager\Controllers\GroupeController::personnageAddAction')
 			->assert('index', '\d+')
 			->bind("groupe.personnage.add")
@@ -62,11 +63,22 @@ class GroupeControllerProvider implements ControllerProviderInterface
 				}
 			});
 		
+		// Ajout d'un groupe (Scénariste uniquement)
 		$controllers->match('/add','LarpManager\Controllers\GroupeController::addAction')
 			->bind("groupe.add")
 			->method('GET|POST')
 			->before(function(Request $request) use ($app) {
 				if (!$app['security.authorization_checker']->isGranted('ROLE_SCENARISTE')) {
+					throw new AccessDeniedException();
+				}
+			});
+
+		// Modification des places disponibles (Admin uniquement)
+		$controllers->match('/place','LarpManager\Controllers\GroupeController::placeAction')
+			->bind("groupe.place")
+			->method('GET|POST')
+			->before(function(Request $request) use ($app) {
+				if (!$app['security.authorization_checker']->isGranted('ROLE_ADMIN')) {
 					throw new AccessDeniedException();
 				}
 			});

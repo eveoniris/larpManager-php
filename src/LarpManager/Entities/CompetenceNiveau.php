@@ -19,6 +19,11 @@ use LarpManager\Entities\BaseCompetenceNiveau;
 class CompetenceNiveau extends BaseCompetenceNiveau
 {
 	
+	public function __toString()
+	{
+		return $this->getLabel();
+	}
+	
 	public function getNiveau()
 	{
 		$niveau = parent::getNiveau();
