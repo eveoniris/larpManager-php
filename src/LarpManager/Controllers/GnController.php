@@ -6,6 +6,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Silex\Application;
 
+use LarpManager\Form\GnForm;
+
 class GnController
 {
 	/**
@@ -23,63 +25,97 @@ class GnController
 	 */
 	public function addAction(Request $request, Application $app)
 	{
-		if ( $request->getMethod() === 'POST' ) 
+		$gn = new \LarpManager\Entities\Gn();
+	
+		$form = $app['form.factory']->createBuilder(new GnForm(), $gn)
+			->add('save','submit', array('label' => "Sauvegarder"))
+			->getForm();
+	
+		$form->handleRequest($request);
+	
+		if ( $form->isValid() )
 		{
-			$name = $request->get('name');
-			
-			$gn = new \LarpManager\Entities\Gn();
-			$gn->setName($name);
-			
+			$gn = $form->getData();
+				
 			$app['orm.em']->persist($gn);
 			$app['orm.em']->flush();
-			
-			return $app->redirect($app['url_generator']->generate('gn_list'));
+	
+			$app['session']->getFlashBag()->add('success', 'Le gn a été ajouté.');
+	
+			return $app->redirect($app['url_generator']->generate('gn'),301);
 		}
-		
-		return $app['twig']->render('gn/add.twig');
+	
+		return $app['twig']->render('gn/add.twig', array(
+				'form' => $form->createView(),
+		));
 	}
 	
 	/**
-	 * @description affiche le formulaire de suppresion d'un gn
-	 */
-	public function removeAction(Request $request, Application $app)
-	{
-		$id = $request->get('index');
-		
-		$gn = $app['orm.em']->find('\LarpManager\Entities\Gn',$id);
-		
-		if ( $gn )
-		{
-			if ( $request->getMethod() === 'POST' )
-			{
-				$app['orm.em']->remove($gn);
-				$app['orm.em']->flush();
-				return $app->redirect($app['url_generator']->generate('gn_list'));
-			}
-			return $app['twig']->render('gn/remove.twig', array('gn' => $gn));
-		}
-		else
-		{
-			return $app->redirect($app['url_generator']->generate('gn_list'));
-		}
-	}
-	
-	/**
-	 * @description affiche la détail d'un gn
+	 * Detail d'un gn
+	 * 
+	 * @param Request $request
+	 * @param Application $app
 	 */
 	public function detailAction(Request $request, Application $app)
 	{
 		$id = $request->get('index');
-		
+	
 		$gn = $app['orm.em']->find('\LarpManager\Entities\Gn',$id);
-		
+	
 		if ( $gn )
 		{
-			return $app['twig']->render('gn/detail.twig', array('gn',$gn));
+			return $app['twig']->render('gn/detail.twig', array('gn' => $gn));
 		}
 		else
 		{
-			return $app->redirect($app['url_generator']->generate('gn_list'));
+			$app['session']->getFlashBag()->add('error', 'Le gn n\'a pas été trouvé.');
+			return $app->redirect($app['url_generator']->generate('gn'));
+		}	
+	}
+	
+	/**
+	 * Met à jour un gn
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function updateAction(Request $request, Application $app)
+	{
+		$id = $request->get('index');
+	
+		$gn = $app['orm.em']->find('\LarpManager\Entities\Gn',$id);
+	
+		$form = $app['form.factory']->createBuilder(new GnForm(), $gn)
+			->add('update','submit', array('label' => "Sauvegarder"))
+			->add('delete','submit', array('label' => "Supprimer"))
+			->getForm();
+	
+		$form->handleRequest($request);
+	
+		if ( $form->isValid() )
+		{
+			$gn = $form->getData();
+	
+			if ($form->get('update')->isClicked())
+			{	
+				$app['orm.em']->persist($gn);
+				$app['orm.em']->flush();
+				$app['session']->getFlashBag()->add('success', 'Le gn a été mis à jour.');
+			}
+			else if ($form->get('delete')->isClicked())
+			{
+				$app['orm.em']->remove($genre);
+				$app['orm.em']->flush();
+					
+				$app['session']->getFlashBag()->add('success', 'Le gn a été supprimé.');
+			}
+	
+			return $app->redirect($app['url_generator']->generate('gn'));
 		}
+	
+		return $app['twig']->render('gn/update.twig', array(
+				'gn' => $gn,
+				'form' => $form->createView(),
+		));
 	}
 }

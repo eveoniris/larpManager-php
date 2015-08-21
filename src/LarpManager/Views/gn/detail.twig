@@ -1,10 +1,51 @@
 {% extends "layout.twig" %}
 
+{% block title %}Gn{% endblock title %}
+
 {% block content %}
 
-<ul>
-<li>{{ gn.id }}</li>
-<li>{{ gn.name }}</li>
-</ul>
-
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-xs-12 col-md-8">
+		
+			<a href="{{ path("gn") }}">Retour à la liste des gns</a>
+						
+			<div class="well well-sm bs-component">
+				<h4>
+					{{ gn.label }}
+				</h4>
+			</div>
+			
+			<div class="list-group">
+		    		
+		    	<div class="list-group-item">
+			    	<h4 class="list-group-item-heading">Description</h4>
+	    			<p class="list-group-item-text">
+	    			{% if not gn.description %}
+    				<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+    					Attention, ce gn n'a pas de description.
+    				{% else %}
+    					{{ gn.description }}
+    				{% endif %}
+    				</p>
+	    		</div>
+	    		
+	    		<div class="list-group-item">
+	    			<h4 class="list-group-item-heading">Création d'un personnage</h4>
+	    			<p class="list-group-item-text">
+	    				<strong>Nombre de point d'expérience à la création d'un personnage : </strong>{{ gn.xpCreation }}
+	    			</p>
+	    		</div>
+	    		
+	    		<div class="list-group-item">
+  					<div class="btn-group" role="group" aria-label="...">
+  						<a  class="btn btn-primary" role="button" href="{{ path('gn.update', {index : gn.id}) }}">Modifier</a>
+					</div>
+  				</div>
+			</div>
+		</div>
+	</div>
+</div>
+	
+			
 {% endblock %}

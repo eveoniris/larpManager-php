@@ -87,7 +87,7 @@ class GenreController
 	}
 	
 	/**
-	 * Met à jour une compétence
+	 * Met à jour un genre
 	 *
 	 * @param Request $request
 	 * @param Application $app

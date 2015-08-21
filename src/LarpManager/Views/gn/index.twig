@@ -1,29 +1,24 @@
 {% extends "layout.twig" %}
 
+{% block title %}Gns{% endblock title %}
+
 {% block content %}
-	
-	<table>
-		<caption>Liste des GN</caption>
-		<thead>
-			<tr>
-				<th>ID</th>
-				<th>Nom</th>
-				<th/>
-			</tr>
-		</thead>
-		<tbody>
-			{% for gn in gns %}
-				<tr>
-					<td>{{ gn.id }}</td>
-					<td>{{ gn.name }}</td>
-					<td><a href="{{ path('gn_remove', {index: gn.id}) }}">Delete</a></td>
-				</tr>
-			{% endfor %}
-		</tbody>
-	</table>
-	
-	<div>
-		<a href="{{ path('gn_add') }}">Ajouter un GN</a>
+
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-xs-12 col-md-12">
+			<div class="well well-sm">
+				<h4>
+					Gestion des événements
+					<small>
+						( {{ gns|length }} gns )
+					</small>
+				</h4>
+			</div>
+			{{ include("gn/fragment/list.twig", {'gns' : gns, 'add' : true}) }}
+		</div>
 	</div>
+
+</div>
 	
 {% endblock %}

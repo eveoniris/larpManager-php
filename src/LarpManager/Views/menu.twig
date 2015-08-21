@@ -16,6 +16,18 @@
 		<ul class="nav navbar-nav">
 			<li><a href="http://www.eveoniris.com">Eve-Oniris</a></li>
 			
+			{% if is_granted('ROLE_ADMIN', app.user) %}
+				<li class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Admin<span class="caret"></span></a>
+					<ul class="dropdown-menu">
+						<li><a href="{{ path('gn') }}">Evénements</a></li>
+						<li><a href="{{ path('groupe.place') }}">Places disponibles</a></li>
+						<li><a href="{{ path('user.list') }}">Liste des utilisateurs</a></li>
+						<li><a href="{{ path('user.right') }}">Gestion des droits</a></li>
+					</ul>
+				</li>
+			{% endif %}
+			
 			{% if is_granted('ROLE_SCENARISTE', app.user) %}
 				<li class="dropdown">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Scénario<span class="caret"></span></a>
@@ -64,10 +76,6 @@
 					{%  if app.user %}			
 						<li><a href="{{ path('user') }}">Mon compte</a></li>					
 						<li><a href="{{ path('user.logout') }}">Déconnection</a></li>
-						{% if is_granted('ROLE_ADMIN', app.user) %}
-							<li><a href="{{ path('user.list') }}">Liste des utilisateurs</a></li>
-							<li><a href="{{ path('user.right') }}">Gestion des droits</a></li>
-						{% endif %}
 					{%  else %}
 						<li><a href="{{ path('user.login') }}">Connection</a></li>
 						<li><a href="{{ path('user.register') }}">Créer un compte</a></li>

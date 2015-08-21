@@ -176,7 +176,7 @@ else
 			   }),
 		),
 		'secured_area' => array(	// le reste necessite d'être connecté
-			'pattern' => '^/[stock|groupe|personnage|territoire|appelation|langue|ressource|age|genre|niveau]/.*$',
+			'pattern' => '^/[stock|groupe|gn|personnage|territoire|appelation|langue|ressource|age|genre|niveau]/.*$',
 			'anonymous' => false,
 			'remember_me' => array(),
 			'form' => array(
@@ -212,7 +212,7 @@ else
 	$app->mount('/personnage', new LarpManager\PersonnageControllerProvider());
 	$app->mount('/age', new LarpManager\AgeControllerProvider());
 	$app->mount('/genre', new LarpManager\GenreControllerProvider());
-	//$app->mount('/gn', new LarpManager\GnControllerProvider());
+	$app->mount('/gn', new LarpManager\GnControllerProvider());
 	//$app->mount('/chronologie', new LarpManager\ChronologieControllerProvider());
 	//$app->mount('/guilde', new LarpManager\GuildeControllerProvider());
 	
@@ -232,6 +232,7 @@ else
 	$app['security.access_rules'] = array(
 		array('^/groupe/.*$', 'ROLE_USER'),
 		array('^/personnage/.*$', 'ROLE_USER'),
+		array('^/gn/.*$', 'ROLE_ADMIN'),
 		array('^/age/.*$', 'ROLE_REGLE'),
 		array('^/genre/.*$', 'ROLE_REGLE'),
 		array('^/territoire/.*$', 'ROLE_SCENARISTE'),
