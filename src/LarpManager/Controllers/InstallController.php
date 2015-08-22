@@ -242,26 +242,31 @@ class InstallController
 			
 			$age = new \LarpManager\Entities\Age();
 			$age->setLabel("Jeune adulte");
+			$age->setEnableCreation(true);
 			$app['orm.em']->persist($age);
 			$app['orm.em']->flush();
 			
 			$age = new \LarpManager\Entities\Age();
 			$age->setLabel("Adulte");
+			$age->setEnableCreation(true);
 			$app['orm.em']->persist($age);
 			$app['orm.em']->flush();
 			
 			$age = new \LarpManager\Entities\Age();
 			$age->setLabel("Mur");
+			$age->setEnableCreation(false);
 			$app['orm.em']->persist($age);
 			$app['orm.em']->flush();
 			
 			$age = new \LarpManager\Entities\Age();
 			$age->setLabel("Vieux");
+			$age->setEnableCreation(false);
 			$app['orm.em']->persist($age);
 			$app['orm.em']->flush();
 			
 			$age = new \LarpManager\Entities\Age();
 			$age->setLabel("Ancien");
+			$age->setEnableCreation(false);
 			$app['orm.em']->persist($age);
 			$app['orm.em']->flush();
 									

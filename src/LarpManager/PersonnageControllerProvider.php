@@ -15,8 +15,14 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 			->bind("personnage.add")
 			->method('GET|POST');
 		
+		// service pour obtenir des informations sur une classe
 		$controllers->match('/classe','LarpManager\Controllers\PersonnageController::classeAction')
 			->bind("personnage.classe")
+			->method('GET');
+		
+		// service pour obtenir des informations sur une competence
+		$controllers->match('/competence','LarpManager\Controllers\PersonnageController::competenceAction')
+			->bind("personnage.competence")
 			->method('GET');
 		
 		$controllers->match('/competence/list','LarpManager\Controllers\PersonnageController::competenceListAction')

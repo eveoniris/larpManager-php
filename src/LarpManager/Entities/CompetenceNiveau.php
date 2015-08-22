@@ -37,6 +37,36 @@ class CompetenceNiveau extends BaseCompetenceNiveau
 		}
 	}
 	
+	public function getCoutNormal()
+	{
+		$niveau = parent::getNiveau();
+		if ( $niveau )
+		{
+			return $niveau->getCout();
+		}
+		return null;
+	}
+	
+	public function getCoutFavori()
+	{
+		$niveau = parent::getNiveau();
+		if ( $niveau )
+		{
+			return $niveau->getCoutFavori();
+		}
+		return null;		
+	}
+	
+	public function getCoutMeconnu()
+	{
+		$niveau = parent::getNiveau();
+		if ( $niveau )
+		{
+			return $niveau->getMeconnu();
+		}
+		return null;
+	}
+	
 	public function getLabel()
 	{
 		$niveau = parent::getNiveau();
