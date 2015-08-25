@@ -6,8 +6,6 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use LarpManager\Form\Type\CompetenceType;
-
 class ClasseForm extends AbstractType
 {
 	public function buildForm(FormBuilderInterface $builder, array $options)
@@ -21,32 +19,32 @@ class ClasseForm extends AbstractType
 				->add('description','textarea', array(
 					'required' => false,)
 				)
-				->add('competenceFavorites','entity', array(
-					'label' => "Compétences favorites (n'oubliez pas de cochez aussi la/les compétences acquises à la création)",
+				->add('competenceFamilyFavorites','entity', array(
+					'label' => "Famille de compétences favorites (n'oubliez pas de cochez aussi la/les compétences acquises à la création)",
 					'required' => false,
-					'property' => 'nom',
+					'property' => 'label',
 					'multiple' => true,
 					'expanded' => true,
 					'mapped' => true,
-					'class' => 'LarpManager\Entities\Competence',	)
+					'class' => 'LarpManager\Entities\CompetenceFamily',	)
 				)
-				->add('competenceNormales','entity', array(
-					'label' => "Compétences normales",
+				->add('competenceFamilyNormales','entity', array(
+					'label' => "Famille de compétences normales",
 					'required' => false,
-					'property' => 'nom',
+					'property' => 'label',
 					'multiple' => true,
 					'expanded' => true,
 					'mapped' => true,
-					'class' => 'LarpManager\Entities\Competence',	)
+					'class' => 'LarpManager\Entities\CompetenceFamily',	)
 				)
-				->add('competenceCreations','entity', array(
-					'label' => "Compétences acquises à la création",
+				->add('competenceFamilyCreations','entity', array(
+					'label' => "Famille de compétences acquises à la création",
 					'required' => false,
-					'property' => 'nom',
+					'property' => 'label',
 					'multiple' => true,
 					'expanded' => true,
 					'mapped' => true,
-					'class' => 'LarpManager\Entities\Competence',	)
+					'class' => 'LarpManager\Entities\CompetenceFamily',	)
 				);
 	}
 	

@@ -10,8 +10,8 @@
 namespace LarpManager\Entities;
 
 use LarpManager\Entities\BaseCompetence;
-use LarpManager\Entities\Classe;
 use Doctrine\Common\Collections\ArrayCollection;
+
 
 /**
  * LarpManager\Entities\Competence
@@ -20,190 +20,47 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class Competence extends BaseCompetence
 {
-	
 	/**
-	 * @ManyToMany(targetEntity="Classe", mappedBy="competencesFavorites")
+	 * Fourni le label d'une compétence
 	 */
-	protected $classeFavorites;
-	
-	/**
-	 * @ManyToMany(targetEntity="Classe", mappedBy="competenceNormales")
-	 */
-	protected $classeNormales;
-	
-	/**
-	 * @ManyToMany(targetEntity="Classe", mappedBy="competenceCreations")
-	 */
-	protected $classeCreations;
-	
-	/**
-	 * Permet de définir la date de création
-	 */
-	public function __construct()
+	public function getLabel()
 	{
-		$this->setCreationDate(new \DateTime('NOW'));
-		$this->setUpdateDate(new \DateTime('NOW'));
+		$label = $this->getCompetenceFamily()->getLabel();
+		$label .= ' - ' . $this->getLevel()->getLabel();
+		return $label;
+	}
+	
+	/**
+	 * Fourni la compétence de niveau immédiatement supérieur appartenant à la même famille de compétence
+	 */
+	public function getNext()
+	{
+		$competenceFamily = $this->getCompetenceFamily();
+		$levelIndex = $this->getLevel()->getIndex();
 		
-		$this->classeFavorites = new ArrayCollection();
-		$this->classeNormales = new ArrayCollection();
-		$this->classeCreations = new ArrayCollection();
+		$competences = $competenceFamily->getCompetences();
+		$nextCompetences = new ArrayCollection();
 		
-		parent::__construct();
-	}
-	
-	public function __toString()
-	{
-		return $this->getNom();	
-	}
-	
-	/**
-	 * Helper pour récupérer l'utilisateur qui a créé la compétence
-	 */
-	public function getCreator()
-	{
-		$creator = $this->getUser();
-	
-		return $creator;
-	}
-	
-	/**
-	 * Helper pour définir l'utilisateur qui a créé la compétence
-	 * @param User $user
-	 */
-	public function setCreator($user)
-	{
-		return $this->setUser($user);
-	}
-	
-	/**
-	 * Helper pour récupérer tous les niveaux d'une compétence
-	 */
-	public function getNiveaux()
-	{
-		return $this->getCompetenceNiveaus();
-	}
-	
-	/**
-	 * Fourni le niveau demandé
-	 * @param unknown $niveau
-	 */
-	public function getNiveau($niveau)
-	{
-		foreach ( $this->getCompetenceNiveaus() as $competenceNiveau )
+		foreach ( $competences as $competence)
 		{
-			if ( $competenceNiveau->getNiveau()->getNiveau() == $niveau )
+			if ( $competence->getLevel()->getIndex() > $levelIndex )
 			{
-				return $competenceNiveau;
+				$nextCompetences->add($competence);
 			}
 		}
-		return null;
+		
+		$minimumIndex = 0 ;
+		$competenceFirst = null;
+		foreach ( $nextCompetences as $competence )
+		{
+			if ( $competence->getLevel()->getIndex() < $minimumIndex )
+			{
+				$competenceFirst = $competence;
+				$minimumIndex = $competence->Level()->getIndex();
+			}
+		}
+		
+		return $competenceFirst;
 	}
 	
-	/**
-	 * Add Classe entity to collection.
-	 *
-	 * @param \LarpManager\Entities\Classe $classe
-	 * @return \LarpManager\Entities\Competence
-	 */
-	public function addClasseFavorite(Classe $classe)
-	{
-		$this->classeFavorites[] = $classe;
-	
-		return $this;
-	}
-	
-	/**
-	 * Remove Classe entity from collection.
-	 *
-	 * @param \LarpManager\Entities\Classe $classe
-	 * @return \LarpManager\Entities\Competence
-	 */
-	public function removeClasseFavorite(Classe $classe)
-	{
-		$this->classeFavorites->removeElement($classe);
-	
-		return $this;
-	}
-	
-	/**
-	 * Get Objet entity collection.
-	 *
-	 * @return \Doctrine\Common\Collections\Collection
-	 */
-	public function getClasseFavorites()
-	{
-		return $this->classeFavorites;
-	}
-	
-	/**
-	 * Add Classe entity to collection.
-	 *
-	 * @param \LarpManager\Entities\Classe $classe
-	 * @return \LarpManager\Entities\Competence
-	 */
-	public function addClasseNormale(Classe $classe)
-	{
-		$this->classeNormales[] = $classe;
-	
-		return $this;
-	}
-	
-	/**
-	 * Remove Classe entity from collection.
-	 *
-	 * @param \LarpManager\Entities\Classe $classe
-	 * @return \LarpManager\Entities\Competence
-	 */
-	public function removeClasseNormale(Classe $classe)
-	{
-		$this->classeNormales->removeElement($classe);
-	
-		return $this;
-	}
-	
-	/**
-	 * Get Objet entity collection.
-	 *
-	 * @return \Doctrine\Common\Collections\Collection
-	 */
-	public function getClasseNormales()
-	{
-		return $this->classeNormales;
-	}
-	
-	/**
-	 * Add Classe entity to collection.
-	 *
-	 * @param \LarpManager\Entities\Classe $classe
-	 * @return \LarpManager\Entities\Competence
-	 */
-	public function addClasseCreation(Classe $classe)
-	{
-		$this->classeCreations[] = $classe;
-	
-		return $this;
-	}
-	
-	/**
-	 * Remove Classe entity from collection.
-	 *
-	 * @param \LarpManager\Entities\Classe $classe
-	 * @return \LarpManager\Entities\Competence
-	 */
-	public function removeClasseCreation(Classe $classe)
-	{
-		$this->classeCreations->removeElement($classe);
-	
-		return $this;
-	}
-	
-	/**
-	 * Get Objet entity collection.
-	 *
-	 * @return \Doctrine\Common\Collections\Collection
-	 */
-	public function getClasseCreations()
-	{
-		return $this->classeCreations;
-	}
 }

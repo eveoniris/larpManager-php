@@ -24,38 +24,38 @@ use LarpManager\Entities\BaseClasse;
 class Classe extends BaseClasse
 {
 	/**
-	 * @ManyToMany(targetEntity="Competence", inversedBy="classeFavorites")
-	 * @JoinTable(name="classe_competence_favorite",
+	 * @ManyToMany(targetEntity="CompetenceFamily", inversedBy="classeFavorites")
+	 * @JoinTable(name="classe_competence_family_favorite",
 	 *     joinColumns={@JoinColumn(name="classe_id", referencedColumnName="id")},
-	 *     inverseJoinColumns={@JoinColumn(name="competence_id", referencedColumnName="id")}
+	 *     inverseJoinColumns={@JoinColumn(name="competence_family_id", referencedColumnName="id")}
 	 * )
 	 */
-	protected $competenceFavorites;
+	protected $competenceFamilyFavorites;
 	
 	/**
-	 * @ManyToMany(targetEntity="Competence", inversedBy="classeNormales")
-	 * @JoinTable(name="classe_competence_normale",
+	 * @ManyToMany(targetEntity="CompetenceFamily", inversedBy="classeNormales")
+	 * @JoinTable(name="classe_competence_family_normale",
 	 *     joinColumns={@JoinColumn(name="classe_id", referencedColumnName="id")},
-	 *     inverseJoinColumns={@JoinColumn(name="competence_id", referencedColumnName="id")}
+	 *     inverseJoinColumns={@JoinColumn(name="competence_family_id", referencedColumnName="id")}
 	 * )
 	 */
-	protected $competenceNormales;
+	protected $competenceFamilyNormales;
 	
 	/**
-	 * @ManyToMany(targetEntity="Competence", inversedBy="classeCreations")
-	 * @JoinTable(name="classe_competence_creation",
+	 * @ManyToMany(targetEntity="CompetenceFamily", inversedBy="classeCreations")
+	 * @JoinTable(name="classe_competence_family_creation",
 	 *     joinColumns={@JoinColumn(name="classe_id", referencedColumnName="id")},
-	 *     inverseJoinColumns={@JoinColumn(name="competence_id", referencedColumnName="id")}
+	 *     inverseJoinColumns={@JoinColumn(name="competence_family_id", referencedColumnName="id")}
 	 * )
 	 */
-	protected $competenceCreations;
+	protected $competenceFamilyCreations;
 	
 	
 	public function __construct()
 	{
-		$this->competenceFavorites = new ArrayCollection();
-		$this->competenceNormales = new ArrayCollection();
-		$this->competenceCreations = new ArrayCollection();
+		$this->competenceFamilyFavorites = new ArrayCollection();
+		$this->competenceFamilyNormales = new ArrayCollection();
+		$this->competenceFamilyCreations = new ArrayCollection();
 		parent::__construct();
 	}
 	
@@ -75,10 +75,10 @@ class Classe extends BaseClasse
 	 * @param \LarpManager\Entities\Competence $competence
 	 * @return \LarpManager\Entities\Classe
 	 */
-	public function addCompetenceFavorite(Competence $competence)
+	public function addCompetenceFamilyFavorite(CompetenceFamily $competenceFamily)
 	{
-		$competence->addClasseFavorite($this);
-		$this->competenceFavorites[] = $competence;
+		$competenceFamily->addClasseFavorite($this);
+		$this->competenceFamilyFavorites[] = $competenceFamily;
 	
 		return $this;
 	}
@@ -86,13 +86,13 @@ class Classe extends BaseClasse
 	/**
 	 * Remove Competence entity from collection.
 	 *
-	 * @param \LarpManager\Entities\Competence $competence
+	 * @param \LarpManager\Entities\CompetenceFamily $competenceFamily
 	 * @return \LarpManager\Entities\Classe
 	 */
-	public function removeCompetenceFavorite(Competence $competence)
+	public function removeCompetenceFamilyFavorite(CompetenceFamily $competenceFamily)
 	{
-		$competence->removeClasseFavorite($this);
-		$this->$competenceFavorites->removeElement($competence);
+		$competenceFamily->removeClasseFavorite($this);
+		$this->$competenceFamilyFavorites->removeElement($competenceFamily);
 	
 		return $this;
 	}
@@ -102,21 +102,21 @@ class Classe extends BaseClasse
 	 *
 	 * @return \Doctrine\Common\Collections\Collection
 	 */
-	public function getCompetenceFavorites()
+	public function getCompetenceFamilyFavorites()
 	{
-		return $this->competenceFavorites;
+		return $this->competenceFamilyFavorites;
 	}
 	
 	/**
 	 * Add Competence entity to collection.
 	 *
-	 * @param \LarpManager\Entities\Competence $competence
+	 * @param \LarpManager\Entities\CompetenceFamily $competenceFamily
 	 * @return \LarpManager\Entities\Classe
 	 */
-	public function addCompetenceNormale(Competence $competence)
+	public function addCompetenceFamilyNormale(CompetenceFamily $competenceFamily)
 	{
-		$competence->addClasseNormale($this);
-		$this->competenceNormales[] = $competence;
+		$competenceFamily->addClasseNormale($this);
+		$this->competenceFamilyNormales[] = $competenceFamily;
 	
 		return $this;
 	}
@@ -124,13 +124,13 @@ class Classe extends BaseClasse
 	/**
 	 * Remove Competence entity from collection.
 	 *
-	 * @param \LarpManager\Entities\Competence $competence
+	 * @param \LarpManager\Entities\CompetenceFamily $competenceFamily
 	 * @return \LarpManager\Entities\Classe
 	 */
-	public function removeCompetenceNormale(Competence $competence)
+	public function removeCompetenceFamilyNormale(CompetenceFamily $competenceFamily)
 	{
-		$competence->removeClasseNormale($this);
-		$this->$competenceNormales->removeElement($competence);
+		$competenceFamily->removeClasseNormale($this);
+		$this->$competenceFamilyNormales->removeElement($competenceFamily);
 	
 		return $this;
 	}
@@ -140,21 +140,21 @@ class Classe extends BaseClasse
 	 *
 	 * @return \Doctrine\Common\Collections\Collection
 	 */
-	public function getCompetenceNormales()
+	public function getCompetenceFamilyNormales()
 	{
-		return $this->competenceNormales;
+		return $this->competenceFamilyNormales;
 	}
 	
 	/**
 	 * Add Competence entity to collection.
 	 *
-	 * @param \LarpManager\Entities\Competence $competence
+	 * @param \LarpManager\Entities\CompetenceFamily $competenceFamily
 	 * @return \LarpManager\Entities\Classe
 	 */
-	public function addCompetenceCreation(Competence $competence)
+	public function addCompetenceFamilyCreation(CompetenceFamily $competenceFamily)
 	{
-		$competence->addClasseCreation($this);
-		$this->competenceCreations[] = $competence;
+		$competenceFamily->addClasseCreation($this);
+		$this->competenceFamilyCreations[] = $competenceFamily;
 	
 		return $this;
 	}
@@ -162,13 +162,13 @@ class Classe extends BaseClasse
 	/**
 	 * Remove Competence entity from collection.
 	 *
-	 * @param \LarpManager\Entities\Competence $competence
+	 * @param \LarpManager\Entities\CompetenceFamily $competenceFamily
 	 * @return \LarpManager\Entities\Classe
 	 */
-	public function removeCompetenceCreation(Competence $competence)
+	public function removeCompetenceFamilyCreation(CompetenceFamily $competenceFamily)
 	{
-		$competence->removeClasseCreation($this);
-		$this->$competenceCreations->removeElement($competence);
+		$competenceFamily->removeClasseCreation($this);
+		$this->$competenceFamilyCreations->removeElement($competenceFamily);
 	
 		return $this;
 	}
@@ -178,8 +178,8 @@ class Classe extends BaseClasse
 	 *
 	 * @return \Doctrine\Common\Collections\Collection
 	 */
-	public function getCompetenceCreations()
+	public function getCompetenceFamilyCreations()
 	{
-		return $this->competenceCreations;
+		return $this->competenceFamilyCreations;
 	}
 }

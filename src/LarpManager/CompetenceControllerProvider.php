@@ -28,25 +28,6 @@ class CompetenceControllerProvider implements ControllerProviderInterface
 			->assert('index', '\d+')
 			->bind("competence.detail")
 			->method('GET');
-		
-		$controllers->match('/{index}/export','LarpManager\Controllers\CompetenceController::detailExportAction')
-			->assert('index', '\d+')
-			->bind("competence.detail.export")
-			->method('GET');
-		
-		$controllers->match('/export','LarpManager\Controllers\CompetenceController::exportAction')
-			->bind("competence.export")
-			->method('GET');
-		
-		$controllers->match('/{index}/niveau/add','LarpManager\Controllers\CompetenceController::niveauAddAction')
-			->assert('index', '\d+')
-			->bind("competence.niveau.add")
-			->method('GET|POST');
-		
-		$controllers->match('/niveau/{index}/update','LarpManager\Controllers\CompetenceController::niveauUpdateAction')
-			->assert('index', '\d+')
-			->bind("competence.niveau.update")
-			->method('GET|POST');
 			
 		return $controllers;
 	}

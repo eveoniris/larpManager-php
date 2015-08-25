@@ -2,15 +2,13 @@
 
 namespace LarpManager\Controllers;
 
-use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Silex\Application;
 use Doctrine\Common\Collections\ArrayCollection;
 
 use LarpManager\Form\GroupeForm;
 use LarpManager\Form\PersonnageForm;
-use LarpManager\Form\Type\CompetenceType;
+use LarpManager\Form\PersonnageCompetenceForm;
 
 /**
  * Gestion des groupes
@@ -71,6 +69,7 @@ class GroupeController
 		$id = $request->get('index');
 		
 		$groupe = $app['orm.em']->find('\LarpManager\Entities\Groupe',$id);
+		$joueur = $app['user']->getJoueur();
 		
 		// si le groupe n'a plus de place, refuser le personnage
 		if (  ! $groupe->hasEnoughPlace() )
@@ -80,7 +79,7 @@ class GroupeController
 		}
 		
 		// si le joueur dispose déjà d'un personnage, refuser le personnage
-		if ( $app['user']->getPersonnages()->count() > 0 ) 
+		if ( $joueur->getPersonnage() ) 
 		{
 			$app['session']->getFlashBag()->add('error','Désolé, vous disposez déjà d\'un personnage.');
 			return $app->redirect($app['url_generator']->generate('groupe.joueur',array('index'=>$id)),301);
@@ -105,27 +104,27 @@ class GroupeController
 		if ( $form->isValid() )
 		{
 			$personnage = $form->getData();
-			$personnage->setUser($app['user']);
 			$personnage->setGroupe($groupe);
-			
-			// ajoute les compétences au niveau 1 acquise à la création
-			$repoNiveau = $app['orm.em']->getRepository('\LarpManager\Entities\Niveau');
-			$niveau = $repoNiveau->findByNiveau(1);
-			
-			foreach ($personnage->getClasse()->getCompetenceCreations() as $competence)
+			$joueur->setPersonnage($personnage);
+
+			// ajout des compétences acquises à la création		
+			foreach ($personnage->getClasse()->getCompetenceFamilyCreations() as $competenceFamily)
 			{
-				$personnage->addCompetence($competence,$niveau);
+				$firstCompetence = $competenceFamily->getFirstCompetence();
+				if ( $firstCompetence )
+				{
+					$personnage->addCompetence($firstCompetence);
+				}
 			}
 			
 			$app['orm.em']->persist($personnage);
-			$app['orm.em']->flush($personnage);
+			$app['orm.em']->persist($joueur);
+			$app['orm.em']->flush();
+			
 			
 			$app['session']->getFlashBag()->add('success','Votre personnage a été sauvegardé, étape suivante');
 			return $app->redirect($app['url_generator']->generate('groupe.personnage.competence',array('index'=>$id),301));
 		}
-		
-		$repoClasse = $app['orm.em']->getRepository('\LarpManager\Entities\Classe');
-		$classes = $repoClasse->findAll();
 		
 		return $app['twig']->render('groupe/personnage/add.twig', array(
 				'form' => $form->createView(),
@@ -136,6 +135,9 @@ class GroupeController
 	
 	/**
 	 * Page de gestion des competence
+	 * Cette page doit permettre à un joueur de selectionner parmis les compétences qui lui sont acceccibles
+	 * de nouvelles compétences (pour peu qu'il dispose des points d'expériences necessaires)
+	 * 
 	 * @param Request $request
 	 * @param Application $app
 	 */
@@ -153,7 +155,16 @@ class GroupeController
 			return $app->redirect($app['url_generator']->generate('groupe.joueur',array('index'=>$id)),301);
 		}
 		
-		$form = $app['form.factory']->createBuilder(new PersonnageCompetenceForm(), $personnage);
+		$form = $app['form.factory']->createBuilder(new PersonnageCompetenceForm(), $personnage)
+								->add('competences','entity', array(
+										'label' =>  'Choisissez une nouvelle compétence',
+										'property' => 'label',
+										'class' => 'LarpManager\Entities\Competence',
+										'mapped' => false,
+										'choices' => $app['personnage.manager']->getAvailableCompetences($personnage),
+								))
+								->add('save','submit', array('label' => 'Etape suivante'))
+								->getForm();
 		
 		$form->handleRequest($request);
 		
@@ -167,6 +178,7 @@ class GroupeController
 		
 		return $app['twig']->render('groupe/personnage/competence.twig', array(
 				'form' => $form->createView(),
+				'groupe' => $groupe,
 		));
 	}
 	
@@ -193,6 +205,9 @@ class GroupeController
 				}
 			}
 			$app['orm.em']->flush();
+			
+			$app['session']->getFlashBag()->add('success','Le nombre de place disponible a été mis à jour');
+				
 		}
 		
 		return $app['twig']->render('groupe/place.twig', array(

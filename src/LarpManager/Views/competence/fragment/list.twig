@@ -8,7 +8,7 @@
 	{%  for competence in competences %}
 	<li class="list-group-item">
 		<h4 class="list-group-item-heading">
-			{{ competence.nom }}
+			{{ competence.competenceFamily.label }} - <small>Niveau {{ competence.level.label }}</small>
 			<div class="pull-right btn-group" role="group" aria-label="...">
 				<a href="{{ path('competence.detail', {index: competence.id}) }}" class="btn btn-primary" role="button">Voir</a>
 			    <a href="{{ path('competence.update', {index: competence.id}) }}" class="btn btn-default" role="button">Modifier</a>
@@ -20,14 +20,6 @@
 		{% else %}
 			<p class="list-group-item-text text-warning">Attention, cette compétence n'a pas description</p>
 		{%  endif %}
-		
-		<p class="list-group-item-text">
-		{% if competence.niveaux|length > 0 %}
-			Niveaux définis :{{ competence.niveaux|join(', ') }}
-		{% else %}
-			<span class="text-warning">Attention, aucun niveau n'est défini !</span>
-		{% endif %}
-		</p>
 		
 	</li>
 	{%  endfor %}

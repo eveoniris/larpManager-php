@@ -8,10 +8,10 @@
 	<div class="container-fluid">
 		<div class="row">
 			<div class="col-xs-12 col-md-8">
-				<a href="{{ path("niveau") }}">Retour à la liste des niveaux</a>
-				{{ include("niveau/fragment/form.twig",{
+				<a href="{{ path("level") }}">Retour à la liste des niveaux</a>
+				{{ include("level/fragment/form.twig",{
 					'legend': 'Modification d\'un niveau',
-					'action': path('niveau.update',{'index': niveau.id}), 
+					'action': path('level.update',{'index': level.id}), 
 					'form' : form}) }}
 			</div>
 		</div>

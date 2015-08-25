@@ -15,13 +15,14 @@ use Silex\Provider\SwiftmailerServiceProvider;
 use Silex\Provider\HttpFragmentServiceProvider;
 use Dflydev\Silex\Provider\DoctrineOrm\DoctrineOrmServiceProvider;
 use Saxulum\DoctrineOrmManagerRegistry\Silex\Provider\DoctrineOrmManagerRegistryProvider;
-use Symfony\Component\HttpFoundation\Response;
 
 use LarpManager\User\UserServiceProvider;
 use LarpManager\Groupe\GroupeServiceProvider;
 use LarpManager\Territoire\TerritoireServiceProvider;
 use LarpManager\Appelation\AppelationServiceProvider;
 use LarpManager\Personnage\PersonnageServiceProvider;
+use LarpManager\Niveau\NiveauServiceProvider;
+use LarpManager\Competence\CompetenceServiceProvider;
 
 $loader = require_once __DIR__.'/../vendor/autoload.php';
 
@@ -160,6 +161,7 @@ else
 	$app->register(new AppelationServiceProvider());
 	$app->register(new PersonnageServiceProvider());
 	$app->register(new NiveauServiceProvider());
+	$app->register(new CompetenceServiceProvider());
 	
 	// Define firewall
 	$app['security.firewalls'] = array(
@@ -179,7 +181,7 @@ else
 			   }),
 		),
 		'secured_area' => array(	// le reste necessite d'être connecté
-			'pattern' => '^/[stock|groupe|gn|personnage|territoire|appelation|langue|ressource|age|genre|niveau]/.*$',
+			'pattern' => '^/[stock|groupe|gn|personnage|territoire|appelation|langue|ressource|age|genre|level|competence|competenceFamily]/.*$',
 			'anonymous' => false,
 			'remember_me' => array(),
 			'form' => array(
@@ -209,7 +211,8 @@ else
 	$app->mount('/appelation', new LarpManager\AppelationControllerProvider());
 	$app->mount('/langue', new LarpManager\LangueControllerProvider());
 	$app->mount('/competence', new LarpManager\CompetenceControllerProvider());
-	$app->mount('/niveau', new LarpManager\NiveauControllerProvider());
+	$app->mount('/competenceFamily', new LarpManager\CompetenceFamilyControllerProvider());
+	$app->mount('/level', new LarpManager\LevelControllerProvider());
 	$app->mount('/classe', new LarpManager\ClasseControllerProvider());
 	$app->mount('/ressource', new LarpManager\RessourceControllerProvider());
 	$app->mount('/personnage', new LarpManager\PersonnageControllerProvider());
@@ -243,7 +246,8 @@ else
 		array('^/langue/.*$', 'ROLE_SCENARISTE'),
 		array('^/ressource/.*$', 'ROLE_SCENARISTE'),			
 		array('^/competence/.*$', 'ROLE_REGLE'),
-		array('^/niveau/.*$', 'ROLE_REGLE'),
+		array('^/competenceFamily/.*$', 'ROLE_REGLE'),
+		array('^/level/.*$', 'ROLE_REGLE'),
 		array('^/classe/.*$', 'ROLE_REGLE'),
 		array('^/stock/.*$', 'ROLE_STOCK'),
 
@@ -282,7 +286,6 @@ $app->error(function (\Exception $e, $code) use ($app)
  */
  
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\ParameterBag;
  
 /**
  * Permet de formatter correctement la requête de l'utilisateur si celui-ci

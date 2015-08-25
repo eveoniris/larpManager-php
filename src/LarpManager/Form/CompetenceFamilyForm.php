@@ -6,34 +6,27 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-class CompetenceNiveauForm extends AbstractType
+class CompetenceFamilyForm extends AbstractType
 {
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
-		$builder->add('competence','entity', array(
-					'required' => true,
-					'class' => 'LarpManager\Entities\Competence',
-					'property' => 'nom',
-				))
-				->add('niveau','entity', array(
-					'required' => true,
-					'class' => 'LarpManager\Entities\Niveau',
-					'property' => 'label',
+		$builder->add('label','text', array(
+					'required' => true,	
 				))
 				->add('description','textarea', array(
-					'required' => false,		
+					'required' => false,	
 				));
 	}
-
+	
 	public function setDefaultOptions(OptionsResolverInterface $resolver)
 	{
 		$resolver->setDefaults(array(
-				'data' => 'LarpManager\Entities\CompetenceNiveau',
+				'class' => 'LarpManager\Entities\CompetenceFamily',
 		));
 	}
-
+	
 	public function getName()
 	{
-		return 'competenceNiveauForm';
+		return 'competenceFamily';
 	}
 }

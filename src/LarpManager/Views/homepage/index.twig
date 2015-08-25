@@ -54,10 +54,8 @@
 	{% else %}
 		{% if is_granted('ROLE_USER', app.user) %}
 
-			{% if app.user.groupes|length > 0 %}
-				{% for groupe in app.user.groupes %}
-					{{ include("homepage/fragment/groupe.twig",{'groupe' : groupe}) }}
-				{% endfor %}
+			{% if app.user.groupe %}
+				{{ include("homepage/fragment/groupe.twig",{'groupe' : app.user.groupe}) }}
 			{% else %}
 				<div class="panel panel-default">
 					<div class="panel-heading">

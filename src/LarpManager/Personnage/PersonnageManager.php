@@ -4,11 +4,9 @@ namespace LarpManager\Personnage;
 
 use Silex\Application;
 use LarpManager\Entities\Personnage;
-use LarpManager\Entities\PersonnageCompetence;
-use LarpManager\Entities\Competence;
-use LarpManager\Entities\Niveau;
+use LarpManager\Entities\CompetenceFamily;
 
-use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 
 class PersonnageManager
 {
@@ -21,66 +19,85 @@ class PersonnageManager
 	}
 	
 	/**
-	 * Ajoute une competence à la liste des compétence d'un personnage
+	 * Indique si un personnage connait une famille de competence
 	 * 
 	 * @param Personnage $personnage
-	 * @param Competence $competence
-	 * @param Niveau $niveau
+	 * @param CompetenceFamily $competenceFamily
+	 * @return boolean
 	 */
-	public function addCompetence(Personnage $personnage, Competence $competence, Niveau $niveau)
+	public function knownCompetenceFamily(Personnage $personnage, CompetenceFamily $competenceFamily)
 	{
+		$competences = $personnage->getCompetences();
 		
-		$competenceNiveau = $this->findCompetenceNiveau($competence, $niveau);
-		
-		// vérifie si le personnage dispose bien de la competence de niveau inférieur.
-		if ( $niveau->getNiveau() > 1 ) 
+		foreach ( $competences as $competence)
 		{
-			$previousNiveau = $app['niveau.manager']->getPrevious($niveau);
-			if ( $previousNiveau )
+			if ( $competences->getCompetenceFamily() == $competenceFamily)
 			{
-				if ( ! $this->hasCompetence($competence, $previousNiveau ) ) return null; // erreur. retourner une exception ?
+				return true;
 			}
 		}
-		
-		
-		// vérifie si le joueur dispose de suffisement de point d'expérience
-		$joueur = $personnage->getJoueur();
-		
-		if ( ! $joueur ) return null; // erreur. retourner une exception ?
-		$xpAvailable = $joueur->getXp();
-			
-		
-	}
-	
-	/**
-	 * Determine si un personnage dispose d'une competence au niveau demandé.
-	 * @param Personnage $personnage
-	 * @param Competence $competence
-	 * @param Niveau $niveau
-	 */
-	public function hasCompetence(Personnage $personnage, Competence $competence, Niveau $niveau )
-	{
-		$query = $this->app['orm.em']->createQuery('SELECT 1 FROM LarpManager\Entities\PersonnageCompetence pc WHERE pc.competence = :competence AND pc.niveau = :niveau')
-									->setParameter('competence',$competence)
-									->setParameter('niveau', $niveau);
-		
-		$result = $query->getSingleResult();
-		
-		if ( $result == 1 ) return true;
 		return false;
 	}
 	
 	/**
-	 * Récupére l'objet competenceNiveau
-	 * @param Competence $competence
-	 * @param Niveau $niveau
+	 * Fourni la liste des compétences inconnues d'un personnage
+	 * 
+	 * @param Personnage $personnage
+	 * @return Collection $competences
 	 */
-	public function findCompetenceNiveau(Competence $competence, Niveau $niveau)
+	public function getUnknownCompetences(Personnage $personnage)
 	{
-		$query = $this->app['orm.em']->createQuery('SELECT cn FROM LarpManager\Entities\CompetenceNiveau cn WHERE cn.competence = :competence AND cn.niveau = :niveau')
-									->setParameter('competence',$competence)
-									->setParameter('niveau', $niveau);
-		$result = $query->getSingleResult();
-		return $result;
+		$unknownCompetences = new ArrayCollection();
+		
+		$repo = $this->app['orm.em']->getRepository('\LarpManager\Entities\CompetenceFamily');
+		$competenceFamilies = $repo->findAll();
+				
+		foreach ( $competenceFamilies as $competenceFamily)
+		{
+			if ( ! $this->knownCompetenceFamily($personnage, $competenceFamily))
+			{
+				$competence = $competenceFamily->getFirstCompetence();
+				if ( $competence )
+				{
+					$unknownCompetences->add($competence);
+				}
+			}
+		}
+		
+		return $unknownCompetences;
 	}
+
+	/**
+	 * Récupére la liste des toutes les compétences accessibles pour un personnage
+	 * 
+	 * @param Personnage $personnage
+	 * @return Collection $competenceNiveaux
+	 */
+	public function getAvailableCompetences(Personnage $personnage)
+	{
+		$availableCompetences = new ArrayCollection();
+		
+		// les compétences de niveau supérieur sont disponibles
+		$competences = $personnage->getCompetences();
+		foreach ( $competences as $competence )
+		{
+			var_dump('test');
+			$nextCompetence = $competence->getNext();
+			if ( $nextCompetence )
+			{
+				$availableCompetences->add($nextCompetence);
+			}
+		}
+		
+		// les compétences inconnue du personnage sont disponible au niveau 1
+		$competences = $this->getUnknownCompetences($personnage);
+		
+		foreach ($competences as $competence )
+		{
+			$availableCompetences->add($competence);		
+		}
+		
+		return $availableCompetences;
+	}
+	
 }

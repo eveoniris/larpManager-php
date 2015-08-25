@@ -127,14 +127,5 @@ class ClasseController
 			return $app->redirect($app['url_generator']->generate('classe'));
 		}
 	}
-	
-	public function detailExportAction(Request $request, Application $app)
-	{
-	
-	}
-	
-	public function exportAction(Request $request, Application $app)
-	{
-	
-	}
+
 }

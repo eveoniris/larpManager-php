@@ -11,7 +11,6 @@
 		"doctrine/common" : "~2.5",
 		"dflydev/doctrine-orm-service-provider" : "1.0.*",
 		"symfony/security" : "^2.7",
-		"jasongrimes/silex-simpleuser" : "^2.0",
 		"mysql-workbench-schema-exporter/mysql-workbench-schema-exporter" : "dev-master",
 		"jdorn/sql-formatter" : "^1.2",
 		"symfony/config" : "~2.7",
@@ -23,7 +22,7 @@
 		"symfony/doctrine-bridge" : "~2.7",
 		"saxulum/saxulum-doctrine-orm-manager-registry-provider" : "2.2.1@stable",
 		"symfony/yaml" : "^2.5",
-		"deralex/yaml-config-service-provider": "1.0.x-dev",
+		"deralex/yaml-config-service-provider" : "1.0.x-dev",
 		"swiftmailer/swiftmailer" : "5.*@stable",
 		"monolog/monolog" : "1.15.0@stable"
 	},

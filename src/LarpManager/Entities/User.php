@@ -46,28 +46,27 @@ class User extends BaseUser implements AdvancedUserInterface, \Serializable
 		return $this == $groupe->getResponsable();
 	}
 	
-	
 	/**
-	 * Determine si l'utilisateur dispose d'un personnage dans un groupe
-	 * 
-	 * @param LarpManager\Entities\Groupe $groupe
-	 * @return LarpManager\Entities\Personnage $personnage
+	 * Fourni le personnage d'un joueur
 	 */
-	public function personnageOn(\LarpManager\Entities\Groupe $groupe)
+	public function getPersonnage()
 	{
-		foreach ( $groupe->getPersonnages() as $personnage)
+		$joueur = $this->getJoueur();
+		if ( $joueur )
 		{
-			if ( $personnage->getUser() == $this ) return $personnage;
+			return $joueur->getPersonnage();
 		}
 		return null;
 	}
 	
 	/**
-	 * Fourni le personnage de l'utilisateur
+	 * Determine si l'utilisateur dispose d'un personnage dans son groupe
 	 */
-	public function getPersonnage()
+	public function personnageOn()
 	{
-		return $this->getPersonnages()->first();
+		$groupe = $this->getGroupe();
+		$personnage = $this->getPersonnage();
+		return  $personage && $personnage->getGroupe() == $groupe;
 	}
 	
 	/**

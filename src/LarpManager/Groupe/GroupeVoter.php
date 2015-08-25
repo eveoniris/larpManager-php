@@ -97,12 +97,12 @@ class GroupeVoter implements VoterInterface
 	 */
 	protected function isMemberOf($user, $groupeId)
 	{
-		foreach( $user->getGroupes() as $groupe)
-		{
-			if ( $groupe instanceof \LarpManager\Entities\Groupe
-				&& $groupe->getId() == $groupeId)
-				return true;
-		}
+		$groupe = $user->getGroupe();
+		
+		if ( $groupe instanceof \LarpManager\Entities\Groupe
+			&& $groupe->getId() == $groupeId)
+			return true;
+			
 		return false;
 	}
 		

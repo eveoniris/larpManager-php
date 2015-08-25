@@ -1,21 +1,21 @@
 <ul class="list-group">
 	{%  if add != false %}
-		<a href="{{ path('niveau.add') }}" class="list-group-item active">
+		<a href="{{ path('level.add') }}" class="list-group-item active">
 			<span class="badge"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></span>
 			<h4 class="list-group-item-heading">Ajouter un niveau</h4>
 		</a>
 	{%  endif %}
-	{%  for niveau in niveaux %}
+	{%  for level in levels %}
 	<li class="list-group-item">
 		<h4 class="list-group-item-heading">
-			{{ niveau.label }}
+			{{ level.label }}
 			<div class="btn-group pull-right" role="group" aria-label="...">
-				<a href="{{ path('niveau.detail', {index: niveau.id}) }}" class="btn btn-primary" role="button">Voir</a>
-			    <a href="{{ path('niveau.update', {index: niveau.id}) }}" class="btn btn-default" role="button">Modifier</a>
+				<a href="{{ path('level.detail', {index: level.id}) }}" class="btn btn-primary" role="button">Voir</a>
+			    <a href="{{ path('level.update', {index: level.id}) }}" class="btn btn-default" role="button">Modifier</a>
 			</div>
 		</h4>
 		<p class="list-group-item-text">
-			<p>Coût : {{ niveau.coutFavori }} / {{ niveau.cout }} / {{ niveau.coutMeconu }}</p>			
+			<p>Coût : {{ level.coutFavori }} / {{ level.cout }} / {{ level.coutMeconu }}</p>			
 		</p>
 	</li>
 	{%  endfor %}

@@ -10,8 +10,17 @@ class CompetenceForm extends AbstractType
 {
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
-		$builder->add('nom','text', array(
-					'required' => true,	
+		$builder->add('competenceFamily','entity', array(
+					'label' => 'Famille',
+					'required' => true,
+					'class' => 'LarpManager\Entities\CompetenceFamily',
+					'property' => 'label',
+				))
+				->add('level','entity', array(
+					'label' => 'Niveau',
+					'required' => true,
+					'class' => 'LarpManager\Entities\Level',
+					'property' => 'label',
 				))
 				->add('description','textarea', array(
 					'required' => false,	
@@ -27,6 +36,6 @@ class CompetenceForm extends AbstractType
 	
 	public function getName()
 	{
-		return 'competenceForm';
+		return 'competence';
 	}
 }

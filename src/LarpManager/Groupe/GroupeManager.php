@@ -59,14 +59,14 @@ class GroupeManager
 	}
 	
 	/**
-	 * Trouve le ou les groupes dont l'utilisateur est membre
+	 * Trouve le groupe dont l'utilisateur est membre
 	 * 
 	 * @param LarpManager\Entities\User $user
 	 * @return boolean
 	 */
 	public function findUserGroupe(User $user)
 	{
-		return $user->groupes();
+		return $user->getGroupe();
 	}
 	
 	/**

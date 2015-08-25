@@ -22,28 +22,28 @@
 				<p class="text-warning">Attention, cette classe n'a pas description</p>
 			{%  endif %}
 			
-			{% if classe.competenceFavorites|length != 0 %}
+			{% if classe.competenceFamilyFavorites|length != 0 %}
 				<p>
-					<strong>Compétences favorites : </strong>{{ classe.competenceFavorites|join(', ') }}
+					<strong>Famille de compétence favorites : </strong>{{ classe.competenceFamilyFavorites|join(', ') }}
 				</p>
 			{% else %}
-				<p class="text-warning">Attention, cette classe n'a pas de compétences favorites</p>
+				<p class="text-warning">Attention, cette classe n'a pas de famille de compétences favorites</p>
 			{% endif %}
 		
-			{% if classe.competenceNormales|length != 0 %}
+			{% if classe.competenceFamilyNormales|length != 0 %}
 				<p>
-					<strong>Compétences normales : </strong>{{ classe.competenceNormales|join(', ') }}
+					<strong>Famille de compétence normales : </strong>{{ classe.competenceFamilyNormales|join(', ') }}
 				</p>
 			{% else %}
-				<p class="text-warning">Attention, cette classe n'a pas de compétences normales</p>
+				<p class="text-warning">Attention, cette classe n'a pas de famille de compétences normales</p>
 			{% endif %}
 		
-			{% if classe.competenceCreations|length != 0 %}
+			{% if classe.competenceFamilyCreations|length != 0 %}
 				<p>
-					<strong>Compétences acquises à la création : </strong>{{ classe.competenceCreations|join(', ') }}
+					<strong>Famille de compétence acquises à la création : </strong>{{ classe.competenceFamilyCreations|join(', ') }}
 				</p>
 			{% else %}
-				<p class="text-warning">Attention, cette classe n'a pas de compétences acquises à la créations</p>
+				<p class="text-warning">Attention, cette classe n'a pas de famille de compétences acquises à la créations</p>
 			{% endif %}
 		</p>
 	</li>

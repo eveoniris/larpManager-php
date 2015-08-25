@@ -11,11 +11,11 @@
 				<h4>
 					Gestion des niveaux
 					<small>
-						( {{ niveaux|length }} niveaux )
+						( {{ levels|length }} niveaux )
 					</small>
 				</h4>
 			</div>
-			{{ include("niveau/fragment/list.twig", {'niveaux' : niveaux, 'add' : true}) }}
+			{{ include("level/fragment/list.twig", {'levels' : levels, 'add' : true}) }}
 		</div>
 	</div>
 

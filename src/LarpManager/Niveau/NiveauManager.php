@@ -5,8 +5,6 @@ namespace LarpManager\Niveau;
 use Silex\Application;
 use LarpManager\Entities\Niveau;
 
-use Doctrine\Common\Collections\Collection;
-
 class NiveauManager
 {
 	/** @var \Silex\Application */
@@ -15,6 +13,19 @@ class NiveauManager
 	public function __construct(Application $app)
 	{
 		$this->app = $app;
+	}
+	
+	/**
+	 * Fourni un niveau en fonction de son index
+	 * 
+	 * @param integer $index
+	 * @return Niveau $niveau
+	 */
+	public function get($index)
+	{
+		$repoNiveau = $this->app['orm.em']->getRepository('\LarpManager\Entities\Niveau');
+		$niveau = $repoNiveau->findOneByNiveau(1);
+		return $niveau;
 	}
 
 	/**

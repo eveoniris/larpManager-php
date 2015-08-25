@@ -43,7 +43,16 @@ class HomepageController
 			
 			if ( $groupe )
 			{
-				$app['groupe.manager']->addOnGroupe($app['user'],$groupe);
+				$app['user']->setGroupe($groupe);
+												
+				// si l'utilisateur n'a pas de lien avec un objet joueur, il faut le créé maintenant.
+				$joueur = new \LarpManager\Entities\Joueur();
+				$joueur->setXp(10); // en dur, bhaaaa
+				$joueur->setUser($app['user']);
+				
+				$app['orm.em']->persist($joueur);
+				$app['orm.em']->persist($app['user']);
+				$app['orm.em']->flush();
 				
 				$app['session']->getFlashBag()->add('success', 'Vous êtes maintenant inscrit au groupe.');
 				return $app->redirect($app['url_generator']->generate('groupe.joueur',array('index' => $groupe->getId())),301);

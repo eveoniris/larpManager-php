@@ -4,12 +4,8 @@ namespace LarpManager\Controllers;
 use Silex\Application;
 use Silex\Provider\SecurityServiceProvider;
 use Silex\Provider\DoctrineServiceProvider;
-use Silex\Provider\ServiceControllerServiceProvider;
-use Silex\Provider\RememberMeServiceProvider;
 use LarpManager\User\UserServiceProvider;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use SqlFormatter;
 use Symfony\Component\Yaml\Dumper;
 
 class InstallController
@@ -188,33 +184,33 @@ class InstallController
 			$app['orm.em']->flush();
 			
 			// Création des niveaux de compétence
-			$niveau = new \LarpManager\Entities\Niveau();
+			$niveau = new \LarpManager\Entities\Level();
 			$niveau->setLabel("Apprenti");
-			$niveau->setNiveau("1");
+			$niveau->setIndex("1");
 			$app['orm.em']->persist($niveau);
 			$app['orm.em']->flush();
 			
-			$niveau = new \LarpManager\Entities\Niveau();
+			$niveau = new \LarpManager\Entities\Level();
 			$niveau->setLabel("Initié");
-			$niveau->setNiveau("2");
+			$niveau->setIndex("2");
 			$app['orm.em']->persist($niveau);
 			$app['orm.em']->flush();
 			
-			$niveau = new \LarpManager\Entities\Niveau();
+			$niveau = new \LarpManager\Entities\Level();
 			$niveau->setLabel("Expert");
-			$niveau->setNiveau("3");
+			$niveau->setIndex("3");
 			$app['orm.em']->persist($niveau);
 			$app['orm.em']->flush();
 			
-			$niveau = new \LarpManager\Entities\Niveau();
+			$niveau = new \LarpManager\Entities\Level();
 			$niveau->setLabel("Maître");
-			$niveau->setNiveau("4");
+			$niveau->setIndex("4");
 			$app['orm.em']->persist($niveau);
 			$app['orm.em']->flush();
 			
-			$niveau = new \LarpManager\Entities\Niveau();
+			$niveau = new \LarpManager\Entities\Level();
 			$niveau->setLabel("Secret");
-			$niveau->setNiveau("5");
+			$niveau->setIndex("5");
 			$app['orm.em']->persist($niveau);
 			$app['orm.em']->flush();
 			
