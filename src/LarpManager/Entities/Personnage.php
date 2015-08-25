@@ -18,4 +18,17 @@ use LarpManager\Entities\BasePersonnage;
  */
 class Personnage extends BasePersonnage
 {
+	/**
+	 * Ajoute une competence dans la liste des competences d'un personnage
+	 * @param Competence $competence
+	 * @param Niveau $niveau
+	 */
+	public function addCompetence(Competence $competence, Niveau $niveau)
+	{
+		$personnageCompetence = new PersonnageCompetence();
+		$personnageCompetence->setNiveau($niveau);
+		$personnageCompetence->setCompetence($competence);
+		$personnageCompetence->setPersonnage($this);
+		$this->addPersonnageCompetence($personnageCompetence);
+	}
 }

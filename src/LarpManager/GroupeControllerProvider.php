@@ -62,6 +62,17 @@ class GroupeControllerProvider implements ControllerProviderInterface
 					throw new AccessDeniedException();
 				}
 			});
+			
+		// Gestion des competences d'un personnage (membre du groupe seulement)
+		$controllers->match('/{index}/personnage/competence','LarpManager\Controllers\GroupeController::personnageCompetenceAction')
+			->assert('index', '\d+')
+			->bind("groupe.personnage.competence")
+			->method('GET|POST')
+			->before(function(Request $request) use ($app) {
+				if (!$app['security.authorization_checker']->isGranted('GROUPE_MEMBER', $request->get('index'))) {
+					throw new AccessDeniedException();
+				}
+			});
 		
 		// Ajout d'un groupe (Scénariste uniquement)
 		$controllers->match('/add','LarpManager\Controllers\GroupeController::addAction')

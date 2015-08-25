@@ -21,6 +21,7 @@ use LarpManager\User\UserServiceProvider;
 use LarpManager\Groupe\GroupeServiceProvider;
 use LarpManager\Territoire\TerritoireServiceProvider;
 use LarpManager\Appelation\AppelationServiceProvider;
+use LarpManager\Personnage\PersonnageServiceProvider;
 
 $loader = require_once __DIR__.'/../vendor/autoload.php';
 
@@ -157,6 +158,8 @@ else
 	$app->register(new GroupeServiceProvider());
 	$app->register(new TerritoireServiceProvider());
 	$app->register(new AppelationServiceProvider());
+	$app->register(new PersonnageServiceProvider());
+	$app->register(new NiveauServiceProvider());
 	
 	// Define firewall
 	$app['security.firewalls'] = array(

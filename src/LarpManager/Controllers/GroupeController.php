@@ -62,7 +62,7 @@ class GroupeController
 	}
 	
 	/**
-	 * Page de création d'un personnage
+	 * Page de création d'un personnage (première étape, choix de la classe)
 	 * @param Request $request
 	 * @param Application $app
 	 */
@@ -72,18 +72,23 @@ class GroupeController
 		
 		$groupe = $app['orm.em']->find('\LarpManager\Entities\Groupe',$id);
 		
+		// si le groupe n'a plus de place, refuser le personnage
 		if (  ! $groupe->hasEnoughPlace() )
 		{
-			$app['session']->getFlashBag()->add('error','Désolé, ce groupe ne contient plus de classes disponible');
+			$app['session']->getFlashBag()->add('error','Désolé, ce groupe ne contient plus de places disponibles');
+			return $app->redirect($app['url_generator']->generate('groupe.joueur',array('index'=>$id)),301);
+		}
+		
+		// si le joueur dispose déjà d'un personnage, refuser le personnage
+		if ( $app['user']->getPersonnages()->count() > 0 ) 
+		{
+			$app['session']->getFlashBag()->add('error','Désolé, vous disposez déjà d\'un personnage.');
 			return $app->redirect($app['url_generator']->generate('groupe.joueur',array('index'=>$id)),301);
 		}
 		
 		$personnage = new \LarpManager\Entities\Personnage();
-		
-		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Competence');
-		$competences = $repo->findAll();
-		
-		// j'ajoute içi certain champs du formulaires
+				
+		// j'ajoute içi certain champs du formulaires (les classes)
 		// car j'ai besoin des informations du groupes pour les alimenter
 		$form = $app['form.factory']->createBuilder(new PersonnageForm(), $personnage)
 			->add('classe','entity', array(
@@ -92,7 +97,7 @@ class GroupeController
 					'class' => 'LarpManager\Entities\Classe',
 					'choices' => array_unique($groupe->getAvailableClasses()),
 				))
-			->add('save','submit', array('label' => 'Sauvegarder mon personnage'))
+			->add('save','submit', array('label' => 'Etape suivante'))
 			->getForm();
 			
 		$form->handleRequest($request);
@@ -103,17 +108,65 @@ class GroupeController
 			$personnage->setUser($app['user']);
 			$personnage->setGroupe($groupe);
 			
+			// ajoute les compétences au niveau 1 acquise à la création
+			$repoNiveau = $app['orm.em']->getRepository('\LarpManager\Entities\Niveau');
+			$niveau = $repoNiveau->findByNiveau(1);
+			
+			foreach ($personnage->getClasse()->getCompetenceCreations() as $competence)
+			{
+				$personnage->addCompetence($competence,$niveau);
+			}
+			
 			$app['orm.em']->persist($personnage);
 			$app['orm.em']->flush($personnage);
 			
-			$app['session']->getFlashBag()->add('success','Votre personnage a été sauvegardé');
-			return $app->redirect($app['url_generator']->generate('groupe.joueur',array('index'=>$id),301));
+			$app['session']->getFlashBag()->add('success','Votre personnage a été sauvegardé, étape suivante');
+			return $app->redirect($app['url_generator']->generate('groupe.personnage.competence',array('index'=>$id),301));
 		}
+		
+		$repoClasse = $app['orm.em']->getRepository('\LarpManager\Entities\Classe');
+		$classes = $repoClasse->findAll();
 		
 		return $app['twig']->render('groupe/personnage/add.twig', array(
 				'form' => $form->createView(),
 				'groupe' => $groupe,
-				'competences' => $competences,
+				'classes' => array_unique($groupe->getAvailableClasses()),
+		));
+	}
+	
+	/**
+	 * Page de gestion des competence
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function personnageCompetenceAction(Request $request, Application $app)
+	{
+		$id = $request->get('index');
+		
+		$groupe = $app['orm.em']->find('\LarpManager\Entities\Groupe',$id);
+		
+		$personnage = $app['user']->getPersonnage();
+		
+		if ( ! $personnage )
+		{
+			$app['session']->getFlashBag()->add('error','Désolé, vous n\'avez pas encore de personnage. Créez un personnage avant de pouvoir lui affecter des compétences');
+			return $app->redirect($app['url_generator']->generate('groupe.joueur',array('index'=>$id)),301);
+		}
+		
+		$form = $app['form.factory']->createBuilder(new PersonnageCompetenceForm(), $personnage);
+		
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
+		{
+			$personnage = $form->getData();
+			$app['orm.em']->persist($personnage);
+			$app['orm.em']->flush($personnage);
+			
+		}
+		
+		return $app['twig']->render('groupe/personnage/competence.twig', array(
+				'form' => $form->createView(),
 		));
 	}
 	

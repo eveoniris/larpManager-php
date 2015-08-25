@@ -84,6 +84,22 @@ class Competence extends BaseCompetence
 	}
 	
 	/**
+	 * Fourni le niveau demandé
+	 * @param unknown $niveau
+	 */
+	public function getNiveau($niveau)
+	{
+		foreach ( $this->getCompetenceNiveaus() as $competenceNiveau )
+		{
+			if ( $competenceNiveau->getNiveau()->getNiveau() == $niveau )
+			{
+				return $competenceNiveau;
+			}
+		}
+		return null;
+	}
+	
+	/**
 	 * Add Classe entity to collection.
 	 *
 	 * @param \LarpManager\Entities\Classe $classe

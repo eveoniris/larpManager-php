@@ -20,8 +20,12 @@ class PersonnageController
 		$id = $request->get('classeId');
 		
 		$classe = $app['orm.em']->find('\LarpManager\Entities\Classe',$id);
+		
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Niveau');
 		$niveaux = $repo->findAll();
+		
+		$repo = $app['orm.em']->find('\LarpManager\Entities\Competence');
+		$competences = $repo->findAll();
 		
 		$niv = array();
 		foreach ($niveaux as $niveau)
@@ -35,10 +39,10 @@ class PersonnageController
 			);
 		}
 		
-		$competences = array();
+		$comps = array();
 		foreach ( $classe->getCompetenceCreations() as $competence)
 		{
-			$competences[$competence->getId()] = array(
+			$comps[$competence->getId()] = array(
 						'type' => 'creation',
 						'id' => $competence->getId(),
 						'niveaux' =>  array()
@@ -46,7 +50,7 @@ class PersonnageController
 			
 			foreach ( $competence->getNiveaux() as $niveau)
 			{
-				$competences[$competence->getId()]['niveaux'][$niveau->getNiveau()] = array(
+				$comps[$competence->getId()]['niveaux'][$niveau->getNiveau()] = array(
 						'niveau' => $niveau->getNiveau(),
 						'description' =>$niveau->getDescription(),
 					);						
@@ -55,9 +59,9 @@ class PersonnageController
 		
 		foreach ( $classe->getCompetenceFavorites() as $competence)
 		{
-			if ( isset($competences[$competence->getId()])) continue;
+			if ( isset($comps[$competence->getId()])) continue;
 			
-			$competences[$competence->getId()] = array(
+			$comps[$competence->getId()] = array(
 				'type' => 'favorite',
 				'id' => $competence->getId(),
 				'niveaux' =>  array()
@@ -65,7 +69,7 @@ class PersonnageController
 			
 			foreach ( $competence->getNiveaux() as $niveau)
 			{
-				$competences[$competence->getId()]['niveaux'][$niveau->getNiveau()] = array(
+				$comps[$competence->getId()]['niveaux'][$niveau->getNiveau()] = array(
 						'niveau' => $niveau->getNiveau(),
 						'description' =>$niveau->getDescription(),
 					);						
@@ -74,9 +78,9 @@ class PersonnageController
 		
 		foreach ( $classe->getCompetenceNormales() as $competence)
 		{
-			if ( isset($competences[$competence->getId()])) continue;
+			if ( isset($comps[$competence->getId()])) continue;
 			
-			$competences[$competence->getId()] = array(
+			$comps[$competence->getId()] = array(
 				'type' => 'normale',
 				'id' => $competence->getId(),
 				'niveaux' =>  array()
@@ -84,7 +88,7 @@ class PersonnageController
 			
 			foreach ( $competence->getNiveaux() as $niveau)
 			{
-				$competences[$competence->getId()]['niveaux'][$niveau->getNiveau()] = array(
+				$comps[$competence->getId()]['niveaux'][$niveau->getNiveau()] = array(
 						'niveau' => $niveau->getNiveau(),
 						'description' =>$niveau->getDescription(),
 					);						
@@ -92,9 +96,10 @@ class PersonnageController
 		}
 		
 		return $app->json(array(
-					'competences' => $competences,
+					'competences' => $comps,
 					'niveaux' => $niv,
-					'html' => $app['twig']->render('classe/info.twig', array('classe' => $classe))
+					'html_classe' => $app['twig']->render('classe/info.twig', array('classe' => $classe)),
+					'html_competences' => $app['twig']->render('competence/selection.twig', array('competences' => $competences)),
 				));
 		
 	}

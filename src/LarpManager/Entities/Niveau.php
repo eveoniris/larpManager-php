@@ -18,4 +18,5 @@ use LarpManager\Entities\BaseNiveau;
  */
 class Niveau extends BaseNiveau
 {
+
 }

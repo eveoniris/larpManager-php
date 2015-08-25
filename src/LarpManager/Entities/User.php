@@ -63,6 +63,14 @@ class User extends BaseUser implements AdvancedUserInterface, \Serializable
 	}
 	
 	/**
+	 * Fourni le personnage de l'utilisateur
+	 */
+	public function getPersonnage()
+	{
+		return $this->getPersonnages()->first();
+	}
+	
+	/**
 	 * Fourni la liste des groupes dont l'utilisateur est le responsable
 	 */
 	public function getGroupeResponsable()
