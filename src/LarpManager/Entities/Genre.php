@@ -18,4 +18,8 @@ use LarpManager\Entities\BaseGenre;
  */
 class Genre extends BaseGenre
 {
+	public function __toString()
+	{
+		return $this->getLabel();
+	}
 }

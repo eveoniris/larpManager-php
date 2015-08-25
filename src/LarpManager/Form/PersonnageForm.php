@@ -32,8 +32,9 @@ class PersonnageForm extends AbstractType
 						'class' => 'LarpManager\Entities\Genre',
 						'property' => 'label',
 				))
-				->add('intrigue','checkbox', array(
+				->add('intrigue','choice', array(
 					'required' => true,
+					'choices' => array(true => 'Oui', false => 'Non'),
 					'label' => 'Participer aux intrigues'
 				));
 	}

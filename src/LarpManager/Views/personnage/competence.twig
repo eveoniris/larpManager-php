@@ -1,0 +1,33 @@
+{% extends "layout.twig" %}
+
+{% block title %}{{ app.user.groupe.nom }}{% endblock title %}
+
+{% block content %}
+
+<a href="{{ path('personnage.detail',{'index':personnage.id}) }}">Retour à votre personnage</a>
+<div class="well bs-component">
+	<form action="{{ path('personnage.competence.add',{'index':personnage.id}) }}" method="POST" {{ form_enctype(form) }}>
+		<fieldset>
+			<legend>{{ personnage.nom }} - <small>Achat d'une compétence</small></legend>
+			
+			<ul class="list-group">
+				<li class="list-group-item">Vous disposez de <strong>{{ personnage.joueur.xp }}</strong> Points d'expériences.</li>
+				<li class="list-group-item">Vos compétences favorites sont : {{ personnage.classe.competenceFamilyFavorites|join(', ') }}</li>
+				<li class="list-group-item">Vos compétences normales sont : {{ personnage.classe.competenceFamilyNormales|join(', ') }}</li>
+				<li class="list-group-item">Les autres compétences sont méconnue</li>
+			</ul> 
+	
+			{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+
+			{{ form_row(form.competence) }}
+			{{ form_rest(form) }}
+		</fieldset>
+	</form>
+</div>
+{% endblock content %}
+
+{% block javascript %}
+
+{{ parent() }}
+
+{%  endblock javascript %}

@@ -4,6 +4,8 @@ namespace LarpManager;
 
 use Silex\Application;
 use Silex\ControllerProviderInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class PersonnageControllerProvider implements ControllerProviderInterface
 {
@@ -15,19 +17,25 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 			->bind("personnage.add")
 			->method('GET|POST');
 		
-		// service pour obtenir des informations sur une classe
-		$controllers->match('/classe','LarpManager\Controllers\PersonnageController::classeAction')
-			->bind("personnage.classe")
-			->method('GET');
+		$controllers->match('/{index}/detail','LarpManager\Controllers\PersonnageController::detailAction')
+			->assert('index', '\d+')
+			->bind("personnage.detail")
+			->method('GET')
+			->before(function(Request $request) use ($app) {
+				if (!$app['security.authorization_checker']->isGranted('OWN_PERSONNAGE', $request->get('index'))) {
+					throw new AccessDeniedException();
+				}
+			});
 		
-		// service pour obtenir des informations sur une competence
-		$controllers->match('/competence','LarpManager\Controllers\PersonnageController::competenceAction')
-			->bind("personnage.competence")
-			->method('GET');
-		
-		$controllers->match('/competence/list','LarpManager\Controllers\PersonnageController::competenceListAction')
-			->bind("personnage.competence.list")
-			->method('GET');
+		$controllers->match('/{index}/competence/add','LarpManager\Controllers\PersonnageController::addCompetenceAction')
+			->assert('index', '\d+')
+			->bind("personnage.competence.add")
+			->method('GET|POST')
+			->before(function(Request $request) use ($app) {
+				if (!$app['security.authorization_checker']->isGranted('OWN_PERSONNAGE', $request->get('index'))) {
+					throw new AccessDeniedException();
+				}
+			});
 					
 		return $controllers;
 	}

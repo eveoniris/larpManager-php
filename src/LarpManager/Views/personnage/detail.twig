@@ -1,0 +1,57 @@
+{% extends "layout.twig" %}
+
+{% block title %}Personnage{% endblock title %}
+
+{% block content %}
+	
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-xs-12 col-md-8">
+						
+			<div class="well well-sm bs-component">
+				<h4>
+					{{ personnage.nom }} - <small>{{ personnage.classe.label }}</small>
+				</h4>
+			</div>
+						
+			{{ include("classe/fragment/info.twig", {'classe' : personnage.classe}) }}
+			
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					Informations générales
+				</div>
+				<div class="panel-body">
+					
+				</div>
+				<div class="list-group">
+					<div class="list-group-item">
+						Surnom : {{ personnage.surnom }}
+					</div>
+					<div class="list-group-item">
+						Age : {{ personnage.age }}
+					</div>
+					<div class="list-group-item">
+						Genre : {{ personnage.genre }}
+					</div>
+				</div>
+			</div>
+			
+			{{ include("groupe/fragment/info.twig", {'groupe' : personnage.groupe}) }}
+
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					Expérience
+				</div>
+				<div class="panel-body">
+					<p>{{ personnage.joueur.xp }}</p>
+				</div>
+			</div>
+
+			{{ include("personnage/fragment/list_competence.twig", {'personnage' : personnage}) }}
+					
+		</div>
+	</div>
+</div>
+	
+			
+{% endblock %}

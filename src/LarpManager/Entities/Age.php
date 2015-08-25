@@ -18,4 +18,8 @@ use LarpManager\Entities\BaseAge;
  */
 class Age extends BaseAge
 {
+	public function __toString()
+	{
+		return $this->getLabel();
+	}
 }

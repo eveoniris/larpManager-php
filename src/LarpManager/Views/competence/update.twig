@@ -13,14 +13,6 @@
 					'action': path('competence.update',{'index': competence.id}), 
 					'form' : form}) }}
 			</div>
-
-			<div class="col-xs-12 col-md-4">
-				<h3>Niveaux</h3>	
-				{{ include("competence/fragment/niveau.twig",{
-					'legend' : 'ajout d\'un niveau à une compétence',
-					'competence': competence,
-					'add' : true}) }}
-			</div>
 		</div>
 	</div>
 		

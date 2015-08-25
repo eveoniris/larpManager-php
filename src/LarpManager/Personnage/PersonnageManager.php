@@ -19,6 +19,28 @@ class PersonnageManager
 	}
 	
 	/**
+	 * Calcul le cout d'une compétence en fonction de la classe du personnage
+	 * 
+	 * @param Personnage $personnage
+	 * @param Competence $competence
+	 */
+	public function getCompetenceCout(Personnage $personnage, Competence $competence)
+	{
+		$classe = $personnage->getClasse();
+		if ($classe->getCompetenceFamilyFavorite()->contain($competence->getCompetenceFamily()))
+		{
+			return $competence->getLevel()->getCoutFavori();
+		}
+		else if ($classe->getCompetenceFamilyNormale()->contain($competence->getCompetenceFamily()))
+		{
+			return $competence->getLevel()->getCout();
+		}
+
+		return $competence->getLevel()->getCoutMeconu();
+
+	}
+	
+	/**
 	 * Indique si un personnage connait une famille de competence
 	 * 
 	 * @param Personnage $personnage
@@ -31,7 +53,7 @@ class PersonnageManager
 		
 		foreach ( $competences as $competence)
 		{
-			if ( $competences->getCompetenceFamily() == $competenceFamily)
+			if ( $competence->getCompetenceFamily() == $competenceFamily)
 			{
 				return true;
 			}
@@ -81,7 +103,6 @@ class PersonnageManager
 		$competences = $personnage->getCompetences();
 		foreach ( $competences as $competence )
 		{
-			var_dump('test');
 			$nextCompetence = $competence->getNext();
 			if ( $nextCompetence )
 			{

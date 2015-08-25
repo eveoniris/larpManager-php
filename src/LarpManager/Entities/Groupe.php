@@ -25,8 +25,6 @@ class Groupe extends BaseGroupe
 	
 	public function __construct()
 	{		
-		$this->setCreationDate(new \Datetime('NOW'));
-		$this->setUpdateDate(new \Datetime('NOW'));
 		$this->setClasseOpen(0);
 		parent::__construct();
 	}
@@ -75,27 +73,6 @@ class Groupe extends BaseGroupe
 		
 		return $availableClasses;	
 	}			
-	
-	/**
-	 * Get User entity related by `creator_id` (many to one).
-	 *
-	 * @return \LarpManager\Entities\User
-	 */
-	public function getCreator()
-	{
-		return $this->getUserRelatedByCreatorId();
-	}
-	
-	/**
-	 * Set User entity related by `creator_id` (many to one).
-	 *
-	 * @param \LarpManager\Entities\User $user
-	 * @return \LarpManager\Entities\Groupe
-	 */
-	public function setCreator(User $user)
-	{
-		return $this->setUserRelatedByCreatorId($user);
-	}
 	
 	/**
 	 * Get User entity related by `responsable_id` (many to one).

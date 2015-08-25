@@ -58,81 +58,7 @@ class GroupeController
 		return $app['twig']->render('groupe/joueur.twig', array(
 				'groupe' => $groupe));
 	}
-	
-	/**
-	 * Page de création d'un personnage (première étape, choix de la classe)
-	 * @param Request $request
-	 * @param Application $app
-	 */
-	public function personnageAddAction(Request $request, Application $app)
-	{
-		$id = $request->get('index');
 		
-		$groupe = $app['orm.em']->find('\LarpManager\Entities\Groupe',$id);
-		$joueur = $app['user']->getJoueur();
-		
-		// si le groupe n'a plus de place, refuser le personnage
-		if (  ! $groupe->hasEnoughPlace() )
-		{
-			$app['session']->getFlashBag()->add('error','Désolé, ce groupe ne contient plus de places disponibles');
-			return $app->redirect($app['url_generator']->generate('groupe.joueur',array('index'=>$id)),301);
-		}
-		
-		// si le joueur dispose déjà d'un personnage, refuser le personnage
-		if ( $joueur->getPersonnage() ) 
-		{
-			$app['session']->getFlashBag()->add('error','Désolé, vous disposez déjà d\'un personnage.');
-			return $app->redirect($app['url_generator']->generate('groupe.joueur',array('index'=>$id)),301);
-		}
-		
-		$personnage = new \LarpManager\Entities\Personnage();
-				
-		// j'ajoute içi certain champs du formulaires (les classes)
-		// car j'ai besoin des informations du groupes pour les alimenter
-		$form = $app['form.factory']->createBuilder(new PersonnageForm(), $personnage)
-			->add('classe','entity', array(
-					'label' =>  'Classe',
-					'property' => 'label',
-					'class' => 'LarpManager\Entities\Classe',
-					'choices' => array_unique($groupe->getAvailableClasses()),
-				))
-			->add('save','submit', array('label' => 'Etape suivante'))
-			->getForm();
-			
-		$form->handleRequest($request);
-		
-		if ( $form->isValid() )
-		{
-			$personnage = $form->getData();
-			$personnage->setGroupe($groupe);
-			$joueur->setPersonnage($personnage);
-
-			// ajout des compétences acquises à la création		
-			foreach ($personnage->getClasse()->getCompetenceFamilyCreations() as $competenceFamily)
-			{
-				$firstCompetence = $competenceFamily->getFirstCompetence();
-				if ( $firstCompetence )
-				{
-					$personnage->addCompetence($firstCompetence);
-				}
-			}
-			
-			$app['orm.em']->persist($personnage);
-			$app['orm.em']->persist($joueur);
-			$app['orm.em']->flush();
-			
-			
-			$app['session']->getFlashBag()->add('success','Votre personnage a été sauvegardé, étape suivante');
-			return $app->redirect($app['url_generator']->generate('groupe.personnage.competence',array('index'=>$id),301));
-		}
-		
-		return $app['twig']->render('groupe/personnage/add.twig', array(
-				'form' => $form->createView(),
-				'groupe' => $groupe,
-				'classes' => array_unique($groupe->getAvailableClasses()),
-		));
-	}
-	
 	/**
 	 * Page de gestion des competence
 	 * Cette page doit permettre à un joueur de selectionner parmis les compétences qui lui sont acceccibles
@@ -233,7 +159,6 @@ class GroupeController
 		if ( $form->isValid() )
 		{
 			$groupe = $form->getData();
-			$groupe->setCreator($app['user']);
 			
 			foreach ( $groupe->getGroupeClasses() as $groupeClasses)
 			{
@@ -300,9 +225,7 @@ class GroupeController
 			}
 		
 			if ($form->get('update')->isClicked())
-			{
-				$groupe->setUpdateDate(new \DateTime('NOW'));
-				
+			{				
 				$app['orm.em']->persist($groupe);
 				$app['orm.em']->flush();
 				$app['session']->getFlashBag()->add('success', 'Le groupe a été mis à jour.');

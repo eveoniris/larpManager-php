@@ -5,181 +5,172 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Silex\Application;
 use LarpManager\Form\PersonnageForm;
+use LarpManager\Form\PersonnageCompetenceForm;
 
 class PersonnageController
 {
 	
 	/**
-	 * Fourni des informations sur une classe
-	 *
-	 * @param Application $app
-	 * @param Request $request
-	 */
-	public function classeAction(Request $request, Application $app )
-	{
-		$id = $request->get('classeId');
-		
-		$classe = $app['orm.em']->find('\LarpManager\Entities\Classe',$id);
-		
-		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Niveau');
-		$niveaux = $repo->findAll();
-		
-		$repo = $app['orm.em']->find('\LarpManager\Entities\Competence');
-		$competences = $repo->findAll();
-		
-		$niv = array();
-		foreach ($niveaux as $niveau)
-		{
-			$niv[$niveau->getNiveau()] = array(
-				'label' => $niveau->getLabel(),
-				'description' => $niveau->getLabel(),
-				'coutFavori' => $niveau->getCoutFavori(),
-				'coutNormal' => $niveau->getCout(),
-				'coutMeconnu' => $niveau->getCoutMeconu(),
-			);
-		}
-		
-		$comps = array();
-		foreach ( $classe->getCompetenceCreations() as $competence)
-		{
-			$comps[$competence->getId()] = array(
-						'type' => 'creation',
-						'id' => $competence->getId(),
-						'niveaux' =>  array()
-					);
-			
-			foreach ( $competence->getNiveaux() as $niveau)
-			{
-				$comps[$competence->getId()]['niveaux'][$niveau->getNiveau()] = array(
-						'niveau' => $niveau->getNiveau(),
-						'description' =>$niveau->getDescription(),
-					);						
-			}
-		}
-		
-		foreach ( $classe->getCompetenceFavorites() as $competence)
-		{
-			if ( isset($comps[$competence->getId()])) continue;
-			
-			$comps[$competence->getId()] = array(
-				'type' => 'favorite',
-				'id' => $competence->getId(),
-				'niveaux' =>  array()
-			);
-			
-			foreach ( $competence->getNiveaux() as $niveau)
-			{
-				$comps[$competence->getId()]['niveaux'][$niveau->getNiveau()] = array(
-						'niveau' => $niveau->getNiveau(),
-						'description' =>$niveau->getDescription(),
-					);						
-			}
-		}
-		
-		foreach ( $classe->getCompetenceNormales() as $competence)
-		{
-			if ( isset($comps[$competence->getId()])) continue;
-			
-			$comps[$competence->getId()] = array(
-				'type' => 'normale',
-				'id' => $competence->getId(),
-				'niveaux' =>  array()
-			);
-			
-			foreach ( $competence->getNiveaux() as $niveau)
-			{
-				$comps[$competence->getId()]['niveaux'][$niveau->getNiveau()] = array(
-						'niveau' => $niveau->getNiveau(),
-						'description' =>$niveau->getDescription(),
-					);						
-			}
-		}
-		
-		return $app->json(array(
-					'competences' => $comps,
-					'niveaux' => $niv,
-					'html_classe' => $app['twig']->render('classe/info.twig', array('classe' => $classe)),
-					'html_competences' => $app['twig']->render('competence/selection.twig', array('competences' => $competences)),
-				));
-		
-	}
-	
-	/**
-	 * Fourni des informations sur une compétence
+	 * Création d'un nouveau personnage
 	 * 
 	 * @param Request $request
 	 * @param Application $app
 	 */
-	public function competenceAction(Request $request, Application $app)
+	public function addAction(Request $request, Application $app)
 	{
+		// l'utilisateur doit appartenir à un groupe de joueur
+		// l'utilisateur ne doit pas déjà posséder un personnage
+		// le groupe de joueur doit pouvoir avoir un personnage de plus
+		$groupe = $app['user']->getGroupe();
+		$joueur = $app['user']->getJoueur();
+		
+		if ( ! $joueur || ! $groupe )
+		{
+			$app['session']->getFlashBag()->add('error','Désolé, vous devez faire parti d\'un groupe pour pouvoir créer un personnage.');
+			return $app->redirect($app['url_generator']->generate('homepage',array('index'=>$id)),301);
+		}
+		
+		// si le joueur dispose déjà d'un personnage, refuser le personnage
+		if ( $joueur->getPersonnage() )
+		{
+			$app['session']->getFlashBag()->add('error','Désolé, vous disposez déjà d\'un personnage.');
+			return $app->redirect($app['url_generator']->generate('homepage',array('index'=>$id)),301);
+		}
+		
+		// si le groupe n'a plus de place, refuser le personnage
+		if (  ! $groupe->hasEnoughPlace() )
+		{
+			$app['session']->getFlashBag()->add('error','Désolé, ce groupe ne contient plus de places disponibles');
+			return $app->redirect($app['url_generator']->generate('homepage',array('index'=>$id)),301);
+		}
+		
+		$personnage = new \LarpManager\Entities\Personnage();
+		
+		// j'ajoute içi certain champs du formulaires (les classes)
+		// car j'ai besoin des informations du groupes pour les alimenter
+		$form = $app['form.factory']->createBuilder(new PersonnageForm(), $personnage)
+					->add('classe','entity', array(
+						'label' =>  'Classes disponibles',
+						'property' => 'label',
+						'class' => 'LarpManager\Entities\Classe',
+						'choices' => array_unique($groupe->getAvailableClasses()),
+					))
+					->add('save','submit', array('label' => 'Valider mon personnage'))
+					->getForm();
+					
+		$form->handleRequest($request);
+									
+		if ( $form->isValid() )
+		{
+			$personnage = $form->getData();
+			$personnage->setGroupe($groupe);
+			$joueur->setPersonnage($personnage);
+			
+			// ajout des compétences acquises à la création
+			foreach ($personnage->getClasse()->getCompetenceFamilyCreations() as $competenceFamily)
+			{
+				var_dump($competenceFamily->getLabel());
+				$firstCompetence = $competenceFamily->getFirstCompetence();
+				if ( $firstCompetence )
+				{
+					var_dump($firstCompetence->getId());
+					$personnage->addCompetence($firstCompetence);
+				}
+			}
+				
+			$app['orm.em']->persist($personnage);
+			$app['orm.em']->persist($joueur);
+			$app['orm.em']->flush();
+				
+				
+			$app['session']->getFlashBag()->add('success','Votre personnage a été sauvegardé.');
+			return $app->redirect($app['url_generator']->generate('personnage.detail',array('index'=>$personnage->getId()),301));
+		}
+		
+		return $app['twig']->render('personnage/add.twig', array(
+				'form' => $form->createView(),
+				'classes' => array_unique($groupe->getAvailableClasses()),
+		));
 		
 	}
 	
 	/**
-	 * Fourni la liste des compétences en fonction de la classe
+	 * Affiche le détail d'un personnage
 	 * 
-	 * @param Application $app
 	 * @param Request $request
+	 * @param Application $app
 	 */
-	public function competenceListAction(Request $request, Application $app)
+	public function detailAction(Request $request, Application $app)
 	{
-		$id = $request->get('classeId');
+		$id = $request->get('index');
+				
+		$personnage = $app['orm.em']->find('\LarpManager\Entities\Personnage',$id);
 		
-		$classe = $app['orm.em']->find('\LarpManager\Entities\Classe',$id);
-		
-		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Competence');
-		$competences = $repo->findAll();
-		
-		$result = array(
-				'favorites' => array(),
-				'normales' => array(),
-				'creations' => array(),
-				'autres' => array(),
-		);
-		
-		foreach ( $classe->getCompetenceFavorites() as $competence)
+		if ( $personnage )
 		{
-			$result['favorites'][] = array(
-				'id' => $competence->getId(),
-				'label' => $competence->getNom(),
-				'description' => $competence->getDescription()
-			);
-			$key = array_search($competence,$competences);
-			unset($competences[$key]);
+			return $app['twig']->render('personnage/detail.twig', array('personnage' => $personnage));
 		}
-		
-		foreach ( $classe->getCompetenceNormales() as $competence)
+		else
 		{
-			$result['normales'][] = array(
-					'id' => $competence->getId(),
-					'label' => $competence->getNom(),
-					'description' => $competence->getDescription()
-			);
-			
-			$key = array_search($competence,$competences);
-			unset($competences[$key]);
+			$app['session']->getFlashBag()->add('error', 'Le personnage n\'a pas été trouvé.');
+			return $app->redirect($app['url_generator']->generate('homepage'));
 		}
+	}
+	
+	/**
+	 * Ajoute une compétence au personnage
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function addCompetenceAction(Request $request, Application $app)
+	{
+		$id = $request->get('index');
 		
-		foreach ( $classe->getCompetenceCreations() as $competence)
+		$personnage = $app['orm.em']->find('\LarpManager\Entities\Personnage',$id);
+		
+		$form = $app['form.factory']->createBuilder(new PersonnageCompetenceForm(), $personnage)
+					->add('competence','entity', array(
+							'label' =>  'Choisissez une nouvelle compétence',
+							'property' => 'label',
+							'class' => 'LarpManager\Entities\Competence',
+							'mapped' => false,
+							'choices' => $app['personnage.manager']->getAvailableCompetences($personnage),
+					))
+					->add('save','submit', array('label' => 'Valider la compétence'))
+					->getForm();
+		
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
 		{
-			$result['creations'][] = array(
-					'id' => $competence->getId(),
-					'label' => $competence->getNom(),
-					'description' => $competence->getDescription()
-			);
+			$personnage = $form->getData();
+			$competence = $form->get('competence');
 			
-			$key = array_search($competence,$competences);
-			unset($competences[$key]);
+			$cout = $app['personnage.manager']->getCompetenceCout($personnage, $competence);
+			$joueur = $personnage->getJoueur();
+			$xp = $joueur->getXp();
+			
+			if ( $xp - cout > 0 )
+			{
+				$app['session']->getFlashBag()->add('error','Vos n\'avez pas suffisement de point d\'expérience pour acquérir cette compétence.');
+				return $app->redirect($app['url_generator']->generate('personnage.detail',array('index'=>$personnage->getId()),301));
+			}
+			$joueur->setXp($xp - $cout);
+			$personnage->addCompetence($competence);
+			
+			$app['orm.em']->persist($joueur);
+			$app['orm.em']->persist($personnage);
+			$app['orm.em']->flush();
+			
+			$app['session']->getFlashBag()->add('success','Votre personnage a été sauvegardé.');
+			return $app->redirect($app['url_generator']->generate('personnage.detail',array('index'=>$personnage->getId()),301));
 		}
 		
-		foreach ( $competences as $competence) {
-			$result['autres'][] = array(
-					'id' => $competence->getId(),
-					'label' => $competence->getNom(),
-					'description' => $competence->getDescription()
-			);
-		}
-			
-		return $app->json($result);
+		return $app['twig']->render('personnage/competence.twig', array(
+				'form' => $form->createView(),
+				'personnage' => $personnage,
+				'competences' =>  $app['personnage.manager']->getAvailableCompetences($personnage),
+		));
 	}
 }

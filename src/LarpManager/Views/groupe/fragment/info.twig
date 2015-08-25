@@ -1,0 +1,25 @@
+<div class="panel panel-default">
+	<div class="panel-heading">
+		{{ groupe.numero|default('?') }} - {{ groupe.nom }}
+	</div>
+	<div class="panel-body">
+		{% if groupe.description %}
+    		{{ groupe.description }}
+    	{% endif %}
+	</div>
+	    		
+	<div class="list-group">
+   		<div class="list-group-item">
+   			<h4 class="list-group-item-heading">Territoire</h4>
+    			
+   			<p class="list-group-item-text">
+   				{% if not groupe.territoire %}
+   					<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+   					Attention, ce groupe n'a pas de territoire.
+   				{% else %}
+   					{{ groupe.territoire.nom }}
+   				{% endif %}
+   			</p>
+   		</div>	
+	</div>
+</div>

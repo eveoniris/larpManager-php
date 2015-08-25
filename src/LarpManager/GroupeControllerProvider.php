@@ -51,29 +51,7 @@ class GroupeControllerProvider implements ControllerProviderInterface
 					throw new AccessDeniedException();
 				}
 			});
-			
-		// Ajout d'un personnage (membre du groupe uniquement)
-		$controllers->match('/{index}/personnage/add','LarpManager\Controllers\GroupeController::personnageAddAction')
-			->assert('index', '\d+')
-			->bind("groupe.personnage.add")
-			->method('GET|POST')
-			->before(function(Request $request) use ($app) {
-				if (!$app['security.authorization_checker']->isGranted('GROUPE_MEMBER', $request->get('index'))) {
-					throw new AccessDeniedException();
-				}
-			});
-			
-		// Gestion des competences d'un personnage (membre du groupe seulement)
-		$controllers->match('/{index}/personnage/competence','LarpManager\Controllers\GroupeController::personnageCompetenceAction')
-			->assert('index', '\d+')
-			->bind("groupe.personnage.competence")
-			->method('GET|POST')
-			->before(function(Request $request) use ($app) {
-				if (!$app['security.authorization_checker']->isGranted('GROUPE_MEMBER', $request->get('index'))) {
-					throw new AccessDeniedException();
-				}
-			});
-		
+					
 		// Ajout d'un groupe (Scénariste uniquement)
 		$controllers->match('/add','LarpManager\Controllers\GroupeController::addAction')
 			->bind("groupe.add")
@@ -93,7 +71,8 @@ class GroupeControllerProvider implements ControllerProviderInterface
 					throw new AccessDeniedException();
 				}
 			});
-		
+			
+		// Mise à jour d'un groupe (scénariste uniquement)
 		$controllers->match('/{index}/update','LarpManager\Controllers\GroupeController::updateAction')
 			->assert('index', '\d+')
 			->bind("groupe.update")
@@ -104,25 +83,6 @@ class GroupeControllerProvider implements ControllerProviderInterface
 				}
 			});
 		
-		$controllers->match('/{index}/export','LarpManager\Controllers\GroupeController::detailExportAction')
-			->assert('index', '\d+')
-			->bind("groupe.detail.export")
-			->method('GET')
-			->before(function(Request $request) use ($app) {
-				if (!$app['security.authorization_checker']->isGranted('ROLE_SCENARISTE')) {
-					throw new AccessDeniedException();
-				}
-			});
-		
-		$controllers->match('/export','LarpManager\Controllers\GroupeController::exportAction')
-			->bind("groupe.export")
-			->method('GET|POST')
-			->before(function(Request $request) use ($app) {
-				if (!$app['security.authorization_checker']->isGranted('ROLE_SCENARISTE')) {
-					throw new AccessDeniedException();
-				}
-			});
-
 		return $controllers;
 	}
 }

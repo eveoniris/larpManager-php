@@ -22,7 +22,11 @@
 		
 		<p class="list-group-item-text">
 		{% if competenceFamily.competences|length > 0 %}
-			Niveaux définis : {{ competenceFamily.competences|join(', ') }}
+			Niveaux définis : 
+			{% for competence in competenceFamily.competences %}
+				{{ competence.level.label }},
+			{% endfor %}
+			<a href="{{ path('competence.add', {competenceFamily:competenceFamily.id}) }}">Ajouter un niveau</a>
 		{% else %}
 			<span class="text-warning">Attention, aucune compétence n'est définie dans cette famille !</span>
 		{% endif %}

@@ -31,6 +31,21 @@ class CompetenceController
 	{
 		$competence = new \LarpManager\Entities\Competence();
 		
+		// l'identifiant de la famille de competence peux avoir été passé en paramètre
+		// pour initialiser le formulaire avec une valeur par défaut.
+		// TODO : dans ce cas, il ne faut proposer que les niveaux pour lesquels une compétence
+		// n'a pas été défini pour cette famille
+		
+		$competenceFamilyId = $request->get('competenceFamily');
+		if ( $competenceFamilyId ) 
+		{
+			$competenceFamily = $app['orm.em']->find('\LarpManager\Entities\CompetenceFamily', $competenceFamilyId);
+			if ( $competenceFamily )
+			{
+				$competence->setCompetenceFamily($competenceFamily);
+			}
+		}
+		
 		$form = $app['form.factory']->createBuilder(new CompetenceForm(), $competence)
 			->add('save','submit', array('label' => "Sauvegarder"))
 			->add('save_continue','submit', array('label' => "Sauvegarder & continuer"))

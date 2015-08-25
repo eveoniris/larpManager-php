@@ -9,67 +9,63 @@
         <p><a href="{{ path('user.logout') }}">Sign out</a></p>
 
     {% else %}
-    	<div class="page-header">
-	        <h1>
-	            Créer un compte
-	        </h1>
-	    </div>
+    	<div class="well">
+    	
+	        <p class="text-muted lead">
+	            Vous disposez déjà d'un compte ? <a href="{{ path('user.login') }}">Connectez-vous.</a>
+	        </p>
 
-        <p class="text-muted lead">
-            Vous disposez déjà d'un compte ? <a href="{{ path('user.login') }}">Connectez-vous.</a>
-        </p>
+	        {% if error %}
+	            <div class="alert alert-danger">{{ error|nl2br }}</div>
+	        {% endif %}
 
-        {% if error %}
-            <div class="alert alert-danger">{{ error|nl2br }}</div>
-        {% endif %}
-
-        <form class="form-horizontal" method="POST">
-
-            <div class="form-group">
-                <label class="col-sm-2 control-label" for="input-name">Nom</label>
-                <div class="col-sm-8">
-                    <input class="form-control" name="name" type="text" id="input-name" placeholder="Nom" value="{{ name }}">
-                    <span class="help-inline">Information publique</span>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label class="col-sm-2 control-label" for="input-email">Email</label>
-                <div class="col-sm-8">
-                    <input class="form-control" name="email" type="email" id="input-email" placeholder="Email" required value="{{ email }}">
-                    <span class="help-inline">Information privée, ne sera jamais rendue publique ou partagée avec d'autres sites.</span>
-                </div>
-            </div>
-
-
-            <div class="form-group">
-                <label class="col-sm-2 control-label" for="input-username">Nom d'utilisateur</label>
-                <div class="col-sm-8">
-                    <input class="form-control" name="username" type="text" id="input-username" placeholder="Nom d'utilisateur" required value="{{ username }}">
-                </div>
-            </div>
-
-
-            <div class="form-group">
-                <label class="col-sm-2 control-label" for="input-password">Mot de passe</label>
-                <div class="col-sm-8">
-                    <input class="form-control" name="password" type="password" id="input-password" required placeholder="Mot de passe">
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label class="col-sm-2 control-label" for="input-confirm-password">Confirmez votre mot de passe</label>
-                <div class="col-sm-8">
-                    <input class="form-control" name="confirm_password" type="password" id="input-confirm-password" required placeholder="Confirmez votre mot de passe">
-                </div>
-            </div>
-
-            <div class="form-group">
-                <div class="col-sm-8 col-sm-offset-2">
-                    <button type="submit" class="btn btn-primary">S'enregistrer</button>
-                </div>
-            </div>
-        </form>
-
+	        <form class="form-horizontal" method="POST">
+	
+	            <div class="form-group">
+	                <label class="col-sm-2 control-label" for="input-name">Nom</label>
+	                <div class="col-sm-8">
+	                    <input class="form-control" name="name" type="text" id="input-name" placeholder="Nom" value="{{ name }}">
+	                    <span class="help-inline">Information publique</span>
+	                </div>
+	            </div>
+	
+	            <div class="form-group">
+	                <label class="col-sm-2 control-label" for="input-email">Email</label>
+	                <div class="col-sm-8">
+	                    <input class="form-control" name="email" type="email" id="input-email" placeholder="Email" required value="{{ email }}">
+	                    <span class="help-inline">Information privée, ne sera jamais rendue publique ou partagée avec d'autres sites.</span>
+	                </div>
+	            </div>
+	
+	
+	            <div class="form-group">
+	                <label class="col-sm-2 control-label" for="input-username">Nom d'utilisateur</label>
+	                <div class="col-sm-8">
+	                    <input class="form-control" name="username" type="text" id="input-username" placeholder="Nom d'utilisateur" required value="{{ username }}">
+	                </div>
+	            </div>
+	
+	
+	            <div class="form-group">
+	                <label class="col-sm-2 control-label" for="input-password">Mot de passe</label>
+	                <div class="col-sm-8">
+	                    <input class="form-control" name="password" type="password" id="input-password" required placeholder="Mot de passe">
+	                </div>
+	            </div>
+	
+	            <div class="form-group">
+	                <label class="col-sm-2 control-label" for="input-confirm-password">Confirmez votre mot de passe</label>
+	                <div class="col-sm-8">
+	                    <input class="form-control" name="confirm_password" type="password" id="input-confirm-password" required placeholder="Confirmez votre mot de passe">
+	                </div>
+	            </div>
+	
+	            <div class="form-group">
+	                <div class="col-sm-8 col-sm-offset-2">
+	                    <button type="submit" class="btn btn-primary">S'enregistrer</button>
+	                </div>
+	            </div>
+	        </form>
+		</div>
     {% endif %}
 {% endblock %}

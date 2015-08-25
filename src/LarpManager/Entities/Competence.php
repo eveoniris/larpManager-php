@@ -20,6 +20,11 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class Competence extends BaseCompetence
 {
+	public function __toString()
+	{
+		return $this->getLabel();	
+	}
+	
 	/**
 	 * Fourni le label d'une compétence
 	 */
@@ -49,14 +54,19 @@ class Competence extends BaseCompetence
 			}
 		}
 		
-		$minimumIndex = 0 ;
+		$minimumIndex = null ;
 		$competenceFirst = null;
 		foreach ( $nextCompetences as $competence )
 		{
-			if ( $competence->getLevel()->getIndex() < $minimumIndex )
+			if ( $minimumIndex == null)
 			{
 				$competenceFirst = $competence;
-				$minimumIndex = $competence->Level()->getIndex();
+				$minimumIndex = $competence->getLevel()->getIndex();
+			}
+			else if ( $competence->getLevel()->getIndex() < $minimumIndex )
+			{
+				$competenceFirst = $competence;
+				$minimumIndex = $competence->getLevel()->getIndex();
 			}
 		}
 		
