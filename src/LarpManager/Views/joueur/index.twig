@@ -1,0 +1,24 @@
+{% extends "layout.twig" %}
+
+{% block title %}Joueurs{% endblock title %}
+
+{% block content %}
+
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-xs-12 col-md-12">
+			<div class="well well-sm">
+				<h4>
+					Gestion des joueurs
+					<small>
+						( {{ joueurs|length }} joueurs )
+					</small>
+				</h4>
+			</div>
+			{{ include("joueur/fragment/list.twig", {'joueurs' : joueurs, 'add' : true}) }}
+		</div>
+	</div>
+
+</div>
+	
+{% endblock %}

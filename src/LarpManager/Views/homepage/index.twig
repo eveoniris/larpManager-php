@@ -1,8 +1,70 @@
 {% extends "layout.twig" %}
 
 {% block content %}
-	<h1>LarpManager</h1>
-	{% if app.user %}
-		<p>Bienvenue {{ app.user.name }}</p>
+
+	{% if app.user %}	
+	<div class="well well-sm">
+		<h4>
+			Bienvenue {{ app.user.name }}
+		</h4>
+	</div>
 	{% endif %}
+	
+	{% if not app.user %}
+	<div class="panel panel-warning">
+		<div class="panel-heading">
+			Vous n'êtes pas connecté
+		</div>
+	  	<div class="panel-body">
+	  		<p>Si vous disposez d'un compte, <a href="{{ path('user.login') }}">connectez-vous</a>.</p>
+	  		<p>Sinon <a href="{{ path('user.register') }}">créez un compte</a>.</p>
+	  	</div>
+  	</div>
+	{%  endif %}
+	
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			Une annonce publique
+		</div>
+		<div class="panel-body">
+			La page d'acceuil présentera des annonces publiques
+		</div>
+	</div>
+	
+	{% if is_granted('ROLE_SCENARISTE', app.user) %}
+		{% if app.user.groupeScenariste|length > 0 %}
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				Scénariste : groupes dont vous avez la charge
+			</div>
+			<div class="panel-body">
+				<div class="col-xs-6 col-md-3">
+					{% for groupe in app.user.groupeScenariste %}
+					<div class="thumbnail">
+						<div class="caption">
+							<h3>{{ groupe.nom }}</h3>
+							<p><a class="btn btn-primary" role="button" href="{{ path('groupe.detail',{'index':groupe.id}) }}">Détail</a></p>
+						</div>
+					</div>			
+					{% endfor %}
+				</div>	
+			</div>
+		</div>
+		{%  endif %}
+	{% else %}
+		{% if is_granted('ROLE_USER', app.user) %}
+			{% if not app.user.groupe %}
+				<div class="panel panel-default">
+					<div class="panel-heading">Rejoindre un groupe
+					</div>
+					<div class="panel-body">
+						<p>Vous n'êtes pour le moment inscrit dans aucun groupe. Entrez le code de votre groupe dans le formulaire ci-dessous.
+							Le code doit vous être transmis par le responsable de votre groupe.</p>
+						{{ include("homepage/fragment/form_groupe.twig",{'form': form_groupe,'action': path('homepage.inscription')}) }}
+					</div>
+				</div>
+			{% endif %}
+		{% endif %}
+	{% endif %}
+	
 {% endblock %}

@@ -1,0 +1,131 @@
+{% extends "layout.twig" %}
+
+{% block title %}{{ groupe.nom }}{% endblock title %}
+
+{% block content %}
+
+	<div class="page-header">
+		<h1>
+			{{ groupe.nom }} - <small>Gestion du groupe</small>
+		</h1>
+	</div>
+	
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-xs-12 col-md-8">
+			
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<label class="control-label">Informations générales</label>
+					</div>
+					<div class="panel-body">
+						Bienvenue en <strong>{{ groupe.nom }}</strong> !
+					</div>
+					<ul class="list-group">
+						<li class="list-group-item">
+						{{ include("groupe/fragment/scenariste.twig",{'scenariste': groupe.scenariste}) }}
+						</li>
+					</ul>
+				</div>
+				
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<label class="control-label">Membre du groupe</label>
+					</div>
+					<div class="panel-body">
+						L'accés au groupe est protégé par un code. Transmettez ce code aux membres de votre groupe. Grâce à lui ils pourront se connecter à LarpManager, et choisir l'une des classes disponibles pour ce groupe.
+					</div>
+					<ul class="list-group">
+						<li class="list-group-item">
+							<strong>Composition du groupe : </strong>{{ groupe.classes|length }} personnages.<br />
+							<strong>Nombre de personnages vacants : </strong>{{ groupe.availableClasses|length }} personnages.<br />
+							<a href="{{ path('groupe.joueur',{'index':groupe.id}) }}">Mon personnage</a>
+						</li>
+						<li class="list-group-item">
+							{% if groupe.classes|length - groupe.availableClasses|length >= groupe.classeOpen %}
+							<p class="warning">Attention ! des places sont encore disponibles, mais l'état de vos paiements à eve-oniris ne permet pas aux joueurs de les selectionner</p>
+							{% endif %}
+							<strong>Nombre de place ouverte : </strong>{{ groupe.classeOpen }}
+							<small>(Le nombre de places ouvertes dépend de vos paiements à eve-oniris)</small>
+						</li>
+						<li class="list-group-item">
+							<strong>Membres du groupe : </strong>{{ groupe.users|join(', ') }}
+						</li>
+						<li class="list-group-item">
+							{% if groupe.code %}
+							<strong>Code : </strong>{{ groupe.code }}. <a href="#">Demander la modification du code</a>&nbsp;<span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>
+							{% else %}
+								Votre code ne semble pas avoir été défini. Veuillez nous excuser. <a href="#">Demander un code</a>
+							{% endif %}
+						</li>
+					</ul>
+				</div>
+				
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<label class="control-label">Background</label>
+					</div>
+					<div class="panel-body">
+						{% if groupe.description %}
+							{{ groupe.description }}
+						{% else %}
+							Votre groupe ne dispose pas de description. Cela sera corrigé d'içi peu.
+						{% endif %}
+						
+					</div>
+					<ul class="list-group">
+						<li class="list-group-item">
+							{% if groupe.territoire %}
+								Votre fief est <strong>{{ groupe.territoire.nom }}</strong>
+								{{ groupe.territoire.description }}
+								{{ groupe.territoire.dirigeant }}
+								{{ groupe.territoire.capitale }}
+							{% else %}
+								Votre groupe ne dispose pas de territoire.
+							{% endif %}
+						</li>
+					</ul>
+				</div>
+				
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<label class="control-label">Jeu stratégique</label>
+					</div>
+					<div class="panel-body">
+						{% if groupe.jeuStrategique %}
+
+						{% else %}
+							Le jeu stratégique n'est pas activé pour votre groupe.<br />
+							<a href="#">Demander l'activation du jeu stratégique.</a>
+						{% endif %}
+					</div>
+				</div>
+				
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<label class="control-label">Jeu maritime</label>
+					</div>
+					<div class="panel-body">
+						{% if groupe.jeuMaritime %}
+						{% else %}
+							Le jeu stratégique n'est pas activé pour votre groupe.<br />
+							<a href="#">Demander l'activation du jeu maritime.</a>
+						{% endif %}
+					</div>
+				</div>
+				
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<label class="control-label">Diplomatie</label>
+					</div>
+					<div class="panel-body">
+					</div>
+				</div>
+					
+			
+			</div>
+		</div>
+	</div>
+			
+
+{% endblock content %}

@@ -1,0 +1,24 @@
+{% extends "layout.twig" %}
+
+{% block title %}Niveaux{% endblock title %}
+
+{% block content %}
+
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-xs-12 col-md-12">
+			<div class="well well-sm">
+				<h4>
+					Gestion des niveaux
+					<small>
+						( {{ levels|length }} niveaux )
+					</small>
+				</h4>
+			</div>
+			{{ include("level/fragment/list.twig", {'levels' : levels, 'add' : true}) }}
+		</div>
+	</div>
+
+</div>
+	
+{% endblock %}

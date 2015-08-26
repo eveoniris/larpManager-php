@@ -1,0 +1,20 @@
+{% extends "layout.twig" %}
+
+{% block title %}Ressources{% endblock title %}
+
+{% block content %}
+
+	<a href="{{ path("niveau") }}">Retour à la liste des ressources</a>
+	
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-xs-12 col-md-8">
+				{{ include("ressource/fragment/form.twig",{
+					'legend': 'Modification d\'une ressource',
+					'action': path('ressource.update',{'index': ressource.id}),
+					'form' : form}) }}
+			</div>
+		</div>
+	</div>
+		
+{% endblock content %}

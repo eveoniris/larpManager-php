@@ -1,0 +1,32 @@
+<div class="panel panel-default">
+	<div class="panel-heading">
+		Expérience de votre personnage
+	</div>
+	<div class="panel-body">
+		<p>Vous possédez actuellement <strong>{{ personnage.xp|default(0) }}</strong> points d'expériences</p>
+		<p>Utilisez vos points d'expériences pour acquérir de nouvelles compétences.</p>
+	</div>
+		
+	<div class="list-group">
+		{% if personnage.experienceGains|length > 0 %}
+		<div class="list-group-item">
+			<h6 class="list-group-item-heading">Historique de vos gains d'expérience</h6>
+			<ul>
+			{% for historique in personnage.experienceGains %}
+				<li>Le {{ historique.operationDate|date("Y-m-d h:i:s") }} vous avez gagné {{ historique.xpGain }} xp {% if historique.explanation %} pour la raison suivante : "{{ historique.explanation }}"{% endif %}.</li>
+			{% endfor %}
+			</ul>
+		</div>
+		{% endif %}
+		{% if personnage.experienceUsages|length > 0 %}
+		<div class="list-group-item">
+			<h6 class="list-group-item-heading">Historique de vos achats de compétence</h6>
+			<ul>
+			{% for historique in personnage.experienceUsages %}
+				<li>Le {{ historique.operationDate|date("Y-m-d h:i:s") }} vous avez utilisé {{ historique.xpUse }} xp pour acquérir {{ historique.competence.label }}.</li>
+			{% endfor %}
+			</ul>
+		</div>
+		{% endif %}
+	</div>
+</div>

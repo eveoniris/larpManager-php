@@ -1,0 +1,20 @@
+{% extends "layout.twig" %}
+
+{% block title %}Niveaux{% endblock title %}
+
+{% block content %}
+
+	
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-xs-12 col-md-8">
+				<a href="{{ path("level") }}">Retour à la liste des niveaux</a>
+				{{ include("level/fragment/form.twig",{
+					'legend': 'Modification d\'un niveau',
+					'action': path('level.update',{'index': level.id}), 
+					'form' : form}) }}
+			</div>
+		</div>
+	</div>
+		
+{% endblock content %}

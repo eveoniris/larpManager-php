@@ -1,0 +1,24 @@
+{% extends "layout.twig" %}
+
+{% block title %}Gns{% endblock title %}
+
+{% block content %}
+
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-xs-12 col-md-12">
+			<div class="well well-sm">
+				<h4>
+					Gestion des événements
+					<small>
+						( {{ gns|length }} gns )
+					</small>
+				</h4>
+			</div>
+			{{ include("gn/fragment/list.twig", {'gns' : gns, 'add' : true}) }}
+		</div>
+	</div>
+
+</div>
+	
+{% endblock %}

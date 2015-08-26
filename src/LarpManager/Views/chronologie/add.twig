@@ -1,0 +1,21 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+	
+	<form action="{{ path('chrono_add') }}" method="POST">
+		<div>
+			<label for="paysId">Pays</label>
+			<select name="paysId">
+			{% for item in pays %}
+            	<option value="{{ item.id }}">{{ item.nom }}</option>
+        	{% endfor %}
+        	</select>
+			<label for="date">Date</label>
+			<input type="text" name="date" />
+			<label for="description">Description</label>
+			<input type="text" name="description" />
+		</div>
+		<input type="submit" value="Enregistrer" />
+	</form>
+	
+{% endblock %}

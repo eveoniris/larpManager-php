@@ -1,0 +1,44 @@
+{% extends "layout.twig" %}
+
+{% block title %}Droits{% endblock %}
+
+{% block content %}
+
+	<div class="page-header">
+		<h1>
+			Gestion des droits
+		</h1>
+	</div>
+
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-xs-12 col-md-12">
+			
+				<form action="{{ path('user.right') }}" method="POST">
+				<table class="table">
+				<thead>
+					<tr>
+						<th />
+						{% for role in roles %}
+                            <th><a href="#" data-toggle="tooltip" title="{{ role.descr}}">{{ role.label }}</a></th>
+                		{% endfor %}		
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+				{% for user in users %}
+						<th>{{ user.id }} - {{ user.username }}</th>
+						{% for role in roles %}
+							<td><input type="checkbox" name="user[{{ user.id }}][{{ role.label }}]" {% if user.hasRole(role.label) %}checked="checked" {% endif %} /></td>
+						{% endfor %}
+						</tr>
+				{% endfor %}
+				</tbody>
+				</table>
+				<input type="submit" value="Enregistrer" />
+				</form>
+			</div>
+		</div>
+	</div>
+
+{% endblock content %}

@@ -1,0 +1,13 @@
+<ul class="list-group">
+	<a href="{{ path('stock_rangement_add') }}" class="list-group-item active">
+		<span class="badge"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></span>
+		<h4 class="list-group-item-heading">Ajouter un rangement</h4>
+	</a>
+	{%  for rangement in rangements %}
+		<a href="{{ path('stock_rangement_update', {index: rangement.id}) }}" class="list-group-item">
+			<span class="badge">{{ rangement.objets|length }}</span>
+			<h4 class="list-group-item-heading">{{ rangement.label }}</h4>
+			<p>{{ rangement.precision }} / {%  if rangement.localisation %} {{ rangement.localisation.label }} {%  endif %}</p>
+		</a>
+	{%  endfor %}
+</ul>

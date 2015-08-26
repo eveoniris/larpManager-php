@@ -1,0 +1,36 @@
+<ul class="list-group">
+	{%  if add != false %}
+		<a href="{{ path('age.add') }}" class="list-group-item active">
+			<span class="badge"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></span>
+			<h4 class="list-group-item-heading">Ajouter un age</h4>
+		</a>
+	{%  endif %}
+	{%  for age in ages %}
+	<li class="list-group-item">
+		
+		<h4 class="list-group-item-heading">
+			{{ age.label }}
+			<div class="pull-right btn-group" role="group" aria-label="...">
+				<a href="{{ path('age.detail', {index: age.id}) }}" class="btn btn-primary" role="button">Voir</a>
+			    <a href="{{ path('age.update', {index: age.id}) }}" class="btn btn-default" role="button">Modifier</a>
+			</div>
+		</h4>
+		
+		{% if age.enableCreation %}
+		<p class="list-group-item-text text-info">
+			Age disponible lors de la création d'un personnage.
+		</p>
+		{% endif %}
+		
+		<p class="list-group-item-text">		
+		</p>	
+		{% if age.description %}
+			<p class="list-group-item-text text-default">{{ age.description }}</p>
+		{% else %}
+			<p class="list-group-item-text text-warning">Attention, cet age n'a pas description</p>
+		{%  endif %}
+		<p class="list-group-item-text text-default"><strong>XP en bonus : </strong>{{ age.bonus|default(0) }}</p>
+		
+	</li>
+	{%  endfor %}
+</ul>

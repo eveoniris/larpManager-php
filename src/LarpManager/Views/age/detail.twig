@@ -1,0 +1,63 @@
+{% extends "layout.twig" %}
+
+{% block title %}Ages{% endblock title %}
+
+{% block content %}
+	
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-xs-12 col-md-8">
+		
+			<a href="{{ path("age") }}">Retour à la liste des ages</a>
+			<div class="well well-sm bs-component">
+				<h4>
+					{{ age.label }}
+				</h4>
+			</div>
+			
+  			<div class="list-group">
+		    		
+		    	<div class="list-group-item">
+			    	<h4 class="list-group-item-heading">Description</h4>
+	    			<p class="list-group-item-text">
+
+						<p>	    			
+		    			{% if not age.enableCreation %}
+		    				Cet age n'est pas disponible lors de la création d'un personnage.
+		    			{% else %}
+		    				Cet age est disponible lors de la création d'un personnage.
+		    			{% endif %}
+		    			</p>
+	    			
+	    				<p>
+		    			{% if not age.description %}
+	    				<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+	    					Attention, cet age n'a pas de description.
+	    				{% else %}
+	    					{{ age.description }}
+	    				{% endif %}
+	    				</p>
+    				</p>
+	    		</div>
+	    		
+	    		<div class="list-group-item">
+	    			<h4 class="list-group-item-heading">XP en bonus</h4>
+	    			<p class="list-group-item-text">
+	    				{{ age.bonus|default(0) }}
+	    			</p>
+	    		</div>
+	    		
+	    		<div class="list-group-item">
+	    			<h4 class="list-group-item-heading"></h4>
+	    			<p class="list-group-item-text">
+	    				{{ age.bonus|default(0) }}
+	    			</p>
+	    		</div>
+	    		
+			</div>
+		</div>
+	</div>
+</div>
+	
+			
+{% endblock %}

@@ -1,0 +1,42 @@
+<ul class="list-group">
+	{%  if add != false %}
+		<a href="{{ path('competence.family.add') }}" class="list-group-item active">
+			<span class="badge"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></span>
+			<h4 class="list-group-item-heading">Ajouter une famille de compétence</h4>
+		</a>
+	{%  endif %}
+	{%  for competenceFamily in competenceFamilies %}
+		<li class="list-group-item">
+			<h4 class="list-group-item-heading">
+				{{ competenceFamily.label }}
+				<div class="btn-group pull-right" role="group" aria-label="...">
+					<a href="{{ path('competence.family.detail', {index: competenceFamily.id}) }}" class="btn btn-primary" role="button">Voir</a>
+				    <a href="{{ path('competence.family.update', {index: competenceFamily.id}) }}" class="btn btn-default" role="button">Modifier</a>
+				</div>
+			</h4>
+			{% if competenceFamily.description %}
+				<p class="list-group-item-text text-default">{{ competenceFamily.description }}</p>
+			{% else %}
+				<p class="list-group-item-text text-warning">Attention, cette famille de compétence n'a pas description</p>
+			{%  endif %}
+			
+			<p class="list-group-item-text">
+			{% if competenceFamily.competences|length > 0 %}
+				Niveaux définis : 
+				{% for competence in competenceFamily.competences %}
+					{{ competence.level.label }},
+				{% endfor %}
+				
+			{% else %}
+				<span class="text-warning">Attention, aucune compétence n'est définie dans cette famille !</span>
+			{% endif %}
+			{% if competenceFamily.lastCompetence %}
+				<a href="{{ path('competence.add', {competenceFamily:competenceFamily.id, level:competenceFamily.lastCompetence.level.index}) }}">Ajouter une compétence</a>
+			{% else %}
+				<a href="{{ path('competence.add', {competenceFamily:competenceFamily.id }) }}">Ajouter une compétence</a>
+			{% endif %}
+			
+			</p>
+		</li>
+	{%  endfor %}
+</ul>

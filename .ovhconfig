@@ -1,0 +1,9 @@
+; pour plus d'informations sur ce fichier:
+; http://www.ovh.com/fr/g1175.format_du_point_ovhconfig
+
+app.engine=phpcgi
+app.engine.version=AUTO
+
+http.firewall=none
+environment=production
+

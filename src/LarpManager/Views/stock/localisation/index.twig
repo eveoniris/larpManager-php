@@ -1,0 +1,29 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+
+	<div class="page-header">
+		<h1>Liste des localisation</h1>
+	</div>
+	
+	<div class="panel panel-info">
+		<div class="panel-heading">
+			<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+			Qu'est-ce qu'une localisation ?
+		</div>
+		<div class="panel-body">Une localisation permet de définir précisemment ou se trouve l'objet.</div>
+	</div>
+	
+	{% if localisations|length == 0 %}
+		<div class="panel panel-warning">
+			<div class="panel-heading">
+				<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+				Attention !
+			</div>
+			<div class="panel-body">Aucune localisations n'est définie ! Vous devez définir au moins une localisation.</div>
+		</div>
+	{% endif %}
+	
+	{{ include("stock/localisation/list.twig", {'localisations' : localisations}) }}
+	
+{% endblock %}

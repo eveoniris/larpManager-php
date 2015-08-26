@@ -1,0 +1,84 @@
+{% extends "layout.twig" %}
+
+{% block title %}Groupes{% endblock title %}
+
+{% block content %}
+
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-xs-12 col-md-8">
+				<a href="{{ path("groupe") }}">Retour à la liste des groupes</a>
+				{{ include("groupe/fragment/form.twig",{
+					'legend': 'Modification d\'un groupe',
+					'action': path('groupe.update',{'index': groupe.id}), 
+					'form' : form}) }}
+			</div>
+		</div>
+	</div>
+		
+{% endblock content %}
+
+
+{% block javascript %}
+
+	{{  parent() }}
+	<script>
+
+		function addGroupeClasseForm(collectionHolder, $newLinkLi) {
+		    // Récupère l'élément ayant l'attribut data-prototype comme expliqué plus tôt
+		    var prototype = collectionHolder.attr('data-prototype');
+
+		    // Remplace '__name__' dans le HTML du prototype par un nombre basé sur
+		    // la longueur de la collection courante
+		    var newForm = prototype.replace(/__name__/g, collectionHolder.children().length);
+	
+		    // Affiche le formulaire dans la page dans un li, avant le lien "ajouter un tag"
+		    var $newFormLi = $('<li class="list-group-item"></li>').append(newForm);
+		    $newLinkLi.before($newFormLi);
+
+			 // ajoute un lien de suppression au nouveau formulaire
+		    addGroupeClasseFormDeleteLink($newFormLi);
+		}
+
+		function addGroupeClasseFormDeleteLink($groupeClasseFormLi) {
+		    var $removeFormA = $('<span class="input-group-btn"><a class="btn btn-link" href="#"><span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span></a></span>');
+		    $('select',$groupeClasseFormLi).wrap('<div class="input-group"></div>');
+		    $('select',$groupeClasseFormLi).after($removeFormA);
+
+		    $removeFormA.on('click', function(e) {
+		        // empêche le lien de créer un « # » dans l'URL
+		        e.preventDefault();
+
+		        // supprime l'élément li pour le formulaire de tag
+		        $groupeClasseFormLi.remove();
+		    });
+		}
+	
+		// Récupère le div qui contient la collection de tags
+		var collectionHolder = $('ul.groupeClasses');
+		
+		// ajoute un lien « add a tag »
+		var $addGroupeClasseLink = $('<a href="#" class="add_groupeClasse_link">Ajouter une classe</a>');
+		var $newLinkLi = $('<li class="list-group-item"></li>').append($addGroupeClasseLink);
+		
+		jQuery(document).ready(function() {
+
+			// ajoute un lien de suppression à tous les éléments li de
+		    // formulaires de tag existants
+		    collectionHolder.find('li').each(function() {
+		        addGroupeClasseFormDeleteLink($(this));
+		    });
+		    
+		    // ajoute l'ancre « ajouter un tag » et li à la balise ul
+		    collectionHolder.append($newLinkLi);
+		
+		    $addGroupeClasseLink.on('click', function(e) {
+		        // empêche le lien de créer un « # » dans l'URL
+		        e.preventDefault();
+		
+		        // ajoute un nouveau formulaire tag (voir le prochain bloc de code)
+		        addGroupeClasseForm(collectionHolder, $newLinkLi);
+		    });
+		});
+</script>
+{% endblock javascript %}

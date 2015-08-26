@@ -1,0 +1,79 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+
+	<div class="page-header">
+		<h1>Détail de {{ objet.code }} - {{ objet.nom }} <a href="{{ path('stock_objet_update', {index: objet.id}) }}" class="btn btn-primary" role="button">Modifier</a> <a href="{{ path('stock_objet_clone', {index: objet.id}) }}" class="btn btn-primary" role="button">Cloner</a></h1>		
+	</div>
+
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-xs-12 col-md-6">
+							
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						Information générale
+					</div>
+					<div class="panel-body">
+						<ul>
+						<li><b>Nom :</b> {{ objet.nom }}</li>
+						<li><b>Code :</b> {{ objet.code }}</li>
+						<li><b>Description :</b> {{ objet.description }}</li>
+						<li><b>Date de création :</b> {{ objet.creationDate|date('Y-m-d H:i:s') }}</li>
+						</ul>
+						
+						{% if objet.photo %}
+        					<img src="{{ path('stock_objet_photo',{index: objet.id}) }}" alt="{{ objet.photo.name }}" class="img-responsive" />
+        				{% endif %}
+					</div>
+				</div>
+				
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						Localisation
+					</div>
+					<div class="panel-body">
+						<ul>
+							<li><b>Rangement :</b> {% if objet.rangement %}{{ objet.rangement.adresse }}{%  endif %}</li>
+							<li><b>Etat :</b> {% if objet.etat %}{{ objet.etat.label }}{%  endif %}</li>
+							<li><b>Proprietaire :</b> {% if objet.proprietaire %}{{ objet.proprietaire.nom }}{%  endif %}</li>
+							<li><b>Responsable :</b> {% if objet.responsable %}{{ objet.responsable.username }}{%  endif %}</li>
+						</ul>
+					</div>
+				</div>
+				
+			</div>
+			
+			
+			<div class="col-xs-12 col-md-6">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						Autres information
+					</div>
+					<div class="panel-body">
+						<ul>
+						<li><b>Cout :</b>{{ objet.cout }}</li>
+						<li><b>Nombre :</b>{{ objet.nombre }}</li>
+						<li><b>Budget :</b>{{ objet.budget }}</li>
+						<li><b>Investissement :</b>{{ objet.investissement }}</li>
+						</ul>
+					</div>
+				</div>
+			
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						Caractèristiques
+					</div>
+					<div class="panel-body">
+						<ul>
+						<li><b>Taille :</b>{% if objet.objetCarac %}{{ objet.objetCarac.taille }}{%  endif %}</li>
+						<li><b>Poid :</b>{% if objet.objetCarac %}{{ objet.objetCarac.poid }}{%  endif %}</li>
+						<li><b>Couleur :</b>{% if objet.objetCarac %}{{ objet.objetCarac.couleur }}{%  endif %}</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>		
+
+{% endblock %}

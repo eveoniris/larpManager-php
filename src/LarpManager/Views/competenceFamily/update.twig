@@ -1,0 +1,20 @@
+{% extends "layout.twig" %}
+
+{% block title %}Familles de compétence{% endblock title %}
+
+{% block content %}
+
+	
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-xs-12 col-md-8">
+				<a href="{{ path("competence.family") }}">Retour à la liste des familles de compétence</a>
+				{{ include("competenceFamily/fragment/form.twig",{
+					'legend': 'Modification d\'une famille de compétence',
+					'action': path('competence.family.update',{'index': competenceFamily.id}), 
+					'form' : form}) }}
+			</div>
+		</div>
+	</div>
+		
+{% endblock content %}

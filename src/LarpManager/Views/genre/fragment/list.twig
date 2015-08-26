@@ -1,0 +1,27 @@
+<ul class="list-group">
+	{%  if add != false %}
+		<a href="{{ path('genre.add') }}" class="list-group-item active">
+			<span class="badge"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></span>
+			<h4 class="list-group-item-heading">Ajouter un genre</h4>
+		</a>
+	{%  endif %}
+	{%  for genre in genres %}
+	<li class="list-group-item">
+		<h4 class="list-group-item-heading">
+			{{ genre.label }}
+			<div class="pull-right btn-group" role="group" aria-label="...">
+				<a href="{{ path('genre.detail', {index: genre.id}) }}" class="btn btn-primary" role="button">Voir</a>
+			    <a href="{{ path('genre.update', {index: genre.id}) }}" class="btn btn-default" role="button">Modifier</a>
+			</div>
+		</h4>
+			
+		{% if genre.description %}
+			<p class="list-group-item-text text-default">{{ genre.description }}</p>
+		{% else %}
+			<p class="list-group-item-text text-warning">Attention, ce genre n'a pas description</p>
+		{%  endif %}
+		
+		
+	</li>
+	{%  endfor %}
+</ul>

@@ -1,49 +1,82 @@
+html {
+  position: relative;
+  min-height: 100%;	
+}
+
 body {
 	font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 	font-size: 14px;
   	line-height: 1.42857143;
   	color: #333;
 	background-color: #fff;
-	padding: 0;
-	margin: 0;
+	margin-bottom: 60px;
+	background: url("../img/landscape2.jpg")no-repeat;
+	background-size: cover !important;
+	background-attachment: fixed;
+	border-top: 0 !important;
 }
 
-div#menu {
-	padding-right: 10px;
-	padding-left: 10px;
-	height: 59px;
-	border-bottom : 1px solid #ccc;
-	
+#footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  /* Set the fixed height of the footer here */
+  height: 60px;
+  background-color: #f5f5f5;
 }
 
-div#menu ul {
-	float: right!important;
-  	margin-right: -15px;
-  	display: table;
+/**
+ * Ajoute un asterix rouge si le champ est obligatoire
+ */        
+.control-label.required:after {
+	font-family: 'FontAwesome';
+	font-weight: normal;
+	content: "\f069";
+	color: red;
+	margin-left: 5px;
 }
 
-div#menu ul li {
-  float: left;
-  position: relative;
-  display: block;
-  box-sizing: border-box;
+
+/** 
+ *	Icones 
+ */
+
+[class^="icon-"],[class*=" icon-"]{
+	display:inline-block;
+	width:14px;
+	height:14px;
+	line-height:14px;
+	vertical-align:text-top;
+	background-image:url("../img/glyphicons-halflings.png");
+	background-position:14px 14px;
+	background-repeat:no-repeat;
+	*margin-right:.3em;
 }
 
-div#menu ul a {
-	text-decoration: none;
-	padding-top: 15px;
-  	padding-bottom: 15px;
-  	height : 39px;
- 	margin-right : 20px;
+[class^="icon-"]:last-child,[class*=" icon-"]:last-child{
+	*margin-left:0;
 }
-
-div#content {
-	padding : 10px;
+.icon-plus-sign{
+	background-position:0 -96px;
 }
-
-div#footer {
-	padding-right: 10px;
-	padding-left: 10px;
-	border-top : 1px solid #ccc;
-	height : 30px;
+.icon-pencil{
+	background-position:0 -72px;
+}
+.icon-document{
+	background-position:-24px -24px;
+}
+.icon-plus{
+	background-position:-408px -96px;
+}
+.icon-next-page{
+	background-position:-336px -72px;
+}
+.icon-prev-page{
+	background-position:-240px -72px;
+}
+.icon-first-page{
+	background-position:-192px -72px;
+}
+.icon-last-page{
+	background-position:-384px -72px;
 }

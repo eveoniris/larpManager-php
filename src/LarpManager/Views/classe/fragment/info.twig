@@ -1,0 +1,19 @@
+<div class="panel panel-default">
+	<div class="panel-heading">
+		{{ classe.label }}
+	</div>
+	<div class="panel-body">
+		<p>{{ classe.description }}</p>
+	</div>
+	<div class="list-group">
+		<div class="list-group-item">
+			Compétences acquises à la création : {{ classe.competenceFamilyCreations|join(', ') }}
+		</div>
+		<div class="list-group-item">
+			Compétences favorites : {{ classe.competenceFamilyFavorites|join(', ') }}
+		</div>
+		<div class="list-group-item">
+			Compétences normales : {{ classe.competenceFamilyNormales|join(', ') }}
+		</div>
+	</div>
+</div>

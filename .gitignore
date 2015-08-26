@@ -1,6 +1,7 @@
 /vendor/
-/cache/
 .buildpath
 .project
 /.settings/
 composer.phar
+/database/larpmanager.mwb.bak
+/src/LarpManager/Entities/*.bak

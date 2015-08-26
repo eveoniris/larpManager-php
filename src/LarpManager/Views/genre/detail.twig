@@ -1,0 +1,44 @@
+{% extends "layout.twig" %}
+
+{% block title %}Genres{% endblock title %}
+
+{% block content %}
+
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-xs-12 col-md-8">
+		
+			<a href="{{ path("genre") }}">Retour à la liste des genres</a>
+						
+			<div class="well well-sm bs-component">
+				<h4>
+					{{ genre.label }}
+				</h4>
+			</div>
+			
+			<div class="list-group">
+		    		
+		    	<div class="list-group-item">
+			    	<h4 class="list-group-item-heading">Description</h4>
+	    			<p class="list-group-item-text">
+	    			{% if not genre.description %}
+    				<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+    					Attention, ce genre n'a pas de description.
+    				{% else %}
+    					{{ genre.description }}
+    				{% endif %}
+    				</p>
+	    		</div>
+	    		
+	    		<div class="list-group-item">
+  					<div class="btn-group" role="group" aria-label="...">
+  						<a  class="btn btn-primary" role="button" href="{{ path('genre.update', {index : genre.id}) }}">Modifier</a>
+					</div>
+  				</div>
+			</div>
+		</div>
+	</div>
+</div>
+	
+			
+{% endblock %}

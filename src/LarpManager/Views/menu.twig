@@ -1,0 +1,125 @@
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+  
+  	<!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="{{ path('homepage') }}">LarpManager</a>
+    </div>
+
+	<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+		<ul class="nav navbar-nav">
+			<li><a href="http://www.eveoniris.com">Eve-Oniris</a></li>
+			
+			{% if is_granted('ROLE_ADMIN', app.user) %}
+				<li class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Admin<span class="caret"></span></a>
+					<ul class="dropdown-menu">
+						<li><a href="{{ path('gn') }}">Evénements</a></li>
+						<li><a href="{{ path('groupe.place') }}">Places disponibles</a></li>
+						<li><a href="{{ path('joueur.xp') }}">Points d'expériences</a></li>
+						<li><a href="{{ path('user.list') }}">Liste des utilisateurs</a></li>
+						<li><a href="{{ path('user.right') }}">Gestion des droits</a></li>
+					</ul>
+				</li>
+			{% endif %}
+			
+			{% if is_granted('ROLE_SCENARISTE', app.user) %}
+				<li class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Scénario<span class="caret"></span></a>
+					<ul class="dropdown-menu">
+						<li><a href="{{ path('appelation') }}">Appelations</a></li>
+						<li><a href="{{ path('territoire') }}">Territoires</a></li>
+						<li><a href="{{ path('langue') }}">Langues</a></li>
+						<li><a href="{{ path('groupe') }}">Groupes</a></li>
+						<li><a href="{{ path('ressource') }}">Ressources</a></li>
+					</ul>
+				</li>
+			{% endif %}
+			
+			{% if is_granted('ROLE_REGLE', app.user) %}
+				<li class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Règles<span class="caret"></span></a>
+					<ul class="dropdown-menu">
+						<li><a href="{{ path('competence.family') }}">Famille de compétences</a></li>
+						<li><a href="{{ path('level') }}">Niveaux</a></li>
+						<li><a href="{{ path('competence') }}">Compétences</a></li>
+						<li><a href="{{ path('classe') }}">Classes</a></li>
+						<li><a href="{{ path('age') }}">Ages</a></li>
+						<li><a href="{{ path('genre') }}">Genres</a></li>
+					</ul>
+				</li>
+			{% endif %}
+			
+			{% if is_granted('ROLE_STOCK', app.user) %}
+				<li class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Stock<span class="caret"></span></a>
+					<ul class="dropdown-menu">
+						<li><a href="{{ path('stock_homepage') }}">Tableau de bord</a></li>
+						<li><a href="{{ path('stock_etat_index') }}">Etats</a></li>
+						<li><a href="{{ path('stock_tag_index') }}">Tags</a></li>
+						<li><a href="{{ path('stock_localisation_index') }}">Localisations</a></li>
+						<li><a href="{{ path('stock_rangement_index') }}">Rangements</a></li>
+						<li><a href="{{ path('stock_proprietaire_index') }}">Proprietaires</a></li>
+						<li><a href="{{ path('stock_objet_list',{'page':1}) }}">Objets</a></li>
+						<li><a href="{{ path('stock_objet_export') }}">Exporter</a></li>
+					</ul>
+				</li>
+			{% endif %}
+			
+			{% if is_granted('ROLE_USER', app.user) %}
+				<li class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Joueur<span class="caret"></span></a>
+					<ul class="dropdown-menu">
+						{% if app.user.personnage %}
+							<li><a href="{{ path('personnage.detail',{'index': app.user.personnage.id}) }}">Mon personnage</a></li>
+						{% else %}
+							<li><a href="{{ path('personnage.add') }}">Création de mon personnage</a></li>
+						{% endif %}
+						{% if app.user.joueur %}
+							<li><a href="{{ path('joueur.detail',{'index': app.user.joueur.id}) }}">Mes informations</a></li>
+						{% endif %}
+						{% if app.user.groupe %}
+							<li><a href="{{ path('groupe.joueur',{'index':app.user.groupe.id}) }}">Mon groupe</a></li>
+							{% if app.user.isResponsable(app.user.groupe) %}
+								<li><a href="{{ path('groupe.gestion',{'index':app.user.groupe.id}) }}">Gestion du groupe</a></li>
+								<li><a href="#">Diplomatie</a></li>								
+							{% endif %}
+							<li><a href="#">Contacter le scénariste</a></li>
+						{% endif %}
+						
+						<li><a href="#">Les compétences</a></li>
+						<li><a href="#">Les classes</a></li>
+					</ul
+				</li>
+			{% endif %}
+			
+			<li class="dropdown">
+				<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Compte<span class="caret"></span></a>
+				<ul class="dropdown-menu">
+					{%  if app.user %}			
+						<li><a href="{{ path('user') }}">Mon compte</a></li>					
+						<li><a href="{{ path('user.logout') }}">Déconnection</a></li>
+					{%  else %}
+						<li><a href="{{ path('user.login') }}">Connection</a></li>
+						<li><a href="{{ path('user.register') }}">Créer un compte</a></li>
+					{%  endif %}
+				</ul>
+			</li>	
+						
+			{% if is_granted('ADMIN_USER', app.user) %}
+			<li class="dropdown">
+				<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Larp</a>
+				<ul class="dropdown-menu">			
+					<li><a href="{{ path('install') }}">Tableau de bord</a></li>
+				</ul>
+			</li>
+			{% endif %}
+		</ul>
+	</div>
+</div>

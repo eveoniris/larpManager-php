@@ -1,0 +1,29 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+
+	<div class="page-header">
+		<h1>Liste des propriétaires</h1>
+	</div>
+	
+	<div class="panel panel-info">
+		<div class="panel-heading">
+			<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+			Qu'est-ce qu'un propriétaire ?
+		</div>
+		<div class="panel-body">Les propriétaires sont les personnes (morale ou physique) qui possédent l'objet.</div>
+	</div>
+	
+	{% if proprietaires|length == 0 %}
+		<div class="panel panel-warning">
+			<div class="panel-heading">
+				<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+				Attention !
+			</div>
+			<div class="panel-body">Aucun propriétaire n'est défini ! Vous devez définir au moins un propriétaire.</div>
+		</div>
+	{% endif %}
+
+{{ include("stock/proprietaire/list.twig", {'proprietaires' : proprietaires}) }}
+	
+{% endblock %}

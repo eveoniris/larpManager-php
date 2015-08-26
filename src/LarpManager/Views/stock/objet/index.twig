@@ -1,0 +1,65 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+
+	<div class="page-header">
+	<h1>
+		Liste des objets
+	</h1>
+	</div>
+	
+	<nav class="navbar navbar-default">
+  		<div class="container-fluid">
+  		
+	  		<form action="{{ path(pagination.route, pagination.route_params|merge({'page': pagination.page})) }}" method="POST" {{ form_enctype(form) }}>
+				{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+				{{ form(form) }}
+			</form>
+			
+			<div class="form-group">
+				<div class="btn-group" role="group" aria-label="...">
+					<a href={{ path('stock_objet_index') }} class="btn btn-default"><span class="icon fa fa-refresh"></span></a>
+				 	<a href={{ path('stock_objet_add') }} class="btn btn-default"><span class="icon fa fa-plus"></span></a>
+				</div>
+				
+
+				<div class="btn-group" role="group" aria-label="...">
+				  	{{ include("stock/objet/fragment/pagination.twig",{'pagination': pagination}) }}
+				</div>
+				
+			</div>
+						
+  		</div>
+  	</nav>
+  	
+
+  		
+	<div class="row" >
+		{% for objet in objets %}
+		<div class="col-xs-12 col-sm-6 col-md-3">
+  			<div class="thumbnail">	
+	   			{% if objet.photo %}
+	    			<img src="{{ path('stock_objet_photo',{index: objet.id}) }}" alt="{{ objet.photo.name }}" class="img-responsive" />
+				{% endif %}
+				<div class="caption">
+					<h3>{{ objet.code }}&nbsp;<small>{{ objet.nom }}</small></h3>
+			        <p>{{ objet.description }}</p>
+			        
+			        <div class="btn-group" role="group" aria-label="...">
+			        	<a href="{{ path('stock_objet_detail', {index: objet.id}) }}" class="btn btn-primary" role="button">Voir</a>
+			        	<a href="{{ path('stock_objet_update', {index: objet.id}) }}" class="btn btn-default" role="button">Modifier</a>
+			        	<a href="{{ path('stock_objet_clone', {index: objet.id}) }}" class="btn btn-default" role="button">Cloner</a>
+			        </div>
+			        
+				</div>
+			</div>
+		</div>
+  		{% endfor %}
+  	</div>
+			
+{% endblock content %}
+
+
+
+
+

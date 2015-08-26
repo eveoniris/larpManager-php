@@ -3,9 +3,18 @@
 {% block title %}Installation{% endblock %}
 
 {% block content %}
-	<form action="{{ path('install') }}" method ="POST">
-		<p>Installation de LarpManager</p>
-		<p>Cette opération va créer les tables necessaires au fonctionnement de LarpManager dans votre base de données</p>		
-		<input type="submit" value="Installer" />
-	</form>
+
+	<div class="page-header">
+		<h1>Installation de LarpManager</h1>
+	</div>
+	
+	<div class="well bs-component">
+		<form action="{{ path('install_index') }}" method="POST" {{ form_enctype(form) }}>
+			<fieldset>
+	    	<legend>Configuration de la base de données</legend>
+				{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+				{{ form(form) }}
+			</fieldset>
+		</form>
+	</div>
 {% endblock %}

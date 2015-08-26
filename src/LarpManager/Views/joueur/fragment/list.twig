@@ -1,0 +1,27 @@
+<ul class="list-group">
+	{%  if add != false %}
+		<a href="{{ path('joueur.add') }}" class="list-group-item active">
+			<span class="badge"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></span>
+			<h4 class="list-group-item-heading">Ajouter un joueur</h4>
+		</a>
+	{%  endif %}
+	{%  for joueur in joueurs %}
+	<li class="list-group-item">
+		
+		<h4 class="list-group-item-heading">
+			{{ joueur.label }}
+			<div class="pull-right btn-group" role="group" aria-label="...">
+				<a href="{{ path('joueur.detail', {index: gn.id}) }}" class="btn btn-primary" role="button">Voir</a>
+			    <a href="{{ path('joueur.update', {index: gn.id}) }}" class="btn btn-default" role="button">Modifier</a>
+			</div>
+		</h4>
+		
+		{% if joueur.description %}
+			<p class="list-group-item-text text-default">{{ joueur.description }}</p>
+		{% else %}
+			<p class="list-group-item-text text-warning">Attention, ce joueur n'a pas description</p>
+		{%  endif %}
+				
+	</li>
+	{%  endfor %}
+</ul>

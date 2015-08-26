@@ -1,0 +1,17 @@
+<div class="panel panel-default">
+	<div class="panel-heading">
+		{{ groupe.nom }}
+	</div>
+	<div class="panel-body">
+		<p>Territoire : {{ groupe.territoire.nom }}</p>
+		<p>Composition : {{ groupe.personnages|length }} personages</p>
+   	</div>
+   	<ul class="list-group">
+   		<li class="list-group-item">
+   			{% if app.user.isResponsable(groupe) %}
+   				<a href="{{ path('groupe.gestion', {'index':groupe.id}) }}" class="btn btn-primary" role="button">Gérer</a>
+   			{%  endif %}
+   			<a href="{{ path('groupe.joueur', {'index':groupe.id}) }}" class="btn btn-primary" role="button">Détail</a>
+   		</li>
+	</ul>
+</div>

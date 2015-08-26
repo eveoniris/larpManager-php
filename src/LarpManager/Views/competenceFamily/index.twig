@@ -1,0 +1,24 @@
+{% extends "layout.twig" %}
+
+{% block title %}Familles de compétence{% endblock title %}
+
+{% block content %}
+
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-xs-12 col-md-12">
+			<div class="well well-sm">
+				<h4>
+					Gestion des familles de compétences
+					<small>
+						( {{ competenceFamilies|length }} familles )
+					</small>
+				</h4>
+			</div>
+			{{ include("competenceFamily/fragment/list.twig", {'competenceFamilies' : competenceFamilies, 'add' : true}) }}
+		</div>
+	</div>
+
+</div>
+	
+{% endblock %}

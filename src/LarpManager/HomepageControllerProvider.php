@@ -12,8 +12,13 @@ class HomepageControllerProvider implements ControllerProviderInterface
 		// creates a new controller based on the default route
 		$controllers = $app['controllers_factory'];
 
-		$controllers->get('/','LarpManager\Controllers\HomepageController::indexAction')
+		$controllers->match('/','LarpManager\Controllers\HomepageController::indexAction')
+					->method('GET')
 					->bind('homepage');
+		
+		$controllers->match('/inscription','LarpManager\Controllers\HomepageController::inscriptionAction')
+					->method('POST')
+					->bind('homepage.inscription');
 		
 		return $controllers;
 	}

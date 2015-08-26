@@ -1,0 +1,17 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+
+	<div class="page-header">
+		<h1>Ajout d'une localisation</h1>
+	</div>
+
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-xs-12 col-md-8">
+				{{ include("stock/localisation/form.twig",{'action': path('stock_localisation_add'), 'form' : form}) }}
+			</div>
+		</div>
+	</div>
+
+{% endblock %}

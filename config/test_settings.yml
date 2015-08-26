@@ -1,0 +1,18 @@
+env:
+	env: prod
+	
+database:
+    driver: pdo_mysql #TODO resoudre le probleme de creation d'index pour passer en sqlite
+    host: 127.0.0.1
+    dbname: db_test
+    user: root
+    password: 
+    #memory: true #pour sqlite in memory (rapide !)
+
+swiftmailler:
+   host: host
+   port: 25
+   username: username
+   password: password
+   encryption: null
+   auth_mode: null
