@@ -76,6 +76,32 @@ class CompetenceFamily extends BaseCompetenceFamily
 	}
 	
 	/**
+	 * Fourni la compétence de plus haut niveau d'une famille de compétence
+	 */
+	public function getLastCompetence()
+	{
+		$maximumIndex = null ;
+		$competenceLast = null;
+		
+		foreach ( $this->getCompetences() as $competence )
+		{
+			if ( $minimumIndex == null )
+			{
+				$competenceLast = $competence;
+				$maximumIndex = $competence->getLevel()->getIndex();
+			}
+			else if ( $competence->getLevel()->getIndex() > $maximumIndex )
+			{
+				$competenceLast = $competence;
+				$maximumIndex = $competence->getLevel()->getIndex();
+			}
+		}
+		
+		return $competenceLast;
+	}
+	
+	
+	/**
 	 * Add Classe entity to collection.
 	 *
 	 * @param \LarpManager\Entities\Classe $classe

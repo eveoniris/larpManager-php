@@ -37,12 +37,24 @@ class CompetenceController
 		// n'a pas été défini pour cette famille
 		
 		$competenceFamilyId = $request->get('competenceFamily');
+		$levelIndex = $request->get('level');
+		
 		if ( $competenceFamilyId ) 
 		{
 			$competenceFamily = $app['orm.em']->find('\LarpManager\Entities\CompetenceFamily', $competenceFamilyId);
 			if ( $competenceFamily )
 			{
 				$competence->setCompetenceFamily($competenceFamily);
+			}
+		}
+		
+		if ( $levelIndex )
+		{
+			$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Level');
+			$level = $repo->findByIndex($levelIndex+1);
+			if ( $level )
+			{
+				$competence->setLevel($level);
 			}
 		}
 		
