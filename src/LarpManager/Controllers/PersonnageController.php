@@ -47,7 +47,7 @@ class PersonnageController
 		$personnage = new \LarpManager\Entities\Personnage();
 		
 		// j'ajoute içi certain champs du formulaires (les classes)
-		// car j'ai besoin des informations du groupes pour les alimenter
+		// car j'ai besoin des informations du groupe pour les alimenter
 		$form = $app['form.factory']->createBuilder(new PersonnageForm(), $personnage)
 					->add('classe','entity', array(
 						'label' =>  'Classes disponibles',
@@ -64,27 +64,52 @@ class PersonnageController
 		{
 			$personnage = $form->getData();
 			$personnage->setGroupe($groupe);
+			
+			// Ajout des points d'expérience gagné à la création d'un personnage
+			$personnage->setXp(10); // TODO il faudra utiliser par la suite les informations lié au gn
+			// historique
+			$historique = new \LarpManager\Entities\ExperienceGain();
+			$historique->setExplanation("Création de votre personnage");
+			$historique->setOperationDate(new \Datetime('NOW'));
+			$historique->setPersonnage($personnage);
+			$historique->setXpGain(10); // TODO cf. precedent
+			$app['orm.em']->persist($historique);
+			
 			$joueur->setPersonnage($personnage);
 			
 			// ajout des compétences acquises à la création
 			foreach ($personnage->getClasse()->getCompetenceFamilyCreations() as $competenceFamily)
 			{
-				var_dump($competenceFamily->getLabel());
 				$firstCompetence = $competenceFamily->getFirstCompetence();
 				if ( $firstCompetence )
 				{
-					var_dump($firstCompetence->getId());
 					$personnage->addCompetence($firstCompetence);
+					$competence->addPersonnage($personnage);
+					$app['orm.em']->persist($competence);
 				}
 			}
-				
+			
+			// Ajout des points d'expérience gagné grace à l'age
+			$xpAgeBonus = $personnage->getAge()->getBonus();
+			if ( $xpAgeBonus )
+			{
+				$personnage->addXp($xpAgeBonus);
+				$historique = new \LarpManager\Entities\ExperienceGain();
+				$historique->setExplanation("Bonus lié à l'age");
+				$historique->setOperationDate(new \Datetime('NOW'));
+				$historique->setPersonnage($personnage);
+				$historique->setXpGain($xpAgeBonus);
+				$app['orm.em']->persist($historique);
+			}
+			
+			
 			$app['orm.em']->persist($personnage);
 			$app['orm.em']->persist($joueur);
 			$app['orm.em']->flush();
 				
 				
 			$app['session']->getFlashBag()->add('success','Votre personnage a été sauvegardé.');
-			return $app->redirect($app['url_generator']->generate('personnage.detail',array('index'=>$personnage->getId()),301));
+			//return $app->redirect($app['url_generator']->generate('personnage.detail',array('index'=>$personnage->getId()),301));
 		}
 		
 		return $app['twig']->render('personnage/add.twig', array(
@@ -128,14 +153,25 @@ class PersonnageController
 		$id = $request->get('index');
 		
 		$personnage = $app['orm.em']->find('\LarpManager\Entities\Personnage',$id);
+		$availableCompetences = $app['personnage.manager']->getAvailableCompetences($personnage);
 		
-		$form = $app['form.factory']->createBuilder(new PersonnageCompetenceForm(), $personnage)
-					->add('competence','entity', array(
+		if ( $availableCompetences->count() == 0 )
+		{
+			$app['session']->getFlashBag()->add('error','Désolé, il n\'y a plus de compétence disponible.');
+			return $app->redirect($app['url_generator']->generate('personnage.detail',array('index'=>$id)),301);
+		}
+		
+		// construit le tableau de choix
+		$choices = array();
+		foreach ( $availableCompetences as $competence)
+		{
+			$choices[$competence->getId()] = $competence->getLabel() . ' (cout : '.$app['personnage.manager']->getCompetenceCout($personnage, $competence).' xp)';
+		}
+		
+		$form = $app['form.factory']->createBuilder()
+					->add('competenceId','choice', array(
 							'label' =>  'Choisissez une nouvelle compétence',
-							'property' => 'label',
-							'class' => 'LarpManager\Entities\Competence',
-							'mapped' => false,
-							'choices' => $app['personnage.manager']->getAvailableCompetences($personnage),
+							'choices' => $choices,
 					))
 					->add('save','submit', array('label' => 'Valider la compétence'))
 					->getForm();
@@ -144,23 +180,33 @@ class PersonnageController
 			
 		if ( $form->isValid() )
 		{
-			$personnage = $form->getData();
-			$competence = $form->get('competence');
+			$data = $form->getData();
 			
+			$competenceId = $data['competenceId']; 
+			$competence = $app['orm.em']->find('\LarpManager\Entities\Competence', $competenceId);
+						
 			$cout = $app['personnage.manager']->getCompetenceCout($personnage, $competence);
-			$joueur = $personnage->getJoueur();
-			$xp = $joueur->getXp();
+			$xp = $personnage->getXp();
 			
-			if ( $xp - cout > 0 )
+			if ( $xp - cout < 0 )
 			{
 				$app['session']->getFlashBag()->add('error','Vos n\'avez pas suffisement de point d\'expérience pour acquérir cette compétence.');
 				return $app->redirect($app['url_generator']->generate('personnage.detail',array('index'=>$personnage->getId()),301));
 			}
-			$joueur->setXp($xp - $cout);
+			$personnage->setXp($xp - $cout);
 			$personnage->addCompetence($competence);
+			$competence->addPersonnage($personnage);
 			
-			$app['orm.em']->persist($joueur);
+			// historique
+			$historique = new \LarpManager\Entities\ExperienceUsage();
+			$historique->setOperationDate(new \Datetime('NOW'));
+			$historique->setXpUse($cout);
+			$historique->setCompetence($competence);
+			$historique->setPersonnage($personnage);
+			
+			$app['orm.em']->persist($competence);
 			$app['orm.em']->persist($personnage);
+			$app['orm.em']->persist($historique);
 			$app['orm.em']->flush();
 			
 			$app['session']->getFlashBag()->add('success','Votre personnage a été sauvegardé.');
@@ -170,7 +216,7 @@ class PersonnageController
 		return $app['twig']->render('personnage/competence.twig', array(
 				'form' => $form->createView(),
 				'personnage' => $personnage,
-				'competences' =>  $app['personnage.manager']->getAvailableCompetences($personnage),
+				'competences' =>  $availablesCompetences,
 		));
 	}
 }

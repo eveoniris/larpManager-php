@@ -53,31 +53,17 @@
 		{%  endif %}
 	{% else %}
 		{% if is_granted('ROLE_USER', app.user) %}
-				{% if app.user.groupe %}
-					<div class="col-xs-3">
-					{{ include("homepage/fragment/groupe.twig",{'groupe' : app.user.groupe}) }}
+			{% if not app.user.groupe %}
+				<div class="panel panel-default">
+					<div class="panel-heading">Rejoindre un groupe
 					</div>
-					{% if app.user.personnage %}
-						<div class="col-xs-3">
-						{{ include("homepage/fragment/personnage.twig",{'personnage' : app.user.personnage}) }}
-						</div>
-					{% else %}
-						<div class="col-xs-3">
-						<a href="{{ path('personnage.add') }}">Créer mon personnage</a>
-						</div>
-					{% endif %}
-				{% else %}
-					<div class="panel panel-default">
-						<div class="panel-heading">
-						</div>
-						<div class="panel-body">
-							<p>Vous n'êtes pour le moment inscrit dans aucun groupe. Entrez le code de votre groupe dans le formulaire ci-dessous.
-								Le code doit vous être transmis par le responsable de votre groupe.</p>
-							{{ include("homepage/fragment/form_groupe.twig",{'form': form_groupe,'action': path('homepage.inscription')}) }}
-						</div>
+					<div class="panel-body">
+						<p>Vous n'êtes pour le moment inscrit dans aucun groupe. Entrez le code de votre groupe dans le formulaire ci-dessous.
+							Le code doit vous être transmis par le responsable de votre groupe.</p>
+						{{ include("homepage/fragment/form_groupe.twig",{'form': form_groupe,'action': path('homepage.inscription')}) }}
 					</div>
-				{% endif %}
-
+				</div>
+			{% endif %}
 		{% endif %}
 	{% endif %}
 	

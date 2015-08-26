@@ -69,7 +69,7 @@ class AppelationManager
 	}
 	
 	/**
-	 * Fourni la liste des appelations n'étant pas dépendant d'une autre appelation
+	 * Fourni la liste des appelations n'étant pas dépendante d'une autre appelation
 	 * @return \Doctrine\Common\Collections\Collection
 	 */
 	public function findRoot()

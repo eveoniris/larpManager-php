@@ -19,4 +19,21 @@ use LarpManager\Entities\BasePersonnage;
 class Personnage extends BasePersonnage
 {
 
+		public function __construct()
+		{
+			parent::__construct();
+			$this->setXp(0);
+		}
+		
+		/**
+		 * Ajoute des points d'expérience à un personnage
+		 * 
+		 * @param unknown $xp
+		 */
+		public function addXp($xp)
+		{
+			$newXp = $this->getXp() + $xp;
+			$this->setXp($newXp);
+			return $this;
+		}
 }

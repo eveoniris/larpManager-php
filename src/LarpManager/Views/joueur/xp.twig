@@ -1,0 +1,47 @@
+{% extends "layout.twig" %}
+
+{% block title %}Point d'expériences{% endblock %}
+
+{% block content %}
+
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-xs-12 col-md-12">
+		
+			
+				<a href="{{ path("joueur") }}">Retour à la liste des joueurs</a>			
+				<div class="well bs-component">
+		
+					<form class="form-horizontal" action="{{ path('joueur.xp') }}" method="POST">
+					<fieldset>
+						<legend>Gestion des points d'expériences</legend>
+						
+						{% for joueur in joueurs %}
+							<div class="form-group">
+								<label class="col-sm-2 control-label" for="xp[{{ joueur.id}}]">{{ joueur.user.id }} - {{ joueur.user.username }}</label>
+								<div class="col-sm-6">
+									<input class="form-control" type="number" name="xp[{{ joueur.id }}]" value="{{ joueur.personnage.xp|default(0)  }}" />
+								</div>
+							</div>
+						{% endfor %}
+						<div class="form-group">
+							<label class="col-sm-2 control-label" for="explanation">Explication</label>
+							<div class="col-sm-6">
+								<input class="form-control" type="text" name="explanation" />
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="col-sm-8 col-sm-offset-2">
+								
+								<input class="btn btn-primary" type="submit" value="Enregistrer" />
+							</div>
+						</div>
+					</fieldset>
+					</form>
+		
+				</div>
+			</div>
+		</div>
+	</div>
+
+{% endblock content %}

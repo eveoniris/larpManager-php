@@ -31,8 +31,8 @@ class GroupeController
 	
 	/**
 	 * Page de gestion d'un groupe pour son responsable
-	 * @param unknown $request
-	 * @param unknown $app
+	 * @param Request $request
+	 * @param Application $app
 	 */
 	public function gestionAction(Request $request, Application $app)
 	{
@@ -57,55 +57,6 @@ class GroupeController
 		
 		return $app['twig']->render('groupe/joueur.twig', array(
 				'groupe' => $groupe));
-	}
-		
-	/**
-	 * Page de gestion des competence
-	 * Cette page doit permettre à un joueur de selectionner parmis les compétences qui lui sont acceccibles
-	 * de nouvelles compétences (pour peu qu'il dispose des points d'expériences necessaires)
-	 * 
-	 * @param Request $request
-	 * @param Application $app
-	 */
-	public function personnageCompetenceAction(Request $request, Application $app)
-	{
-		$id = $request->get('index');
-		
-		$groupe = $app['orm.em']->find('\LarpManager\Entities\Groupe',$id);
-		
-		$personnage = $app['user']->getPersonnage();
-		
-		if ( ! $personnage )
-		{
-			$app['session']->getFlashBag()->add('error','Désolé, vous n\'avez pas encore de personnage. Créez un personnage avant de pouvoir lui affecter des compétences');
-			return $app->redirect($app['url_generator']->generate('groupe.joueur',array('index'=>$id)),301);
-		}
-		
-		$form = $app['form.factory']->createBuilder(new PersonnageCompetenceForm(), $personnage)
-								->add('competences','entity', array(
-										'label' =>  'Choisissez une nouvelle compétence',
-										'property' => 'label',
-										'class' => 'LarpManager\Entities\Competence',
-										'mapped' => false,
-										'choices' => $app['personnage.manager']->getAvailableCompetences($personnage),
-								))
-								->add('save','submit', array('label' => 'Etape suivante'))
-								->getForm();
-		
-		$form->handleRequest($request);
-		
-		if ( $form->isValid() )
-		{
-			$personnage = $form->getData();
-			$app['orm.em']->persist($personnage);
-			$app['orm.em']->flush($personnage);
-			
-		}
-		
-		return $app['twig']->render('groupe/personnage/competence.twig', array(
-				'form' => $form->createView(),
-				'groupe' => $groupe,
-		));
 	}
 	
 	/**

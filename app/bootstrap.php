@@ -21,8 +21,7 @@ use LarpManager\Groupe\GroupeServiceProvider;
 use LarpManager\Territoire\TerritoireServiceProvider;
 use LarpManager\Appelation\AppelationServiceProvider;
 use LarpManager\Personnage\PersonnageServiceProvider;
-use LarpManager\Niveau\NiveauServiceProvider;
-use LarpManager\Competence\CompetenceServiceProvider;
+use LarpManager\Joueur\JoueurServiceProvider;
 
 $loader = require_once __DIR__.'/../vendor/autoload.php';
 
@@ -160,8 +159,7 @@ else
 	$app->register(new TerritoireServiceProvider());
 	$app->register(new AppelationServiceProvider());
 	$app->register(new PersonnageServiceProvider());
-	$app->register(new NiveauServiceProvider());
-	$app->register(new CompetenceServiceProvider());
+	$app->register(new JoueurServiceProvider());
 	
 	// Define firewall
 	$app['security.firewalls'] = array(
@@ -181,7 +179,7 @@ else
 			   }),
 		),
 		'secured_area' => array(	// le reste necessite d'être connecté
-			'pattern' => '^/[stock|groupe|gn|personnage|territoire|appelation|langue|ressource|age|genre|level|competence|competenceFamily]/.*$',
+			'pattern' => '^/[stock|groupe|gn|personnage|territoire|appelation|langue|ressource|age|genre|level|competence|competenceFamily|joueur]/.*$',
 			'anonymous' => false,
 			'remember_me' => array(),
 			'form' => array(
@@ -219,6 +217,7 @@ else
 	$app->mount('/age', new LarpManager\AgeControllerProvider());
 	$app->mount('/genre', new LarpManager\GenreControllerProvider());
 	$app->mount('/gn', new LarpManager\GnControllerProvider());
+	$app->mount('/joueur', new LarpManager\JoueurControllerProvider());
 	//$app->mount('/chronologie', new LarpManager\ChronologieControllerProvider());
 	//$app->mount('/guilde', new LarpManager\GuildeControllerProvider());
 	
@@ -238,6 +237,7 @@ else
 	$app['security.access_rules'] = array(
 		array('^/groupe/.*$', 'ROLE_USER'),
 		array('^/personnage/.*$', 'ROLE_USER'),
+		array('^/joueur/.*$', 'ROLE_USER'),
 		array('^/gn/.*$', 'ROLE_ADMIN'),
 		array('^/age/.*$', 'ROLE_REGLE'),
 		array('^/genre/.*$', 'ROLE_REGLE'),

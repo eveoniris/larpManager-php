@@ -1,0 +1,18 @@
+{% extends "layout.twig" %}
+
+{% block title %}Joueur{% endblock title %}
+
+{% block content %}
+
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-xs-12 col-md-8">
+				{{ include("joueur/fragment/form.twig",{
+					'legend': 'Ajout d\'un joueur',
+					'action': path('joueur.add'), 
+					'form' : form}) }}
+			</div>
+		</div>
+	</div>
+	
+{% endblock content %}

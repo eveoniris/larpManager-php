@@ -3,7 +3,6 @@
 namespace LarpManager\Controllers;
 
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Silex\Application;
 
 use LarpManager\Form\GnForm;
@@ -104,7 +103,7 @@ class GnController
 			}
 			else if ($form->get('delete')->isClicked())
 			{
-				$app['orm.em']->remove($genre);
+				$app['orm.em']->remove($gn);
 				$app['orm.em']->flush();
 					
 				$app['session']->getFlashBag()->add('success', 'Le gn a été supprimé.');

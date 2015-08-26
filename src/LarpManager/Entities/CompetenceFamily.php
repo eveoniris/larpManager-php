@@ -57,6 +57,7 @@ class CompetenceFamily extends BaseCompetenceFamily
 	{
 		$minimumIndex = null ;
 		$competenceFirst = null;
+		
 		foreach ( $this->getCompetences() as $competence )
 		{
 			if ( $minimumIndex == null )

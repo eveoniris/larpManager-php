@@ -47,7 +47,6 @@ class HomepageController
 												
 				// si l'utilisateur n'a pas de lien avec un objet joueur, il faut le créé maintenant.
 				$joueur = new \LarpManager\Entities\Joueur();
-				$joueur->setXp(10); // en dur, bhaaaa
 				$joueur->setUser($app['user']);
 				
 				$app['orm.em']->persist($joueur);

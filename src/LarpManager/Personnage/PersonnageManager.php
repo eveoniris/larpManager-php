@@ -5,6 +5,7 @@ namespace LarpManager\Personnage;
 use Silex\Application;
 use LarpManager\Entities\Personnage;
 use LarpManager\Entities\CompetenceFamily;
+use LarpManager\Entities\Competence;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
@@ -27,11 +28,11 @@ class PersonnageManager
 	public function getCompetenceCout(Personnage $personnage, Competence $competence)
 	{
 		$classe = $personnage->getClasse();
-		if ($classe->getCompetenceFamilyFavorite()->contain($competence->getCompetenceFamily()))
+		if ($classe->getCompetenceFamilyFavorites()->contains($competence->getCompetenceFamily()))
 		{
 			return $competence->getLevel()->getCoutFavori();
 		}
-		else if ($classe->getCompetenceFamilyNormale()->contain($competence->getCompetenceFamily()))
+		else if ($classe->getCompetenceFamilyNormales()->contains($competence->getCompetenceFamily()))
 		{
 			return $competence->getLevel()->getCout();
 		}
@@ -104,7 +105,7 @@ class PersonnageManager
 		foreach ( $competences as $competence )
 		{
 			$nextCompetence = $competence->getNext();
-			if ( $nextCompetence )
+			if ( $nextCompetence &&  ! $personnage->getCompetences()->contains($nextCompetence) )
 			{
 				$availableCompetences->add($nextCompetence);
 			}

@@ -8,48 +8,61 @@
 	<div class="row">
 		<div class="col-xs-12 col-md-8">
 						
-			<div class="well well-sm bs-component">
-				<h4>
-					{{ personnage.nom }} - <small>{{ personnage.classe.label }}</small>
-				</h4>
-			</div>
-						
-			{{ include("classe/fragment/info.twig", {'classe' : personnage.classe}) }}
-			
 			<div class="panel panel-default">
 				<div class="panel-heading">
-					Informations générales
+					<h4 class="list-group-item-heading">
+						{{ personnage.nom }} - <small>{{ personnage.classe.label }}</small>
+						<div class="pull-right btn-group" role="group" aria-label="...">
+							<a href="#" class="btn btn-primary" >Imprimer</a>
+						</div>
+					</h4>
 				</div>
-				<div class="panel-body">
-					
-				</div>
+				
 				<div class="list-group">
 					<div class="list-group-item">
-						Surnom : {{ personnage.surnom }}
+						<h4 class="list-group-item-heading">
+							Background public
+						</h4>
 					</div>
 					<div class="list-group-item">
-						Age : {{ personnage.age }}
+						<h4 class="list-group-item-heading">
+							Background privé
+						</h4>
 					</div>
 					<div class="list-group-item">
-						Genre : {{ personnage.genre }}
+						<h4 class="list-group-item-heading">
+							Information générale
+						</h4>
+						<p class="list-group-item-text">
+							Surnom : {{ personnage.surnom }}
+						</p>
+						<p class="list-group-item-text">
+							Age : {{ personnage.age }}
+						</p>
+						<p class="list-group-item-text">
+							Genre : {{ personnage.genre }}
+						</p>
+						<p class="list-group-item-text">
+							{% if personnage.intrigue %}
+								Participe aux intrigues
+							{% else %}
+								Ne participe pas aux intrigues
+							{% endif %}
+						</p>
 					</div>
 				</div>
 			</div>
 			
-			{{ include("groupe/fragment/info.twig", {'groupe' : personnage.groupe}) }}
-
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					Expérience
-				</div>
-				<div class="panel-body">
-					<p>{{ personnage.joueur.xp }}</p>
-				</div>
-			</div>
-
 			{{ include("personnage/fragment/list_competence.twig", {'personnage' : personnage}) }}
-					
 		</div>
+
+		<div class="col-xs-12 col-md-4">
+			{{ include("classe/fragment/info.twig", {'classe' : personnage.classe}) }}
+			{{ include("personnage/fragment/historique_xp.twig", {'personnage' : personnage}) }}
+		</div>
+		
+		
+
 	</div>
 </div>
 	

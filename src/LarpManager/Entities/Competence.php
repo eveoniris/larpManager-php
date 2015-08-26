@@ -47,7 +47,7 @@ class Competence extends BaseCompetence
 		$nextCompetences = new ArrayCollection();
 		
 		foreach ( $competences as $competence)
-		{
+		{			
 			if ( $competence->getLevel()->getIndex() > $levelIndex )
 			{
 				$nextCompetences->add($competence);
