@@ -15,7 +15,7 @@ use LarpManager\Entities\BaseLangue;
 /**
  * LarpManager\Entities\Langue
  *
- * @Entity()
+ * @Entity(repositoryClass="LarpManager\Repository\LangueRepository")
  */
 class Langue extends BaseLangue
 {

@@ -130,6 +130,7 @@ $app->register(new DoctrineOrmServiceProvider(), array(
     ),
 ));
 
+
 // Gestion des urls
 $app->register(new UrlGeneratorServiceProvider());
 
@@ -235,6 +236,7 @@ else
 	);
 	
 	$app['security.access_rules'] = array(
+		array('^/world/.*$', 'ROLE_USER'),
 		array('^/groupe/.*$', 'ROLE_USER'),
 		array('^/personnage/.*$', 'ROLE_USER'),
 		array('^/joueur/.*$', 'ROLE_USER'),

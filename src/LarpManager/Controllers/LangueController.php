@@ -2,7 +2,6 @@
 namespace LarpManager\Controllers;
 
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Silex\Application;
 use LarpManager\Form\LangueForm;
 
@@ -10,12 +9,15 @@ use LarpManager\Form\LangueForm;
 class LangueController
 {
 	/**
-	 * @description affiche la liste des langues
+	 * affiche la liste des langues
+	 * 
+	 * @param Request $request
+	 * @param Application $app
 	 */
 	public function indexAction(Request $request, Application $app)
 	{
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Langue');
-		$langues = $repo->findAll();
+		$langues = $repo->findAllOrderedByLabel();
 		
 		return $app['twig']->render('langue/index.twig', array('langues' => $langues));
 	}
@@ -46,12 +48,13 @@ class LangueController
 		$langue = new \LarpManager\Entities\Langue();
 		
 		$form = $app['form.factory']->createBuilder(new LangueForm(), $langue)
-		->add('save','submit', array('label' => "Sauvegarder"))
-		->add('save_continue','submit', array('label' => "Sauvegarder & continuer"))
-		->getForm();
+			->add('save','submit', array('label' => "Sauvegarder"))
+			->add('save_continue','submit', array('label' => "Sauvegarder & continuer"))
+			->getForm();
 		
 		$form->handleRequest($request);
-		
+
+		// si l'utilisateur soumet une nouvelle langue
 		if ( $form->isValid() )
 		{
 			$langue = $form->getData();
@@ -60,6 +63,8 @@ class LangueController
 			
 			$app['session']->getFlashBag()->add('success', 'La langue a été ajoutée.');
 				
+			// l'utilisateur est redirigé soit vers la liste des langues, soit vers de nouveau
+			// vers le formulaire d'ajout d'une langue
 			if ( $form->get('save')->isClicked())
 			{
 				return $app->redirect($app['url_generator']->generate('langue'),301);
@@ -76,7 +81,10 @@ class LangueController
 	}
 	
 	/**
-	 * Modifie une langue
+	 * Modifie une langue. Si l'utilisateur clique sur "sauvegarder", la langue est sauvegardée et
+	 * l'utilisateur est redirigé vers la liste des langues. 
+	 * Si l'utilisateur clique sur "supprimer", la langue est supprimée et l'utilisateur est
+	 * redirigé vers la liste des langues. 
 	 * 
 	 * @param Request $request
 	 * @param Application $app

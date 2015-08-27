@@ -23,11 +23,19 @@
 		</p>
 		
 		<p class="list-group-item-text">
-		{%  if langue.territoires|length > 0 %}
-			Cette langue est parlée dans les territoires suivants : {{ langue.territoires|join(', ') }}	
-		{% else %}
-			Cette langue n'est parlée dans aucun territoire.	
-		{% endif %}
+			{%  if langue.territoires|length > 0 %}
+				Cette langue est la langue principale des territoires suivants : {{ langue.territoires|join(', ') }}				
+			{% else %}
+				Cette langue n'est la langue principale d'aucun territoire.	
+			{% endif %}
+		</p>
+		
+		<p class="list-group-item-text">
+			{%  if langue.territoireSecondaires|length > 0 %}
+				Cette langue est parlée dans les territoires suivants : {{ langue.territoireSecondaires|join(', ') }}
+			{% else %}
+				Cette langue n'est la langue secondaire d'aucun territoire.
+			{% endif %}
 		</p>
 	</li>
 	{%  endfor %}

@@ -16,6 +16,10 @@ class HomepageControllerProvider implements ControllerProviderInterface
 					->method('GET')
 					->bind('homepage');
 		
+		$controllers->match('/world','LarpManager\Controllers\HomepageController::worldAction')
+					->method('GET')
+					->bind('world');
+		
 		$controllers->match('/inscription','LarpManager\Controllers\HomepageController::inscriptionAction')
 					->method('POST')
 					->bind('homepage.inscription');

@@ -18,8 +18,8 @@ use LarpManager\Entities\BaseClasse;
  * les mêmes entities (c'est dommage ...)
  * 
  * LarpManager\Entities\Classe
- *
- * @Entity()
+ * 
+ * @Entity(repositoryClass="LarpManager\Repository\ClasseRepository")
  */
 class Classe extends BaseClasse
 {

@@ -43,10 +43,10 @@
     			{% endif %}
     			
 	    		<div class="list-group-item">
-		    		<h4 class="list-group-item-heading">Liste des territoires ou cette langue est parlée ({{ langue.territoires|length }} territoires)</h4>
+		    		<h4 class="list-group-item-heading">Liste des territoires ou cette langue est parlée ({{ langue.territoireSecondaires|length }} territoires)</h4>
     				<p class="list-group-item-text">
 						<ul>
-						{% for territoire in langue.territoires %}
+						{% for territoire in langue.territoireSecondaires %}
 							<li><a href="{{ path('territoire.detail',{'index': territoire.id}) }}">{{ territoire.nomTree }}</a></li>
 						{% endfor %}
 						</ul>

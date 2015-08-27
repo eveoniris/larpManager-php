@@ -19,6 +19,26 @@ class GnForm extends AbstractType
 				->add('xpCreation','integer', array(
 					'label' => 'Point d\'expérience à la création d\'un personnage',
 					'required' => false,
+				))
+				->add('dateDebut','datetime', array(
+						'label' => 'Date et heure de début du jeu',
+						'required' => false,
+				))
+				->add('dateFin','datetime', array(
+						'label' => 'Date et heure de fin du jeu',
+						'required' => false,
+				))
+				->add('dateInstallationJoueur','datetime',array(
+						'label' => 'Date et heure du début de l\'acceuil des joueurs',
+						'required' => false,
+				))
+				->add('dateFinOrga','datetime', array(
+						'label' => 'Date limite pour libérer le site',
+						'required' => false,
+				))
+				->add('adresse','textarea', array(
+						'label' => 'Adresse du site',
+						'required' => false,
 				));
 	}
 	

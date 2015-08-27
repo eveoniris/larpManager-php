@@ -10,7 +10,7 @@ use LarpManager\Form\GroupeInscriptionForm;
 class HomepageController
 {
 	/**
-	 * @description affiche la vue index.twig
+	 * affiche la vue index.twig
 	 */
 	public function indexAction(Request $request, Application $app) 
 	{	
@@ -19,6 +19,17 @@ class HomepageController
 			->getForm();
 		
 		return $app['twig']->render('homepage/index.twig', array('form_groupe' => $form->createView()));
+	}
+	
+	/**
+	 * Affiche une carte du monde
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function worldAction(Request $request, Application $app)
+	{	
+		return $app['twig']->render('homepage/world.twig');		
 	}
 	
 	/**

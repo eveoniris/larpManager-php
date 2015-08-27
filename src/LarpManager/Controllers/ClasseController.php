@@ -17,7 +17,7 @@ class ClasseController
 	public function indexAction(Request $request, Application $app)
 	{
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Classe');
-		$classes = $repo->findAll();
+		$classes = $repo->findAllOrderedByLabel();
 		return $app['twig']->render('classe/index.twig', array('classes' => $classes));
 	}
 	

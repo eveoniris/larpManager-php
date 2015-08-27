@@ -13,6 +13,8 @@
             <link rel="stylesheet" href="{{ app.request.basepath }}/css/bootstrap.min.css" />
             <link rel="stylesheet" href="{{ app.request.basepath }}/css/cyborg_bootstrap.min.css" />
             
+            <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+			            
             <title>LarpManager - {% block title %}{% endblock title %}</title>
         {% endblock head %}
     </head>
@@ -49,6 +51,7 @@
 	         <script>
 	         	moment.locale('fr');
 	         </script>
+	         <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
 		{% endblock javascript %}
     </body>
 </html>

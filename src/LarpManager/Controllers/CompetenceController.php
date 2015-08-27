@@ -17,7 +17,7 @@ class CompetenceController
 	public function indexAction(Request $request, Application $app)
 	{
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Competence');
-		$competences = $repo->findAll();
+		$competences = $repo->findAllOrderedByLabel();
 		return $app['twig']->render('competence/index.twig', array('competences' => $competences));
 	}
 	
@@ -76,7 +76,7 @@ class CompetenceController
 				
 			if ( $form->get('save')->isClicked())
 			{
-				return $app->redirect($app['url_generator']->generate('competence'),301);
+				return $app->redirect($app['url_generator']->generate('competence.family'),301);
 			}
 			else if ( $form->get('save_continue')->isClicked())
 			{
@@ -103,7 +103,7 @@ class CompetenceController
 		
 		if ( $competence )
 		{
-			return $app['twig']->render('competence/detail.twig', array('competence' => $competence));
+			return $app['twig']->render('competence/detail.twig', array('competence.family' => $competence));
 		}
 		else
 		{
@@ -150,7 +150,7 @@ class CompetenceController
 				$app['session']->getFlashBag()->add('success', 'La compétence a été supprimée.');
 			}
 		
-			return $app->redirect($app['url_generator']->generate('competence'));
+			return $app->redirect($app['url_generator']->generate('competence.family'));
 		}
 		
 		return $app['twig']->render('competence/update.twig', array(

@@ -16,9 +16,10 @@ class AgeForm extends AbstractType
 				->add('description','textarea', array(
 					'required' => false,	
 				))
-				->add('enableCreation','checkbox', array(
-						'label' => 'Disponible lors de la création d\'un personnage',
+				->add('enableCreation','choice', array(
 						'required' => true,
+						'choices' => array(true => 'Oui', false => 'Non'),
+						'label' => 'Disponible lors de la création d\'un personnage',
 				))
 				->add('bonus','integer', array(
 					'label' => 'XP en bonus',
