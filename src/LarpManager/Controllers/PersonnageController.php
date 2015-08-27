@@ -84,8 +84,8 @@ class PersonnageController
 				if ( $firstCompetence )
 				{
 					$personnage->addCompetence($firstCompetence);
-					$competence->addPersonnage($personnage);
-					$app['orm.em']->persist($competence);
+					$firstCompetence->addPersonnage($personnage);
+					$app['orm.em']->persist($firstCompetence);
 				}
 			}
 			

@@ -93,7 +93,7 @@ class Groupe extends BaseGroupe
 	 */
 	public function setResponsable(User $user)
 	{
-		$user->addGroupe($this);
+		$user->setGroupe($this);
 		return $this->setUserRelatedByResponsableId($user);
 	}
 	

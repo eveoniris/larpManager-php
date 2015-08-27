@@ -51,7 +51,7 @@ class CompetenceController
 		if ( $levelIndex )
 		{
 			$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Level');
-			$level = $repo->findByIndex($levelIndex+1);
+			$level = $repo->findOneByIndex($levelIndex+1);
 			if ( $level )
 			{
 				$competence->setLevel($level);
