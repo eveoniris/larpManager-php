@@ -180,7 +180,7 @@ else
 			   }),
 		),
 		'secured_area' => array(	// le reste necessite d'être connecté
-			'pattern' => '^/[stock|groupe|gn|personnage|territoire|appelation|langue|ressource|age|genre|level|competence|competenceFamily|joueur]/.*$',
+			'pattern' => '^/[stock|groupe|gn|personnage|territoire|appelation|langue|ressource|religion|age|genre|level|competence|competenceFamily|joueur]/.*$',
 			'anonymous' => false,
 			'remember_me' => array(),
 			'form' => array(
@@ -214,6 +214,7 @@ else
 	$app->mount('/level', new LarpManager\LevelControllerProvider());
 	$app->mount('/classe', new LarpManager\ClasseControllerProvider());
 	$app->mount('/ressource', new LarpManager\RessourceControllerProvider());
+	$app->mount('/religion', new LarpManager\ReligionControllerProvider());
 	$app->mount('/personnage', new LarpManager\PersonnageControllerProvider());
 	$app->mount('/age', new LarpManager\AgeControllerProvider());
 	$app->mount('/genre', new LarpManager\GenreControllerProvider());
@@ -247,6 +248,7 @@ else
 		array('^/appelation/.*$', 'ROLE_SCENARISTE'),
 		array('^/langue/.*$', 'ROLE_SCENARISTE'),
 		array('^/ressource/.*$', 'ROLE_SCENARISTE'),			
+		array('^/religion/.*$', 'ROLE_SCENARISTE'),
 		array('^/competence/.*$', 'ROLE_REGLE'),
 		array('^/competenceFamily/.*$', 'ROLE_REGLE'),
 		array('^/level/.*$', 'ROLE_REGLE'),
