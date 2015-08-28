@@ -5,8 +5,25 @@ namespace LarpManager;
 use Silex\Application;
 use Silex\ControllerProviderInterface;
 
+/**
+ * LarpManager\GenreControllerProvider
+ * 
+ * @author kevin
+ *
+ */
 class GenreControllerProvider implements ControllerProviderInterface
 {
+	/**
+	 * Initialise les routes pour les genres
+	 * Routes :
+	 * 	- genre
+	 * 	- genre.add
+	 *  - genre.update
+	 *  - genre.detail
+	 *
+	 * @param Application $app
+	 * @return Controllers $controllers
+	 */
 	public function connect(Application $app)
 	{
 		$controllers = $app['controllers_factory'];

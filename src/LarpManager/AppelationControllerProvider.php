@@ -5,8 +5,24 @@ namespace LarpManager;
 use Silex\Application;
 use Silex\ControllerProviderInterface;
 
+/**
+ * LarpManager\AppelationControllerProvider
+ * 
+ * @author kevin
+ */
 class AppelationControllerProvider implements ControllerProviderInterface
 {
+	/**
+	 * Initialise les routes pour les appelations
+	 * Routes :
+	 * 	- appelation
+	 * 	- appelation.add
+	 *  - appelation.update
+	 *  - appelation.detail
+	 *
+	 * @param Application $app
+	 * @return Controllers $controllers
+	 */
 	public function connect(Application $app)
 	{
 		$controllers = $app['controllers_factory'];

@@ -7,8 +7,25 @@ use Silex\ControllerProviderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
+/**
+ * LarpManager\PersonnageControllerProvider
+ * 
+ * @author kevin
+ *
+ */
 class PersonnageControllerProvider implements ControllerProviderInterface
 {
+	/**
+	 * Initialise les routes pour les personnages
+	 * Routes :
+	 * 	- personnage.add
+	 *  - personnage.detail
+	 *  - personnage.competence.add
+	 *
+	 * @param Application $app
+	 * @return Controllers $controllers
+	 * @throws AccessDeniedException
+	 */
 	public function connect(Application $app)
 	{
 		$controllers = $app['controllers_factory'];

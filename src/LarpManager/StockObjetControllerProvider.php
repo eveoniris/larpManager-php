@@ -5,8 +5,31 @@ namespace LarpManager;
 use Silex\Application;
 use Silex\ControllerProviderInterface;
 
+/**
+ * LarpManager\StockObjetControllerProvider
+ * 
+ * @author kevin
+ *
+ */
 class StockObjetControllerProvider implements ControllerProviderInterface
 {
+	/**
+	 * Initialise les routes pour un objet du stock
+	 * Routes :
+	 * 	- stock_objet_index
+	 * 	- stock_objet_list
+	 *  - stock_objet_list_without_proprio
+	 *  - stock_objet_list_without_rangement
+	 *  - stock_objet_export
+	 *  - stock_objet_detail
+	 *  - stock_objet_photo
+	 *  - stock_objet_add
+	 *  - sotck_objet_update
+	 *  - stock_objet_clone
+	 *
+	 * @param Application $app
+	 * @return Controllers $controllers
+	 */
 	public function connect(Application $app)
 	{
 		$controllers = $app['controllers_factory'];

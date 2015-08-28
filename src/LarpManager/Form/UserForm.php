@@ -4,12 +4,21 @@ namespace LarpManager\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use LarpManager\Form\Type\CompetenceType;
-
+/**
+ * LarpManager\Form\UserForm
+ *
+ * @author kevin
+ *
+ */
 class UserForm extends AbstractType
 {
+	/**
+	 * Construction du formulaire
+	 * 
+	 * @param FormBuilderInterface $builder
+	 * @param array $options
+	 */
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
 		$builder->add('email','email', array(
@@ -22,10 +31,9 @@ class UserForm extends AbstractType
 				));
 	}
 	
-	public function configureOptions(OptionsResolver $resolver)
-	{
-	}
-	
+	/**
+	 * Nom du formulaire
+	 */	
 	public function getName()
 	{
 		return 'user';

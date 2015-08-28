@@ -2,24 +2,78 @@
 namespace LarpManager\Controllers;
 
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Silex\Application;
-
 use LarpManager\Form\AgeForm;
 
+/**
+ * LarpManager\Controllers\AgeController
+ *
+ * @author kevin
+ *
+ */
 class AgeController
-{
+{	
 	/**
-	 * Présentation des ages
+	 * Liste des ages
 	 * 
 	 * @param Request $request
 	 * @param Application $app
+	 * @return View $view
 	 */
 	public function indexAction(Request $request, Application $app)
 	{
-		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Age');
-		$ages = $repo->findAll();
-		return $app['twig']->render('age/index.twig', array('ages' => $ages));
+		$ages =  $app['orm.em']->getRepository('\LarpManager\Entities\Age')
+					->findAllOrderedByLabel();
+		
+		$view = $app['twig']->render('age/index.twig', array('ages' => $ages));
+		return $view;
+	}
+	
+	/**
+	 * Detail d'un age
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 * @return View $view
+	 * @throws LarpManager\Exception\ObjectNotFoundException
+	 */
+	public function detailAction(Request $request, Application $app)
+	{
+		$id = $request->get('index');
+	
+		$age = $app['orm.em']->getRepository('\LarpManager\Entities\Age')->find($id);
+	
+		/**
+		 * Si l'age n'existe pas, renvoyer vers une page d'erreur
+		 */
+		if ( ! $age )
+		{
+			throw new LarpManager\Exception\ObjectNotFoundException();
+		}
+	
+		return $app['twig']->render('age/detail.twig', array('age' => $age));
+	}
+	
+	
+	/**
+	 * Affiche le formulaire d'ajout d'un age
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 * @return View $view
+	 */
+	public function addViewAction(Request $request, Application $app)
+	{
+		$age = new \LarpManager\Entities\Age();
+		
+		$form = $app['form.factory']->createBuilder(new AgeForm(), $age)
+			->add('save','submit', array('label' => "Sauvegarder"))
+			->add('save_continue','submit', array('label' => "Sauvegarder & continuer"))
+			->getForm();
+		
+		return $app['twig']->render('age/add.twig', array(
+			'form' => $form->createView(),
+		));
 	}
 	
 	/**
@@ -27,108 +81,137 @@ class AgeController
 	 * 
 	 * @param Request $request
 	 * @param Application $app
+	 * @return View $view
+	 * @throws LarpManager\Exception\RequestInvalid
 	 */
-	public function addAction(Request $request, Application $app)
-	{
+	public function addPostAction(Request $request, Application $app)
+	{		
 		$age = new \LarpManager\Entities\Age();
-	
+		
 		$form = $app['form.factory']->createBuilder(new AgeForm(), $age)
 			->add('save','submit', array('label' => "Sauvegarder"))
 			->add('save_continue','submit', array('label' => "Sauvegarder & continuer"))
 			->getForm();
-	
+		
 		$form->handleRequest($request);
 	
-		if ( $form->isValid() )
+		/**
+		 * Si la requête est invalide, renvoyer vers une page d'erreur
+		 */
+		if ( ! $form->isValid() )
 		{
-			$age = $form->getData();
-				
-			$app['orm.em']->persist($age);
-			$app['orm.em']->flush();
-	
-			$app['session']->getFlashBag()->add('success', 'L\'age a été ajouté.');
-	
-			if ( $form->get('save')->isClicked())
-			{
-				return $app->redirect($app['url_generator']->generate('age'),301);
-			}
-			else if ( $form->get('save_continue')->isClicked())
-			{
-				return $app->redirect($app['url_generator']->generate('age.add'),301);
-			}
+			throw new LarpManager\Exception\RequestInvalid();
 		}
+		
+		$age = $form->getData();
+		
+		$app['orm.em']->persist($age);
+		$app['orm.em']->flush();
+				
+		$app['session']->getFlashBag()->add('success', 'L\'age a été ajouté.');
+		
+		/**
+		 * Si l'utilisateur a cliquer sur "Sauvegarder", on le redirige vers la liste des age
+		 */
+		if ( $form->get('save')->isClicked())
+		{
+			return $app->redirect($app['url_generator']->generate('age'),301);
+		}
+		
+		// renvoi vers le formulaire d'ajout d'un age
+		return $app->redirect($app['url_generator']->generate('age.add.view'),301);
+	}
 	
-		return $app['twig']->render('age/add.twig', array(
+	/**
+	 * Afiche le formulaire de mise à jour d'un age
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 * @return View $view
+	 * @throws LarpManager\Exception\ObjectNotFoundException
+	 */
+	public function updateViewAction(Request $request, Application $app)
+	{
+		$id = $request->get('index');
+		
+		$age = $app['orm.em']->getRepository('\LarpManager\Entities\Age')->find($id);
+		
+		/**
+		 * Si l'age n'existe pas, renvoyer vers une page d'erreur
+		 */
+		if ( ! $age )
+		{
+			throw new LarpManager\Exception\ObjectNotFoundException();
+		}
+		
+		$form = $app['form.factory']->createBuilder(new AgeForm(), $age)
+			->add('update','submit', array('label' => "Sauvegarder"))
+			->add('delete','submit', array('label' => "Supprimer"))
+			->getForm();
+		
+		return $app['twig']->render('age/update.twig', array(
+				'age' => $age,
 				'form' => $form->createView(),
 		));
 	}
 	
 	/**
-	 * Detail d'un age
-	 * 
-	 * @param Request $request
-	 * @param Application $app
-	 */
-	public function detailAction(Request $request, Application $app)
-	{
-		$id = $request->get('index');
-	
-		$age = $app['orm.em']->find('\LarpManager\Entities\Age',$id);
-	
-		if ( $age )
-		{
-			return $app['twig']->render('age/detail.twig', array('age' => $age));
-		}
-		else
-		{
-			$app['session']->getFlashBag()->add('error', 'L\'age n\'a pas été trouvé.');
-			return $app->redirect($app['url_generator']->generate('age'));
-		}	
-	}
-	
-	/**
-	 * Met à jour une compétence
+	 * Met à jour un age
 	 *
 	 * @param Request $request
 	 * @param Application $app
+	 * @return View $view
+	 * @throws LarpManager\Exception\RequestInvalid
+	 * @throws LarpManager\Exception\ObjectNotFoundException
 	 */
-	public function updateAction(Request $request, Application $app)
+	public function updatePostAction(Request $request, Application $app)
 	{
 		$id = $request->get('index');
 	
-		$age = $app['orm.em']->find('\LarpManager\Entities\Age',$id);
+		$age = $app['orm.em']->getRepository('\LarpManager\Entities\Age')->find($id);
+		
+		/**
+		 * Si l'age n'existe pas, renvoyer vers une page d'erreur
+		 */
+		if ( ! $age )
+		{
+			throw new LarpManager\Exception\ObjectNotFoundException();
+		}
 	
 		$form = $app['form.factory']->createBuilder(new AgeForm(), $age)
 			->add('update','submit', array('label' => "Sauvegarder"))
 			->add('delete','submit', array('label' => "Supprimer"))
 			->getForm();
-	
+		
 		$form->handleRequest($request);
 	
-		if ( $form->isValid() )
+		/**
+		 * Si la requête est invalide, renvoyer vers une page d'erreur
+		 */
+		if ( ! $form->isValid() )
 		{
-			$age = $form->getData();
+			throw new LarpManager\Exception\RequestInvalid();
+		}
+		
+		$age = $form->getData();
 	
-			if ($form->get('update')->isClicked())
-			{	
-				$app['orm.em']->persist($age);
-				$app['orm.em']->flush();
-				$app['session']->getFlashBag()->add('success', 'L\'age a été mis à jour.');
-			}
-			else if ($form->get('delete')->isClicked())
-			{
-				$app['orm.em']->remove($age);
-				$app['orm.em']->flush();
-					
-				$app['session']->getFlashBag()->add('success', 'L\'age a été supprimé.');
-			}
-	
-			return $app->redirect($app['url_generator']->generate('age'));
+		/**
+		 * Si l'utilisateur a cliqué sur "Sauvegarder", l'age sera sauvegarder dans la base de données
+		 * Sinon si l'utilisateur a cliqué sur "Supprimer", l'age sera supprimer dans la base de données.
+		 */
+		if ( $form->get('update')->isClicked() )
+		{	
+			$app['orm.em']->persist($age);
+			$app['orm.em']->flush();
+			$app['session']->getFlashBag()->add('success', 'L\'age a été mis à jour.');
+		}
+		else if ( $form->get('delete')->isClicked() )
+		{
+			$app['orm.em']->remove($age);
+			$app['orm.em']->flush();	
+			$app['session']->getFlashBag()->add('success', 'L\'age a été supprimé.');
 		}
 	
-		return $app['twig']->render('age/update.twig', array(
-				'age' => $age,
-				'form' => $form->createView(),
-		));
+		return $app->redirect($app['url_generator']->generate('age'));
 	}
 }

@@ -3,14 +3,14 @@
 namespace LarpManager\Controllers;
 
 use LarpManager\Form\Type\LocalisationType;
-use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Silex\Application;
 
 /**
- * Gestion du stock
+ * LarpManager\Controllers\StockLocalisationController
+ *
  * @author kevin
+ *
  */
 class StockLocalisationController
 {

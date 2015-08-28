@@ -6,17 +6,20 @@ use Silex\Application;
 use Silex\ControllerProviderInterface;
 
 /**
+ * LarpManager\GnControllerProvider
+ * 
  * @author kevin
  */
 class GnControllerProvider implements ControllerProviderInterface
 {
 	/**
-	 * Fourni les routes suivantes :
-	 * GET gn : liste des gns
-	 * GET|POST gn.add : ajoute un gn
-	 * GET|POST gn.update : met à jour un gn
-	 * GET gn.detail : affiche le détail d'un gn
-	 * 
+	 * Initialise les routes pour les gns
+	 * Routes :
+	 * 	- gn
+	 * 	- gn.add
+	 *  - gn.update
+	 *  - gn.detail
+	 *
 	 * @param Application $app
 	 * @return Controllers $controllers
 	 */

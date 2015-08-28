@@ -7,20 +7,22 @@ use Silex\ControllerProviderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
-/** 
+/**
+ * LarpManager\JoueurControllerProvider
+ *  
  * @author kevin
  */
 class JoueurControllerProvider implements ControllerProviderInterface
 {
 	/**
-	 * Fourni les routes suivantes :
-	 * 
- 	 * GET joueur : liste des joueurs. Uniquement ROLE_ADMIN
- 	 * GET|POST joueur.add : ajoute un joueur. Uniquement ROLE_ADMIN
- 	 * GET|POST joueur.update : met à jour un joueur. Uniquement l'utilisateur possédant ce joueur
- 	 * GET joueur.detail : affiche le détail d'un joueur. Uniquement l'utilisateur possédant ce joueur
- 	 * GET|POST joueur.xp : met à joueur les points d'expérience des joueurs. Uniquement ROLE_ADMIN
- 	 * 
+	 * Initialise les routes pour les joueurs
+	 * Routes :
+	 * 	- joueur
+	 * 	- joueur.add
+	 *  - joueur.update
+	 *  - joueur.detail
+	 *  - joueur.xp
+	 *
 	 * @param Application $app
 	 * @return Controllers $controllers
 	 * @throws AccessDeniedException

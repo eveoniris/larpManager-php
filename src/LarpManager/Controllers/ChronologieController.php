@@ -2,10 +2,12 @@
 namespace LarpManager\Controllers;
 
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Silex\Application;
 
-// Chronologie d'un pays
+/**
+ * LarpManager\Controllers\ChronologieController
+ *
+ */
 class ChronologieController
 {
 	/**

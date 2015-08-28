@@ -5,7 +5,12 @@ use Symfony\Component\HttpFoundation\Request;
 use Silex\Application;
 use LarpManager\Form\LangueForm;
 
-
+/**
+ * LarpManager\Controllers\LangueController
+ *
+ * @author kevin
+ *
+ */
 class LangueController
 {
 	/**

@@ -6,6 +6,12 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
+/**
+ * LarpManager\Form\Type\ObjetCaracType
+ *
+ * @author kevin
+ *
+ */
 class ObjetCaracType extends AbstractType
 {
 	public function buildForm(FormBuilderInterface $builder, array $options)

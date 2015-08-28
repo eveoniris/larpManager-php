@@ -7,6 +7,12 @@ use Silex\Application;
 
 use LarpManager\Form\GenreForm;
 
+/**
+ * LarpManager\Controllers\GenreController
+ *
+ * @author kevin
+ *
+ */
 class GenreController
 {
 	/**

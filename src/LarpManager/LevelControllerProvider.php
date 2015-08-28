@@ -4,9 +4,25 @@ namespace LarpManager;
 
 use Silex\Application;
 use Silex\ControllerProviderInterface;
-
+/**
+ * LarpManager\LevelControllerProvider
+ * 
+ * @author kevin
+ *
+ */
 class LevelControllerProvider implements ControllerProviderInterface
 {
+	/**
+	 * Initialise les routes pour les levels
+	 * Routes :
+	 * 	- level
+	 * 	- level.add
+	 *  - level.update
+	 *  - level.detail
+	 *
+	 * @param Application $app
+	 * @return Controllers $controllers
+	 */
 	public function connect(Application $app)
 	{
 		$controllers = $app['controllers_factory'];

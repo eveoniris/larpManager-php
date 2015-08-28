@@ -262,9 +262,8 @@ else
 
 
 /**
- * Gestion des erreurs
+ * Gestion des exceptions
  */
- 
 $app->error(function (\Exception $e, $code) use ($app)
 {	
 	if( $app['maintenance'] ) 
@@ -282,6 +281,14 @@ $app->error(function (\Exception $e, $code) use ($app)
 	else if($e instanceof Symfony\Component\Routing\Exception\RouteNotFoundException)
 	{
 		return $app['twig']->render('error/notfound.twig');
+	}
+	else if($e instanceof LarpManager\Exception\RequestInvalidException)
+	{
+		return $app['twig']->render('error/requestInvalid.twig');
+	}
+	else if($e instanceof LarpManager\Exception\ObjectNotFoundException)
+	{
+		return $app['twig']->render('error/objectNotFound.twig');
 	}
 });
 

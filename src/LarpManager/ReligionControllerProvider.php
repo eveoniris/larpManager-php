@@ -5,8 +5,25 @@ namespace LarpManager;
 use Silex\Application;
 use Silex\ControllerProviderInterface;
 
+/**
+ * LarpManager\ReligionControllerProvider
+ * 
+ * @author kevin
+ *
+ */
 class ReligionControllerProvider implements ControllerProviderInterface
 {
+	/**
+	 * Initialise les routes pour les religions
+	 * Routes :
+	 * 	- religion
+	 * 	- religion.add
+	 *  - religion.update
+	 *  - religion.detail
+	 *
+	 * @param Application $app
+	 * @return Controllers $controllers
+	 */
 	public function connect(Application $app)
 	{
 		$controllers = $app['controllers_factory'];

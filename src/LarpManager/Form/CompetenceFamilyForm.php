@@ -6,8 +6,20 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
+/**
+ * LarpManager\Form\CompetenceFamilyForm
+ *
+ * @author kevin
+ *
+ */
 class CompetenceFamilyForm extends AbstractType
 {
+	/**
+	 * Construction du formulaire
+	 * 
+	 * @param FormBuilderInterface $builder
+	 * @param array $options
+	 */
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
 		$builder->add('label','text', array(
@@ -18,6 +30,11 @@ class CompetenceFamilyForm extends AbstractType
 				));
 	}
 	
+	/**
+	 * Définition de l'entité concernée
+	 * 
+	 * @param OptionsResolverInterface $resolver
+	 */
 	public function setDefaultOptions(OptionsResolverInterface $resolver)
 	{
 		$resolver->setDefaults(array(
@@ -25,6 +42,9 @@ class CompetenceFamilyForm extends AbstractType
 		));
 	}
 	
+	/**
+	 * Nom du formulaire
+	 */
 	public function getName()
 	{
 		return 'competenceFamily';

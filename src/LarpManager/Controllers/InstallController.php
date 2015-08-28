@@ -8,6 +8,12 @@ use LarpManager\User\UserServiceProvider;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Yaml\Dumper;
 
+/**
+ * LarpManager\Controllers\InstallController
+ *
+ * @author kevin
+ *
+ */
 class InstallController
 {	
 	/**

@@ -1,6 +1,6 @@
 <ul class="list-group">
 	{%  if add != false %}
-		<a href="{{ path('age.add') }}" class="list-group-item active">
+		<a href="{{ path('age.add.view') }}" class="list-group-item active">
 			<span class="badge"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></span>
 			<h4 class="list-group-item-heading">Ajouter un age</h4>
 		</a>
@@ -12,7 +12,7 @@
 			{{ age.label }}
 			<div class="pull-right btn-group" role="group" aria-label="...">
 				<a href="{{ path('age.detail', {index: age.id}) }}" class="btn btn-primary" role="button">Voir</a>
-			    <a href="{{ path('age.update', {index: age.id}) }}" class="btn btn-default" role="button">Modifier</a>
+			    <a href="{{ path('age.update.view', {index: age.id}) }}" class="btn btn-default" role="button">Modifier</a>
 			</div>
 		</h4>
 		

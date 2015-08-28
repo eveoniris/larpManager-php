@@ -7,8 +7,29 @@ use Silex\ControllerProviderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
+/**
+ * LarpManager\GroupeControllerProvider
+ * 
+ * @author kevin
+ *
+ */
 class GroupeControllerProvider implements ControllerProviderInterface
 {
+	/**
+	 * Initialise les routes pour les groupes
+	 * Routes :
+	 * 	- groupe
+	 * 	- groupe.add
+	 *  - groupe.update
+	 *  - groupe.detail
+	 *  - groupe.gestion
+	 *  - groupe.joueur
+	 *  - groupe.place
+	 *
+	 * @param Application $app
+	 * @return Controllers $controllers
+	 * @throws AccessDeniedException
+	 */
 	public function connect(Application $app)
 	{
 		$controllers = $app['controllers_factory'];

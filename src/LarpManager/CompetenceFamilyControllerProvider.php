@@ -5,8 +5,24 @@ namespace LarpManager;
 use Silex\Application;
 use Silex\ControllerProviderInterface;
 
+/**
+ * LarpManager\CompetenceFamilyControllerProvider
+ * @author kevin
+ *
+ */
 class CompetenceFamilyControllerProvider implements ControllerProviderInterface
 {
+	/**
+	 * Initialise les routes pour les famille de competence
+	 * Routes :
+	 * 	- competence.family
+	 * 	- competence.family.add
+	 *  - competence.family.update
+	 *  - competence.family.detail
+	 *
+	 * @param Application $app
+	 * @return Controllers $controllers
+	 */
 	public function connect(Application $app)
 	{
 		$controllers = $app['controllers_factory'];

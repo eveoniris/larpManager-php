@@ -6,6 +6,12 @@ use Silex\Application;
 
 use LarpManager\Form\CompetenceFamilyForm;
 
+/**
+ * LarpManager\Controllers\CompetenceFamilyController
+ *
+ * @author kevin
+ *
+ */
 class CompetenceFamilyController
 {
 	/**

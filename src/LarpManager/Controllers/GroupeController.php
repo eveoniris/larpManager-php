@@ -5,14 +5,14 @@ namespace LarpManager\Controllers;
 use Symfony\Component\HttpFoundation\Request;
 use Silex\Application;
 use Doctrine\Common\Collections\ArrayCollection;
-
 use LarpManager\Form\GroupeForm;
-use LarpManager\Form\PersonnageForm;
-use LarpManager\Form\PersonnageCompetenceForm;
+
 
 /**
- * Gestion des groupes
+ * LarpManager\Controllers\GroupeController
+ *
  * @author kevin
+ *
  */
 class GroupeController
 {

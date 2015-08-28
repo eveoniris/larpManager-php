@@ -6,8 +6,20 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
+/**
+ * LarpManager\Form\LevelForm
+ *
+ * @author kevin
+ *
+ */
 class LevelForm extends AbstractType
 {
+	/**
+	 * Construction du formulaire
+	 * 
+	 * @param FormBuilderInterface $builder
+	 * @param array $options
+	 */
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
 		$builder->add('label','text', array(
@@ -30,6 +42,11 @@ class LevelForm extends AbstractType
 				));
 	}
 	
+	/**
+	 * Définition de l'entité concerné
+	 * 
+	 * @param OptionsResolverInterface $resolver
+	 */
 	public function setDefaultOptions(OptionsResolverInterface $resolver)
 	{
 		$resolver->setDefaults(array(
@@ -37,6 +54,9 @@ class LevelForm extends AbstractType
 		));
 	}
 	
+	/**
+	 * Nom du formulaire
+	 */
 	public function getName()
 	{
 		return 'levelForm';

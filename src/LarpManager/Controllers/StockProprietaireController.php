@@ -3,14 +3,14 @@
 namespace LarpManager\Controllers;
 
 use LarpManager\Form\Type\ProprietaireType;
-use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Silex\Application;
 
 /**
- * Gestion du stock
+ * LarpManager\Controllers\StockProprietaireController
+ *
  * @author kevin
+ *
  */
 class StockProprietaireController
 {

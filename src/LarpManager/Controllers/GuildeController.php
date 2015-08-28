@@ -2,11 +2,12 @@
 namespace LarpManager\Controllers;
 
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Silex\Application;
 
-// Guildes des joueurs
-// TODO : lister les postulants et membres a partir des guildes ?
+/**
+ * LarpManager\Controllers\GuildeController
+ *
+ */
 class GuildeController
 {
 	/**

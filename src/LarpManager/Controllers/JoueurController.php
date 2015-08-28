@@ -7,6 +7,12 @@ use Silex\Application;
 
 use LarpManager\Form\JoueurForm;
 
+/**
+ * LarpManager\Controllers\JoueurController
+ *
+ * @author kevin
+ *
+ */
 class JoueurController
 {
 	/**

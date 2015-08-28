@@ -12,7 +12,7 @@
 				<a href="{{ path("age") }}">Retour à la liste des ages</a>
 				{{ include("age/fragment/form.twig",{
 					'legend': 'Modification d\'un age',
-					'action': path('age.update',{'index':age.id}),
+					'action': path('age.update.post',{'index':age.id}),
 					'form' : form}) }}
 			</div>
 		</div>

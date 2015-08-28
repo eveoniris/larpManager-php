@@ -6,8 +6,20 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * LarpManager\Form\ClasseForm
+ *
+ * @author kevin
+ *
+ */
 class ClasseForm extends AbstractType
 {
+	/**
+	 * Construction du formulaire
+	 * 
+	 * @param FormBuilderInterface $builder
+	 * @param array $options
+	 */
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
 		$builder->add('label_masculin','text', array(
@@ -48,6 +60,11 @@ class ClasseForm extends AbstractType
 				);
 	}
 	
+	/**
+	 * Définition de l'entité concernée
+	 * 
+	 * @param OptionsResolver $resolver
+	 */
 	public function configureOptions(OptionsResolver $resolver)
 	{
 		$resolver->setDefaults(array(
@@ -55,6 +72,9 @@ class ClasseForm extends AbstractType
 		));
 	}
 
+	/**
+	 * Nom du formulaire
+	 */
 	public function getName()
 	{
 		return 'classe';

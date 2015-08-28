@@ -5,8 +5,24 @@ namespace LarpManager;
 use Silex\Application;
 use Silex\ControllerProviderInterface;
 
+/**
+ * LarpManager\StockEtatControllerProvider
+ * 
+ * @author kevin
+ *
+ */
 class StockEtatControllerProvider implements ControllerProviderInterface
 {
+	/**
+	 * Initialise les routes pour les états du stock
+	 * Routes :
+	 * 	- stock_etat_index
+	 * 	- stock_etat_add
+	 *  - stock_etat_update
+	 *
+	 * @param Application $app
+	 * @return Controllers $controllers
+	 */
 	public function connect(Application $app)
 	{
 		$controllers = $app['controllers_factory'];

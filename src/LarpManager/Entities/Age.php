@@ -14,10 +14,13 @@ use LarpManager\Entities\BaseAge;
 /**
  * LarpManager\Entities\Age
  *
- * @Entity()
+ * @Entity(repositoryClass="LarpManager\Repository\AgeRepository")
  */
 class Age extends BaseAge
 {
+	/**
+	 * Pour utilisation en tant que string
+	 */
 	public function __toString()
 	{
 		return $this->getLabel();

@@ -2,15 +2,23 @@
 namespace LarpManager\Controllers;
 
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Silex\Application;
 use LarpManager\Form\TerritoireForm;
 
 
+/**
+ * LarpManager\Controllers\TerritoireController
+ *
+ * @author kevin
+ *
+ */
 class TerritoireController
 {
 	/**
-	 * @description affiche le tableau de bord de gestion des territoires
+	 * Liste des territoires
+	 * 
+	 * @param Request $request
+	 * @param Application $app
 	 */
 	public function indexAction(Request $request, Application $app)
 	{

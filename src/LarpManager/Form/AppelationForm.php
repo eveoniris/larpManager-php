@@ -6,8 +6,20 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * LarpManager\Form\AppelationForm
+ *
+ * @author kevin
+ *
+ */
 class AppelationForm extends AbstractType
 {
+	/**
+	 * Construction du formualire
+	 * 
+	 * @param FormBuilderInterface $builder
+	 * @param array $options
+	 */
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
 		$builder->add('label','text', array(
@@ -31,6 +43,11 @@ class AppelationForm extends AbstractType
 		));
 	}
 	
+	/**
+	 * Définition de l'entité concerné
+	 * 
+	 * @param OptionsResolver $resolver
+	 */
 	public function configureOptions(OptionsResolver $resolver)
 	{
 		$resolver->setDefaults(array(
@@ -38,6 +55,9 @@ class AppelationForm extends AbstractType
 		));
 	}
 	
+	/**
+	 * Nom du formulaire
+	 */
 	public function getName()
 	{
 		return 'appelation';

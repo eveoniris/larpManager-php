@@ -5,7 +5,12 @@ use Symfony\Component\HttpFoundation\Request;
 use Silex\Application;
 use LarpManager\Form\ReligionForm;
 
-
+/**
+ * LarpManager\Controllers\ReligionController
+ * 
+ * @author kevin
+ *
+ */
 class ReligionController
 {
 	/**

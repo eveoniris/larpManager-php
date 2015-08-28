@@ -5,8 +5,25 @@ namespace LarpManager;
 use Silex\Application;
 use Silex\ControllerProviderInterface;
 
+/**
+ * LarpManager\TerritoireControllerProvider
+ * 
+ * @author kevin
+ *
+ */
 class TerritoireControllerProvider implements ControllerProviderInterface
 {
+	/**
+	 * Initialise les routes pour les territoires
+	 * Routes :
+	 * 	- territoire
+	 * 	- territoire.add
+	 *  - territoire.update
+	 *  - territoire.detail
+	 *
+	 * @param Application $app
+	 * @return Controllers $controllers
+	 */
 	public function connect(Application $app)
 	{
 		$controllers = $app['controllers_factory'];

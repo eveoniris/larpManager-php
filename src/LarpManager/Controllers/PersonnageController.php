@@ -7,6 +7,12 @@ use Silex\Application;
 use LarpManager\Form\PersonnageForm;
 use LarpManager\Form\PersonnageCompetenceForm;
 
+/**
+ * LarpManager\Controllers\PersonnageController
+ *
+ * @author kevin
+ *
+ */
 class PersonnageController
 {
 	

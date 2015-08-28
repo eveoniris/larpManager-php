@@ -9,8 +9,20 @@ use Doctrine\ORM\EntityRepository;
 
 use LarpManager\Form\Type\ClasseType;
 
+/**
+ * LarpManager\Form\GroupeForm
+ *
+ * @author kevin
+ *
+ */
 class GroupeForm extends AbstractType
 {
+	/**
+	 * Contruction du formulaire
+	 * 
+	 * @param FormBuilderInterface $builder
+	 * @param array $options
+	 */
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
 		$builder->add('nom','text')
@@ -56,10 +68,6 @@ class GroupeForm extends AbstractType
 						'label' => "Participe au jeu maritime ?",
 						'required' => false,
 				))
-				/*->add('classeOpen','integer', array(
-						'label' => "Nombre de place ouverte",
-						'required' => false,
-				))*/ // seul l'admin peux modifier le nombre de classe ouverte
 				->add('groupeClasses', 'collection', array(
 						'label' => "Composition",
 						'required' => false,
@@ -70,6 +78,11 @@ class GroupeForm extends AbstractType
 				));
 	}
 
+	/**
+	 * Définition de l'entité conercné
+	 * 
+	 * @param OptionsResolverInterface $resolver
+	 */
 	public function setDefaultOptions(OptionsResolverInterface $resolver)
 	{
 		$resolver->setDefaults(array(
@@ -77,6 +90,9 @@ class GroupeForm extends AbstractType
 		));
 	}
 
+	/**
+	 * Nom du formulaire
+	 */
 	public function getName()
 	{
 		return 'groupe';

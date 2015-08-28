@@ -7,6 +7,12 @@ use Silex\Application;
 
 use LarpManager\Form\GnForm;
 
+/**
+ * LarpManager\Controllers\GnController
+ *
+ * @author kevin
+ *
+ */
 class GnController
 {
 	/**

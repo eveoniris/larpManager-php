@@ -6,10 +6,20 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use LarpManager\Form\Type\CompetenceType;
-
+/**
+ * LarpManager\Form\PersonnageForm
+ *
+ * @author kevin
+ *
+ */
 class PersonnageForm extends AbstractType
 {
+	/**
+	 * Construction du formulaire
+	 * 
+	 * @param FormBuilderInterface $builder
+	 * @param array $options
+	 */
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
 		$builder->add('nom','text', array(
@@ -39,6 +49,11 @@ class PersonnageForm extends AbstractType
 				));
 	}
 	
+	/**
+	 * Définition de l'entité concerné
+	 * 
+	 * @param OptionsResolver $resolver
+	 */
 	public function configureOptions(OptionsResolver $resolver)
 	{
 		$resolver->setDefaults(array(
@@ -46,6 +61,9 @@ class PersonnageForm extends AbstractType
 		));
 	}
 	
+	/**
+	 * Nom du formulaire
+	 */
 	public function getName()
 	{
 		return 'personnage';
