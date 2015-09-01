@@ -77,6 +77,7 @@
 				<li class="dropdown">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Joueur<span class="caret"></span></a>
 					<ul class="dropdown-menu">
+						<li><a href="{{ path('forum.topic') }}">Forum</a></li>
 						{% if app.user.personnage %}
 							<li><a href="{{ path('personnage.detail',{'index': app.user.personnage.id}) }}">Mon personnage</a></li>
 						{% else %}
@@ -85,13 +86,17 @@
 						{% if app.user.joueur %}
 							<li><a href="{{ path('joueur.detail',{'index': app.user.joueur.id}) }}">Mes informations</a></li>
 						{% endif %}
-						{% if app.user.groupe %}
-							<li><a href="{{ path('groupe.joueur',{'index':app.user.groupe.id}) }}">Mon groupe</a></li>
-							{% if app.user.isResponsable(app.user.groupe) %}
-								<li><a href="{{ path('groupe.gestion',{'index':app.user.groupe.id}) }}">Gestion du groupe</a></li>
-								<li><a href="#">Diplomatie</a></li>								
-							{% endif %}
-							<li><a href="#">Contacter le scénariste</a></li>
+						
+						
+						{% if app.user.groupes %}
+							{% for groupe in app.user.groupes %}
+								<li><a href="{{ path('groupe.joueur',{'index':groupe.id}) }}">{{ groupe.label }}</a></li>
+								{% if app.user.isResponsable(groupe) %}
+									<li><a href="{{ path('groupe.gestion',{'index':groupe.id}) }}">Gestion de {{ groupe.label }}</a></li>
+									<li><a href="#">Diplomatie</a></li>								
+								{% endif %}
+								<li><a href="#">Contacter le scénariste</a></li>
+							{% endfor %}
 						{% endif %}
 						
 						<li><a href="#">Les compétences</a></li>

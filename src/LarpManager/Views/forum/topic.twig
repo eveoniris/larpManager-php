@@ -1,0 +1,21 @@
+{% extends "layout.twig" %}
+
+{% block title %}Forum{% endblock title %}
+
+{% block content %}
+
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-xs-12 col-md-12">
+			<div class="well well-sm">
+				<h4>
+					Forum
+				</h4>
+			</div>
+			{{ include("forum/fragment/topic_list.twig", {'topics' : topics, 'add' : true}) }}
+		</div>
+	</div>
+
+</div>
+	
+{% endblock %}

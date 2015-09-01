@@ -2,25 +2,29 @@
 
 {% block content %}
 
+	{# si l'utilisateur est connecté, lui afficher un message de bienvenu
+	   sinon lui afficher des liens vers les pages de création de compte ou de login #}
+	   
 	{% if app.user %}	
-	<div class="well well-sm">
-		<h4>
-			Bienvenue {{ app.user.name }}
-		</h4>
-	</div>
-	{% endif %}
-	
-	{% if not app.user %}
-	<div class="panel panel-warning">
-		<div class="panel-heading">
-			Vous n'êtes pas connecté
+		<div class="well well-sm">
+			<h4>
+				Bienvenue {{ app.user.name }}
+			</h4>
 		</div>
-	  	<div class="panel-body">
-	  		<p>Si vous disposez d'un compte, <a href="{{ path('user.login') }}">connectez-vous</a>.</p>
-	  		<p>Sinon <a href="{{ path('user.register') }}">créez un compte</a>.</p>
+	{%  else %}
+		<div class="panel panel-warning">
+			<div class="panel-heading">
+				Vous n'êtes pas connecté
+			</div>
+		  	<div class="panel-body">
+		  		<p>Si vous disposez d'un compte, <a href="{{ path('user.login') }}">connectez-vous</a>.</p>
+		  		<p>Sinon <a href="{{ path('user.register') }}">créez un compte</a>.</p>
+		  	</div>
 	  	</div>
-  	</div>
 	{%  endif %}
+	
+	
+	{# affichage de l'annonce la plus récente et du lien vers les archives des annonces #}
 	
 	<div class="panel panel-default">
 		<div class="panel-heading">
@@ -30,6 +34,10 @@
 			La page d'acceuil présentera des annonces publiques
 		</div>
 	</div>
+	
+	
+	{# si l'utilisateur est scénariste, lui afficher les liens vers les groupes dont
+	   il a la responsabilité #}
 	
 	{% if is_granted('ROLE_SCENARISTE', app.user) %}
 		{% if app.user.groupeScenariste|length > 0 %}
@@ -52,18 +60,43 @@
 		</div>
 		{%  endif %}
 	{% else %}
+	
+		{# si l'utilisateur n'a *que le role USER*, lui afficher les liens
+		   soit vers la création des informations joueurs
+		   soit vers l'inscription dans un gn
+		   soit vers l'inscription dans un groupe #}
+		   
 		{% if is_granted('ROLE_USER', app.user) %}
-			{% if not app.user.groupe %}
+		
+			{# si l'utilisateur n'a pas de joueur #}
+			{% if not app.user.joueur %}
 				<div class="panel panel-default">
-					<div class="panel-heading">Rejoindre un groupe
-					</div>
+					<div class="panel-heading">{% trans %}record_player_title{% endtrans %}</div>
 					<div class="panel-body">
-						<p>Vous n'êtes pour le moment inscrit dans aucun groupe. Entrez le code de votre groupe dans le formulaire ci-dessous.
-							Le code doit vous être transmis par le responsable de votre groupe.</p>
-						{{ include("homepage/fragment/form_groupe.twig",{'form': form_groupe,'action': path('homepage.inscription')}) }}
+						<p>{% trans %}record_player_explain{% endtrans %}</p>
 					</div>
 				</div>
+			{% else %}
+				{# proposer une inscription dans les gns actifs #}
+				<div class="panel panel-default">
+					<div class="panel-heading">{% trans %}gn_subscribe_title{% endtrans %}</div>
+					<div class="panel-body">
+						<p>{% trans %}gn_subscribe_explain{% endtrans %}</p>
+					</div>
+				</div>
+				
+				{# si le joueur est inscrit dans au moins 1 gn, proposer une inscription dans un groupe #}
+				{%  if app.user.gns|length >= 1 %}
+					<div class="panel panel-default">
+						<div class="panel-heading">{% trans %}subscribe_group_title{% endtrans %}</div>
+						<div class="panel-body">
+							<p>{% trans %}subscribe_group_explain{% endtrans %}</p>
+							{{ include("homepage/fragment/form_groupe.twig",{'form': form_groupe,'action': path('homepage.inscription')}) }}
+						</div>
+					</div>
+				{% endif %}
 			{% endif %}
 		{% endif %}
 	{% endif %}	
-{% endblock %}
+	
+{% endblock content %}

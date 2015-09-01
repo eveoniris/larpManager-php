@@ -180,7 +180,7 @@ else
 			   }),
 		),
 		'secured_area' => array(	// le reste necessite d'être connecté
-			'pattern' => '^/[stock|groupe|gn|personnage|territoire|appelation|langue|ressource|religion|age|genre|level|competence|competenceFamily|joueur]/.*$',
+			'pattern' => '^/[stock|forum|groupe|gn|personnage|territoire|appelation|langue|ressource|religion|age|genre|level|competence|competenceFamily|joueur]/.*$',
 			'anonymous' => false,
 			'remember_me' => array(),
 			'form' => array(
@@ -220,14 +220,14 @@ else
 	$app->mount('/genre', new LarpManager\GenreControllerProvider());
 	$app->mount('/gn', new LarpManager\GnControllerProvider());
 	$app->mount('/joueur', new LarpManager\JoueurControllerProvider());
+	$app->mount('/forum', new LarpManager\ForumControllerProvider());
 	//$app->mount('/chronologie', new LarpManager\ChronologieControllerProvider());
 	//$app->mount('/guilde', new LarpManager\GuildeControllerProvider());
-	
-	
+		
+
 	/**
-	 * Gestion des droits d'accés
+	 * Gestion de la hierarchie des droits
 	 */
-	
 	$app['security.role_hierarchy'] = array(
 		'ROLE_USER' => array('ROLE_USER'),
 		'ROLE_STOCK' => array('ROLE_USER', 'ROLE_STOCK'),
@@ -236,6 +236,9 @@ else
 		'ROLE_ADMIN' => array('ROLE_USER', 'ROLE_STOCK','ROLE_SCENARISTE','ROLE_REGLE'),
 	);
 	
+	/**
+	 * Gestion des droits d'accés
+	 */
 	$app['security.access_rules'] = array(
 		array('^/world/.*$', 'ROLE_USER'),
 		array('^/groupe/.*$', 'ROLE_USER'),
@@ -291,6 +294,35 @@ $app->error(function (\Exception $e, $code) use ($app)
 		return $app['twig']->render('error/objectNotFound.twig');
 	}
 });
+
+
+/**
+ * Service de traduction
+ */
+
+function getClientLanguage() {
+	$langs = explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']);
+	return substr($langs[0], 0, 2);
+}
+
+$app->register(new Silex\Provider\TranslationServiceProvider(), array(
+		'locale'                    => getClientLanguage(),
+		'locale_fallback'           => 'en',
+		'translation.class_path'    => __DIR__.'/vendor/Symfony/Component',
+));
+
+use Symfony\Component\Translation\Loader\YamlFileLoader;
+
+$app['translator'] = $app->share($app->extend('translator', function($translator, $app) {
+	$translator->addLoader('yaml', new YamlFileLoader());
+
+	$translator->addResource('yaml', __DIR__.'/../src/LarpManager/Locales/en.yml', 'en');
+	$translator->addResource('yaml', __DIR__.'/../src/LarpManager/Locales/de.yml', 'de');
+	$translator->addResource('yaml', __DIR__.'/../src/LarpManager/Locales/fr.yml', 'fr');
+
+	return $translator;
+}));
+
 
 /**
  * API

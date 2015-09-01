@@ -60,6 +60,32 @@ class User extends BaseUser implements AdvancedUserInterface, \Serializable
 	}
 	
 	/**
+	 * Fourni la liste des groupes d'un joueur
+	 */
+	public function getGroupes()
+	{
+		$joueur = $this->getJoueur();
+		if ( $joueur )
+		{
+			return $joueur->getGroupes();
+		}
+		return null;		
+	}
+	
+	/**
+	 * Fourni la liste des gns d'un joueur
+	 */
+	public function getGns()
+	{
+		$joueur = $this->getJoueur();
+		if ( $joueur )
+		{
+			return $joueur->getGns();
+		}
+		return null;
+	}
+	
+	/**
 	 * Determine si l'utilisateur dispose d'un personnage dans son groupe
 	 */
 	public function personnageOn()

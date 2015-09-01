@@ -51,6 +51,14 @@ class GnForm extends AbstractType
 				->add('adresse','textarea', array(
 						'label' => 'Adresse du site',
 						'required' => false,
+				))
+				->add('actif','choice', array(
+						'label' => 'GN actif ?',
+						'required' => true,
+						'choices' => array(
+								true => 'Oui',
+								false => 'Non',
+						),
 				));
 	}
 	
