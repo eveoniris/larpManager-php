@@ -1,0 +1,14 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+
+{{ gn.label }}
+{{ gn.description }}
+
+<form action="{{ path('inscriptionGn') }}" method="POST" {{ form_enctype(form) }}>
+		{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+
+		{{ form(form) }}
+</form>
+
+{% endblock content %}

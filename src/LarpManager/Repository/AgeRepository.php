@@ -15,7 +15,7 @@ class AgeRepository extends EntityRepository
 	/**
 	 * Trouve tous les ages classé par index
 	 * 
-	 * @return ArrayCollection $classes
+	 * @return ArrayCollection $ages
 	 */
 	public function findAllOrderedByLabel()
 	{

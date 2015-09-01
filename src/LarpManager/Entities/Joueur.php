@@ -10,6 +10,7 @@
 namespace LarpManager\Entities;
 
 use LarpManager\Entities\BaseJoueur;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * LarpManager\Entities\Joueur
@@ -18,4 +19,18 @@ use LarpManager\Entities\BaseJoueur;
  */
 class Joueur extends BaseJoueur
 {
+	/**
+	 * Fourni la liste des gns auquel un joueur est inscrit
+	 * @return \Doctrine\Common\Collections\Collection
+	 */
+	public function getGns()
+	{
+		$gn = new ArrayCollection();
+		
+		foreach ( $this->getJoueurGns() as $joueurGn )
+		{
+			$gn[] = $joueurGn->getGn();
+		}
+		return $gn;
+	}
 }

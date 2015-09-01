@@ -300,13 +300,8 @@ $app->error(function (\Exception $e, $code) use ($app)
  * Service de traduction
  */
 
-function getClientLanguage() {
-	$langs = explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']);
-	return substr($langs[0], 0, 2);
-}
-
 $app->register(new Silex\Provider\TranslationServiceProvider(), array(
-		'locale'                    => getClientLanguage(),
+		'locale'                    => 'fr',
 		'locale_fallback'           => 'en',
 		'translation.class_path'    => __DIR__.'/vendor/Symfony/Component',
 ));

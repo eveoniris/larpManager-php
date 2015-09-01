@@ -26,18 +26,31 @@ class HomepageControllerProvider implements ControllerProviderInterface
 	public function connect(Application $app)
 	{
 		$controllers = $app['controllers_factory'];
-
+		
+		/** Affichage de la page d'acceuil */
 		$controllers->match('/','LarpManager\Controllers\HomepageController::indexAction')
 					->method('GET')
 					->bind('homepage');
 		
+		/** Affichage de la cartographie du monde de conan */
 		$controllers->match('/world','LarpManager\Controllers\HomepageController::worldAction')
 					->method('GET')
 					->bind('world');
 		
+		/** Traitement du formulaire d'inscription d'un joueur dans un groupe */
 		$controllers->match('/inscription','LarpManager\Controllers\HomepageController::inscriptionAction')
 					->method('POST')
 					->bind('homepage.inscription');
+		
+		/** Formulaire d'inscription d'un joueur dans un gn */
+		$controllers->match('/inscriptionGn','LarpManager\Controllers\HomepageController::inscriptionGnFormAction')
+					->method('GET')
+					->bind('inscriptionGn.form');
+		
+		/** Traitement du formulaire d'inscription d'un joueur dans un gn */
+		$controllers->match('/inscriptionGn','LarpManager\Controllers\HomepageController::inscriptionGnAction')
+					->method('POST')
+					->bind('inscriptionGn');
 		
 		return $controllers;
 	}

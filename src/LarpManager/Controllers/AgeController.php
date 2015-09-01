@@ -100,7 +100,7 @@ class AgeController
 		 */
 		if ( ! $form->isValid() )
 		{
-			throw new LarpManager\Exception\RequestInvalid();
+			throw new LarpManager\Exception\RequestInvalidException();
 		}
 		
 		$age = $form->getData();

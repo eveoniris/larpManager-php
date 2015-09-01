@@ -1,0 +1,10 @@
+<div class="well">
+	<div class="pull-right">
+		<a class="btn btn-default" href="{{ path('inscriptionGn.form',{'idGn': gn.id}) }}">Participer</a>
+	</div>
+	<div class="text-group">
+		<p class="text-group-item">{{ gn.label }}</p>
+		<p class="text-group-item">{{ gn.description }}</p>
+		<p class="text-group-item">du {{ gn.dateDebut|date('Y-m-d') }} au {{ gn.dateFin|date('Y-m-d') }}.</p>
+	</div>
+</div>
