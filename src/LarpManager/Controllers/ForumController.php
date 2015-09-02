@@ -30,35 +30,67 @@ class ForumController
 			// erreur, l'utilisateur doit avoir un joueur pour acceder aux forums
 		}
 		
-		$personnage = $joueur->getPersonnage();
-		$groupe = $personnage->getGroupe();
-		$territoire = $groupe->getTerritoire();
-			
-		
-		if ( $joueur->getGns() )
-		{
-			$topicGns = $app['orm.em']->getRepository('\LarpManager\Entities\Topic')
-						->findAllRelatedToJoueurReferedGn($joueur->getId());
-		}
-		
-		if ( $personnage->getTerritoire() )
-		{
-		
-			$topicTerritories = $app['orm.em']->getRepository('\LarpManager\Entities\Topic')
-						->findAllRelatedToTerritory();
-		}
-		
-		$topicGroupes = $app['orm.em']->getRepository('\LarpManager\Entities\Topic')
-					->findAllRelatedToGroupe();
-		
-		$topicGroupeSecondary = $app['orm.em']->getRepository('\LarpManager\Entities\Topic')
-					->findAllRelatedToGroupeSecondary();
-		
-		$topicReligions = $app['orm.em']->getRepository('\LarpManager\Entities\Topic')
-					->findAllRelatedToReligion();
-					
-		
-		$view = $app['twig']->render('forum/topic.twig', array('topics' => $topics));
+		$topics = $app['orm.em']->getRepository('\LarpManager\Entities\Topic')
+						->findAllRelatedToJoueurReferedGns($joueur->getId());
+
+		$view = $app['twig']->render('forum/topic.twig', array(
+				'topic' => null,
+				'topics' => $topics,
+				'posts' => null,
+				'parent' => null
+		));
 		return $view;
+	}
+	
+	/**
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function topicPostAction(Request $request, Application $app)
+	{
+		$topicId = $request->get('index');
+		
+		$joueur = $app['user']->getJoueur();
+		
+		if ( ! $joueur )
+		{
+			// erreur, l'utilisateur doit avoir un joueur pour acceder aux forums
+		}
+		
+		$topic = $app['orm.em']->getRepository('\LarpManager\Entities\Topic')
+					->find($topicId);
+		
+		$view = $app['twig']->render('forum/topic.twig', array(
+				'topic' => $topic,
+				'topics' => $topic->getTopics(),
+				'posts' => $topic->getPosts(),
+				'parent' => $topic->getTopic(),
+		));
+		
+		return $view;
+		
+	}
+	
+	/**
+	 * Formulaire d'ajout d'un post dans un topic
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function postAddFormAction(Request $request, Application $app)
+	{
+		
+	}
+	
+	/**
+	 * Traitement du formulaire d'ajout d'un post dans un topic
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function postAddAction(Request $request, Application $app)
+	{
+	
 	}
 }

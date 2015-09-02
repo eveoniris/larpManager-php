@@ -5,22 +5,24 @@ namespace LarpManager\Groupe;
 use Silex\Application;
 use Silex\ServiceProviderInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\RoleHierarchyVoter;
-use Symfony\Component\Security\Core\SecurityContextInterface;
 
 use LarpManager\Groupe\GroupeVoter;
-use LarpManager\Groupe\GroupeManager;
 
-
+/**
+ * LarpManager\Groupe\GroupeServiceProvider
+ * 
+ * @author kevin
+ *
+ */
 class GroupeServiceProvider implements ServiceProviderInterface
 {
+	/**
+	 * Enregistrement du service
+	 * 
+	 * @param Application $app
+	 */
 	public function register(Application $app)
-	{
-		// Groupe manager
-		$app['groupe.manager'] = $app->share(function($app) {
-			$groupeManager = new GroupeManager($app);
-			return $groupeManager;
-		});
-		
+	{		
 		// Ajoute une nouvelle gestion des droits pour les groupes
 		$app['security.voters'] = $app->extend('security.voters', function($voters) use ($app) {
 			foreach ($voters as $voter) {
@@ -34,6 +36,11 @@ class GroupeServiceProvider implements ServiceProviderInterface
 		});
 	}
 	
+	/**
+	 * Evénement boot
+	 * 
+	 * @param Application $app
+	 */
 	public function boot(Application $app)
 	{
 	}

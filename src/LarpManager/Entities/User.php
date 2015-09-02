@@ -23,7 +23,7 @@ class User extends BaseUser implements AdvancedUserInterface, \Serializable
 	 * Lors de la création d'un nouvel utilisateur, on lui détermine aléatoirement
 	 * la valeur salt.
 	 * 
-	 * @param unknown $email
+	 * @param string $email
 	 */
 	public function __construct($email)
 	{
@@ -32,6 +32,9 @@ class User extends BaseUser implements AdvancedUserInterface, \Serializable
 		parent::__construct();
 	}
 	
+	/**
+	 * @return string
+	 */
 	public function __toString()
 	{
 		return $this->getUsername();
@@ -39,6 +42,7 @@ class User extends BaseUser implements AdvancedUserInterface, \Serializable
 	
 	/**
 	 * Determine si l'utilisateur est responsable du groupe
+	 * 
 	 * @param LarpManager\Entities\Groupe $groupe
 	 */
 	public function isResponsable(\LarpManager\Entities\Groupe $groupe)
@@ -48,10 +52,13 @@ class User extends BaseUser implements AdvancedUserInterface, \Serializable
 	
 	/**
 	 * Fourni le personnage d'un joueur
+	 * 
+	 * @return \LarpManager\Entities\Personnage $personnage
 	 */
 	public function getPersonnage()
 	{
 		$joueur = $this->getJoueur();
+		
 		if ( $joueur )
 		{
 			return $joueur->getPersonnage();
@@ -84,17 +91,7 @@ class User extends BaseUser implements AdvancedUserInterface, \Serializable
 		}
 		return null;
 	}
-	
-	/**
-	 * Determine si l'utilisateur dispose d'un personnage dans son groupe
-	 */
-	public function personnageOn()
-	{
-		$groupe = $this->getGroupe();
-		$personnage = $this->getPersonnage();
-		return  $personage && $personnage->getGroupe() == $groupe;
-	}
-	
+
 	/**
 	 * Fourni la liste des groupes dont l'utilisateur est le responsable
 	 */

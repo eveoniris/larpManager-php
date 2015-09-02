@@ -18,17 +18,26 @@ use LarpManager\Entities\BaseGroupe;
  * 
  * LarpManager\Entities\Groupe
  *
- * @Entity()
+ * @Entity(repositoryClass="LarpManager\Repository\GroupeRepository")
  */
 class Groupe extends BaseGroupe
 {
-	
+	/**
+	 * Contructeur.
+	 * 
+	 * Défini le nombre de place disponible à 0
+	 */
 	public function __construct()
 	{		
 		$this->setClasseOpen(0);
 		parent::__construct();
 	}
 	
+	/**
+	 * méthode magique transtypage en string
+	 * 
+	 * @return string
+	 */
 	public function __toString()
 	{
 		return $this->getNom();	
@@ -36,6 +45,8 @@ class Groupe extends BaseGroupe
 	
 	/**
 	 * Vérifie si le groupe dispose de suffisement de place disponible
+	 * 
+	 * @return boolean
 	 */
 	public function hasEnoughPlace()
 	{
@@ -45,6 +56,8 @@ class Groupe extends BaseGroupe
 	/**
 	 * Fourni la liste des classes disponibles (non actuellement utilisé par un personnage)
 	 * Ce type de liste est utile pour le formulaire de création d'un personnage
+	 * 
+	 * @return Collection LarpManager\Entities\Classe
 	 */
 	public function getAvailableClasses()
 	{		
@@ -120,6 +133,8 @@ class Groupe extends BaseGroupe
 	
 	/**
 	 * Fourni la liste des classes
+	 * 
+	 * @return Array LarpManager\Entities\Classe
 	 */
 	public function getClasses()
 	{
@@ -134,6 +149,7 @@ class Groupe extends BaseGroupe
 	
 	/**
 	 * Ajoute une classe dans le groupe
+	 * 
 	 * @param GroupeClasse $groupeClasse
 	 */
 	public function addGroupeClass(GroupeClasse $groupeClasse)

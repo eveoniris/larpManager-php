@@ -19,8 +19,16 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class Joueur extends BaseJoueur
 {
+	public function __construct()
+	{
+		parent::__construct();
+		$this->setCreationDate(new \Datetime('NOW'));
+		$this->setUpdateDate(new \Datetime('NOW'));
+	}
+	
 	/**
 	 * Fourni la liste des gns auquel un joueur est inscrit
+	 * 
 	 * @return \Doctrine\Common\Collections\Collection
 	 */
 	public function getGns()

@@ -6,13 +6,19 @@ use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\RoleHierarchyVoter;
 
-
+/**
+ * LarpManager\Groupe\GroupeVoter
+ * @author kevin
+ *
+ */
 class GroupeVoter implements VoterInterface
 {
 	/** @var RoleHierarchyVoter */
 	protected $roleHierarchyVoter;
 	
 	/**
+	 * Constructeur
+	 * 
 	 * @param RoleHierarchyVoter $roleHierarchyVoter
 	 */
 	public function __construct(RoleHierarchyVoter $roleHierarchyVoter)
@@ -21,7 +27,7 @@ class GroupeVoter implements VoterInterface
 	}
 	
 	/**
-	 * Checks if the voter supports the given attribute.
+	 * Vérifie si le voter supporte l'attribue demandé
 	 *
 	 * @param string $attribute An attribute
 	 *
@@ -106,7 +112,12 @@ class GroupeVoter implements VoterInterface
 		return false;
 	}
 		
-	
+	/**
+	 * Vérifie si l'utilisateur dispose du rôle demandé
+	 * 
+	 * @param Token $token
+	 * @param string $role
+	 */
 	protected function hasRole($token, $role)
 	{
 		return VoterInterface::ACCESS_GRANTED == $this->roleHierarchyVoter->vote($token, null, array($role));

@@ -10,7 +10,7 @@ use LarpManager\Entities\Topic;
  *  
  * @author kevin
  */
-class AgeRepository extends EntityRepository
+class TopicRepository extends EntityRepository
 {
 	/**
 	 * Trouve tous les topics classés par date de création.
@@ -48,7 +48,7 @@ class AgeRepository extends EntityRepository
 	public function findAllRelatedToJoueurReferedGns($joueurId)
 	{
 		$topics = $this->getEntityManager()
-			->createQuery('SELECT t FROM LarpManager\Entities\Topic t JOIN t.gn g JOIN g.joueurs j WHERE j.id = :joueurId AND t.topic_id IS NULL')
+			->createQuery('SELECT t FROM LarpManager\Entities\Topic t WHERE t.id IN ( SELECT IDENTITY(g.topic) FROM LarpManager\Entities\Gn g WHERE g.actif = true AND IDENTITY(t.topic) IS NULL AND g.id IN (SELECT IDENTITY(jg.gn) FROM LarpManager\Entities\JoueurGn jg WHERE IDENTITY(jg.joueur) = :joueurId))')
 			->setParameter('joueurId', $joueurId)
 			->getResult();
 		

@@ -61,7 +61,7 @@
 		{%  endif %}
 	{% else %}
 	
-		{# si l'utilisateur n'a *que le role USER*, lui afficher les liens
+		{# si l'utilisateur n'a *que* le role USER, lui afficher les liens
 		   soit vers la création des informations joueurs
 		   soit vers l'inscription dans un gn
 		   soit vers l'inscription dans un groupe #}
@@ -74,19 +74,36 @@
 					<div class="panel-heading">{% trans %}record_player_title{% endtrans %}</div>
 					<div class="panel-body">
 						<p>{% trans %}record_player_explain{% endtrans %}</p>
+						<a class="btn btn-default" href="{{ path('joueur.add') }}">{% trans %}record_player_link{% endtrans %}</a>
 					</div>
 				</div>
 			{% else %}
-				{# proposer une inscription dans les gns actifs #}
-				<div class="panel panel-default">
-					<div class="panel-heading">{% trans %}gn_subscribe_title{% endtrans %}</div>
-					<div class="panel-body">
-						<p>{% trans %}gn_subscribe_explain{% endtrans %}</p>
-						{% for gn in gns %}
-							{{ include("homepage/fragment/gn.twig",{'gn': gn}) }}
-						{% endfor %}
+			
+				{# afficher la liste des gns dans lequel le joueur est inscrit #}
+				{% if gnSubscribes|length > 0 %}
+					<div class="panel panel-default">
+						<div class="panel-heading">{% trans %}gn_list_title{% endtrans %}</div>
+						<div class="panel-body">
+							<p>{% trans %}gn_list_explain{% endtrans %}</p>
+							{% for gn in gnSubscribes %}
+								{{ gn.label }}
+							{% endfor %}
+						</div>
 					</div>
-				</div>
+				{% endif %}
+				
+				{# proposer une inscription dans les gns actifs auquel le joueur n'est pas inscrit #}
+				{% if gnNotSubscribes|length > 0 %}
+					<div class="panel panel-default">
+						<div class="panel-heading">{% trans %}gn_subscribe_title{% endtrans %}</div>
+						<div class="panel-body">
+							<p>{% trans %}gn_subscribe_explain{% endtrans %}</p>
+							{% for gn in gnNotSubscribes %}
+								{{ include("homepage/fragment/gn.twig",{'gn': gn}) }}
+							{% endfor %}
+						</div>
+					</div>
+				{% endif %}
 				
 				{# si le joueur est inscrit dans au moins 1 gn, proposer une inscription dans un groupe #}
 				{%  if app.user.gns|length >= 1 %}

@@ -7,12 +7,33 @@
 <div class="container-fluid">
 	<div class="row">
 		<div class="col-xs-12 col-md-12">
+			{% if parent %}
+				<a href="">Retour à {{ parent.title }}</a>
+			{% else %}
+				{% if topic %}
+					<a href="{{ path('forum.topic') }}">Retour au forum</a>
+				{% endif %}
+			{% endif %}
+			
 			<div class="well well-sm">
 				<h4>
-					Forum
+					{% if topic %}
+						{{ topic.title }}
+					{% else %}
+						Forum
+					{% endif %}
 				</h4>
 			</div>
-			{{ include("forum/fragment/topic_list.twig", {'topics' : topics, 'add' : true}) }}
+			{{ include("forum/fragment/topic_list.twig", {'topics' : topics}) }}
+			
+			{% if posts %}
+				{{ include("forum/fragment/post_list.twig", {'posts' : posts}) }}
+			{% endif %}
+			
+			{% if topic %}
+				<a href="{{ path('forum.topic.post.add.form', {'index',topic.id}) }}">Ajouter un nouveau message</a>
+			{% endif %}
+			
 		</div>
 	</div>
 

@@ -26,7 +26,11 @@ class GnController
 	}
 	
 	/**
-	 * @description affiche le formulaire d'ajout d'un gn
+	 * affiche le formulaire d'ajout d'un gn
+	 * Lorsqu'un GN est créé, son forum associé doit lui aussi être créé
+	 * 
+	 * @param Request $request
+	 * @param Application $app
 	 */
 	public function addAction(Request $request, Application $app)
 	{
@@ -41,7 +45,19 @@ class GnController
 		if ( $form->isValid() )
 		{
 			$gn = $form->getData();
-				
+			
+			/**
+			 * Création du topic associé à ce gn
+			 * @var \LarpManager\Entities\Topic $topic
+			 */
+			$topic = new \LarpManager\Entities\Topic();
+			$topic->setTitle($gn->getLabel());
+			$topic->setDescription($gn->getDescription());
+			$topic->setUser($app['user']);
+			
+			$gn->setTopic($topic);
+			
+			$app['orm.em']->persist($topic);
 			$app['orm.em']->persist($gn);
 			$app['orm.em']->flush();
 	

@@ -6,7 +6,12 @@ use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\RoleHierarchyVoter;
 
-
+/**
+ * LarpManager\Joueur\JoueurVoter
+ * 
+ * @author kevin
+ *
+ */
 class JoueurVoter implements VoterInterface
 {
 	/** @var RoleHierarchyVoter */
@@ -31,6 +36,7 @@ class JoueurVoter implements VoterInterface
 	{
 		return in_array($attribute, array(
 				'JOUEUR_OWNER',
+				'JOUEUR_NOT_REGISTERED'
 		));
 	}
 
@@ -46,6 +52,13 @@ class JoueurVoter implements VoterInterface
 		return true;
 	}
 	
+	/**
+	 * Test l'authorisation demandé et fourni soit ACCSESS_GRANTED, soit ACCESS_DENIED, soit ACCESS_ABSTAIN
+	 * 
+	 * @param TokenInterface $token
+	 * @param unknown $object
+	 * @param array $attributes
+	 */
 	public function vote(TokenInterface $token, $object, array $attributes)
 	{
 		$user = $token->getUser();
@@ -63,6 +76,9 @@ class JoueurVoter implements VoterInterface
 				$joueurId = $object;
 				return $this->isOwnerOf($user, $joueurId) ? VoterInterface::ACCESS_GRANTED : VoterInterface::ACCESS_DENIED;
 			}
+			if ($attribute == 'JOUEUR_NOT_REGISTERED') {
+				return $this->isNotRegistered($user) ? VoterInterface::ACCESS_GRANTED : VoterInterface::ACCESS_DENIED;
+			}
 		}
 		
 		return VoterInterface::ACCESS_ABSTAIN;
@@ -79,7 +95,22 @@ class JoueurVoter implements VoterInterface
 		return $joueur &&  $joueur->getId() == $joueurId;
 	}
 	
+	/**
+	 * Test si l'utilisateur a des informations joueurs enregistré
+	 * 
+	 * @param LarpManager\Entities\User $user
+	 */
+	protected function isNotRegistered($user)
+	{
+		return empty($user->getJoueur);
+	}
 	
+	/**
+	 * Test si un utilisateur dispose du role demandé
+	 * 
+	 * @param unknown $token
+	 * @param unknown $role
+	 */
 	protected function hasRole($token, $role)
 	{
 		return VoterInterface::ACCESS_GRANTED == $this->roleHierarchyVoter->vote($token, null, array($role));

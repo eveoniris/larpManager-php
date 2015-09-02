@@ -16,7 +16,13 @@ use LarpManager\Form\GnInscriptionForm;
 class HomepageController
 {
 	/**
-	 * affiche la vue index.twig
+	 * affiche la page d'acceuil.
+	 * 
+	 * Si l'utilisateur a enregistrer ses informations de joueur, on lui propose la liste
+	 * des GNs auquel il peux s'inscrire.
+	 * 
+	 * Si l'utilisateur n'a pas enregistré ses informations de joueur, on lui propose la liste
+	 * de tous les GNs actifs.
 	 * 
 	 * @param Request $request
 	 * @param Application $app
@@ -27,12 +33,23 @@ class HomepageController
 			->add('subscribe','submit', array('label' => 'S\'inscrire'))
 			->getForm();
 		
-		$repo = $app['orm.em']->getRepository('LarpManager\Entities\Gn');
-		$gns = $repo->findAllActive();
+		$joueur = $app['user']->getJoueur();
 		
+		$repoGn = $app['orm.em']->getRepository('LarpManager\Entities\Gn');
+		
+		if ( $joueur )
+		{
+			$gnNotSubscribes = $repoGn->findByActiveWhereNotSubscribe($joueur);
+			$gnSubscribes = $repoGn->findByActiveWhereSubscribe($joueur);
+		}
+
+		$gns = $repoGn->findByActive();
+				
 		return $app['twig']->render('homepage/index.twig', array(
 				'form_groupe' => $form->createView(),
 				'gns' => $gns,
+				'gnSubscribes' => $gnSubscribes,
+				'gnNotSubscribes' =>  $gnNotSubscribes,
 		));
 	}
 	
@@ -90,7 +107,7 @@ class HomepageController
 		/** Erreur, l'utilisateur n'est pas encore un joueur */
 		if ( ! $user->getJoueur() )
 		{
-			// TODO
+			throw new LarpManager\Exception\RequestInvalidException();
 		}
 		
 		$form = $app['form.factory']->createBuilder(new GnInscriptionForm())
@@ -143,25 +160,21 @@ class HomepageController
 			->add('subscribe','submit', array('label' => 'S\'inscrire'))
 			->getForm();
 		
-	
 		$form->handleRequest($request);
 		
 		if ( $form->isValid() )
 		{
 			$data = $form->getData();
 			
-			$groupe = $app['groupe.manager']->findByCode($data['code']);
+			$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Groupe');
+			$groupe = $repo->findOneByCode($data['code']);
 			
 			if ( $groupe )
 			{
-				$app['user']->setGroupe($groupe);
+				$joueur = $app['user']->getJoueur();
+				$joueur->addGroupe($groupe);
 												
-				// si l'utilisateur n'a pas de lien avec un objet joueur, il faut le créé maintenant.
-				$joueur = new \LarpManager\Entities\Joueur();
-				$joueur->setUser($app['user']);
-				
 				$app['orm.em']->persist($joueur);
-				$app['orm.em']->persist($app['user']);
 				$app['orm.em']->flush();
 				
 				$app['session']->getFlashBag()->add('success', 'Vous êtes maintenant inscrit au groupe.');

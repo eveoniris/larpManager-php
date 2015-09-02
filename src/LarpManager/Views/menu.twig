@@ -78,13 +78,17 @@
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Joueur<span class="caret"></span></a>
 					<ul class="dropdown-menu">
 						<li><a href="{{ path('forum.topic') }}">Forum</a></li>
-						{% if app.user.personnage %}
-							<li><a href="{{ path('personnage.detail',{'index': app.user.personnage.id}) }}">Mon personnage</a></li>
-						{% else %}
-							<li><a href="{{ path('personnage.add') }}">Création de mon personnage</a></li>
-						{% endif %}
 						{% if app.user.joueur %}
 							<li><a href="{{ path('joueur.detail',{'index': app.user.joueur.id}) }}">Mes informations</a></li>
+							{% if app.user.groupes %}
+								{% if app.user.personnage %}
+									<li><a href="{{ path('personnage.detail',{'index': app.user.personnage.id}) }}">Mon personnage</a></li>
+								{% else %}
+									<li><a href="{{ path('personnage.add') }}">Création de mon personnage</a></li>
+								{% endif %}
+							{% endif %}
+						{% else %}
+						
 						{% endif %}
 						
 						

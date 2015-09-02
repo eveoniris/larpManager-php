@@ -1,10 +1,4 @@
 <ul class="list-group">
-	{%  if add != false %}
-		<a href="{{ path('forum.topic.add.form') }}" class="list-group-item active">
-			<span class="badge"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></span>
-			<h4 class="list-group-item-heading">Ajouter un nouveau topic</h4>
-		</a>
-	{%  endif %}
 	{%  for topic in topics %}
 	<li class="list-group-item">
 		

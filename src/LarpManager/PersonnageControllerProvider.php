@@ -30,10 +30,17 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 	{
 		$controllers = $app['controllers_factory'];
 				
+		/**
+		 * Création d'un nouveau personnage
+		 */
 		$controllers->match('/add','LarpManager\Controllers\PersonnageController::addAction')
 			->bind("personnage.add")
 			->method('GET|POST');
 		
+		/**
+		 * Détail d'un personnage
+		 * Accessible uniquement au proprietaire du personnage
+		 */
 		$controllers->match('/{index}/detail','LarpManager\Controllers\PersonnageController::detailAction')
 			->assert('index', '\d+')
 			->bind("personnage.detail")
@@ -44,6 +51,10 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 				}
 			});
 		
+		/**
+		 * Ajout d'une compétence au personnage
+		 * Accessible uniquement au proprietaire du personnage
+		 */
 		$controllers->match('/{index}/competence/add','LarpManager\Controllers\PersonnageController::addCompetenceAction')
 			->assert('index', '\d+')
 			->bind("personnage.competence.add")

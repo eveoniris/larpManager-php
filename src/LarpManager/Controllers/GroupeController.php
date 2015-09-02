@@ -18,12 +18,14 @@ class GroupeController
 {
 	/**
 	 * Liste des groupes
+	 * 
 	 * @param Request $request
 	 * @param Application $app
 	 */
 	public function indexAction(Request $request, Application $app)
 	{	
-		$groupes = $app['groupe.manager']->findAllOrderByNumero();
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Groupe');
+		$groupes = $repo->findAllOrderByNumero();
 				
 		return $app['twig']->render('groupe/index.twig', array(
 				'groupes' => $groupes));
@@ -31,6 +33,7 @@ class GroupeController
 	
 	/**
 	 * Page de gestion d'un groupe pour son responsable
+	 * 
 	 * @param Request $request
 	 * @param Application $app
 	 */
@@ -46,6 +49,7 @@ class GroupeController
 	
 	/**
 	 * Page de gestion d'un groupe pour un membre du groupe
+	 * 
 	 * @param Request $request
 	 * @param Application $app
 	 */
@@ -67,14 +71,21 @@ class GroupeController
 	 */
 	public function placeAction(Request $request, Application $app)
 	{
-		$groupes = $app['groupe.manager']->findAllOrderByNumero();
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Groupe');
+		$groupes = $repo->findAllOrderByNumero();
 		
 		if ( $request->getMethod() == 'POST')
 		{
 			$newPlaces = $request->get('place');
-				
+			
+			/**
+			 * Pour tous les groupes
+			 */
 			foreach( $groupes as $groupe )
 			{
+				/**
+				 * Met à jour uniquement si la valeur à changée
+				 */
 				if ( $groupe->getClasseOpen() != $newPlaces[$groupe->getId()])
 				{
 					$groupe->setClasseOpen($newPlaces[$groupe->getId()]);
@@ -93,6 +104,7 @@ class GroupeController
 	
 	/**
 	 * Ajout d'un groupe
+	 * 
 	 * @param Request $request
 	 * @param Application $app
 	 */
@@ -111,16 +123,36 @@ class GroupeController
 		{
 			$groupe = $form->getData();
 			
+			/**
+			 * Pour toutes les classes du groupe
+			 */
 			foreach ( $groupe->getGroupeClasses() as $groupeClasses)
 			{
 				$groupeClasses->setGroupe($groupe);
 			}
 			
+			/**
+			 * Création des topics associés à ce groupe
+			 * un topic doit être créé par GN auquel ce groupe est inscrit
+			 * @var \LarpManager\Entities\Topic $topic
+			 */
+			$topic = new \LarpManager\Entities\Topic();
+			$topic->setTitle($groupe->getLabel());
+			$topic->setDescription($groupe->getDescription());
+			$topic->setTopic($groupe->getGn());
+			$topic->setUser($app['user']);
+				
+			$groupe->setTopic($topic);
+			
 			$app['orm.em']->persist($groupe);
 			$app['orm.em']->flush();
 		
 			$app['session']->getFlashBag()->add('success','Le groupe été sauvegardé');
-				
+			
+			/**
+			 * Si l'utilisateur a cliqué sur "save", renvoi vers la liste des groupes
+			 * Si l'utilisateur a cliqué sur "save_continue", renvoi vers un nouveau formulaire d'ajout 
+			 */
 			if ( $form->get('save')->isClicked())
 			{
 				return $app->redirect($app['url_generator']->generate('groupe'),301);
@@ -136,6 +168,7 @@ class GroupeController
 	
 	/**
 	 * Modification d'un groupe
+	 * 
 	 * @param Request $request
 	 * @param Application $app
 	 */
@@ -147,7 +180,9 @@ class GroupeController
 		
 		$originalGroupeClasses = new ArrayCollection();
 
-		// Crée un tableau contenant les objets GroupeClasse courants de la base de données
+		/**
+		 *  Crée un tableau contenant les objets GroupeClasse courants de la base de données
+		 */
 		foreach ($groupe->getGroupeClasses() as $groupeClasse) 
 		{
 			$originalGroupeClasses->add($groupeClasse);
@@ -164,17 +199,27 @@ class GroupeController
 		{
 			$groupe = $form->getData();
 			
+			/**
+			 * Pour toutes les classes du groupe
+			 */
 			foreach ( $groupe->getGroupeClasses() as $groupeClasses)
 			{
 				$groupeClasses->setGroupe($groupe);
 			}
-			// supprime la relation entre le groupeClasse et le groupe
+			
+			/**
+			 *  supprime la relation entre le groupeClasse et le groupe
+			 */
 			foreach ($originalGroupeClasses as $groupeClasse) {
 				if ($groupe->getGroupeClasses()->contains($groupeClasse) == false) {
 					$app['orm.em']->remove($groupeClasse);
 				}
 			}
 		
+			/**
+			 * Si l'utilisateur a cliquer sur "update", on met à jour le groupe
+			 * Si l'utilisateur a cliquer sur "delete", on supprime le groupe
+			 */
 			if ($form->get('update')->isClicked())
 			{				
 				$app['orm.em']->persist($groupe);
@@ -202,6 +247,7 @@ class GroupeController
 	
 	/**
 	 * Affiche le détail d'un groupe
+	 * 
 	 * @param Request $request
 	 * @param Application $app
 	 */
@@ -211,6 +257,10 @@ class GroupeController
 		
 		$groupe = $app['orm.em']->find('\LarpManager\Entities\Groupe',$id);
 		
+		/**
+		 * Si le groupe existe, on affiche son détail
+		 * Sinon on envoi une erreur
+		 */
 		if ( $groupe )
 		{
 			return $app['twig']->render('groupe/detail.twig', array('groupe' => $groupe));
@@ -222,6 +272,12 @@ class GroupeController
 		}
 	}
 	
+	/**
+	 * Exportation de la liste des groupes au format CSV
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
 	public function exportAction(Request $request, Application $app)
 	{
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Groupe');

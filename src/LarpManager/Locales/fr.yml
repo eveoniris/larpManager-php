@@ -2,5 +2,8 @@ subscribe_group_title: Rejoindre un groupe
 subscribe_group_explain: Vous n'êtes pour le moment inscrit dans aucun groupe. Entrez le code de votre groupe dans le formulaire ci-dessous. Le code doit vous être transmis par le responsable de votre groupe.
 record_player_title: Enregistrez vos informations de joueur
 record_player_explain : Afin de pouvoir vous inscrire dans les GN proposé et rejoindre un groupe de joueur, vous devez préalablement enregistrer certaines informations vous concernant (civilité, adresse, numéro de téléphone, etc ...). Une fois ces informations enregistrés, vous pourrez choisir le GN auquel vous participez et rejoindre un groupe de joueur.
+record_player_link: Enregistrer mes informations
 gn_subscribe_title : Participer à un grandeur nature
 gn_subscribe_explain : Choisissez le grandeur nature auquel vous voulez participer. Attention, cette action ne valide pas votre inscription, elle vous permet uniquement d'acceder aux interface de création de personnage et de gestion de groupe lié à cet événement.
+gn_list_title : Les GNs auquel vous participez
+gn_list_explain : trouver un truc à dire içi
