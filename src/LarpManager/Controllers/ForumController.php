@@ -5,6 +5,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Silex\Application;
 
 use LarpManager\Form\PostForm;
+use LarpManager\Form\TopicForm;
+use LarpManager\Exception\RequestInvalidException;
 
 /**
  * LarpManager\Controllers\ForumController
@@ -15,9 +17,59 @@ use LarpManager\Form\PostForm;
 class ForumController
 {	
 	/**
-	 * Liste des topics
-	 * TODO  : ne lister que les topics correspondants aux droits de l'utilisateur (territoire, gn, groupe, religion, groupe secondaire)
-	 *  
+	 * Liste des forums
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function forumAction(Request $request, Application $app)
+	{
+		$topics = $app['orm.em']->getRepository('\LarpManager\Entities\Topic')
+					->findAllRoot();
+		
+		$view = $app['twig']->render('forum/root.twig', array(
+				'topics' => $topics,
+		));
+		return $view;
+		
+	}
+	
+	/**
+	 * Ajout d'un forum
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function forumAddAction(Request $request, Application $app)
+	{
+		$topic = new \LarpManager\Entities\Topic();
+		
+		$form = $app['form.factory']->createBuilder(new TopicForm(), $topic)
+			->add('save','submit', array('label' => "Sauvegarder"))
+			->getForm();
+		
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
+		{
+			$topic = $form->getData();
+			$topic->setUser($app['user']);
+			
+			$app['orm.em']->persist($topic);
+			$app['orm.em']->flush();
+			
+			$app['session']->getFlashBag()->add('success', 'Le forum a été ajouté.');
+			
+			return $app->redirect($app['url_generator']->generate('forum'),301);
+		}
+		
+		return $app['twig']->render('forum/forum_add.twig', array(
+				'form' => $form->createView(),	
+		));
+	}
+	
+	/**
+	 * Détail d'un topic
 	 * 
 	 * @param Request $request
 	 * @param Application $app
@@ -25,19 +77,12 @@ class ForumController
 	 */
 	public function topicAction(Request $request, Application $app)
 	{
-		$joueur = $app['user']->getJoueur();
+		$id = $request->get('index');
 		
-		if ( ! $joueur )
-		{
-			// erreur, l'utilisateur doit avoir un joueur pour acceder aux forums
-		}
-		
-		$topics = $app['orm.em']->getRepository('\LarpManager\Entities\Topic')
-						->findAllRelatedToJoueurReferedGns($joueur->getId());
+		$topic = $app['orm.em']->getRepository('\LarpManager\Entities\Topic')->find($id);
 
-		$view = $app['twig']->render('forum/root.twig', array(
-				'topics' => $topics,
-
+		$view = $app['twig']->render('forum/topic.twig', array(
+				'topic' => $topic,
 		));
 		return $view;
 	}
@@ -75,32 +120,6 @@ class ForumController
 	 * @param Request $request
 	 * @param Application $app
 	 */
-	public function postAddFormAction(Request $request, Application $app)
-	{
-		$topicId = $request->get('index');
-		
-		$topic = $app['orm.em']->getRepository('\LarpManager\Entities\Topic')
-					->find($topicId);
-		
-		$post = new \LarpManager\Entities\Post();
-		$post->setTopic($topic);
-		
-		$form = $app['form.factory']->createBuilder(new PostForm(), $post)
-			->add('save','submit', array('label' => "Sauvegarder"))
-			->getForm();
-		
-		return $app['twig']->render('forum/post_add.twig', array(
-				'form' => $form->createView(),
-				'topic' => $topic,
-		));
-	}
-	
-	/**
-	 * Traitement du formulaire d'ajout d'un post dans un topic
-	 *
-	 * @param Request $request
-	 * @param Application $app
-	 */
 	public function postAddAction(Request $request, Application $app)
 	{
 		$topicId = $request->get('index');
@@ -109,33 +128,34 @@ class ForumController
 					->find($topicId);
 		
 		$post = new \LarpManager\Entities\Post();
-				
+		$post->setTopic($topic);
+		
 		$form = $app['form.factory']->createBuilder(new PostForm(), $post)
 			->add('save','submit', array('label' => "Sauvegarder"))
 			->getForm();
 		
 		$form->handleRequest($request);
 		
-		/**
-		 * Si la requête est invalide, renvoyer vers une page d'erreur
-		 */
-		if ( ! $form->isValid() )
+		if ( $form->isValid() )
 		{
-			throw new LarpManager\Exception\RequestInvalidException();
+			$post = $form->getData();			
+			$post->setTopic($topic);
+			$post->setUser($app['user']);
+			
+			$app['orm.em']->persist($post);
+			$app['orm.em']->flush();
+			
+			$app['session']->getFlashBag()->add('success', 'Le message a été ajouté.');
+			
+			return $app->redirect($app['url_generator']->generate('forum.topic',array('index'=> $topic->getId())),301);
 		}
-		
-		$post = $form->getData();
-		
-		$post->setTopic($topic);
-		$post->setUser($app['user']);
-		
-		$app['orm.em']->persist($post);
-		$app['orm.em']->flush();
-		
-		$app['session']->getFlashBag()->add('success', 'Le message a été ajouté.');
-		
-		return $app->redirect($app['url_generator']->generate('forum.topic',array('index'=> $topic->getId())),301);
+			
+		return $app['twig']->render('forum/post_add.twig', array(
+				'form' => $form->createView(),
+				'topic' => $topic,
+		));
 	}
+	
 	
 	/**
 	 * Lire un post

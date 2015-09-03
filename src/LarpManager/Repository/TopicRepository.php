@@ -13,6 +13,18 @@ use LarpManager\Entities\Topic;
 class TopicRepository extends EntityRepository
 {
 	/**
+	 * Trouve tous les topics de premier niveau (qui ne sont pas des sous-forums)
+	 */
+	public function findAllRoot()
+	{
+		$query = $this->getEntityManager()
+				->createQuery('SELECT t FROM LarpManager\Entities\Topic t WHERE IDENTITY(t.topic) IS NULL ORDER BY t.creation_date ASC');
+		
+		$topics = $query->getResult();
+		return $topics;
+	}
+	
+	/**
 	 * Trouve tous les topics classés par date de création.
 	 * Si le topicId est fourni, retourne la liste des topics appartenant à ce topic.
 	 * Si le topicId n'est pas fourni, retourne la liste des topics de premier niveau.

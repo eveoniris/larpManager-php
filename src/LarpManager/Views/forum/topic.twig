@@ -7,24 +7,37 @@
 <div class="container-fluid">
 	<div class="row">
 		<div class="col-xs-12 col-md-12">
-			<a href="{{ path('forum.topic') }}">Retour au forum</a>
 			
-			<div class="well well-sm">
-				<h4>
-					{{ topic.title }}
-				</h4>
-				<p>
-					{{ topic.description }}
-				</p>
+			<div class="panel">
+				<div class="panel-heading">
+					<h5>
+						<div class="pull-right">
+							<a class="btn btn-default" href="{{ path('forum.topic.add',{'index': topic.id}) }}">Ajouter un nouveau sous-forum</a>
+						</div>
+						{{ topic.title }}
+						{{ topic.description }}
+					</h5>
+				</div>
+				<div class="panel-body">
+					{# liste des topics #}
+					{{ include("forum/fragment/topic_list.twig", {'topics' : topic.topics}) }}
+				</div>
 			</div>
-
-			{# liste des topics #}
-			{{ include("forum/fragment/topic_list.twig", {'topics' : topic.topics, 'topicId': topic.id}) }}
-							
-			{# liste des posts #}
-			{{ include("forum/fragment/post_list.twig", {'posts' : topic.posts,'topicId': topic.id}) }}
-
 			
+			<div class="panel">
+				<div class="panel-heading">
+					<h5>
+						<div class="pull-right">
+							<small><a class="btn btn-default" href="{{ path('forum.post.add', {'index':topic.id}) }}">Ajouter un nouveau message</a></small>
+						</div>
+						Discussions
+					<h5>
+				</div>
+				<div class="panel-body">
+					{# liste des posts #}
+					{{ include("forum/fragment/post_list.twig", {'posts' : topic.posts}) }}
+				</div>
+			</div>
 		</div>
 	</div>
 

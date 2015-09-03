@@ -8,18 +8,25 @@
 	<div class="row">
 		<div class="col-xs-12 col-md-12">
 		
-			<div class="well well-sm">
-				<h4>
-					Les forums
-				</h4>
+			<div class="panel">
+				<div class="panel-heading">
+					<h5>
+						<div class="pull-right">
+							<a class="btn btn-default" href="{{ path('forum.add') }}">Ajouter un nouveau forum</a>
+						</div>
+						Forum
+					</h5>
+				</div>
+				<div class="panel-body">
+					{# liste des topics #}
+					{{ include("forum/fragment/topic_list.twig", {'topics' : topics}) }}
+				</div>
 			</div>
 
-			{# liste des topics #}
-			{{ include("forum/fragment/topic_list.twig", {'topics' : topics,'topicId': null}) }}
+							
 			
 		</div>
 	</div>
-
 </div>
 	
 {% endblock %}

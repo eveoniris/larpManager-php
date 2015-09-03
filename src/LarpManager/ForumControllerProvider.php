@@ -33,15 +33,25 @@ class ForumControllerProvider implements ControllerProviderInterface
 	{
 		$controllers = $app['controllers_factory'];
 		
-		/** liste des topics */
-		$controllers->match('/topic','LarpManager\Controllers\ForumController::topicAction')
-			->bind("forum.topic")
+		/** liste des topics de premier niveau (qui ne sont pas des sous-forums) */
+		$controllers->match('/','LarpManager\Controllers\ForumController::forumAction')
+			->bind("forum")
 			->method('GET');
 		
-		/** Formulaire d'ajout d'un topic */
-		$controllers->match('/topic/add/form','LarpManager\Controllers\ForumController::topicAddFormAction')
-			->bind("forum.topic.add.form")
+		/** Ajouter un topic de premier niveau (qui n'est pas un sous-forum) */
+		$controllers->match('/add','LarpManager\Controllers\ForumController::forumAddAction')
+			->bind("forum.add")
+			->method('GET|POST');
+		
+		/** detail d'un topic */
+		$controllers->match('/{index}','LarpManager\Controllers\ForumController::topicAction')
+			->bind("forum.topic")
 			->method('GET');
+
+		/** Ajout d'un post */
+		$controllers->match('/post/add','LarpManager\Controllers\ForumController::postAddAction')
+			->bind("forum.post.add")
+			->method('GET|POST');
 		
 		/** Ajout d'un topic */
 		$controllers->match('/topic/add','LarpManager\Controllers\ForumController::topicAddAction')

@@ -1,25 +1,18 @@
-<div class="well">
-	<h5>
-		Discussion
-		<small><a href="{{ path('forum.topic.post.add.form', {'index':topicId}) }}">Ajouter un nouveau message</a></small>
-	</h5>
+<ul class="list-group">
 
-	<ul class="list-group">
-		{%  for post in posts %}
-		<li class="list-group-item">
-			<div class="row">
-				<div class="col-xs-8 col-md-8">
-					<h4 class="list-group-item-heading">
-						<a href="{{ path('forum.post',{'index':post.id}) }}">{{ post.title }}</a>
-					</h4>		
-				</div>
-				<div class="col-xs-4 col-md-4">
-					<p class="list-group-item-text">par {{ post.user.username }} le {{ post.creationDate|date('Y-m-d') }}. Mis à jour le {{ post.updateDate|date('Y-m-d') }}</p>
-					<p class="list-group-item-text">{{ post.posts|length }} réponses</p>
-				</div>
+	{%  for post in posts %}
+	<li class="list-group-item">
+		<div class="row">
+			<div class="col-xs-8 col-md-8">
+				<h4 class="list-group-item-heading">
+					<a href="{{ path('forum.post',{'index':post.id}) }}">{{ post.title }}</a>
+				</h4>		
 			</div>
-		</li>
-		{%  endfor %}
-	</ul>
-
-</div>
+			<div class="col-xs-4 col-md-4">
+				<p class="list-group-item-text">par {{ post.user.username }} le {{ post.creationDate|date('Y-m-d') }}. Mis à jour le {{ post.updateDate|date('Y-m-d') }}</p>
+				<span class="badge">réponses {{ post.posts|length }}</span>
+			</div>
+		</div>
+	</li>
+	{%  endfor %}
+</ul>

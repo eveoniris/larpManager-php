@@ -2,6 +2,8 @@
 
 {% block head %}
 	{{ parent() }}
+	
+	{# inclusion du plugin meltdown pour la saisie du post #}
 	<link rel="stylesheet" href="{{ app.request.basepath }}/css/meltdown.css" />
 {% endblock head %}
 
@@ -41,9 +43,9 @@
 
 {% block javascript %}
 
-{{ parent() }}
+	{{ parent() }}
 
-	         
+	{# inclusion du plugin meltdown pour la saisie du post #}   
 	<script src="{{ app.request.basepath }}/js/lib/element_resize_detection.js"></script>
     <script src="{{ app.request.basepath }}/js/lib/js-markdown-extra.js"></script>
     <script src="{{ app.request.basepath }}/js/lib/rangyinputs-jquery.min.js"></script>
