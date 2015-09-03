@@ -1,13 +1,25 @@
-<ul class="list-group">
-	{%  for post in posts %}
-	<li class="list-group-item">
-		
-		<h4 class="list-group-item-heading">
-			{{ post.title }}
-		</h4>
-				
-		<p class="list-group-item-text text-default">{{ post.text }}</p>
-		
-	</li>
-	{%  endfor %}
-</ul>
+<div class="well">
+	<h5>
+		Discussion
+		<small><a href="{{ path('forum.topic.post.add.form', {'index':topicId}) }}">Ajouter un nouveau message</a></small>
+	</h5>
+
+	<ul class="list-group">
+		{%  for post in posts %}
+		<li class="list-group-item">
+			<div class="row">
+				<div class="col-xs-8 col-md-8">
+					<h4 class="list-group-item-heading">
+						<a href="{{ path('forum.post',{'index':post.id}) }}">{{ post.title }}</a>
+					</h4>		
+				</div>
+				<div class="col-xs-4 col-md-4">
+					<p class="list-group-item-text">par {{ post.user.username }} le {{ post.creationDate|date('Y-m-d') }}. Mis à jour le {{ post.updateDate|date('Y-m-d') }}</p>
+					<p class="list-group-item-text">{{ post.posts|length }} réponses</p>
+				</div>
+			</div>
+		</li>
+		{%  endfor %}
+	</ul>
+
+</div>

@@ -1,0 +1,19 @@
+{% extends "layout.twig" %}
+
+{% block title %}Forum - message{% endblock title %}
+
+{% block content %}
+
+	<a href="">Retour au topic</a>
+	<div class="container-fluid">
+		<div class="row">
+		
+			<div class="col-xs-12 col-md-8">
+				{{ include("forum/fragment/post.twig",{'post': post}) }}
+			</div>
+		</div>
+	</div>
+	
+	<a href="">Repondre</a>
+	
+{% endblock content %}

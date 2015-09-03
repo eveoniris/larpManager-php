@@ -15,6 +15,7 @@ use Silex\Provider\SwiftmailerServiceProvider;
 use Silex\Provider\HttpFragmentServiceProvider;
 use Dflydev\Silex\Provider\DoctrineOrm\DoctrineOrmServiceProvider;
 use Saxulum\DoctrineOrmManagerRegistry\Silex\Provider\DoctrineOrmManagerRegistryProvider;
+use Nicl\Silex\MarkdownServiceProvider;
 
 use LarpManager\User\UserServiceProvider;
 use LarpManager\Groupe\GroupeServiceProvider;
@@ -154,6 +155,9 @@ else
 	$app->register(new ServiceControllerServiceProvider());
 	$app->register(new RememberMeServiceProvider());
 	$app->register(new UserServiceProvider());
+	
+	// markdown syntaxe pour les forums
+	$app->register(new MarkdownServiceProvider());
 	
 	// Other management
 	$app->register(new GroupeServiceProvider());

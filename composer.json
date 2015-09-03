@@ -23,7 +23,8 @@
 		"symfony/yaml" : "^2.5",
 		"deralex/yaml-config-service-provider" : "1.0.x-dev",
 		"swiftmailer/swiftmailer" : "5.*@stable",
-		"monolog/monolog" : "1.15.0@stable"
+		"monolog/monolog" : "1.15.0@stable",
+		"nicl/silex-markdown" : "1.1.0"
 	},
 	"autoload" : {
 		"psr-0" : {

@@ -1,19 +1,26 @@
-<ul class="list-group">
-	{%  for topic in topics %}
-	<li class="list-group-item">
-		
-		<h4 class="list-group-item-heading">
-			{{ topic.title }}
-			<div class="pull-right btn-group" role="group" aria-label="...">
-				<a href="{{ path('forum.topic.post', {index: topic.id}) }}" class="btn btn-primary" role="button">Voir</a>
-			    <a href="{{ path('forum.topic.update.form', {index: topic.id}) }}" class="btn btn-default" role="button">Modifier</a>
-			</div>
-		</h4>
-				
-		{% if topic.description %}
-			<p class="list-group-item-text text-default">{{ topic.description }}</p>
-		{%  endif %}
-		
-	</li>
-	{%  endfor %}
-</ul>
+<div class="well">
+	<h5>
+		Forum
+		<small><a href="{{ path('forum.topic.add.form', {'index':topicId}) }}">Ajouter un nouveau sous-forum</a></small>
+	</h5>
+	<ul class="list-group">
+		{%  for topic in topics %}
+		<li class="list-group-item">
+			
+			<h4 class="list-group-item-heading">
+				<a href="{{ path('forum.topic.post', {index: topic.id}) }}">{{ topic.title }}</a>
+
+			</h4>
+					
+			{% if topic.description %}
+				<p class="list-group-item-text text-default">{{ topic.description }}</p>
+			{%  endif %}
+			
+			Nombre de message dans ce topic
+			Dernier message date/heure/utilisateur
+			Lien vers les sous-forums
+			
+		</li>
+		{%  endfor %}
+	</ul>
+</div>

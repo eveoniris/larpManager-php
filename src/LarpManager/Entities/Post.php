@@ -18,4 +18,10 @@ use LarpManager\Entities\BasePost;
  */
 class Post extends BasePost
 {
+	public function __construct()
+	{
+		parent::__construct();
+		$this->setCreationDate(new \Datetime('NOW'));
+		$this->setUpdateDate(new \Datetime('NOW'));
+	}
 }

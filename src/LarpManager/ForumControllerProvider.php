@@ -66,6 +66,24 @@ class ForumControllerProvider implements ControllerProviderInterface
 			->bind("forum.topic.post")
 			->method('GET');
 		
+		/** Voir un post */
+		$controllers->match('/post/{index}','LarpManager\Controllers\ForumController::postAction')
+			->assert('index', '\d+')
+			->bind("forum.post")
+			->method('GET');
+		
+		/** Répondre à un post */
+		$controllers->match('/post/{index}/response','LarpManager\Controllers\ForumController::postResponseFormAction')
+			->assert('index', '\d+')
+			->bind("forum.post.response.form")
+			->method('GET');
+		
+		/** Traitement du formulaire pour répondre à un post */
+		$controllers->match('/post/{index}/response','LarpManager\Controllers\ForumController::postResponseAction')
+			->assert('index', '\d+')
+			->bind("forum.post.response")
+			->method('POST');
+		
 		/** formulaire d'ajout d'un post dans un topic */
 		$controllers->match('/topic/{index}/post/add','LarpManager\Controllers\ForumController::postAddFormAction')
 			->assert('index', '\d+')

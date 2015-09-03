@@ -4,6 +4,8 @@ namespace LarpManager\Controllers;
 use Symfony\Component\HttpFoundation\Request;
 use Silex\Application;
 
+use LarpManager\Form\PostForm;
+
 /**
  * LarpManager\Controllers\ForumController
  *
@@ -33,11 +35,9 @@ class ForumController
 		$topics = $app['orm.em']->getRepository('\LarpManager\Entities\Topic')
 						->findAllRelatedToJoueurReferedGns($joueur->getId());
 
-		$view = $app['twig']->render('forum/topic.twig', array(
-				'topic' => null,
+		$view = $app['twig']->render('forum/root.twig', array(
 				'topics' => $topics,
-				'posts' => null,
-				'parent' => null
+
 		));
 		return $view;
 	}
@@ -63,9 +63,6 @@ class ForumController
 		
 		$view = $app['twig']->render('forum/topic.twig', array(
 				'topic' => $topic,
-				'topics' => $topic->getTopics(),
-				'posts' => $topic->getPosts(),
-				'parent' => $topic->getTopic(),
 		));
 		
 		return $view;
@@ -80,7 +77,22 @@ class ForumController
 	 */
 	public function postAddFormAction(Request $request, Application $app)
 	{
+		$topicId = $request->get('index');
 		
+		$topic = $app['orm.em']->getRepository('\LarpManager\Entities\Topic')
+					->find($topicId);
+		
+		$post = new \LarpManager\Entities\Post();
+		$post->setTopic($topic);
+		
+		$form = $app['form.factory']->createBuilder(new PostForm(), $post)
+			->add('save','submit', array('label' => "Sauvegarder"))
+			->getForm();
+		
+		return $app['twig']->render('forum/post_add.twig', array(
+				'form' => $form->createView(),
+				'topic' => $topic,
+		));
 	}
 	
 	/**
@@ -91,6 +103,55 @@ class ForumController
 	 */
 	public function postAddAction(Request $request, Application $app)
 	{
+		$topicId = $request->get('index');
+		
+		$topic = $app['orm.em']->getRepository('\LarpManager\Entities\Topic')
+					->find($topicId);
+		
+		$post = new \LarpManager\Entities\Post();
+				
+		$form = $app['form.factory']->createBuilder(new PostForm(), $post)
+			->add('save','submit', array('label' => "Sauvegarder"))
+			->getForm();
+		
+		$form->handleRequest($request);
+		
+		/**
+		 * Si la requête est invalide, renvoyer vers une page d'erreur
+		 */
+		if ( ! $form->isValid() )
+		{
+			throw new LarpManager\Exception\RequestInvalidException();
+		}
+		
+		$post = $form->getData();
+		
+		$post->setTopic($topic);
+		$post->setUser($app['user']);
+		
+		$app['orm.em']->persist($post);
+		$app['orm.em']->flush();
+		
+		$app['session']->getFlashBag()->add('success', 'Le message a été ajouté.');
+		
+		return $app->redirect($app['url_generator']->generate('forum.topic',array('index'=> $topic->getId())),301);
+	}
 	
+	/**
+	 * Lire un post
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function postAction(Request $request, Application $app)
+	{
+		$postId = $request->get('index');
+		
+		$post = $app['orm.em']->getRepository('\LarpManager\Entities\Post')
+							->find($postId);
+		
+		return $app['twig']->render('forum/post.twig', array(
+				'post' => $post,
+		));
 	}
 }

@@ -1,0 +1,10 @@
+<div class="well"
+	{{ post.title }}
+	{{ post.text|markdown }}
+	
+	{# liste des réponses #}
+	
+	{% for p in post.posts %}
+	
+	{% endfor %}
+</div>
