@@ -145,6 +145,13 @@ class GroupeController
 			$groupe->setTopic($topic);
 			
 			$app['orm.em']->persist($groupe);
+			
+			// défini les droits d'accés à ce forum
+			// (les membres du groupe ont le droit d'accéder à ce forum)
+			$topic->setRight('GROUPE_MEMBER');
+			$topic->setObjectId($gn->getId());
+			
+			$app['orm.em']->persist($topic);
 			$app['orm.em']->flush();
 		
 			$app['session']->getFlashBag()->add('success','Le groupe été sauvegardé');

@@ -33,7 +33,7 @@ class ForumControllerProvider implements ControllerProviderInterface
 	{
 		$controllers = $app['controllers_factory'];
 		
-		/** liste des topics de premier niveau (qui ne sont pas des sous-forums) */
+		/** liste des forums de premier niveau (qui ne sont pas des sous-forums) */
 		$controllers->match('/','LarpManager\Controllers\ForumController::forumAction')
 			->bind("forum")
 			->method('GET');
@@ -43,81 +43,35 @@ class ForumControllerProvider implements ControllerProviderInterface
 			->bind("forum.add")
 			->method('GET|POST');
 		
-		/** detail d'un topic */
+		/** detail d'un forum */
 		$controllers->match('/{index}','LarpManager\Controllers\ForumController::topicAction')
+			->assert('index', '\d+')
 			->bind("forum.topic")
 			->method('GET');
+		
+		/** Ajouter un sous-forum */
+		$controllers->match('/{index}/add','LarpManager\Controllers\ForumController::topicAddAction')
+			->assert('index', '\d+')
+			->bind("forum.topic.add")
+			->method('GET|POST');
 
 		/** Ajout d'un post */
 		$controllers->match('/post/add','LarpManager\Controllers\ForumController::postAddAction')
 			->bind("forum.post.add")
 			->method('GET|POST');
 		
-		/** Ajout d'un topic */
-		$controllers->match('/topic/add','LarpManager\Controllers\ForumController::topicAddAction')
-			->bind("forum.topic.add")
-			->method('POST');
-		
-		/** Formulaire de modification d'un topic */
-		$controllers->match('/topic/{index}/update/form','LarpManager\Controllers\ForumController::topicUpdateFormAction')
+		/** Répondre à un post */
+		$controllers->match('/post/{index}/response','LarpManager\Controllers\ForumController::postResponseAction')
 			->assert('index', '\d+')
-			->bind("forum.topic.update.form")
-			->method('GET');
-			
-		/** modification d'un topic */
-		$controllers->match('/topic/{index}/update','LarpManager\Controllers\ForumController::topicUpdateAction')
-			->assert('index', '\d+')
-			->bind("forum.topic.update")
-			->method('POST');
-		
-		/** liste des posts dans un topic */
-		$controllers->match('/topic/{index}/post','LarpManager\Controllers\ForumController::topicPostAction')
-			->assert('index', '\d+')
-			->bind("forum.topic.post")
-			->method('GET');
+			->bind("forum.post.response")
+			->method('GET|POST');
 		
 		/** Voir un post */
 		$controllers->match('/post/{index}','LarpManager\Controllers\ForumController::postAction')
 			->assert('index', '\d+')
 			->bind("forum.post")
 			->method('GET');
-		
-		/** Répondre à un post */
-		$controllers->match('/post/{index}/response','LarpManager\Controllers\ForumController::postResponseFormAction')
-			->assert('index', '\d+')
-			->bind("forum.post.response.form")
-			->method('GET');
-		
-		/** Traitement du formulaire pour répondre à un post */
-		$controllers->match('/post/{index}/response','LarpManager\Controllers\ForumController::postResponseAction')
-			->assert('index', '\d+')
-			->bind("forum.post.response")
-			->method('POST');
-		
-		/** formulaire d'ajout d'un post dans un topic */
-		$controllers->match('/topic/{index}/post/add','LarpManager\Controllers\ForumController::postAddFormAction')
-			->assert('index', '\d+')
-			->bind("forum.topic.post.add.form")
-			->method('GET');
-			
-		/** ajout d'un post dans un topic */
-		$controllers->match('/topic/{index}/post/add','LarpManager\Controllers\ForumController::postAddAction')
-			->assert('index', '\d+')
-			->bind("forum.topic.post.add")
-			->method('POST');
-		
-		/** formulaire de modification d'un post */
-		$controllers->match('/post/{index}/update/form','LarpManager\Controllers\ForumController::postUpdateFormAction')
-			->assert('index', '\d+')
-			->bind("forum.post.update.form")
-			->method('GET');
-		
-		/** modification d'un post */
-		$controllers->match('/post/{index}/update','LarpManager\Controllers\ForumController::postUpdateAction')
-			->assert('index', '\d+')
-			->bind("forum.post.update")
-			->method('POST');
-		
+
 		return $controllers;
 	}
 }

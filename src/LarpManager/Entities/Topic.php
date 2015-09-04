@@ -24,4 +24,9 @@ class Topic extends BaseTopic
 		$this->setCreationDate(new \Datetime('NOW'));
 		$this->setUpdateDate(new \Datetime('NOW'));
 	}
+	
+	public function __toString()
+	{
+		return $this->getTitle();
+	}
 }

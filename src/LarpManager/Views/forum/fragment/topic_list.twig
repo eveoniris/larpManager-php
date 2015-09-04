@@ -1,31 +1,44 @@
-
-	<ul class="list-group">
-		{%  for topic in topics %}
-		<li class="list-group-item">
-			
-			<h4 class="list-group-item-heading">
-				<a href="{{ path('forum.topic', {index: topic.id}) }}">{{ topic.title }}</a>
-			</h4>
-				
-			<p class="list-group-item-text text-default">
+<ul class="list-group">
+	{%  for topic in topics %}
+		{% if topic|forumRight(app.user) %}
+			<li class="list-group-item">
 				<div class="row">
-					<div class="col-xs-8 col-md-8">	
-						{{ topic.description|default('pas de description') }}
-					</div>
-					<div class="col-xs-4 col-md-4">			
-						<span class="badge">Messages {{ topic.posts|length }}</span>
-						
+									
+					<div class="col-xs-9 col-md-9">
+						<h5 class="list-group-item-heading">
+							<a href="{{ path('forum.topic', {index: topic.id}) }}">
+								{{ topic.title }}
+							</a>
+						</h5>
+						<p class="list-group-item-text text-default">
+							{{ topic.description|default('pas de description') }}
+						</p>
 						{% if topic.topics|length > 0 %}
-							{% for t in topic.topics %}
-								<span>{{ t.title }}</span>
-							{% endfor %}
-							{% set lastTopic = topic.topics|last %}
-							{{ lastTopic.updateDate|date('Y-m-d') }}
-							par {{ lastTopic.user.username }}
+							<p class="list-group-item-text text-default">
+								Sous-forums : {{ topic.topics|join(', ') }} 
+							</p>
 						{% endif %}
 					</div>
+					<div class="col-xs-1 col-md-1">
+						{# nombre de sujets #}
+						{{ topic.posts|length }} Sujets
+					</div>
+					<div class="col-xs-2 col-md-2">
+						{# dernier message #}
+						
+						{% set lastPost = topic.posts|last %}
+						{% if lastPost %}
+							Dernier message :
+							<a href="{{ path('forum.post',{'index':lastPost.id}) }}">
+								{{ lastPost.title }}	
+							</a><br />
+							Par {{ lastPost.user.username }}<br />
+							{{ lastPost.creationDate|time_diff }}
+						{% endif %}
+					</div>
+					
 				</div>
-			</p>
-		</li>
-		{%  endfor %}
-	</ul>
+			</li>
+		{% endif %}
+	{%  endfor %}
+</ul>

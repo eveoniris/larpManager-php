@@ -1,10 +1,33 @@
-<div class="well"
-	{{ post.title }}
-	{{ post.text|markdown }}
-	
-	{# liste des réponses #}
-	
-	{% for p in post.posts %}
-	
-	{% endfor %}
+<div class="well">
+	<ul class="list-group">
+
+		<li class="list-group-item">
+			<div class="row">
+				<div class="col-xs-8 col-md-8">
+					<h4 class="list-group-item-heading">{{ post.title }}</h4>
+					<p class="list-group-item-text">{{ post.text|markdown }}</p>
+				</div>
+				<div class="col-xs-4 col-md-4">
+					<p>par {{ post.user.username }} le {{ post.creationDate|date('Y-m-d') }}.</p>
+					<p>Mis à jour le {{ post.updateDate|date('Y-m-d') }}</p>
+				</div>
+			</div>
+		</li>
+		
+		{# liste des réponses #}
+		{% for p in post.posts %}
+		<li class="list-group-item" id="post_{{ p.id }}">
+			<div class="row">
+				<div class="col-xs-8 col-md-8">
+					<p class="list-group-item-text">{{ p.text|markdown }}</p>		
+				</div>
+				<div class="col-xs-4 col-md-4">
+					<p>par {{ p.user.username }} le {{ p.creationDate|date('Y-m-d') }}.</p>
+					<p>Mis à jour le {{ p.updateDate|date('Y-m-d') }}</p>
+				</div>
+			</div>
+		</li>
+		{%  endfor %}
+	</ul>
+
 </div>

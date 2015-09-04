@@ -4,7 +4,7 @@
 
 {% block content %}
 
-	<a href="">Retour au topic</a>
+	<a href="{{ path('forum.topic', {'index': post.topic.id}) }}">Retour au topic</a>
 	<div class="container-fluid">
 		<div class="row">
 		
@@ -14,6 +14,6 @@
 		</div>
 	</div>
 	
-	<a href="">Repondre</a>
+	<a href="{{ path('forum.post.response',{'index':post.id}) }}">Repondre</a>
 	
 {% endblock content %}

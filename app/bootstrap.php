@@ -24,6 +24,8 @@ use LarpManager\Appelation\AppelationServiceProvider;
 use LarpManager\Personnage\PersonnageServiceProvider;
 use LarpManager\Joueur\JoueurServiceProvider;
 
+use LarpManager\LarpManagerServiceProvider;
+
 $loader = require_once __DIR__.'/../vendor/autoload.php';
 
 $app = new Silex\Application();
@@ -165,6 +167,8 @@ else
 	$app->register(new AppelationServiceProvider());
 	$app->register(new PersonnageServiceProvider());
 	$app->register(new JoueurServiceProvider());
+	
+	$app->register(new LarpManagerServiceProvider());
 	
 	// Define firewall
 	$app['security.firewalls'] = array(

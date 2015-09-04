@@ -3,14 +3,24 @@
 	{%  for post in posts %}
 	<li class="list-group-item">
 		<div class="row">
-			<div class="col-xs-8 col-md-8">
-				<h4 class="list-group-item-heading">
-					<a href="{{ path('forum.post',{'index':post.id}) }}">{{ post.title }}</a>
-				</h4>		
+			<div class="col-xs-1 col-md-1">
+				<center>
+					<bold>{{ post.posts|length }}</bold><br />
+					réponses
+				</center>
 			</div>
-			<div class="col-xs-4 col-md-4">
-				<p class="list-group-item-text">par {{ post.user.username }} le {{ post.creationDate|date('Y-m-d') }}. Mis à jour le {{ post.updateDate|date('Y-m-d') }}</p>
-				<span class="badge">réponses {{ post.posts|length }}</span>
+			<div class="col-xs-8 col-md-8">
+				<h6 class="list-group-item-heading">
+					<a href="{{ path('forum.post',{'index':post.id}) }}">{{ post.title }}</a>
+				</h6>
+				Sujet démaré {{ post.creationDate|time_diff }} 	par {{ post.user.username }}
+			</div>
+			<div class="col-xs-3 col-md-3">
+				{% set lastPost = post.posts|last %}
+				{% if lastPost %}
+					<a href="{{ path('forum.post',{'index':post.id}) ~ '#post_' ~ lastPost.id }}">Dernier message</a> par {{ lastPost.user.username }}<br />
+					{{ lastPost.creationDate|time_diff }}
+				{% endif %} 
 			</div>
 		</div>
 	</li>
