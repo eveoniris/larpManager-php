@@ -18,13 +18,9 @@ use Saxulum\DoctrineOrmManagerRegistry\Silex\Provider\DoctrineOrmManagerRegistry
 use Nicl\Silex\MarkdownServiceProvider;
 
 use LarpManager\User\UserServiceProvider;
-use LarpManager\Groupe\GroupeServiceProvider;
-use LarpManager\Territoire\TerritoireServiceProvider;
 use LarpManager\Appelation\AppelationServiceProvider;
 use LarpManager\Personnage\PersonnageServiceProvider;
-use LarpManager\Joueur\JoueurServiceProvider;
-
-use LarpManager\LarpManagerServiceProvider;
+use LarpManager\Services\LarpManagerServiceProvider;
 
 $loader = require_once __DIR__.'/../vendor/autoload.php';
 
@@ -162,11 +158,7 @@ else
 	$app->register(new MarkdownServiceProvider());
 	
 	// Other management
-	$app->register(new GroupeServiceProvider());
-	$app->register(new TerritoireServiceProvider());
-	$app->register(new AppelationServiceProvider());
 	$app->register(new PersonnageServiceProvider());
-	$app->register(new JoueurServiceProvider());
 	
 	$app->register(new LarpManagerServiceProvider());
 	
@@ -241,6 +233,7 @@ else
 		'ROLE_STOCK' => array('ROLE_USER', 'ROLE_STOCK'),
 		'ROLE_SCENARISTE' => array('ROLE_USER', 'ROLE_SCENARISTE'),
 		'ROLE_REGLE' => array('ROLE_USER', 'ROLE_REGLE'),
+		'ROLE_MODERATOR' => array('ROLE_USER', 'ROLE_MODERATOR'), 
 		'ROLE_ADMIN' => array('ROLE_USER', 'ROLE_STOCK','ROLE_SCENARISTE','ROLE_REGLE'),
 	);
 	

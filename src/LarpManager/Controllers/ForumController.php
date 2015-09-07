@@ -83,13 +83,6 @@ class ForumController
 
 		$topic = $app['orm.em']->getRepository('\LarpManager\Entities\Topic')->find($id);
 		
-		// vérification des droits
-		if ( ! $app['forum.manager']->right($topic,$app['user']) )
-		{
-			$app['session']->getFlashBag()->add('error', 'Vous n\'avez pas les droits necessaires pour acceder à ce forum');
-			return $app->redirect($app['url_generator']->generate('forum'),301);
-		}
-
 		$view = $app['twig']->render('forum/topic.twig', array(
 				'topic' => $topic,
 		));
@@ -108,14 +101,7 @@ class ForumController
 		
 		$topic = $app['orm.em']->getRepository('\LarpManager\Entities\Topic')
 					->find($topicId);
-		
-		// vérification des droits
-		if ( ! $app['forum.manager']->right($topic,$app['user']) )
-		{
-			$app['session']->getFlashBag()->add('error', 'Vous n\'avez pas les droits necessaires pour ajouter un message dans ce forum');
-			return $app->redirect($app['url_generator']->generate('forum'),301);
-		}
-		
+				
 		$post = new \LarpManager\Entities\Post();
 		$post->setTopic($topic);
 		
@@ -158,14 +144,32 @@ class ForumController
 		
 		$post = $app['orm.em']->getRepository('\LarpManager\Entities\Post')
 							->find($postId);
-		
-		// vérification des droits
-		if ( ! $app['forum.manager']->right($post->getTopic(),$app['user']) )
+				
+		// Mettre à jour les vues de ce post (et de toutes ces réponses)
+		if ( ! $app['user']->alreadyView($post))
 		{
-			$app['session']->getFlashBag()->add('error', 'Vous n\'avez pas les droits necessaires pour lire ce message');
-			return $app->redirect($app['url_generator']->generate('forum'),301);
+			$postView = new \LarpManager\Entities\PostView();
+			$postView->setDate(new \Datetime('NOW'));
+			$postView->setUser($app['user']);
+			$postView->setPost($post);
+			$app['orm.em']->persist($postView);
 		}
 							
+		foreach ( $post->getPosts() as $p)
+		{
+			if ( ! $app['user']->alreadyView($p))
+			{
+				$postView = new \LarpManager\Entities\PostView();
+				$postView->setDate(new \Datetime('NOW'));
+				$postView->setUser($app['user']);
+				$postView->setPost($p);
+				
+				$app['orm.em']->persist($postView);
+			}
+		}
+		
+		$app['orm.em']->flush();
+									
 		return $app['twig']->render('forum/post.twig', array(
 				'post' => $post,
 		));
@@ -217,6 +221,44 @@ class ForumController
 		return $app['twig']->render('forum/post_response.twig', array(
 				'form' => $form->createView(),
 				'postToResponse' => $postToResponse,
+		));
+	}
+	
+	/**
+	 * Modifier un post
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function postUpdateAction(Request $request, Application $app)
+	{
+		$postId = $request->get('index');
+	
+		$post = $app['orm.em']->getRepository('\LarpManager\Entities\Post')
+			->find($postId);
+		
+		$form = $app['form.factory']->createBuilder(new PostForm(), $post)
+			->add('save','submit', array('label' => "Sauvegarder"))
+			->getForm();
+	
+		$form->handleRequest($request);
+	
+		if ( $form->isValid() )
+		{
+			$post = $form->getData();
+			$post->setUpdateDate(new \Datetime('NOW'));
+	
+			$app['orm.em']->persist($post);
+			$app['orm.em']->flush();
+	
+			$app['session']->getFlashBag()->add('success', 'Le message a été modifié.');
+	
+			return $app->redirect($app['url_generator']->generate('forum.post',array('index'=> $post->getId())),301);
+		}
+	
+		return $app['twig']->render('forum/post_update.twig', array(
+				'form' => $form->createView(),
+				'post' => $post,
 		));
 	}
 	

@@ -11,6 +11,7 @@ namespace LarpManager\Entities;
 
 use LarpManager\Entities\BaseUser;
 use Symfony\Component\Security\Core\User\AdvancedUserInterface;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * LarpManager\Entities\User
@@ -38,6 +39,42 @@ class User extends BaseUser implements AdvancedUserInterface, \Serializable
 	public function __toString()
 	{
 		return $this->getUsername();
+	}
+	
+	/**
+	 * Determine si l'utilisateur a déjà lu ce post
+	 * 
+	 * @param LarpManager\Entities\Post $post
+	 */
+	public function alreadyView(\LarpManager\Entities\Post $post)
+	{
+		foreach ( $this->getPostViews() as $postView )
+		{
+			if ( $postView->getPost() == $post) return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Determine si l'une des réponses à un post n'a pas été lu par l'utilisateur
+	 * 
+	 * @param LarpManager\Entities\Post $post
+	 */
+	public function newResponse(\LarpManager\Entities\Post $post)
+	{
+		// construit la liste des posts déjà vue
+		$alreadyView = new ArrayCollection();
+		
+		foreach ( $this->getPostViews() as $postView )
+		{
+			$alreadyView[] = $postView->getPost();
+		}
+		
+		foreach($post->getPosts() as $p)
+		{
+			if ( ! $alreadyView->contains($p) ) return true;
+		}
+		return false;
 	}
 	
 	/**

@@ -10,15 +10,15 @@
 namespace LarpManager\Entities;
 
 /**
- * LarpManager\Entities\Chronologie
+ * LarpManager\Entities\PostView
  *
  * @Entity()
- * @Table(name="chronologie", indexes={@Index(name="fk_chronologie_zone_politique1_idx", columns={"zone_politique_id"})})
+ * @Table(name="post_view", indexes={@Index(name="fk_post_view_post1_idx", columns={"post_id"}), @Index(name="fk_post_view_user1_idx", columns={"user_id"})})
  * @InheritanceType("SINGLE_TABLE")
  * @DiscriminatorColumn(name="discr", type="string")
- * @DiscriminatorMap({"base":"BaseChronologie", "extended":"Chronologie"})
+ * @DiscriminatorMap({"base":"BasePostView", "extended":"PostView"})
  */
-class BaseChronologie
+class BasePostView
 {
     /**
      * @Id
@@ -33,15 +33,16 @@ class BaseChronologie
     protected $date;
 
     /**
-     * @Column(type="text")
+     * @ManyToOne(targetEntity="Post", inversedBy="postViews")
+     * @JoinColumn(name="post_id", referencedColumnName="id")
      */
-    protected $description;
+    protected $post;
 
     /**
-     * @ManyToOne(targetEntity="Territoire", inversedBy="chronologies")
-     * @JoinColumn(name="zone_politique_id", referencedColumnName="id")
+     * @ManyToOne(targetEntity="User", inversedBy="postViews")
+     * @JoinColumn(name="user_id", referencedColumnName="id")
      */
-    protected $territoire;
+    protected $user;
 
     public function __construct()
     {
@@ -51,7 +52,7 @@ class BaseChronologie
      * Set the value of id.
      *
      * @param integer $id
-     * @return \LarpManager\Entities\Chronologie
+     * @return \LarpManager\Entities\PostView
      */
     public function setId($id)
     {
@@ -74,7 +75,7 @@ class BaseChronologie
      * Set the value of date.
      *
      * @param \DateTime $date
-     * @return \LarpManager\Entities\Chronologie
+     * @return \LarpManager\Entities\PostView
      */
     public function setDate($date)
     {
@@ -94,53 +95,53 @@ class BaseChronologie
     }
 
     /**
-     * Set the value of description.
+     * Set Post entity (many to one).
      *
-     * @param string $description
-     * @return \LarpManager\Entities\Chronologie
+     * @param \LarpManager\Entities\Post $post
+     * @return \LarpManager\Entities\PostView
      */
-    public function setDescription($description)
+    public function setPost(Post $post = null)
     {
-        $this->description = $description;
+        $this->post = $post;
 
         return $this;
     }
 
     /**
-     * Get the value of description.
+     * Get Post entity (many to one).
      *
-     * @return string
+     * @return \LarpManager\Entities\Post
      */
-    public function getDescription()
+    public function getPost()
     {
-        return $this->description;
+        return $this->post;
     }
 
     /**
-     * Set Territoire entity (many to one).
+     * Set User entity (many to one).
      *
-     * @param \LarpManager\Entities\Territoire $territoire
-     * @return \LarpManager\Entities\Chronologie
+     * @param \LarpManager\Entities\User $user
+     * @return \LarpManager\Entities\PostView
      */
-    public function setTerritoire(Territoire $territoire = null)
+    public function setUser(User $user = null)
     {
-        $this->territoire = $territoire;
+        $this->user = $user;
 
         return $this;
     }
 
     /**
-     * Get Territoire entity (many to one).
+     * Get User entity (many to one).
      *
-     * @return \LarpManager\Entities\Territoire
+     * @return \LarpManager\Entities\User
      */
-    public function getTerritoire()
+    public function getUser()
     {
-        return $this->territoire;
+        return $this->user;
     }
 
     public function __sleep()
     {
-        return array('id', 'date', 'description', 'zone_politique_id');
+        return array('id', 'date', 'post_id', 'user_id');
     }
 }

@@ -8,12 +8,18 @@
 	<div class="row">
 		<div class="col-xs-12 col-md-12">
 		
+			<ol class="breadcrumb">
+				<li>Navigation :</li>
+				<li class="active">Forum</li>
+			</ol>
 			<div class="panel">
 				<div class="panel-heading">
 					<h5>
-						<div class="pull-right">
-							<a class="btn btn-default" href="{{ path('forum.add') }}">Ajouter un nouveau forum</a>
-						</div>
+						{% if is_granted('ROLE_MODERATOR', app.user) %}
+							<div class="pull-right">
+								<a class="btn btn-default" href="{{ path('forum.add') }}">Ajouter un nouveau forum</a>
+							</div>
+						{% endif %}
 						Forum
 					</h5>
 				</div>

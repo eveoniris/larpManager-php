@@ -9,14 +9,14 @@
 		<div class="col-xs-12 col-md-12">
 
 		
-		<ol class="breadcrumb">
-		<li>Navigation :</li>
-		<li><a href="{{ path('forum')  }}">Forum</a></li>
-		{% for ancestor in topic.ancestor %}
-			<li><a href="{{ path('forum.topic',{'index':ancestor.id})  }}">{{ ancestor.title }}</a></li>
-		{% endfor %}
-			<li class="active">{{ topic.title }}</li>
-		</ol>
+			<ol class="breadcrumb">
+				<li>Navigation :</li>
+				<li><a href="{{ path('forum')  }}">Forum</a></li>
+				{% for ancestor in topic.ancestor %}
+					<li><a href="{{ path('forum.topic',{'index':ancestor.id})  }}">{{ ancestor.title }}</a></li>
+				{% endfor %}
+				<li class="active">{{ topic.title }}</li>
+			</ol>
 			
 			<div class="well">
 				<h6>{{ topic.title }}</h6>
@@ -24,9 +24,11 @@
 			</div>
 			<div class="panel panel-default">
 				<div class="panel-heading">
-					<div class="pull-right">
-							<a class="btn btn-primary" href="{{ path('forum.topic.add',{'index': topic.id}) }}">Ajouter un nouveau sous-forum</a>
-					</div>
+					{% if is_granted('ROLE_MODERATOR', app.user) %}
+						<div class="pull-right">
+								<a class="btn btn-primary" href="{{ path('forum.topic.add',{'index': topic.id}) }}">Ajouter un nouveau sous-forum</a>
+						</div>
+					{% endif %}
 					<h5>
 						Catégories
 					</h5>

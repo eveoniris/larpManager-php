@@ -4,6 +4,8 @@ namespace LarpManager;
 
 use Silex\Application;
 use Silex\ControllerProviderInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
  * LarpManager\ForumControllerProvider
@@ -23,7 +25,6 @@ class ForumControllerProvider implements ControllerProviderInterface
 	 * 	- forum.topic.post : affichage des posts d'un topic
 	 * 	- forum.topic.post.add.form : formulaire d'ajout d'un post dans un topic
 	 * 	- forum.topic.post.add : ajout d'un post dans un topic
-	 * 	- forum.post.update.form : formulaire de modification d'un post
 	 * 	- forum.post.update : modification d'un post
 	 *   
 	 * @param Application $app
@@ -41,36 +42,85 @@ class ForumControllerProvider implements ControllerProviderInterface
 		/** Ajouter un topic de premier niveau (qui n'est pas un sous-forum) */
 		$controllers->match('/add','LarpManager\Controllers\ForumController::forumAddAction')
 			->bind("forum.add")
-			->method('GET|POST');
-		
+			->method('GET|POST')
+			->before(function(Request $request) use ($app) {
+				if (!$app['security.authorization_checker']->isGranted('ROLE_MODERATOR')) {
+					throw new AccessDeniedException();
+				}
+			});
+
 		/** detail d'un forum */
 		$controllers->match('/{index}','LarpManager\Controllers\ForumController::topicAction')
 			->assert('index', '\d+')
 			->bind("forum.topic")
-			->method('GET');
+			->method('GET')
+			->before(function(Request $request) use ($app) {
+				$topicId = $request->get('index');
+				$topic = $app['orm.em']->find('\LarpManager\Entities\Topic',$topicId);
+				if (!$app['security.authorization_checker']->isGranted('TOPIC_RIGHT',$topic)) {
+					throw new AccessDeniedException();
+				}
+			});
 		
 		/** Ajouter un sous-forum */
 		$controllers->match('/{index}/add','LarpManager\Controllers\ForumController::topicAddAction')
 			->assert('index', '\d+')
 			->bind("forum.topic.add")
-			->method('GET|POST');
+			->method('GET|POST')
+			->before(function(Request $request) use ($app) {
+				if (!$app['security.authorization_checker']->isGranted('ROLE_MODERATOR')) {
+					throw new AccessDeniedException();
+				}
+			});
 
 		/** Ajout d'un post */
 		$controllers->match('/post/add','LarpManager\Controllers\ForumController::postAddAction')
 			->bind("forum.post.add")
-			->method('GET|POST');
+			->method('GET|POST')
+			->before(function(Request $request) use ($app) {
+				$topicId = $request->get('index');
+				$topic = $app['orm.em']->find('\LarpManager\Entities\Topic',$topicId);
+				if (!$app['security.authorization_checker']->isGranted('TOPIC_RIGHT',$topic)) {
+					throw new AccessDeniedException();
+				}
+			});
 		
 		/** Répondre à un post */
 		$controllers->match('/post/{index}/response','LarpManager\Controllers\ForumController::postResponseAction')
 			->assert('index', '\d+')
 			->bind("forum.post.response")
-			->method('GET|POST');
+			->method('GET|POST')
+			->before(function(Request $request) use ($app) {
+				$postId = $request->get('index');
+				$post = $app['orm.em']->find('\LarpManager\Entities\Post',$postId);
+				if (!$app['security.authorization_checker']->isGranted('TOPIC_RIGHT',$post->getTopic()) ) {
+					throw new AccessDeniedException();
+				}
+			});
+
+		/** Modifier un post */
+		$controllers->match('/post/{index}/update','LarpManager\Controllers\ForumController::postUpdateAction')
+			->assert('index', '\d+')
+			->bind("forum.post.update")
+			->method('GET|POST')
+			->before(function(Request $request) use ($app) {
+				if (!$app['security.authorization_checker']->isGranted('POST_OWNER', $request->get('index'))) {
+					throw new AccessDeniedException();
+				}
+			});
 		
 		/** Voir un post */
 		$controllers->match('/post/{index}','LarpManager\Controllers\ForumController::postAction')
 			->assert('index', '\d+')
 			->bind("forum.post")
-			->method('GET');
+			->method('GET')
+			->before(function(Request $request) use ($app) {
+				$postId = $request->get('index');
+				$post = $app['orm.em']->find('\LarpManager\Entities\Post',$postId);
+				if (!$app['security.authorization_checker']->isGranted('TOPIC_RIGHT',$post->getTopic()) ) {
+					throw new AccessDeniedException();
+				}
+			});
 
 		return $controllers;
 	}

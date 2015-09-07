@@ -4,49 +4,73 @@
 		Sujet : {{ post.title }} <small>({{ post.updateDate|time_diff }})</small>
 		</h4>
 	</div>
+	
 	<div class="panel-body">
 		<ul class="list-group">
 			<li class="list-group-item">
-				<p>
-					<a href="{{ path('user.view',{'id': post.user.id}) }}">{{ post.user.username }}</a>.
-				</p>
-					{% if not post.creationDate == post.updateDate %}
-						<p>Mis à jour le {{ post.updateDate|time_diff() }}</p>
-					{% endif %}
-			</li>
-			<li class="list-group-item">
-				<p class="list-group-item-text">{{ post.text|markdown }}</p>
-				<p>
-					<div class="btn-group pull-right">
-						<a class="btn btn-primary">Répondre</a>
-						<a class="btn btn-default">Citer</a>
-						<a class="btn btn-default">Editer</a>
-						<a class="btn btn-warning">Modérer</a>
-						<a class="btn btn-danger">Supprimer</a>
+			
+				<div class="row">
+					<div class="col-xs-8 col-md-8">
+						<p>
+							<a href="{{ path('user.view',{'id': post.user.id}) }}">{{ post.user.username }}</a>.
+						</p>
+						{% if post.creationDate != post.updateDate %}
+							<p>Mis à jour {{ post.updateDate|time_diff() }}</p>
+						{% endif %}
+						<p class="list-group-item-text">{{ post.text|markdown }}</p>
 					</div>
-				</p>
+					
+					<div class="col-xs-4 col-md-4">
+						<div class="pull-right">							 
+							{% if is_granted('POST_OWNER', post.id) %}<a href="{{ path('forum.post.update',{'index':post.id}) }}">Editer</a>{% endif %} 
+							{% if is_granted('ROLE_MODERATOR', app.user) %}<a href="">Modérer</a>{% endif %} 
+							{% if is_granted('ROLE_MODERATOR', app.user) %}<a href="">Supprimer</a>{% endif %}
+							<br />
+							<p>
+								Créé {{ post.creationDate|time_diff() }}
+							{% if post.creationDate != post.updateDate %}
+								<br />Modifié {{ post.updateDate|time_diff() }}
+							{% endif %}
+							
+								<br />{{ post.views }} Vues.
+							</p>
+						</div>
+					</div>
+				</div>
 			</li>
 			
 		
 			{# liste des réponses #}
 			{% for p in post.posts %}
 			<li class="list-group-item"  id="post_{{ p.id }}">
-				<p>
-					<a href="{{ path('user.view',{'id': post.user.id}) }}">{{ post.user.username }}</a>.
-				</p>
-					{% if not post.creationDate == post.updateDate %}
-						<p>Mis à jour le {{ post.updateDate|time_diff() }}</p>
-					{% endif %}
-				<p class="list-group-item-text">{{ p.text|markdown }}</p>
-				<p>
-					<div class="btn-group pull-right">
-						<a class="btn btn-primary">Répondre</a>
-						<a class="btn btn-default">Citer</a>
-						<a class="btn btn-default">Editer</a>
-						<a class="btn btn-warning">Modérer</a>
-						<a class="btn btn-danger">Supprimer</a>
+				<div class="row">
+					<div class="col-xs-8 col-md-8">
+						<p>
+							<a href="{{ path('user.view',{'id': post.user.id}) }}">{{ post.user.username }}</a>.
+						</p>
+						{% if not post.creationDate == post.updateDate %}
+							<p>Mis à jour le {{ post.updateDate|time_diff() }}</p>
+						{% endif %}
+						<p class="list-group-item-text">{{ p.text|markdown }}</p>
 					</div>
-				</p>
+					
+					<div class="col-xs-4 col-md-4">
+						<div class="pull-right"> 
+							{% if is_granted('POST_OWNER', p.id) %}<a href="{{ path('forum.post.update',{'index':p.id}) }}">Editer</a>{% endif %} 
+							{% if is_granted('ROLE_MODERATOR', app.user) %}<a href="">Modérer</a> {% endif %} 
+							{% if is_granted('ROLE_MODERATOR', app.user) %}<a href="">Supprimer</a>{% endif %}
+							<br />
+							<p>
+								Créé {{ p.creationDate|time_diff() }}
+							{% if post.creationDate|date('Y-m-d') != p.updateDate|date('Y-m-d') %}
+								<br />Modifié {{ p.updateDate|time_diff() }}
+							{% endif %}
+							
+								<br />{{ p.views }} Vues.
+							</p>
+						</div>
+					</div>
+				</div>
 			</li>
 			{%  endfor %}
 		</ul>
@@ -58,8 +82,8 @@
 			<a class="btn btn-default">Favori</a>
 			<a class="btn btn-default">Epinglé</a>
 			<a class="btn btn-default">Vérrouiller</a>			
-			<a class="btn btn-warning">Modérer le sujet</a>
-			<a class="btn btn-danger">Supprimer le sujet</a>
+			{% if is_granted('ROLE_MODERATOR', app.user) %}<a class="btn btn-warning">Modérer le sujet</a>{% endif %}
+			{% if is_granted('ROLE_MODERATOR', app.user) %}<a class="btn btn-danger">Supprimer le sujet</a>{% endif %}
 		</div>
 	</div>
 </div>

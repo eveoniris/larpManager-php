@@ -24,4 +24,12 @@ class Post extends BasePost
 		$this->setCreationDate(new \Datetime('NOW'));
 		$this->setUpdateDate(new \Datetime('NOW'));
 	}
+	
+	/**
+	 * Fourni le nombre de vue de ce post
+	 */
+	public function getViews()
+	{
+		return $this->getPostViews()->count();
+	}
 }

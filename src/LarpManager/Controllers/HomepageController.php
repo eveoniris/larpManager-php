@@ -33,18 +33,20 @@ class HomepageController
 			->add('subscribe','submit', array('label' => 'S\'inscrire'))
 			->getForm();
 		
-		$joueur = $app['user']->getJoueur();
-		
-		$repoGn = $app['orm.em']->getRepository('LarpManager\Entities\Gn');
-		
-		if ( $joueur )
+		if ( $app['user'])
 		{
-			$gnNotSubscribes = $repoGn->findByActiveWhereNotSubscribe($joueur);
-			$gnSubscribes = $repoGn->findByActiveWhereSubscribe($joueur);
+			$joueur = $app['user']->getJoueur();
+			$repoGn = $app['orm.em']->getRepository('LarpManager\Entities\Gn');
+			
+			if ( $joueur )
+			{
+				$gnNotSubscribes = $repoGn->findByActiveWhereNotSubscribe($joueur);
+				$gnSubscribes = $repoGn->findByActiveWhereSubscribe($joueur);
+			}
+			
+			$gns = $repoGn->findByActive();
 		}
 
-		$gns = $repoGn->findByActive();
-				
 		return $app['twig']->render('homepage/index.twig', array(
 				'form_groupe' => $form->createView(),
 				'gns' => $gns,

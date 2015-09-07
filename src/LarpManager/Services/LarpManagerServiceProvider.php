@@ -4,9 +4,11 @@ namespace LarpManager;
 
 use Silex\Application;
 use Silex\ServiceProviderInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\RoleHierarchyVoter;
 
 use LarpManager\Twig\LarpManagerExtension;
-use LarpManager\ForumRightManager;
+use LarpManager\Services\ForumRightManager;
+use LarpManager\Services\LarpManagerVoter;
 
 /**
  * LarpManager\LarpManagerServiceProvider
@@ -16,8 +18,30 @@ use LarpManager\ForumRightManager;
  */
 class LarpManagerServiceProvider implements ServiceProviderInterface
 {
+	/**
+	 * 
+	 * @param Application $app
+	 */
 	public function register(Application $app)
 	{
+		// Ajoute la gestion des droits propre à larpmanager
+		$app['security.voters'] = $app->extend('security.voters', function($voters) use ($app) {
+			foreach ($voters as $voter) {
+				if ($voter instanceof RoleHierarchyVoter) {
+					$roleHierarchyVoter = $voter;
+					break;
+				}
+			}
+			$voters[] = new LarpManagerVoter($roleHierarchyVoter);
+			return $voters;
+		});
+		
+		// manager
+		$app['larp.manager'] = $app->share(function($app) {
+			$larpManagerManager = new LarpManagerManager($app);
+			return $larpManagerManager;
+		});
+		
 		// Forum right manager
 		$app['forum.manager'] = $app->share(function($app) {
 			$forumRightManager = new ForumRightManager($app);
