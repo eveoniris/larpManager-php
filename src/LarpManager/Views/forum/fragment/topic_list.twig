@@ -32,7 +32,7 @@
 							<a href="{{ path('forum.post',{'index':lastPost.id}) }}">
 								{{ lastPost.title }}	
 							</a><br />
-							Par {{ lastPost.user.username }}<br />
+							Par <a href="{{ path('user.view',{'id': lastPost.user.id}) }}">{{ lastPost.user.username }}</a><br />
 							{{ lastPost.creationDate|time_diff }}
 						{% endif %}
 					</div>

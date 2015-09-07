@@ -18,6 +18,9 @@ use LarpManager\Entities\BaseTopic;
  */
 class Topic extends BaseTopic
 {
+	/**
+	 * Constructeur
+	 */
 	public function __construct()
 	{
 		parent::__construct();
@@ -25,8 +28,27 @@ class Topic extends BaseTopic
 		$this->setUpdateDate(new \Datetime('NOW'));
 	}
 	
+	/**
+	 * Affichage d'un topic
+	 */
 	public function __toString()
 	{
 		return $this->getTitle();
+	}
+	
+	/**
+	 * Fourni la liste de tous les ancêtres d'un topic
+	 * @param unknown $array
+	 */
+	public function getAncestor($array = array())
+	{
+		if ( $this->getTopic() )
+		{
+			$array = $this->getTopic()->getAncestor($array);
+			$array[] = $this->getTopic();
+		}
+		
+		
+		return $array;
 	}
 }

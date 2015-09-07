@@ -3,17 +3,22 @@
 {% block title %}Forum - message{% endblock title %}
 
 {% block content %}
-
-	<a href="{{ path('forum.topic', {'index': post.topic.id}) }}">Retour au topic</a>
+	
 	<div class="container-fluid">
-		<div class="row">
-		
-			<div class="col-xs-12 col-md-8">
+		<div class="row">		
+			<div class="col-xs-12 col-md-12">
+				<ol class="breadcrumb">
+					<li>Navigation :</li>
+					<li><a href="{{ path('forum')  }}">Forum</a></li>
+					{% for ancestor in post.topic.ancestor %}
+						<li><a href="{{ path('forum.topic',{'index':ancestor.id})  }}">{{ ancestor.title }}</a></li>
+					{% endfor %}
+					<li><a href="{{ path('forum.topic',{'index':post.topic.id}) }}">{{ post.topic.title }}</a></li>
+					<li class="active">{{ post.title }}</li>
+				</ol>
 				{{ include("forum/fragment/post.twig",{'post': post}) }}
 			</div>
 		</div>
 	</div>
-	
-	<a href="{{ path('forum.post.response',{'index':post.id}) }}">Repondre</a>
 	
 {% endblock content %}

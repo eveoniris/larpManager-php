@@ -6,6 +6,7 @@ use Silex\Application;
 use Silex\ServiceProviderInterface;
 
 use LarpManager\Twig\LarpManagerExtension;
+use LarpManager\ForumRightManager;
 
 /**
  * LarpManager\LarpManagerServiceProvider
@@ -17,6 +18,11 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 {
 	public function register(Application $app)
 	{
+		// Forum right manager
+		$app['forum.manager'] = $app->share(function($app) {
+			$forumRightManager = new ForumRightManager($app);
+			return $forumRightManager;
+		});
 	}
 
 	/**

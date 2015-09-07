@@ -1,33 +1,65 @@
-<div class="well">
-	<ul class="list-group">
-
-		<li class="list-group-item">
-			<div class="row">
-				<div class="col-xs-8 col-md-8">
-					<h4 class="list-group-item-heading">{{ post.title }}</h4>
-					<p class="list-group-item-text">{{ post.text|markdown }}</p>
-				</div>
-				<div class="col-xs-4 col-md-4">
-					<p>par {{ post.user.username }} le {{ post.creationDate|date('Y-m-d') }}.</p>
-					<p>Mis à jour le {{ post.updateDate|date('Y-m-d') }}</p>
-				</div>
-			</div>
-		</li>
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<h4>
+		Sujet : {{ post.title }} <small>({{ post.updateDate|time_diff }})</small>
+		</h4>
+	</div>
+	<div class="panel-body">
+		<ul class="list-group">
+			<li class="list-group-item">
+				<p>
+					<a href="{{ path('user.view',{'id': post.user.id}) }}">{{ post.user.username }}</a>.
+				</p>
+					{% if not post.creationDate == post.updateDate %}
+						<p>Mis à jour le {{ post.updateDate|time_diff() }}</p>
+					{% endif %}
+			</li>
+			<li class="list-group-item">
+				<p class="list-group-item-text">{{ post.text|markdown }}</p>
+				<p>
+					<div class="btn-group pull-right">
+						<a class="btn btn-primary">Répondre</a>
+						<a class="btn btn-default">Citer</a>
+						<a class="btn btn-default">Editer</a>
+						<a class="btn btn-warning">Modérer</a>
+						<a class="btn btn-danger">Supprimer</a>
+					</div>
+				</p>
+			</li>
+			
 		
-		{# liste des réponses #}
-		{% for p in post.posts %}
-		<li class="list-group-item" id="post_{{ p.id }}">
-			<div class="row">
-				<div class="col-xs-8 col-md-8">
-					<p class="list-group-item-text">{{ p.text|markdown }}</p>		
-				</div>
-				<div class="col-xs-4 col-md-4">
-					<p>par {{ p.user.username }} le {{ p.creationDate|date('Y-m-d') }}.</p>
-					<p>Mis à jour le {{ p.updateDate|date('Y-m-d') }}</p>
-				</div>
-			</div>
-		</li>
-		{%  endfor %}
-	</ul>
-
+			{# liste des réponses #}
+			{% for p in post.posts %}
+			<li class="list-group-item"  id="post_{{ p.id }}">
+				<p>
+					<a href="{{ path('user.view',{'id': post.user.id}) }}">{{ post.user.username }}</a>.
+				</p>
+					{% if not post.creationDate == post.updateDate %}
+						<p>Mis à jour le {{ post.updateDate|time_diff() }}</p>
+					{% endif %}
+				<p class="list-group-item-text">{{ p.text|markdown }}</p>
+				<p>
+					<div class="btn-group pull-right">
+						<a class="btn btn-primary">Répondre</a>
+						<a class="btn btn-default">Citer</a>
+						<a class="btn btn-default">Editer</a>
+						<a class="btn btn-warning">Modérer</a>
+						<a class="btn btn-danger">Supprimer</a>
+					</div>
+				</p>
+			</li>
+			{%  endfor %}
+		</ul>
+	</div>
+	<div class="panel-footer">
+		<div class="btn-group">
+			<a class="btn btn-primary" href="{{ path('forum.post.response',{'index':post.id}) }}">Repondre</a>
+			<a class="btn btn-default">S'abonner</a>
+			<a class="btn btn-default">Favori</a>
+			<a class="btn btn-default">Epinglé</a>
+			<a class="btn btn-default">Vérrouiller</a>			
+			<a class="btn btn-warning">Modérer le sujet</a>
+			<a class="btn btn-danger">Supprimer le sujet</a>
+		</div>
+	</div>
 </div>

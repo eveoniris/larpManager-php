@@ -84,7 +84,7 @@ class ForumController
 		$topic = $app['orm.em']->getRepository('\LarpManager\Entities\Topic')->find($id);
 		
 		// vérification des droits
-		if ( ! ForumRightManager::right($topic,$app['user']) )
+		if ( ! $app['forum.manager']->right($topic,$app['user']) )
 		{
 			$app['session']->getFlashBag()->add('error', 'Vous n\'avez pas les droits necessaires pour acceder à ce forum');
 			return $app->redirect($app['url_generator']->generate('forum'),301);
@@ -110,7 +110,7 @@ class ForumController
 					->find($topicId);
 		
 		// vérification des droits
-		if ( ! ForumRightManager::right($topic,$app['user']) )
+		if ( ! $app['forum.manager']->right($topic,$app['user']) )
 		{
 			$app['session']->getFlashBag()->add('error', 'Vous n\'avez pas les droits necessaires pour ajouter un message dans ce forum');
 			return $app->redirect($app['url_generator']->generate('forum'),301);
@@ -160,7 +160,7 @@ class ForumController
 							->find($postId);
 		
 		// vérification des droits
-		if ( ! ForumRightManager::right($post->getTopic(),$app['user']) )
+		if ( ! $app['forum.manager']->right($post->getTopic(),$app['user']) )
 		{
 			$app['session']->getFlashBag()->add('error', 'Vous n\'avez pas les droits necessaires pour lire ce message');
 			return $app->redirect($app['url_generator']->generate('forum'),301);
@@ -185,7 +185,7 @@ class ForumController
 							->find($postId);
 							
 		// vérification des droits
-		if ( ! ForumRightManager::right($postToResponse->getTopic(),$app['user']) )
+		if ( ! $app['forum.manager']->right($postToResponse->getTopic(),$app['user']) )
 		{
 			$app['session']->getFlashBag()->add('error', 'Vous n\'avez pas les droits necessaires pour lire ce message');
 			return $app->redirect($app['url_generator']->generate('forum'),301);
@@ -234,7 +234,7 @@ class ForumController
 			->find($topicId);
 		
 		// vérification des droits
-		if ( ! ForumRightManager::right($topicRelated,$app['user']) )
+		if ( ! $app['forum.manager']->right($topicRelated,$app['user']) )
 		{
 			$app['session']->getFlashBag()->add('error', 'Vous n\'avez pas les droits necessaires pour ajouter un sous-forum dans ce forum');
 			return $app->redirect($app['url_generator']->generate('forum'),301);

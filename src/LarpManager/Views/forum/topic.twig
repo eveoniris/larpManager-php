@@ -7,6 +7,16 @@
 <div class="container-fluid">
 	<div class="row">
 		<div class="col-xs-12 col-md-12">
+
+		
+		<ol class="breadcrumb">
+		<li>Navigation :</li>
+		<li><a href="{{ path('forum')  }}">Forum</a></li>
+		{% for ancestor in topic.ancestor %}
+			<li><a href="{{ path('forum.topic',{'index':ancestor.id})  }}">{{ ancestor.title }}</a></li>
+		{% endfor %}
+			<li class="active">{{ topic.title }}</li>
+		</ol>
 			
 			<div class="well">
 				<h6>{{ topic.title }}</h6>
