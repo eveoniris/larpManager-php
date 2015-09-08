@@ -1,6 +1,6 @@
 <?php
 
-namespace LarpManager;
+namespace LarpManager\Services;
 
 use Silex\Application;
 use Silex\ServiceProviderInterface;

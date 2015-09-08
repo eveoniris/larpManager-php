@@ -80,26 +80,12 @@
 			{% else %}
 			
 				{# afficher la liste des gns dans lequel le joueur est inscrit #}
-				{% if gnSubscribes|length > 0 %}
+				{% if app.user.joueur.gns|length > 0 %}
 					<div class="panel panel-default">
 						<div class="panel-heading">{% trans %}gn_list_title{% endtrans %}</div>
 						<div class="panel-body">
-							<p>{% trans %}gn_list_explain{% endtrans %}</p>
-							{% for gn in gnSubscribes %}
+							{% for gn in gns %}
 								{{ gn.label }}
-							{% endfor %}
-						</div>
-					</div>
-				{% endif %}
-				
-				{# proposer une inscription dans les gns actifs auquel le joueur n'est pas inscrit #}
-				{% if gnNotSubscribes|length > 0 %}
-					<div class="panel panel-default">
-						<div class="panel-heading">{% trans %}gn_subscribe_title{% endtrans %}</div>
-						<div class="panel-body">
-							<p>{% trans %}gn_subscribe_explain{% endtrans %}</p>
-							{% for gn in gnNotSubscribes %}
-								{{ include("homepage/fragment/gn.twig",{'gn': gn}) }}
 							{% endfor %}
 						</div>
 					</div>

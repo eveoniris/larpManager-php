@@ -5,6 +5,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Silex\Application;
 
 use LarpManager\Form\PostForm;
+use LarpManager\Form\PostDeleteForm;
 use LarpManager\Form\TopicForm;
 use LarpManager\ForumRightManager;
 
@@ -257,6 +258,61 @@ class ForumController
 		}
 	
 		return $app['twig']->render('forum/post_update.twig', array(
+				'form' => $form->createView(),
+				'post' => $post,
+		));
+	}
+	
+	/**
+	 * Supprimer un post
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function postDeleteAction(Request $request, Application $app)
+	{
+		$postId = $request->get('index');
+		
+		$post = $app['orm.em']->getRepository('\LarpManager\Entities\Post')
+			->find($postId);
+		
+		$form = $app['form.factory']->createBuilder(new PostDeleteForm(), $post)
+			->add('delete','submit', array('label' => "Supprimer"))
+			->getForm();
+		
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$post = $form->getData();
+			
+			if ( $post->isRoot() )
+			{				
+				$url = $app['url_generator']->generate('forum.topic',array('index'=> $post->getTopic()->getId()));
+			}
+			else
+			{
+				$ancestor = $post->getAncestor();
+				/*$ancestor->removePost($post);
+				$app['orm.em']->persist($ancestor);*/
+				
+				$url = $app['url_generator']->generate('forum.post',array('index'=> $ancestor->getId()));
+			}
+			// supprimer tous les posts qui en dépendent
+			foreach ( $post->getPosts() as $child)
+			{
+				$app['orm.em']->remove($child);
+			}
+			
+			$app['orm.em']->remove($post);
+			$app['orm.em']->flush();
+			
+			$app['session']->getFlashBag()->add('success', 'Le message a été supprimé.');
+			
+			return $app->redirect($url,301);
+		}
+		
+		return $app['twig']->render('forum/post_delete.twig', array(
 				'form' => $form->createView(),
 				'post' => $post,
 		));

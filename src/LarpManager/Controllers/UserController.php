@@ -31,6 +31,7 @@ class UserController
 				array('label' => 'ROLE_STOCK', 'descr' => 'Droit de modification sur le stock'),
 				array('label' => 'ROLE_REGLE', 'descr' => 'Droit de modification sur les règles'),
 				array('label' => 'ROLE_SCENARISTE', 'descr' => 'Droit de modification sur le scénario, les groupes et le background'),
+				array('label' => 'ROLE_MODERATOR', 'descr' => 'Modération du forum'),
 			);
 		return $availableRoles;
 	}

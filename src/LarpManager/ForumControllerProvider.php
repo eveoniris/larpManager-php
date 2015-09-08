@@ -23,7 +23,6 @@ class ForumControllerProvider implements ControllerProviderInterface
 	 *  - forum.topic.update.form : Formulaire de modification d'un topic
 	 *  - forum.topic.update : modification d'un topic
 	 * 	- forum.topic.post : affichage des posts d'un topic
-	 * 	- forum.topic.post.add.form : formulaire d'ajout d'un post dans un topic
 	 * 	- forum.topic.post.add : ajout d'un post dans un topic
 	 * 	- forum.post.update : modification d'un post
 	 *   
@@ -122,6 +121,17 @@ class ForumControllerProvider implements ControllerProviderInterface
 				}
 			});
 
+		/** Ajouter un sous-forum */
+		$controllers->match('/post/{index}/delete','LarpManager\Controllers\ForumController::postDeleteAction')
+			->assert('index', '\d+')
+			->bind("forum.post.delete")
+			->method('GET|POST')
+			->before(function(Request $request) use ($app) {
+				if (!$app['security.authorization_checker']->isGranted('ROLE_MODERATOR')) {
+					throw new AccessDeniedException();
+				}
+			});
+				
 		return $controllers;
 	}
 }

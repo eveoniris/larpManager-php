@@ -18,6 +18,9 @@ use LarpManager\Entities\BasePost;
  */
 class Post extends BasePost
 {
+	/**
+	 * constructeur
+	 */
 	public function __construct()
 	{
 		parent::__construct();
@@ -32,4 +35,25 @@ class Post extends BasePost
 	{
 		return $this->getPostViews()->count();
 	}
+	
+	/**
+	 * Fourni le post initial (ou a défaut lui-même)
+	 */
+	public function getAncestor()
+	{
+		if ( $this->getPost() )
+		{
+			return $this->getPost()->getAncestor();
+		}
+		return $this;
+	}
+	
+	/**
+	 * Determine si le post est un post racine
+	 */
+	public function isRoot()
+	{
+		return ( $this->getPost() == null );
+	}
+			
 }

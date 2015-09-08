@@ -1,6 +1,6 @@
 <?php
 
-namespace LarpManager;
+namespace LarpManager\Services;
 
 /**
  * LarpManager\ForumRightManager

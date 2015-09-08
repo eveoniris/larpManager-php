@@ -12,7 +12,7 @@
 				<div class="row">
 					<div class="col-xs-8 col-md-8">
 						<p>
-							<a href="{{ path('user.view',{'id': post.user.id}) }}">{{ post.user.username }}</a>.
+							<a href="{{ path('user.view',{'id': post.user.id}) }}">{{ post.user.username }}</a>&nbsp;:
 						</p>
 						{% if post.creationDate != post.updateDate %}
 							<p>Mis à jour {{ post.updateDate|time_diff() }}</p>
@@ -46,10 +46,10 @@
 				<div class="row">
 					<div class="col-xs-8 col-md-8">
 						<p>
-							<a href="{{ path('user.view',{'id': post.user.id}) }}">{{ post.user.username }}</a>.
+							<a href="{{ path('user.view',{'id': p.user.id}) }}">{{ p.user.username }}</a>&nbsp;:
 						</p>
-						{% if not post.creationDate == post.updateDate %}
-							<p>Mis à jour le {{ post.updateDate|time_diff() }}</p>
+						{% if not p.creationDate == p.updateDate %}
+							<p>Mis à jour le {{ p.updateDate|time_diff() }}</p>
 						{% endif %}
 						<p class="list-group-item-text">{{ p.text|markdown }}</p>
 					</div>
@@ -58,7 +58,7 @@
 						<div class="pull-right"> 
 							{% if is_granted('POST_OWNER', p.id) %}<a href="{{ path('forum.post.update',{'index':p.id}) }}">Editer</a>{% endif %} 
 							{% if is_granted('ROLE_MODERATOR', app.user) %}<a href="">Modérer</a> {% endif %} 
-							{% if is_granted('ROLE_MODERATOR', app.user) %}<a href="">Supprimer</a>{% endif %}
+							{% if is_granted('ROLE_MODERATOR', app.user) %}<a href="{{ path('forum.post.delete', {'index': post.id}) }}" href="">Supprimer</a>{% endif %}
 							<br />
 							<p>
 								Créé {{ p.creationDate|time_diff() }}
@@ -83,7 +83,7 @@
 			<a class="btn btn-default">Epinglé</a>
 			<a class="btn btn-default">Vérrouiller</a>			
 			{% if is_granted('ROLE_MODERATOR', app.user) %}<a class="btn btn-warning">Modérer le sujet</a>{% endif %}
-			{% if is_granted('ROLE_MODERATOR', app.user) %}<a class="btn btn-danger">Supprimer le sujet</a>{% endif %}
+			{% if is_granted('ROLE_MODERATOR', app.user) %}<a href="{{ path('forum.post.delete', {'index': post.id}) }}" class="btn btn-danger">Supprimer le sujet</a>{% endif %}
 		</div>
 	</div>
 </div>

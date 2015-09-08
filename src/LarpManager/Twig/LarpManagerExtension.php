@@ -1,7 +1,7 @@
 <?php 
 
 namespace LarpManager\Twig;
-use LarpManager\ForumRightManager;
+use LarpManager\Services\ForumRightManager;
 use Doctrine\ORM\PersistentCollection;
 
 /**
