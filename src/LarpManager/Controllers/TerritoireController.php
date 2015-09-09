@@ -22,8 +22,8 @@ class TerritoireController
 	 */
 	public function indexAction(Request $request, Application $app)
 	{
-		$territoires = $app['territoire.manager']->findAll();
-		$territoires = $app['territoire.manager']->sort($territoires);
+		$territoires = $app['orm.em']->getRepository('\LarpManager\Entities\Territoire')->findAll();
+		$territoires = $app['larp.manager']->sortTerritoire($territoires);
 		
 		return $app['twig']->render('territoire/index.twig', array('territoires' => $territoires));
 	}
@@ -38,7 +38,7 @@ class TerritoireController
 	{
 		$id = $request->get('index');
 		
-		$territoire = $app['territoire.manager']->find($id);
+		$territoire = $app['orm.em']->find('\LarpManager\Entities\Territoire',$id);
 		
 		return $app['twig']->render('territoire/detail.twig', array('territoire' => $territoire));
 	}

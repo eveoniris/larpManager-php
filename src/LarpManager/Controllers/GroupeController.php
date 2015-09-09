@@ -193,7 +193,7 @@ class GroupeController
 		{
 			$originalGroupeClasses->add($groupeClasse);
 		}
-				
+		
 		$form = $app['form.factory']->createBuilder(new GroupeForm(), $groupe)
 			->add('update','submit', array('label' => "Sauvegarder"))
 			->add('delete','submit', array('label' => "Supprimer"))
@@ -204,7 +204,7 @@ class GroupeController
 		if ( $form->isValid() )
 		{
 			$groupe = $form->getData();
-			
+
 			/**
 			 * Pour toutes les classes du groupe
 			 */
@@ -221,7 +221,7 @@ class GroupeController
 					$app['orm.em']->remove($groupeClasse);
 				}
 			}
-		
+			
 			/**
 			 * Si l'utilisateur a cliquer sur "update", on met à jour le groupe
 			 * Si l'utilisateur a cliquer sur "delete", on supprime le groupe

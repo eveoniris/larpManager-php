@@ -18,4 +18,8 @@ use LarpManager\Entities\BaseGn;
  */
 class Gn extends BaseGn
 {
+	public function __toString()
+	{
+		return $this->getLabel();	
+	}
 }

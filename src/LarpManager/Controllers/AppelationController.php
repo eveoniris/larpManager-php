@@ -18,8 +18,8 @@ class AppelationController
 	 */
 	public function indexAction(Request $request, Application $app)
 	{
-		$appelations = $app['appelation.manager']->findAll();
-		$appelations = $app['appelation.manager']->sort($appelations);
+		$appelations = $app['orm.em']->getRepository('\LarpManager\Entities\Appelation')->findAll();
+		$appelations = $app['larp.manager']->sortAppelation($appelations);
 		
 		return $app['twig']->render('appelation/index.twig', array('appelations' => $appelations));
 	}
@@ -33,7 +33,7 @@ class AppelationController
 	{
 		$id = $request->get('index');
 		
-		$appelation = $app['appelation.manager']->find($id);
+		$appelation = $app['orm.em']->find('\LarpManager\Entities\Appelation',$id);
 		
 		return $app['twig']->render('appelation/detail.twig', array('appelation' => $appelation));
 	}
@@ -85,7 +85,7 @@ class AppelationController
 	{
 		$id = $request->get('index');
 		
-		$appelation = $app['appelation.manager']->find($id);
+		$appelation = $app['orm.em']->find('\LarpManager\Entities\Appelation',$id);
 		
 		$form = $app['form.factory']->createBuilder(new AppelationForm(), $appelation)
 			->add('update','submit', array('label' => "Sauvegarder"))

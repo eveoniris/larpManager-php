@@ -14,7 +14,7 @@ use LarpManager\Entities\BaseReligionLevel;
 /**
  * LarpManager\Entities\ReligionLevel
  *
- * @Entity()
+ * @Entity(repositoryClass="LarpManager\Repository\ReligionLevelRepository")
  */
 class ReligionLevel extends BaseReligionLevel
 {

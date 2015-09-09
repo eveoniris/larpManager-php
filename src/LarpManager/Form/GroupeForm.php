@@ -8,6 +8,7 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Doctrine\ORM\EntityRepository;
 
 use LarpManager\Form\Type\ClasseType;
+use LarpManager\Form\Type\GnType;
 
 /**
  * LarpManager\Form\GroupeForm
@@ -67,6 +68,13 @@ class GroupeForm extends AbstractType
 				->add('jeuMaritime','checkbox', array(
 						'label' => "Participe au jeu maritime ?",
 						'required' => false,
+				))
+				->add('gns', 'entity', array(
+						'label' => 'GNs auquel ce groupe participe',
+						'multiple' => true,
+						'required' => false,
+						'class' => 'LarpManager\Entities\Gn',
+						'property' => 'label',
 				))
 				->add('groupeClasses', 'collection', array(
 						'label' => "Composition",

@@ -237,7 +237,7 @@ class ReligionController
 	 * @param Request $request
 	 * @param Application $app
 	 */
-	public function updateAction(Request $request, Application $app)
+	public function levelUpdateAction(Request $request, Application $app)
 	{
 		$id = $request->get('index');
 	
