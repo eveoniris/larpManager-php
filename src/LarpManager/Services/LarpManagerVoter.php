@@ -179,9 +179,12 @@ class LarpManagerVoter implements VoterInterface
 	 */
 	protected function userGroupeRight($groupeId, $user)
 	{
-		foreach ( $user->getGroupes() as $groupe)
+		if ( $user->getGroupes() )
 		{
-			if ( $groupe->getId() == $groupeId ) return true;
+			foreach ( $user->getGroupes() as $groupe)
+			{
+				if ( $groupe->getId() == $groupeId ) return true;
+			}
 		}
 		return false;
 	}
@@ -226,14 +229,17 @@ class LarpManagerVoter implements VoterInterface
 	 * @param unknown $user
 	 * @param unknown $groupeId
 	 */
-	protected function isMemberOfJoueur($user, $groupeId)
+	protected function isMemberOf($user, $groupeId)
 	{
-		$groupe = $user->getGroupe();
 		
-		if ( $groupe instanceof \LarpManager\Entities\Groupe
-			&& $groupe->getId() == $groupeId)
-			return true;
-			
+		if ( $user->getGroupes() )
+		{
+			foreach ( $user->getGroupes() as $groupe )
+			{
+				if ( $groupe->getId() == $groupeId)	return true;
+			}
+		}
+					
 		return false;
 	}
 	
@@ -259,7 +265,7 @@ class LarpManagerVoter implements VoterInterface
 	 * @param unknown $user
 	 * @param unknown $joueurId
 	 */
-	protected function isOwnerOf($user, $joueurId)
+	protected function isOwnerOfJoueur($user, $joueurId)
 	{
 		$joueur =  $user->getJoueur();
 		return $joueur &&  $joueur->getId() == $joueurId;

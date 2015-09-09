@@ -95,9 +95,9 @@
 						
 						{% if app.user.groupes %}
 							{% for groupe in app.user.groupes %}
-								<li><a href="{{ path('groupe.joueur',{'index':groupe.id}) }}">{{ groupe.label }}</a></li>
+								<li><a href="{{ path('groupe.joueur',{'index':groupe.id}) }}">{{ groupe.nom }}</a></li>
 								{% if app.user.isResponsable(groupe) %}
-									<li><a href="{{ path('groupe.gestion',{'index':groupe.id}) }}">Gestion de {{ groupe.label }}</a></li>
+									<li><a href="{{ path('groupe.gestion',{'index':groupe.id}) }}">Gestion de {{ groupe.nom }}</a></li>
 									<li><a href="#">Diplomatie</a></li>								
 								{% endif %}
 								<li><a href="#">Contacter le scénariste</a></li>

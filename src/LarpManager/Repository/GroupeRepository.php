@@ -36,7 +36,7 @@ class GroupeRepository extends EntityRepository
 	public function findOneByCode($code)
 	{
 		$groupes = $this->getEntityManager()
-						->createQuery('SELECT g FROM LarpManager\Entities\Groupe g WHERE code = :code')
+						->createQuery('SELECT g FROM LarpManager\Entities\Groupe g WHERE g.code = :code')
 						->setParameter('code', $code)
 						->getResult();
 		

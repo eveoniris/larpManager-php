@@ -12,15 +12,15 @@ namespace LarpManager\Entities;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * LarpManager\Entities\Religion
+ * LarpManager\Entities\ReligionLevel
  *
  * @Entity()
- * @Table(name="religion", indexes={@Index(name="fk_religion_topic1_idx", columns={"topic_id"})})
+ * @Table(name="religion_level")
  * @InheritanceType("SINGLE_TABLE")
  * @DiscriminatorColumn(name="discr", type="string")
- * @DiscriminatorMap({"base":"BaseReligion", "extended":"Religion"})
+ * @DiscriminatorMap({"base":"BaseReligionLevel", "extended":"ReligionLevel"})
  */
-class BaseReligion
+class BaseReligionLevel
 {
     /**
      * @Id
@@ -35,21 +35,20 @@ class BaseReligion
     protected $label;
 
     /**
+     * @Column(name="`index`", type="integer")
+     */
+    protected $index;
+
+    /**
      * @Column(type="text", nullable=true)
      */
     protected $description;
 
     /**
-     * @OneToMany(targetEntity="PersonnageReligion", mappedBy="religion")
-     * @JoinColumn(name="id", referencedColumnName="religion_id")
+     * @OneToMany(targetEntity="PersonnageReligion", mappedBy="religionLevel")
+     * @JoinColumn(name="id", referencedColumnName="religion_level_id")
      */
     protected $personnageReligions;
-
-    /**
-     * @ManyToOne(targetEntity="Topic", inversedBy="religions")
-     * @JoinColumn(name="topic_id", referencedColumnName="id")
-     */
-    protected $topic;
 
     public function __construct()
     {
@@ -60,7 +59,7 @@ class BaseReligion
      * Set the value of id.
      *
      * @param integer $id
-     * @return \LarpManager\Entities\Religion
+     * @return \LarpManager\Entities\ReligionLevel
      */
     public function setId($id)
     {
@@ -83,7 +82,7 @@ class BaseReligion
      * Set the value of label.
      *
      * @param string $label
-     * @return \LarpManager\Entities\Religion
+     * @return \LarpManager\Entities\ReligionLevel
      */
     public function setLabel($label)
     {
@@ -103,10 +102,33 @@ class BaseReligion
     }
 
     /**
+     * Set the value of index.
+     *
+     * @param integer $index
+     * @return \LarpManager\Entities\ReligionLevel
+     */
+    public function setIndex($index)
+    {
+        $this->index = $index;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of index.
+     *
+     * @return integer
+     */
+    public function getIndex()
+    {
+        return $this->index;
+    }
+
+    /**
      * Set the value of description.
      *
      * @param string $description
-     * @return \LarpManager\Entities\Religion
+     * @return \LarpManager\Entities\ReligionLevel
      */
     public function setDescription($description)
     {
@@ -129,7 +151,7 @@ class BaseReligion
      * Add PersonnageReligion entity to collection (one to many).
      *
      * @param \LarpManager\Entities\PersonnageReligion $personnageReligion
-     * @return \LarpManager\Entities\Religion
+     * @return \LarpManager\Entities\ReligionLevel
      */
     public function addPersonnageReligion(PersonnageReligion $personnageReligion)
     {
@@ -142,7 +164,7 @@ class BaseReligion
      * Remove PersonnageReligion entity from collection (one to many).
      *
      * @param \LarpManager\Entities\PersonnageReligion $personnageReligion
-     * @return \LarpManager\Entities\Religion
+     * @return \LarpManager\Entities\ReligionLevel
      */
     public function removePersonnageReligion(PersonnageReligion $personnageReligion)
     {
@@ -161,31 +183,8 @@ class BaseReligion
         return $this->personnageReligions;
     }
 
-    /**
-     * Set Topic entity (many to one).
-     *
-     * @param \LarpManager\Entities\Topic $topic
-     * @return \LarpManager\Entities\Religion
-     */
-    public function setTopic(Topic $topic = null)
-    {
-        $this->topic = $topic;
-
-        return $this;
-    }
-
-    /**
-     * Get Topic entity (many to one).
-     *
-     * @return \LarpManager\Entities\Topic
-     */
-    public function getTopic()
-    {
-        return $this->topic;
-    }
-
     public function __sleep()
     {
-        return array('id', 'label', 'description', 'topic_id');
+        return array('id', 'label', 'index', 'description');
     }
 }

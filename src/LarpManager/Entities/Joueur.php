@@ -26,6 +26,9 @@ class Joueur extends BaseJoueur
 		$this->setUpdateDate(new \Datetime('NOW'));
 	}
 	
+	public function __toString() {
+		return $this->getNom();
+	}
 	/**
 	 * Fourni la liste des gns auquel un joueur est inscrit
 	 * 

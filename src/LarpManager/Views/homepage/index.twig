@@ -100,7 +100,18 @@
 							{{ include("homepage/fragment/form_groupe.twig",{'form': form_groupe,'action': path('homepage.inscription')}) }}
 						</div>
 					</div>
+				{% else %}
+					<div class="panel panel-default">
+						<div class="panel-heading">{% trans %}gn_subscribe_title{% endtrans %}</div>
+						<div class="panel-body">
+							<p>{% trans %}gn_subscribe_explain{% endtrans %}</p>
+							{% for gn in gns %}
+								{{ include("homepage/fragment/gn.twig",{'gn': gn}) }}
+							{% endfor %}
+						</div>
+					</div>
 				{% endif %}
+				
 			{% endif %}
 		{% endif %}
 	{% endif %}	

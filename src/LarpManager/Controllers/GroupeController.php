@@ -137,9 +137,8 @@ class GroupeController
 			 * @var \LarpManager\Entities\Topic $topic
 			 */
 			$topic = new \LarpManager\Entities\Topic();
-			$topic->setTitle($groupe->getLabel());
+			$topic->setTitle($groupe->getNom());
 			$topic->setDescription($groupe->getDescription());
-			$topic->setTopic($groupe->getGn());
 			$topic->setUser($app['user']);
 				
 			$groupe->setTopic($topic);
@@ -149,7 +148,7 @@ class GroupeController
 			// défini les droits d'accés à ce forum
 			// (les membres du groupe ont le droit d'accéder à ce forum)
 			$topic->setRight('GROUPE_MEMBER');
-			$topic->setObjectId($gn->getId());
+			$topic->setObjectId($groupe->getId());
 			
 			$app['orm.em']->persist($topic);
 			$app['orm.em']->flush();
