@@ -120,9 +120,33 @@ class LarpManagerVoter implements VoterInterface
 			case 'GROUPE_MEMBER' :
 				return $this->userGroupeRight($topic->getObjectId(), $user);
 				break;
+			case 'CULTE' :
+				return $this->userCulteRight($topic->getObjectId(), $user);
 			default :
 				return true;
 		}
+	}
+	
+	/**
+	 * Determine si l'utilisateur a le droit d'accéder aux forums de ce culte
+	 * (le personnage de l'utilisateur doit être pratiquant de ce culte)
+	 * 
+	 * @param unknown $culteId
+	 * @param unknown $user
+	 */
+	protected function userCulteRight($culteId, $user)
+	{
+		$joueur =  $user->getJoueur();
+		
+		if ( $joueur)
+		{
+			foreach ( $joueur->getPersonnages() as $personnage )
+			{
+				if ( $personnage->getReligion()->getId() == $culteId )
+					return true;
+			}
+		}
+		return false;
 	}
 	
 	/**
@@ -222,10 +246,9 @@ class LarpManagerVoter implements VoterInterface
 	 */
 	protected function isOwnerOfPersonnage($user, $personnageId)
 	{
-		$personnage = $user->getPersonnage();
-		if ( $personnage )
+		foreach ( $user->getPersonnages() as $personnage )
 		{
-			return $personnage->getId() == $personnageId;
+			if ( $personnage->getId() == $personnageId ) return true;
 		}
 		return false;
 	}

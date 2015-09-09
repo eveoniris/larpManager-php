@@ -18,7 +18,6 @@ use Saxulum\DoctrineOrmManagerRegistry\Silex\Provider\DoctrineOrmManagerRegistry
 use Nicl\Silex\MarkdownServiceProvider;
 
 use LarpManager\User\UserServiceProvider;
-use LarpManager\Appelation\AppelationServiceProvider;
 use LarpManager\Personnage\PersonnageServiceProvider;
 use LarpManager\Services\LarpManagerServiceProvider;
 
@@ -234,7 +233,7 @@ else
 		'ROLE_SCENARISTE' => array('ROLE_USER', 'ROLE_SCENARISTE'),
 		'ROLE_REGLE' => array('ROLE_USER', 'ROLE_REGLE'),
 		'ROLE_MODERATOR' => array('ROLE_USER', 'ROLE_MODERATOR'), 
-		'ROLE_ADMIN' => array('ROLE_USER', 'ROLE_STOCK','ROLE_SCENARISTE','ROLE_REGLE'),
+		'ROLE_ADMIN' => array('ROLE_USER', 'ROLE_STOCK','ROLE_SCENARISTE','ROLE_REGLE','ROLE_MODERATOR'),
 	);
 	
 	/**
