@@ -1,0 +1,18 @@
+{% extends "layout.twig" %}
+
+{% block title %}Groupe secondaire{% endblock title %}
+
+{% block content %}
+
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-xs-12 col-md-8">
+				{{ include("groupeSecondaire/fragment/form.twig",{
+					'legend': 'Ajout d\'un groupe secondaire',
+					'action': path('groupeSecondaire.add'), 
+					'form' : form}) }}
+			</div>
+		</div>
+	</div>
+	
+{% endblock content %}

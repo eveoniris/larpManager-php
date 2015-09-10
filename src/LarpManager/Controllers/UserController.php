@@ -356,7 +356,7 @@ class UserController
 					// Log the user in to the new account.
 					$app['user.manager']->loginAsUser($user);
 		
-					$app['session']->getFlashBag()->set('alert', 'Le compte a été créé.');
+					$app['session']->getFlashBag()->set('success', 'Votre compte a été créé ! vous pouvez maintenant rejoindre un groupe et créer votre personnage');
 		
 					return $app->redirect($app['url_generator']->generate('homepage'));
 				//}

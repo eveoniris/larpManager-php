@@ -109,11 +109,26 @@ class User extends BaseUser implements AdvancedUserInterface, \Serializable
 	public function getGroupes()
 	{
 		$joueur = $this->getJoueur();
+		
 		if ( $joueur )
 		{
 			return $joueur->getGroupes();
 		}
 		return null;		
+	}
+	
+	/**
+	 * Fourni la liste des groupes secondaires d'un utilisateur
+	 */
+	public function getSecondaryGroups()
+	{
+		$personnage = $this->getPersonnage();
+		
+		if ( $personnage )
+		{
+			return $personnage->getSecondaryGroups();
+		}
+		return null;
 	}
 	
 	/**

@@ -179,7 +179,7 @@ else
 			   }),
 		),
 		'secured_area' => array(	// le reste necessite d'être connecté
-			'pattern' => '^/[stock|forum|groupe|gn|personnage|territoire|appelation|langue|ressource|religion|age|genre|level|competence|competenceFamily|joueur]/.*$',
+			'pattern' => '^/[annonce|stock|forum|groupe|gn|personnage|territoire|appelation|langue|ressource|religion|age|genre|level|competence|competenceFamily|joueur]/.*$',
 			'anonymous' => false,
 			'remember_me' => array(),
 			'form' => array(
@@ -196,6 +196,7 @@ else
 	);
 	
 	$app->mount('/', new LarpManager\HomepageControllerProvider());
+	$app->mount('/annonce', new LarpManager\AnnonceControllerProvider());
 	$app->mount('/user',  new LarpManager\UserControllerProvider());
 	$app->mount('/stock', new LarpManager\StockControllerProvider());
 	$app->mount('/stock/objet', new LarpManager\StockObjetControllerProvider());
@@ -205,6 +206,8 @@ else
 	$app->mount('/stock/localisation', new LarpManager\StockLocalisationControllerProvider());
 	$app->mount('/stock/rangement', new LarpManager\StockRangementControllerProvider());
 	$app->mount('/groupe', new LarpManager\GroupeControllerProvider());
+	$app->mount('/groupeSecondaire', new LarpManager\GroupeSecondaireControllerProvider());
+	$app->mount('/groupeSecondaireType', new LarpManager\GroupeSecondaireTypeControllerProvider());
 	$app->mount('/territoire', new LarpManager\TerritoireControllerProvider());
 	$app->mount('/appelation', new LarpManager\AppelationControllerProvider());
 	$app->mount('/langue', new LarpManager\LangueControllerProvider());
@@ -220,8 +223,6 @@ else
 	$app->mount('/gn', new LarpManager\GnControllerProvider());
 	$app->mount('/joueur', new LarpManager\JoueurControllerProvider());
 	$app->mount('/forum', new LarpManager\ForumControllerProvider());
-	//$app->mount('/chronologie', new LarpManager\ChronologieControllerProvider());
-	//$app->mount('/guilde', new LarpManager\GuildeControllerProvider());
 		
 
 	/**
@@ -242,9 +243,12 @@ else
 	$app['security.access_rules'] = array(
 		array('^/world/.*$', 'ROLE_USER'),
 		array('^/groupe/.*$', 'ROLE_USER'),
+		array('^/groupeSecondaire/.*$', 'ROLE_USER'),
+		array('^/groupeSecondaireType/.*$', 'ROLE_SCENARISTE'),
 		array('^/personnage/.*$', 'ROLE_USER'),
 		array('^/joueur/.*$', 'ROLE_USER'),
 		array('^/gn/.*$', 'ROLE_ADMIN'),
+		array('^/annonce/.*$', 'ROLE_ADMIN'),
 		array('^/age/.*$', 'ROLE_REGLE'),
 		array('^/genre/.*$', 'ROLE_REGLE'),
 		array('^/territoire/.*$', 'ROLE_SCENARISTE'),
@@ -295,7 +299,6 @@ $app->error(function (\Exception $e, $code) use ($app)
 	}
 });
 
-
 /**
  * Service de traduction
  */
@@ -317,25 +320,5 @@ $app['translator'] = $app->share($app->extend('translator', function($translator
 
 	return $translator;
 }));
-
-
-/**
- * API
- */
- 
-use Symfony\Component\HttpFoundation\Request;
- 
-/**
- * Permet de formatter correctement la requête de l'utilisateur si celui-ci
- * indique content-type = application/json
- * Important pour les requêtes HTTP sur l'API
- */
-$app->before(function (Request $request) {
-	if (0 === strpos($request->headers->get('Content-Type'), 'application/json')) {
-		$data = json_decode($request->getContent(), true);
-		$request->request->replace(is_array($data) ? $data : array());
-	}
-});
-
 
 return $app;

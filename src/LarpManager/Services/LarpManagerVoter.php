@@ -40,6 +40,8 @@ class LarpManagerVoter implements VoterInterface
 				'MODERATOR',
 				'GROUPE_MEMBER',
 				'GROUPE_RESPONSABLE',
+				//'GROUPE_SECONDAIRE_MEMBER',
+				//'GROUPE_SECONDAIRE_RESPONSABLE',
 				'JOUEUR_OWNER',
 				'JOUEUR_NOT_REGISTERED',
 				'OWN_PERSONNAGE',
@@ -80,6 +82,14 @@ class LarpManagerVoter implements VoterInterface
 				$groupeId = $object;
 				return $this->isMemberOf($user, $groupeId) ? VoterInterface::ACCESS_GRANTED : VoterInterface::ACCESS_DENIED;
 			}
+			/*if ($attribute == 'GROUPE_SECONDAIRE_RESPONSABLE') {
+				$groupeId = $object;
+				return $this->isGroupeSecondaireResponsableOf($user, $groupeSecondaireId) ? VoterInterface::ACCESS_GRANTED : VoterInterface::ACCESS_DENIED;
+			}
+			if ($attribute == 'GROUPE_SECONDAIRE_MEMBER') {
+				$groupeId = $object;
+				return $this->isGroupeSecondaireMemberOf($user, $groupeSecondaireId) ? VoterInterface::ACCESS_GRANTED : VoterInterface::ACCESS_DENIED;
+			}*/
 			if ( $attribute == 'POST_OWNER') {
 				$postId = $object;
 				return $this->isHisPost($user, $postId) ? VoterInterface::ACCESS_GRANTED : VoterInterface::ACCESS_DENIED;
@@ -244,6 +254,46 @@ class LarpManagerVoter implements VoterInterface
 	}
 	
 
+	/**
+	 * Test si un utilisateur est responsable d'un groupe secondaire
+	 *
+	 * @param unknown $user
+	 * @param unknown $groupeId
+	 */
+	protected function isGroupeSecondaireResponsableOf($user, $groupeSecondaireId)
+	{
+		/*$personnage = $user->getPersonnage();
+		if ( $personnage->)
+		foreach( $user->getGroupeSecondaireResponsable() as $groupe)
+		{
+			if ( $groupe instanceof \LarpManager\Entities\Groupe
+					&& $groupe->getId() == $groupeId)
+				return true;
+		}
+		return false;*/
+		return true;
+	}
+	
+	/**
+	 * Test si un utilisateur est membre d'un groupe secondaire
+	 *
+	 * @param unknown $user
+	 * @param unknown $groupeId
+	 */
+	protected function isGroupeSecondaireMemberOf($user, $groupeSecondaireId)
+	{
+		return true;
+		if ( $user->getGroupes() )
+		{
+			foreach ( $user->getGroupes() as $groupe )
+			{
+				if ( $groupe->getId() == $groupeId)	return true;
+			}
+		}
+			
+		return false;
+	}
+	
 	/**
 	 * Test si un utilisateur posséde bien le personnage
 	 *

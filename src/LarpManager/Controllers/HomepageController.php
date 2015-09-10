@@ -29,17 +29,28 @@ class HomepageController
 	 */
 	public function indexAction(Request $request, Application $app) 
 	{	
+		/**
+		 * L'utilisateur n'est pas connecté, lui fournir la page d'acceuil spécifique
+		 */
+		if ( ! $app['user'] )
+		{
+			return $app['twig']->render('homepage/not_connected.twig');
+		}
+		
 		$form = $app['form.factory']->createBuilder(new GroupeInscriptionForm(), array())
 			->add('subscribe','submit', array('label' => 'S\'inscrire'))
 			->getForm();
 		
 		$repoGn = $app['orm.em']->getRepository('LarpManager\Entities\Gn');
-
 		$gns = $repoGn->findByActive();
+		
+		$repoAnnonce = $app['orm.em']->getRepository('LarpManager\Entities\Annonce');
+		$annonces = $repoAnnonce->findAll();
 		
 		return $app['twig']->render('homepage/index.twig', array(
 				'form_groupe' => $form->createView(),
 				'gns' => $gns,
+				'annonces' => $annonces,
 		));
 	}
 	

@@ -20,6 +20,7 @@
 				<li class="dropdown">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Admin<span class="caret"></span></a>
 					<ul class="dropdown-menu">
+						<li><a href="{{ path('annonce') }}">Annonces</a></li>
 						<li><a href="{{ path('gn') }}">GNs</a></li>
 						<li><a href="{{ path('groupe.place') }}">Places disponibles</a></li>
 						<li><a href="{{ path('joueur.xp') }}">Points d'expériences</a></li>
@@ -37,9 +38,12 @@
 						<li><a href="{{ path('territoire') }}">Territoires</a></li>
 						<li><a href="{{ path('langue') }}">Langues</a></li>
 						<li><a href="{{ path('groupe') }}">Groupes</a></li>
+						<li><a href="{{ path('groupeSecondaire.type') }}">Types de groupe</a></li>
+						<li><a href="{{ path('groupeSecondaire') }}">Groupe secondaires</a></li>
 						<li><a href="{{ path('ressource') }}">Ressources</a></li>
 						<li><a href="{{ path('religion') }}">Religions</a></li>
 						<li><a href="{{ path('religion.level') }}">Fanatisme</a></li>
+						
 					</ul>
 				</li>
 			{% endif %}
@@ -119,7 +123,7 @@
 						<li><a href="{{ path('user.logout') }}">Déconnection</a></li>
 					{%  else %}
 						<li><a href="{{ path('user.login') }}">Connection</a></li>
-						<li><a href="{{ path('user.register') }}">Créer un compte</a></li>
+						<li><a href="{{ path('user.register') }}">S'enregistrer</a></li>
 					{%  endif %}
 				</ul>
 			</li>	

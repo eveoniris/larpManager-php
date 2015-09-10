@@ -1,39 +1,115 @@
 {% extends "layout.twig" %}
 
 {% block content %}
-
-	{# si l'utilisateur est connecté, lui afficher un message de bienvenu
-	   sinon lui afficher des liens vers les pages de création de compte ou de login #}
-	   
-	{% if app.user %}	
-		<div class="well well-sm">
-			<h4>
-				Bienvenue {{ app.user.name }}
-			</h4>
-		</div>
-	{%  else %}
-		<div class="panel panel-warning">
-			<div class="panel-heading">
-				Vous n'êtes pas connecté
+	   		
+	<div class="row">
+	
+		<div class="col-xs-8 col-md-8">
+		
+			<div class="well well-sm">
+				<h4>
+					Bienvenue {{ app.user.name }}
+				</h4>
 			</div>
-		  	<div class="panel-body">
-		  		<p>Si vous disposez d'un compte, <a href="{{ path('user.login') }}">connectez-vous</a>.</p>
-		  		<p>Sinon <a href="{{ path('user.register') }}">créez un compte</a>.</p>
-		  	</div>
-	  	</div>
-	{%  endif %}
-	
-	
-	{# affichage de l'annonce la plus récente et du lien vers les archives des annonces #}
-	
-	<div class="panel panel-default">
-		<div class="panel-heading">
-			Une annonce publique
+			
+			{% if not app.user.joueur 
+				or app.user.gns|length == 0 
+				or app.user.groupes|length == 0 
+				or not app.user.personnage %}
+				<div class="well well-sm">
+					<h6>Liste des choses importantes à faire :</h6>
+					<ol>
+					{% if not app.user.joueur %}
+						<li>Enregistrer mes informations de joueur</li>
+					{% endif %}
+					
+					{% if app.user.gns|length == 0 %}
+						<li>Choisir un grandeur nature</li>
+					{% endif %}
+					
+					{% if app.user.groupes|length == 0 %}
+						<li>S'inscrire dans un groupe</li>
+					{% endif %}
+					
+					{% if not app.user.personnage %}
+						<li>Créer mon personnage</li>
+					{% endif %}
+					</ol>
+				</div>
+			{% endif %}
+		
+			{# enregistrement des informations joueurs #}
+			{% if not app.user.joueur %}
+				<div class="panel panel-success">
+					<div class="panel-heading">{% trans %}record_player_title{% endtrans %}</div>
+					<div class="panel-body">
+						<p>{% trans %}record_player_explain{% endtrans %}</p>
+						<a class="btn btn-default" href="{{ path('joueur.add') }}">{% trans %}record_player_link{% endtrans %}</a>
+					</div>
+				</div>
+			{% else %}
+			
+				{%  if app.user.gns|length == 0 %}
+					{# inscription dans un gn #}
+					<div class="panel panel-success">
+						<div class="panel-heading">{% trans %}gn_subscribe_title{% endtrans %}</div>
+						<div class="panel-body">
+							<p>{% trans %}gn_subscribe_explain{% endtrans %}</p>
+							<div class="list-group">
+							{% for gn in gns %}
+								<a href="{{ path('inscriptionGn.form',{'idGn': gn.id}) }}" class="list-group-item">
+									<p><h6>{{ gn.label }} : <small>{{ gn.description }}</small></h6></p>
+									<p>du {{ gn.dateDebut|date('Y-m-d') }} au {{ gn.dateFin|date('Y-m-d') }}</p>
+								</a>
+							{% endfor %}
+							</div>
+						</div>
+					</div>
+				{% else %}
+					{% if app.user.groupes|length == 0 %}
+						{# inscription dans un groupe #}
+						<div class="panel panel-success">
+							<div class="panel-heading">{% trans %}subscribe_group_title{% endtrans %}</div>
+							<div class="panel-body">
+								<p>{% trans %}subscribe_group_explain{% endtrans %}</p>
+								{{ include("homepage/fragment/form_groupe.twig",{'form': form_groupe,'action': path('homepage.inscription')}) }}
+							</div>
+						</div>
+					{% endif %}
+				{% endif %}
+			{% endif %}
 		</div>
-		<div class="panel-body">
-			La page d'acceuil présentera des annonces publiques
+		
+		<div class="col-xs-4 col-md-4">
+		
+			{# afficher la liste des gns dans lequel le joueur est inscrit #}
+			{% if app.user.joueur and app.user.joueur.gns|length > 0 %}
+				<div class="panel panel-default">
+					<div class="panel-heading">{% trans %}gn_list_title{% endtrans %}</div>
+					<div class="panel-body">
+						<ul class="list-group">
+						{% for gn in gns %}
+							<li class="list-group-item">{{ gn.label }}</li>
+						{% endfor %}
+						</ul>
+					</div>
+				</div>
+			{% endif %}
+				
+			{# affichage de l'annonce la plus récente et du lien vers les archives des annonces #}
+			{% for annonce in annonces %}
+				<div class="panel panel-primary">
+					<div class="panel-heading">
+						{{ annonce.title }}
+					</div>
+					<div class="panel-body">
+						{{ annonce.text|markdown }}
+					</div>
+				</div>
+			{% endfor %}
 		</div>
-	</div>
+	</div>		
+	
 	
 	
 	{# si l'utilisateur est scénariste, lui afficher les liens vers les groupes dont
@@ -59,61 +135,6 @@
 			</div>
 		</div>
 		{%  endif %}
-	{% else %}
-	
-		{# si l'utilisateur n'a *que* le role USER, lui afficher les liens
-		   soit vers la création des informations joueurs
-		   soit vers l'inscription dans un gn
-		   soit vers l'inscription dans un groupe #}
-		   
-		{% if is_granted('ROLE_USER', app.user) %}
-		
-			{# si l'utilisateur n'a pas de joueur #}
-			{% if not app.user.joueur %}
-				<div class="panel panel-default">
-					<div class="panel-heading">{% trans %}record_player_title{% endtrans %}</div>
-					<div class="panel-body">
-						<p>{% trans %}record_player_explain{% endtrans %}</p>
-						<a class="btn btn-default" href="{{ path('joueur.add') }}">{% trans %}record_player_link{% endtrans %}</a>
-					</div>
-				</div>
-			{% else %}
-			
-				{# afficher la liste des gns dans lequel le joueur est inscrit #}
-				{% if app.user.joueur.gns|length > 0 %}
-					<div class="panel panel-default">
-						<div class="panel-heading">{% trans %}gn_list_title{% endtrans %}</div>
-						<div class="panel-body">
-							{% for gn in gns %}
-								{{ gn.label }}
-							{% endfor %}
-						</div>
-					</div>
-				{% endif %}
-				
-				{# si le joueur est inscrit dans au moins 1 gn, proposer une inscription dans un groupe #}
-				{%  if app.user.gns|length >= 1 %}
-					<div class="panel panel-default">
-						<div class="panel-heading">{% trans %}subscribe_group_title{% endtrans %}</div>
-						<div class="panel-body">
-							<p>{% trans %}subscribe_group_explain{% endtrans %}</p>
-							{{ include("homepage/fragment/form_groupe.twig",{'form': form_groupe,'action': path('homepage.inscription')}) }}
-						</div>
-					</div>
-				{% else %}
-					<div class="panel panel-default">
-						<div class="panel-heading">{% trans %}gn_subscribe_title{% endtrans %}</div>
-						<div class="panel-body">
-							<p>{% trans %}gn_subscribe_explain{% endtrans %}</p>
-							{% for gn in gns %}
-								{{ include("homepage/fragment/gn.twig",{'gn': gn}) }}
-							{% endfor %}
-						</div>
-					</div>
-				{% endif %}
-				
-			{% endif %}
-		{% endif %}
 	{% endif %}	
 	
 {% endblock content %}
