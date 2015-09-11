@@ -24,26 +24,23 @@ class GroupeSecondaireControllerProvider implements ControllerProviderInterface
 		 */		
 		$controllers->match('/','LarpManager\Controllers\GroupeSecondaireController::indexAction')
 			->bind("groupeSecondaire")
-			->method('GET')
-			->before(function(Request $request) use ($app) {
-				if (!$app['security.authorization_checker']->isGranted('ROLE_SCENARISTE')) {
-					throw new AccessDeniedException();
-				}
-			
-			});
+			->method('GET');
 
 		/**
-		 * Detail d'un groupe secondaire à destication des scenaristes/admin
+		 * Detail d'un groupe secondaire
 		 */
 		$controllers->match('/{index}','LarpManager\Controllers\GroupeSecondaireController::detailAction')
 			->assert('index', '\d+')
 			->bind("groupeSecondaire.detail")
-			->method('GET')
-			->before(function(Request $request) use ($app) {
-				if (!$app['security.authorization_checker']->isGranted('ROLE_SCENARISTE')) {
-					throw new AccessDeniedException();
-				}
-			});
+			->method('GET');
+					
+		/**
+		 * Postuler à un groupe secondaire
+		 */
+		$controllers->match('/{index}/postuler','LarpManager\Controllers\GroupeSecondaireController::postulerAction')
+			->assert('index', '\d+')
+			->bind("groupeSecondaire.postuler")
+			->method('GET|POST');
 
 		/**
 		 * Detail d'un groupe secondaire à destication du chef de groupe

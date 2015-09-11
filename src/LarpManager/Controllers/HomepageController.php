@@ -179,7 +179,7 @@ class HomepageController
 				$app['orm.em']->flush();
 				
 				$app['session']->getFlashBag()->add('success', 'Vous êtes maintenant inscrit au groupe.');
-				return $app->redirect($app['url_generator']->generate('groupe.joueur',array('index' => $groupe->getId())),301);
+				return $app->redirect($app['url_generator']->generate('homepage'),301);
 			}
 			else
 			{

@@ -1,12 +1,18 @@
 {% extends "error/layout.twig" %}
 
+{% block title %}Droit insuffisant{% endblock title %}
 {% block content %}
-	<div class="panel panel-warning">
+	<div class="panel panel-danger">
 		<div class="panel-heading">
-			Droits insuffisant
+			<h6>Par Crom ! petit vermisseau ! crois-tu pouvoir me duper ainsi ? (droits insuffisant)</h6>
 		</div>
 	  	<div class="panel-body">
-		  <p>Vous n'avez pas les droits pour cette action.</p>
+		  <blockquote>
+		  	<p>Autrefois des géants vivaient dans la terre, Conan, et dans les ténèbres du chaos, ils dupèrent Crom. Ils purent ainsi lui voler l'énigme de l'acier. Crom se mit en colère et la terre trembla. Le feu et le vent abattirent ces géants et ils jetèrent leurs corps dans les mers mais, dans leur rage, les Dieux oublièrent le secret de l'acier et le laissèrent sur le champ de bataille. Et c'est nous qui l'avons trouvé. Nous ne sommes que des hommes, pas des Dieux, pas des géants. De simples hommes. Et le secret de l'acier a toujours porté avec lui un mystère. Tu dois apprendre sa valeur Conan, tu dois apprendre ses lois. Car à personne, personne en ce monde tu ne dois te fier. Ni aux hommes, ni aux femmes, ni aux bêtes. [Il désigne l'épée] À ceci tu dois te fier.</p>
+		  </blockquote>
+		  <center>
+		  	<img src="{{ app.request.basepath }}/img/conan.jpg" class="img-responsive img-circle" alt="">
+		  </center>
 		</div>
 	</div>
 {% endblock %}

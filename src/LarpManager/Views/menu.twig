@@ -95,19 +95,8 @@
 						{% else %}
 						
 						{% endif %}
-						
-						
-						{% if app.user.groupes %}
-							{% for groupe in app.user.groupes %}
-								<li><a href="{{ path('groupe.joueur',{'index':groupe.id}) }}">{{ groupe.nom }}</a></li>
-								{% if app.user.isResponsable(groupe) %}
-									<li><a href="{{ path('groupe.gestion',{'index':groupe.id}) }}">Gestion de {{ groupe.nom }}</a></li>
-									<li><a href="#">Diplomatie</a></li>								
-								{% endif %}
-								<li><a href="#">Contacter le scénariste</a></li>
-							{% endfor %}
-						{% endif %}
-						
+
+						<li><a href="{{ path('groupeSecondaire') }}">Les groupes secondaires</a></li>
 						<li><a href="#">Les compétences</a></li>
 						<li><a href="#">Les classes</a></li>
 						<li><a href="{{ path('world') }}">Le monde</a></li>

@@ -1,5 +1,7 @@
 {% extends "layout.twig" %}
 
+{% block title %}Acceuil{% endblock title %}
+
 {% block content %}
 	   		
 	<div class="row">
@@ -75,6 +77,32 @@
 								{{ include("homepage/fragment/form_groupe.twig",{'form': form_groupe,'action': path('homepage.inscription')}) }}
 							</div>
 						</div>
+					{% else %}
+						{# detail du personnage #}
+						{% if app.user.personnage %}
+							{% if app.user.personnage.postulants|length > 0 %}
+								<div class="panel panel-default">
+									<div class="panel-heading">
+									</div>
+									<div class="panel-body">
+										<ul>
+										{% for postulant in app.user.personnage.postulants %}
+											<li>Votre candidature au groupe {{ postulant.groupeSecondaire.label }} est en attente de validation.</li>
+										{% endfor %}
+										</ul>
+									</div>
+								</div>
+							{% endif %}
+						{% endif %}
+						
+						{# detail du groupe #}
+						{% for groupe in app.user.groupes %}
+							<div class="panel panel-default">
+								<div class="panel-heading">{{ groupe.nom }}</div>
+								<div class="panel-body">
+								</div>
+							</div>
+						{% endfor %}
 					{% endif %}
 				{% endif %}
 			{% endif %}
@@ -82,16 +110,45 @@
 		
 		<div class="col-xs-4 col-md-4">
 		
+			{# Trucs et astuces #}
+			<div class="panel panel-default">
+				<div class="panel-heading">Trucs et astuces
+				</div>
+				<div class="panel-body">
+					<p>Utilisez le menu "Joueur" pour découvrir des fonctionnalitées supplémentaires</p>
+				</div>
+			</div>
+						
+			{# si l'utilisateur est scénariste, lui afficher les liens vers les groupes dont
+			   il a la responsabilité #}
+	
+			{% if is_granted('ROLE_SCENARISTE', app.user) %}
+				{% if app.user.groupeScenariste|length > 0 %}
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						Scénariste : groupes dont vous avez la charge
+					</div>
+					<div class="panel-body">
+						<div class="list-group">
+							{% for groupe in app.user.groupeScenariste %}
+								<a class="list-group-item" href="{{ path('groupe.detail', {'index': groupe.id}) }}">{{ groupe.nom }}</a>
+							{% endfor %}
+						</div>	
+					</div>
+				</div>
+				{%  endif %}
+			{% endif %}	
+		
 			{# afficher la liste des gns dans lequel le joueur est inscrit #}
 			{% if app.user.joueur and app.user.joueur.gns|length > 0 %}
 				<div class="panel panel-default">
 					<div class="panel-heading">{% trans %}gn_list_title{% endtrans %}</div>
 					<div class="panel-body">
-						<ul class="list-group">
+						<div class="list-group">
 						{% for gn in gns %}
-							<li class="list-group-item">{{ gn.label }}</li>
+							<a class="list-group-item" href="{{ path('gn.detail', {'index': gn.id}) }}">{{ gn.label }}</a>
 						{% endfor %}
-						</ul>
+						</div>
 					</div>
 				</div>
 			{% endif %}
@@ -103,11 +160,14 @@
 						Vos groupes
 					</div>
 					<div class="panel-body">
-					 	<ul class="list-group">
+					 	<div class="list-group">
 						{% for groupe in app.user.groupes %}
-							<li class="list-group-item">{{ groupe.nom }}</li>
+							<a class="list-group-item" href="{{ path('groupe.detail',{'index': groupe.id}) }}">{{ groupe.nom }}</a>
 						{% endfor %}
-						</ul>			
+						{% for groupe in app.user.personnage.secondaryGroups %}
+							<a class="list-group-item" href="{{ path('secondayGroup.detail',{'index':groupe.id}) }}">{{ groupe.label }}</a>
+						{% endfor %}
+						</div>			
 					</div>
 				</div>
 			{% endif %}
@@ -125,32 +185,5 @@
 			{% endfor %}
 		</div>
 	</div>		
-	
-	
-	
-	{# si l'utilisateur est scénariste, lui afficher les liens vers les groupes dont
-	   il a la responsabilité #}
-	
-	{% if is_granted('ROLE_SCENARISTE', app.user) %}
-		{% if app.user.groupeScenariste|length > 0 %}
-		<div class="panel panel-default">
-			<div class="panel-heading">
-				Scénariste : groupes dont vous avez la charge
-			</div>
-			<div class="panel-body">
-				<div class="col-xs-6 col-md-3">
-					{% for groupe in app.user.groupeScenariste %}
-					<div class="thumbnail">
-						<div class="caption">
-							<h3>{{ groupe.nom }}</h3>
-							<p><a class="btn btn-primary" role="button" href="{{ path('groupe.detail',{'index':groupe.id}) }}">Détail</a></p>
-						</div>
-					</div>			
-					{% endfor %}
-				</div>	
-			</div>
-		</div>
-		{%  endif %}
-	{% endif %}	
 	
 {% endblock content %}

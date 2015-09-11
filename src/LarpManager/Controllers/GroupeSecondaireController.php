@@ -4,6 +4,9 @@ namespace LarpManager\Controllers;
 use Symfony\Component\HttpFoundation\Request;
 use Silex\Application;
 use LarpManager\Form\GroupeSecondaireForm;
+use LarpManager\Form\GroupeSecondairePostulerForm;
+
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
  * LarpManager\Controllers\GroupeSecondaireController
@@ -24,8 +27,69 @@ class GroupeSecondaireController
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\SecondaryGroup');
 		$groupeSecondaires = $repo->findAll();
 	
-		return $app['twig']->render('groupeSecondaire/index.twig', array(
-				'groupeSecondaires' => $groupeSecondaires));
+		if ( $app['security.authorization_checker']->isGranted('ROLE_SCENARISTE') )
+		{
+			return $app['twig']->render('groupeSecondaire/index.twig', array(
+					'groupeSecondaires' => $groupeSecondaires));
+		}
+		else
+		{
+			return $app['twig']->render('groupeSecondaire/list_joueur.twig', array(
+					'groupeSecondaires' => $groupeSecondaires));
+		}
+	}
+	
+	/**
+	 * Postuler à un groupe secondaire
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function postulerAction(Request $request, Application $app)
+	{
+		$id = $request->get('index');
+		
+		$groupeSecondaire = $app['orm.em']->find('\LarpManager\Entities\SecondaryGroup',$id);
+		
+		/**
+		 * Si le joueur est déjà postulant dans ce groupe, refuser d'office la demande
+		 */
+		$repoPostulant = $app['orm.em']->getRepository('\LarpManager\Entities\Postulant');
+		$personnage = $app['user']->getPersonnage();
+		foreach (  $personnage->getPostulants() as $postulant )
+		{
+			if ( $postulant->getSecondaryGroup() == $groupeSecondaire )
+			{
+				$app['session']->getFlashBag()->add('error', 'Votre avez déjà postulé dans ce groupe. Inutile d\'en refaire la demande.');
+				return $app->redirect($app['url_generator']->generate('homepage'));
+			}
+		}
+		
+		$form = $app['form.factory']->createBuilder(new GroupeSecondairePostulerForm())
+			->add('postuler','submit', array('label' => "Postuler"))
+			->getForm();
+		
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
+		{
+			$data = $form->getData();
+			$postulant = new \LarpManager\Entities\Postulant();
+			$postulant->setPersonnage($app['user']->getPersonnage());
+			$postulant->setSecondaryGroup($groupeSecondaire);
+			$postulant->setExplanation($data['explanation']);
+		
+			$app['orm.em']->persist($postulant);
+			$app['orm.em']->flush();
+			$app['session']->getFlashBag()->add('success', 'Votre candidature a été enregistrée, et transmise au chef de groupe.');
+		
+			return $app->redirect($app['url_generator']->generate('homepage'));
+		}
+		
+		return $app['twig']->render('groupeSecondaire/postuler.twig', array(
+				'groupeSecondaire' => $groupeSecondaire,
+				'form' => $form->createView(),
+		));
 	}
 	
 	/**
@@ -129,7 +193,22 @@ class GroupeSecondaireController
 	
 		if ( $groupeSecondaire )
 		{
-			return $app['twig']->render('groupeSecondaire/detail.twig', array('groupeSecondaire' => $groupeSecondaire));
+			if ( $app['larp.manager']->isResponsableOfSecondaryGroup($app['user'],$groupeSecondaire) )
+			{
+				return $app['twig']->render('groupeSecondaire/detail_responsable.twig', array('groupeSecondaire' => $groupeSecondaire));
+			}
+			else if ( $app['larp.manager']->isMemberOfSecondaryGroup($app['user'],$groupeSecondaire) )
+			{
+				return $app['twig']->render('groupeSecondaire/detail_member.twig', array('groupeSecondaire' => $groupeSecondaire));
+			}
+			else if ( $app['security.authorization_checker']->isGranted('ROLE_SCENARISTE') )
+			{
+				return $app['twig']->render('groupeSecondaire/detail.twig', array('groupeSecondaire' => $groupeSecondaire));
+			}
+			else
+			{
+				throw new AccessDeniedException();
+			}
 		}
 		else
 		{
