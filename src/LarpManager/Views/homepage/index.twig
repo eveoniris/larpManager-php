@@ -95,6 +95,22 @@
 					</div>
 				</div>
 			{% endif %}
+			
+			{# afficher la liste des groupes du joueur #}
+			{% if app.user.groupes|length > 0 %}
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						Vos groupes
+					</div>
+					<div class="panel-body">
+					 	<ul class="list-group">
+						{% for groupe in app.user.groupes %}
+							<li class="list-group-item">{{ groupe.nom }}</li>
+						{% endfor %}
+						</ul>			
+					</div>
+				</div>
+			{% endif %}
 				
 			{# affichage de l'annonce la plus récente et du lien vers les archives des annonces #}
 			{% for annonce in annonces %}
