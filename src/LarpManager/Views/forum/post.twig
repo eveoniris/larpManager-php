@@ -1,0 +1,24 @@
+{% extends "layout.twig" %}
+
+{% block title %}Forum - message{% endblock title %}
+
+{% block content %}
+	
+	<div class="container-fluid">
+		<div class="row">		
+			<div class="col-xs-12 col-md-12">
+				<ol class="breadcrumb">
+					<li><a href="{{ path('homepage') }}">Accueil</a></li>
+					<li><a href="{{ path('forum')  }}">Forum</a></li>
+					{% for ancestor in post.topic.ancestor %}
+						<li><a href="{{ path('forum.topic',{'index':ancestor.id})  }}">{{ ancestor.title }}</a></li>
+					{% endfor %}
+					<li><a href="{{ path('forum.topic',{'index':post.topic.id}) }}">{{ post.topic.title }}</a></li>
+					<li class="active">{{ post.title }}</li>
+				</ol>
+				{{ include("forum/fragment/post.twig",{'post': post}) }}
+			</div>
+		</div>
+	</div>
+	
+{% endblock content %}

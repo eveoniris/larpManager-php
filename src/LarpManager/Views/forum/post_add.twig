@@ -1,0 +1,48 @@
+{% extends "layout.twig" %}
+
+{% block head %}
+	{{ parent() }}
+	
+	{# inclusion du plugin meltdown pour la saisie du post #}
+	<link rel="stylesheet" href="{{ app.request.basepath }}/css/meltdown.css" />
+{% endblock head %}
+
+{% block title %}Forum - Saisie d'un message{% endblock title %}
+
+{% block content %}
+
+	<div class="container-fluid">
+		<div class="row">
+		
+			{# le formulaire pour saisir son message #}
+			<div class="col-xs-12 col-md-8">
+				{{ include("forum/fragment/post_form.twig",{
+					'legend': 'Ajout d\'un message',
+					'action': path('forum.post.add', {'index': topic.id}), 
+					'form' : form}) }}
+			</div>
+		</div>
+	</div>
+	
+{% endblock content %}
+
+{% block javascript %}
+
+	{{ parent() }}
+
+	{# inclusion du plugin meltdown pour la saisie du post #}   
+	<script src="{{ app.request.basepath }}/js/lib/element_resize_detection.js"></script>
+    <script src="{{ app.request.basepath }}/js/lib/js-markdown-extra.js"></script>
+    <script src="{{ app.request.basepath }}/js/lib/rangyinputs-jquery.min.js"></script>
+    <script src="{{ app.request.basepath }}/js/jquery.meltdown.js"></script>
+	         
+	<script type="text/javascript">
+		$(document).ready(function() {
+			$('#post_text').meltdown({
+				openPreview: true,
+				sidebyside: true
+			});
+		});
+	</script>
+
+{% endblock javascript %}

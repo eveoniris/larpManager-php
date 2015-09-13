@@ -14,8 +14,12 @@ use LarpManager\Entities\BaseGn;
 /**
  * LarpManager\Entities\Gn
  *
- * @Entity()
+ * @Entity(repositoryClass="LarpManager\Repository\GnRepository")
  */
 class Gn extends BaseGn
 {
+	public function __toString()
+	{
+		return $this->getLabel();	
+	}
 }

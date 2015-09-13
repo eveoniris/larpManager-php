@@ -2,11 +2,15 @@
 namespace LarpManager\Controllers;
 
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Silex\Application;
 use LarpManager\Form\AppelationForm;
 
-
+/**
+ * LarpManager\Controllers\AppelationController
+ *
+ * @author kevin
+ *
+ */
 class AppelationController
 {
 	/**
@@ -14,8 +18,8 @@ class AppelationController
 	 */
 	public function indexAction(Request $request, Application $app)
 	{
-		$appelations = $app['appelation.manager']->findAll();
-		$appelations = $app['appelation.manager']->sort($appelations);
+		$appelations = $app['orm.em']->getRepository('\LarpManager\Entities\Appelation')->findAll();
+		$appelations = $app['larp.manager']->sortAppelation($appelations);
 		
 		return $app['twig']->render('appelation/index.twig', array('appelations' => $appelations));
 	}
@@ -29,7 +33,7 @@ class AppelationController
 	{
 		$id = $request->get('index');
 		
-		$appelation = $app['appelation.manager']->find($id);
+		$appelation = $app['orm.em']->find('\LarpManager\Entities\Appelation',$id);
 		
 		return $app['twig']->render('appelation/detail.twig', array('appelation' => $appelation));
 	}
@@ -53,7 +57,8 @@ class AppelationController
 		if ( $form->isValid() )
 		{
 			$appelation = $form->getData();
-			$app['appelation.manager']->insert($appelation);
+			$app['orm.em']->persist($appelation);
+			$app['orm.em']->flush();
 			
 			$app['session']->getFlashBag()->add('success', 'L\'appelation a été ajoutée.');
 				
@@ -81,7 +86,7 @@ class AppelationController
 	{
 		$id = $request->get('index');
 		
-		$appelation = $app['appelation.manager']->find($id);
+		$appelation = $app['orm.em']->find('\LarpManager\Entities\Appelation',$id);
 		
 		$form = $app['form.factory']->createBuilder(new AppelationForm(), $appelation)
 			->add('update','submit', array('label' => "Sauvegarder"))
@@ -96,14 +101,16 @@ class AppelationController
 		
 			if ( $form->get('update')->isClicked())
 			{
-				$app['appelation.manager']->update($appelation);
+				$app['orm.em']->persist($appelation);
+				$app['orm.em']->flush();
 				$app['session']->getFlashBag()->add('success', 'L\'appelation a été mise à jour.');
 				
 				return $app->redirect($app['url_generator']->generate('appelation.detail',array('index' => $id)),301);
 			}
 			else if ( $form->get('delete')->isClicked())
 			{
-				$app['appelation.manager']->delete($appelation);
+				$app['orm.em']->remove($appelation);
+				$app['orm.em']->flush();
 				$app['session']->getFlashBag()->add('success', 'L\'appelation a été supprimée.');
 				return $app->redirect($app['url_generator']->generate('appelation'),301);
 			}

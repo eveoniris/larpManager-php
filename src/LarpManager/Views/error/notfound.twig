@@ -1,12 +1,17 @@
 {% extends "error/layout.twig" %}
-
+{% block title %}Erreur 404{% endblock title %}
 {% block content %}
-	<div class="panel panel-warning">
+	<div class="panel panel-danger">
 		<div class="panel-heading">
-			Page non trouvée
+			<h6>Par Crom ! une erreur 404 (page non trouvée) !</h6>
 		</div>
 	  	<div class="panel-body">
-		  <p>Désolé, La page demandée n'a pas été trouvée.</p>
+	  		<blockquote>
+	  			<p>Crom, je ne t'ai jamais prié auparavant. Je n'ai pas les mots pour cela. Personne, pas même toi, ne se souviendra si nous étions des hommes bons ou mauvais, pourquoi nous nous battions ou pourquoi nous sommes morts. Non, tout ce qui compte c'est que deux hommes se sont battus contre un grand nombre, voilà ce qui importe. Tu aimes la bravoure, Crom, alors accorde moi une chose, accorde-moi la VENGEANCE ! Et si tu n’entends pas ma prière, va au diable !"
+	  		</blockquote>
+	  		<center>
+	  			<img src="{{ app.request.basepath }}/img/conan.jpg" class="img-responsive img-circle" alt="">
+	  		</center>
 		</div>
 	</div>
 {% endblock %}

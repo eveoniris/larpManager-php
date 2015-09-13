@@ -5,8 +5,25 @@ namespace LarpManager;
 use Silex\Application;
 use Silex\ControllerProviderInterface;
 
+/**
+ * LarpManager\LangueControllerProvider
+ * 
+ * @author kevin
+ *
+ */
 class LangueControllerProvider implements ControllerProviderInterface
 {
+	/**
+	 * Initialise les routes pour les langues
+	 * Routes :
+	 * 	- langue
+	 * 	- langue.add
+	 *  - langue.update
+	 *  - langue.detail
+	 *
+	 * @param Application $app
+	 * @return Controllers $controllers
+	 */
 	public function connect(Application $app)
 	{
 		$controllers = $app['controllers_factory'];

@@ -6,8 +6,20 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * LarpManager\Form\TerritoireForm
+ *
+ * @author kevin
+ *
+ */
 class TerritoireForm extends AbstractType
 {
+	/**
+	 * Construction du formulaire
+	 * 
+	 * @param FormBuilderInterface $builder
+	 * @param array $options
+	 */
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
 		$builder->add('nom','text', array(
@@ -96,6 +108,11 @@ class TerritoireForm extends AbstractType
 				));
 	}
 	
+	/**
+	 * Définition de l'entité concerné
+	 * 
+	 * @param OptionsResolver $resolver
+	 */
 	public function configureOptions(OptionsResolver $resolver)
 	{
 		$resolver->setDefaults(array(
@@ -103,6 +120,9 @@ class TerritoireForm extends AbstractType
 		));
 	}
 	
+	/**
+	 * Nom du formulaire
+	 */
 	public function getName()
 	{
 		return 'territoire';

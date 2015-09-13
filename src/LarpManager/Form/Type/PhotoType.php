@@ -6,6 +6,12 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
+/**
+ * LarpManager\Form\Type\PhotoType
+ *
+ * @author kevin
+ *
+ */
 class PhotoType extends AbstractType
 {
 	public function buildForm(FormBuilderInterface $builder, array $options)

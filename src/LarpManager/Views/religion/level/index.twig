@@ -1,0 +1,23 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-xs-12 col-md-12">
+			<div class="well well-sm">
+				<h4>
+					Gestion des niveaux de religion
+					<small>
+						( {{ religionLevels|length }} niveaux )
+					</small>
+				</h4>
+			</div>
+			
+			{{ include("religion/fragment/list_level.twig", {'religionLevels' : religionLevels, 'add' : true}) }}
+		</div>
+	</div>
+
+</div>
+	
+{% endblock %}

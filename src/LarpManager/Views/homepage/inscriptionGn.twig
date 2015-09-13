@@ -1,0 +1,21 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+
+<div class="panel panel-default">
+	<div class="panel-heading">{{ gn.label }}</div>
+	<div class="panel-body">
+		<p>{{ gn.description }}</p>
+		<p>Ce GN se déroulera du {{ gn.dateDebut|date('Y-m-d') }} au {{ gn.dateFin|date('Y-m-d') }}.</p>
+		<p>Lieu : {{ gn.adresse }}</p>
+		
+		
+		<form action="{{ path('inscriptionGn') }}" method="POST" {{ form_enctype(form) }}>
+				{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+		
+				{{ form(form) }}
+		</form>
+	</div>
+</div>
+
+{% endblock content %}

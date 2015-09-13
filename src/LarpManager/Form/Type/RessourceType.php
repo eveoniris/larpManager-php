@@ -5,8 +5,13 @@ namespace LarpManager\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use Doctrine\ORM\EntityRepository;
 
+/**
+ * LarpManager\Form\Type\RessourceType
+ *
+ * @author kevin
+ *
+ */
 class RessourceType extends AbstractType
 {
 	public function buildForm(FormBuilderInterface $builder, array $options)

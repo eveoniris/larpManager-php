@@ -1,0 +1,26 @@
+{% extends "layout.twig" %}
+
+{% block title %}{{ personnage.nom }}{% endblock title %}
+
+{% block content %}
+<div class="container-fluid">
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage')  }}">Accueil</a></li>
+		<li class="active">Choix d'une religion</li>
+	</ol>
+	
+	<div class="well bs-component">
+		<form action="{{ path('personnage.religion.add',{'index':personnage.id}) }}" method="POST" {{ form_enctype(form) }}>
+			<fieldset>
+				<legend>{{ personnage.nom }} - <small>Choix d'une religion</small></legend>
+				<p>Attention ! une fois votre religion choisie, vous ne pourrez plus revenir sur votre choix.</p>
+				{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+	
+				{{ form_row(form.religion) }}
+				{{ form_row(form.religionLevel) }}
+				{{ form_rest(form) }}
+			</fieldset>
+		</form>
+	</div>
+{% endblock content %}

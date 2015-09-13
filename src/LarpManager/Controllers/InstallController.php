@@ -8,6 +8,12 @@ use LarpManager\User\UserServiceProvider;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Yaml\Dumper;
 
+/**
+ * LarpManager\Controllers\InstallController
+ *
+ * @author kevin
+ *
+ */
 class InstallController
 {	
 	/**
@@ -181,89 +187,98 @@ class InstallController
 			$etat = new \LarpManager\Entities\Etat();
 			$etat->setLabel("A acheter");
 			$app['orm.em']->persist($etat);
-			$app['orm.em']->flush();
+			
 			
 			// Création des niveaux de compétence
 			$niveau = new \LarpManager\Entities\Level();
 			$niveau->setLabel("Apprenti");
 			$niveau->setIndex("1");
 			$app['orm.em']->persist($niveau);
-			$app['orm.em']->flush();
+			
 			
 			$niveau = new \LarpManager\Entities\Level();
 			$niveau->setLabel("Initié");
 			$niveau->setIndex("2");
 			$app['orm.em']->persist($niveau);
-			$app['orm.em']->flush();
+			
 			
 			$niveau = new \LarpManager\Entities\Level();
 			$niveau->setLabel("Expert");
 			$niveau->setIndex("3");
 			$app['orm.em']->persist($niveau);
-			$app['orm.em']->flush();
+			
 			
 			$niveau = new \LarpManager\Entities\Level();
 			$niveau->setLabel("Maître");
 			$niveau->setIndex("4");
 			$app['orm.em']->persist($niveau);
-			$app['orm.em']->flush();
+			
 			
 			$niveau = new \LarpManager\Entities\Level();
 			$niveau->setLabel("Secret");
 			$niveau->setIndex("5");
 			$app['orm.em']->persist($niveau);
-			$app['orm.em']->flush();
+			
 			
 			$rarete = new \LarpManager\Entities\Rarete();
 			$rarete->setLabel("Commun");
 			$rarete->setValue("1");
 			$app['orm.em']->persist($rarete);
-			$app['orm.em']->flush();
+			
 			
 			$rarete = new \LarpManager\Entities\Rarete();
 			$rarete->setLabel("Rare");
 			$rarete->setValue("2");
 			$app['orm.em']->persist($rarete);
-			$app['orm.em']->flush();
+			
 			
 			$genre = new \LarpManager\Entities\Genre();
 			$genre->setLabel("Masculin");
 			$app['orm.em']->persist($genre);
-			$app['orm.em']->flush();
+			
 			
 			$genre = new \LarpManager\Entities\Genre();
 			$genre->setLabel("Feminin");
 			$app['orm.em']->persist($genre);
-			$app['orm.em']->flush();
+			
 			
 			$age = new \LarpManager\Entities\Age();
 			$age->setLabel("Jeune adulte");
 			$age->setEnableCreation(true);
 			$app['orm.em']->persist($age);
-			$app['orm.em']->flush();
+			
 			
 			$age = new \LarpManager\Entities\Age();
 			$age->setLabel("Adulte");
 			$age->setEnableCreation(true);
 			$app['orm.em']->persist($age);
-			$app['orm.em']->flush();
+			
 			
 			$age = new \LarpManager\Entities\Age();
 			$age->setLabel("Mur");
 			$age->setEnableCreation(false);
 			$app['orm.em']->persist($age);
-			$app['orm.em']->flush();
+			
 			
 			$age = new \LarpManager\Entities\Age();
 			$age->setLabel("Vieux");
 			$age->setEnableCreation(false);
 			$app['orm.em']->persist($age);
-			$app['orm.em']->flush();
+			
 			
 			$age = new \LarpManager\Entities\Age();
 			$age->setLabel("Ancien");
 			$age->setEnableCreation(false);
 			$app['orm.em']->persist($age);
+
+			
+			// Création du topic culte
+			$topic = new \LarpManager\Entities\Topic();
+			$topic->setKey('TOPIC_CULTE');
+			$topic->setLabel('Cultes');
+			$topic->setDescription('Discussion à propos des cultes');
+			$app['orm.em']->persist($topic);
+			
 			$app['orm.em']->flush();
 									
 			// création de l'utilisateur admin

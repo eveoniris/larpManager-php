@@ -7,9 +7,32 @@ use Silex\ControllerProviderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
-
+/**
+ * LarpManager\UserControllerProvider
+ * 
+ * @author kevin
+ *
+ */
 class UserControllerProvider implements ControllerProviderInterface
 {
+	/**
+	 * Initialise les routes pour les users
+	 * Routes :
+	 * 	- user
+	 * 	- user.view
+	 *  - user.add
+	 *  - user.edit
+	 *  - user.list
+	 *  - user.right
+	 *  - user.login
+	 *  - user.logout
+	 *  - user.register
+	 *  - user.forgot-password
+	 *  - user.login_check
+	 *
+	 * @param Application $app
+	 * @return Controllers $controllers
+	 */
 	public function connect(Application $app)
 	{
 		$controllers = $app['controllers_factory'];

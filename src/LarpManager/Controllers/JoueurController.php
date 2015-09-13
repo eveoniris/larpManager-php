@@ -7,10 +7,19 @@ use Silex\Application;
 
 use LarpManager\Form\JoueurForm;
 
+/**
+ * LarpManager\Controllers\JoueurController
+ *
+ * @author kevin
+ *
+ */
 class JoueurController
 {
 	/**
-	 * @description affiche la vue index.twig
+	 * Affiche la vue index.twig
+	 * 
+	 * @param Request $request
+	 * @param Application $app
 	 */
 	public function indexAction(Request $request, Application $app) 
 	{
@@ -20,7 +29,10 @@ class JoueurController
 	}
 	
 	/**
-	 * @description affiche le formulaire d'ajout d'un joueur
+	 * Affiche le formulaire d'ajout d'un joueur
+	 * 
+	 * @param Request $request
+	 * @param Application $app
 	 */
 	public function addAction(Request $request, Application $app)
 	{
@@ -35,13 +47,15 @@ class JoueurController
 		if ( $form->isValid() )
 		{
 			$joueur = $form->getData();
-				
+			$app['user']->setJoueur($joueur);
+			
+			$app['orm.em']->persist($app['user']);
 			$app['orm.em']->persist($joueur);
 			$app['orm.em']->flush();
 	
-			$app['session']->getFlashBag()->add('success', 'Le joueur a été ajouté.');
+			$app['session']->getFlashBag()->add('success', 'Vos informations ont été enregistrés.');
 	
-			return $app->redirect($app['url_generator']->generate('joueur'),301);
+			return $app->redirect($app['url_generator']->generate('homepage'),301);
 		}
 	
 		return $app['twig']->render('joueur/add.twig', array(

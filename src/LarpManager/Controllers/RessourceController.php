@@ -2,12 +2,23 @@
 namespace LarpManager\Controllers;
 
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Silex\Application;
 use LarpManager\Form\RessourceForm;
 
+/**
+ * LarpManager\Controllers\RessourceController
+ *
+ * @author kevin
+ *
+ */
 class RessourceController
 {
+	/**
+	 * Liste des ressources
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
 	public function indexAction(Request $request, Application $app)
 	{
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Ressource');

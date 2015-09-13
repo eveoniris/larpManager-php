@@ -2,11 +2,15 @@
 namespace LarpManager\Controllers;
 
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Silex\Application;
-
 use LarpManager\Form\ClasseForm;
 
+/**
+ * LarpManager\Controllers\ClasseController
+ *
+ * @author kevin
+ *
+ */
 class ClasseController
 {
 	/**
@@ -17,8 +21,15 @@ class ClasseController
 	public function indexAction(Request $request, Application $app)
 	{
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Classe');
-		$classes = $repo->findAll();
-		return $app['twig']->render('classe/index.twig', array('classes' => $classes));
+		$classes = $repo->findAllOrderedByLabel();
+		if ( $app['security.authorization_checker']->isGranted('ROLE_REGLE') )
+		{
+			return $app['twig']->render('classe/index.twig', array('classes' => $classes));
+		}
+		else
+		{
+			return $app['twig']->render('classe/list_joueur.twig', array('classes' => $classes));
+		}
 	}
 	
 	/**

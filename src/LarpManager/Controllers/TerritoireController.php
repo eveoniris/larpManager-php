@@ -2,20 +2,28 @@
 namespace LarpManager\Controllers;
 
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Silex\Application;
 use LarpManager\Form\TerritoireForm;
 
 
+/**
+ * LarpManager\Controllers\TerritoireController
+ *
+ * @author kevin
+ *
+ */
 class TerritoireController
 {
 	/**
-	 * @description affiche le tableau de bord de gestion des territoires
+	 * Liste des territoires
+	 * 
+	 * @param Request $request
+	 * @param Application $app
 	 */
 	public function indexAction(Request $request, Application $app)
 	{
-		$territoires = $app['territoire.manager']->findAll();
-		$territoires = $app['territoire.manager']->sort($territoires);
+		$territoires = $app['orm.em']->getRepository('\LarpManager\Entities\Territoire')->findAll();
+		$territoires = $app['larp.manager']->sortTerritoire($territoires);
 		
 		return $app['twig']->render('territoire/index.twig', array('territoires' => $territoires));
 	}
@@ -30,9 +38,16 @@ class TerritoireController
 	{
 		$id = $request->get('index');
 		
-		$territoire = $app['territoire.manager']->find($id);
+		$territoire = $app['orm.em']->find('\LarpManager\Entities\Territoire',$id);
 		
-		return $app['twig']->render('territoire/detail.twig', array('territoire' => $territoire));
+		if ( $app['security.authorization_checker']->isGranted('ROLE_SCENARISTE') )
+		{
+			return $app['twig']->render('territoire/detail.twig', array('territoire' => $territoire));
+		}
+		else
+		{
+			return $app['twig']->render('territoire/detail_joueur.twig', array('territoire' => $territoire));
+		}
 	}
 	
 	/**
@@ -46,9 +61,9 @@ class TerritoireController
 		$territoire = new \LarpManager\Entities\Territoire();
 		
 		$form = $app['form.factory']->createBuilder(new TerritoireForm(), $territoire)
-		->add('save','submit', array('label' => "Sauvegarder"))
-		->add('save_continue','submit', array('label' => "Sauvegarder & continuer"))
-		->getForm();
+			->add('save','submit', array('label' => "Sauvegarder"))
+			->add('save_continue','submit', array('label' => "Sauvegarder & continuer"))
+			->getForm();
 		
 		$form->handleRequest($request);
 		

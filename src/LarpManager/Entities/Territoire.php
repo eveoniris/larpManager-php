@@ -19,7 +19,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * car l'exporteur ne sait pas gérer correctement plusieurs relations ManyToMany entre 
  * les mêmes entities (c'est dommage ...)
  *
- * @Entity()
+ * @Entity(repositoryClass="LarpManager\Repository\TerritoireRepository")
  */
 class Territoire extends BaseTerritoire
 {
@@ -50,6 +50,9 @@ class Territoire extends BaseTerritoire
 	 */
 	protected $langues;
 	
+	/**
+	 * Constructeur
+	 */
 	public function __construct()
 	{
 		$this->importations = new ArrayCollection();
@@ -58,6 +61,9 @@ class Territoire extends BaseTerritoire
 		parent::__construct();
 	}
 	
+	/**
+	 * Affichage
+	 */
 	public function __toString()
 	{
 		return $this->getNomTree();

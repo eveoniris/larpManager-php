@@ -6,6 +6,12 @@ use Silex\Application;
 
 use LarpManager\Form\CompetenceForm;
 
+/**
+ * LarpManager\Controllers\CompetenceController
+ *
+ * @author kevin
+ *
+ */
 class CompetenceController
 {
 	/**
@@ -15,10 +21,20 @@ class CompetenceController
 	 * @param Application $app
 	 */
 	public function indexAction(Request $request, Application $app)
-	{
-		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Competence');
-		$competences = $repo->findAll();
-		return $app['twig']->render('competence/index.twig', array('competences' => $competences));
+	{		
+		if ( $app['security.authorization_checker']->isGranted('ROLE_REGLE') )
+		{
+			$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Competence');
+			$competences = $repo->findAllOrderedByLabel();
+			
+			return $app['twig']->render('competence/index.twig', array('competences' => $competences));
+		}
+		else
+		{
+			$competences = $app['larp.manager']->getRootCompetences();
+			
+			return $app['twig']->render('competence/list_joueur.twig', array('competences' => $competences));
+		}
 	}
 	
 	/**
@@ -51,7 +67,7 @@ class CompetenceController
 		if ( $levelIndex )
 		{
 			$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Level');
-			$level = $repo->findByIndex($levelIndex+1);
+			$level = $repo->findOneByIndex($levelIndex+1);
 			if ( $level )
 			{
 				$competence->setLevel($level);
@@ -76,7 +92,7 @@ class CompetenceController
 				
 			if ( $form->get('save')->isClicked())
 			{
-				return $app->redirect($app['url_generator']->generate('competence'),301);
+				return $app->redirect($app['url_generator']->generate('competence.family'),301);
 			}
 			else if ( $form->get('save_continue')->isClicked())
 			{
@@ -103,7 +119,7 @@ class CompetenceController
 		
 		if ( $competence )
 		{
-			return $app['twig']->render('competence/detail.twig', array('competence' => $competence));
+			return $app['twig']->render('competence/detail.twig', array('competence.family' => $competence));
 		}
 		else
 		{
@@ -150,7 +166,7 @@ class CompetenceController
 				$app['session']->getFlashBag()->add('success', 'La compétence a été supprimée.');
 			}
 		
-			return $app->redirect($app['url_generator']->generate('competence'));
+			return $app->redirect($app['url_generator']->generate('competence.family'));
 		}
 		
 		return $app['twig']->render('competence/update.twig', array(

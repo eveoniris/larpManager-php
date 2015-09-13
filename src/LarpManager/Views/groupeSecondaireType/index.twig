@@ -1,0 +1,24 @@
+{% extends "layout.twig" %}
+
+{% block title %}Type de groupe secondaire{% endblock title %}
+
+{% block content %}
+
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-xs-12 col-md-12">
+			<div class="well well-sm">
+				<h4>
+					Gestion des type de groupe secondaires
+					<small>
+						( {{ groupeSecondaireTypes|length }} types )
+					</small>
+				</h4>
+			</div>
+			{{ include("groupeSecondaireType/fragment/list.twig", {'groupeSecondaireTypes' : groupeSecondaireTypes, 'add' : true}) }}
+		</div>
+	</div>
+
+</div>
+	
+{% endblock %}

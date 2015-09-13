@@ -15,13 +15,11 @@ use Silex\Provider\SwiftmailerServiceProvider;
 use Silex\Provider\HttpFragmentServiceProvider;
 use Dflydev\Silex\Provider\DoctrineOrm\DoctrineOrmServiceProvider;
 use Saxulum\DoctrineOrmManagerRegistry\Silex\Provider\DoctrineOrmManagerRegistryProvider;
+use Nicl\Silex\MarkdownServiceProvider;
 
 use LarpManager\User\UserServiceProvider;
-use LarpManager\Groupe\GroupeServiceProvider;
-use LarpManager\Territoire\TerritoireServiceProvider;
-use LarpManager\Appelation\AppelationServiceProvider;
 use LarpManager\Personnage\PersonnageServiceProvider;
-use LarpManager\Joueur\JoueurServiceProvider;
+use LarpManager\Services\LarpManagerServiceProvider;
 
 $loader = require_once __DIR__.'/../vendor/autoload.php';
 
@@ -130,6 +128,7 @@ $app->register(new DoctrineOrmServiceProvider(), array(
     ),
 ));
 
+
 // Gestion des urls
 $app->register(new UrlGeneratorServiceProvider());
 
@@ -154,12 +153,13 @@ else
 	$app->register(new RememberMeServiceProvider());
 	$app->register(new UserServiceProvider());
 	
+	// markdown syntaxe pour les forums
+	$app->register(new MarkdownServiceProvider());
+	
 	// Other management
-	$app->register(new GroupeServiceProvider());
-	$app->register(new TerritoireServiceProvider());
-	$app->register(new AppelationServiceProvider());
 	$app->register(new PersonnageServiceProvider());
-	$app->register(new JoueurServiceProvider());
+	
+	$app->register(new LarpManagerServiceProvider());
 	
 	// Define firewall
 	$app['security.firewalls'] = array(
@@ -179,7 +179,7 @@ else
 			   }),
 		),
 		'secured_area' => array(	// le reste necessite d'être connecté
-			'pattern' => '^/[stock|groupe|gn|personnage|territoire|appelation|langue|ressource|age|genre|level|competence|competenceFamily|joueur]/.*$',
+			'pattern' => '^/[annonce|stock|forum|groupe|gn|personnage|territoire|appelation|langue|ressource|religion|age|genre|level|competence|competenceFamily|joueur]/.*$',
 			'anonymous' => false,
 			'remember_me' => array(),
 			'form' => array(
@@ -196,6 +196,7 @@ else
 	);
 	
 	$app->mount('/', new LarpManager\HomepageControllerProvider());
+	$app->mount('/annonce', new LarpManager\AnnonceControllerProvider());
 	$app->mount('/user',  new LarpManager\UserControllerProvider());
 	$app->mount('/stock', new LarpManager\StockControllerProvider());
 	$app->mount('/stock/objet', new LarpManager\StockObjetControllerProvider());
@@ -205,6 +206,8 @@ else
 	$app->mount('/stock/localisation', new LarpManager\StockLocalisationControllerProvider());
 	$app->mount('/stock/rangement', new LarpManager\StockRangementControllerProvider());
 	$app->mount('/groupe', new LarpManager\GroupeControllerProvider());
+	$app->mount('/groupeSecondaire', new LarpManager\GroupeSecondaireControllerProvider());
+	$app->mount('/groupeSecondaireType', new LarpManager\GroupeSecondaireTypeControllerProvider());
 	$app->mount('/territoire', new LarpManager\TerritoireControllerProvider());
 	$app->mount('/appelation', new LarpManager\AppelationControllerProvider());
 	$app->mount('/langue', new LarpManager\LangueControllerProvider());
@@ -213,42 +216,51 @@ else
 	$app->mount('/level', new LarpManager\LevelControllerProvider());
 	$app->mount('/classe', new LarpManager\ClasseControllerProvider());
 	$app->mount('/ressource', new LarpManager\RessourceControllerProvider());
+	$app->mount('/religion', new LarpManager\ReligionControllerProvider());
 	$app->mount('/personnage', new LarpManager\PersonnageControllerProvider());
 	$app->mount('/age', new LarpManager\AgeControllerProvider());
 	$app->mount('/genre', new LarpManager\GenreControllerProvider());
 	$app->mount('/gn', new LarpManager\GnControllerProvider());
 	$app->mount('/joueur', new LarpManager\JoueurControllerProvider());
-	//$app->mount('/chronologie', new LarpManager\ChronologieControllerProvider());
-	//$app->mount('/guilde', new LarpManager\GuildeControllerProvider());
-	
-	
+	$app->mount('/forum', new LarpManager\ForumControllerProvider());
+		
+
 	/**
-	 * Gestion des droits d'accés
+	 * Gestion de la hierarchie des droits
 	 */
-	
 	$app['security.role_hierarchy'] = array(
 		'ROLE_USER' => array('ROLE_USER'),
 		'ROLE_STOCK' => array('ROLE_USER', 'ROLE_STOCK'),
 		'ROLE_SCENARISTE' => array('ROLE_USER', 'ROLE_SCENARISTE'),
 		'ROLE_REGLE' => array('ROLE_USER', 'ROLE_REGLE'),
-		'ROLE_ADMIN' => array('ROLE_USER', 'ROLE_STOCK','ROLE_SCENARISTE','ROLE_REGLE'),
+		'ROLE_MODERATOR' => array('ROLE_USER', 'ROLE_MODERATOR'), 
+		'ROLE_ADMIN' => array('ROLE_USER', 'ROLE_STOCK','ROLE_SCENARISTE','ROLE_REGLE','ROLE_MODERATOR'),
 	);
 	
+	/**
+	 * Gestion des droits d'accés
+	 */
 	$app['security.access_rules'] = array(
+		array('^/world/.*$', 'ROLE_USER'),
 		array('^/groupe/.*$', 'ROLE_USER'),
+		array('^/groupeSecondaire/.*$', 'ROLE_USER'),
+		array('^/competence/.*$', 'ROLE_USER'),
+		array('^/classe/.*$', 'ROLE_USER'),
+		array('^/gn/.*$', 'ROLE_USER'),
 		array('^/personnage/.*$', 'ROLE_USER'),
 		array('^/joueur/.*$', 'ROLE_USER'),
-		array('^/gn/.*$', 'ROLE_ADMIN'),
+		array('^/territoire/.*$', 'ROLE_USER'),
+		array('^/groupeSecondaireType/.*$', 'ROLE_SCENARISTE'),
+		array('^/annonce/.*$', 'ROLE_ADMIN'),
 		array('^/age/.*$', 'ROLE_REGLE'),
 		array('^/genre/.*$', 'ROLE_REGLE'),
-		array('^/territoire/.*$', 'ROLE_SCENARISTE'),
+		
 		array('^/appelation/.*$', 'ROLE_SCENARISTE'),
 		array('^/langue/.*$', 'ROLE_SCENARISTE'),
 		array('^/ressource/.*$', 'ROLE_SCENARISTE'),			
-		array('^/competence/.*$', 'ROLE_REGLE'),
+		array('^/religion/.*$', 'ROLE_SCENARISTE'),
 		array('^/competenceFamily/.*$', 'ROLE_REGLE'),
 		array('^/level/.*$', 'ROLE_REGLE'),
-		array('^/classe/.*$', 'ROLE_REGLE'),
 		array('^/stock/.*$', 'ROLE_STOCK'),
 
 	);
@@ -258,9 +270,8 @@ else
 
 
 /**
- * Gestion des erreurs
+ * Gestion des exceptions
  */
- 
 $app->error(function (\Exception $e, $code) use ($app)
 {	
 	if( $app['maintenance'] ) 
@@ -279,25 +290,36 @@ $app->error(function (\Exception $e, $code) use ($app)
 	{
 		return $app['twig']->render('error/notfound.twig');
 	}
-});
-
-/**
- * API
- */
- 
-use Symfony\Component\HttpFoundation\Request;
- 
-/**
- * Permet de formatter correctement la requête de l'utilisateur si celui-ci
- * indique content-type = application/json
- * Important pour les requêtes HTTP sur l'API
- */
-$app->before(function (Request $request) {
-	if (0 === strpos($request->headers->get('Content-Type'), 'application/json')) {
-		$data = json_decode($request->getContent(), true);
-		$request->request->replace(is_array($data) ? $data : array());
+	else if($e instanceof LarpManager\Exception\RequestInvalidException)
+	{
+		return $app['twig']->render('error/requestInvalid.twig');
+	}
+	else if($e instanceof LarpManager\Exception\ObjectNotFoundException)
+	{
+		return $app['twig']->render('error/objectNotFound.twig');
 	}
 });
 
+/**
+ * Service de traduction
+ */
+
+$app->register(new Silex\Provider\TranslationServiceProvider(), array(
+		'locale'                    => 'fr',
+		'locale_fallback'           => 'en',
+		'translation.class_path'    => __DIR__.'/vendor/Symfony/Component',
+));
+
+use Symfony\Component\Translation\Loader\YamlFileLoader;
+
+$app['translator'] = $app->share($app->extend('translator', function($translator, $app) {
+	$translator->addLoader('yaml', new YamlFileLoader());
+
+	$translator->addResource('yaml', __DIR__.'/../src/LarpManager/Locales/en.yml', 'en');
+	$translator->addResource('yaml', __DIR__.'/../src/LarpManager/Locales/de.yml', 'de');
+	$translator->addResource('yaml', __DIR__.'/../src/LarpManager/Locales/fr.yml', 'fr');
+
+	return $translator;
+}));
 
 return $app;

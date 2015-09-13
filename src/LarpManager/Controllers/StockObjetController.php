@@ -4,21 +4,28 @@ namespace LarpManager\Controllers;
 
 use LarpManager\Form\Type\ObjetType;
 use LarpManager\Form\SearchObjetForm;
-
-use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Silex\Application;
 
 /**
- * Gestion du stock
+ * LarpManager\Controllers\StockObjetController
+ *
  * @author kevin
+ *
  */
 class StockObjetController
 {
-	
+	/** Nombre d'objet maximum présenté par page */
 	private $maxPerPage = 20;
 	
+	/**
+	 * Ajoute les contraintes liés à la recherche de l'utilisateur
+	 * 
+	 * @param QueryBuilder $qb
+	 * @param string $searchPhrase
+	 * @param string $searchType
+	 * @return QueryBuilder $qb
+	 */
 	private function addWhere($qb, $searchPhrase, $searchType) {
 		if ( $searchPhrase !== null ) {
 				
@@ -39,9 +46,9 @@ class StockObjetController
 	}
 
 	/**
-	 * Fetch objet from database with user constraint
+	 * Récupére les objets en utilisant les contraintes définies par l'utilisateur
 	 * 
-	 * @param array $params
+	 * @param Array $params
 	 */
 	private function getObjets(Array $params, Application $app)
 	{
@@ -80,7 +87,10 @@ class StockObjetController
 	}
 	
 	/**
-	 * @description affiche la liste des objets
+	 * Affiche la liste des objets
+	 * 
+	 * @param Request $request
+	 * @param Application $app
 	 */
 	public function indexAction(Request $request, Application $app)
 	{	
@@ -122,6 +132,7 @@ class StockObjetController
 	
 	/**
 	 * Liste des tous les objets
+	 * 
 	 * @param Request $request
 	 * @param Application $app
 	 */
@@ -181,6 +192,9 @@ class StockObjetController
 	
 	/**
 	 * Fourni la liste des objets sans proprietaire
+	 * 
+	 * @param Request $request
+	 * @param Application $app
 	 */
 	public function listWithoutProprioAction(Request $request, Application $app)
 	{
@@ -239,6 +253,9 @@ class StockObjetController
 	
 	/**
 	 * Fourni la liste des objets sans responsable
+	 * 
+	 * @param Request $request
+	 * @param Application $app
 	 */
 	public function listWithoutResponsableAction(Request $request, Application $app)
 	{
@@ -298,6 +315,9 @@ class StockObjetController
 	
 	/**
 	 * Fourni la liste des objets sans rangement
+	 * 
+	 * @param Request $request
+	 * @param Application $app
 	 */
 	public function listWithoutRangementAction(Request $request, Application $app)
 	{
@@ -356,8 +376,10 @@ class StockObjetController
 	}
 
 	/**
-	 * /stock/objet/{index}
-	 * affiche la détail d'un objet
+	 * Affiche la détail d'un objet
+	 * 
+	 * @param Request $request
+	 * @param Application $app
 	 */
 	public function detailAction(Request $request, Application $app)
 	{
@@ -370,7 +392,6 @@ class StockObjetController
 	}
 	
 	/**
-	 * /stock/objet/{index}/photo
 	 * Fourni les données de la photo lié à l'objet
 	 * 
 	 * @param Request $request
@@ -397,7 +418,10 @@ class StockObjetController
 	}
 	
 	/**
-	 * @description ajoute un objet
+	 * Ajoute un objet
+	 * 
+	 * @param Request $request
+	 * @param Application $app
 	 */
 	public function addAction(Request $request, Application $app)
 	{
@@ -463,6 +487,7 @@ class StockObjetController
 	
 	/**
 	 * Créé un objet à partir d'un autre
+	 * 
 	 * @param Request $request
 	 * @param Application $app
 	 */
@@ -516,7 +541,10 @@ class StockObjetController
 	}
 	
 	/**
-	 * @description Met à jour un objet
+	 * Mise à jour un objet
+	 * 
+	 * @param Request $request
+	 * @param Application $app
 	 */
 	public function updateAction(Request $request, Application $app)
 	{
@@ -570,7 +598,7 @@ class StockObjetController
 	}
 	
 	/**
-	 * @description Exporte la liste des objets en fichier csv.
+	 * Exporte la liste des objets au format CSV.
 	 * 
 	 * @param Request $request
 	 * @param Application $app

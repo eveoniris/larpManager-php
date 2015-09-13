@@ -16,6 +16,30 @@ body {
 	border-top: 0 !important;
 }
 
+.svg-content { 
+	display: inline-block;
+	position: relative;
+	top: 0;
+	left: 0;
+	width: 100%;
+}
+
+.container--ph {
+  height: 0;
+  padding-top: 48%;
+  position: relative;
+}
+
+.iframe--responsive {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none; /* get rid of the border */
+}
+
+
 #footer {
   position: absolute;
   bottom: 0;

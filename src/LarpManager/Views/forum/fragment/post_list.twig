@@ -1,0 +1,45 @@
+<ul class="list-group">
+
+	{%  for post in posts %}
+	<li class="list-group-item">
+		<div class="row">
+			<div class="col-xs-1 col-md-1">
+				{# indique si l'utilisateur a déjà lu ce post #}
+				{% if app.user.alreadyView(post) %}
+					déjà vu
+					{% if app.user.newResponse(post) %}
+						Nouvelles réponses
+					{% endif %}
+					
+				{% else %}
+					pas vu
+				{% endif %}
+				
+			</div>
+			<div class="col-xs-1 col-md-1">
+				<center>
+					<bold>{{ post.posts|length }}</bold><br />
+					réponses
+				</center>
+			</div>
+			<div class="col-xs-6 col-md-6">
+				<h6 class="list-group-item-heading">
+					<a href="{{ path('forum.post',{'index':post.id}) }}">{{ post.title }}</a>
+				</h6>
+				Sujet démaré {{ post.creationDate|time_diff }} 	par <a href="{{ path('user.view', {'id':post.user.id}) }}">{{ post.user.username }}</a>
+			</div>
+			<div class="col-xs-1 col-md-1">
+				{# nombre de sujets #}
+				{{ post.views }} Vues
+			</div>
+			<div class="col-xs-3 col-md-3">
+				{% set lastPost = post.posts|last %}
+				{% if lastPost %}
+					<a href="{{ path('forum.post',{'index':post.id}) ~ '#post_' ~ lastPost.id }}">Dernier message</a> par {{ lastPost.user.username }}<br />
+					{{ lastPost.creationDate|time_diff }}
+				{% endif %} 
+			</div>
+		</div>
+	</li>
+	{%  endfor %}
+</ul>

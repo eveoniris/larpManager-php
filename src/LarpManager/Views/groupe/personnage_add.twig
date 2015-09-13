@@ -1,0 +1,37 @@
+{% extends "layout.twig" %}
+
+{% block title %}{{ groupe.nom }}{% endblock title %}
+
+{% block content %}
+
+<div class="well bs-component">	
+	<form action="{{ path('groupe.personnage.add', {'index': groupe.id}) }}" method="POST" {{ form_enctype(form) }}>
+		<fieldset>
+			<legend>{{ groupe.nom }} - <small>Création d'un personnage</small></legend>
+			{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+
+			{{ form_row(form.nom) }}
+			{{ form_row(form.surnom) }}
+			{{ form_row(form.age) }}
+			{{ form_row(form.genre) }}
+			{{ form_row(form.intrigue) }}
+			{{ form_row(form.classe) }}
+			
+			<div class="row">
+			{% for classe in classes %}
+				<div class="col-xs-3 col-md-3">
+				{{ include("classe/fragment/info.twig", {'classe' : classe}) }}
+				</div>
+			{%  endfor %}
+			</div>
+			{{ form_rest(form) }}
+		</fieldset>
+	</form>
+</div>
+{% endblock content %}
+
+{% block javascript %}
+
+{{ parent() }}
+
+{%  endblock javascript %}

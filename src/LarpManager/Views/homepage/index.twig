@@ -1,70 +1,158 @@
 {% extends "layout.twig" %}
 
-{% block content %}
+{% block title %}Acceuil{% endblock title %}
 
-	{% if app.user %}	
-	<div class="well well-sm">
-		<h4>
-			Bienvenue {{ app.user.name }}
-		</h4>
-	</div>
-	{% endif %}
+{% block content %}
+	   		
+	<div class="row">
 	
-	{% if not app.user %}
-	<div class="panel panel-warning">
-		<div class="panel-heading">
-			Vous n'êtes pas connecté
-		</div>
-	  	<div class="panel-body">
-	  		<p>Si vous disposez d'un compte, <a href="{{ path('user.login') }}">connectez-vous</a>.</p>
-	  		<p>Sinon <a href="{{ path('user.register') }}">créez un compte</a>.</p>
-	  	</div>
-  	</div>
-	{%  endif %}
-	
-	<div class="panel panel-default">
-		<div class="panel-heading">
-			Une annonce publique
-		</div>
-		<div class="panel-body">
-			La page d'acceuil présentera des annonces publiques
-		</div>
-	</div>
-	
-	{% if is_granted('ROLE_SCENARISTE', app.user) %}
-		{% if app.user.groupeScenariste|length > 0 %}
-		<div class="panel panel-default">
-			<div class="panel-heading">
-				Scénariste : groupes dont vous avez la charge
+		<div class="col-xs-8 col-md-8">
+		
+			<div class="well well-sm">
+				<h4>
+					Bienvenue {{ app.user.name }}
+				</h4>
 			</div>
-			<div class="panel-body">
-				<div class="col-xs-6 col-md-3">
-					{% for groupe in app.user.groupeScenariste %}
-					<div class="thumbnail">
-						<div class="caption">
-							<h3>{{ groupe.nom }}</h3>
-							<p><a class="btn btn-primary" role="button" href="{{ path('groupe.detail',{'index':groupe.id}) }}">Détail</a></p>
+			
+			{% if not app.user.joueur 
+				or app.user.gns|length == 0 
+				or app.user.groupes|length == 0 
+				or not app.user.personnage %}
+				<div class="well well-sm">
+					<h6>Liste des choses importantes à faire :</h6>
+					<ol>
+					{% if not app.user.joueur %}
+						<li>Enregistrer mes informations de joueur</li>
+					{% endif %}
+					
+					{% if app.user.gns|length == 0 %}
+						<li>Choisir un grandeur nature</li>
+					{% endif %}
+					
+					{% if app.user.groupes|length == 0 %}
+						<li>S'inscrire dans un groupe</li>
+					{% endif %}
+					
+					{% if not app.user.personnage %}
+						<li>Créer mon personnage</li>
+					{% endif %}
+					</ol>
+				</div>
+			{% endif %}
+			
+			{% if is_granted('ROLE_MODERATOR', app.user) %}
+				<div class="well well-sm">
+					<h6>Liste des nouveaux posts :</h6>
+					<ul>
+						{% for post in app.user.newPosts %}
+							<li><a href="{{ path('forum.post',{'index':post.id}) }}">{{ post.title }}</a></li>
+						{% endfor %}
+					</ul>
+					<small>Désolé, cette fonctionnalité n'est pas encore implémenté.</small>
+				</div>
+			{% endif %}
+		
+			{# enregistrement des informations joueurs #}
+			{% if not app.user.joueur %}
+				<div class="panel panel-success">
+					<div class="panel-heading">{% trans %}record_player_title{% endtrans %}</div>
+					<div class="panel-body">
+						<p>{% trans %}record_player_explain{% endtrans %}</p>
+						<a class="btn btn-default" href="{{ path('joueur.add') }}">{% trans %}record_player_link{% endtrans %}</a>
+					</div>
+				</div>
+			{% else %}
+			
+				{%  if app.user.gns|length == 0 %}
+					{# inscription dans un gn #}
+					<div class="panel panel-success">
+						<div class="panel-heading">{% trans %}gn_subscribe_title{% endtrans %}</div>
+						<div class="panel-body">
+							<p>{% trans %}gn_subscribe_explain{% endtrans %}</p>
+							<div class="list-group">
+							{% for gn in gns %}
+								<a href="{{ path('inscriptionGn.form',{'idGn': gn.id}) }}" class="list-group-item">
+									<p><h6>{{ gn.label }} : <small>{{ gn.description }}</small></h6></p>
+									<p>du {{ gn.dateDebut|date('Y-m-d') }} au {{ gn.dateFin|date('Y-m-d') }}</p>
+								</a>
+							{% endfor %}
+							</div>
 						</div>
-					</div>			
-					{% endfor %}
-				</div>	
-			</div>
+					</div>
+				{% else %}
+					{% if app.user.groupes|length == 0 %}
+						{# inscription dans un groupe #}
+						<div class="panel panel-success">
+							<div class="panel-heading">{% trans %}subscribe_group_title{% endtrans %}</div>
+							<div class="panel-body">
+								<p>{% trans %}subscribe_group_explain{% endtrans %}</p>
+								{{ include("homepage/fragment/form_groupe.twig",{'form': form_groupe,'action': path('homepage.inscription')}) }}
+							</div>
+						</div>
+					{% else %}
+						{# detail du personnage #}
+						{% if app.user.personnage %}
+							{{ include("homepage/fragment/personnage.twig",{'personnage':app.user.personnage}) }}
+						{% endif %}
+						
+						{# Détail des groupes#}
+						{% for groupe in app.user.groupes %}
+							{{ include("homepage/fragment/groupe.twig",{'groupe':groupe}) }}
+						{% endfor %}
+						
+					{% endif %}
+				{% endif %}
+			{% endif %}
 		</div>
-		{%  endif %}
-	{% else %}
-		{% if is_granted('ROLE_USER', app.user) %}
-			{% if not app.user.groupe %}
-				<div class="panel panel-default">
-					<div class="panel-heading">Rejoindre un groupe
+		
+		<div class="col-xs-4 col-md-4">
+		
+			{# affichage de l'annonce la plus récente et du lien vers les archives des annonces #}
+			{% for annonce in annonces %}
+				<div class="panel panel-primary">
+					<div class="panel-heading">
+						{{ annonce.title }}
 					</div>
 					<div class="panel-body">
-						<p>Vous n'êtes pour le moment inscrit dans aucun groupe. Entrez le code de votre groupe dans le formulaire ci-dessous.
-							Le code doit vous être transmis par le responsable de votre groupe.</p>
-						{{ include("homepage/fragment/form_groupe.twig",{'form': form_groupe,'action': path('homepage.inscription')}) }}
+						{{ annonce.text|markdown }}
+					</div>
+				</div>
+			{% endfor %}
+						
+			{# si l'utilisateur est scénariste, lui afficher les liens vers les groupes dont
+			   il a la responsabilité #}
+	
+			{% if is_granted('ROLE_SCENARISTE', app.user) %}
+				{% if app.user.groupeScenariste|length > 0 %}
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						Scénariste : groupes dont vous avez la charge
+					</div>
+					<div class="panel-body">
+						<div class="list-group">
+							{% for groupe in app.user.groupeScenariste %}
+								<a class="list-group-item" href="{{ path('groupe.detail', {'index': groupe.id}) }}">{{ groupe.nom }}</a>
+							{% endfor %}
+						</div>	
+					</div>
+				</div>
+				{%  endif %}
+			{% endif %}	
+		
+			{# afficher la liste des gns dans lequel le joueur est inscrit #}
+			{% if app.user.joueur and app.user.joueur.gns|length > 0 %}
+				<div class="panel panel-default">
+					<div class="panel-heading">{% trans %}gn_list_title{% endtrans %}</div>
+					<div class="panel-body">
+						<div class="list-group">
+						{% for gn in gns %}
+							<a class="list-group-item" href="{{ path('gn.detail', {'index': gn.id}) }}">{{ gn.label }}</a>
+						{% endfor %}
+						</div>
 					</div>
 				</div>
 			{% endif %}
-		{% endif %}
-	{% endif %}
+		</div>
+	</div>		
 	
-{% endblock %}
+{% endblock content %}

@@ -1,13 +1,69 @@
-<div class="panel panel-default">
-	<div class="panel-heading">
-		{{ personnage.nom }}
-	</div>
+<div class="panel panel-success">
+	<div class="panel-heading">{{ personnage.nom }} - <small>{{ personnage.classe.label }}</small></div>
 	<div class="panel-body">
-
-   	</div>
-   	<ul class="list-group">
-   		<li class="list-group-item">
-   			<a href="{{ path('personnage.detail', {'index':personnage.id}) }}" class="btn btn-primary" role="button">Détail</a>
-   		</li>
-	</ul>
+		<div class="list-group">
+			<div class="list-group-item">
+				<h6 class="list-group-item-heading">Informations</h6>
+				<p class="list-group-item-text">
+					Surnom : {{ personnage.surnom }}
+				</p>
+				<p class="list-group-item-text">
+					Age : {{ personnage.age }}
+				</p>
+				<p class="list-group-item-text">
+					Genre : {{ personnage.genre }}
+				</p>
+				<p class="list-group-item-text">
+					{% if personnage.intrigue %}
+						Participe aux intrigues
+					{% else %}
+						Ne participe pas aux intrigues
+					{% endif %}
+				</p>
+			</div>
+			<div class="list-group-item">
+				<h6 class="list-group-item-heading">Religion</h6>
+				<p class="list-group-item-text">
+				{% if personnage.personnageReligion %}
+					{{ personnage.personnageReligion.religion.label }} - {{ personnage.personnageReligion.religionLevel.label }} - <a href="{{ path('forum.topic',{'index': personnage.personnageReligion.religion.topic.id }) }}">Forum</a>
+				{% else %}
+					<a href="{{ path('personnage.religion.add',{'index': personnage.id}) }}">Choisir une religion</a>
+				{% endif %}
+				</p>
+			</div>
+			<div class="list-group-item">
+				<h6 class="list-group-item-heading">Compétences <small>({{ personnage.xp|default(0) }} xp)</small></h6>
+				{% for competence in personnage.competences %}
+				<p class="list-group-item-text">
+					{{ competence.competenceFamily.label }}&nbsp({{ competence.level.label }}) : {{ competence.description }}
+				</p>
+				{% endfor %}
+				<p class="list-group-item-text">
+					<a href="{{ path('personnage.competence.add', {'index': app.user.personnage.id}) }}">Acheter une nouvelle compétence</a>
+				</p>
+			</div>
+			<div class="list-group-item">
+				<h6 class="list-group-item-heading">Historique</h6>		
+				{% for historique in personnage.experienceGains %}
+					<p class="list-group-item-text">{{ historique.operationDate|date("Y-m-d h:i:s") }} : + {{ historique.xpGain }} xp {% if historique.explanation %} pour la raison suivante : "{{ historique.explanation }}"{% endif %}.</p>
+				{% endfor %}
+				{% for historique in personnage.experienceUsages %}
+					<p class="list-group-item-text">{{ historique.operationDate|date("Y-m-d h:i:s") }} : - {{ historique.xpUse }} xp pour acquérir {{ historique.competence.label }}.</p>
+				{% endfor %}
+			</div>
+			<div class="list-group-item">
+				<h6 class="list-group-item-heading">Groupes secondaires</h6>
+				{% for groupeSecondaire in personnage.secondaryGroups %}
+					<a href="{{ path('groupeSecondaire.detail', {'index':groupeSecondaire.id}) }}">{{ groupeSecondaire.label }}</a>
+				{% endfor %}
+				{% if personnage.postulants|length > 0 %}
+					{% for postulant in personnage.postulants %}
+						<p class="list-group-item-text">Votre candidature au groupe {{ postulant.secondaryGroup.label }} est en attente de validation.</p>
+					{% endfor %}
+				{% endif %}
+				<p class="list-group-item-text"><a href="{{ path('groupeSecondaire') }}">Liste des groupes secondaires</a></p>
+				
+			</div>
+		</div>
+	</div>
 </div>

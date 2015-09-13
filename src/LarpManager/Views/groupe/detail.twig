@@ -63,9 +63,9 @@
 	    			<p class="list-group-item-text">
 	    				<ul>
 	    				{% if groupe.responsable %}<li><strong>{{ groupe.responsable.username }}</strong>&nbsp;(Responsable du groupe)</li>{% endif %}
-						{% for user in groupe.users %}
+						{% for joueur in groupe.joueurs %}
 						<li>
-							<strong>{{ user.username }} </strong>: {{ user.email }}
+							<strong>{{ joueur }} </strong>: {{ joueur.user.email }}
 						</li>
 						{% endfor %}
 	    				</ul>
@@ -118,6 +118,14 @@
     					{% endif %}
     				</p>
     			</div>
+    			
+    			<div class="list-group-item">
+    				<h4 class="list-group-item-heading">Gns</h4>
+					
+					<p class="list-group-item-text">
+						{{ groupe.gns|join(', ') }}
+					</p>
+    				    				
 
 	  			<div class="list-group-item">
 		  			<div class="btn-group" role="group" aria-label="...">

@@ -5,6 +5,12 @@ use Symfony\Component\HttpFoundation\Request;
 use Silex\Application;
 use LarpManager\Form\LevelForm;
 
+/**
+ * LarpManager\Controllers\LevelController
+ *
+ * @author kevin
+ *
+ */
 class LevelController
 {
 	/**

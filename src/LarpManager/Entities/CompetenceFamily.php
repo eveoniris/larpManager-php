@@ -15,7 +15,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 /**
  * LarpManager\Entities\CompetenceFamily
  *
- * @Entity()
+ * @Entity(repositoryClass="LarpManager\Repository\CompetenceFamilyRepository")
  */
 class CompetenceFamily extends BaseCompetenceFamily
 {

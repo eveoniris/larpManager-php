@@ -5,8 +5,25 @@ namespace LarpManager;
 use Silex\Application;
 use Silex\ControllerProviderInterface;
 
+/**
+ * LarpManager\ChronologieControllerProvider
+ * 
+ * @author kevin
+ *
+ */
 class ChronologieControllerProvider implements ControllerProviderInterface
 {
+	/**
+	 * Initialise les routes pour les territoires
+	 * Routes :
+	 * 	- chrono_list
+	 * 	- chrono_add
+	 *  - chrono_modify
+	 *  - chrono_remove
+	 *
+	 * @param Application $app
+	 * @return Controllers $controllers
+	 */
 	public function connect(Application $app)
 	{
 		// creates a new controller based on the default route

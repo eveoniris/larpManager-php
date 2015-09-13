@@ -3,14 +3,14 @@
 namespace LarpManager\Controllers;
 
 use LarpManager\Form\Type\EtatType;
-use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Silex\Application;
 
 /**
- * Gestion du stock
+ * LarpManager\Controllers\StockEtatController
+ *
  * @author kevin
+ *
  */
 class StockEtatController
 {

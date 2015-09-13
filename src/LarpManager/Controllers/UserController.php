@@ -10,20 +10,35 @@ use LarpManager\Form\UserForm;
 
 use JasonGrimes\Paginator;
 
+
+/**
+ * LarpManager\Controllers\UserController
+ *
+ * @author kevin
+ *
+ */
 class UserController
 {
+	/**
+	 * Fourni la liste des ROLES utilisé dans LarpManager
+	 * @return Array $availablesRoles
+	 */
 	protected function getAvailableRoles()
 	{
-		return array(
+		$availableRoles = array(
 				array('label' => 'ROLE_USER', 'descr' => 'Utilisateur de larpManager'),
 				array('label' => 'ROLE_ADMIN', 'descr' => 'Droit de modification sur tout'),
 				array('label' => 'ROLE_STOCK', 'descr' => 'Droit de modification sur le stock'),
 				array('label' => 'ROLE_REGLE', 'descr' => 'Droit de modification sur les règles'),
 				array('label' => 'ROLE_SCENARISTE', 'descr' => 'Droit de modification sur le scénario, les groupes et le background'),
+				array('label' => 'ROLE_MODERATOR', 'descr' => 'Modération du forum'),
 			);
+		return $availableRoles;
 	}
 	
 	/**
+	 * Fourni l'url de gravatar pour l'utilisateur
+	 * 
 	 * @param string $email
 	 * @param int $size
 	 * @return string
@@ -35,6 +50,8 @@ class UserController
 	}
 	
 	/**
+	 * Création d'un utilisateur
+	 * 
 	 * @param Request $request
 	 * @return User
 	 * @throws InvalidArgumentException
@@ -66,7 +83,9 @@ class UserController
 	
 	/**
 	 * Genere un mot de passe aléatoire
+	 * 
 	 * @param number $length
+	 * @return string $password
 	 */
 	protected function generatePassword($length = 10)
 	{
@@ -87,6 +106,8 @@ class UserController
 	}
 
 	/**
+	 * Affiche le détail de l'utilisateur courant
+	 * 
 	 * @param Application $app
 	 * @return \Symfony\Component\HttpFoundation\RedirectResponse
 	 */
@@ -222,6 +243,7 @@ class UserController
 	
 	
 	/**
+	 * Login
 	 * 
 	 * @param Application $app
 	 * @param Request $request
@@ -250,6 +272,12 @@ class UserController
 		));
 	}
 	
+	/**
+	 * Liste des utilisateurs
+	 * 
+	 * @param Application $app
+	 * @param Request $request
+	 */
 	public function listAction(Application $app, Request $request)
 	{
 		$order_by = $request->get('order_by') ?: 'name';
@@ -292,7 +320,14 @@ class UserController
 				'lastResult' => $paginator->getCurrentPageLastItem(),*/
 		));
 	}
-		
+	
+	/**
+	 * Enregistre un utilisateur
+	 * 
+	 * @param Application $app
+	 * @param Request $request
+	 * @throws InvalidArgumentException
+	 */
 	public function registerAction(Application $app, Request $request)
 	{
 		if ($request->isMethod('POST')) {
@@ -321,7 +356,7 @@ class UserController
 					// Log the user in to the new account.
 					$app['user.manager']->loginAsUser($user);
 		
-					$app['session']->getFlashBag()->set('alert', 'Le compte a été créé.');
+					$app['session']->getFlashBag()->set('success', 'Votre compte a été créé ! vous pouvez maintenant rejoindre un groupe et créer votre personnage');
 		
 					return $app->redirect($app['url_generator']->generate('homepage'));
 				//}

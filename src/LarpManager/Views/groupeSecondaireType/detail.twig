@@ -1,0 +1,33 @@
+{% extends "layout.twig" %}
+
+{% block title %}Type de groupe secondaire{% endblock title %}
+
+{% block content %}
+	
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-xs-12 col-md-8">
+			
+			<a href="{{ path("groupeSecondaire.type") }}">Retour à la liste des type de groupe secondaire</a>
+						
+			<div class="well well-sm bs-component">
+				<h4>
+					{{ groupeSecondaireType.label }}
+				</h4>
+				{{ groupeSecondaireType.description }}
+			</div>
+			
+			<div class="list-group">
+				<div class="list-group-item">
+  					<div class="btn-group" role="group" aria-label="...">
+  						<a  class="btn btn-primary" role="button" href="{{ path('groupeSecondaire.type.update', {index : groupeSecondaireType.id}) }}">Modifier</a>
+					</div>
+  				</div>
+  			
+			</div>			
+		</div>
+	</div>
+</div>
+	
+			
+{% endblock %}

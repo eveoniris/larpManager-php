@@ -7,8 +7,29 @@ use Silex\ControllerProviderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
+/**
+ * LarpManager\GroupeControllerProvider
+ * 
+ * @author kevin
+ *
+ */
 class GroupeControllerProvider implements ControllerProviderInterface
 {
+	/**
+	 * Initialise les routes pour les groupes
+	 * Routes :
+	 * 	- groupe
+	 * 	- groupe.add
+	 *  - groupe.update
+	 *  - groupe.detail
+	 *  - groupe.gestion
+	 *  - groupe.joueur
+	 *  - groupe.place
+	 *
+	 * @param Application $app
+	 * @return Controllers $controllers
+	 * @throws AccessDeniedException
+	 */
 	public function connect(Application $app)
 	{
 		$controllers = $app['controllers_factory'];
@@ -31,6 +52,21 @@ class GroupeControllerProvider implements ControllerProviderInterface
 					throw new AccessDeniedException();
 				}
 			});
+			
+		/**
+		 * Ajoute un nouveau personnage dans un groupe
+		 */
+		$controllers->match('/{index}/personnage/add','LarpManager\Controllers\GroupeController::personnageAddAction')
+			->assert('index', '\d+')
+			->bind("groupe.personnage.add")
+			->method('GET|POST')
+			->before(function(Request $request) use ($app) {
+				if (!$app['security.authorization_checker']->isGranted('GROUPE_MEMBER', $request->get('index'))) {
+					throw new AccessDeniedException();
+				}
+			});
+			
+		
 		
 		$controllers->match('/{index}/gestion','LarpManager\Controllers\GroupeController::gestionAction')
 			->assert('index', '\d+')
@@ -41,7 +77,7 @@ class GroupeControllerProvider implements ControllerProviderInterface
 					throw new AccessDeniedException();
 				}
 			});
-			
+		
 		$controllers->match('/{index}/joueur','LarpManager\Controllers\GroupeController::joueurAction')
 			->assert('index', '\d+')
 			->bind("groupe.joueur")

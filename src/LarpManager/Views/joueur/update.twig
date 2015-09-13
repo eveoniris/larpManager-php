@@ -9,7 +9,7 @@
 			<div class="col-xs-12 col-md-8">
 				<a href="{{ path("joueur.detail", {'index':joueur.id}) }}">Retour</a>
 				{{ include("joueur/fragment/form.twig",{
-					'legend': 'Modification d\'un joueur',
+					'legend': 'Modification de vos informations',
 					'action': path('joueur.update',{'index':joueur.id}),
 					'form' : form}) }}
 			</div>

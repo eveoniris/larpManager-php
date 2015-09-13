@@ -10,14 +10,19 @@ use Symfony\Component\HttpFoundation\Response;
 use Silex\Application;
 
 /**
- * Gestion du stock
+ * LarpManager\Controllers\StockTagController
+ *
  * @author kevin
+ *
  */
 class StockTagController
 {
 
 	/**
-	 * @description affiche la liste des tags
+	 * Liste des tags
+	 * 
+	 * @param Request $request
+	 * @param Application $app
 	 */
 	public function indexAction(Request $request, Application $app)
 	{

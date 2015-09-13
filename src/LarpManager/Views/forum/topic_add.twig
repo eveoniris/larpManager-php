@@ -1,0 +1,21 @@
+{% extends "layout.twig" %}
+
+{% block title %}Forum - Nouveau topic{% endblock title %}
+
+{% block content %}
+
+	<div class="container-fluid">
+		<div class="row">
+		
+			{# le formulaire pour saisir son message #}
+			<div class="col-xs-12 col-md-8">
+				{{ include("forum/fragment/topic_form.twig",{
+					'legend': 'Création d\'un nouveau forum',
+					'action': path('forum.topic.add',{'index':topic.id}), 
+					'form' : form}) }}
+			</div>
+			
+		</div>
+	</div>
+	
+{% endblock content %}

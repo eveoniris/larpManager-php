@@ -11,6 +11,7 @@ namespace LarpManager\Entities;
 
 use LarpManager\Entities\BaseUser;
 use Symfony\Component\Security\Core\User\AdvancedUserInterface;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * LarpManager\Entities\User
@@ -23,7 +24,7 @@ class User extends BaseUser implements AdvancedUserInterface, \Serializable
 	 * Lors de la création d'un nouvel utilisateur, on lui détermine aléatoirement
 	 * la valeur salt.
 	 * 
-	 * @param unknown $email
+	 * @param string $email
 	 */
 	public function __construct($email)
 	{
@@ -32,13 +33,63 @@ class User extends BaseUser implements AdvancedUserInterface, \Serializable
 		parent::__construct();
 	}
 	
+	/**
+	 * @return string
+	 */
 	public function __toString()
 	{
 		return $this->getUsername();
 	}
 	
 	/**
+	 * Fourni la liste de tous les posts qu'un utilisateur n'a pas lu
+	 */
+	public function newPosts()
+	{
+		// construit la liste des posts déjà vue
+		$newPosts = new ArrayCollection();
+		return $newPosts;		
+	}
+	
+	/**
+	 * Determine si l'utilisateur a déjà lu ce post
+	 * 
+	 * @param LarpManager\Entities\Post $post
+	 */
+	public function alreadyView(\LarpManager\Entities\Post $post)
+	{
+		foreach ( $this->getPostViews() as $postView )
+		{
+			if ( $postView->getPost() == $post) return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Determine si l'une des réponses à un post n'a pas été lu par l'utilisateur
+	 * 
+	 * @param LarpManager\Entities\Post $post
+	 */
+	public function newResponse(\LarpManager\Entities\Post $post)
+	{
+		// construit la liste des posts déjà vue
+		$alreadyView = new ArrayCollection();
+		
+		foreach ( $this->getPostViews() as $postView )
+		{
+			$alreadyView[] = $postView->getPost();
+		}
+		
+		foreach($post->getPosts() as $p)
+		{
+			if ( ! $alreadyView->contains($p) ) return true;
+		}
+		return false;
+	}
+	
+	/**
 	 * Determine si l'utilisateur est responsable du groupe
+	 * 
 	 * @param LarpManager\Entities\Groupe $groupe
 	 */
 	public function isResponsable(\LarpManager\Entities\Groupe $groupe)
@@ -48,10 +99,13 @@ class User extends BaseUser implements AdvancedUserInterface, \Serializable
 	
 	/**
 	 * Fourni le personnage d'un joueur
+	 * 
+	 * @return \LarpManager\Entities\Personnage $personnage
 	 */
 	public function getPersonnage()
 	{
 		$joueur = $this->getJoueur();
+		
 		if ( $joueur )
 		{
 			return $joueur->getPersonnage();
@@ -60,15 +114,46 @@ class User extends BaseUser implements AdvancedUserInterface, \Serializable
 	}
 	
 	/**
-	 * Determine si l'utilisateur dispose d'un personnage dans son groupe
+	 * Fourni la liste des groupes d'un joueur
 	 */
-	public function personnageOn()
+	public function getGroupes()
 	{
-		$groupe = $this->getGroupe();
-		$personnage = $this->getPersonnage();
-		return  $personage && $personnage->getGroupe() == $groupe;
+		$joueur = $this->getJoueur();
+		
+		if ( $joueur )
+		{
+			return $joueur->getGroupes();
+		}
+		return null;		
 	}
 	
+	/**
+	 * Fourni la liste des groupes secondaires d'un utilisateur
+	 */
+	public function getSecondaryGroups()
+	{
+		$personnage = $this->getPersonnage();
+		
+		if ( $personnage )
+		{
+			return $personnage->getSecondaryGroups();
+		}
+		return null;
+	}
+	
+	/**
+	 * Fourni la liste des gns d'un joueur
+	 */
+	public function getGns()
+	{
+		$joueur = $this->getJoueur();
+		if ( $joueur )
+		{
+			return $joueur->getGns();
+		}
+		return null;
+	}
+
 	/**
 	 * Fourni la liste des groupes dont l'utilisateur est le responsable
 	 */

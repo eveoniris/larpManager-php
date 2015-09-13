@@ -6,6 +6,12 @@ use Silex\Application;
 
 use LarpManager\Form\CompetenceFamilyForm;
 
+/**
+ * LarpManager\Controllers\CompetenceFamilyController
+ *
+ * @author kevin
+ *
+ */
 class CompetenceFamilyController
 {
 	/**
@@ -17,7 +23,7 @@ class CompetenceFamilyController
 	public function indexAction(Request $request, Application $app)
 	{
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\CompetenceFamily');
-		$competenceFamilies = $repo->findAll();
+		$competenceFamilies = $repo->findAllOrderedByLabel();
 		return $app['twig']->render('competenceFamily/index.twig', array('competenceFamilies' => $competenceFamilies));
 	}
 	

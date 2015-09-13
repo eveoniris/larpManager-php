@@ -5,8 +5,24 @@ namespace LarpManager;
 use Silex\Application;
 use Silex\ControllerProviderInterface;
 
+/**
+ * LarpManager\StockRangementControllerProvider
+ * 
+ * @author kevin
+ *
+ */
 class StockRangementControllerProvider implements ControllerProviderInterface
 {
+	/**
+	 * Initialise les routes pour les rangements
+	 * Routes :
+	 * 	- stock_rangement_index
+	 * 	- stock_rangement_add
+	 *  - stock_rangement_update
+	 *
+	 * @param Application $app
+	 * @return Controllers $controllers
+	 */
 	public function connect(Application $app)
 	{
 		$controllers = $app['controllers_factory'];

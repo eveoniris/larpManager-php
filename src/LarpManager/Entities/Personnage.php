@@ -36,4 +36,21 @@ class Personnage extends BasePersonnage
 			$this->setXp($newXp);
 			return $this;
 		}
+		
+		/**
+		 * Fourni l'identité complete d'un personnage
+		 */
+		public function getIdentity()
+		{
+			return $this->getNom().'('.$this->getGroupe()->getNom().' - '.$this->getJoueur()->getUser()->getUsername().')';
+		}
+		
+		/**
+		 * Fourni la liste des groupes secondaires pour lesquel ce personnage est chef
+		 */
+		public function getSecondaryGroupsAsChief()
+		{
+			return $this->getSecondaryGroupRelatedByPersonnageIds();
+		}
+				
 }

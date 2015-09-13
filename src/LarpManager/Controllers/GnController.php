@@ -7,6 +7,12 @@ use Silex\Application;
 
 use LarpManager\Form\GnForm;
 
+/**
+ * LarpManager\Controllers\GnController
+ *
+ * @author kevin
+ *
+ */
 class GnController
 {
 	/**
@@ -20,7 +26,11 @@ class GnController
 	}
 	
 	/**
-	 * @description affiche le formulaire d'ajout d'un gn
+	 * affiche le formulaire d'ajout d'un gn
+	 * Lorsqu'un GN est créé, son forum associé doit lui aussi être créé
+	 * 
+	 * @param Request $request
+	 * @param Application $app
 	 */
 	public function addAction(Request $request, Application $app)
 	{
@@ -35,8 +45,26 @@ class GnController
 		if ( $form->isValid() )
 		{
 			$gn = $form->getData();
-				
+			
+			/**
+			 * Création du topic associé à ce gn
+			 * @var \LarpManager\Entities\Topic $topic
+			 */
+			$topic = new \LarpManager\Entities\Topic();
+			$topic->setTitle($gn->getLabel());
+			$topic->setDescription($gn->getDescription());
+			$topic->setUser($app['user']);
+
+			$gn->setTopic($topic);
+			
+			$app['orm.em']->persist($topic);
 			$app['orm.em']->persist($gn);
+			
+			// défini les droits d'accés à ce forum
+			// (les participants au GN ont le droits d'accéder à ce forum)
+			$topic->setRight('GN_PARTICIPANT');
+			$topic->setObjectId($gn->getId());
+			$app['orm.em']->persist($topic);
 			$app['orm.em']->flush();
 	
 			$app['session']->getFlashBag()->add('success', 'Le gn a été ajouté.');
@@ -63,12 +91,19 @@ class GnController
 	
 		if ( $gn )
 		{
-			return $app['twig']->render('gn/detail.twig', array('gn' => $gn));
+			if ( $app['security.authorization_checker']->isGranted('ROLE_ADMIN') )
+			{
+				return $app['twig']->render('gn/detail.twig', array('gn' => $gn));
+			}
+			else
+			{
+				return $app['twig']->render('gn/detail_joueur.twig', array('gn' => $gn));
+			}
 		}
 		else
 		{
 			$app['session']->getFlashBag()->add('error', 'Le gn n\'a pas été trouvé.');
-			return $app->redirect($app['url_generator']->generate('gn'));
+			return $app->redirect($app['url_generator']->generate('homepage'));
 		}	
 	}
 	

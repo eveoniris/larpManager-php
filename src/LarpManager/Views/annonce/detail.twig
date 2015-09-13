@@ -1,0 +1,33 @@
+{% extends "layout.twig" %}
+
+{% block title %}Annonces{% endblock title %}
+
+{% block content %}
+	
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-xs-12 col-md-8">
+		
+			<a href="{{ path("annonce") }}">Retour à la liste des annonces</a>
+			<div class="well well-sm bs-component">
+				<h4>
+					{{ annonce.title }}
+				</h4>
+			</div>
+			
+  			<div class="list-group">
+		    		
+		    	<div class="list-group-item">
+			    	<h4 class="list-group-item-heading">Contenu</h4>
+	    			<p class="list-group-item-text">
+	    				{{ annonce.text|markdown }}		
+					</p>
+	    		</div>
+	    		    	
+			</div>
+		</div>
+	</div>
+</div>
+	
+			
+{% endblock %}

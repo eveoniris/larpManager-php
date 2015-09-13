@@ -1,0 +1,20 @@
+{% extends "layout.twig" %}
+
+{% block title %}Type de groupe secondaires{% endblock title %}
+
+{% block content %}
+
+	
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-xs-12 col-md-8">
+				<a href="{{ path("groupeSecondaire.type") }}">Retour à la liste des type de groupe secondaires</a>
+				{{ include("groupeSecondaireType/fragment/form.twig",{
+					'legend': 'Modification d\'un type de groupe secondaire',
+					'action': path('groupeSecondaire.type.update',{'index': groupeSecondaireType.id}), 
+					'form' : form}) }}
+			</div>
+		</div>
+	</div>
+		
+{% endblock content %}

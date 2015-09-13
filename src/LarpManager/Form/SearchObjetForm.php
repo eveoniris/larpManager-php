@@ -4,10 +4,21 @@ namespace LarpManager\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
+/**
+ * LarpManager\Form\SearchObjetForm
+ *
+ * @author kevin
+ *
+ */
 class SearchObjetForm extends AbstractType
 {
+	/**
+	 * Construction du formulaire
+	 * 
+	 * @param FormBuilderInterface $builder
+	 * @param array $options
+	 */
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{		
 		$builder->add('type','choice', array(
@@ -19,6 +30,9 @@ class SearchObjetForm extends AbstractType
 		
 	}
 
+	/**
+	 * Nom du formulaire
+	 */
 	public function getName()
 	{
 		return 'searchObjetForm';

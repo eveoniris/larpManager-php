@@ -1,0 +1,43 @@
+{% extends "layout.twig" %}
+
+{% block title %}Territoire{% endblock title %}
+
+{% block content %}
+
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-xs-12 col-md-8">
+		
+			<div class="well well-sm bs-component">
+			<a href="{{ path('religion') }}">Retour à la liste des religions</a>
+				<h4>
+					{{ religion.label }}
+				</h4>
+			</div>
+		
+  			<div class="list-group">
+		    		
+		    	<div class="list-group-item">
+			    	<h4 class="list-group-item-heading">Description</h4>
+	    			<p class="list-group-item-text">
+	    			{% if not religion.description %}
+    				<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+    				Attention, cette religion n'a pas de description.
+    				{% else %}
+    					{{ religion.description }}
+    				{% endif %}
+    				</p>
+	    		</div>
+
+				
+				<div class="list-group-item">
+  					<div class="btn-group" role="group" aria-label="...">
+  						<a  class="btn btn-primary" role="button" href="{{ path('religion.update', {index : religion.id}) }}">Modifier</a>
+					</div>
+  				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+{% endblock %}
