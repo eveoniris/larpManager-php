@@ -78,13 +78,13 @@ class ReligionController
 			$topic->setRight('CULTE');
 			
 			$app['orm.em']->persist($religion);
+			$app['orm.em']->flush();
 			
 			$topic->setObjectId($religion->getId());
 			$religion->setTopic($topic);
 				
 			$app['orm.em']->persist($topic);
 			$app['orm.em']->persist($religion);
-			
 			$app['orm.em']->flush();
 			
 			$app['session']->getFlashBag()->add('success', 'La religion a été ajoutée.');

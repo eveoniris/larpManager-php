@@ -52,6 +52,21 @@ class GroupeControllerProvider implements ControllerProviderInterface
 					throw new AccessDeniedException();
 				}
 			});
+			
+		/**
+		 * Ajoute un nouveau personnage dans un groupe
+		 */
+		$controllers->match('/{index}/personnage/add','LarpManager\Controllers\GroupeController::personnageAddAction')
+			->assert('index', '\d+')
+			->bind("groupe.personnage.add")
+			->method('GET|POST')
+			->before(function(Request $request) use ($app) {
+				if (!$app['security.authorization_checker']->isGranted('GROUPE_MEMBER', $request->get('index'))) {
+					throw new AccessDeniedException();
+				}
+			});
+			
+		
 		
 		$controllers->match('/{index}/gestion','LarpManager\Controllers\GroupeController::gestionAction')
 			->assert('index', '\d+')
@@ -62,7 +77,7 @@ class GroupeControllerProvider implements ControllerProviderInterface
 					throw new AccessDeniedException();
 				}
 			});
-			
+		
 		$controllers->match('/{index}/joueur','LarpManager\Controllers\GroupeController::joueurAction')
 			->assert('index', '\d+')
 			->bind("groupe.joueur")

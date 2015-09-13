@@ -113,9 +113,35 @@ class GroupeSecondaireController
 		{
 			$groupeSecondaire = $form->getData();
 	
+			/**
+			 * Création des topics associés à ce groupe
+			 * un topic doit être créé par GN auquel ce groupe est inscrit
+			 * @var \LarpManager\Entities\Topic $topic
+			 */
+			$topic = new \LarpManager\Entities\Topic();
+			$topic->setTitle($groupeSecondaire->getLabel());
+			$topic->setDescription($groupeSecondaire->getDescription());
+			$topic->setUser($app['user']);
+
 			$app['orm.em']->persist($groupeSecondaire);
 			$app['orm.em']->flush();
-	
+			
+			// défini les droits d'accés à ce forum
+			// (les membres du groupe ont le droit d'accéder à ce forum)
+			$topic->setRight('GROUPE_SECONDAIRE_MEMBER');
+			$topic->setObjectId($groupeSecondaire->getId());
+			$groupeSecondaire->setTopic($topic);
+
+			/**
+			 * Ajoute le responsable du groupe dans le groupe si il n'y est pas déjà
+			 */
+			$personnage = $groupeSecondaire->getResponsable();
+			$groupeSecondaire->addPersonnage($personnage);
+			
+			$app['orm.em']->persist($topic);
+			$app['orm.em']->persist($groupeSecondaire);
+			$app['orm.em']->flush();
+			
 			$app['session']->getFlashBag()->add('success', 'Le groupe secondaire a été ajouté.');
 	
 			if ( $form->get('save')->isClicked())
@@ -158,6 +184,15 @@ class GroupeSecondaireController
 	
 			if ($form->get('update')->isClicked())
 			{
+				/**
+				 * Ajoute le responsable du groupe dans le groupe si il n'y est pas déjà
+				 */
+				$personnage = $groupeSecondaire->getResponsable();
+				if ( ! $groupeSecondaire->getPersonnages()->contains($personnage))
+				{
+					$groupeSecondaire->addPersonnage($personnage);
+				}
+				
 				$app['orm.em']->persist($groupeSecondaire);
 				$app['orm.em']->flush();
 				$app['session']->getFlashBag()->add('success', 'Le groupe secondaire a été mis à jour.');
@@ -193,11 +228,11 @@ class GroupeSecondaireController
 	
 		if ( $groupeSecondaire )
 		{
-			if ( $app['larp.manager']->isResponsableOfSecondaryGroup($app['user'],$groupeSecondaire) )
+			if ( $app['security.authorization_checker']->isGranted('GROUPE_SECONDAIRE_RESPONSABLE',$groupeSecondaire->getId()) )
 			{
 				return $app['twig']->render('groupeSecondaire/detail_responsable.twig', array('groupeSecondaire' => $groupeSecondaire));
 			}
-			else if ( $app['larp.manager']->isMemberOfSecondaryGroup($app['user'],$groupeSecondaire) )
+			if ( $app['security.authorization_checker']->isGranted('GROUPE_SECONDAIRE_MEMBER',$groupeSecondaire->getId()) )
 			{
 				return $app['twig']->render('groupeSecondaire/detail_member.twig', array('groupeSecondaire' => $groupeSecondaire));
 			}

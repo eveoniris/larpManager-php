@@ -16,6 +16,7 @@
 		<ul class="nav navbar-nav">
 			<li><a href="http://www.eveoniris.com">Eve-Oniris</a></li>
 			
+			{# Menus reservé aux admins #}
 			{% if is_granted('ROLE_ADMIN', app.user) %}
 				<li class="dropdown">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Admin<span class="caret"></span></a>
@@ -30,6 +31,7 @@
 				</li>
 			{% endif %}
 			
+			{# Menus reservé aux scénaristes #}
 			{% if is_granted('ROLE_SCENARISTE', app.user) %}
 				<li class="dropdown">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Scénario<span class="caret"></span></a>
@@ -48,6 +50,7 @@
 				</li>
 			{% endif %}
 			
+			{# Menus reservé aux règles #}
 			{% if is_granted('ROLE_REGLE', app.user) %}
 				<li class="dropdown">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Règles<span class="caret"></span></a>
@@ -62,6 +65,7 @@
 				</li>
 			{% endif %}
 			
+			{# Menus reservé au stock #}
 			{% if is_granted('ROLE_STOCK', app.user) %}
 				<li class="dropdown">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Stock<span class="caret"></span></a>
@@ -78,28 +82,14 @@
 				</li>
 			{% endif %}
 			
+			{# Menus reservé aux utilisateurs #}
 			{% if is_granted('ROLE_USER', app.user) %}
 				<li class="dropdown">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Joueur<span class="caret"></span></a>
 					<ul class="dropdown-menu">
 						<li><a href="{{ path('forum') }}">Forum</a></li>
-						{% if app.user.joueur %}
-							<li><a href="{{ path('joueur.detail',{'index': app.user.joueur.id}) }}">Mes informations</a></li>
-							{% if app.user.groupes %}
-								{% if app.user.personnage %}
-									<li><a href="{{ path('personnage.detail',{'index': app.user.personnage.id}) }}">Mon personnage</a></li>
-								{% else %}
-									<li><a href="{{ path('personnage.add') }}">Création de mon personnage</a></li>
-								{% endif %}
-							{% endif %}
-						{% else %}
-						
-						{% endif %}
-
-						<li><a href="{{ path('groupeSecondaire') }}">Les groupes secondaires</a></li>
-						<li><a href="#">Les compétences</a></li>
-						<li><a href="#">Les classes</a></li>
-						<li><a href="{{ path('world') }}">Le monde</a></li>
+						<li><a href="{{ path('competence') }}">Les compétences</a></li>
+						<li><a href="{{ path('classe') }}">Les classes</a></li>
 					</ul
 				</li>
 			{% endif %}

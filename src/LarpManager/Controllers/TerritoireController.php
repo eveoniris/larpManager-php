@@ -40,7 +40,14 @@ class TerritoireController
 		
 		$territoire = $app['orm.em']->find('\LarpManager\Entities\Territoire',$id);
 		
-		return $app['twig']->render('territoire/detail.twig', array('territoire' => $territoire));
+		if ( $app['security.authorization_checker']->isGranted('ROLE_SCENARISTE') )
+		{
+			return $app['twig']->render('territoire/detail.twig', array('territoire' => $territoire));
+		}
+		else
+		{
+			return $app['twig']->render('territoire/detail_joueur.twig', array('territoire' => $territoire));
+		}
 	}
 	
 	/**
@@ -54,9 +61,9 @@ class TerritoireController
 		$territoire = new \LarpManager\Entities\Territoire();
 		
 		$form = $app['form.factory']->createBuilder(new TerritoireForm(), $territoire)
-		->add('save','submit', array('label' => "Sauvegarder"))
-		->add('save_continue','submit', array('label' => "Sauvegarder & continuer"))
-		->getForm();
+			->add('save','submit', array('label' => "Sauvegarder"))
+			->add('save_continue','submit', array('label' => "Sauvegarder & continuer"))
+			->getForm();
 		
 		$form->handleRequest($request);
 		

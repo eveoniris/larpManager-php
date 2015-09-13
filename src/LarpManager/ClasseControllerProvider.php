@@ -4,6 +4,8 @@ namespace LarpManager;
 
 use Silex\Application;
 use Silex\ControllerProviderInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
  * LarpManager\ClasseControllerProvider
@@ -35,26 +37,51 @@ class ClasseControllerProvider implements ControllerProviderInterface
 		
 		$controllers->match('/add','LarpManager\Controllers\ClasseController::addAction')
 			->bind("classe.add")
-			->method('GET|POST');
+			->method('GET|POST')
+			->before(function(Request $request) use ($app) {
+				if (!$app['security.authorization_checker']->isGranted('ROLE_REGLE')) {
+					throw new AccessDeniedException();
+				}
+			});
 				
 		$controllers->match('/{index}/update','LarpManager\Controllers\ClasseController::updateAction')
 			->assert('index', '\d+')
 			->bind("classe.update")
-			->method('GET|POST');
+			->method('GET|POST')
+			->before(function(Request $request) use ($app) {
+				if (!$app['security.authorization_checker']->isGranted('ROLE_REGLE')) {
+					throw new AccessDeniedException();
+				}
+			});
 		
 		$controllers->match('/{index}','LarpManager\Controllers\ClasseController::detailAction')
 			->assert('index', '\d+')
 			->bind("classe.detail")
-			->method('GET');
+			->method('GET')
+			->before(function(Request $request) use ($app) {
+				if (!$app['security.authorization_checker']->isGranted('ROLE_REGLE')) {
+					throw new AccessDeniedException();
+				}
+			});
 		
 		$controllers->match('/{index}/export','LarpManager\Controllers\ClasseController::detailExportAction')
 			->assert('index', '\d+')
 			->bind("classe.detail.export")
-			->method('GET');
+			->method('GET')
+			->before(function(Request $request) use ($app) {
+				if (!$app['security.authorization_checker']->isGranted('ROLE_REGLE')) {
+					throw new AccessDeniedException();
+				}
+			});
 		
 		$controllers->match('/export','LarpManager\Controllers\ClasseController::exportAction')
 			->bind("classe.export")
-			->method('GET');
+			->method('GET')
+			->before(function(Request $request) use ($app) {
+				if (!$app['security.authorization_checker']->isGranted('ROLE_REGLE')) {
+					throw new AccessDeniedException();
+				}
+			});
 					
 		return $controllers;
 	}

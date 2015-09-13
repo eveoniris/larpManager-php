@@ -42,6 +42,16 @@ class User extends BaseUser implements AdvancedUserInterface, \Serializable
 	}
 	
 	/**
+	 * Fourni la liste de tous les posts qu'un utilisateur n'a pas lu
+	 */
+	public function newPosts()
+	{
+		// construit la liste des posts déjà vue
+		$newPosts = new ArrayCollection();
+		return $newPosts;		
+	}
+	
+	/**
 	 * Determine si l'utilisateur a déjà lu ce post
 	 * 
 	 * @param LarpManager\Entities\Post $post

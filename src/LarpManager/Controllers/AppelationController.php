@@ -57,7 +57,8 @@ class AppelationController
 		if ( $form->isValid() )
 		{
 			$appelation = $form->getData();
-			$app['appelation.manager']->insert($appelation);
+			$app['orm.em']->persist($appelation);
+			$app['orm.em']->flush();
 			
 			$app['session']->getFlashBag()->add('success', 'L\'appelation a été ajoutée.');
 				
@@ -100,14 +101,16 @@ class AppelationController
 		
 			if ( $form->get('update')->isClicked())
 			{
-				$app['appelation.manager']->update($appelation);
+				$app['orm.em']->persist($appelation);
+				$app['orm.em']->flush();
 				$app['session']->getFlashBag()->add('success', 'L\'appelation a été mise à jour.');
 				
 				return $app->redirect($app['url_generator']->generate('appelation.detail',array('index' => $id)),301);
 			}
 			else if ( $form->get('delete')->isClicked())
 			{
-				$app['appelation.manager']->delete($appelation);
+				$app['orm.em']->remove($appelation);
+				$app['orm.em']->flush();
 				$app['session']->getFlashBag()->add('success', 'L\'appelation a été supprimée.');
 				return $app->redirect($app['url_generator']->generate('appelation'),301);
 			}

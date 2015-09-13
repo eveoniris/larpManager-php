@@ -10,7 +10,7 @@
 
 		
 			<ol class="breadcrumb">
-				<li>Navigation :</li>
+				<li><a href="{{ path('homepage') }}">Accueil</a></li>
 				<li><a href="{{ path('forum')  }}">Forum</a></li>
 				{% for ancestor in topic.ancestor %}
 					<li><a href="{{ path('forum.topic',{'index':ancestor.id})  }}">{{ ancestor.title }}</a></li>
@@ -18,7 +18,7 @@
 				<li class="active">{{ topic.title }}</li>
 			</ol>
 			
-			<div class="well">
+			<div class="well well-sm">
 				<h6>{{ topic.title }}</h6>
 				{{ topic.description }}
 			</div>

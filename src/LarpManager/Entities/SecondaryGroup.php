@@ -18,4 +18,22 @@ use LarpManager\Entities\BaseSecondaryGroup;
  */
 class SecondaryGroup extends BaseSecondaryGroup
 {
+	/**
+	 * Fourni le personnage responsable du groupe
+	 */
+	public function getResponsable()
+	{
+		return $this->getPersonnageRelatedByPersonnageId();
+	}
+	
+	/**
+	 * Défini le personnage responsable du groupe
+	 * @param Personnage $personnage
+	 */
+	public function setResponsable(Personnage $personnage)
+	{
+		$this->setPersonnageRelatedByPersonnageId($personnage);
+		return $this;
+	}
+		
 }

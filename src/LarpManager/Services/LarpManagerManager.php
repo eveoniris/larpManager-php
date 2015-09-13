@@ -3,6 +3,7 @@
 namespace LarpManager\Services;
 
 use Silex\Application;
+use Doctrine\Common\Collections\ArrayCollection;
 
 class LarpManagerManager
 {
@@ -20,6 +21,29 @@ class LarpManagerManager
 		$this->app = $app;
 	}
 
+	/**
+	 * Fourni la liste des compétences de premier niveau
+	 * @return Collection $competences
+	 */
+	public function getRootCompetences()
+	{
+		$rootCompetences = new ArrayCollection();
+	
+		$repo = $this->app['orm.em']->getRepository('\LarpManager\Entities\CompetenceFamily');
+		$competenceFamilies = $repo->findAll();
+	
+		foreach ( $competenceFamilies as $competenceFamily)
+		{
+			$competence = $competenceFamily->getFirstCompetence();
+			if ( $competence )
+			{
+				$rootCompetences->add($competence);
+			}
+		}
+	
+		return $rootCompetences;
+	}
+	
 	/**
 	 * Trouve un topic en fonction de sa clé
 	 * 
@@ -58,7 +82,7 @@ class LarpManagerManager
 			{
 				$childs = array_merge(
 						array($territoire),
-						$this->sort($territoire->getTerritoires()->toArray())
+						$this->sortTerritoire($territoire->getTerritoires()->toArray())
 						);
 	
 				$result = array_merge($result, $childs);
@@ -99,7 +123,7 @@ class LarpManagerManager
 			{
 				$childs = array_merge(
 						array($appelation),
-						$this->sort($appelation->getAppelations()->toArray())
+						$this->sortAppelation($appelation->getAppelations()->toArray())
 						);
 	
 				$result = array_merge($result, $childs);

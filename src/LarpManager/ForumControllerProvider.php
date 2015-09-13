@@ -71,6 +71,17 @@ class ForumControllerProvider implements ControllerProviderInterface
 					throw new AccessDeniedException();
 				}
 			});
+			
+		/** Modifier un forum */
+		$controllers->match('/{index}/update','LarpManager\Controllers\ForumController::topicUpdateAction')
+			->assert('index', '\d+')
+			->bind("forum.topic.update")
+			->method('GET|POST')
+			->before(function(Request $request) use ($app) {
+			if (!$app['security.authorization_checker']->isGranted('ROLE_MODERATOR')) {
+				throw new AccessDeniedException();
+			}
+		});			
 
 		/** Ajout d'un post */
 		$controllers->match('/post/add','LarpManager\Controllers\ForumController::postAddAction')

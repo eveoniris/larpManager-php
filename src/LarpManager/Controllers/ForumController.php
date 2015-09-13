@@ -367,4 +367,47 @@ class ForumController
 				'topic' => $topicRelated,
 		));
 	}
+	
+	/**
+	 * Modfifier un topic
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function topicUpdateAction(Request $request, Application $app)
+	{
+		$topicId = $request->get('index');
+	
+		$topic = $app['orm.em']->getRepository('\LarpManager\Entities\Topic')
+						->find($topicId);
+	
+		// vérification des droits
+		if ( ! $app['forum.manager']->right($topic,$app['user']) )
+		{
+			$app['session']->getFlashBag()->add('error', 'Vous n\'avez pas les droits necessaires pour modifier ce topic');
+			return $app->redirect($app['url_generator']->generate('forum'),301);
+		}
+	
+		$form = $app['form.factory']->createBuilder(new TopicForm(), $topic)
+				->add('save','submit', array('label' => "Sauvegarder"))
+				->getForm();
+	
+		$form->handleRequest($request);
+	
+		if ( $form->isValid() )
+		{
+			$topic = $form->getData();
+			$app['orm.em']->persist($topic);
+			$app['orm.em']->flush();
+	
+			$app['session']->getFlashBag()->add('success', 'Le forum a été modifié.');
+	
+			return $app->redirect($app['url_generator']->generate('forum.topic',array('index'=> $topic->getId())),301);
+		}
+	
+		return $app['twig']->render('forum/topic_update.twig', array(
+				'form' => $form->createView(),
+				'topic' => $topic,
+		));
+	}
 }

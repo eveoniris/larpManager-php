@@ -23,6 +23,17 @@ class GroupeSecondaireForm extends AbstractType
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
 		$builder->add('label','text')
+				->add('description','textarea', array(
+						'required' => true,
+						'label' => 'Description',
+						'attr' => array('rows' => 9)
+				))
+				->add('responsable', 'entity', array(
+						'required' => false,
+						'label' => 'Chef du groupe',
+						'class' => 'LarpManager\Entities\Personnage',
+						'property' => 'identity',
+				))
 				->add('secondaryGroupType','entity', array(
 						'label' => 'Type',
 						'required' => true,

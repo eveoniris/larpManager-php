@@ -22,7 +22,7 @@ class GroupeSecondairePostulerForm extends AbstractType
 	 */
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
-		$builder->add('explication','textarea', array(
+		$builder->add('explanation','textarea', array(
 				'required' => true,
 				'attr' => array(
 						'rows' => 9,

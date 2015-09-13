@@ -40,8 +40,8 @@ class LarpManagerVoter implements VoterInterface
 				'MODERATOR',
 				'GROUPE_MEMBER',
 				'GROUPE_RESPONSABLE',
-				//'GROUPE_SECONDAIRE_MEMBER',
-				//'GROUPE_SECONDAIRE_RESPONSABLE',
+				'GROUPE_SECONDAIRE_MEMBER',
+				'GROUPE_SECONDAIRE_RESPONSABLE',
 				'JOUEUR_OWNER',
 				'JOUEUR_NOT_REGISTERED',
 				'OWN_PERSONNAGE',
@@ -82,14 +82,14 @@ class LarpManagerVoter implements VoterInterface
 				$groupeId = $object;
 				return $this->isMemberOf($user, $groupeId) ? VoterInterface::ACCESS_GRANTED : VoterInterface::ACCESS_DENIED;
 			}
-			/*if ($attribute == 'GROUPE_SECONDAIRE_RESPONSABLE') {
-				$groupeId = $object;
+			if ($attribute == 'GROUPE_SECONDAIRE_RESPONSABLE') {
+				$groupeSecondaireId = $object;
 				return $this->isGroupeSecondaireResponsableOf($user, $groupeSecondaireId) ? VoterInterface::ACCESS_GRANTED : VoterInterface::ACCESS_DENIED;
 			}
 			if ($attribute == 'GROUPE_SECONDAIRE_MEMBER') {
-				$groupeId = $object;
+				$groupeSecondaireId = $object;
 				return $this->isGroupeSecondaireMemberOf($user, $groupeSecondaireId) ? VoterInterface::ACCESS_GRANTED : VoterInterface::ACCESS_DENIED;
-			}*/
+			}
 			if ( $attribute == 'POST_OWNER') {
 				$postId = $object;
 				return $this->isHisPost($user, $postId) ? VoterInterface::ACCESS_GRANTED : VoterInterface::ACCESS_DENIED;
@@ -130,6 +130,9 @@ class LarpManagerVoter implements VoterInterface
 			case 'GROUPE_MEMBER' :
 				return $this->userGroupeRight($topic->getObjectId(), $user);
 				break;
+			case 'GROUPE_SECONDAIRE_MEMBRE' :
+				return $this->userGroupeSecondaireRight($topic->getObjectId(), $user);
+				break;
 			case 'CULTE' :
 				return $this->userCulteRight($topic->getObjectId(), $user);
 			default :
@@ -148,14 +151,17 @@ class LarpManagerVoter implements VoterInterface
 	{
 		$joueur =  $user->getJoueur();
 		
-		if ( $joueur)
+		if ( $joueur && $joueur->getPersonnage() )
 		{
-			foreach ( $joueur->getPersonnages() as $personnage )
+			if ( $joueur->getPersonnage()->getPersonnageReligion() )
 			{
-				if ( $personnage->getReligion()->getId() == $culteId )
+				if ( $joueur->getPersonnage()->getPersonnageReligion()->getReligion()->getId() == $culteId )
+				{
 					return true;
+				}
 			}
 		}
+		
 		return false;
 	}
 	
@@ -262,16 +268,17 @@ class LarpManagerVoter implements VoterInterface
 	 */
 	protected function isGroupeSecondaireResponsableOf($user, $groupeSecondaireId)
 	{
-		/*$personnage = $user->getPersonnage();
-		if ( $personnage->)
-		foreach( $user->getGroupeSecondaireResponsable() as $groupe)
+		$personnage = $user->getPersonnage();
+		if ( $personnage)
 		{
-			if ( $groupe instanceof \LarpManager\Entities\Groupe
-					&& $groupe->getId() == $groupeId)
-				return true;
+			foreach( $personnage->getSecondaryGroupsAsChief() as $groupe)
+			{
+				if ( $groupe instanceof \LarpManager\Entities\SecondaryGroup
+						&& $groupe->getId() == $groupeSecondaireId)
+					return true;
+			}
 		}
-		return false;*/
-		return true;
+		return false;
 	}
 	
 	/**
@@ -302,9 +309,9 @@ class LarpManagerVoter implements VoterInterface
 	 */
 	protected function isOwnerOfPersonnage($user, $personnageId)
 	{
-		foreach ( $user->getPersonnages() as $personnage )
+		if ( $user->getPersonnage() )
 		{
-			if ( $personnage->getId() == $personnageId ) return true;
+			if ( $user->getPersonnage()->getId() == $personnageId ) return true;
 		}
 		return false;
 	}

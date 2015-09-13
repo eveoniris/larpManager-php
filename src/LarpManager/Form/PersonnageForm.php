@@ -5,6 +5,7 @@ namespace LarpManager\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Doctrine\ORM\EntityRepository;
 
 /**
  * LarpManager\Form\PersonnageForm
@@ -35,6 +36,11 @@ class PersonnageForm extends AbstractType
 						'label' => '',
 						'class' => 'LarpManager\Entities\Age',
 						'property' => 'label',
+						'query_builder' => function(EntityRepository $er) {
+							$qb = $er->createQueryBuilder('a');
+							$qb->andWhere('a.enableCreation = true');
+							return $qb;
+						}
 				))
 				->add('genre','entity', array(
 						'required' => true,

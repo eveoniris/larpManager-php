@@ -64,6 +64,20 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 					throw new AccessDeniedException();
 				}
 			});
+			
+		/**
+		 * Choix d'une religion
+		 * Accessible uniquement au proprietaire du personnage
+		 */
+		$controllers->match('/{index}/religion/add','LarpManager\Controllers\PersonnageController::addReligionAction')
+			->assert('index', '\d+')
+			->bind("personnage.religion.add")
+			->method('GET|POST')
+			->before(function(Request $request) use ($app) {
+				if (!$app['security.authorization_checker']->isGranted('OWN_PERSONNAGE', $request->get('index'))) {
+					throw new AccessDeniedException();
+				}
+			});
 					
 		return $controllers;
 	}

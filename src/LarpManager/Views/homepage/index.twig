@@ -39,6 +39,18 @@
 					</ol>
 				</div>
 			{% endif %}
+			
+			{% if is_granted('ROLE_MODERATOR', app.user) %}
+				<div class="well well-sm">
+					<h6>Liste des nouveaux posts :</h6>
+					<ul>
+						{% for post in app.user.newPosts %}
+							<li><a href="{{ path('forum.post',{'index':post.id}) }}">{{ post.title }}</a></li>
+						{% endfor %}
+					</ul>
+					<small>Désolé, cette fonctionnalité n'est pas encore implémenté.</small>
+				</div>
+			{% endif %}
 		
 			{# enregistrement des informations joueurs #}
 			{% if not app.user.joueur %}
@@ -80,29 +92,14 @@
 					{% else %}
 						{# detail du personnage #}
 						{% if app.user.personnage %}
-							{% if app.user.personnage.postulants|length > 0 %}
-								<div class="panel panel-default">
-									<div class="panel-heading">
-									</div>
-									<div class="panel-body">
-										<ul>
-										{% for postulant in app.user.personnage.postulants %}
-											<li>Votre candidature au groupe {{ postulant.groupeSecondaire.label }} est en attente de validation.</li>
-										{% endfor %}
-										</ul>
-									</div>
-								</div>
-							{% endif %}
+							{{ include("homepage/fragment/personnage.twig",{'personnage':app.user.personnage}) }}
 						{% endif %}
 						
-						{# detail du groupe #}
+						{# Détail des groupes#}
 						{% for groupe in app.user.groupes %}
-							<div class="panel panel-default">
-								<div class="panel-heading">{{ groupe.nom }}</div>
-								<div class="panel-body">
-								</div>
-							</div>
+							{{ include("homepage/fragment/groupe.twig",{'groupe':groupe}) }}
 						{% endfor %}
+						
 					{% endif %}
 				{% endif %}
 			{% endif %}
@@ -110,14 +107,17 @@
 		
 		<div class="col-xs-4 col-md-4">
 		
-			{# Trucs et astuces #}
-			<div class="panel panel-default">
-				<div class="panel-heading">Trucs et astuces
+			{# affichage de l'annonce la plus récente et du lien vers les archives des annonces #}
+			{% for annonce in annonces %}
+				<div class="panel panel-primary">
+					<div class="panel-heading">
+						{{ annonce.title }}
+					</div>
+					<div class="panel-body">
+						{{ annonce.text|markdown }}
+					</div>
 				</div>
-				<div class="panel-body">
-					<p>Utilisez le menu "Joueur" pour découvrir des fonctionnalitées supplémentaires</p>
-				</div>
-			</div>
+			{% endfor %}
 						
 			{# si l'utilisateur est scénariste, lui afficher les liens vers les groupes dont
 			   il a la responsabilité #}
@@ -152,37 +152,6 @@
 					</div>
 				</div>
 			{% endif %}
-			
-			{# afficher la liste des groupes du joueur #}
-			{% if app.user.groupes|length > 0 %}
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						Vos groupes
-					</div>
-					<div class="panel-body">
-					 	<div class="list-group">
-						{% for groupe in app.user.groupes %}
-							<a class="list-group-item" href="{{ path('groupe.detail',{'index': groupe.id}) }}">{{ groupe.nom }}</a>
-						{% endfor %}
-						{% for groupe in app.user.personnage.secondaryGroups %}
-							<a class="list-group-item" href="{{ path('secondayGroup.detail',{'index':groupe.id}) }}">{{ groupe.label }}</a>
-						{% endfor %}
-						</div>			
-					</div>
-				</div>
-			{% endif %}
-				
-			{# affichage de l'annonce la plus récente et du lien vers les archives des annonces #}
-			{% for annonce in annonces %}
-				<div class="panel panel-primary">
-					<div class="panel-heading">
-						{{ annonce.title }}
-					</div>
-					<div class="panel-body">
-						{{ annonce.text|markdown }}
-					</div>
-				</div>
-			{% endfor %}
 		</div>
 	</div>		
 	

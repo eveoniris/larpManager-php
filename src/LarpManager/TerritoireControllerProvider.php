@@ -30,21 +30,37 @@ class TerritoireControllerProvider implements ControllerProviderInterface
 		
 		$controllers->match('/','LarpManager\Controllers\TerritoireController::indexAction')
 			->bind("territoire")
-			->method('GET');
+			->method('GET')
+			->before(function(Request $request) use ($app) {
+				if (!$app['security.authorization_checker']->isGranted('ROLE_SCENARISTE')) {
+					throw new AccessDeniedException();
+				}
+			});
 		
 		$controllers->match('/add','LarpManager\Controllers\TerritoireController::addAction')
 			->bind("territoire.add")
-			->method('GET|POST');
+			->method('GET|POST')
+			->before(function(Request $request) use ($app) {
+				if (!$app['security.authorization_checker']->isGranted('ROLE_SCENARISTE')) {
+					throw new AccessDeniedException();
+				}
+			});
 		
 		$controllers->match('/{index}/update','LarpManager\Controllers\TerritoireController::updateAction')
 			->assert('index', '\d+')
 			->bind("territoire.update")
-			->method('GET|POST');
+			->method('GET|POST')
+			->before(function(Request $request) use ($app) {
+				if (!$app['security.authorization_checker']->isGranted('ROLE_SCENARISTE')) {
+					throw new AccessDeniedException();
+				}
+			});
 		
 		$controllers->match('/{index}','LarpManager\Controllers\TerritoireController::detailAction')
 			->assert('index', '\d+')
 			->bind("territoire.detail")
 			->method('GET');
+			
 					
 		return $controllers;
 	}

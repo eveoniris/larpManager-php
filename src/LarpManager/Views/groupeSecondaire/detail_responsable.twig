@@ -4,58 +4,49 @@
 
 {% block content %}
 	
-<div class="container-fluid">
-	<div class="row">
-		<div class="col-xs-12 col-md-8">
-			
-			<a href="{{ path("groupeSecondaire") }}">Retour à la liste des groupes secondaires</a>
+	<div class="container-fluid">
+	
+		<ol class="breadcrumb">
+			<li><a href="{{ path('homepage')  }}">Accueil</a></li>
+			<li class="active">{{ groupeSecondaire.label }}</li>
+		</ol>
 						
-			<div class="well well-sm bs-component">
-				<h4>
-					{{ groupeSecondaire.label }}
-				</h4>
-				{{ groupeSecondaire.description }}
-			</div>
-			
-			Liste des postulants
-			
-			{% for postulant in groupeSecondaire.postulants %}
-				<div class="media">
-					<div class="media-left media-top">
-						<a href="{{ path('personnage.fiche_public',{'index': postulant.personnage.id}) }}"><img class="media-object" src="" alt="" /></a>
-					</div>
-					<div class="media-body">
-						<h4 class="media-heading">{{ postulant.personnage.nom }}</h4>
-						{{ postualant.date|date('Y-m-d') }}
-						{{ postulant.explanation }}
-						Accepter / Refuser / Message Privé
-					</div>
-				</div>
-			{% endfor %}
-			
-			
-			Liste des Membres
-			
-			{% for personnage in groupeSecondaire.personnages %}
-				<div class="media">
-					<div class="media-left media-top">
-						<a href="#"><img class="media-object" src="" alt="" /></a>
-					</div>
-					<div class="media-body">
-						<h4 class="media-heading">{{ personnage.nom }}</h4>
-						
-					</div>
-				</div>
-			{% endfor %}
-			
-			
-			Lien vers le forum
-			
-			Liste des nouveaux message sur le forum
-							
+		<div class="well well-sm bs-component">
+			<h4>
+				{{ groupeSecondaire.label }}
+			</h4>
+			{{ groupeSecondaire.description }}
 		</div>
+			
+		<div class="panel panel-default">
+			<div class="panel-heading">Liste des postulants</div>
+			<div class="panel-body">
+			
+				<div class="list-group">
+					{% for postulant in groupeSecondaire.postulants %}
+					<div class="list-group-item">
+						<h6 class="list-group-item-heading">{{ postulant.personnage.identity }}</h6>
+						<p class="list-group-item-text">{{ postulant.date|date('Y-m-d') }}</p>
+						<p class="list-group-item-text">{{ postulant.explanation|markdown }}</p>
+					</div>
+					{% endfor %}		
+				</div>
+			</div>
+		</div>
+		
+		<div class="panel panel-default">
+			<div class="panel-heading">Liste des membres</div>
+			<div class="panel-body">
+				<div class="list-group">
+					{% for personnage in groupeSecondaire.personnages %}
+						<div class="list-group-item">
+							<h6 class="list-group-item-heading">{{ personnage.identity }}</h6>
+						</div>
+					{% endfor %}
+				</div>
+			</div>
+		</div>					
 	</div>
-</div>
 	
 			
 {% endblock %}

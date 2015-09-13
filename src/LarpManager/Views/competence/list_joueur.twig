@@ -1,0 +1,38 @@
+{% extends "layout.twig" %}
+
+{% block title %}Competences{% endblock title %}
+
+{% block content %}
+
+	<div class="container-fluid">
+		<ol class="breadcrumb">
+			<li><a href="{{ path('homepage')  }}">Accueil</a></li>
+			<li class="active">Les compétences</li>
+		</ol>
+		
+		<div class="row">
+		
+		{% for competence in competences %}
+			<div class="col-sm-4 col-md-4 ">
+				<div class="well well-sm">
+				<div class="media">
+		    		<div class="media-left media-top">
+		      			{# Dans le cas ou on associe une image aux compétences
+		      			<a href="#">
+		        			<img class="media-object" src="..." alt="...">
+		      			</a> #}
+		    		</div>
+		    		<div class="media-body">
+		      			<h4 class="media-heading">{{ competence.competenceFamily.label }}</h4>
+		      			<p>{{ competence.competenceFamily.description }}</p>
+		      			<p><strong>{{competence.level.label }}</strong> : {{ competence.description }}</p>
+		    		</div>
+		  		</div>
+		  		</div>
+		  	</div>
+		{% endfor %}
+		
+		</div>
+	</div>
+
+{% endblock content %}
