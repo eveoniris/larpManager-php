@@ -104,10 +104,15 @@ class JoueurController
 			
 			if ( $joueurs != null )
 			{
-				if ( count($joueurs) == 1 )
+				if ( $joueurs->count() == 0 )
+				{
+					$app['session']->getFlashBag()->add('error', 'Le joueur n\'a pas été trouvé.');
+					return $app->redirect($app['url_generator']->generate('homepage'), 301);
+				}
+				else if ( $joueurs->count() == 1 )
 				{
 					$app['session']->getFlashBag()->add('success', 'Le joueur a été trouvé.');
-					return $app->redirect($app['url_generator']->generate('joueur.detail', array('index'=> $joueurs[0])));
+					return $app->redirect($app['url_generator']->generate('joueur.detail.orga', array('index'=> $joueurs->first()->getId())),301);
 				}
 				else
 				{
@@ -145,8 +150,31 @@ class JoueurController
 		else
 		{
 			$app['session']->getFlashBag()->add('error', 'Le joueur n\'a pas été trouvé.');
-			return $app->redirect($app['url_generator']->generate('joueur'));
+			return $app->redirect($app['url_generator']->generate('homepage'));
 		}	
+	}
+	
+	/**
+	 * Detail d'un joueur (pour les orgas)
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function detailOrgaAction(Request $request, Application $app)
+	{
+		$id = $request->get('index');
+	
+		$joueur = $app['orm.em']->find('\LarpManager\Entities\Joueur',$id);
+	
+		if ( $joueur )
+		{
+			return $app['twig']->render('joueur/detail_orga.twig', array('joueur' => $joueur));
+		}
+		else
+		{
+			$app['session']->getFlashBag()->add('error', 'Le joueur n\'a pas été trouvé.');
+			return $app->redirect($app['url_generator']->generate('homepage'));
+		}
 	}
 	
 	/**

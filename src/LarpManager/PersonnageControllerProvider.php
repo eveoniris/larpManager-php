@@ -62,6 +62,20 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 					throw new AccessDeniedException();
 				}
 			});
+			
+		/**
+		 * Détail d'un personnage
+		 * Accessible uniquement aux orgas
+		 */
+		$controllers->match('/{index}/detail/orga','LarpManager\Controllers\PersonnageController::detailOrgaAction')
+			->assert('index', '\d+')
+			->bind("personnage.detail.orga")
+			->method('GET')
+			->before(function(Request $request) use ($app) {
+				if ( !$app['security.authorization_checker']->isGranted('ROLE_ORGA') ) {
+					throw new AccessDeniedException();
+				}
+			});
 		
 		/**
 		 * Ajout d'une compétence au personnage

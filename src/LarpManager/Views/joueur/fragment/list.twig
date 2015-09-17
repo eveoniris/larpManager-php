@@ -11,7 +11,7 @@
 		<h4 class="list-group-item-heading">
 			{{ joueur.nom }}
 			<div class="pull-right btn-group" role="group" aria-label="...">
-				<a href="{{ path('joueur.detail', {index: joueur.id}) }}" class="btn btn-primary" role="button">Voir</a>
+				<a href="{{ path('joueur.detail.orga', {index: joueur.id}) }}" class="btn btn-primary" role="button">Voir</a>
 			    <a href="{{ path('joueur.update', {index: joueur.id}) }}" class="btn btn-default" role="button">Modifier</a>
 			</div>
 		</h4>

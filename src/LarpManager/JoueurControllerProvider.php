@@ -84,7 +84,7 @@ class JoueurControllerProvider implements ControllerProviderInterface
 			});
 		
 		/**
-		 * Détail des informations joueurs
+		 * Détail des informations joueurs (pour le joueur)
 		 * Accessible uniquement aux utilisateurs possédant ces informations
 		 */
 		$controllers->match('/{index}/detail','LarpManager\Controllers\JoueurController::detailAction')
@@ -93,6 +93,20 @@ class JoueurControllerProvider implements ControllerProviderInterface
 			->method('GET')
 			->before(function(Request $request) use ($app) {
 				if (!$app['security.authorization_checker']->isGranted('JOUEUR_OWNER', $request->get('index'))) {
+					throw new AccessDeniedException();
+				}
+			});
+			
+		/**
+		 * Détail des informations joueurs (pour les orgas)
+		 * Accessible uniquement aux utilisateurs possédant ces informations
+		 */
+		$controllers->match('/{index}/detail/orga','LarpManager\Controllers\JoueurController::detailOrgaAction')
+			->assert('index', '\d+')
+			->bind("joueur.detail.orga")
+			->method('GET')
+			->before(function(Request $request) use ($app) {
+				if (!$app['security.authorization_checker']->isGranted('ROLE_ADMIN')) {
 					throw new AccessDeniedException();
 				}
 			});

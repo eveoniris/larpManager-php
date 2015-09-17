@@ -4,6 +4,7 @@ namespace LarpManager\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use LarpManager\Entities\Joueur;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * LarpManager\Repository\JoueurRepository
@@ -27,9 +28,8 @@ class JoueurRepository extends EntityRepository
 			->where($qb->expr()->like('j.prenom', $qb->expr()->literal('%'.$firstName.'%')))
 			->orderBy('j.prenom','ASC');
 		
-		$joueurs = $qb->getQuery()->getResult();
-				
-		return $joueurs;
+		$result = $qb->getQuery()->getResult();
+		return new ArrayCollection($result);
 	}
 	
 	/**
@@ -46,8 +46,7 @@ class JoueurRepository extends EntityRepository
 			->where($qb->expr()->like('j.nom', $qb->expr()->literal('%'.$lastName.'%')))
 			->orderBy('j.nom','ASC');
 	
-		$joueurs = $qb->getQuery()->getResult();
-	
-		return $joueurs;
+		$result = $qb->getQuery()->getResult();
+		return new ArrayCollection($result);
 	}
 }

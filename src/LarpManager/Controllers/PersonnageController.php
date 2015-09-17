@@ -41,6 +41,29 @@ class PersonnageController
 	}
 	
 	/**
+	 * Affiche le détail d'un personnage (pour les orgas)
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function detailAction(Request $request, Application $app)
+	{
+		$id = $request->get('index');
+	
+		$personnage = $app['orm.em']->find('\LarpManager\Entities\Personnage',$id);
+	
+		if ( $personnage )
+		{
+			return $app['twig']->render('personnage/detail_orga.twig', array('personnage' => $personnage));
+		}
+		else
+		{
+			$app['session']->getFlashBag()->add('error', 'Le personnage n\'a pas été trouvé.');
+			return $app->redirect($app['url_generator']->generate('homepage'));
+		}
+	}
+	
+	/**
 	 * Ajoute une religion au personnage
 	 * 
 	 * @param Request $request
@@ -194,7 +217,14 @@ class PersonnageController
 				
 			if ( $personnages != null )
 			{
-				if ( $personnages->count() == 1 )
+				if ( $personnages->count() == 0 )
+				{
+					$app['session']->getFlashBag()->add('error', 'Le personnage n\'a pas été trouvé.');
+					return $app['twig']->render('personnage/search.twig', array(
+							'form' => $form->createView(),
+					));
+				}
+				else if ( $personnages->count() == 1 )
 				{
 					$app['session']->getFlashBag()->add('success', 'Le personnage a été trouvé.');
 					return $app->redirect($app['url_generator']->generate('personnage.detail', array('index'=> $personnages->first()->getId())));
@@ -211,7 +241,7 @@ class PersonnageController
 			$app['session']->getFlashBag()->add('error', 'Désolé, le personnage n\'a pas été trouvé.');
 		}
 	
-		return $app['twig']->render('joueur/search.twig', array(
+		return $app['twig']->render('personnage/search.twig', array(
 				'form' => $form->createView(),
 		));
 	}
