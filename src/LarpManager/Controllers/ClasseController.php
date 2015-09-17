@@ -15,6 +15,7 @@ class ClasseController
 {
 	/**
 	 * Présentation des classes
+	 * 
 	 * @param Request $request
 	 * @param Application $app
 	 */
@@ -22,14 +23,20 @@ class ClasseController
 	{
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Classe');
 		$classes = $repo->findAllOrderedByLabel();
-		if ( $app['security.authorization_checker']->isGranted('ROLE_REGLE') )
-		{
-			return $app['twig']->render('classe/index.twig', array('classes' => $classes));
-		}
-		else
-		{
-			return $app['twig']->render('classe/list_joueur.twig', array('classes' => $classes));
-		}
+		return $app['twig']->render('classe/index.twig', array('classes' => $classes));
+	}
+	
+	/**
+	 * Liste des classes pour le joueur
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function listAction(Request $request, Application $app)
+	{
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Classe');
+		$classes = $repo->findAllOrderedByLabel();
+		return $app['twig']->render('classe/list_joueur.twig', array('classes' => $classes));
 	}
 	
 	/**

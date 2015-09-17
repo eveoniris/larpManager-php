@@ -33,6 +33,15 @@ class ClasseControllerProvider implements ControllerProviderInterface
 		
 		$controllers->match('/','LarpManager\Controllers\ClasseController::indexAction')
 			->bind("classe")
+			->method('GET')
+			->before(function(Request $request) use ($app) {
+				if (!$app['security.authorization_checker']->isGranted('ROLE_REGLE')) {
+					throw new AccessDeniedException();
+				}
+			});
+		
+		$controllers->match('/list','LarpManager\Controllers\ClasseController::listAction')
+			->bind("classe.joueur")
 			->method('GET');
 		
 		$controllers->match('/add','LarpManager\Controllers\ClasseController::addAction')

@@ -22,19 +22,22 @@ class CompetenceController
 	 */
 	public function indexAction(Request $request, Application $app)
 	{		
-		if ( $app['security.authorization_checker']->isGranted('ROLE_REGLE') )
-		{
-			$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Competence');
-			$competences = $repo->findAllOrderedByLabel();
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Competence');
+		$competences = $repo->findAllOrderedByLabel();
 			
-			return $app['twig']->render('competence/index.twig', array('competences' => $competences));
-		}
-		else
-		{
-			$competences = $app['larp.manager']->getRootCompetences();
-			
-			return $app['twig']->render('competence/list_joueur.twig', array('competences' => $competences));
-		}
+		return $app['twig']->render('competence/index.twig', array('competences' => $competences));
+	}
+
+	/**
+	 * Liste des compétences pour les joueurs
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function listAction(Request $request, Application $app)
+	{
+		$competences = $app['larp.manager']->getRootCompetences();
+		return $app['twig']->render('competence/list_joueur.twig', array('competences' => $competences));
 	}
 	
 	/**
