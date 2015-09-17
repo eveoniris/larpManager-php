@@ -7,6 +7,7 @@ use Silex\Application;
 use Doctrine\Common\Collections\ArrayCollection;
 use LarpManager\Form\GroupeForm;
 use LarpManager\Form\PersonnageForm;
+use LarpManager\Form\FindGroupeForm;
 
 
 /**
@@ -31,6 +32,66 @@ class GroupeController
 		return $app['twig']->render('groupe/index.twig', array(
 				'groupes' => $groupes));
 	}
+	
+	/**
+	 * Recherche d'un groupe
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function searchAction(Request $request, Application $app)
+	{
+		$form = $app['form.factory']->createBuilder(new FindGroupeForm(), array())
+			->add('submit','submit', array('label' => 'Rechercher'))
+			->getForm();
+	
+		$form->handleRequest($request);
+	
+		if ( $form->isValid() )
+		{
+			$data = $form->getData();
+				
+			$type = $data['type'];
+			$search = $data['search'];
+	
+			$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Groupe');
+				
+			$groupes = null;
+				
+			switch ($type)
+			{
+				case 'label' :
+					$groupes = $repo->findByName($search);
+					break;
+				case 'numero' :
+					$groupes = $repo->findByNumero($search);
+					break;
+			}
+				
+			if ( $joueurs != null )
+			{
+				if ( count($joueurs) == 1 )
+				{
+					$app['session']->getFlashBag()->add('success', 'Le joueur a été trouvé.');
+					return $app->redirect($app['url_generator']->generate('joueur.detail', array('index'=> $joueurs[0])));
+				}
+				else
+				{
+					$app['session']->getFlashBag()->add('success', 'Il y a plusieurs résultats à votre recherche.');
+					return $app['twig']->render('joueur/search_result.twig', array(
+							'joueurs' => $joueurs,
+					));
+				}
+			}
+				
+			$app['session']->getFlashBag()->add('error', 'Désolé, le joueur n\'a pas été trouvé.');
+		}
+	
+		return $app['twig']->render('joueur/search.twig', array(
+				'form' => $form->createView(),
+		));
+	}
+	
 	
 	/**
 	 * Création d'un nouveau personnage dans un groupe

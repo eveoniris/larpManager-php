@@ -13,7 +13,7 @@
 					Bienvenue {{ app.user.name }}
 				</h4>
 			</div>
-			
+						
 			{% if not app.user.joueur 
 				or app.user.gns|length == 0 
 				or app.user.groupes|length == 0 
@@ -37,18 +37,6 @@
 						<li>Créer mon personnage</li>
 					{% endif %}
 					</ol>
-				</div>
-			{% endif %}
-			
-			{% if is_granted('ROLE_MODERATOR', app.user) %}
-				<div class="well well-sm">
-					<h6>Liste des nouveaux posts :</h6>
-					<ul>
-						{% for post in app.user.newPosts %}
-							<li><a href="{{ path('forum.post',{'index':post.id}) }}">{{ post.title }}</a></li>
-						{% endfor %}
-					</ul>
-					<small>Désolé, cette fonctionnalité n'est pas encore implémenté.</small>
 				</div>
 			{% endif %}
 		

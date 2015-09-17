@@ -43,6 +43,18 @@ class JoueurControllerProvider implements ControllerProviderInterface
 					throw new AccessDeniedException();
 				}
 			});
+			
+		/**
+		 * Rechercher un joueur
+		 */
+		$controllers->match('/search','LarpManager\Controllers\JoueurController::searchAction')
+			->bind("joueur.search")
+			->method('GET|POST')
+			->before(function(Request $request) use ($app) {
+				if ( !$app['security.authorization_checker']->isGranted('ROLE_ORGA') ) {
+					throw new AccessDeniedException();
+				}
+			});
 
 		/**
 		 * Saisie des informations joueurs

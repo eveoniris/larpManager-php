@@ -1,0 +1,23 @@
+{% extends "layout.twig" %}
+
+{% block title %}Résultat de la recherche{% endblock title %}
+
+{% block content %}
+
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-xs-12 col-md-12">
+		
+			<ol class="breadcrumb">
+				<li><a href="{{ path('homepage') }}">Accueil</a></li>
+				<li class="active">Résultat de la recherche</li>
+			</ol>
+			
+			<div class="well well-sm">
+				{{ include("joueur/fragment/list.twig", {'joueurs' : joueurs, 'add' : false}) }}
+			</div>
+		</div>
+	</div>
+</div>
+
+{% endblock content %}

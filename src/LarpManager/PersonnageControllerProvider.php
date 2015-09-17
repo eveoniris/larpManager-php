@@ -38,6 +38,18 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 			->method('GET|POST');
 		
 		/**
+		 * Rechercher un joueur
+		 */
+		$controllers->match('/search','LarpManager\Controllers\PersonnageController::searchAction')
+			->bind("personnage.search")
+			->method('GET|POST')
+			->before(function(Request $request) use ($app) {
+				if ( !$app['security.authorization_checker']->isGranted('ROLE_ORGA') ) {
+					throw new AccessDeniedException();
+				}
+			});
+			
+		/**
 		 * Détail d'un personnage
 		 * Accessible uniquement au proprietaire du personnage
 		 */

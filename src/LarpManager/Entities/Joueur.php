@@ -15,7 +15,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 /**
  * LarpManager\Entities\Joueur
  *
- * @Entity()
+ * @Entity(repositoryClass="LarpManager\Repository\JoueurRepository")
  */
 class Joueur extends BaseJoueur
 {
@@ -29,6 +29,7 @@ class Joueur extends BaseJoueur
 	public function __toString() {
 		return $this->getNom();
 	}
+	
 	/**
 	 * Fourni la liste des gns auquel un joueur est inscrit
 	 * 

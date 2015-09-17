@@ -34,6 +34,9 @@ class GroupeControllerProvider implements ControllerProviderInterface
 	{
 		$controllers = $app['controllers_factory'];
 
+		/**
+		 * Liste des groupes
+		 */
 		$controllers->match('/','LarpManager\Controllers\GroupeController::indexAction')
 			->bind("groupe")
 			->method('GET')
@@ -43,6 +46,21 @@ class GroupeControllerProvider implements ControllerProviderInterface
 				}
 			});
 		
+		/**
+		 * Rechercher un groupe
+		 */
+		$controllers->match('/search','LarpManager\Controllers\GroupeController::searchAction')
+			->bind("groupe.search")
+			->method('GET|POST')
+			->before(function(Request $request) use ($app) {
+				if ( !$app['security.authorization_checker']->isGranted('ROLE_ORGA') ) {
+					throw new AccessDeniedException();
+				}
+			});
+			
+		/**
+		 * Detail d'un groupe
+		 */
 		$controllers->match('/{index}','LarpManager\Controllers\GroupeController::detailAction')
 			->assert('index', '\d+')
 			->bind("groupe.detail")

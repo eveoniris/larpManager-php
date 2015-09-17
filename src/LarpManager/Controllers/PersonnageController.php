@@ -153,4 +153,66 @@ class PersonnageController
 				'competences' =>  $availableCompetences,
 		));
 	}
+	
+	/**
+	 * Recherche d'un personnage
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function searchAction(Request $request, Application $app)
+	{
+		$form = $app['form.factory']->createBuilder(new FindPersonnageForm(), array())
+			->add('submit','submit', array('label' => 'Rechercher'))
+			->getForm();
+	
+		$form->handleRequest($request);
+	
+		if ( $form->isValid() )
+		{
+			$data = $form->getData();
+				
+			$type = $data['type'];
+			$search = $data['search'];
+	
+			$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Personnage');
+				
+			$personnages = null;
+				
+			switch ($type)
+			{
+				case 'nom' :
+					$personnages = $repo->findByName($search);
+					break;
+				case 'surnom' :
+					$personnages = $repo->findByNickname($search);
+					break;
+				case 'numero' :
+					// TODO
+					break;
+			}
+				
+			if ( $personnages != null )
+			{
+				if ( $personnages->count() == 1 )
+				{
+					$app['session']->getFlashBag()->add('success', 'Le personnage a été trouvé.');
+					return $app->redirect($app['url_generator']->generate('personnage.detail', array('index'=> $personnages->first()->getId())));
+				}
+				else
+				{
+					$app['session']->getFlashBag()->add('success', 'Il y a plusieurs résultats à votre recherche.');
+					return $app['twig']->render('personnage/search_result.twig', array(
+							'personnages' => $personnages,
+					));
+				}
+			}
+				
+			$app['session']->getFlashBag()->add('error', 'Désolé, le personnage n\'a pas été trouvé.');
+		}
+	
+		return $app['twig']->render('joueur/search.twig', array(
+				'form' => $form->createView(),
+		));
+	}
 }

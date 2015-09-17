@@ -6,6 +6,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Silex\Application;
 
 use LarpManager\Form\JoueurForm;
+use LarpManager\Form\FindJoueurForm;
 
 /**
  * LarpManager\Controllers\JoueurController
@@ -59,6 +60,68 @@ class JoueurController
 		}
 	
 		return $app['twig']->render('joueur/add.twig', array(
+				'form' => $form->createView(),
+		));
+	}
+	
+	/**
+	 * Recherche d'un joueur
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function searchAction(Request $request, Application $app)
+	{
+		$form = $app['form.factory']->createBuilder(new FindJoueurForm(), array())
+			->add('submit','submit', array('label' => 'Rechercher'))
+			->getForm();
+		
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
+		{
+			$data = $form->getData();
+			
+			$type = $data['type'];
+			$search = $data['search'];
+
+			$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Joueur');
+			
+			$joueurs = null;
+			
+			switch ($type)
+			{
+				case 'lastName' :
+					$joueurs = $repo->findByLastName($search);
+					break;
+				case 'firstName' :
+					$joueurs = $repo->findByFirstName($search);
+					break;
+				case 'numero' :
+					// TODO
+					break;
+			}
+			
+			if ( $joueurs != null )
+			{
+				if ( count($joueurs) == 1 )
+				{
+					$app['session']->getFlashBag()->add('success', 'Le joueur a été trouvé.');
+					return $app->redirect($app['url_generator']->generate('joueur.detail', array('index'=> $joueurs[0])));
+				}
+				else
+				{
+					$app['session']->getFlashBag()->add('success', 'Il y a plusieurs résultats à votre recherche.');
+					return $app['twig']->render('joueur/search_result.twig', array(
+						'joueurs' => $joueurs,
+					));
+				}
+			}
+			
+			$app['session']->getFlashBag()->add('error', 'Désolé, le joueur n\'a pas été trouvé.');
+		}
+		
+		return $app['twig']->render('joueur/search.twig', array(
 				'form' => $form->createView(),
 		));
 	}
