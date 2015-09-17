@@ -53,6 +53,10 @@ class JoueurForm extends AbstractType
 				->add('fedegn','text', array(
 					'label' => 'Numéro d’adhérent FédéGN',
 					'required' => true,
+				))
+				->add('dateFinValiditeFedegn','date', array(
+						'label' => 'Date de fin de validité de votre carte FédéGN',
+						'required' => true,
 				));
 	}
 	

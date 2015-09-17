@@ -106,26 +106,6 @@
 					</div>
 				</div>
 			{% endfor %}
-						
-			{# si l'utilisateur est scénariste, lui afficher les liens vers les groupes dont
-			   il a la responsabilité #}
-	
-			{% if is_granted('ROLE_SCENARISTE', app.user) %}
-				{% if app.user.groupeScenariste|length > 0 %}
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						Scénariste : groupes dont vous avez la charge
-					</div>
-					<div class="panel-body">
-						<div class="list-group">
-							{% for groupe in app.user.groupeScenariste %}
-								<a class="list-group-item" href="{{ path('groupe.detail', {'index': groupe.id}) }}">{{ groupe.nom }}</a>
-							{% endfor %}
-						</div>	
-					</div>
-				</div>
-				{%  endif %}
-			{% endif %}	
 		
 			{# afficher la liste des gns dans lequel le joueur est inscrit #}
 			{% if app.user.joueur and app.user.joueur.gns|length > 0 %}
