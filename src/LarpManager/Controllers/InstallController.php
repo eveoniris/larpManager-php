@@ -275,7 +275,7 @@ class InstallController
 			// Création du topic culte
 			$topic = new \LarpManager\Entities\Topic();
 			$topic->setKey('TOPIC_CULTE');
-			$topic->setLabel('Cultes');
+			$topic->setTitle('Cultes');
 			$topic->setDescription('Discussion à propos des cultes');
 			$app['orm.em']->persist($topic);
 			

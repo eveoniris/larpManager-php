@@ -313,9 +313,7 @@ class GroupeController
 			$topic->setTitle($groupe->getNom());
 			$topic->setDescription($groupe->getDescription());
 			$topic->setUser($app['user']);
-				
-			$groupe->setTopic($topic);
-			
+							
 			$app['orm.em']->persist($groupe);
 			$app['orm.em']->flush();
 			
@@ -323,6 +321,7 @@ class GroupeController
 			// (les membres du groupe ont le droit d'accéder à ce forum)
 			$topic->setRight('GROUPE_MEMBER');
 			$topic->setObjectId($groupe->getId());
+			$groupe->setTopic($topic);
 			
 			$app['orm.em']->persist($topic);
 			$app['orm.em']->persist($groupe);
