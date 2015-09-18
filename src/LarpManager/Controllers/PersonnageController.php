@@ -4,6 +4,7 @@ namespace LarpManager\Controllers;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Silex\Application;
+use JasonGrimes\Paginator;
 use LarpManager\Form\PersonnageForm;
 use LarpManager\Form\PersonnageCompetenceForm;
 use LarpManager\Form\PersonnageReligionForm;
@@ -16,6 +17,41 @@ use LarpManager\Form\PersonnageReligionForm;
  */
 class PersonnageController
 {
+	
+	/**
+	 * Liste des personnages
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function listAction(Request $request, Application $app)
+	{
+		$order_by = $request->get('order_by') ?: 'numero';
+		$order_dir = $request->get('order_dir') == 'DESC' ? 'DESC' : 'ASC';
+		$limit = (int)($request->get('limit') ?: 50);
+		$page = (int)($request->get('page') ?: 1);
+		$offset = ($page - 1) * $limit;
+		
+		$criteria = array();
+		
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Groupe');
+		$personnages = $repo->findBy(
+				$criteria,
+				array( $order_by => $order_dir),
+				$limit,
+				$offset);
+		
+		$numResults = $repo->findCount($criteria);
+		
+		$paginator = new Paginator($numResults, $limit, $page,
+				$app['url_generator']->generate('personnage.list') . '?page=(:num)&limit=' . $limit . '&order_by=' . $order_by . '&order_dir=' . $order_dir
+				);
+		
+		return $app['twig']->render('admin/personnage/list.twig', array(
+				'personnages' => $personnages,
+				'paginator' => $paginator,
+		));
+	}
 		
 	/**
 	 * Affiche le détail d'un personnage

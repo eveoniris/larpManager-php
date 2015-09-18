@@ -1,0 +1,30 @@
+{% extends "layout.twig" %}
+
+{% block title %}Annonces{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path("annonce.list") }}">Liste des annonces</a></li>
+		<li class="active">Détail d'une annonce</li>
+	</ol>
+		
+	<div class="well well-sm">	
+		<div class="list-group">
+			    		
+	    	<div class="list-group-item">
+		    	<h4 class="list-group-item-heading">{{ annonce.title }}</h4>
+	   			<p class="list-group-item-text">
+	   				{{ annonce.text|markdown }}		
+				</p>
+	   		</div>
+	   		<div class="list-group-item">
+		 		<a href="{{ path('annonce.update', {'index': annonce.id}) }}"><span class="glyphicon glyphicon-edit" style="margin-right: 5px;"></span>Modifier</a>
+		 	</div>
+		</div>
+	</div>
+	
+
+				
+{% endblock %}

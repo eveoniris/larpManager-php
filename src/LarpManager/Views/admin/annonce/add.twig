@@ -11,16 +11,20 @@
 
 {% block content %}
 
-	<div class="container-fluid">
-		<div class="row">
-			<div class="col-xs-12 col-md-8">
-				<a href="{{ path("annonce") }}">Retour à la liste des annonces</a>
-				{{ include("annonce/fragment/form.twig",{
-					'legend': 'Modification d\'une annonce',
-					'action': path('annonce.update',{'index':annonce.id}),
-					'form' : form}) }}
-			</div>
-		</div>
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path("annonce.list") }}">Liste des annonces</a></li>
+		<li class="active">Ajout d'une annonce</li>
+	</ol>
+	
+	<div class="well bs-component">
+		<form action="{{ path('annonce.add') }}" method="POST" {{ form_enctype(form) }}>
+			<fieldset>
+				<legend>Ajout d'une annonce</legend>
+					{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+					{{ form(form) }}
+			</fieldset>
+		</form>
 	</div>
 	
 {% endblock content %}

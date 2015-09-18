@@ -1,23 +1,22 @@
 {% extends "layout.twig" %}
 
-{% block title %}Gn{% endblock title %}
+{% block title %}Grandeur nature{% endblock title %}
 
 {% block content %}
 
-<div class="container-fluid">
-	<div class="row">
-		<div class="col-xs-12 col-md-8">
-		
-			<a href="{{ path("gn") }}">Retour à la liste des gns</a>
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path("gn.list") }}">Liste des grandeur nature</a></li>
+		<li class="active">Détail d'un grandeur nature</li>
+	</ol>
+
 						
-			<div class="well well-sm bs-component">
-				<h4>
-					{{ gn.label }}
-				</h4>
-			</div>
+	<div class="well well-sm">
 			
 			<div class="list-group">
 		    		
+		    	<div class="list-group-item">{{ gn.label }}</div>
+		    				    	
 		    	<div class="list-group-item">
 			    	<h4 class="list-group-item-heading">Description</h4>
 	    			<p class="list-group-item-text">
@@ -39,7 +38,7 @@
 	    		
 	    		<div class="list-group-item">
   					<div class="btn-group" role="group" aria-label="...">
-  						<a  class="btn btn-primary" role="button" href="{{ path('gn.update', {index : gn.id}) }}">Modifier</a>
+  						<a class="btn btn-primary" role="button" href="{{ path('gn.update', {'index' : gn.id}) }}"><span class="glyphicon glyphicon-edit" style="margin-right: 5px;"></span>Modifier</a>
 					</div>
   				</div>
 			</div>

@@ -3,18 +3,19 @@
 namespace LarpManager\Repository;
 
 use Doctrine\ORM\EntityRepository;
-use LarpManager\Entities\Personnage;
+use LarpManager\Entities\User;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * LarpManager\Repository\PersonnageRepository
- *  
+ * LarpManager\Repository\UserRepository
+ *
  * @author kevin
  */
-class PersonnageRepository extends EntityRepository
+class UserRepository extends EntityRepository
 {
+
 	/**
-	 * Trouve les annonces correspondant aux critères de recherche
+	 * Trouve les utilisateurs correspondant aux critères de recherche
 	 *
 	 * @param array $criteria
 	 * @param array $options
@@ -22,15 +23,15 @@ class PersonnageRepository extends EntityRepository
 	public function findCount(array $criteria = array())
 	{
 		$qb = $this->getEntityManager()->createQueryBuilder();
-	
-		$qb->select($qb->expr()->count('p'));
-		$qb->from('LarpManager\Entities\Personnage','p');
-	
+		
+		$qb->select($qb->expr()->count('u'));
+		$qb->from('LarpManager\Entities\User','u');
+		
 		foreach ( $criteria as $criter )
 		{
 			$qb->addWhere($criter);
 		}
-	
+		
 		return $qb->getQuery()->getSingleScalarResult();
 	}
 }

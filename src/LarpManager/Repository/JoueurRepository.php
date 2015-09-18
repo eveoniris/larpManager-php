@@ -20,7 +20,6 @@ class JoueurRepository extends EntityRepository
 	 */
 	public function findByFirstName($firstName)
 	{
-		var_dump($firstName);
 		$qb = $this->getEntityManager()->createQueryBuilder();
 		
 		$qb->select('j')

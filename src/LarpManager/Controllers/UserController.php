@@ -141,7 +141,7 @@ class UserController
 			throw new NotFoundHttpException('That user is disabled (pending email confirmation).');
 		}
 	
-		return $app['twig']->render('user/view.twig', array(
+		return $app['twig']->render('admin/user/detail.twig', array(
 				'user' => $user,
 				'imageUrl' => $this->getGravatarUrl($user->getEmail()),
 		));
@@ -233,7 +233,7 @@ class UserController
 			
 		}
 	
-		return $app['twig']->render('user/edit.twig', array(
+		return $app['twig']->render('admin/user/update.twig', array(
 				'error' => implode("\n", $errors),
 				'user' => $user,
 				'available_roles' => $this->getAvailableRoles(),
@@ -287,37 +287,23 @@ class UserController
 		$offset = ($page - 1) * $limit;
 		
 		$criteria = array();
+
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\User');
+		$users = $repo->findBy(
+						$criteria,
+						array( $order_by => $order_dir),
+						$limit,
+						$offset);
 		
-		if ( ! $app['security']->isGranted('ROLE_ADMIN')) {
-			$criteria['isEnabled'] = true;
-		}
-		
-		$users = $app['user.manager']->findAll($criteria, array(
-				'limit' => array($offset, $limit),
-				'order_by' => array($order_by, $order_dir),
-		));
-		
-		$numResults = $app['user.manager']->findCount($criteria);
-		
+		$numResults = $repo->findCount($criteria);
+
 		$paginator = new Paginator($numResults, $limit, $page,
 				$app['url_generator']->generate('user.list') . '?page=(:num)&limit=' . $limit . '&order_by=' . $order_by . '&order_dir=' . $order_dir
 				);
-		
-		foreach ($users as $user) {
-			$user->imageUrl = $this->getGravatarUrl($user->getEmail(), 40);
-		}
-		
-		return $app['twig']->render('user/list.twig', array(
+
+		return $app['twig']->render('admin/user/list.twig', array(
 				'users' => $users,
 				'paginator' => $paginator,
-		
-				// The following variables are no longer used in the default template,
-				// but are retained for backward compatibility.
-				/*'numResults' => $paginator->getTotalItems(),
-				'nextUrl' => $paginator->getNextUrl(),
-				'prevUrl' => $paginator->getPrevUrl(),
-				'firstResult' => $paginator->getCurrentPageFirstItem(),
-				'lastResult' => $paginator->getCurrentPageLastItem(),*/
 		));
 	}
 	

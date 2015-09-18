@@ -29,7 +29,19 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 	public function connect(Application $app)
 	{
 		$controllers = $app['controllers_factory'];
-				
+
+		/**
+		 * Liste des personnages
+		 */
+		$controllers->match('/list','LarpManager\Controllers\PersonnageController::listAction')
+			->bind("personnage.list")
+			->method('GET')
+			->before(function(Request $request) use ($app) {
+				if (!$app['security.authorization_checker']->isGranted('ROLE_SCENARISTE')) {
+					throw new AccessDeniedException();
+				}
+			});
+		
 		/**
 		 * Création d'un nouveau personnage
 		 */

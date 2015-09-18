@@ -28,8 +28,8 @@ class AnnonceControllerProvider implements ControllerProviderInterface
 	{
 		$controllers = $app['controllers_factory'];
 		
-		$controllers->match('/','LarpManager\Controllers\AnnonceController::indexAction')
-			->bind("annonce")
+		$controllers->match('/list','LarpManager\Controllers\AnnonceController::listAction')
+			->bind("annonce.list")
 			->method('GET');
 		
 		$controllers->match('/add','LarpManager\Controllers\AnnonceController::addAction')

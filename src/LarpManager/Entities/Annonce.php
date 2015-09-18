@@ -14,7 +14,7 @@ use LarpManager\Entities\BaseAnnonce;
 /**
  * LarpManager\Entities\Annonce
  *
- * @Entity()
+ * @Entity(repositoryClass="LarpManager\Repository\AnnonceRepository")
  */
 class Annonce extends BaseAnnonce
 {

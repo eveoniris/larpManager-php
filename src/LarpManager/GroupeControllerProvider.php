@@ -37,8 +37,8 @@ class GroupeControllerProvider implements ControllerProviderInterface
 		/**
 		 * Liste des groupes
 		 */
-		$controllers->match('/','LarpManager\Controllers\GroupeController::indexAction')
-			->bind("groupe")
+		$controllers->match('/','LarpManager\Controllers\GroupeController::listAction')
+			->bind("groupe.list")
 			->method('GET')
 			->before(function(Request $request) use ($app) {
 				if (!$app['security.authorization_checker']->isGranted('ROLE_SCENARISTE')) {

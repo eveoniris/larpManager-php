@@ -72,7 +72,7 @@ class HomepageController
 		$gns = $repoGn->findByActive();
 		
 		$repoAnnonce = $app['orm.em']->getRepository('LarpManager\Entities\Annonce');
-		$annonces = $repoAnnonce->findAll();
+		$annonces = $repoAnnonce->findBy(array('archive' => false));
 		
 		return $app['twig']->render('homepage/index.twig', array(
 				'form_groupe' => $form->createView(),
@@ -102,7 +102,7 @@ class HomepageController
 			->getForm();
 		
 		$repoAnnonce = $app['orm.em']->getRepository('LarpManager\Entities\Annonce');
-		$annonces = $repoAnnonce->findAll();
+		$annonces = $repoAnnonce->findBy(array('archive' => false));
 		
 		return $app['twig']->render('homepage/orga.twig', array(
 				'findJoueurForm' => $findJoueurForm->createView(),

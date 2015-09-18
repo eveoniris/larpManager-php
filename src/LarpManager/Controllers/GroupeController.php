@@ -5,9 +5,11 @@ namespace LarpManager\Controllers;
 use Symfony\Component\HttpFoundation\Request;
 use Silex\Application;
 use Doctrine\Common\Collections\ArrayCollection;
+use JasonGrimes\Paginator;
 use LarpManager\Form\GroupeForm;
 use LarpManager\Form\PersonnageForm;
 use LarpManager\Form\FindGroupeForm;
+
 
 
 /**
@@ -24,13 +26,33 @@ class GroupeController
 	 * @param Request $request
 	 * @param Application $app
 	 */
-	public function indexAction(Request $request, Application $app)
-	{	
+	public function listAction(Request $request, Application $app)
+	{
+		$order_by = $request->get('order_by') ?: 'numero';
+		$order_dir = $request->get('order_dir') == 'DESC' ? 'DESC' : 'ASC';
+		$limit = (int)($request->get('limit') ?: 50);
+		$page = (int)($request->get('page') ?: 1);
+		$offset = ($page - 1) * $limit;
+		
+		$criteria = array();
+		
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Groupe');
-		$groupes = $repo->findAllOrderByNumero();
-				
-		return $app['twig']->render('groupe/index.twig', array(
-				'groupes' => $groupes));
+		$groupes = $repo->findBy(
+				$criteria,
+				array( $order_by => $order_dir),
+				$limit,
+				$offset);
+		
+		$numResults = $repo->findCount($criteria);
+		
+		$paginator = new Paginator($numResults, $limit, $page,
+				$app['url_generator']->generate('groupe.list') . '?page=(:num)&limit=' . $limit . '&order_by=' . $order_by . '&order_dir=' . $order_dir
+				);
+		
+		return $app['twig']->render('admin/groupe/list.twig', array(
+				'groupes' => $groupes,
+				'paginator' => $paginator,
+		));
 	}
 	
 	/**
@@ -236,35 +258,30 @@ class GroupeController
 	 */
 	public function placeAction(Request $request, Application $app)
 	{
-		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Groupe');
-		$groupes = $repo->findAllOrderByNumero();
-		
+		$id = $request->get('index');
+		$groupe = $app['orm.em']->find('\LarpManager\Entities\Groupe', $id);
+				
 		if ( $request->getMethod() == 'POST')
 		{
 			$newPlaces = $request->get('place');
 			
 			/**
-			 * Pour tous les groupes
+			 * Met à jour uniquement si la valeur à changé
 			 */
-			foreach( $groupes as $groupe )
+			if ( $groupe->getClasseOpen() != $newPlaces)
 			{
-				/**
-				 * Met à jour uniquement si la valeur à changée
-				 */
-				if ( $groupe->getClasseOpen() != $newPlaces[$groupe->getId()])
-				{
-					$groupe->setClasseOpen($newPlaces[$groupe->getId()]);
-					$app['orm.em']->persist($groupe);
-				}
+				$groupe->setClasseOpen($newPlaces);
+				$app['orm.em']->persist($groupe);
 			}
+		
 			$app['orm.em']->flush();
 			
 			$app['session']->getFlashBag()->add('success','Le nombre de place disponible a été mis à jour');
-				
+			return $app->redirect($app['url_generator']->generate('groupe.list'),301);
 		}
 		
-		return $app['twig']->render('groupe/place.twig', array(
-				'groupes' => $groupes));
+		return $app['twig']->render('admin/groupe/place.twig', array(
+				'groupe' => $groupe));
 	}
 	
 	/**
@@ -335,7 +352,7 @@ class GroupeController
 			 */
 			if ( $form->get('save')->isClicked())
 			{
-				return $app->redirect($app['url_generator']->generate('groupe'),301);
+				return $app->redirect($app['url_generator']->generate('groupe.list'),301);
 			}
 			else if ( $form->get('save_continue')->isClicked())
 			{
@@ -343,7 +360,7 @@ class GroupeController
 			}
 		}
 		
-		return $app['twig']->render('groupe/add.twig', array('form' => $form->createView()));
+		return $app['twig']->render('admin/groupe/add.twig', array('form' => $form->createView()));
 	}
 	
 	/**
@@ -411,7 +428,8 @@ class GroupeController
 			 */
 			foreach ( $groupe->getGns() as $gn )
 			{
-				$gn->addGroupe($groupe);
+				if ( $gn->getGroupes()->contains($groupe) == false)
+					$gn->addGroupe($groupe);
 			}
 			
 			foreach ($originalGns as $gn)
@@ -438,13 +456,13 @@ class GroupeController
 				$app['orm.em']->flush();
 					
 				$app['session']->getFlashBag()->add('success', 'Le groupe a été supprimé.');
-				return $app->redirect($app['url_generator']->generate('groupe'));
+				return $app->redirect($app['url_generator']->generate('groupe.list'));
 			}
 		
 			
 		}
 			
-		return $app['twig']->render('groupe/update.twig', array(
+		return $app['twig']->render('admin/groupe/update.twig', array(
 				'groupe' => $groupe,
 				'form' => $form->createView(),
 		));
@@ -468,7 +486,7 @@ class GroupeController
 		 */
 		if ( $groupe )
 		{
-			return $app['twig']->render('groupe/detail.twig', array('groupe' => $groupe));
+			return $app['twig']->render('admin/groupe/detail.twig', array('groupe' => $groupe));
 		}
 		else
 		{

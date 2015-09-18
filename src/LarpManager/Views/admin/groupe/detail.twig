@@ -4,11 +4,17 @@
 
 {% block content %}
 
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path("groupe.list") }}">Liste des groupes</a></li>
+		<li class="active">Détail d'un groupe</li>
+	</ol>
+	
 <div class="container-fluid">
 	<div class="row">
 		<div class="col-xs-12 col-md-8">
 		
-			<a href="{{ path("groupe") }}">Retour à la liste des groupes</a>			
+						
 			<div class="well well-sm bs-component">
 				<h4>
 					{{ groupe.numero|default('?') }} - {{ groupe.nom }}

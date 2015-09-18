@@ -22,8 +22,8 @@ class GroupeSecondaireControllerProvider implements ControllerProviderInterface
 		/**
 		 * Liste des groupes secondaires
 		 */		
-		$controllers->match('/','LarpManager\Controllers\GroupeSecondaireController::indexAction')
-			->bind("groupeSecondaire")
+		$controllers->match('/list','LarpManager\Controllers\GroupeSecondaireController::listAction')
+			->bind("groupeSecondaire.list")
 			->method('GET');
 
 		/**

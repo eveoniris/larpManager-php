@@ -21,9 +21,12 @@
 				<li class="dropdown">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Admin<span class="caret"></span></a>
 					<ul class="dropdown-menu">
-						<li><a href="{{ path('annonce') }}">Annonces</a></li>
-						<li><a href="{{ path('gn') }}">GNs</a></li>
+						<li><a href="{{ path('annonce.list') }}">Liste des annonces</a></li>
+						<li><a href="{{ path('gn.list') }}">Liste des grandeurs natures</a></li>
 						<li><a href="{{ path('user.list') }}">Liste des utilisateurs</a></li>
+						<li><a href="{{ path('groupe.list') }}">Liste des groupes</a></li>
+						<li><a href="{{ path('groupeSecondaire.list') }}">Liste des groupes secondaires</a></li>
+						<li><a href="{{ path('personnage.list') }}">Liste des personnages</a></li>
 					</ul>
 				</li>
 			{% endif %}
@@ -36,9 +39,9 @@
 						<li><a href="{{ path('appelation') }}">Appelations</a></li>
 						<li><a href="{{ path('territoire') }}">Territoires</a></li>
 						<li><a href="{{ path('langue') }}">Langues</a></li>
-						<li><a href="{{ path('groupe') }}">Groupes</a></li>
+						<li><a href="{{ path('groupe.list') }}">Groupes</a></li>
 						<li><a href="{{ path('groupeSecondaire.type') }}">Types de groupe</a></li>
-						<li><a href="{{ path('groupeSecondaire') }}">Groupe secondaires</a></li>
+						<li><a href="{{ path('groupeSecondaire.list') }}">Groupe secondaires</a></li>
 						<li><a href="{{ path('ressource') }}">Ressources</a></li>
 						<li><a href="{{ path('religion') }}">Religions</a></li>
 						<li><a href="{{ path('religion.level') }}">Fanatisme</a></li>

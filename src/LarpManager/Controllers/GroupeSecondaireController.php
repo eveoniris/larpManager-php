@@ -3,6 +3,7 @@ namespace LarpManager\Controllers;
 
 use Symfony\Component\HttpFoundation\Request;
 use Silex\Application;
+use JasonGrimes\Paginator;
 use LarpManager\Form\GroupeSecondaireForm;
 use LarpManager\Form\GroupeSecondairePostulerForm;
 
@@ -22,21 +23,33 @@ class GroupeSecondaireController
 	 * @param Request $request
 	 * @param Application $app
 	 */
-	public function indexAction(Request $request, Application $app)
+	public function listAction(Request $request, Application $app)
 	{
-		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\SecondaryGroup');
-		$groupeSecondaires = $repo->findAll();
-	
-		if ( $app['security.authorization_checker']->isGranted('ROLE_SCENARISTE') )
-		{
-			return $app['twig']->render('groupeSecondaire/index.twig', array(
-					'groupeSecondaires' => $groupeSecondaires));
-		}
-		else
-		{
-			return $app['twig']->render('groupeSecondaire/list_joueur.twig', array(
-					'groupeSecondaires' => $groupeSecondaires));
-		}
+		$order_by = $request->get('order_by') ?: 'label';
+		$order_dir = $request->get('order_dir') == 'DESC' ? 'DESC' : 'ASC';
+		$limit = (int)($request->get('limit') ?: 50);
+		$page = (int)($request->get('page') ?: 1);
+		$offset = ($page - 1) * $limit;
+		
+		$criteria = array();
+		
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\GroupeSecondaire');
+		$groupeSecondaires = $repo->findBy(
+				$criteria,
+				array( $order_by => $order_dir),
+				$limit,
+				$offset);
+		
+		$numResults = $repo->findCount($criteria);
+		
+		$paginator = new Paginator($numResults, $limit, $page,
+				$app['url_generator']->generate('groupeSecondaire.list') . '?page=(:num)&limit=' . $limit . '&order_by=' . $order_by . '&order_dir=' . $order_dir
+				);
+		
+		return $app['twig']->render('admin/groupeSecondaire/list.twig', array(
+				'groupeSecondaires' => $groupeSecondaires,
+				'paginator' => $paginator,
+		));
 	}
 	
 	/**

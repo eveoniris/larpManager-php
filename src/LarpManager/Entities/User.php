@@ -16,7 +16,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 /**
  * LarpManager\Entities\User
  *
- * @Entity()
+ * @Entity(repositoryClass="LarpManager\Repository\UserRepository")
  */
 class User extends BaseUser implements AdvancedUserInterface, \Serializable
 {
