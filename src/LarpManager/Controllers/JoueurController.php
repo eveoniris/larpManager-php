@@ -7,6 +7,7 @@ use Silex\Application;
 
 use LarpManager\Form\JoueurForm;
 use LarpManager\Form\FindJoueurForm;
+use LarpManager\Form\JoueurXpForm;
 
 /**
  * LarpManager\Controllers\JoueurController
@@ -137,7 +138,7 @@ class JoueurController
 	 * @param Request $request
 	 * @param Application $app
 	 */
-	public function detailAction(Request $request, Application $app)
+	public function adminDetailAction(Request $request, Application $app)
 	{
 		$id = $request->get('index');
 	
@@ -145,13 +146,66 @@ class JoueurController
 	
 		if ( $joueur )
 		{
-			return $app['twig']->render('joueur/detail.twig', array('joueur' => $joueur));
+			return $app['twig']->render('joueur/admin/detail.twig', array('joueur' => $joueur));
 		}
 		else
 		{
 			$app['session']->getFlashBag()->add('error', 'Le joueur n\'a pas été trouvé.');
 			return $app->redirect($app['url_generator']->generate('homepage'));
 		}	
+	}
+	
+	/**
+	 * Met a jours les points d'expérience des joueurs
+	 *
+	 * @param Application $app
+	 * @param Request $request
+	 */
+	public function adminXpAction(Application $app, Request $request)
+	{
+		$id = $request->get('index');
+	
+		$joueur = $app['orm.em']->find('\LarpManager\Entities\Joueur',$id);
+	
+		$form = $app['form.factory']->createBuilder(new JoueurXpForm(), $joueur)
+			->add('update','submit', array('label' => "Sauvegarder"))
+			->getForm();
+	
+		$form->handleRequest($request);
+			
+		if ( $request->getMethod() == 'POST')
+		{
+			$newXps = $request->get('xp');
+			$explanation = $request->get('explanation');
+	
+			foreach( $joueurs as $joueur )
+			{
+				$personnage = $joueur->getPersonnage();
+				if ( $personnage->getXp() != $newXps[$joueur->getId()])
+				{
+					$oldXp = $personnage->getXp();
+					$gain = $newXps[$joueur->getId()] - $oldXp;
+						
+					$personnage->setXp($newXps[$joueur->getId()]);
+					$app['orm.em']->persist($personnage);
+						
+					// historique
+					$historique = new \LarpManager\Entities\ExperienceGain();
+					$historique->setExplanation($explanation);
+					$historique->setOperationDate(new \Datetime('NOW'));
+					$historique->setPersonnage($personnage);
+					$historique->setXpGain($gain);
+					$app['orm.em']->persist($historique);
+				}
+			}
+			$app['orm.em']->flush();
+				
+			$app['session']->getFlashBag()->add('success','Les points d\'expérience ont été sauvegardés');
+		}
+	
+		return $app['twig']->render('joueur/admin/xp.twig', array(
+				'joueur' => $joueur,
+		));
 	}
 	
 	/**
@@ -168,7 +222,7 @@ class JoueurController
 	
 		if ( $joueur )
 		{
-			return $app['twig']->render('joueur/detail_orga.twig', array('joueur' => $joueur));
+			return $app['twig']->render('joueur/admin/detail.twig', array('joueur' => $joueur));
 		}
 		else
 		{
@@ -210,51 +264,5 @@ class JoueurController
 				'joueur' => $joueur,
 				'form' => $form->createView(),
 		));
-	}
-	
-	/**
-	 * Met a jours les points d'expérience des joueurs
-	 *
-	 * @param Application $app
-	 * @param Request $request
-	 */
-	public function xpAction(Application $app, Request $request)
-	{
-		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Joueur');
-		$joueurs = $repo->findAll();
-			
-		if ( $request->getMethod() == 'POST')
-		{
-			$newXps = $request->get('xp');
-			$explanation = $request->get('explanation');
-				
-			foreach( $joueurs as $joueur )
-			{
-				$personnage = $joueur->getPersonnage();
-				if ( $personnage->getXp() != $newXps[$joueur->getId()])
-				{
-					$oldXp = $personnage->getXp();
-					$gain = $newXps[$joueur->getId()] - $oldXp;
-					
-					$personnage->setXp($newXps[$joueur->getId()]);
-					$app['orm.em']->persist($personnage);
-					
-					// historique
-					$historique = new \LarpManager\Entities\ExperienceGain();
-					$historique->setExplanation($explanation);
-					$historique->setOperationDate(new \Datetime('NOW'));
-					$historique->setPersonnage($personnage);
-					$historique->setXpGain($gain);
-					$app['orm.em']->persist($historique);
-				}
-			}
-			$app['orm.em']->flush();
-			
-			$app['session']->getFlashBag()->add('success','Les points d\'expérience ont été sauvegardés');
-		}
-	
-		return $app['twig']->render('joueur/xp.twig', array(
-				'joueurs' => $joueurs,
-				));
 	}
 }

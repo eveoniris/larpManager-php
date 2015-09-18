@@ -1,15 +1,16 @@
 {% extends "layout.twig" %}
 
-{% block title %}Joueur{% endblock title %}
+{% block title %}Joueurs{% endblock title %}
 
 {% block content %}
 
 	<div class="container-fluid">
 		<div class="row">
 			<div class="col-xs-12 col-md-8">
+				<a href="{{ path("joueur.detail", {'index':joueur.id}) }}">Retour</a>
 				{{ include("joueur/fragment/form.twig",{
-					'legend': 'Enregistrement de votre état-civil',
-					'action': path('joueur.add'), 
+					'legend': 'Modification l\'état civil d\'un joueur',
+					'action': path('joueur.update',{'index':joueur.id}),
 					'form' : form}) }}
 			</div>
 		</div>

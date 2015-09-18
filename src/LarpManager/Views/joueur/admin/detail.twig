@@ -49,15 +49,13 @@
 							Numéro d'adhérant à la FédéGn : {{ joueur.fedegn }}
 						</p>
 						<p class="list-group-item-text">
-							
 							Date de fin de validité de l'assurance FédéGN : {% if joueur.dateFinValiditeFedegn %}{{ joueur.dateFinValiditeFedegn|date('Y-m-d') }}{%else%}non spécifié{% endif %}
-							
 						</p>
 					</div>
 		    		
 		    		<div class="list-group-item">
 	  					<div class="btn-group" role="group" aria-label="...">
-	  						<a  class="btn btn-primary" role="button" href="{{ path('joueur.update', {index : joueur.id}) }}">Modifier</a>
+	  						<a class="btn btn-primary" role="button" href="{{ path('admin.joueur.update', {'index' : joueur.id}) }}">Modifier</a>
 						</div>
 	  				</div>
 				</div>

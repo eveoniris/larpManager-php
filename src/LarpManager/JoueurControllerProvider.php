@@ -35,8 +35,23 @@ class JoueurControllerProvider implements ControllerProviderInterface
 		 * Liste des joueurs
 		 * Accessible uniquement aux admin
 		 */
-		$controllers->match('/','LarpManager\Controllers\JoueurController::indexAction')
-			->bind("joueur")
+		$controllers->match('/admin','LarpManager\Controllers\JoueurController::indexAction')
+			->bind("admin.joueur")
+			->method('GET')
+			->before(function(Request $request) use ($app) {
+				if (!$app['security.authorization_checker']->isGranted('ROLE_ADMIN')) {
+					throw new AccessDeniedException();
+				}
+			});
+			
+
+		/**
+		 * Détail des informations joueurs (pour les orgas)
+		 * Accessible uniquement aux utilisateurs possédant ces informations
+		 */
+		$controllers->match('/admin/{index}','LarpManager\Controllers\JoueurController::adminDetailAction')
+			->assert('index', '\d+')
+			->bind("admin.joueur.detail")
 			->method('GET')
 			->before(function(Request $request) use ($app) {
 				if (!$app['security.authorization_checker']->isGranted('ROLE_ADMIN')) {
@@ -47,11 +62,37 @@ class JoueurControllerProvider implements ControllerProviderInterface
 		/**
 		 * Rechercher un joueur
 		 */
-		$controllers->match('/search','LarpManager\Controllers\JoueurController::searchAction')
-			->bind("joueur.search")
+		$controllers->match('/admin/search','LarpManager\Controllers\JoueurController::adminSearchAction')
+			->bind("admin.joueur.search")
 			->method('GET|POST')
 			->before(function(Request $request) use ($app) {
 				if ( !$app['security.authorization_checker']->isGranted('ROLE_ORGA') ) {
+					throw new AccessDeniedException();
+				}
+			});
+			
+		/**
+		 * Mise à jour des informations joueur
+		 */
+		$controllers->match('/admin/{index}/update','LarpManager\Controllers\JoueurController::adminUpdateAction')
+			->assert('index', '\d+')
+			->bind("admin.joueur.update")
+			->method('GET|POST')
+			->before(function(Request $request) use ($app) {
+				if (!$app['security.authorization_checker']->isGranted('ROLE_ORGA') ) {
+					throw new AccessDeniedException();
+				}
+			});
+			
+		/**
+		 * Mise à jour des XP alloué à un joueur
+		 */
+		$controllers->match('/admin/{index}/xp','LarpManager\Controllers\JoueurController::adminXpAction')
+			->assert('index', '\d+')
+			->bind("admin.joueur.xp")
+			->method('GET|POST')
+			->before(function(Request $request) use ($app) {
+				if (!$app['security.authorization_checker']->isGranted('ROLE_ORGA') ) {
 					throw new AccessDeniedException();
 				}
 			});
@@ -93,33 +134,6 @@ class JoueurControllerProvider implements ControllerProviderInterface
 			->method('GET')
 			->before(function(Request $request) use ($app) {
 				if (!$app['security.authorization_checker']->isGranted('JOUEUR_OWNER', $request->get('index'))) {
-					throw new AccessDeniedException();
-				}
-			});
-			
-		/**
-		 * Détail des informations joueurs (pour les orgas)
-		 * Accessible uniquement aux utilisateurs possédant ces informations
-		 */
-		$controllers->match('/{index}/detail/orga','LarpManager\Controllers\JoueurController::detailOrgaAction')
-			->assert('index', '\d+')
-			->bind("joueur.detail.orga")
-			->method('GET')
-			->before(function(Request $request) use ($app) {
-				if (!$app['security.authorization_checker']->isGranted('ROLE_ADMIN')) {
-					throw new AccessDeniedException();
-				}
-			});
-		
-		/**
-		 * Saisie de bonus d'xp
-		 * Accessible uniquement aux admin
-		 */
-		$controllers->match('/xp','LarpManager\Controllers\JoueurController::xpAction')
-			->bind("joueur.xp")
-			->method('GET|POST')
-			->before(function(Request $request) use ($app) {
-				if (!$app['security.authorization_checker']->isGranted('ROLE_ADMIN')) {
 					throw new AccessDeniedException();
 				}
 			});
