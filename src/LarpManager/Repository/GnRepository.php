@@ -15,6 +15,18 @@ class GnRepository extends EntityRepository
 {
 	
 	/**
+	 * Trouve le gn actif
+	 */
+	public function findGnActif()
+	{	
+		$gn = $this->getEntityManager()
+			->createQuery('SELECT g FROM LarpManager\Entities\Gn g WHERE g.actif = true ORDER BY g.date_debut ASC')
+			->getSingleResult();
+
+		return $gn;
+	}
+	
+	/**
 	 * Trouve les gns correspondant aux critères de recherche
 	 *
 	 * @param array $criteria

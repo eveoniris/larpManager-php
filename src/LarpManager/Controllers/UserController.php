@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use InvalidArgumentException;
 use LarpManager\Form\UserForm;
+use LarpManager\Form\EtatCivilForm;
 
 use JasonGrimes\Paginator;
 
@@ -179,6 +180,52 @@ class UserController
 		}
 		
 		return $app['twig']->render('user/add.twig', array(
+				'form' => $form->createView(),
+		));
+	}
+	
+	/**
+	 * Enregistrement de l'état-civil
+	 * 
+	 * @param Application $app
+	 * @param Request $request
+	 * @param unknown $id
+	 */
+	public function addInformationAction(Application $app, Request $request, $id)
+	{
+		$etatCivil = new \LarpManager\Entities\EtatCivil();
+		
+		$form = $app['form.factory']->createBuilder(new EtatCivilForm(), $etatCivil)
+			->add('save','submit', array('label' => "Sauvegarder"))
+			->getForm();
+		
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
+		{
+			$etatCivil = $form->getData();
+			$app['user']->setEtatCivil($etatCivil);
+				
+			$app['orm.em']->persist($app['user']);
+			$app['orm.em']->persist($etatCivil);
+			
+			// enregistrer l'utilisateur dans le GN actif
+			$joueur = new \LarpManager\Entities\Joueur();
+			$joueur->setGn($app['larp.manager']->getGnActif());
+			$joueur->setSubscriptionDate(new \Datetime('NOW'));
+			$joueur->setUser($app['user']);
+			$joueur->setXp($app['larp.manager']->getGnActif()->getXpCreation());
+			
+			$app['orm.em']->persist($joueur);
+			
+			$app['orm.em']->flush();
+		
+			$app['session']->getFlashBag()->add('success', 'Vos informations ont été enregistrés.');
+		
+			return $app->redirect($app['url_generator']->generate('homepage'),301);
+		}
+		
+		return $app['twig']->render('etatCivil/add.twig', array(
 				'form' => $form->createView(),
 		));
 	}

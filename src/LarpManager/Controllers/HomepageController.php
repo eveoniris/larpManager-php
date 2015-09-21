@@ -230,7 +230,7 @@ class HomepageController
 			
 			if ( $groupe )
 			{
-				$joueur = $app['user']->getJoueur();
+				$joueur = $app['user']->getJoueurByGn($app['larp.manager']->getGnActif());
 				$joueur->addGroupe($groupe);
 												
 				$app['orm.em']->persist($joueur);

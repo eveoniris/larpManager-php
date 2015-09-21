@@ -87,7 +87,7 @@
 					</th>
 					<th>Etat-civil</th>
 					<th>Droits</th>
-					<th />
+					<th>Expérience</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -96,11 +96,13 @@
 					<td><a href="{{ path('user.edit',{'id':user.id}) }}">{{ user.id }}</a></td>
 					<td><a href="{{ path('user.view',{'id':user.id}) }}">{{ user.username }}</td>
 					<td>{{ user.email }}</td>
-					<td>{%  if not user.joueur %}<span class="text-warning">Etat-civil non renseigné</span>{% else %}<a href="{{ path('admin.joueur.detail', {'index':user.joueur.id}) }}">Voir l'état-civil</a>{% endif %}</td>
+					<td>{%  if not user.etatCivil %}<span class="text-warning">Etat-civil non renseigné</span>{% else %}<span class="text-success">Etat-civil rensiegné</span>{% endif %}</td>
 					<td>{{ user.roles|join(', ') }}</td>
 					<td>
-					{% if user.joueur %}
-						<a href="{{ path('admin.joueur.xp', {'index': user.joueur.id}) }}">Points d'expériences</a>
+					{% if user.joueurs|length > 0 %}
+						<a href="{{ path('admin.joueur.xp', {'index': user.id}) }}">Points d'expériences</a>
+					{% else %}
+						<span class="text-warning">Cet utilisateur ne participe à aucun GN.</span>
 					{% endif %}
 					</td>
 				</tr>

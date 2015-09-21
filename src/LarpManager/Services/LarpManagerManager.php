@@ -22,6 +22,15 @@ class LarpManagerManager
 	}
 
 	/**
+	 * Fourni le gn actif
+	 */
+	public function getGnActif()
+	{
+		$repo = $this->app['orm.em']->getRepository('\LarpManager\Entities\Gn');
+		return $repo->findGnActif();
+	}
+	
+	/**
 	 * Fourni la liste des compétences de premier niveau
 	 * @return Collection $competences
 	 */

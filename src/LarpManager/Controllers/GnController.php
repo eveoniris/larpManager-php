@@ -92,7 +92,7 @@ class GnController
 	
 			$app['session']->getFlashBag()->add('success', 'Le gn a été ajouté.');
 	
-			return $app->redirect($app['url_generator']->generate('gn'),301);
+			return $app->redirect($app['url_generator']->generate('gn.list'),301);
 		}
 	
 		return $app['twig']->render('admin/gn/add.twig', array(

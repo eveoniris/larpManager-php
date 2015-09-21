@@ -14,21 +14,16 @@
 				</h4>
 			</div>
 						
-			{% if not app.user.joueur 
-				or app.user.gns|length == 0 
+			{% if not app.user.etatCivil  
 				or app.user.groupes|length == 0 
-				or not app.user.personnage %}
+				or app.user.personnages|length == 0 %}
 				<div class="well well-sm">
 					<h6>Liste des choses importantes à faire :</h6>
 					<ol>
-					{% if not app.user.joueur %}
-						<li>Enregistrer mes informations de joueur</li>
+					{% if not app.user.etatCivil %}
+						<li>Enregistrer mon état-civil</li>
 					{% endif %}
-					
-					{% if app.user.gns|length == 0 %}
-						<li>Choisir un grandeur nature</li>
-					{% endif %}
-					
+									
 					{% if app.user.groupes|length == 0 %}
 						<li>S'inscrire dans un groupe</li>
 					{% endif %}
@@ -40,55 +35,37 @@
 				</div>
 			{% endif %}
 		
-			{# enregistrement des informations joueurs #}
-			{% if not app.user.joueur %}
+			{# enregistrement de l'état-civil #}
+			{% if not app.user.etatCivil %}
 				<div class="panel panel-success">
 					<div class="panel-heading">{% trans %}record_player_title{% endtrans %}</div>
 					<div class="panel-body">
 						<p>{% trans %}record_player_explain{% endtrans %}</p>
-						<a class="btn btn-default" href="{{ path('joueur.add') }}">{% trans %}record_player_link{% endtrans %}</a>
+						<a class="btn btn-default" href="{{ path('user.information.add', {'id': app.user.id}) }}">{% trans %}record_player_link{% endtrans %}</a>
 					</div>
 				</div>
 			{% else %}
 			
-				{%  if app.user.gns|length == 0 %}
-					{# inscription dans un gn #}
+				{% if app.user.groupes|length == 0 %}
+					{# inscription dans un groupe #}
 					<div class="panel panel-success">
-						<div class="panel-heading">{% trans %}gn_subscribe_title{% endtrans %}</div>
+						<div class="panel-heading">{% trans %}subscribe_group_title{% endtrans %}</div>
 						<div class="panel-body">
-							<p>{% trans %}gn_subscribe_explain{% endtrans %}</p>
-							<div class="list-group">
-							{% for gn in gns %}
-								<a href="{{ path('inscriptionGn.form',{'idGn': gn.id}) }}" class="list-group-item">
-									<p><h6>{{ gn.label }} : <small>{{ gn.description }}</small></h6></p>
-									<p>du {{ gn.dateDebut|date('Y-m-d') }} au {{ gn.dateFin|date('Y-m-d') }}</p>
-								</a>
-							{% endfor %}
-							</div>
+							<p>{% trans %}subscribe_group_explain{% endtrans %}</p>
+							{{ include("homepage/fragment/form_groupe.twig",{'form': form_groupe,'action': path('homepage.inscription')}) }}
 						</div>
 					</div>
 				{% else %}
-					{% if app.user.groupes|length == 0 %}
-						{# inscription dans un groupe #}
-						<div class="panel panel-success">
-							<div class="panel-heading">{% trans %}subscribe_group_title{% endtrans %}</div>
-							<div class="panel-body">
-								<p>{% trans %}subscribe_group_explain{% endtrans %}</p>
-								{{ include("homepage/fragment/form_groupe.twig",{'form': form_groupe,'action': path('homepage.inscription')}) }}
-							</div>
-						</div>
-					{% else %}
-						{# detail du personnage #}
-						{% if app.user.personnage %}
-							{{ include("homepage/fragment/personnage.twig",{'personnage':app.user.personnage}) }}
-						{% endif %}
-						
-						{# Détail des groupes#}
-						{% for groupe in app.user.groupes %}
-							{{ include("homepage/fragment/groupe.twig",{'groupe':groupe}) }}
-						{% endfor %}
-						
+					{# detail du personnage #}
+					{% if app.user.personnage %}
+						{{ include("homepage/fragment/personnage.twig",{'personnage':app.user.personnage}) }}
 					{% endif %}
+						
+					{# Détail des groupes#}
+					{% for groupe in app.user.groupes %}
+						{{ include("homepage/fragment/groupe.twig",{'groupe':groupe}) }}
+					{% endfor %}
+						
 				{% endif %}
 			{% endif %}
 		</div>
@@ -108,12 +85,12 @@
 			{% endfor %}
 		
 			{# afficher la liste des gns dans lequel le joueur est inscrit #}
-			{% if app.user.joueur and app.user.joueur.gns|length > 0 %}
+			{% if app.user.gns|length > 0 %}
 				<div class="panel panel-default">
 					<div class="panel-heading">{% trans %}gn_list_title{% endtrans %}</div>
 					<div class="panel-body">
 						<div class="list-group">
-						{% for gn in gns %}
+						{% for gn in app.user.gns %}
 							<a class="list-group-item" href="{{ path('gn.detail', {'index': gn.id}) }}">{{ gn.label }}</a>
 						{% endfor %}
 						</div>

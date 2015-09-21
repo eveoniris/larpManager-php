@@ -12,7 +12,7 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
  * @author kevin
  *
  */
-class JoueurForm extends AbstractType
+class EtatCivilForm extends AbstractType
 {
 	/**
 	 * Construction du formulaire
@@ -68,7 +68,7 @@ class JoueurForm extends AbstractType
 	public function setDefaultOptions(OptionsResolverInterface $resolver)
 	{
 		$resolver->setDefaults(array(
-				'class' => 'LarpManager\Entities\Joueur',
+				'class' => 'LarpManager\Entities\EtatCivil',
 		));
 	}
 	
@@ -77,6 +77,6 @@ class JoueurForm extends AbstractType
 	 */
 	public function getName()
 	{
-		return 'joueur';
+		return 'etatCivil';
 	}
 }

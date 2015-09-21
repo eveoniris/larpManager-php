@@ -174,15 +174,11 @@ class LarpManagerVoter implements VoterInterface
 	 */
 	protected function userGnRight($gnId, $user)
 	{
-		$joueur =  $user->getJoueur();
-	
-		if ( $joueur)
+		foreach ( $user->getGns() as $gn )
 		{
-			foreach ( $joueur->getGns() as $gn )
-			{
-				if ( $gn->getId() == $gnId) return true;
-			}
+			if ( $gn->getId() == $gnId) return true;
 		}
+
 		return false;
 	}
 	

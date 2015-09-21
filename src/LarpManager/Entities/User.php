@@ -42,7 +42,77 @@ class User extends BaseUser implements AdvancedUserInterface, \Serializable
 	}
 	
 	/**
-	 * Fourni la liste de tous les posts qu'un utilisateur n'a pas lu
+	 * Trouve les informations de participation d'un utilisateur à un gn
+	 * @param Gn $gn
+	 */
+	public function getJoueurByGn(Gn $gn)
+	{
+		foreach ( $this->getJoueurs() as $joueur)
+		{
+			if ( $joueur->getGn() == $gn )
+			{
+				return $joueur;
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Fourni la liste des groupes auquel est inscrit cet utilisateur
+	 */
+	public function getGroupes()
+	{
+		$groupes = new ArrayCollection();
+		
+		foreach ( $this->getJoueurs() as $joueur )
+		{
+			$groupes = new ArrayCollection( array_merge($groupes->toArray(), $joueur->getGroupes()->toArray()));
+		}
+		return $groupes;
+	}
+	
+	/**
+	 * Fourni la liste des personnages de cet utilisateur
+	 */
+	public function getPersonnages()
+	{
+		$personnages = new ArrayCollection();
+		
+		foreach ( $this->getJoueurs() as $joueur )
+		{
+			$personnages[] = $joueur->getPersonnage();
+		}
+		return $personnages;
+	}
+	
+	/**
+	 * Fourni le personnage du GN actif
+	 */
+	public function getPersonnage()
+	{
+		foreach ( $this->getJoueurs() as $joueur )
+		{
+			if ( $joueur->getGn()->getActif() == true) return $joueur->getPersonnage();
+		}
+		return null;
+	}
+	
+	/**
+	 * Fourni la liste des gns auquel l'utilisateur est inscrit
+	 */
+	public function getGns()
+	{
+		$gns = new ArrayCollection();
+		
+		foreach ( $this->getJoueurs() as $joueur )
+		{
+			$gns[] = $joueur->getGn();
+		}
+		return $gns;
+	}
+	
+	/**
+	 * TODO Fourni la liste de tous les posts qu'un utilisateur n'a pas lu
 	 */
 	public function newPosts()
 	{
@@ -96,63 +166,7 @@ class User extends BaseUser implements AdvancedUserInterface, \Serializable
 	{
 		return $this == $groupe->getResponsable();
 	}
-	
-	/**
-	 * Fourni le personnage d'un joueur
-	 * 
-	 * @return \LarpManager\Entities\Personnage $personnage
-	 */
-	public function getPersonnage()
-	{
-		$joueur = $this->getJoueur();
 		
-		if ( $joueur )
-		{
-			return $joueur->getPersonnage();
-		}
-		return null;
-	}
-	
-	/**
-	 * Fourni la liste des groupes d'un joueur
-	 */
-	public function getGroupes()
-	{
-		$joueur = $this->getJoueur();
-		
-		if ( $joueur )
-		{
-			return $joueur->getGroupes();
-		}
-		return null;		
-	}
-	
-	/**
-	 * Fourni la liste des groupes secondaires d'un utilisateur
-	 */
-	public function getSecondaryGroups()
-	{
-		$personnage = $this->getPersonnage();
-		
-		if ( $personnage )
-		{
-			return $personnage->getSecondaryGroups();
-		}
-		return null;
-	}
-	
-	/**
-	 * Fourni la liste des gns d'un joueur
-	 */
-	public function getGns()
-	{
-		$joueur = $this->getJoueur();
-		if ( $joueur )
-		{
-			return $joueur->getGns();
-		}
-		return null;
-	}
 
 	/**
 	 * Fourni la liste des groupes dont l'utilisateur est le responsable
