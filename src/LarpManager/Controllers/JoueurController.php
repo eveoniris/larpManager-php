@@ -178,29 +178,27 @@ class JoueurController
 			$newXps = $request->get('xp');
 			$explanation = $request->get('explanation');
 	
-			foreach( $joueurs as $joueur )
+			$personnage = $joueur->getPersonnage();
+			if ( $personnage->getXp() != $newXps)
 			{
-				$personnage = $joueur->getPersonnage();
-				if ( $personnage->getXp() != $newXps[$joueur->getId()])
-				{
-					$oldXp = $personnage->getXp();
-					$gain = $newXps[$joueur->getId()] - $oldXp;
+				$oldXp = $personnage->getXp();
+				$gain = $newXps - $oldXp;
 						
-					$personnage->setXp($newXps[$joueur->getId()]);
-					$app['orm.em']->persist($personnage);
+				$personnage->setXp($newXps);
+				$app['orm.em']->persist($personnage);
 						
-					// historique
-					$historique = new \LarpManager\Entities\ExperienceGain();
-					$historique->setExplanation($explanation);
-					$historique->setOperationDate(new \Datetime('NOW'));
-					$historique->setPersonnage($personnage);
-					$historique->setXpGain($gain);
-					$app['orm.em']->persist($historique);
-				}
-			}
-			$app['orm.em']->flush();
+				// historique
+				$historique = new \LarpManager\Entities\ExperienceGain();
+				$historique->setExplanation($explanation);
+				$historique->setOperationDate(new \Datetime('NOW'));
+				$historique->setPersonnage($personnage);
+				$historique->setXpGain($gain);
+				$app['orm.em']->persist($historique);
+				$app['orm.em']->flush();
 				
-			$app['session']->getFlashBag()->add('success','Les points d\'expérience ont été sauvegardés');
+				$app['session']->getFlashBag()->add('success','Les points d\'expérience ont été sauvegardés');
+			}
+			
 		}
 	
 		return $app['twig']->render('joueur/admin/xp.twig', array(
