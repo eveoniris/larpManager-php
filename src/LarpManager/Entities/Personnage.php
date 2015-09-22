@@ -27,6 +27,7 @@ class Personnage extends BasePersonnage
 		$this->setXp(0);
 	}
 	
+	
 	/**
 	 * Fourni l'identité complete d'un personnage
 	 */

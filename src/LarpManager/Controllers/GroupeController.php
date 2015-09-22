@@ -141,6 +141,13 @@ class GroupeController
 			$app['session']->getFlashBag()->add('error','Désolé, ce groupe ne contient plus de places disponibles');
 			return $app->redirect($app['url_generator']->generate('homepage',array('index'=>$id)),301);
 		}
+		
+		// si le groupe n'a plus de classe disponible, refuser le personnage
+		if (  ! $groupe->hasEnoughClasse() )
+		{
+			$app['session']->getFlashBag()->add('error','Désolé, ce groupe ne contient plus de classes disponibles');
+			return $app->redirect($app['url_generator']->generate('homepage',array('index'=>$id)),301);
+		}
 	
 		$personnage = new \LarpManager\Entities\Personnage();
 	

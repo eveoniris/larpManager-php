@@ -1,0 +1,55 @@
+{% extends "layout.twig" %}
+
+{% block head %}
+	{{ parent() }}
+	
+	{# inclusion du plugin meltdown pour la saisie du post #}
+	<link rel="stylesheet" href="{{ app.request.basepath }}/css/meltdown.css" />
+{% endblock head %}
+
+
+{% block title %}Accepter ou refuser une candidature{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path("groupeSecondaire.admin.list") }}">Liste des groupes secondaires</a></li>
+		<li><a href="{{ path("groupeSecondaire.admin.detail",{'index':groupeSecondaire.id}) }}">Détail de {{ groupeSecondaire.label }}</a></li>
+		<li class="active">Accepter ou refuser une candidature</li>
+	</ol>
+	
+	<div class="well bs-component">
+		
+		<form action="{{ path('groupeSecondaire.admin.reponse', {'index': groupeSecondaire.id, 'postulantId': postulant.id}) }}" method="POST" {{ form_enctype(form) }}>
+			<fieldset>
+				<legend>Accepter ou refuser la candidature de {{ postulant.personnage.identity }}</legend>
+					{{ postulant.explanation|markdown }}
+					{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+					{{ form(form) }}
+			</fieldset>
+		</form>
+	</div>
+{% endblock content %}
+
+
+{% block javascript %}
+
+	{{ parent() }}
+
+	{# inclusion du plugin meltdown pour la saisie du post #}   
+	<script src="{{ app.request.basepath }}/js/lib/element_resize_detection.js"></script>
+    <script src="{{ app.request.basepath }}/js/lib/js-markdown-extra.js"></script>
+    <script src="{{ app.request.basepath }}/js/lib/rangyinputs-jquery.min.js"></script>
+    <script src="{{ app.request.basepath }}/js/jquery.meltdown.js"></script>
+	         
+	<script type="text/javascript">
+		$(document).ready(function() {
+			$('#postulantReponse_explanation').meltdown({
+				openPreview: true,
+				sidebyside: true
+			});
+		});
+	</script>
+
+{% endblock javascript %}

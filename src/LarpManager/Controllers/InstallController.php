@@ -160,7 +160,7 @@ class InstallController
 			$tool = new \Doctrine\ORM\Tools\SchemaTool($app['orm.em']);
 		
 			// l'opération peut prendre du temps, il faut donc régler le temps maximum d'execution
-			set_time_limit(120);
+			set_time_limit(240);
 			
 			// on récupére les méta-data de toutes les tables
 			$classes = $app['orm.em']->getMetadataFactory()->getAllMetadata();

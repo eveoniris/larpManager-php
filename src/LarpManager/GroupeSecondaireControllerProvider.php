@@ -44,6 +44,45 @@ class GroupeSecondaireControllerProvider implements ControllerProviderInterface
 				}
 			});
 		
+
+		/**
+		 * Ajouter un groupe secondaire (pour les orgas)
+		 */
+		$controllers->match('/admin/add','LarpManager\Controllers\GroupeSecondaireController::adminAddAction')
+			->bind("groupeSecondaire.admin.add")
+			->method('GET|POST')
+			->before(function(Request $request) use ($app) {
+				if (!$app['security.authorization_checker']->isGranted('ROLE_ORGA')) {
+					throw new AccessDeniedException();
+				}
+			});
+						
+		/**
+		 * Modification d'un groupe secondaire (pour les orgas)
+		 */
+		$controllers->match('/admin/{index}/update','LarpManager\Controllers\GroupeSecondaireController::adminUpdateAction')
+			->assert('index', '\d+')
+			->bind("groupeSecondaire.admin.update")
+			->method('GET|POST')
+			->before(function(Request $request) use ($app) {
+				if (!$app['security.authorization_checker']->isGranted('ROLE_ORGA')) {
+					throw new AccessDeniedException();
+				}
+			});
+
+		/**
+		 * Accepter une candidature (pour les orgas)
+		 */
+		$controllers->match('/{index}/reponse','LarpManager\Controllers\GroupeSecondaireController::adminReponseAction')
+			->assert('index', '\d+')
+			->bind("groupeSecondaire.admin.reponse")
+			->method('GET|POST')
+			->before(function(Request $request) use ($app) {
+				if (!$app['security.authorization_checker']->isGranted('ROLE_ORGA')) {
+					throw new AccessDeniedException();
+				}
+			});
+							
 		/**
 		 * Liste des groupes secondaires (pour les joueurs)
 		 */
@@ -66,7 +105,21 @@ class GroupeSecondaireControllerProvider implements ControllerProviderInterface
 			->assert('index', '\d+')
 			->bind("groupeSecondaire.postuler")
 			->method('GET|POST');
-
+			
+		/**
+		 * Accepter une candidature (chef de groupe)
+		 */
+		$controllers->match('/{index}/reponse','LarpManager\Controllers\GroupeSecondaireController::reponseAction')
+			->assert('index', '\d+')
+			->bind("groupeSecondaire.reponse")
+			->method('GET|POST')
+			->before(function(Request $request) use ($app) {
+				if (!$app['security.authorization_checker']->isGranted('GROUPE_SECONDAIRE_RESPONSABLE', $request->get('index'))) {
+					throw new AccessDeniedException();
+				}
+			});
+				
+			
 		/**
 		 * Detail d'un groupe secondaire à destication du chef de groupe
 		 */
@@ -92,31 +145,7 @@ class GroupeSecondaireControllerProvider implements ControllerProviderInterface
 					throw new AccessDeniedException();
 				}
 			});
-						
-		/**
-		 * Ajouter un groupe secondaire
-		 */
-		$controllers->match('/admin/add','LarpManager\Controllers\GroupeSecondaireController::adminAddAction')
-			->bind("groupeSecondaire.admin.add")
-			->method('GET|POST')
-			->before(function(Request $request) use ($app) {
-				if (!$app['security.authorization_checker']->isGranted('ROLE_SCENARISTE')) {
-					throw new AccessDeniedException();
-				}
-			});
-			
-		/**
-		 * Modification d'un groupe secondaire
-		 */
-		$controllers->match('/admin/{index}/update','LarpManager\Controllers\GroupeSecondaireController::adminUpdateAction')
-			->assert('index', '\d+')
-			->bind("groupeSecondaire.admin.update")
-			->method('GET|POST')
-			->before(function(Request $request) use ($app) {
-				if (!$app['security.authorization_checker']->isGranted('ROLE_SCENARISTE')) {
-					throw new AccessDeniedException();
-				}
-			});
+
 			
 		return $controllers;
 	}

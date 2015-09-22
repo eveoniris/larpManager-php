@@ -18,4 +18,10 @@ use LarpManager\Entities\BaseParticipant;
  */
 class Participant extends BaseParticipant
 {
+	public function __toString()
+	{
+		return $this->getUser()->getDisplayName();
+	}
+			
+	
 }

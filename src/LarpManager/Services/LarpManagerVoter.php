@@ -149,13 +149,13 @@ class LarpManagerVoter implements VoterInterface
 	 */
 	protected function userCulteRight($culteId, $user)
 	{
-		$joueur =  $user->getJoueur();
+		$participants =  $user->getParticipants();
 		
-		if ( $joueur && $joueur->getPersonnage() )
+		foreach ( $participants as $participant )
 		{
-			if ( $joueur->getPersonnage()->getPersonnageReligion() )
+			if ( $participant->getPersonnage() )
 			{
-				if ( $joueur->getPersonnage()->getPersonnageReligion()->getReligion()->getId() == $culteId )
+				if ( $participant->getPersonnage()->getPersonnageReligion()->getReligion()->getId() == $culteId )
 				{
 					return true;
 				}

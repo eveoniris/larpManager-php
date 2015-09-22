@@ -69,9 +69,9 @@
 	    			<p class="list-group-item-text">
 	    				<ul>
 	    				{% if groupe.responsable %}<li><strong>{{ groupe.responsable.username }}</strong>&nbsp;(Responsable du groupe)</li>{% endif %}
-						{% for joueur in groupe.joueurs %}
+						{% for participant in groupe.participants %}
 						<li>
-							<strong>{{ joueur }} </strong>: {{ joueur.user.email }}
+							<strong>{{ participant }} </strong>: {{ participant.user.email }}
 						</li>
 						{% endfor %}
 	    				</ul>

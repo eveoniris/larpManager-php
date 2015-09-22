@@ -1,0 +1,83 @@
+{% extends "layout.twig" %}
+
+
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path("groupeSecondaire.admin.list") }}">Liste des groupes secondaires</a></li>
+		<li class="active">Détail de {{ groupeSecondaire.label }}</li>
+	</ol>
+
+
+	<div class="well well-sm bs-component">
+		<h4>
+			{{ groupeSecondaire.label }}
+		</h4>
+	</div>
+
+	<div class="panel panel-default">
+		<div class="panel-heading">Informations</div>
+		<div class="panel-body">
+			<div class="list-group">
+				<div class="list-group-item">
+					<p>{{ groupeSecondaire.description }}</p>
+				</div>
+				<div class="list-group-item">
+					<div class="list-group-item-heading">
+						<h6>Responsable</h6>
+					</div>
+					<div class="list-group-item-text">
+					{% if groupeSecondaire.responsable %}
+						{{ groupeSecondaire.responsable }}
+					{%  else %}
+						<p class="text-warning">Attention, ce groupe n'a pas de responsable !</p>
+					{% endif %}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+		
+	<div class="panel panel-default">
+		<div class="panel-heading">Liste des postulants</div>
+		<div class="panel-body">
+		
+			<div class="list-group">
+				{% for postulant in groupeSecondaire.postulants %}
+				<div class="list-group-item">
+					<h6 class="list-group-item-heading">{{ postulant.personnage.identity }}</h6>
+					<p class="list-group-item-text">{{ postulant.date|date('Y-m-d') }}</p>
+					<p class="list-group-item-text">{{ postulant.explanation|markdown }}</p>
+					<a href="{{ path('groupeSecondaire.admin.reponse', {'index': groupeSecondaire.id, 'postulantId' : postulant.id}) }}">Répondre</a>
+				</div>
+				{% endfor %}		
+			</div>
+		</div>
+	</div>
+	
+	<div class="panel panel-default">
+		<div class="panel-heading">Liste des membres</div>
+		<div class="panel-body">
+			<div class="list-group">
+				{% for personnage in groupeSecondaire.personnages %}
+					<div class="list-group-item">
+						<h6 class="list-group-item-heading">{{ personnage.identity }}</h6>
+					</div>
+				{% endfor %}
+			</div>
+		</div>
+	</div>
+	
+
+				
+	<div class="list-group-item">
+		<div class="btn-group" role="group" aria-label="...">
+			<a  class="btn btn-primary" role="button" href="{{ path('groupeSecondaire.admin.update', {'index' : groupeSecondaire.id}) }}">Modifier</a>
+		</div>
+  	</div>
+	
+			
+
+{% endblock content %}
