@@ -10,12 +10,12 @@ use LarpManager\Form\FindJoueurForm;
 use LarpManager\Form\JoueurXpForm;
 
 /**
- * LarpManager\Controllers\JoueurController
+ * LarpManager\Controllers\ParticipantController
  *
  * @author kevin
  *
  */
-class JoueurController
+class ParticipantController
 {
 	/**
 	 * Affiche la vue index.twig

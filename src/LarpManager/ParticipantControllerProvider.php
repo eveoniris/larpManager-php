@@ -8,11 +8,11 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
- * LarpManager\JoueurControllerProvider
+ * LarpManager\ParticipantControllerProvider
  *  
  * @author kevin
  */
-class JoueurControllerProvider implements ControllerProviderInterface
+class ParticipantControllerProvider implements ControllerProviderInterface
 {
 	/**
 	 * Initialise les routes pour les joueurs
@@ -35,7 +35,7 @@ class JoueurControllerProvider implements ControllerProviderInterface
 		 * Liste des joueurs
 		 * Accessible uniquement aux admin
 		 */
-		$controllers->match('/admin','LarpManager\Controllers\JoueurController::indexAction')
+		$controllers->match('/admin','LarpManager\Controllers\ParticipantController::indexAction')
 			->bind("admin.joueur")
 			->method('GET')
 			->before(function(Request $request) use ($app) {
@@ -49,7 +49,7 @@ class JoueurControllerProvider implements ControllerProviderInterface
 		 * Détail des informations joueurs (pour les orgas)
 		 * Accessible uniquement aux utilisateurs possédant ces informations
 		 */
-		$controllers->match('/admin/{index}','LarpManager\Controllers\JoueurController::adminDetailAction')
+		$controllers->match('/admin/{index}','LarpManager\Controllers\ParticipantController::adminDetailAction')
 			->assert('index', '\d+')
 			->bind("admin.joueur.detail")
 			->method('GET')
@@ -62,7 +62,7 @@ class JoueurControllerProvider implements ControllerProviderInterface
 		/**
 		 * Rechercher un joueur
 		 */
-		$controllers->match('/admin/search','LarpManager\Controllers\JoueurController::adminSearchAction')
+		$controllers->match('/admin/search','LarpManager\Controllers\ParticipantController::adminSearchAction')
 			->bind("admin.joueur.search")
 			->method('GET|POST')
 			->before(function(Request $request) use ($app) {
@@ -74,7 +74,7 @@ class JoueurControllerProvider implements ControllerProviderInterface
 		/**
 		 * Mise à jour des informations joueur
 		 */
-		$controllers->match('/admin/{index}/update','LarpManager\Controllers\JoueurController::adminUpdateAction')
+		$controllers->match('/admin/{index}/update','LarpManager\Controllers\ParticipantController::adminUpdateAction')
 			->assert('index', '\d+')
 			->bind("admin.joueur.update")
 			->method('GET|POST')
@@ -87,7 +87,7 @@ class JoueurControllerProvider implements ControllerProviderInterface
 		/**
 		 * Mise à jour des XP alloué à un joueur
 		 */
-		$controllers->match('/admin/{index}/xp','LarpManager\Controllers\JoueurController::adminXpAction')
+		$controllers->match('/admin/{index}/xp','LarpManager\Controllers\ParticipantController::adminXpAction')
 			->assert('index', '\d+')
 			->bind("admin.joueur.xp")
 			->method('GET|POST')
@@ -101,7 +101,7 @@ class JoueurControllerProvider implements ControllerProviderInterface
 		 * Saisie des informations joueurs
 		 * Accessible uniquement aux utilisateurs ne l'ayant pas déjà fait
 		 */
-		$controllers->match('/add','LarpManager\Controllers\JoueurController::addAction')
+		$controllers->match('/add','LarpManager\Controllers\ParticipantController::addAction')
 			->bind("joueur.add")
 			->method('GET|POST')
 			->before(function(Request $request) use ($app) {
@@ -114,7 +114,7 @@ class JoueurControllerProvider implements ControllerProviderInterface
 		 * Mise à jour des informations joueur
 		 * Accessible uniquement aux utilisateurs ayant déjà saisie leurs informations
 		 */
-		$controllers->match('/{index}/update','LarpManager\Controllers\JoueurController::updateAction')
+		$controllers->match('/{index}/update','LarpManager\Controllers\ParticipantController::updateAction')
 			->assert('index', '\d+')
 			->bind("joueur.update")
 			->method('GET|POST')
@@ -128,7 +128,7 @@ class JoueurControllerProvider implements ControllerProviderInterface
 		 * Détail des informations joueurs (pour le joueur)
 		 * Accessible uniquement aux utilisateurs possédant ces informations
 		 */
-		$controllers->match('/{index}/detail','LarpManager\Controllers\JoueurController::detailAction')
+		$controllers->match('/{index}/detail','LarpManager\Controllers\ParticipantController::detailAction')
 			->assert('index', '\d+')
 			->bind("joueur.detail")
 			->method('GET')

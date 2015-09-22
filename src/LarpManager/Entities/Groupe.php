@@ -43,6 +43,22 @@ class Groupe extends BaseGroupe
 		return $this->getNom();	
 	}
 	
+	
+	/**
+	 * Trouve le personnage de l'utilisateur dans ce groupe
+	 * 
+	 * @param User $user
+	 */
+	public function getPersonnage(User $user)
+	{
+		$participant = $user->getParticipantByGroupe($this);
+		if ( $participant )
+		{
+			return $participant->getPersonnage();
+		}
+		return null;
+	}
+	
 	/**
 	 * Vérifie si le groupe dispose de suffisement de place disponible
 	 * 

@@ -20,8 +20,33 @@ class GroupeSecondaireControllerProvider implements ControllerProviderInterface
 		$controllers = $app['controllers_factory'];
 		
 		/**
-		 * Liste des groupes secondaires
+		 * Liste des groupes secondaires (pour les orgas)
 		 */		
+		$controllers->match('/admin/list','LarpManager\Controllers\GroupeSecondaireController::adminListAction')
+			->bind("groupeSecondaire.admin.list")
+			->method('GET')
+			->before(function(Request $request) use ($app) {
+				if (!$app['security.authorization_checker']->isGranted('ROLE_ORGA')) {
+					throw new AccessDeniedException();
+				}
+			});
+			
+		/**
+		 * Detail d'un groupe secondaire (pour les orgas)
+		 */
+		$controllers->match('/admin/{index}','LarpManager\Controllers\GroupeSecondaireController::adminDetailAction')
+			->assert('index', '\d+')
+			->bind("groupeSecondaire.admin.detail")
+			->method('GET')
+			->before(function(Request $request) use ($app) {
+				if (!$app['security.authorization_checker']->isGranted('ROLE_ORGA')) {
+					throw new AccessDeniedException();
+				}
+			});
+		
+		/**
+		 * Liste des groupes secondaires (pour les joueurs)
+		 */
 		$controllers->match('/list','LarpManager\Controllers\GroupeSecondaireController::listAction')
 			->bind("groupeSecondaire.list")
 			->method('GET');
@@ -71,8 +96,8 @@ class GroupeSecondaireControllerProvider implements ControllerProviderInterface
 		/**
 		 * Ajouter un groupe secondaire
 		 */
-		$controllers->match('/add','LarpManager\Controllers\GroupeSecondaireController::addAction')
-			->bind("groupeSecondaire.add")
+		$controllers->match('/admin/add','LarpManager\Controllers\GroupeSecondaireController::adminAddAction')
+			->bind("groupeSecondaire.admin.add")
 			->method('GET|POST')
 			->before(function(Request $request) use ($app) {
 				if (!$app['security.authorization_checker']->isGranted('ROLE_SCENARISTE')) {
@@ -83,9 +108,9 @@ class GroupeSecondaireControllerProvider implements ControllerProviderInterface
 		/**
 		 * Modification d'un groupe secondaire
 		 */
-		$controllers->match('/{index}/update','LarpManager\Controllers\GroupeSecondaireController::updateAction')
+		$controllers->match('/admin/{index}/update','LarpManager\Controllers\GroupeSecondaireController::adminUpdateAction')
 			->assert('index', '\d+')
-			->bind("groupeSecondaire.update")
+			->bind("groupeSecondaire.admin.update")
 			->method('GET|POST')
 			->before(function(Request $request) use ($app) {
 				if (!$app['security.authorization_checker']->isGranted('ROLE_SCENARISTE')) {

@@ -99,7 +99,7 @@
 					<td>{%  if not user.etatCivil %}<span class="text-warning">Etat-civil non renseigné</span>{% else %}<span class="text-success">Etat-civil rensiegné</span>{% endif %}</td>
 					<td>{{ user.roles|join(', ') }}</td>
 					<td>
-					{% if user.joueurs|length > 0 %}
+					{% if user.participants|length > 0 %}
 						<a href="{{ path('admin.joueur.xp', {'index': user.id}) }}">Points d'expériences</a>
 					{% else %}
 						<span class="text-warning">Cet utilisateur ne participe à aucun GN.</span>

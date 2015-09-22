@@ -17,22 +17,22 @@ class GroupeSecondaireTypeControllerProvider implements ControllerProviderInterf
 	{
 		$controllers = $app['controllers_factory'];
 		
-		$controllers->match('/','LarpManager\Controllers\GroupeSecondaireTypeController::indexAction')
-			->bind("groupeSecondaire.type")
+		$controllers->match('/','LarpManager\Controllers\GroupeSecondaireTypeController::adminListAction')
+			->bind("groupeSecondaire.admin.type.list")
 			->method('GET');
 		
-		$controllers->match('/add','LarpManager\Controllers\GroupeSecondaireTypeController::addAction')
-			->bind("groupeSecondaire.type.add")
+		$controllers->match('/add','LarpManager\Controllers\GroupeSecondaireTypeController::adminAddAction')
+			->bind("groupeSecondaire.admin.type.add")
 			->method('GET|POST');
 		
-		$controllers->match('/{index}/update','LarpManager\Controllers\GroupeSecondaireTypeController::updateAction')
+		$controllers->match('/{index}/update','LarpManager\Controllers\GroupeSecondaireTypeController::adminUpdateAction')
 			->assert('index', '\d+')
-			->bind("groupeSecondaire.type.update")
+			->bind("groupeSecondaire.admin.type.update")
 			->method('GET|POST');
 		
-		$controllers->match('/{index}','LarpManager\Controllers\GroupeSecondaireTypeController::detailAction')
+		$controllers->match('/{index}','LarpManager\Controllers\GroupeSecondaireTypeController::adminDetailAction')
 			->assert('index', '\d+')
-			->bind("groupeSecondaire.type.detail")
+			->bind("groupeSecondaire.admin.type.detail")
 			->method('GET');
 			
 		return $controllers;

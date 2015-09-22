@@ -82,7 +82,7 @@ class PersonnageController
 	 * @param Request $request
 	 * @param Application $app
 	 */
-	public function detailAction(Request $request, Application $app)
+	public function detailOrgaAction(Request $request, Application $app)
 	{
 		$id = $request->get('index');
 	
@@ -90,7 +90,7 @@ class PersonnageController
 	
 		if ( $personnage )
 		{
-			return $app['twig']->render('personnage/detail_orga.twig', array('personnage' => $personnage));
+			return $app['twig']->render('admin/personnage/detail.twig', array('personnage' => $personnage));
 		}
 		else
 		{

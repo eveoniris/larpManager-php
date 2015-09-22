@@ -78,16 +78,17 @@ class GnController
 			$topic->setDescription($gn->getDescription());
 			$topic->setUser($app['user']);
 
-			$gn->setTopic($topic);
-			
-			$app['orm.em']->persist($topic);
 			$app['orm.em']->persist($gn);
+			$app['orm.em']->flush();
 			
 			// défini les droits d'accés à ce forum
 			// (les participants au GN ont le droits d'accéder à ce forum)
 			$topic->setRight('GN_PARTICIPANT');
 			$topic->setObjectId($gn->getId());
+			$gn->setTopic($topic);
+				
 			$app['orm.em']->persist($topic);
+			$app['orm.em']->persist($gn);
 			$app['orm.em']->flush();
 	
 			$app['session']->getFlashBag()->add('success', 'Le gn a été ajouté.');

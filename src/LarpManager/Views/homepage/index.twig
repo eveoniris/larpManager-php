@@ -28,7 +28,7 @@
 						<li>S'inscrire dans un groupe</li>
 					{% endif %}
 					
-					{% if not app.user.personnage %}
+					{% if app.user.personnages|length == 0 %}
 						<li>Créer mon personnage</li>
 					{% endif %}
 					</ol>

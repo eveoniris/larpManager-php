@@ -18,39 +18,29 @@ use LarpManager\Entities\BasePersonnage;
  */
 class Personnage extends BasePersonnage
 {
-
-		public function __construct()
-		{
-			parent::__construct();
-			$this->setXp(0);
-		}
-		
-		/**
-		 * Ajoute des points d'expérience à un personnage
-		 * 
-		 * @param unknown $xp
-		 */
-		public function addXp($xp)
-		{
-			$newXp = $this->getXp() + $xp;
-			$this->setXp($newXp);
-			return $this;
-		}
-		
-		/**
-		 * Fourni l'identité complete d'un personnage
-		 */
-		public function getIdentity()
-		{
-			return $this->getNom().'('.$this->getGroupe()->getNom().' - '.$this->getJoueur()->getUser()->getUsername().')';
-		}
-		
-		/**
-		 * Fourni la liste des groupes secondaires pour lesquel ce personnage est chef
-		 */
-		public function getSecondaryGroupsAsChief()
-		{
-			return $this->getSecondaryGroupRelatedByPersonnageIds();
-		}
+	/**
+	 * Constructeur
+	 */
+	public function __construct()
+	{
+		parent::__construct();
+		$this->setXp(0);
+	}
+	
+	/**
+	 * Fourni l'identité complete d'un personnage
+	 */
+	public function getIdentity()
+	{
+		return $this->getNom().' ('.$this->getGroupe()->getNom().' - '.$this->getParticipant()->getUser()->getUsername().')';
+	}
+	
+	/**
+	 * Fourni la liste des groupes secondaires pour lesquel ce personnage est chef
+	 */
+	public function getSecondaryGroupsAsChief()
+	{
+		return $this->getSecondaryGroupRelatedByPersonnageIds();
+	}
 				
 }

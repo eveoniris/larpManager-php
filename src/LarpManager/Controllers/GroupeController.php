@@ -126,10 +126,10 @@ class GroupeController
 		$id = $request->get('index');
 		
 		$groupe = $app['orm.em']->find('\LarpManager\Entities\Groupe',$id);
-		$joueur = $app['user']->getJoueur();
+		$participant = $app['user']->getParticipantByGroupe($groupe);
 		
 		// si le joueur dispose déjà d'un personnage, refuser le personnage
-		if ( $joueur->getPersonnage() )
+		if ( $participant->getPersonnage() )
 		{
 			$app['session']->getFlashBag()->add('error','Désolé, vous disposez déjà d\'un personnage.');
 			return $app->redirect($app['url_generator']->generate('homepage',array('index'=>$id)),301);
@@ -164,16 +164,17 @@ class GroupeController
 			$personnage->setGroupe($groupe);
 				
 			// Ajout des points d'expérience gagné à la création d'un personnage
-			$personnage->setXp(10); // TODO il faudra utiliser par la suite les informations lié au gn
+			$personnage->setXp($app['larp.manager']->getGnActif()->getXpCreation());
+			
 			// historique
 			$historique = new \LarpManager\Entities\ExperienceGain();
 			$historique->setExplanation("Création de votre personnage");
 			$historique->setOperationDate(new \Datetime('NOW'));
 			$historique->setPersonnage($personnage);
-			$historique->setXpGain(10); // TODO cf. precedent
+			$historique->setXpGain($app['larp.manager']->getGnActif()->getXpCreation());
 			$app['orm.em']->persist($historique);
 				
-			$joueur->setPersonnage($personnage);
+			$participant->setPersonnage($personnage);
 			
 			// ajout des compétences acquises à la création
 			foreach ($personnage->getClasse()->getCompetenceFamilyCreations() as $competenceFamily)
@@ -191,7 +192,7 @@ class GroupeController
 			$xpAgeBonus = $personnage->getAge()->getBonus();
 			if ( $xpAgeBonus )
 			{
-				$personnage->addXp($xpAgeBonus);
+				$joueur->addXp($xpAgeBonus);
 				$historique = new \LarpManager\Entities\ExperienceGain();
 				$historique->setExplanation("Bonus lié à l'age");
 				$historique->setOperationDate(new \Datetime('NOW'));
@@ -202,7 +203,7 @@ class GroupeController
 				
 				
 			$app['orm.em']->persist($personnage);
-			$app['orm.em']->persist($joueur);
+			$app['orm.em']->persist($participant);
 			$app['orm.em']->flush();
 	
 	

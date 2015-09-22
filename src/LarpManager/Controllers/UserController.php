@@ -210,18 +210,14 @@ class UserController
 			$app['orm.em']->persist($etatCivil);
 			
 			// enregistrer l'utilisateur dans le GN actif
-			$joueur = new \LarpManager\Entities\Joueur();
-			$joueur->setGn($app['larp.manager']->getGnActif());
-			$joueur->setSubscriptionDate(new \Datetime('NOW'));
-			$joueur->setUser($app['user']);
-			$joueur->setXp($app['larp.manager']->getGnActif()->getXpCreation());
-			
-			$app['orm.em']->persist($joueur);
-			
+			$participant = new \LarpManager\Entities\Participant();
+			$participant->setGn($app['larp.manager']->getGnActif());
+			$participant->setSubscriptionDate(new \Datetime('NOW'));
+			$participant->setUser($app['user']);
+						
+			$app['orm.em']->persist($participant);
 			$app['orm.em']->flush();
-		
 			$app['session']->getFlashBag()->add('success', 'Vos informations ont été enregistrés.');
-		
 			return $app->redirect($app['url_generator']->generate('homepage'),301);
 		}
 		

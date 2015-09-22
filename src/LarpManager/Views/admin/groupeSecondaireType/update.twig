@@ -1,0 +1,23 @@
+{% extends "layout.twig" %}
+
+{% block title %}Type de groupe secondaire{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path("groupeSecondaire.admin.list") }}">Liste des groupes secondaires</a></li>
+		<li class="active">Modification d'un type de groupe secondaire</li>
+	</ol>
+	
+	<div class="well bs-component">
+		<form action="{{ path('groupeSecondaire.admin.type.update',{'index': groupeSecondaireType.id}) }}" method="POST" {{ form_enctype(form) }}>
+			<fieldset>
+				<legend>Modification d'un type de groupe secondaire</legend>
+					{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+					{{ form(form) }}
+			</fieldset>
+		</form>
+	</div>
+	
+{% endblock content %}

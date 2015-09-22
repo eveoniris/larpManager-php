@@ -18,12 +18,12 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 class GroupeSecondaireController
 {
 	/**
-	 * Liste des groupes secondaires
+	 * Liste des groupes secondaires (pour les orgas)
 	 *
 	 * @param Request $request
 	 * @param Application $app
 	 */
-	public function listAction(Request $request, Application $app)
+	public function adminListAction(Request $request, Application $app)
 	{
 		$order_by = $request->get('order_by') ?: 'label';
 		$order_dir = $request->get('order_dir') == 'DESC' ? 'DESC' : 'ASC';
@@ -33,7 +33,7 @@ class GroupeSecondaireController
 		
 		$criteria = array();
 		
-		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\GroupeSecondaire');
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\SecondaryGroup');
 		$groupeSecondaires = $repo->findBy(
 				$criteria,
 				array( $order_by => $order_dir),
@@ -47,6 +47,41 @@ class GroupeSecondaireController
 				);
 		
 		return $app['twig']->render('admin/groupeSecondaire/list.twig', array(
+				'groupeSecondaires' => $groupeSecondaires,
+				'paginator' => $paginator,
+		));
+	}
+	
+	/**
+	 * Liste des groupes secondaires (pour les joueurs)
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function listAction(Request $request, Application $app)
+	{
+		$order_by = $request->get('order_by') ?: 'label';
+		$order_dir = $request->get('order_dir') == 'DESC' ? 'DESC' : 'ASC';
+		$limit = (int)($request->get('limit') ?: 50);
+		$page = (int)($request->get('page') ?: 1);
+		$offset = ($page - 1) * $limit;
+	
+		$criteria = array();
+	
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\SecondaryGroup');
+		$groupeSecondaires = $repo->findBy(
+				$criteria,
+				array( $order_by => $order_dir),
+				$limit,
+				$offset);
+	
+		$numResults = $repo->findCount($criteria);
+	
+		$paginator = new Paginator($numResults, $limit, $page,
+				$app['url_generator']->generate('groupeSecondaire.list') . '?page=(:num)&limit=' . $limit . '&order_by=' . $order_by . '&order_dir=' . $order_dir
+				);
+	
+		return $app['twig']->render('public/groupeSecondaire/list.twig', array(
 				'groupeSecondaires' => $groupeSecondaires,
 				'paginator' => $paginator,
 		));
@@ -111,7 +146,7 @@ class GroupeSecondaireController
 	 * @param Request $request
 	 * @param Application $app
 	 */
-	public function addAction(Request $request, Application $app)
+	public function adminAddAction(Request $request, Application $app)
 	{
 		$groupeSecondaire = new \LarpManager\Entities\SecondaryGroup();
 	
@@ -159,15 +194,15 @@ class GroupeSecondaireController
 	
 			if ( $form->get('save')->isClicked())
 			{
-				return $app->redirect($app['url_generator']->generate('groupeSecondaire'),301);
+				return $app->redirect($app['url_generator']->generate('groupeSecondaire.admin.list'),301);
 			}
 			else if ( $form->get('save_continue')->isClicked())
 			{
-				return $app->redirect($app['url_generator']->generate('groupeSecondaire.add'),301);
+				return $app->redirect($app['url_generator']->generate('groupeSecondaire.admin.add'),301);
 			}
 		}
 	
-		return $app['twig']->render('groupeSecondaire/add.twig', array(
+		return $app['twig']->render('admin/groupeSecondaire/add.twig', array(
 				'form' => $form->createView(),
 		));
 	}
@@ -178,7 +213,7 @@ class GroupeSecondaireController
 	 * @param Request $request
 	 * @param Application $app
 	 */
-	public function updateAction(Request $request, Application $app)
+	public function adminUpdateAction(Request $request, Application $app)
 	{
 		$id = $request->get('index');
 	
@@ -218,10 +253,10 @@ class GroupeSecondaireController
 				$app['session']->getFlashBag()->add('success', 'Le groupe secondaire a été supprimé.');
 			}
 	
-			return $app->redirect($app['url_generator']->generate('groupeSecondaire'));
+			return $app->redirect($app['url_generator']->generate('groupeSecondaire.admin.list'));
 		}
 	
-		return $app['twig']->render('groupeSecondaire/update.twig', array(
+		return $app['twig']->render('admin/groupeSecondaire/update.twig', array(
 				'groupeSecondaire' => $groupeSecondaire,
 				'form' => $form->createView(),
 		));

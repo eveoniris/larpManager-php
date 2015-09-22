@@ -42,16 +42,32 @@ class User extends BaseUser implements AdvancedUserInterface, \Serializable
 	}
 	
 	/**
+	 * Trouve les informations de participation d'un utilisateur à un groupe
+	 * @param Groupe $groupe
+	 */
+	public function getParticipantByGroupe(Groupe $groupe)
+	{
+		foreach ( $this->getParticipants() as $participant)
+		{
+			if ( $participant->getGroupe() == $groupe )
+			{
+				return $participant;
+			}
+		}
+		return null;
+	}
+	
+	/**
 	 * Trouve les informations de participation d'un utilisateur à un gn
 	 * @param Gn $gn
 	 */
-	public function getJoueurByGn(Gn $gn)
+	public function getParticipantByGn(Gn $gn)
 	{
-		foreach ( $this->getJoueurs() as $joueur)
+		foreach ( $this->getParticipants() as $participant)
 		{
-			if ( $joueur->getGn() == $gn )
+			if ( $participant->getGn() == $gn )
 			{
-				return $joueur;
+				return $participant;
 			}
 		}
 		return null;
@@ -64,9 +80,11 @@ class User extends BaseUser implements AdvancedUserInterface, \Serializable
 	{
 		$groupes = new ArrayCollection();
 		
-		foreach ( $this->getJoueurs() as $joueur )
+		foreach ( $this->getParticipants() as $participant )
 		{
-			$groupes = new ArrayCollection( array_merge($groupes->toArray(), $joueur->getGroupes()->toArray()));
+			if ( $participant->getGroupe() ) {
+				$groupes[] = $participant->getGroupe();
+			}
 		}
 		return $groupes;
 	}
@@ -78,9 +96,11 @@ class User extends BaseUser implements AdvancedUserInterface, \Serializable
 	{
 		$personnages = new ArrayCollection();
 		
-		foreach ( $this->getJoueurs() as $joueur )
+		foreach ( $this->getParticipants() as $participant )
 		{
-			$personnages[] = $joueur->getPersonnage();
+			if ( $participant->getPersonnage() ) {
+				$personnages[] = $participant->getPersonnage();
+			}
 		}
 		return $personnages;
 	}
@@ -90,9 +110,9 @@ class User extends BaseUser implements AdvancedUserInterface, \Serializable
 	 */
 	public function getPersonnage()
 	{
-		foreach ( $this->getJoueurs() as $joueur )
+		foreach ( $this->getParticipants() as $participant )
 		{
-			if ( $joueur->getGn()->getActif() == true) return $joueur->getPersonnage();
+			if ( $participant->getGn()->getActif() == true) return $participant->getPersonnage();
 		}
 		return null;
 	}
@@ -104,9 +124,9 @@ class User extends BaseUser implements AdvancedUserInterface, \Serializable
 	{
 		$gns = new ArrayCollection();
 		
-		foreach ( $this->getJoueurs() as $joueur )
+		foreach ( $this->getParticipants() as $participant )
 		{
-			$gns[] = $joueur->getGn();
+			$gns[] = $participant->getGn();
 		}
 		return $gns;
 	}

@@ -221,7 +221,7 @@ else
 	$app->mount('/age', new LarpManager\AgeControllerProvider());
 	$app->mount('/genre', new LarpManager\GenreControllerProvider());
 	$app->mount('/gn', new LarpManager\GnControllerProvider());
-	$app->mount('/joueur', new LarpManager\JoueurControllerProvider());
+	$app->mount('/participant', new LarpManager\ParticipantControllerProvider());
 	$app->mount('/forum', new LarpManager\ForumControllerProvider());
 		
 

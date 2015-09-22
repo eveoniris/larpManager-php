@@ -230,10 +230,10 @@ class HomepageController
 			
 			if ( $groupe )
 			{
-				$joueur = $app['user']->getJoueurByGn($app['larp.manager']->getGnActif());
-				$joueur->addGroupe($groupe);
+				$participant = $app['user']->getParticipantByGn($app['larp.manager']->getGnActif());
+				$participant->setGroupe($groupe);
 												
-				$app['orm.em']->persist($joueur);
+				$app['orm.em']->persist($participant);
 				$app['orm.em']->flush();
 				
 				$app['session']->getFlashBag()->add('success', 'Vous êtes maintenant inscrit au groupe.');
