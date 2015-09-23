@@ -1,12 +1,5 @@
 {% extends "layout.twig" %}
 
-{% block head %}
-	{{ parent() }}
-	
-	{# inclusion du plugin meltdown pour la saisie du post #}
-	<link rel="stylesheet" href="{{ app.request.basepath }}/css/meltdown.css" />
-{% endblock head %}
-
 {% block title %}Postuler à un groupe secondaire{% endblock title %}
 
 {% block content %}
@@ -21,7 +14,7 @@
 		</ol>
 	
 		<div class="well bs-component">
-			<form action="{{ path('groupeSecondaire.postuler',{'index': groupeSecondaire.id}) }}" method="POST" {{ form_enctype(form) }}>
+			<form action="{{ path('groupeSecondaire.postuler',{'index': groupeSecondaire.id}) }}" method="POST" {{ form_enctype(form) }} novalidate>
 				<fieldset>
 					<legend>Postuler à {{ groupeSecondaire.label}}</legend>
 						{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
@@ -38,19 +31,16 @@
 
 	{{ parent() }}
 
-	{# inclusion du plugin meltdown pour la saisie du post #}   
-	<script src="{{ app.request.basepath }}/js/lib/element_resize_detection.js"></script>
-    <script src="{{ app.request.basepath }}/js/lib/js-markdown-extra.js"></script>
-    <script src="{{ app.request.basepath }}/js/lib/rangyinputs-jquery.min.js"></script>
-    <script src="{{ app.request.basepath }}/js/jquery.meltdown.js"></script>
-	         
+	{# inclusion du plugin tinymce pour la saisie du post #}   
+	<script src="{{ app.request.basepath }}/js/tinymce/tinymce.min.js"></script>
+
 	<script type="text/javascript">
-		$(document).ready(function() {
-			$('#secondaryGroupApply_explication').meltdown({
-				openPreview: true,
-				sidebyside: true
-			});
+		tinyMCE.init({
+				mode: "textareas",
+				theme: "modern",
+				plugins : "spellchecker,insertdatetime,preview", 
 		});
+		
 	</script>
 
 {% endblock javascript %}

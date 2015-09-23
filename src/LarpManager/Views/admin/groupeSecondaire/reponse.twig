@@ -1,13 +1,5 @@
 {% extends "layout.twig" %}
 
-{% block head %}
-	{{ parent() }}
-	
-	{# inclusion du plugin meltdown pour la saisie du post #}
-	<link rel="stylesheet" href="{{ app.request.basepath }}/css/meltdown.css" />
-{% endblock head %}
-
-
 {% block title %}Accepter ou refuser une candidature{% endblock title %}
 
 {% block content %}
@@ -21,7 +13,7 @@
 	
 	<div class="well bs-component">
 		
-		<form action="{{ path('groupeSecondaire.admin.reponse', {'index': groupeSecondaire.id, 'postulantId': postulant.id}) }}" method="POST" {{ form_enctype(form) }}>
+		<form action="{{ path('groupeSecondaire.admin.reponse', {'index': groupeSecondaire.id, 'postulantId': postulant.id}) }}" method="POST" {{ form_enctype(form) }} novalidate>
 			<fieldset>
 				<legend>Accepter ou refuser la candidature de {{ postulant.personnage.identity }}</legend>
 					{{ postulant.explanation|markdown }}
@@ -37,19 +29,16 @@
 
 	{{ parent() }}
 
-	{# inclusion du plugin meltdown pour la saisie du post #}   
-	<script src="{{ app.request.basepath }}/js/lib/element_resize_detection.js"></script>
-    <script src="{{ app.request.basepath }}/js/lib/js-markdown-extra.js"></script>
-    <script src="{{ app.request.basepath }}/js/lib/rangyinputs-jquery.min.js"></script>
-    <script src="{{ app.request.basepath }}/js/jquery.meltdown.js"></script>
-	         
+	{# inclusion du plugin tinymce pour la saisie du post #}   
+	<script src="{{ app.request.basepath }}/js/tinymce/tinymce.min.js"></script>
+
 	<script type="text/javascript">
-		$(document).ready(function() {
-			$('#postulantReponse_explanation').meltdown({
-				openPreview: true,
-				sidebyside: true
-			});
+		tinyMCE.init({
+				mode: "textareas",
+				theme: "modern",
+				plugins : "spellchecker,insertdatetime,preview", 
 		});
+		
 	</script>
 
 {% endblock javascript %}
