@@ -26,11 +26,32 @@ class PersonnageRepository extends EntityRepository
 		$qb->select($qb->expr()->count('p'));
 		$qb->from('LarpManager\Entities\Personnage','p');
 	
-		foreach ( $criteria as $criter )
+			foreach ( $criteria as $critere )
 		{
-			$qb->addWhere($criter);
+			$qb->andWhere($critere);
+			
 		}
 	
 		return $qb->getQuery()->getSingleScalarResult();
+	}
+	
+	public function findList(array $criteria = array(), array $order = array(), $limit, $offset)
+	{
+		$qb = $this->getEntityManager()->createQueryBuilder();
+		
+		$qb->select('p');
+		$qb->from('LarpManager\Entities\Personnage','p');
+		
+		foreach ( $criteria as $critere )
+		{
+			$qb->andWhere($critere);
+			
+		}
+		
+		$qb->setFirstResult($offset);
+		$qb->setMaxResults($limit);
+		$qb->orderBy('p.'.$order['by'], $order['dir']);
+		
+		return $qb->getQuery()->getResult();
 	}
 }

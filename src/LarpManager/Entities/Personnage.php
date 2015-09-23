@@ -14,7 +14,7 @@ use LarpManager\Entities\BasePersonnage;
 /**
  * LarpManager\Entities\Personnage
  *
- * @Entity(repositoryClass="LarpManager\Repository\JoueurRepository")
+ * @Entity(repositoryClass="LarpManager\Repository\PersonnageRepository")
  */
 class Personnage extends BasePersonnage
 {

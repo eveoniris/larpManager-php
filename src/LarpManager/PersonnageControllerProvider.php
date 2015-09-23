@@ -31,10 +31,22 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 		$controllers = $app['controllers_factory'];
 
 		/**
-		 * Liste des personnages
+		 * Liste des personnages (orga)
 		 */
-		$controllers->match('/list','LarpManager\Controllers\PersonnageController::listAction')
-			->bind("personnage.list")
+		$controllers->match('/admin/list','LarpManager\Controllers\PersonnageController::adminListAction')
+			->bind("personnage.admin.list")
+			->method('GET|POST')
+			->before(function(Request $request) use ($app) {
+				if (!$app['security.authorization_checker']->isGranted('ROLE_SCENARISTE')) {
+					throw new AccessDeniedException();
+				}
+			});
+			
+		/**
+		 * Detail d'un personnage (orga)
+		 */
+		$controllers->match('/admin/{index}/detail','LarpManager\Controllers\PersonnageController::adminDetailAction')
+			->bind("personnage.admin.detail")
 			->method('GET')
 			->before(function(Request $request) use ($app) {
 				if (!$app['security.authorization_checker']->isGranted('ROLE_SCENARISTE')) {
@@ -42,6 +54,29 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 				}
 			});
 		
+		/**
+		 * Ajout d'un personnage (orga)
+		 */
+		$controllers->match('/admin/add','LarpManager\Controllers\PersonnageController::adminAddAction')
+			->bind("personnage.admin.add")
+			->method('GET|POST')
+			->before(function(Request $request) use ($app) {
+				if (!$app['security.authorization_checker']->isGranted('ROLE_SCENARISTE')) {
+					throw new AccessDeniedException();
+				}
+			});
+		/**
+		 * Modification d'un personnage (orga)
+		 */
+		$controllers->match('/admin/{index}/update','LarpManager\Controllers\PersonnageController::adminUpdateAction')
+			->bind("personnage.admin.update")
+			->method('GET|POST')
+			->before(function(Request $request) use ($app) {
+				if (!$app['security.authorization_checker']->isGranted('ROLE_SCENARISTE')) {
+					throw new AccessDeniedException();
+				}
+			});
+			
 		/**
 		 * Création d'un nouveau personnage
 		 */

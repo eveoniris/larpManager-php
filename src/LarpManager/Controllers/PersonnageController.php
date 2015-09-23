@@ -8,6 +8,7 @@ use JasonGrimes\Paginator;
 use LarpManager\Form\PersonnageForm;
 use LarpManager\Form\PersonnageCompetenceForm;
 use LarpManager\Form\PersonnageReligionForm;
+use LarpManager\Form\PersonnageFindForm;
 
 /**
  * LarpManager\Controllers\PersonnageController
@@ -24,32 +25,52 @@ class PersonnageController
 	 * @param Request $request
 	 * @param Application $app
 	 */
-	public function listAction(Request $request, Application $app)
+	public function adminListAction(Request $request, Application $app)
 	{
-		$order_by = $request->get('order_by') ?: 'numero';
+		$order_by = $request->get('order_by') ?: 'id';
 		$order_dir = $request->get('order_dir') == 'DESC' ? 'DESC' : 'ASC';
 		$limit = (int)($request->get('limit') ?: 50);
 		$page = (int)($request->get('page') ?: 1);
 		$offset = ($page - 1) * $limit;
-		
 		$criteria = array();
 		
-		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Groupe');
-		$personnages = $repo->findBy(
+		$form = $app['form.factory']->createBuilder(new PersonnageFindForm())
+			->add('find','submit', array('label' => 'Rechercher'))
+			->getForm();
+		
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$data = $form->getData();
+			$type = $data['type'];
+			$value = $data['value'];
+			switch ($type){
+				case 'nom':
+					$criteria[] = "p.nom LIKE '%$value%'";
+					//$criteria[] = array('nom' => $value);
+					break;
+			}
+			
+		}
+		
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Personnage');
+		$personnages = $repo->findList(
 				$criteria,
-				array( $order_by => $order_dir),
+				array( 'by' =>  $order_by, 'dir' => $order_dir),
 				$limit,
 				$offset);
 		
 		$numResults = $repo->findCount($criteria);
 		
 		$paginator = new Paginator($numResults, $limit, $page,
-				$app['url_generator']->generate('personnage.list') . '?page=(:num)&limit=' . $limit . '&order_by=' . $order_by . '&order_dir=' . $order_dir
+				$app['url_generator']->generate('personnage.admin.list') . '?page=(:num)&limit=' . $limit . '&order_by=' . $order_by . '&order_dir=' . $order_dir
 				);
 		
 		return $app['twig']->render('admin/personnage/list.twig', array(
 				'personnages' => $personnages,
 				'paginator' => $paginator,
+				'form' => $form->createView(),
 		));
 	}
 		
