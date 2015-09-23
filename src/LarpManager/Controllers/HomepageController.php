@@ -6,6 +6,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Silex\Application;
 use LarpManager\Form\GroupeInscriptionForm;
 use LarpManager\Form\GnInscriptionForm;
+use LarpManager\Form\FindJoueurForm;
+use LarpManager\Form\FindGroupForm;
+use LarpManager\Form\FindPersonnageForm;
 
 /**
  * LarpManager\Controllers\HomepageController
@@ -15,28 +18,52 @@ use LarpManager\Form\GnInscriptionForm;
  */
 class HomepageController
 {
+
 	/**
-	 * affiche la page d'acceuil.
-	 * 
-	 * Si l'utilisateur a enregistrer ses informations de joueur, on lui propose la liste
-	 * des GNs auquel il peux s'inscrire.
-	 * 
-	 * Si l'utilisateur n'a pas enregistré ses informations de joueur, on lui propose la liste
-	 * de tous les GNs actifs.
+	 * Choix de la page d'acceuil en fonction de l'état de l'utilisateur
 	 * 
 	 * @param Request $request
 	 * @param Application $app
 	 */
 	public function indexAction(Request $request, Application $app) 
 	{	
-		/**
-		 * L'utilisateur n'est pas connecté, lui fournir la page d'acceuil spécifique
-		 */
 		if ( ! $app['user'] )
 		{
-			return $app['twig']->render('homepage/not_connected.twig');
+			return $this->notConnectedIndexAction($request, $app);
+		}
+		else if ( $app['security.authorization_checker']->isGranted('ROLE_ORGA') )
+		{
+			return $this->orgaIndexAction($request, $app);
 		}
 		
+		return $this->joueurIndexAction($request, $app);
+	}
+	
+	/**
+	 * Page d'acceuil pour les utilisateurs non connecté
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function notConnectedIndexAction(Request $request, Application $app)
+	{
+		return $app['twig']->render('homepage/not_connected.twig');
+	}
+	
+	/**
+	 * affiche la page d'acceuil.
+	 *
+	 * Si l'utilisateur a enregistrer ses informations de joueur, on lui propose la liste
+	 * des GNs auquel il peux s'inscrire.
+	 *
+	 * Si l'utilisateur n'a pas enregistré ses informations de joueur, on lui propose la liste
+	 * de tous les GNs actifs.
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function joueurIndexAction(Request $request, Application $app)
+	{
 		$form = $app['form.factory']->createBuilder(new GroupeInscriptionForm(), array())
 			->add('subscribe','submit', array('label' => 'S\'inscrire'))
 			->getForm();
@@ -45,11 +72,42 @@ class HomepageController
 		$gns = $repoGn->findByActive();
 		
 		$repoAnnonce = $app['orm.em']->getRepository('LarpManager\Entities\Annonce');
-		$annonces = $repoAnnonce->findAll();
+		$annonces = $repoAnnonce->findBy(array('archive' => false));
 		
 		return $app['twig']->render('homepage/index.twig', array(
 				'form_groupe' => $form->createView(),
 				'gns' => $gns,
+				'annonces' => $annonces,
+		));
+	}
+	
+	/**
+	 * Affichage de la page d'acceuil pour les orgas
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function orgaIndexAction(Request $request, Application $app)
+	{
+		$findJoueurForm = $app['form.factory']->createBuilder(new FindJoueurForm(), array())
+			->add('submit','submit', array('label' => 'Rechercher'))
+			->getForm();
+		
+		$findGroupForm = $app['form.factory']->createBuilder(new FindGroupForm(), array())
+			->add('submit','submit', array('label' => 'Rechercher'))
+			->getForm();
+		
+		$findPersonnageForm = $app['form.factory']->createBuilder(new FindPersonnageForm(), array())
+			->add('submit','submit', array('label' => 'Rechercher'))
+			->getForm();
+		
+		$repoAnnonce = $app['orm.em']->getRepository('LarpManager\Entities\Annonce');
+		$annonces = $repoAnnonce->findBy(array('archive' => false));
+		
+		return $app['twig']->render('homepage/orga.twig', array(
+				'findJoueurForm' => $findJoueurForm->createView(),
+				'findGroupForm' => $findGroupForm->createView(),
+				'findPersonnageForm' => $findPersonnageForm->createView(),
 				'annonces' => $annonces,
 		));
 	}
@@ -172,10 +230,10 @@ class HomepageController
 			
 			if ( $groupe )
 			{
-				$joueur = $app['user']->getJoueur();
-				$joueur->addGroupe($groupe);
+				$participant = $app['user']->getParticipantByGn($app['larp.manager']->getGnActif());
+				$participant->setGroupe($groupe);
 												
-				$app['orm.em']->persist($joueur);
+				$app['orm.em']->persist($participant);
 				$app['orm.em']->flush();
 				
 				$app['session']->getFlashBag()->add('success', 'Vous êtes maintenant inscrit au groupe.');

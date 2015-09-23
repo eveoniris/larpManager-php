@@ -16,7 +16,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 /**
  * LarpManager\Entities\User
  *
- * @Entity()
+ * @Entity(repositoryClass="LarpManager\Repository\UserRepository")
  */
 class User extends BaseUser implements AdvancedUserInterface, \Serializable
 {
@@ -42,7 +42,97 @@ class User extends BaseUser implements AdvancedUserInterface, \Serializable
 	}
 	
 	/**
-	 * Fourni la liste de tous les posts qu'un utilisateur n'a pas lu
+	 * Trouve les informations de participation d'un utilisateur à un groupe
+	 * @param Groupe $groupe
+	 */
+	public function getParticipantByGroupe(Groupe $groupe)
+	{
+		foreach ( $this->getParticipants() as $participant)
+		{
+			if ( $participant->getGroupe() == $groupe )
+			{
+				return $participant;
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Trouve les informations de participation d'un utilisateur à un gn
+	 * @param Gn $gn
+	 */
+	public function getParticipantByGn(Gn $gn)
+	{
+		foreach ( $this->getParticipants() as $participant)
+		{
+			if ( $participant->getGn() == $gn )
+			{
+				return $participant;
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Fourni la liste des groupes auquel est inscrit cet utilisateur
+	 */
+	public function getGroupes()
+	{
+		$groupes = new ArrayCollection();
+		
+		foreach ( $this->getParticipants() as $participant )
+		{
+			if ( $participant->getGroupe() ) {
+				$groupes[] = $participant->getGroupe();
+			}
+		}
+		return $groupes;
+	}
+	
+	/**
+	 * Fourni la liste des personnages de cet utilisateur
+	 */
+	public function getPersonnages()
+	{
+		$personnages = new ArrayCollection();
+		
+		foreach ( $this->getParticipants() as $participant )
+		{
+			if ( $participant->getPersonnage() ) {
+				$personnages[] = $participant->getPersonnage();
+			}
+		}
+		return $personnages;
+	}
+	
+	/**
+	 * Fourni le personnage du GN actif
+	 */
+	public function getPersonnage()
+	{
+		foreach ( $this->getParticipants() as $participant )
+		{
+			if ( $participant->getGn()->getActif() == true) return $participant->getPersonnage();
+		}
+		return null;
+	}
+	
+	/**
+	 * Fourni la liste des gns auquel l'utilisateur est inscrit
+	 */
+	public function getGns()
+	{
+		$gns = new ArrayCollection();
+		
+		foreach ( $this->getParticipants() as $participant )
+		{
+			$gns[] = $participant->getGn();
+		}
+		return $gns;
+	}
+	
+	/**
+	 * TODO Fourni la liste de tous les posts qu'un utilisateur n'a pas lu
 	 */
 	public function newPosts()
 	{
@@ -96,63 +186,7 @@ class User extends BaseUser implements AdvancedUserInterface, \Serializable
 	{
 		return $this == $groupe->getResponsable();
 	}
-	
-	/**
-	 * Fourni le personnage d'un joueur
-	 * 
-	 * @return \LarpManager\Entities\Personnage $personnage
-	 */
-	public function getPersonnage()
-	{
-		$joueur = $this->getJoueur();
 		
-		if ( $joueur )
-		{
-			return $joueur->getPersonnage();
-		}
-		return null;
-	}
-	
-	/**
-	 * Fourni la liste des groupes d'un joueur
-	 */
-	public function getGroupes()
-	{
-		$joueur = $this->getJoueur();
-		
-		if ( $joueur )
-		{
-			return $joueur->getGroupes();
-		}
-		return null;		
-	}
-	
-	/**
-	 * Fourni la liste des groupes secondaires d'un utilisateur
-	 */
-	public function getSecondaryGroups()
-	{
-		$personnage = $this->getPersonnage();
-		
-		if ( $personnage )
-		{
-			return $personnage->getSecondaryGroups();
-		}
-		return null;
-	}
-	
-	/**
-	 * Fourni la liste des gns d'un joueur
-	 */
-	public function getGns()
-	{
-		$joueur = $this->getJoueur();
-		if ( $joueur )
-		{
-			return $joueur->getGns();
-		}
-		return null;
-	}
 
 	/**
 	 * Fourni la liste des groupes dont l'utilisateur est le responsable

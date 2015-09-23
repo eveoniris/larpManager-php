@@ -21,12 +21,12 @@
 				<li class="dropdown">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Admin<span class="caret"></span></a>
 					<ul class="dropdown-menu">
-						<li><a href="{{ path('annonce') }}">Annonces</a></li>
-						<li><a href="{{ path('gn') }}">GNs</a></li>
-						<li><a href="{{ path('groupe.place') }}">Places disponibles</a></li>
-						<li><a href="{{ path('joueur.xp') }}">Points d'expériences</a></li>
+						<li><a href="{{ path('annonce.list') }}">Liste des annonces</a></li>
+						<li><a href="{{ path('gn.list') }}">Liste des grandeurs natures</a></li>
 						<li><a href="{{ path('user.list') }}">Liste des utilisateurs</a></li>
-						<li><a href="{{ path('user.right') }}">Gestion des droits</a></li>
+						<li><a href="{{ path('groupe.list') }}">Liste des groupes</a></li>
+						<li><a href="{{ path('groupeSecondaire.admin.list') }}">Liste des groupes secondaires</a></li>
+						<li><a href="{{ path('personnage.list') }}">Liste des personnages</a></li>
 					</ul>
 				</li>
 			{% endif %}
@@ -39,9 +39,7 @@
 						<li><a href="{{ path('appelation') }}">Appelations</a></li>
 						<li><a href="{{ path('territoire') }}">Territoires</a></li>
 						<li><a href="{{ path('langue') }}">Langues</a></li>
-						<li><a href="{{ path('groupe') }}">Groupes</a></li>
-						<li><a href="{{ path('groupeSecondaire.type') }}">Types de groupe</a></li>
-						<li><a href="{{ path('groupeSecondaire') }}">Groupe secondaires</a></li>
+						<li><a href="{{ path('groupe.list') }}">Groupes</a></li>
 						<li><a href="{{ path('ressource') }}">Ressources</a></li>
 						<li><a href="{{ path('religion') }}">Religions</a></li>
 						<li><a href="{{ path('religion.level') }}">Fanatisme</a></li>
@@ -88,8 +86,9 @@
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Joueur<span class="caret"></span></a>
 					<ul class="dropdown-menu">
 						<li><a href="{{ path('forum') }}">Forum</a></li>
-						<li><a href="{{ path('competence') }}">Les compétences</a></li>
-						<li><a href="{{ path('classe') }}">Les classes</a></li>
+						<li><a href="{{ path('competence.joueur') }}">Les compétences</a></li>
+						<li><a href="{{ path('classe.joueur') }}">Les classes</a></li>
+						<li><a href="{{ path('groupeSecondaire.list') }}">Les groupes secondaires</a></li>
 					</ul
 				</li>
 			{% endif %}

@@ -29,6 +29,7 @@ class UserControllerProvider implements ControllerProviderInterface
 	 *  - user.register
 	 *  - user.forgot-password
 	 *  - user.login_check
+	 *  - user.informations.add
 	 *
 	 * @param Application $app
 	 * @return Controllers $controllers
@@ -108,6 +109,11 @@ class UserControllerProvider implements ControllerProviderInterface
 		
 		$controllers->match('/forgot-password', 'LarpManager\Controllers\UserController::forgotPasswordAction')
 			->bind('user.forgot-password')
+			->method('GET|POST');
+		
+		$controllers->match('/{id}/information/add', 'LarpManager\Controllers\UserController::addInformationAction')
+			->assert('id', '\d+')
+			->bind('user.information.add')
 			->method('GET|POST');
 		
 		// login_check and logout are dummy routes so we can use the names.

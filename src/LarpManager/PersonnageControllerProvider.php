@@ -29,7 +29,19 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 	public function connect(Application $app)
 	{
 		$controllers = $app['controllers_factory'];
-				
+
+		/**
+		 * Liste des personnages
+		 */
+		$controllers->match('/list','LarpManager\Controllers\PersonnageController::listAction')
+			->bind("personnage.list")
+			->method('GET')
+			->before(function(Request $request) use ($app) {
+				if (!$app['security.authorization_checker']->isGranted('ROLE_SCENARISTE')) {
+					throw new AccessDeniedException();
+				}
+			});
+		
 		/**
 		 * Création d'un nouveau personnage
 		 */
@@ -37,6 +49,18 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 			->bind("personnage.add")
 			->method('GET|POST');
 		
+		/**
+		 * Rechercher un joueur
+		 */
+		$controllers->match('/search','LarpManager\Controllers\PersonnageController::searchAction')
+			->bind("personnage.search")
+			->method('GET|POST')
+			->before(function(Request $request) use ($app) {
+				if ( !$app['security.authorization_checker']->isGranted('ROLE_ORGA') ) {
+					throw new AccessDeniedException();
+				}
+			});
+			
 		/**
 		 * Détail d'un personnage
 		 * Accessible uniquement au proprietaire du personnage
@@ -47,6 +71,20 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 			->method('GET')
 			->before(function(Request $request) use ($app) {
 				if (!$app['security.authorization_checker']->isGranted('OWN_PERSONNAGE', $request->get('index'))) {
+					throw new AccessDeniedException();
+				}
+			});
+			
+		/**
+		 * Détail d'un personnage
+		 * Accessible uniquement aux orgas
+		 */
+		$controllers->match('/{index}/detail/orga','LarpManager\Controllers\PersonnageController::detailOrgaAction')
+			->assert('index', '\d+')
+			->bind("personnage.detail.orga")
+			->method('GET')
+			->before(function(Request $request) use ($app) {
+				if ( !$app['security.authorization_checker']->isGranted('ROLE_ORGA') ) {
 					throw new AccessDeniedException();
 				}
 			});

@@ -1,0 +1,50 @@
+{% extends "layout.twig" %}
+
+{% block title %}Point d'expériences{% endblock %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path("user.list") }}">Liste des utilisateurs</a></li>
+		<li class="active">Modifier les points d'expériences</li>
+	</ol>
+	
+	<div class="well well-sm">
+		{% if not joueur.personnage %}
+			Impossible de modifier les points d'expérience de ce joueur. Il ne posséde pas de personnage ...
+		{% else %}
+			Point d'expérience : {{ joueur.personnage.xp }}
+			
+			<form class="form-horizontal" action="{{ path('admin.joueur.xp', {'index': joueur.id}) }}" method="POST">
+			<fieldset>
+				<legend>Gestion des points d'expériences</legend>
+				
+	
+				<div class="form-group">
+					<label class="col-sm-2 control-label" for="xp">{{ joueur.user.id }} - {{ joueur.user.username }}</label>
+					<div class="col-sm-6">
+						<input class="form-control" type="number" name="xp" value="{{ joueur.personnage.xp|default(0)  }}" />
+					</div>
+				</div>
+	
+				<div class="form-group">
+					<label class="col-sm-2 control-label" for="explanation">Explication</label>
+					<div class="col-sm-6">
+						<input class="form-control" type="text" name="explanation" />
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-8 col-sm-offset-2">
+						
+						<input class="btn btn-primary" type="submit" value="Enregistrer" />
+					</div>
+				</div>
+			</fieldset>
+			</form>
+		{% endif %}
+
+	</div>
+
+
+{% endblock content %}

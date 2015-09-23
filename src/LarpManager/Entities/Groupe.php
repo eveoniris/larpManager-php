@@ -43,6 +43,22 @@ class Groupe extends BaseGroupe
 		return $this->getNom();	
 	}
 	
+	
+	/**
+	 * Trouve le personnage de l'utilisateur dans ce groupe
+	 * 
+	 * @param User $user
+	 */
+	public function getPersonnage(User $user)
+	{
+		$participant = $user->getParticipantByGroupe($this);
+		if ( $participant )
+		{
+			return $participant->getPersonnage();
+		}
+		return null;
+	}
+	
 	/**
 	 * Vérifie si le groupe dispose de suffisement de place disponible
 	 * 
@@ -54,6 +70,14 @@ class Groupe extends BaseGroupe
 	}
 	
 	/**
+	 * Vérifie si le groupe dispose de suffisement de classe disponible
+	 */
+	public function hasEnoughClasse()
+	{
+		return  ( count($this->getAvailableClasses()) > 0 );
+	}
+	
+	/**
 	 * Fourni la liste des classes disponibles (non actuellement utilisé par un personnage)
 	 * Ce type de liste est utile pour le formulaire de création d'un personnage
 	 * 
@@ -62,16 +86,17 @@ class Groupe extends BaseGroupe
 	public function getAvailableClasses()
 	{		
 		$groupeClasses = $this->getGroupeClasses();
+		$base = clone $groupeClasses;
 		
 		foreach ( $this->getPersonnages() as $personnage)
 		{
 			$id = $personnage->getClasse()->getId();
 			
-			foreach (  $groupeClasses as $key => $groupeClasse)
+			foreach (  $base as $key => $groupeClasse)
 			{
 				if ( $groupeClasse->getClasse()->getId() == $id )
 				{
-					unset($groupeClasses[$key]);
+					unset($base[$key]);
 					break;
 				}
 			}
@@ -79,11 +104,11 @@ class Groupe extends BaseGroupe
 
 		$availableClasses = array();
 		
-		foreach ( $groupeClasses as $groupeClasse)
+		foreach ( $base as $groupeClasse)
 		{
 			$availableClasses[] = $groupeClasse->getClasse();
 		}
-		
+
 		return $availableClasses;	
 	}			
 	

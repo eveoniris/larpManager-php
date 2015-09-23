@@ -1,0 +1,147 @@
+{% extends "layout.twig" %}
+
+
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path("groupe.list") }}">Liste des groupes</a></li>
+		<li class="active">Détail d'un groupe</li>
+	</ol>
+	
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-xs-12 col-md-8">
+		
+						
+			<div class="well well-sm bs-component">
+				<h4>
+					{{ groupe.numero|default('?') }} - {{ groupe.nom }}
+				</h4>
+			</div>
+		  						    		
+	    	<div class="list-group">
+	    		
+	    		<div class="list-group-item">
+		    		<h4 class="list-group-item-heading">Description</h4>
+    				<p class="list-group-item-text">
+    				{% if not groupe.description %}
+    					<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+    					Attention, ce groupe n'a pas de description.
+    				{% else %}
+    					{{ groupe.description }}
+    				{% endif %}
+    				</p>
+	    		</div>
+	    			
+	    		<div class="list-group-item">
+	    			<h4 class="list-group-item-heading">Territoire</h4>
+	    			
+	    			<p class="list-group-item-text">
+	    				{% if not groupe.territoire %}
+    					<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+    					Attention, ce groupe n'a pas de territoire.
+    				{% else %}
+    					{{ groupe.territoire.nom }}
+    				{% endif %}
+	    			</p>
+	    		</div>
+	    			
+	    		<div class="list-group-item">
+		    		<h4 class="list-group-item-heading">Scénariste</h4>
+    				<p class="list-group-item-text">
+    					{% if not groupe.scenariste %}
+    						<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+	    					Attention, ce groupe n'a pas de scénariste.
+    					{% else %}
+    						{{ groupe.scenariste.username }}
+    					{% endif %}
+    				</p>
+    				<p class="list-group-item-text">
+    					<span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>
+    					<a href="#">Contacter par mail</a>
+    				</p>
+	    		</div>
+	    			
+	    		<div class="list-group-item">
+	    			<h4 class="list-group-item-heading">Membres du groupe</h4>
+	    			<p class="list-group-item-text">
+	    				<ul>
+	    				{% if groupe.responsable %}<li><strong>{{ groupe.responsable.username }}</strong>&nbsp;(Responsable du groupe)</li>{% endif %}
+						{% for participant in groupe.participants %}
+						<li>
+							<strong>{{ participant }} </strong>: {{ participant.user.email }}
+						</li>
+						{% endfor %}
+	    				</ul>
+	    			</p>
+	    		</div>
+	    			
+	    		<div class="list-group-item">
+		    		<h4 class="list-group-item-heading">Code</h4>
+    				<p class="list-group-item-text">
+    					<strong>{{ groupe.code }}</strong>
+    				</p>
+    				<p class="list-group-item-text">
+    					Ce code permet à des joueurs invité par le chef de groupe de participer au groupe.
+    				</p>
+	    		</div>
+	    			
+	    		<div class="list-group-item">
+		    		<h4 class="list-group-item-heading">Jeu stratégique</h4>
+    				<p class="list-group-item-text">
+    				{% if groupe.jeuStrategique %}
+    					<span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span>
+		    			participe au jeu stratégique.
+		    		{% else %}
+    					ne participe pas au jeu stratégique.
+    				{% endif %}
+		    		</p>
+	    		</div>
+	    			
+	    		<div class="list-group-item">
+    				<h4 class="list-group-item-heading">Jeu maritime</h4>
+    				<p class="list-group-item-text">
+    				{% if groupe.jeuMaritime %}
+    					<span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span>
+		    			participe au jeu maritime.
+		    		{% else %}
+    					ne participe pas au jeu maritime.
+    				{% endif %}
+		    		</p>
+		    	</div>
+		    		
+		    	<div class="list-group-item">
+    				<h4 class="list-group-item-heading">Composition du groupe</h4>
+    				<p class="list-group-item-text"><strong>Nombre de place ouverte : </strong>{{ groupe.classeOpen }}</p>
+    				<p class="list-group-item-text">
+    					{% if groupe.classes|length == 0 %}
+    					<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+	    					Attention, ce groupe n'a pas de classes définies.
+    					{% else %}
+    						{{ groupe.classes|join(', ') }}
+    					{% endif %}
+    				</p>
+    			</div>
+    			
+    			<div class="list-group-item">
+    				<h4 class="list-group-item-heading">Gns</h4>
+					
+					<p class="list-group-item-text">
+						{{ groupe.gns|join(', ') }}
+					</p>
+    				    				
+
+	  			<div class="list-group-item">
+		  			<div class="btn-group" role="group" aria-label="...">
+		  				<a  class="btn btn-primary" role="button" href="{{ path('groupe.update', {index : groupe.id}) }}">Modifier</a>
+					</div>
+				</div>
+  			</div>
+		</div>
+	</div>
+</div>
+	
+			
+{% endblock %}

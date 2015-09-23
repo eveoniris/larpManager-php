@@ -6,6 +6,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Silex\Application;
 
 use LarpManager\Form\GnForm;
+use JasonGrimes\Paginator;
 
 /**
  * LarpManager\Controllers\GnController
@@ -16,13 +17,35 @@ use LarpManager\Form\GnForm;
 class GnController
 {
 	/**
-	 * @description affiche la vue index.twig
+	 * @description affiche la liste des gns
 	 */
-	public function indexAction(Request $request, Application $app) 
+	public function listAction(Request $request, Application $app) 
 	{
+		$order_by = $request->get('order_by') ?: 'id';
+		$order_dir = $request->get('order_dir') == 'DESC' ? 'DESC' : 'ASC';
+		$limit = (int)($request->get('limit') ?: 50);
+		$page = (int)($request->get('page') ?: 1);
+		$offset = ($page - 1) * $limit;
+		
+		$criteria = array();
+		
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Gn');
-		$gns = $repo->findAll();
-		return $app['twig']->render('gn/index.twig', array('gns' => $gns));
+		$gns = $repo->findBy(
+				$criteria,
+				array( $order_by => $order_dir),
+				$limit,
+				$offset);
+		
+		$numResults = $repo->findCount($criteria);
+		
+		$paginator = new Paginator($numResults, $limit, $page,
+				$app['url_generator']->generate('gn.list') . '?page=(:num)&limit=' . $limit . '&order_by=' . $order_by . '&order_dir=' . $order_dir
+				);
+		
+		return $app['twig']->render('admin/gn/list.twig', array(
+				'gns' => $gns,
+				'paginator' => $paginator,
+		));
 	}
 	
 	/**
@@ -55,24 +78,25 @@ class GnController
 			$topic->setDescription($gn->getDescription());
 			$topic->setUser($app['user']);
 
-			$gn->setTopic($topic);
-			
-			$app['orm.em']->persist($topic);
 			$app['orm.em']->persist($gn);
+			$app['orm.em']->flush();
 			
 			// défini les droits d'accés à ce forum
 			// (les participants au GN ont le droits d'accéder à ce forum)
 			$topic->setRight('GN_PARTICIPANT');
 			$topic->setObjectId($gn->getId());
+			$gn->setTopic($topic);
+				
 			$app['orm.em']->persist($topic);
+			$app['orm.em']->persist($gn);
 			$app['orm.em']->flush();
 	
 			$app['session']->getFlashBag()->add('success', 'Le gn a été ajouté.');
 	
-			return $app->redirect($app['url_generator']->generate('gn'),301);
+			return $app->redirect($app['url_generator']->generate('gn.list'),301);
 		}
 	
-		return $app['twig']->render('gn/add.twig', array(
+		return $app['twig']->render('admin/gn/add.twig', array(
 				'form' => $form->createView(),
 		));
 	}
@@ -93,17 +117,17 @@ class GnController
 		{
 			if ( $app['security.authorization_checker']->isGranted('ROLE_ADMIN') )
 			{
-				return $app['twig']->render('gn/detail.twig', array('gn' => $gn));
+				return $app['twig']->render('admin/gn/detail.twig', array('gn' => $gn));
 			}
 			else
 			{
-				return $app['twig']->render('gn/detail_joueur.twig', array('gn' => $gn));
+				return $app['twig']->render('public/gn/detail.twig', array('gn' => $gn));
 			}
 		}
 		else
 		{
 			$app['session']->getFlashBag()->add('error', 'Le gn n\'a pas été trouvé.');
-			return $app->redirect($app['url_generator']->generate('homepage'));
+			return $app->redirect($app['url_generator']->generate('gn.list'));
 		}	
 	}
 	
@@ -144,10 +168,10 @@ class GnController
 				$app['session']->getFlashBag()->add('success', 'Le gn a été supprimé.');
 			}
 	
-			return $app->redirect($app['url_generator']->generate('gn'));
+			return $app->redirect($app['url_generator']->generate('gn.list'));
 		}
 	
-		return $app['twig']->render('gn/update.twig', array(
+		return $app['twig']->render('admin/gn/update.twig', array(
 				'gn' => $gn,
 				'form' => $form->createView(),
 		));

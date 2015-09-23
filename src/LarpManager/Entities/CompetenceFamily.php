@@ -85,7 +85,7 @@ class CompetenceFamily extends BaseCompetenceFamily
 		
 		foreach ( $this->getCompetences() as $competence )
 		{
-			if ( $minimumIndex == null )
+			if ( $maximumIndex == null )
 			{
 				$competenceLast = $competence;
 				$maximumIndex = $competence->getLevel()->getIndex();

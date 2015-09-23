@@ -1,0 +1,116 @@
+{% extends "layout.twig"  %}
+
+{% block title %}Liste des utilisateurs{% endblock %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li class="active">Liste des utilisateurs</li>
+	</ol>
+	
+	<div class="well well-sm">
+	
+		<ul class="list-group">
+			<li class="list-group-item">
+			    {% if paginator.totalItems == 1 %}
+			        <strong>1</strong> utilisateur trouvé.
+			    {% else %}
+			        <strong>{{ paginator.totalItems }}</strong> utilisateurs trouvés.
+			    {% endif %}
+			
+			    Montre <strong>{{ paginator.currentPageFirstItem }} - {{ paginator.currentPageLastItem }}</strong>.
+			</li>
+	    </ul>
+	    
+	    {{ paginator|raw }}
+	    
+		<table class="table table-striped table-bordered table-condensed table-hover">
+			<thead>
+				<tr>
+				
+					<th>
+						{% if app.request.get('order_dir') == 'ASC' and app.request.get('order_by') == 'id' %}
+							<a href="{{ path('user.list', {'order_by': 'id', 'order_dir': 'DESC'}) }}">
+						{%  else %}
+							<a href="{{ path('user.list', {'order_by': 'id', 'order_dir': 'ASC'}) }}">
+						{% endif %}
+							#	
+						{% if app.request.get('order_by') == 'id'  %}
+							{% if app.request.get('order_dir') == 'ASC' %}
+								<span class="caret"></span>
+							{%else%}
+									<span class="dropup">
+    									<span class="caret"></span>
+									</span>
+								{% endif %}
+						{% endif %}
+						</a> 	
+					</th>
+					
+					<th>
+						{% if app.request.get('order_dir') == 'ASC' and app.request.get('order_by') == 'username'%}
+							<a href="{{ path('user.list', {'order_by': 'username', 'order_dir': 'DESC'}) }}">
+						{% else %}
+							<a href="{{ path('user.list', {'order_by': 'username', 'order_dir': 'ASC'}) }}">
+						{% endif %}
+							Username
+						{% if app.request.get('order_by') == 'username'  %}
+							{% if app.request.get('order_dir') == 'ASC' %}
+								<span class="caret"></span>
+							{%else%}
+									<span class="dropup">
+    									<span class="caret"></span>
+									</span>
+								{% endif %}
+						{% endif %}
+						</a>
+					</th>
+					
+					<th>
+						{% if app.request.get('order_dir') == 'ASC' and app.request.get('order_by') == 'email' %}
+							<a href="{{ path('user.list', {'order_by': 'email', 'order_dir': 'DESC'}) }}">
+						{% else %}
+							<a href="{{ path('user.list', {'order_by': 'email', 'order_dir': 'ASC'}) }}">
+						{% endif %}
+							Email
+						{% if app.request.get('order_by') == 'email' %}
+							{% if app.request.get('order_dir') == 'ASC' %}
+								<span class="caret"></span>
+							{%else%}
+									<span class="dropup">
+    									<span class="caret"></span>
+									</span>
+								{% endif %}
+						{% endif %}
+						</a>
+					</th>
+					<th>Etat-civil</th>
+					<th>Droits</th>
+					<th>Expérience</th>
+				</tr>
+			</thead>
+			<tbody>
+	    	{% for user in users %}
+				<tr>
+					<td><a href="{{ path('user.edit',{'id':user.id}) }}">{{ user.id }}</a></td>
+					<td><a href="{{ path('user.view',{'id':user.id}) }}">{{ user.username }}</td>
+					<td>{{ user.email }}</td>
+					<td>{%  if not user.etatCivil %}<span class="text-warning">Etat-civil non renseigné</span>{% else %}<span class="text-success">Etat-civil rensiegné</span>{% endif %}</td>
+					<td>{{ user.roles|join(', ') }}</td>
+					<td>
+					{% if user.participants|length > 0 %}
+						<a href="{{ path('admin.joueur.xp', {'index': user.id}) }}">Points d'expériences</a>
+					{% else %}
+						<span class="text-warning">Cet utilisateur ne participe à aucun GN.</span>
+					{% endif %}
+					</td>
+				</tr>
+			{% endfor %}
+	    	</tbody>
+	    </table>
+	
+		{{ paginator|raw }}
+		
+	</div>
+{% endblock %}

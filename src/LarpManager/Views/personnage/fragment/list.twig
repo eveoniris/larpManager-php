@@ -1,0 +1,16 @@
+<ul class="list-group">
+
+	{%  for personnage in personnages %}
+	<li class="list-group-item">
+		
+		<h4 class="list-group-item-heading">
+			{{ personnage.nom }}
+			<div class="pull-right btn-group" role="group" aria-label="...">
+				<a href="{{ path('joueur.detail.orga', {index: personnage.id}) }}" class="btn btn-primary" role="button">Voir</a>
+			    <a href="{{ path('joueur.update', {index: personnage.id}) }}" class="btn btn-default" role="button">Modifier</a>
+			</div>
+		</h4>
+				
+	</li>
+	{%  endfor %}
+</ul>

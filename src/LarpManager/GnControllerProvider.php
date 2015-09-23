@@ -32,8 +32,8 @@ class GnControllerProvider implements ControllerProviderInterface
 		/**
 		 * Voir la liste des gns
 		 */
-		$controllers->match('/','LarpManager\Controllers\GnController::indexAction')
-			->bind("gn")
+		$controllers->match('/','LarpManager\Controllers\GnController::listAction')
+			->bind("gn.list")
 			->method('GET')
 			->before(function(Request $request) use ($app) {
 				if (!$app['security.authorization_checker']->isGranted('ROLE_ADMIN')) {

@@ -221,7 +221,7 @@ else
 	$app->mount('/age', new LarpManager\AgeControllerProvider());
 	$app->mount('/genre', new LarpManager\GenreControllerProvider());
 	$app->mount('/gn', new LarpManager\GnControllerProvider());
-	$app->mount('/joueur', new LarpManager\JoueurControllerProvider());
+	$app->mount('/participant', new LarpManager\ParticipantControllerProvider());
 	$app->mount('/forum', new LarpManager\ForumControllerProvider());
 		
 
@@ -230,11 +230,12 @@ else
 	 */
 	$app['security.role_hierarchy'] = array(
 		'ROLE_USER' => array('ROLE_USER'),
-		'ROLE_STOCK' => array('ROLE_USER', 'ROLE_STOCK'),
-		'ROLE_SCENARISTE' => array('ROLE_USER', 'ROLE_SCENARISTE'),
-		'ROLE_REGLE' => array('ROLE_USER', 'ROLE_REGLE'),
-		'ROLE_MODERATOR' => array('ROLE_USER', 'ROLE_MODERATOR'), 
-		'ROLE_ADMIN' => array('ROLE_USER', 'ROLE_STOCK','ROLE_SCENARISTE','ROLE_REGLE','ROLE_MODERATOR'),
+		'ROLE_ORGA' => array('ROLE_ORGA'),
+		'ROLE_STOCK' => array('ROLE_USER', 'ROLE_ORGA', 'ROLE_STOCK'),
+		'ROLE_SCENARISTE' => array('ROLE_USER', 'ROLE_ORGA', 'ROLE_SCENARISTE'),
+		'ROLE_REGLE' => array('ROLE_USER', 'ROLE_ORGA', 'ROLE_REGLE'),
+		'ROLE_MODERATOR' => array('ROLE_USER', 'ROLE_ORGA', 'ROLE_MODERATOR'), 
+		'ROLE_ADMIN' => array('ROLE_USER', 'ROLE_ORGA', 'ROLE_STOCK','ROLE_SCENARISTE','ROLE_REGLE','ROLE_MODERATOR'),
 	);
 	
 	/**
@@ -254,7 +255,6 @@ else
 		array('^/annonce/.*$', 'ROLE_ADMIN'),
 		array('^/age/.*$', 'ROLE_REGLE'),
 		array('^/genre/.*$', 'ROLE_REGLE'),
-		
 		array('^/appelation/.*$', 'ROLE_SCENARISTE'),
 		array('^/langue/.*$', 'ROLE_SCENARISTE'),
 		array('^/ressource/.*$', 'ROLE_SCENARISTE'),			

@@ -9,18 +9,12 @@
 	<li class="list-group-item">
 		
 		<h4 class="list-group-item-heading">
-			{{ joueur.label }}
+			{{ joueur.nom }}
 			<div class="pull-right btn-group" role="group" aria-label="...">
-				<a href="{{ path('joueur.detail', {index: gn.id}) }}" class="btn btn-primary" role="button">Voir</a>
-			    <a href="{{ path('joueur.update', {index: gn.id}) }}" class="btn btn-default" role="button">Modifier</a>
+				<a href="{{ path('joueur.detail.orga', {index: joueur.id}) }}" class="btn btn-primary" role="button">Voir</a>
+			    <a href="{{ path('joueur.update', {index: joueur.id}) }}" class="btn btn-default" role="button">Modifier</a>
 			</div>
 		</h4>
-		
-		{% if joueur.description %}
-			<p class="list-group-item-text text-default">{{ joueur.description }}</p>
-		{% else %}
-			<p class="list-group-item-text text-warning">Attention, ce joueur n'a pas description</p>
-		{%  endif %}
 				
 	</li>
 	{%  endfor %}

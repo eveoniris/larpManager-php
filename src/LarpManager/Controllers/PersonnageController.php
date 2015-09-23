@@ -4,6 +4,7 @@ namespace LarpManager\Controllers;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Silex\Application;
+use JasonGrimes\Paginator;
 use LarpManager\Form\PersonnageForm;
 use LarpManager\Form\PersonnageCompetenceForm;
 use LarpManager\Form\PersonnageReligionForm;
@@ -16,6 +17,41 @@ use LarpManager\Form\PersonnageReligionForm;
  */
 class PersonnageController
 {
+	
+	/**
+	 * Liste des personnages
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function listAction(Request $request, Application $app)
+	{
+		$order_by = $request->get('order_by') ?: 'numero';
+		$order_dir = $request->get('order_dir') == 'DESC' ? 'DESC' : 'ASC';
+		$limit = (int)($request->get('limit') ?: 50);
+		$page = (int)($request->get('page') ?: 1);
+		$offset = ($page - 1) * $limit;
+		
+		$criteria = array();
+		
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Groupe');
+		$personnages = $repo->findBy(
+				$criteria,
+				array( $order_by => $order_dir),
+				$limit,
+				$offset);
+		
+		$numResults = $repo->findCount($criteria);
+		
+		$paginator = new Paginator($numResults, $limit, $page,
+				$app['url_generator']->generate('personnage.list') . '?page=(:num)&limit=' . $limit . '&order_by=' . $order_by . '&order_dir=' . $order_dir
+				);
+		
+		return $app['twig']->render('admin/personnage/list.twig', array(
+				'personnages' => $personnages,
+				'paginator' => $paginator,
+		));
+	}
 		
 	/**
 	 * Affiche le détail d'un personnage
@@ -32,6 +68,29 @@ class PersonnageController
 		if ( $personnage )
 		{
 			return $app['twig']->render('personnage/detail.twig', array('personnage' => $personnage));
+		}
+		else
+		{
+			$app['session']->getFlashBag()->add('error', 'Le personnage n\'a pas été trouvé.');
+			return $app->redirect($app['url_generator']->generate('homepage'));
+		}
+	}
+	
+	/**
+	 * Affiche le détail d'un personnage (pour les orgas)
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function detailOrgaAction(Request $request, Application $app)
+	{
+		$id = $request->get('index');
+	
+		$personnage = $app['orm.em']->find('\LarpManager\Entities\Personnage',$id);
+	
+		if ( $personnage )
+		{
+			return $app['twig']->render('admin/personnage/detail.twig', array('personnage' => $personnage));
 		}
 		else
 		{
@@ -151,6 +210,75 @@ class PersonnageController
 				'form' => $form->createView(),
 				'personnage' => $personnage,
 				'competences' =>  $availableCompetences,
+		));
+	}
+	
+	/**
+	 * Recherche d'un personnage
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function searchAction(Request $request, Application $app)
+	{
+		$form = $app['form.factory']->createBuilder(new FindPersonnageForm(), array())
+			->add('submit','submit', array('label' => 'Rechercher'))
+			->getForm();
+	
+		$form->handleRequest($request);
+	
+		if ( $form->isValid() )
+		{
+			$data = $form->getData();
+				
+			$type = $data['type'];
+			$search = $data['search'];
+	
+			$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Personnage');
+				
+			$personnages = null;
+				
+			switch ($type)
+			{
+				case 'nom' :
+					$personnages = $repo->findByName($search);
+					break;
+				case 'surnom' :
+					$personnages = $repo->findByNickname($search);
+					break;
+				case 'numero' :
+					// TODO
+					break;
+			}
+				
+			if ( $personnages != null )
+			{
+				if ( $personnages->count() == 0 )
+				{
+					$app['session']->getFlashBag()->add('error', 'Le personnage n\'a pas été trouvé.');
+					return $app['twig']->render('personnage/search.twig', array(
+							'form' => $form->createView(),
+					));
+				}
+				else if ( $personnages->count() == 1 )
+				{
+					$app['session']->getFlashBag()->add('success', 'Le personnage a été trouvé.');
+					return $app->redirect($app['url_generator']->generate('personnage.detail', array('index'=> $personnages->first()->getId())));
+				}
+				else
+				{
+					$app['session']->getFlashBag()->add('success', 'Il y a plusieurs résultats à votre recherche.');
+					return $app['twig']->render('personnage/search_result.twig', array(
+							'personnages' => $personnages,
+					));
+				}
+			}
+				
+			$app['session']->getFlashBag()->add('error', 'Désolé, le personnage n\'a pas été trouvé.');
+		}
+	
+		return $app['twig']->render('personnage/search.twig', array(
+				'form' => $form->createView(),
 		));
 	}
 }

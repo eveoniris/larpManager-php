@@ -27,7 +27,7 @@ class AnnonceForm extends AbstractType
 				))
 				->add('archive','choice', array(
 						'required' => true,
-						'choices' => array(true => 'Dans les archive', false => 'Public'),
+						'choices' => array(false => 'Publique', true => 'Dans les archive'),
 						'label' => 'Choisissez la visibilité de votre annonce',
 				))
 				->add('text','textarea', array(

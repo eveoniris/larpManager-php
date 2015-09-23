@@ -1,0 +1,95 @@
+{% extends "layout.twig" %}
+
+{% block title %}Groupe secondaire{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li class="active">Liste des groupes secondaires</li>
+	</ol>
+
+	<div class="well well-sm">
+	
+		<ul class="list-group">
+			<li class="list-group-item">
+				{% if paginator.totalItems == 1 %}
+		        	<strong>1</strong> groupe secondaire trouvé.
+		    	{% else %}
+		        	<strong>{{ paginator.totalItems }}</strong> groupes secondaires trouvés.
+		    	{% endif %}
+		
+		    	Montre <strong>{{ paginator.currentPageFirstItem }} - {{ paginator.currentPageLastItem }}</strong>.
+		   	</li>
+		   	<li class="list-group-item">
+		   		<a href="{{ path('groupeSecondaire.admin.add') }}">Ajouter un groupe secondaire</a>
+		   	</li>
+		   	<li class="list-group-item">
+		   		<a href="{{ path('groupeSecondaire.admin.type.add') }}">Ajouter un type de groupe secondaire</a>
+		   	</li>
+		</ul>
+		 
+		{{ paginator|raw }}
+		<table class="table table-striped table-bordered table-condensed table-hover">
+			<thead>
+				<tr>
+					<th>
+						{% if app.request.get('order_dir') == 'ASC' and app.request.get('order_by') == 'id' %}
+							<a href="{{ path('groupeSecondaire.admin.list', {'order_by': 'id', 'order_dir': 'DESC'}) }}">
+						{%  else %}
+							<a href="{{ path('groupeSecondaire.admin.list', {'order_by': 'id', 'order_dir': 'ASC'}) }}">
+						{% endif %}
+							#	
+						{% if app.request.get('order_by') == 'id'  %}
+							{% if app.request.get('order_dir') == 'ASC' %}
+								<span class="caret"></span>
+							{%else%}
+									<span class="dropup">
+    									<span class="caret"></span>
+									</span>
+								{% endif %}
+						{% endif %}
+						</a>
+					</th>
+					<th>
+						{% if app.request.get('order_dir') == 'ASC' and app.request.get('order_by') == 'label' %}
+							<a href="{{ path('groupeSecondaire.admin.list', {'order_by': 'label', 'order_dir': 'DESC'}) }}">
+						{%  else %}
+							<a href="{{ path('groupeSecondaire.admin.list', {'order_by': 'label', 'order_dir': 'ASC'}) }}">
+						{% endif %}
+							Label	
+						{% if app.request.get('order_by') == 'label'  %}
+							{% if app.request.get('order_dir') == 'ASC' %}
+								<span class="caret"></span>
+							{%else%}
+									<span class="dropup">
+    									<span class="caret"></span>
+									</span>
+								{% endif %}
+						{% endif %}
+						</a>
+					</th>
+					<th>
+						Description
+					</th>
+					<th>
+						Type
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+			{% for groupeSecondaire in groupeSecondaires %}
+				<tr>
+					<td><a href="{{ path('groupeSecondaire.admin.update', {'index':groupeSecondaire.id}) }}">{{ groupeSecondaire.id }}</td>
+					<td><a href="{{ path('groupeSecondaire.admin.detail', {'index':groupeSecondaire.id}) }}">{{ groupeSecondaire.label }}</td>
+					<td>{{ groupeSecondaire.description }}</td>
+					<td>{{ groupeSecondaire.secondaryGroupType.label }}</td>
+				</tr>
+			{% endfor %}
+			</tbody>
+		</table>
+		
+		{{ paginator|raw }}
+	</div>
+
+{% endblock content %}

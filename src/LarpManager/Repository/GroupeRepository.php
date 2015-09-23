@@ -12,6 +12,27 @@ use LarpManager\Entities\Groupe;
  */
 class GroupeRepository extends EntityRepository
 {
+	
+	/**
+	 * Trouve les annonces correspondant aux critères de recherche
+	 *
+	 * @param array $criteria
+	 * @param array $options
+	 */
+	public function findCount(array $criteria = array())
+	{
+		$qb = $this->getEntityManager()->createQueryBuilder();
+	
+		$qb->select($qb->expr()->count('g'));
+		$qb->from('LarpManager\Entities\Groupe','g');
+	
+		foreach ( $criteria as $criter )
+		{
+			$qb->addWhere($criter);
+		}
+	
+		return $qb->getQuery()->getSingleScalarResult();
+	}
 
 	/**
 	 * Fourni la liste de tous les groupes classé par numéro

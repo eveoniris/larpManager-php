@@ -14,7 +14,7 @@ use LarpManager\Entities\BaseSecondaryGroup;
 /**
  * LarpManager\Entities\SecondaryGroup
  *
- * @Entity()
+ * @Entity(repositoryClass="LarpManager\Repository\SecondaryGroupRepository")
  */
 class SecondaryGroup extends BaseSecondaryGroup
 {

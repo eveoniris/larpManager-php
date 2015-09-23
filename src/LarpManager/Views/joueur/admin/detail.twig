@@ -1,0 +1,68 @@
+{% extends "layout.twig" %}
+
+{% block title %}Joueur{% endblock title %}
+
+{% block content %}
+
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-xs-12 col-md-8">
+					
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h4 class="list-group-item-heading">
+						Etat-civil du joueur
+					</h4>
+				</div>
+				
+				<div class="list-group">
+			    		
+		    		<div class="list-group-item">
+						<h4 class="list-group-item-heading">
+							Informations
+						</h4>
+						<p class="list-group-item-text">
+							Nom civil : {{ joueur.nom }}
+						</p>
+						<p class="list-group-item-text">
+							Prénom civil : {{ joueur.prenom }}
+						</p>
+						<p class="list-group-item-text">
+							Prénom d'usage : {{ joueur.prenomUsage }}
+						</p>
+						<p class="list-group-item-text">
+							Numéro de téléphone : {{ joueur.prenomUsage }}
+						</p>
+						<p class="list-group-item-text">
+							Photo : {{ joueur.photo }}
+						</p>
+						<p class="list-group-item-text">
+							Problème médicaux : {{ joueur.problemeMedicaux }}
+						</p>
+						<p class="list-group-item-text">
+							Personne à prévenir en cas d'urgence : {{ joueur.personneAPrevenir }}
+						</p>
+						<p class="list-group-item-text">
+							Numéro de téléphone de la personne à prévenir : {{ joueur.telPap }}
+						</p>
+						<p class="list-group-item-text">
+							Numéro d'adhérant à la FédéGn : {{ joueur.fedegn }}
+						</p>
+						<p class="list-group-item-text">
+							Date de fin de validité de l'assurance FédéGN : {% if joueur.dateFinValiditeFedegn %}{{ joueur.dateFinValiditeFedegn|date('Y-m-d') }}{%else%}non spécifié{% endif %}
+						</p>
+					</div>
+		    		
+		    		<div class="list-group-item">
+	  					<div class="btn-group" role="group" aria-label="...">
+	  						<a class="btn btn-primary" role="button" href="{{ path('admin.joueur.update', {'index' : joueur.id}) }}">Modifier</a>
+						</div>
+	  				</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+	
+			
+{% endblock %}

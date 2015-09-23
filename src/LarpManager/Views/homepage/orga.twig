@@ -1,0 +1,74 @@
+{% extends "layout.twig" %}
+
+{% block title %}Acceuil{% endblock title %}
+
+{% block content %}
+	   		
+	<div class="row">
+	
+		<div class="col-xs-8 col-md-8">
+		
+			<div class="well well-sm">
+				<h4>
+					Bienvenue {{ app.user.name }}
+				</h4>
+			</div>
+			
+			{{ include("homepage/fragment/find_joueur.twig",{
+					'form':findJoueurForm,
+					'action': path('admin.joueur.search'),
+					'legend': 'Rechercher un joueur'}) }}
+					
+			{{ include("homepage/fragment/find_personnage.twig",{
+					'form':findPersonnageForm,
+					'action': path('personnage.search'),
+					'legend': 'Rechercher un personnage'}) }}
+			
+			{{ include("homepage/fragment/find_group.twig",{
+					'form':findGroupForm,
+					'action': path('groupe.search'),
+					'legend': 'Rechercher un groupe'}) }}
+			
+			{% if is_granted('ROLE_MODERATOR', app.user) %}
+				{{ include("homepage/fragment/new_posts.twig") }}
+			{% endif %}
+			
+		</div>
+		
+		<div class="col-xs-4 col-md-4">
+		
+			{# affichage de l'annonce la plus récente et du lien vers les archives des annonces #}
+			{% for annonce in annonces %}
+				<div class="panel panel-primary">
+					<div class="panel-heading">
+						{{ annonce.title }}
+					</div>
+					<div class="panel-body">
+						{{ annonce.text|markdown }}
+					</div>
+				</div>
+			{% endfor %}
+						
+			{# si l'utilisateur est scénariste, lui afficher les liens vers les groupes dont
+			   il a la responsabilité #}
+	
+			{% if is_granted('ROLE_SCENARISTE', app.user) %}
+				{% if app.user.groupeScenariste|length > 0 %}
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						Scénariste : groupes dont vous avez la charge
+					</div>
+					<div class="panel-body">
+						<div class="list-group">
+							{% for groupe in app.user.groupeScenariste %}
+								<a class="list-group-item" href="{{ path('groupe.detail', {'index': groupe.id}) }}">{{ groupe.nom }}</a>
+							{% endfor %}
+						</div>	
+					</div>
+				</div>
+				{%  endif %}
+			{% endif %}
+		</div>
+	</div>
+	
+{% endblock content %}

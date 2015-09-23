@@ -1,0 +1,34 @@
+{% extends "layout.twig" %}
+
+{% block title %}Places disponibles{% endblock %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path("groupe.list") }}">Liste des groupes</a></li>
+		<li class="active">Places ouvertes</li>
+	</ol>
+	
+	<div class="well bs-component">
+	<form class="form-horizontal" action="{{ path('groupe.place', {'index': groupe.id}) }}" method="POST">
+		<fieldset>
+			<legend>Places disponibles</legend>
+			
+			<div class="form-group">
+				<label class="col-sm-2 control-label">{{groupe.numero|default('?')}} - {{ groupe.nom }}</label>
+				<div class="col-sm-6">
+					<input class="form-control" name="place" type="number" value="{{ groupe.classeOpen|default(0) }}" />
+				</div>
+			</div>
+
+			<div class="form-group">
+				<div class="col-sm-8 col-sm-offset-2">
+					<input class="btn btn-primary" type="submit" value="Enregistrer" />
+				</div>
+			</div>
+		</fieldset>
+	</form>
+	</div>
+
+{% endblock content %}

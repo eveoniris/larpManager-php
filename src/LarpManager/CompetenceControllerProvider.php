@@ -32,8 +32,17 @@ class CompetenceControllerProvider implements ControllerProviderInterface
 		
 		$controllers->match('/','LarpManager\Controllers\CompetenceController::indexAction')
 			->bind("competence")
-			->method('GET');
+			->method('GET')
+			->before(function(Request $request) use ($app) {
+				if (!$app['security.authorization_checker']->isGranted('ROLE_REGLE')) {
+					throw new AccessDeniedException();
+				}
+			});
 		
+		$controllers->match('/list','LarpManager\Controllers\CompetenceController::listAction')
+			->bind("competence.joueur")
+			->method('GET');
+			
 		$controllers->match('/add','LarpManager\Controllers\CompetenceController::addAction')
 			->bind("competence.add")
 			->method('GET|POST')
