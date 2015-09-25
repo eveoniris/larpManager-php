@@ -85,7 +85,9 @@
 				<th>
 					Utilisateur
 				</th>
-				
+				<th>
+					Points d'expériences
+				</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -96,6 +98,9 @@
 					<td>{{ personnage.classe }}</td>
 					<td>{{ personnage.groupe }}</td>
 					<td>{{ personnage.participant }}</td>
+					<td>
+						<a href="{{ path('personnage.admin.xp', {'index': personnage.id}) }}">Points d'expériences</a>
+					</td>
 				</tr>
 			{% endfor %}
 		</tbody>

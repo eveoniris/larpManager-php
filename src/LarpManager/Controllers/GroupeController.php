@@ -199,7 +199,7 @@ class GroupeController
 			$xpAgeBonus = $personnage->getAge()->getBonus();
 			if ( $xpAgeBonus )
 			{
-				$joueur->addXp($xpAgeBonus);
+				$personnage->addXp($xpAgeBonus);
 				$historique = new \LarpManager\Entities\ExperienceGain();
 				$historique->setExplanation("Bonus lié à l'age");
 				$historique->setOperationDate(new \Datetime('NOW'));
@@ -215,7 +215,7 @@ class GroupeController
 	
 	
 			$app['session']->getFlashBag()->add('success','Votre personnage a été sauvegardé.');
-			return $app->redirect($app['url_generator']->generate('homepage',301));
+			return $app->redirect($app['url_generator']->generate('homepage'),301);
 		}
 	
 		return $app['twig']->render('groupe/personnage_add.twig', array(

@@ -2,11 +2,8 @@
 namespace LarpManager\Controllers;
 
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Silex\Application;
 use JasonGrimes\Paginator;
-use LarpManager\Form\PersonnageForm;
-use LarpManager\Form\PersonnageCompetenceForm;
 use LarpManager\Form\PersonnageReligionForm;
 use LarpManager\Form\PersonnageFindForm;
 
@@ -48,7 +45,6 @@ class PersonnageController
 			switch ($type){
 				case 'nom':
 					$criteria[] = "p.nom LIKE '%$value%'";
-					//$criteria[] = array('nom' => $value);
 					break;
 			}
 			
@@ -73,6 +69,54 @@ class PersonnageController
 				'form' => $form->createView(),
 		));
 	}
+	
+	/**
+	 * Affiche le détail d'un personnage (pour les orgas)
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function adminDetailAction(Request $request, Application $app)
+	{
+		$personnage = $request->attributes->get('personnage');
+		return $app['twig']->render('admin/personnage/detail.twig', array('personnage' => $personnage));
+	}
+	
+	/**
+	 * Gestion des points d'expérience d'un personnage (pour les orgas)
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function adminXpAction(Request $request, Application $app)
+	{
+		$personnage = $request->attributes->get('personnage');
+		return $app['twig']->render('admin/personnage/xp.twig', array('personnage' => $personnage));
+		
+	}
+	
+	/**
+	 * Ajout d'un personage (orga seulement)
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function adminAddAction(Request $request, Application $app)
+	{
+		
+	}
+	
+	/**
+	 * Modification d'un personnage (orga seulement)
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function adminUpdateAction(Request $request, Application $app)
+	{
+		$personnage = $request->attributes->get('personnage');
+	}
+			
+			
 		
 	/**
 	 * Affiche le détail d'un personnage
@@ -82,43 +126,10 @@ class PersonnageController
 	 */
 	public function detailAction(Request $request, Application $app)
 	{
-		$id = $request->get('index');
-				
-		$personnage = $app['orm.em']->find('\LarpManager\Entities\Personnage',$id);
-		
-		if ( $personnage )
-		{
-			return $app['twig']->render('personnage/detail.twig', array('personnage' => $personnage));
-		}
-		else
-		{
-			$app['session']->getFlashBag()->add('error', 'Le personnage n\'a pas été trouvé.');
-			return $app->redirect($app['url_generator']->generate('homepage'));
-		}
+		$personnage = $request->attributes->get('personnage');
+		return $app['twig']->render('personnage/detail.twig', array('personnage' => $personnage));
 	}
 	
-	/**
-	 * Affiche le détail d'un personnage (pour les orgas)
-	 *
-	 * @param Request $request
-	 * @param Application $app
-	 */
-	public function detailOrgaAction(Request $request, Application $app)
-	{
-		$id = $request->get('index');
-	
-		$personnage = $app['orm.em']->find('\LarpManager\Entities\Personnage',$id);
-	
-		if ( $personnage )
-		{
-			return $app['twig']->render('admin/personnage/detail.twig', array('personnage' => $personnage));
-		}
-		else
-		{
-			$app['session']->getFlashBag()->add('error', 'Le personnage n\'a pas été trouvé.');
-			return $app->redirect($app['url_generator']->generate('homepage'));
-		}
-	}
 	
 	/**
 	 * Ajoute une religion au personnage
@@ -128,9 +139,8 @@ class PersonnageController
 	 */
 	public function addReligionAction(Request $request, Application $app)
 	{
-		$id = $request->get('index');
+		$personnage = $request->attributes->get('personnage');
 		
-		$personnage = $app['orm.em']->find('\LarpManager\Entities\Personnage',$id);
 		$personnageReligion = new \LarpManager\Entities\PersonnageReligion();		
 		
 		$form = $app['form.factory']->createBuilder(new PersonnageReligionForm(), $personnageReligion)
@@ -164,9 +174,8 @@ class PersonnageController
 	 */
 	public function addCompetenceAction(Request $request, Application $app)
 	{
-		$id = $request->get('index');
+		$personnage = $request->attributes->get('personnage');
 		
-		$personnage = $app['orm.em']->find('\LarpManager\Entities\Personnage',$id);
 		$availableCompetences = $app['personnage.manager']->getAvailableCompetences($personnage);
 		
 		if ( $availableCompetences->count() == 0 )
@@ -235,71 +244,28 @@ class PersonnageController
 	}
 	
 	/**
-	 * Recherche d'un personnage
-	 *
+	 * Exporte la fiche d'un personnage
+	 * 
 	 * @param Request $request
 	 * @param Application $app
 	 */
-	public function searchAction(Request $request, Application $app)
+	public function exportAction(Request $request, Application $app)
 	{
-		$form = $app['form.factory']->createBuilder(new FindPersonnageForm(), array())
-			->add('submit','submit', array('label' => 'Rechercher'))
-			->getForm();
-	
-		$form->handleRequest($request);
-	
-		if ( $form->isValid() )
-		{
-			$data = $form->getData();
-				
-			$type = $data['type'];
-			$search = $data['search'];
-	
-			$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Personnage');
-				
-			$personnages = null;
-				
-			switch ($type)
-			{
-				case 'nom' :
-					$personnages = $repo->findByName($search);
-					break;
-				case 'surnom' :
-					$personnages = $repo->findByNickname($search);
-					break;
-				case 'numero' :
-					// TODO
-					break;
-			}
-				
-			if ( $personnages != null )
-			{
-				if ( $personnages->count() == 0 )
-				{
-					$app['session']->getFlashBag()->add('error', 'Le personnage n\'a pas été trouvé.');
-					return $app['twig']->render('personnage/search.twig', array(
-							'form' => $form->createView(),
-					));
-				}
-				else if ( $personnages->count() == 1 )
-				{
-					$app['session']->getFlashBag()->add('success', 'Le personnage a été trouvé.');
-					return $app->redirect($app['url_generator']->generate('personnage.detail', array('index'=> $personnages->first()->getId())));
-				}
-				else
-				{
-					$app['session']->getFlashBag()->add('success', 'Il y a plusieurs résultats à votre recherche.');
-					return $app['twig']->render('personnage/search_result.twig', array(
-							'personnages' => $personnages,
-					));
-				}
-			}
-				
-			$app['session']->getFlashBag()->add('error', 'Désolé, le personnage n\'a pas été trouvé.');
-		}
-	
-		return $app['twig']->render('personnage/search.twig', array(
-				'form' => $form->createView(),
-		));
+		$personnage = $request->attributes->get('personnage');
+		
+		$app['pdf.manager']->AddPage();
+		$app['pdf.manager']->SetFont('Arial','B',16);
+		$app['pdf.manager']->Cell(40,10,$personnage->getNom());
+		
+		header("Content-Type: application/pdf");
+		header("Content-Disposition: attachment; filename=".$personnage->getNom()."_".date("Ymd").".pdf");
+		header("Pragma: no-cache");
+		header("Expires: 0");
+		
+		$output = fopen("php://output", "w");
+		fputs($app['pdf.manager']->Output($personnage->getNom()."_".date("Ymd").".pdf",'I'));
+		fclose($output);
+		exit();
+		
 	}
 }

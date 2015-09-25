@@ -18,10 +18,11 @@ class CompetenceControllerProvider implements ControllerProviderInterface
 	/**
 	 * Initialise les routes pour les competences
 	 * Routes :
-	 * 	- competence
-	 * 	- competence.add
-	 *  - competence.update
-	 *  - competence.detail
+	 *  - competence.admin.list
+	 * 	- competence.list
+	 * 	- competence.admin.add
+	 *  - competence.admin.update
+	 *  - competence.admin.detail
 	 *
 	 * @param Application $app
 	 * @return Controllers $controllers
@@ -30,47 +31,42 @@ class CompetenceControllerProvider implements ControllerProviderInterface
 	{
 		$controllers = $app['controllers_factory'];
 		
+		/**
+		 * Vérifie que l'utilisateur dispose du role REGLE
+		 */
+		$mustBeOrga = function(Request $request) use ($app) {
+			if (!$app['security.authorization_checker']->isGranted('ROLE_REGLE')) {
+				throw new AccessDeniedException();
+			}
+		};
+		
+		
 		$controllers->match('/','LarpManager\Controllers\CompetenceController::indexAction')
 			->bind("competence")
 			->method('GET')
-			->before(function(Request $request) use ($app) {
-				if (!$app['security.authorization_checker']->isGranted('ROLE_REGLE')) {
-					throw new AccessDeniedException();
-				}
-			});
+			->before($mustBeOrga);
 		
 		$controllers->match('/list','LarpManager\Controllers\CompetenceController::listAction')
-			->bind("competence.joueur")
+			->bind("competence.list")
 			->method('GET');
 			
 		$controllers->match('/add','LarpManager\Controllers\CompetenceController::addAction')
 			->bind("competence.add")
 			->method('GET|POST')
-			->before(function(Request $request) use ($app) {
-				if (!$app['security.authorization_checker']->isGranted('ROLE_REGLE')) {
-					throw new AccessDeniedException();
-				}
-			});
+			->before($mustBeOrga);
 		
 		$controllers->match('/{index}/update','LarpManager\Controllers\CompetenceController::updateAction')
 			->assert('index', '\d+')
 			->bind("competence.update")
 			->method('GET|POST')
-			->before(function(Request $request) use ($app) {
-				if (!$app['security.authorization_checker']->isGranted('ROLE_REGLE')) {
-					throw new AccessDeniedException();
-				}
-			});
+			->before($mustBeOrga);
+		
 		
 		$controllers->match('/{index}','LarpManager\Controllers\CompetenceController::detailAction')
 			->assert('index', '\d+')
 			->bind("competence.detail")
 			->method('GET')
-			->before(function(Request $request) use ($app) {
-				if (!$app['security.authorization_checker']->isGranted('ROLE_REGLE')) {
-					throw new AccessDeniedException();
-				}
-			});
+			->before($mustBeOrga);
 			
 		return $controllers;
 	}

@@ -64,6 +64,11 @@
 				<p class="list-group-item-text"><a href="{{ path('groupeSecondaire.list') }}">Liste des groupes secondaires</a></p>
 				
 			</div>
+			<div class="list-group-item">
+				<h6>Téléchargement</h6>
+				<a href="{{ path('personnage.export', {'index':personnage.id}) }}">Télécharger le pdf</a>
+				
+			</div>
 		</div>
 	</div>
 </div>

@@ -18,12 +18,7 @@
 					'form':findJoueurForm,
 					'action': path('admin.joueur.search'),
 					'legend': 'Rechercher un joueur'}) }}
-					
-			{{ include("homepage/fragment/find_personnage.twig",{
-					'form':findPersonnageForm,
-					'action': path('personnage.search'),
-					'legend': 'Rechercher un personnage'}) }}
-			
+								
 			{{ include("homepage/fragment/find_group.twig",{
 					'form':findGroupForm,
 					'action': path('groupe.search'),

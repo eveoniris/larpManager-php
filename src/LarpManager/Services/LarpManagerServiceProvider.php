@@ -9,6 +9,7 @@ use Symfony\Component\Security\Core\Authorization\Voter\RoleHierarchyVoter;
 use LarpManager\Twig\LarpManagerExtension;
 use LarpManager\Services\ForumRightManager;
 use LarpManager\Services\LarpManagerVoter;
+use LarpManager\Services\fpdf\FPDF;
 
 /**
  * LarpManager\LarpManagerServiceProvider
@@ -46,6 +47,13 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 		$app['forum.manager'] = $app->share(function($app) {
 			$forumRightManager = new ForumRightManager($app);
 			return $forumRightManager;
+		});
+		
+		// fpdf
+		$app['pdf.manager'] = $app->share(function($app) {
+			$fpdf = new FPDF();
+			$fpdf->FPDF();
+			return $fpdf;
 		});
 	}
 

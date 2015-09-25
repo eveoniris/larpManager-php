@@ -43,5 +43,16 @@ class Personnage extends BasePersonnage
 	{
 		return $this->getSecondaryGroupRelatedByPersonnageIds();
 	}
+	
+	/**
+	 * Ajoute des points d'experience à un personnage
+	 *  
+	 * @param integer $xp
+	 */
+	public function addXp($xp)
+	{
+		$this->setXp($this->getXp() + $xp);
+		return $this;
+	}
 				
 }

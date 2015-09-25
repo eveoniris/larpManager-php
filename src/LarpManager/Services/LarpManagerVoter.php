@@ -6,6 +6,9 @@ use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\RoleHierarchyVoter;
 
+use LarpManager\Entities\User;
+use LarpManager\Entities\Personnage;
+
 /**
  * LarpManager\LarpManagerVoter
  * @author kevin
@@ -102,8 +105,8 @@ class LarpManagerVoter implements VoterInterface
 				return $this->isNotRegistered($user) ? VoterInterface::ACCESS_GRANTED : VoterInterface::ACCESS_DENIED;
 			}
 			if ($attribute == 'OWN_PERSONNAGE') {
-				$personnageId = $object;
-				return $this->isOwnerOfPersonnage($user, $personnageId) ? VoterInterface::ACCESS_GRANTED : VoterInterface::ACCESS_DENIED;
+				$personnage = $object;
+				return $this->isOwnerOfPersonnage($user, $personnage) ? VoterInterface::ACCESS_GRANTED : VoterInterface::ACCESS_DENIED;
 			}
 			if ($attribute == 'TOPIC_RIGHT') {
 				$topic = $object;
@@ -301,13 +304,13 @@ class LarpManagerVoter implements VoterInterface
 	 * Test si un utilisateur posséde bien le personnage
 	 *
 	 * @param unknown $user
-	 * @param unknown $personnageId
+	 * @param Personnage $personnage
 	 */
-	protected function isOwnerOfPersonnage($user, $personnageId)
+	protected function isOwnerOfPersonnage(User $user, Personnage $personnage)
 	{
 		if ( $user->getPersonnage() )
 		{
-			if ( $user->getPersonnage()->getId() == $personnageId ) return true;
+			if ( $user->getPersonnage() == $personnage ) return true;
 		}
 		return false;
 	}

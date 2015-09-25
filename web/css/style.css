@@ -1,3 +1,17 @@
+.row [class*="col-"]{
+  margin-bottom: -99999px;
+  padding-bottom: 99999px;
+}
+
+.row{
+  overflow: hidden; 
+}
+
+.fixed-height {
+	height: 400px;
+	overflow-y: auto;
+}
+
 html {
   position: relative;
   min-height: 100%;	
