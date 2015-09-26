@@ -51,6 +51,15 @@ class Territoire extends BaseTerritoire
 	protected $langues;
 	
 	/**
+	 * @ManyToMany(targetEntity="Religion", inversedBy="territoireSecondaires")
+	 * @JoinTable(name="territoire_religion",
+	 *     joinColumns={@JoinColumn(name="territoire_id", referencedColumnName="id")},
+	 *     inverseJoinColumns={@JoinColumn(name="religion_id", referencedColumnName="id")}
+	 * )
+	 */
+	protected $religions;
+	
+	/**
 	 * Constructeur
 	 */
 	public function __construct()
@@ -58,6 +67,7 @@ class Territoire extends BaseTerritoire
 		$this->importations = new ArrayCollection();
 		$this->exportations = new ArrayCollection();
 		$this->langues = new ArrayCollection();
+		$this->religions = new ArrayCollection();
 		parent::__construct();
 	}
 	
@@ -98,6 +108,26 @@ class Territoire extends BaseTerritoire
 		return $this->setLangue($langue);
 	}
 	
+	/**
+	 * Fourni la religion principale du territoire
+	 */
+	public function getReligionPrincipale()
+	{
+		return $this->getReligion();
+	}
+	
+	/**
+	 * Défini la religion principale d'un territoire
+	 * @param Religion $religion
+	 */
+	public function setReligionPrincipale(Religion $religion)
+	{
+		return $this->setReligion($religion);
+	}
+	
+	/**
+	 * Fourni le nom complet d'un territoire
+	 */
 	public function getNomTree()
 	{
 		$string = $this->getNom();
@@ -223,5 +253,43 @@ class Territoire extends BaseTerritoire
 	public function getLangues()
 	{
 		return $this->langues;
+	}
+	
+	/**
+	 * Ajoute une religion dans la collection de religion
+	 *
+	 * @param \LarpManager\Entities\Religion $religion
+	 * @return \LarpManager\Entities\Territoire
+	 */
+	public function addReligion(Religion $religion)
+	{
+		$religion->addTerritoireSecondaire($this);
+		$this->religions[] = $religion;
+	
+		return $this;
+	}
+	
+	/**
+	 * Retire une religion de la collection de religion
+	 *
+	 * @param \LarpManager\Entities\Religion $religion
+	 * @return \LarpManager\Entities\Territoire
+	 */
+	public function removeReligion(Religion $religion)
+	{
+		$religion->removeTerritoireSecondaire($this);
+		$this->$religions->removeElement($religion);
+	
+		return $this;
+	}
+	
+	/**
+	 * Fourni la collection de religions
+	 *
+	 * @return \Doctrine\Common\Collections\Collection
+	 */
+	public function getReligions()
+	{
+		return $this->religions;
 	}
 }

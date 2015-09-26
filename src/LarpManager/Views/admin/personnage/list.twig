@@ -27,8 +27,8 @@
 	   	<li class="list-group-item">
 	   		<div class="list-group-item"><h6>Rechercher</h6></div>
 	   		
-	   		<form class="form-inline" action="{{ path('personnage.admin.list') }}" method="POST" {{ form_enctype(form) }}>
-				{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+	   		<form class="form" action="{{ path('personnage.admin.list') }}" method="POST" {{ form_enctype(form) }}>
+				{% form_theme form 'Form/bootstrap_3_horizontal_layout.html.twig' %}
 				{{ form(form) }}
 	   		</form>
 	   		<a href="{{ path('personnage.admin.list') }}">Reset</a>
@@ -93,13 +93,13 @@
 		<tbody>
 			{% for personnage in personnages %}
 				<tr>
-					<td><a href="{{ path('personnage.admin.update', {'index':personnage.id}) }}">{{ personnage.id }}</td>
-					<td><a href="{{ path('personnage.admin.detail', {'index':personnage.id}) }}">{{ personnage.nom }}</td>
+					<td><a href="{{ path('personnage.admin.update', {'personnage':personnage.id}) }}">{{ personnage.id }}</td>
+					<td><a href="{{ path('personnage.admin.detail', {'personnage':personnage.id}) }}">{{ personnage.nom }}</td>
 					<td>{{ personnage.classe }}</td>
 					<td>{{ personnage.groupe }}</td>
 					<td>{{ personnage.participant }}</td>
 					<td>
-						<a href="{{ path('personnage.admin.xp', {'index': personnage.id}) }}">Points d'expériences</a>
+						<a href="{{ path('personnage.admin.xp', {'personnage': personnage.id}) }}">Points d'expériences</a>
 					</td>
 				</tr>
 			{% endfor %}

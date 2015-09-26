@@ -55,6 +55,16 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 			$fpdf->FPDF();
 			return $fpdf;
 		});
+		
+		// personnage converter
+		$app['converter.personnage'] = $app->share(function($app) {
+			return new PersonnageConverter($app['orm.em']);
+		});
+		
+		// personnage converter
+		$app['converter.user'] = $app->share(function($app) {
+			return new UserConverter($app['orm.em']);
+		});
 	}
 
 	/**

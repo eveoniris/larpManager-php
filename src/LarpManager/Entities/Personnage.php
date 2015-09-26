@@ -27,6 +27,11 @@ class Personnage extends BasePersonnage
 		$this->setXp(0);
 	}
 	
+	public function __toString()
+	{
+		return $this->getNom();
+	}
+	
 	
 	/**
 	 * Fourni l'identité complete d'un personnage

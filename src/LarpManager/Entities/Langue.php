@@ -30,6 +30,7 @@ class Langue extends BaseLangue
 		$this->territoireSecondaires = new ArrayCollection();
 		parent::__construct();
 	}
+	
 	public function __toString()
 	{
 		return $this->getLabel();

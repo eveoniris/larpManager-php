@@ -38,9 +38,18 @@ class UserControllerProvider implements ControllerProviderInterface
 	{
 		$controllers = $app['controllers_factory'];
 		
+		/**
+		 * Vérifie que l'utilisateur dispose du role ADMIN
+		 */
+		$mustBeAdmin = function(Request $request) use ($app) {
+			if (!$app['security.authorization_checker']->isGranted('ROLE_ADMIN')) {
+				throw new AccessDeniedException();
+			}
+		};
+		
 		$controllers->get('/', 'LarpManager\Controllers\UserController::viewSelfAction')
-		->bind('user')
-		->before(function(Request $request) use ($app) {
+			->bind('user')
+			->before(function(Request $request) use ($app) {
 			// Require login. This should never actually cause access to be denied,
 			// but it causes a login form to be rendered if the viewer is not logged in.
 			if (!$app['user']) {
@@ -76,15 +85,21 @@ class UserControllerProvider implements ControllerProviderInterface
 					throw new AccessDeniedException();
 				}
 			});
+		
+		/**
+		 * Affiche la liste des utilisateurs (admin uniquement)
+		 */
+		$controllers->match('/admin/list', 'LarpManager\Controllers\UserController::adminListAction')
+			->bind('user.admin.list')
+			->method('GET|POST')
+			->before($mustBeAdmin);
 			
-		$controllers->match('/list', 'LarpManager\Controllers\UserController::listAction')
-			->bind('user.list')
+		$controllers->match('/admin/{user}/etatCivil', 'LarpManager\Controllers\UserController::adminEtatCivilAction')
+			->assert('id', '\d+')
+			->bind('user.admin.etatCivil')
 			->method('GET')
-			->before(function(Request $request) use ($app) {
-				if (!$app['security.authorization_checker']->isGranted('ROLE_ADMIN')) {
-					throw new AccessDeniedException();
-				}				
-			});
+			->convert('user', 'converter.user:convert')
+			->before($mustBeAdmin);
 		
 		$controllers->match('/right', 'LarpManager\Controllers\UserController::rightAction')
 			->bind('user.right')

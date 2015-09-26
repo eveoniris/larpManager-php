@@ -43,30 +43,12 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 				throw new AccessDeniedException();
 			}
 		};
-		
-		/**
-		 * vérifie que la ressource demandée existe
-		 * La ressource est stockée dans la variable $request pour éviter son rechargement
-		 * lors de chaque contrôle.
-		 * De ce fait, cette fonction *doit* être appellé *avant* la fonction $mustOwn
-		 */
-		$mustExist = function(Request $request) use ($app) {
-			$id = $request->get('index');
-			$personnage = $app['orm.em']->find('\LarpManager\Entities\Personnage',$id);
-			if ( ! $personnage )
-			{
-				$app['session']->getFlashBag()->add('error', 'Le personnage n\'a pas été trouvé.');
-				return $app->redirect($app['url_generator']->generate('homepage'));
-			}
-			$request->attributes->set('personnage',$personnage);
-		};
-		
+				
 		/**
 		 * Vérifie que l'utilisateur posséde la ressource demandée
-		 * Cette fonction *doit* être appellé *après* la fonction $mustExist
 		 */
 		$mustOwn = function(Request $request) use ($app) {
-			$personnage = $request->attributes->get('personnage');
+			$personnage = $request->get('personnage');
 			if ( ! $app['security.authorization_checker']->isGranted('OWN_PERSONNAGE', $personnage)) {
 				throw new AccessDeniedException();
 			}
@@ -83,20 +65,23 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 		/**
 		 * Detail d'un personnage (orga)
 		 */
-		$controllers->match('/admin/{index}/detail','LarpManager\Controllers\PersonnageController::adminDetailAction')
+		$controllers->match('/admin/{personnage}/detail','LarpManager\Controllers\PersonnageController::adminDetailAction')
+			->assert('personnage', '\d+')
 			->bind("personnage.admin.detail")
 			->method('GET')
-			->before($mustBeOrga)
-			->before($mustExist, Application::LATE_EVENT);
+			->convert('personnage', 'converter.personnage:convert')
+			->before($mustBeOrga);
 			
 		/**
 		 * Gestion des points d'expériences (orga)
 		 */
-		$controllers->match('/admin/{index}/xp','LarpManager\Controllers\PersonnageController::adminXpAction')
+		$controllers->match('/admin/{personnage}/xp','LarpManager\Controllers\PersonnageController::adminXpAction')
+			->assert('personnage', '\d+')
 			->bind("personnage.admin.xp")
 			->method('GET|POST')
-			->before($mustBeOrga)
-			->before($mustExist, Application::LATE_EVENT);
+			->convert('personnage', 'converter.personnage:convert')
+			->before($mustBeOrga);
+			
 		
 		/**
 		 * Ajout d'un personnage (orga)
@@ -109,55 +94,56 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 		/**
 		 * Modification d'un personnage (orga)
 		 */
-		$controllers->match('/admin/{index}/update','LarpManager\Controllers\PersonnageController::adminUpdateAction')
+		$controllers->match('/admin/{personnage}/update','LarpManager\Controllers\PersonnageController::adminUpdateAction')
+			->assert('personnage', '\d+')
 			->bind("personnage.admin.update")
 			->method('GET|POST')
-			->before($mustBeOrga)
-			->before($mustExist, Application::LATE_EVENT);
-		
+			->convert('personnage', 'converter.personnage:convert')
+			->before($mustBeOrga);
+
 		/**
 		 * Détail d'un personnage
 		 * Accessible uniquement au proprietaire du personnage
 		 */
-		$controllers->match('/{index}/detail','LarpManager\Controllers\PersonnageController::detailAction')
-			->assert('index', '\d+')
+		$controllers->match('/{personnage}/detail','LarpManager\Controllers\PersonnageController::detailAction')
+			->assert('personnage', '\d+')
 			->bind("personnage.detail")
 			->method('GET')
-			->before($mustExist, Application::EARLY_EVENT)
-			->before($mustOwn, Application::LATE_EVENT);
+			->convert('personnage', 'converter.personnage:convert')
+			->before($mustOwn);
 		
 		/**
 		 * Export du personnage
 		 * Accessible uniquement au proprietaire du personnage
 		 */
-		$controllers->match('/{index}/export','LarpManager\Controllers\PersonnageController::exportAction')
-			->assert('index', '\d+')
+		$controllers->match('/{personnage}/export','LarpManager\Controllers\PersonnageController::exportAction')
+			->assert('personnage', '\d+')
 			->bind("personnage.export")
 			->method('GET')
-			->before($mustExist, Application::EARLY_EVENT)
-			->before($mustOwn, Application::LATE_EVENT);			
+			->convert('personnage', 'converter.personnage:convert')
+			->before($mustOwn);			
 		
 		/**
 		 * Ajout d'une compétence au personnage
 		 * Accessible uniquement au proprietaire du personnage
 		 */
-		$controllers->match('/{index}/competence/add','LarpManager\Controllers\PersonnageController::addCompetenceAction')
-			->assert('index', '\d+')
+		$controllers->match('/{personnage}/competence/add','LarpManager\Controllers\PersonnageController::addCompetenceAction')
+			->assert('personnage', '\d+')
 			->bind("personnage.competence.add")
 			->method('GET|POST')
-			->before($mustExist, Application::EARLY_EVENT)
-			->before($mustOwn, Application::LATE_EVENT);
+			->convert('personnage', 'converter.personnage:convert')
+			->before($mustOwn);
 			
 		/**
 		 * Choix d'une religion
 		 * Accessible uniquement au proprietaire du personnage
 		 */
-		$controllers->match('/{index}/religion/add','LarpManager\Controllers\PersonnageController::addReligionAction')
-			->assert('index', '\d+')
+		$controllers->match('/{personnage}/religion/add','LarpManager\Controllers\PersonnageController::addReligionAction')
+			->assert('personnage', '\d+')
 			->bind("personnage.religion.add")
 			->method('GET|POST')
-			->before($mustExist, Application::EARLY_EVENT)
-			->before($mustOwn, Application::LATE_EVENT);
+			->convert('personnage', 'converter.personnage:convert')
+			->before($mustOwn);
 					
 		return $controllers;
 	}

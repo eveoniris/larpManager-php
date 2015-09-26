@@ -89,25 +89,11 @@ class HomepageController
 	 */
 	public function orgaIndexAction(Request $request, Application $app)
 	{
-		$findJoueurForm = $app['form.factory']->createBuilder(new FindJoueurForm(), array())
-			->add('submit','submit', array('label' => 'Rechercher'))
-			->getForm();
-		
-		$findGroupForm = $app['form.factory']->createBuilder(new FindGroupForm(), array())
-			->add('submit','submit', array('label' => 'Rechercher'))
-			->getForm();
-		
-		$findPersonnageForm = $app['form.factory']->createBuilder(new FindPersonnageForm(), array())
-			->add('submit','submit', array('label' => 'Rechercher'))
-			->getForm();
 		
 		$repoAnnonce = $app['orm.em']->getRepository('LarpManager\Entities\Annonce');
 		$annonces = $repoAnnonce->findBy(array('archive' => false));
 		
 		return $app['twig']->render('homepage/orga.twig', array(
-				'findJoueurForm' => $findJoueurForm->createView(),
-				'findGroupForm' => $findGroupForm->createView(),
-				'findPersonnageForm' => $findPersonnageForm->createView(),
 				'annonces' => $annonces,
 		));
 	}

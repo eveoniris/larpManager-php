@@ -7,6 +7,7 @@ use JasonGrimes\Paginator;
 use LarpManager\Form\GroupeSecondaireForm;
 use LarpManager\Form\GroupeSecondairePostulerForm;
 use LarpManager\Form\PostulantReponseForm;
+use LarpManager\Form\SecondaryGroupFindForm;
 
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
@@ -32,6 +33,10 @@ class GroupeSecondaireController
 		$page = (int)($request->get('page') ?: 1);
 		$offset = ($page - 1) * $limit;
 		
+		$form = $app['form.factory']->createBuilder(new SecondaryGroupFindForm())
+			->add('find','submit', array('label' => 'Rechercher'))
+			->getForm();
+		
 		$criteria = array();
 		
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\SecondaryGroup');
@@ -50,6 +55,7 @@ class GroupeSecondaireController
 		return $app['twig']->render('admin/groupeSecondaire/list.twig', array(
 				'groupeSecondaires' => $groupeSecondaires,
 				'paginator' => $paginator,
+				'form' => $form->createView(),
 		));
 	}
 	

@@ -63,6 +63,41 @@ class TerritoireForm extends AbstractType
 					'label' => 'Niveau technologique',
 					'required' => false,
 				))
+				->add('type_racial','textarea', array(
+						'label' => 'Type racial',
+						'required' => false,
+						'attr' => array('rows' => 5),
+				))
+				->add('inspiration','textarea', array(
+						'label' => 'Inspiration',
+						'required' => false,
+						'attr' => array('rows' => 5),
+				))
+				->add('armes_predilection','textarea', array(
+						'label' => 'Armes de prédilection',
+						'required' => false,
+						'attr' => array('rows' => 5),
+				))
+				->add('vetements','textarea', array(
+						'label' => 'Vetements',
+						'required' => false,
+						'attr' => array('rows' => 5),
+				))
+				->add('noms_masculin','textarea', array(
+						'label' => 'Noms masculins',
+						'required' => false,
+						'attr' => array('rows' => 5),
+				))
+				->add('noms_feminin','textarea', array(
+						'label' => 'Noms féminins',
+						'required' => false,
+						'attr' => array('rows' => 5),
+				))
+				->add('frontieres','textarea', array(
+						'label' => 'Frontières',
+						'required' => false,
+						'attr' => array('rows' => 5),
+				))
 				->add('importations','entity', array(
 					'required' => false,
 					'label' => 'Importations',
@@ -93,6 +128,23 @@ class TerritoireForm extends AbstractType
 					'required' => false,
 					'label' => 'Langues parlées (selectionnez aussi la langue principale)',
 					'class' => 'LarpManager\Entities\Langue',
+					'multiple' => true,
+					'expanded' => true,
+					'mapped' => true,
+					'property' => 'label',
+				))
+				->add('religionPrincipale','entity', array(
+					'required' => false,
+					'label' => 'Religion dominante',
+					'class' => 'LarpManager\Entities\Religion',
+					'multiple' => false,
+					'mapped' => true,
+					'property' => 'label',
+				))
+				->add('religions','entity', array(
+					'required' => false,
+					'label' => 'Religions secondaires',
+					'class' => 'LarpManager\Entities\Religion',
 					'multiple' => true,
 					'expanded' => true,
 					'mapped' => true,

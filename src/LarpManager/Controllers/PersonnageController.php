@@ -6,6 +6,7 @@ use Silex\Application;
 use JasonGrimes\Paginator;
 use LarpManager\Form\PersonnageReligionForm;
 use LarpManager\Form\PersonnageFindForm;
+use LarpManager\Form\PersonnageForm;
 
 /**
  * LarpManager\Controllers\PersonnageController
@@ -47,7 +48,6 @@ class PersonnageController
 					$criteria[] = "p.nom LIKE '%$value%'";
 					break;
 			}
-			
 		}
 		
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Personnage');
@@ -78,7 +78,7 @@ class PersonnageController
 	 */
 	public function adminDetailAction(Request $request, Application $app)
 	{
-		$personnage = $request->attributes->get('personnage');
+		$personnage = $request->get('personnage');
 		return $app['twig']->render('admin/personnage/detail.twig', array('personnage' => $personnage));
 	}
 	
@@ -89,7 +89,7 @@ class PersonnageController
 	 */
 	public function adminXpAction(Request $request, Application $app)
 	{
-		$personnage = $request->attributes->get('personnage');
+		$personnage = $request->get('personnage');
 		return $app['twig']->render('admin/personnage/xp.twig', array('personnage' => $personnage));
 		
 	}
@@ -102,7 +102,21 @@ class PersonnageController
 	 */
 	public function adminAddAction(Request $request, Application $app)
 	{
+		$personnage = new \LarpManager\Entities\Personnage();
 		
+		$form = $app['form.factory']->createBuilder(new PersonnageForm(), $personnage)
+			->add('classe','entity', array(
+					'label' =>  'Classes disponibles',
+					'property' => 'label',
+					'class' => 'LarpManager\Entities\Classe',
+			))
+			->add('save','submit', array('label' => 'Sauvegarder'))
+			->add('delete','submit', array('label' => 'Supprimer'))
+			->getForm();
+		
+		return $app['twig']->render('admin/personnage/add.twig', array(
+				'form' => $form->createView(),
+		));
 	}
 	
 	/**
@@ -113,7 +127,22 @@ class PersonnageController
 	 */
 	public function adminUpdateAction(Request $request, Application $app)
 	{
-		$personnage = $request->attributes->get('personnage');
+		$personnage = $request->get('personnage');
+		
+		$form = $app['form.factory']->createBuilder(new PersonnageForm(), $personnage)
+			->add('classe','entity', array(
+					'label' =>  'Classes disponibles',
+					'property' => 'label',
+					'class' => 'LarpManager\Entities\Classe',
+			))
+			->add('save','submit', array('label' => 'Sauvegarder'))
+			->add('delete','submit', array('label' => 'Supprimer'))			
+			->getForm();
+		
+		return $app['twig']->render('admin/personnage/update.twig', array(
+				'form' => $form->createView(),
+				'personnage' => $personnage
+		));
 	}
 			
 			
@@ -126,7 +155,7 @@ class PersonnageController
 	 */
 	public function detailAction(Request $request, Application $app)
 	{
-		$personnage = $request->attributes->get('personnage');
+		$personnage = $request->get('personnage');
 		return $app['twig']->render('personnage/detail.twig', array('personnage' => $personnage));
 	}
 	
@@ -139,7 +168,7 @@ class PersonnageController
 	 */
 	public function addReligionAction(Request $request, Application $app)
 	{
-		$personnage = $request->attributes->get('personnage');
+		$personnage = $request->get('personnage');
 		
 		$personnageReligion = new \LarpManager\Entities\PersonnageReligion();		
 		
@@ -174,7 +203,7 @@ class PersonnageController
 	 */
 	public function addCompetenceAction(Request $request, Application $app)
 	{
-		$personnage = $request->attributes->get('personnage');
+		$personnage = $request->get('personnage');
 		
 		$availableCompetences = $app['personnage.manager']->getAvailableCompetences($personnage);
 		
@@ -251,7 +280,7 @@ class PersonnageController
 	 */
 	public function exportAction(Request $request, Application $app)
 	{
-		$personnage = $request->attributes->get('personnage');
+		$personnage = $request->get('personnage');
 		
 		$app['pdf.manager']->AddPage();
 		$app['pdf.manager']->SetFont('Arial','B',16);

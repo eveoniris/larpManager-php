@@ -21,6 +21,15 @@
 			
 			    Montre <strong>{{ paginator.currentPageFirstItem }} - {{ paginator.currentPageLastItem }}</strong>.
 			</li>
+			<li class="list-group-item">
+		   		<div class="list-group-item"><h6>Rechercher</h6></div>
+		   		
+		   		<form class="form" action="{{ path('user.admin.list') }}" method="POST" {{ form_enctype(form) }}>
+					{% form_theme form 'Form/bootstrap_3_horizontal_layout.html.twig' %}
+					{{ form(form) }}
+		   		</form>
+		   		<a href="{{ path('user.admin.list') }}">Reset</a>
+		   	</li>
 	    </ul>
 	    
 	    {{ paginator|raw }}
@@ -31,9 +40,9 @@
 				
 					<th>
 						{% if app.request.get('order_dir') == 'ASC' and app.request.get('order_by') == 'id' %}
-							<a href="{{ path('user.list', {'order_by': 'id', 'order_dir': 'DESC'}) }}">
+							<a href="{{ path('user.admin.list', {'order_by': 'id', 'order_dir': 'DESC'}) }}">
 						{%  else %}
-							<a href="{{ path('user.list', {'order_by': 'id', 'order_dir': 'ASC'}) }}">
+							<a href="{{ path('user.admin.list', {'order_by': 'id', 'order_dir': 'ASC'}) }}">
 						{% endif %}
 							#	
 						{% if app.request.get('order_by') == 'id'  %}
@@ -50,9 +59,9 @@
 					
 					<th>
 						{% if app.request.get('order_dir') == 'ASC' and app.request.get('order_by') == 'username'%}
-							<a href="{{ path('user.list', {'order_by': 'username', 'order_dir': 'DESC'}) }}">
+							<a href="{{ path('user.admin.list', {'order_by': 'username', 'order_dir': 'DESC'}) }}">
 						{% else %}
-							<a href="{{ path('user.list', {'order_by': 'username', 'order_dir': 'ASC'}) }}">
+							<a href="{{ path('user.admin.list', {'order_by': 'username', 'order_dir': 'ASC'}) }}">
 						{% endif %}
 							Username
 						{% if app.request.get('order_by') == 'username'  %}
@@ -69,9 +78,9 @@
 					
 					<th>
 						{% if app.request.get('order_dir') == 'ASC' and app.request.get('order_by') == 'email' %}
-							<a href="{{ path('user.list', {'order_by': 'email', 'order_dir': 'DESC'}) }}">
+							<a href="{{ path('user.admin.list', {'order_by': 'email', 'order_dir': 'DESC'}) }}">
 						{% else %}
-							<a href="{{ path('user.list', {'order_by': 'email', 'order_dir': 'ASC'}) }}">
+							<a href="{{ path('user.admin.list', {'order_by': 'email', 'order_dir': 'ASC'}) }}">
 						{% endif %}
 							Email
 						{% if app.request.get('order_by') == 'email' %}
@@ -95,7 +104,7 @@
 					<td><a href="{{ path('user.edit',{'id':user.id}) }}">{{ user.id }}</a></td>
 					<td><a href="{{ path('user.view',{'id':user.id}) }}">{{ user.username }}</td>
 					<td>{{ user.email }}</td>
-					<td>{%  if not user.etatCivil %}<span class="text-warning">Etat-civil non renseigné</span>{% else %}<span class="text-success">Etat-civil rensiegné</span>{% endif %}</td>
+					<td>{%  if not user.etatCivil %}<span class="text-warning">Etat-civil non renseigné</span>{% else %}<a href=" {{ path('user.admin.etatCivil', {'user':user.id}) }}">Voir l'etat-civil</a>{% endif %}</td>
 					<td>{{ user.roles|join(', ') }}</td>
 				</tr>
 			{% endfor %}

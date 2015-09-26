@@ -66,7 +66,7 @@ body {
 /**
  * Ajoute un asterix rouge si le champ est obligatoire
  */        
-.control-label.required:after {
+.form .control-label.required:after {
 	font-family: 'FontAwesome';
 	font-weight: normal;
 	content: "\f069";

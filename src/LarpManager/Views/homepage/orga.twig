@@ -13,17 +13,7 @@
 					Bienvenue {{ app.user.name }}
 				</h4>
 			</div>
-			
-			{{ include("homepage/fragment/find_joueur.twig",{
-					'form':findJoueurForm,
-					'action': path('admin.joueur.search'),
-					'legend': 'Rechercher un joueur'}) }}
-								
-			{{ include("homepage/fragment/find_group.twig",{
-					'form':findGroupForm,
-					'action': path('groupe.search'),
-					'legend': 'Rechercher un groupe'}) }}
-			
+						
 			{% if is_granted('ROLE_MODERATOR', app.user) %}
 				{{ include("homepage/fragment/new_posts.twig") }}
 			{% endif %}

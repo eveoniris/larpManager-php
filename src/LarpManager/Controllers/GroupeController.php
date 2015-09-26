@@ -8,7 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use JasonGrimes\Paginator;
 use LarpManager\Form\GroupeForm;
 use LarpManager\Form\PersonnageForm;
-use LarpManager\Form\FindGroupeForm;
+use LarpManager\Form\GroupFindForm;
 
 
 
@@ -26,13 +26,17 @@ class GroupeController
 	 * @param Request $request
 	 * @param Application $app
 	 */
-	public function listAction(Request $request, Application $app)
+	public function adminListAction(Request $request, Application $app)
 	{
 		$order_by = $request->get('order_by') ?: 'numero';
 		$order_dir = $request->get('order_dir') == 'DESC' ? 'DESC' : 'ASC';
 		$limit = (int)($request->get('limit') ?: 50);
 		$page = (int)($request->get('page') ?: 1);
 		$offset = ($page - 1) * $limit;
+		
+		$form = $app['form.factory']->createBuilder(new GroupFindForm())
+			->add('find','submit', array('label' => 'Rechercher'))
+			->getForm();
 		
 		$criteria = array();
 		
@@ -46,10 +50,11 @@ class GroupeController
 		$numResults = $repo->findCount($criteria);
 		
 		$paginator = new Paginator($numResults, $limit, $page,
-				$app['url_generator']->generate('groupe.list') . '?page=(:num)&limit=' . $limit . '&order_by=' . $order_by . '&order_dir=' . $order_dir
+				$app['url_generator']->generate('groupe.admin.list') . '?page=(:num)&limit=' . $limit . '&order_by=' . $order_by . '&order_dir=' . $order_dir
 				);
 		
 		return $app['twig']->render('admin/groupe/list.twig', array(
+				'form' => $form->createView(),
 				'groupes' => $groupes,
 				'paginator' => $paginator,
 		));

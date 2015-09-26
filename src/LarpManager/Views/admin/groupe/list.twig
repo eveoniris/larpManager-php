@@ -24,6 +24,15 @@
 		   	<li class="list-group-item">
 		   		<a href="{{ path('groupe.add') }}">Ajouter un groupe</a>
 		   	</li>
+		   	<li class="list-group-item">
+		   		<div class="list-group-item"><h6>Rechercher</h6></div>
+		   		
+		   		<form class="form" action="{{ path('groupe.admin.list') }}" method="POST" {{ form_enctype(form) }}>
+					{% form_theme form 'Form/bootstrap_3_horizontal_layout.html.twig' %}
+					{{ form(form) }}
+		   		</form>
+		   		<a href="{{ path('groupe.admin.list') }}">Reset</a>
+		   	</li>
 		</ul>
 		 
 		{{ paginator|raw }}
@@ -33,9 +42,9 @@
 				<tr>
 					<th>
 						{% if app.request.get('order_dir') == 'ASC' and app.request.get('order_by') == 'id' %}
-							<a href="{{ path('groupe.list', {'order_by': 'id', 'order_dir': 'DESC'}) }}">
+							<a href="{{ path('groupe.admin.list', {'order_by': 'id', 'order_dir': 'DESC'}) }}">
 						{%  else %}
-							<a href="{{ path('groupe.list', {'order_by': 'id', 'order_dir': 'ASC'}) }}">
+							<a href="{{ path('groupe.admin.list', {'order_by': 'id', 'order_dir': 'ASC'}) }}">
 						{% endif %}
 							#	
 						{% if app.request.get('order_by') == 'id'  %}
@@ -52,9 +61,9 @@
 
 					<th>
 						{% if app.request.get('order_dir') == 'ASC' and app.request.get('order_by') == 'nom' %}
-							<a href="{{ path('groupe.list', {'order_by': 'nom', 'order_dir': 'DESC'}) }}">
+							<a href="{{ path('groupe.admin.list', {'order_by': 'nom', 'order_dir': 'DESC'}) }}">
 						{%  else %}
-							<a href="{{ path('groupe.list', {'order_by': 'nom', 'order_dir': 'ASC'}) }}">
+							<a href="{{ path('groupe.admin.list', {'order_by': 'nom', 'order_dir': 'ASC'}) }}">
 						{% endif %}
 							Nom
 						{% if app.request.get('order_by') == 'nom'  %}
@@ -70,9 +79,9 @@
 					</th>
 					<th>
 						{% if app.request.get('order_dir') == 'ASC' and app.request.get('order_by') == 'numero' %}
-							<a href="{{ path('groupe.list', {'order_by': 'numero', 'order_dir': 'DESC'}) }}">
+							<a href="{{ path('groupe.admin.list', {'order_by': 'numero', 'order_dir': 'DESC'}) }}">
 						{%  else %}
-							<a href="{{ path('groupe.list', {'order_by': 'numero', 'order_dir': 'ASC'}) }}">
+							<a href="{{ path('groupe.admin.list', {'order_by': 'numero', 'order_dir': 'ASC'}) }}">
 						{% endif %}
 							Numero
 						{% if app.request.get('order_by') == 'numero'  %}
@@ -88,9 +97,9 @@
 					</th>
 					<th>
 						{% if app.request.get('order_dir') == 'ASC' and app.request.get('order_by') == 'classe_open' %}
-							<a href="{{ path('groupe.list', {'order_by': 'classe_open', 'order_dir': 'DESC'}) }}">
+							<a href="{{ path('groupe.admin.list', {'order_by': 'classe_open', 'order_dir': 'DESC'}) }}">
 						{%  else %}
-							<a href="{{ path('groupe.list', {'order_by': 'classe_open', 'order_dir': 'ASC'}) }}">
+							<a href="{{ path('groupe.admin.list', {'order_by': 'classe_open', 'order_dir': 'ASC'}) }}">
 						{% endif %}
 							Places ouvertes
 						{% if app.request.get('order_by') == 'classe_open'  %}

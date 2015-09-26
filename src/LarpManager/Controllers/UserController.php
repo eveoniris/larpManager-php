@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use InvalidArgumentException;
 use LarpManager\Form\UserForm;
+use LarpManager\Form\UserFindForm;
 use LarpManager\Form\EtatCivilForm;
 
 use JasonGrimes\Paginator;
@@ -176,7 +177,7 @@ class UserController
 			
 			$app['session']->getFlashBag()->set('alert', 'L\'utilisateur a été créé. TEMPORAIRE : son mot de passe est '.$password);
 			
-			return $app->redirect($app['url_generator']->generate('user.list'));
+			return $app->redirect($app['url_generator']->generate('user.admin.list'));
 		}
 		
 		return $app['twig']->render('user/add.twig', array(
@@ -321,32 +322,61 @@ class UserController
 	 * @param Application $app
 	 * @param Request $request
 	 */
-	public function listAction(Application $app, Request $request)
+	public function adminListAction(Application $app, Request $request)
 	{
-		$order_by = $request->get('order_by') ?: 'name';
+		$order_by = $request->get('order_by') ?: 'username';
 		$order_dir = $request->get('order_dir') == 'DESC' ? 'DESC' : 'ASC';
 		$limit = (int)($request->get('limit') ?: 50);
 		$page = (int)($request->get('page') ?: 1);
 		$offset = ($page - 1) * $limit;
-		
 		$criteria = array();
 
+		$form = $app['form.factory']->createBuilder(new UserFindForm())
+			->add('find','submit', array('label' => 'Rechercher'))
+			->getForm();
+		
+		$form->handleRequest($request);
+				
+		if ( $form->isValid() )
+		{
+			$data = $form->getData();
+			$type = $data['type'];
+			$value = $data['value'];
+			switch ($type){
+				case 'username':
+					$criteria[] = "u.username LIKE '%$value%'";
+					break;
+				case 'email':
+					$criteria[] = "u.email LIKE '%$value%'";
+					break;
+			}
+		}
+		
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\User');
-		$users = $repo->findBy(
+		$users = $repo->findList(
 						$criteria,
-						array( $order_by => $order_dir),
+						array( 'by' =>  $order_by, 'dir' => $order_dir),
 						$limit,
 						$offset);
 		
 		$numResults = $repo->findCount($criteria);
 
 		$paginator = new Paginator($numResults, $limit, $page,
-				$app['url_generator']->generate('user.list') . '?page=(:num)&limit=' . $limit . '&order_by=' . $order_by . '&order_dir=' . $order_dir
+				$app['url_generator']->generate('user.admin.list') . '?page=(:num)&limit=' . $limit . '&order_by=' . $order_by . '&order_dir=' . $order_dir
 				);
 
 		return $app['twig']->render('admin/user/list.twig', array(
 				'users' => $users,
 				'paginator' => $paginator,
+				'form' => $form->createView(),
+		));
+	}
+	
+	public function adminEtatCivilAction(Application $app, Request $request)
+	{
+		$user = $request->get('user');
+		return $app['twig']->render('admin/user/etatCivil.twig', array(
+				'user' => $user,
 		));
 	}
 	

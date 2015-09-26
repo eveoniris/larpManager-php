@@ -39,7 +39,7 @@
 				</p>
 				{% endfor %}
 				<p class="list-group-item-text">
-					<a href="{{ path('personnage.competence.add', {'index': app.user.personnage.id}) }}">Acheter une nouvelle compétence</a>
+					<a href="{{ path('personnage.competence.add', {'personnage': app.user.personnage.id}) }}">Acheter une nouvelle compétence</a>
 				</p>
 			</div>
 			<div class="list-group-item">
@@ -66,7 +66,7 @@
 			</div>
 			<div class="list-group-item">
 				<h6>Téléchargement</h6>
-				<a href="{{ path('personnage.export', {'index':personnage.id}) }}">Télécharger le pdf</a>
+				<a href="{{ path('personnage.export', {'personnage':personnage.id}) }}">Télécharger le pdf</a>
 				
 			</div>
 		</div>

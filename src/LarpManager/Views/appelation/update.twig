@@ -13,3 +13,19 @@
 	</div>
 	
 {% endblock content %}
+
+
+{% block javascript %}
+
+	{{ parent() }}
+	
+	<script type="text/javascript">
+	
+		$(document).ready(function() {
+	
+			$('#submit').click(function(){
+			    $('form').submit();
+			});	
+		});
+	</script>
+{% endblock javascript %}

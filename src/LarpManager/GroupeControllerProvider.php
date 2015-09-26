@@ -35,16 +35,21 @@ class GroupeControllerProvider implements ControllerProviderInterface
 		$controllers = $app['controllers_factory'];
 
 		/**
+		 * Vérifie que l'utilisateur dispose du role ORGA
+		 */
+		$mustBeScenariste = function(Request $request) use ($app) {
+			if (!$app['security.authorization_checker']->isGranted('ROLE_SCENARISTE')) {
+				throw new AccessDeniedException();
+			}
+		};
+		
+		/**
 		 * Liste des groupes
 		 */
-		$controllers->match('/','LarpManager\Controllers\GroupeController::listAction')
-			->bind("groupe.list")
+		$controllers->match('/admin/list','LarpManager\Controllers\GroupeController::adminListAction')
+			->bind("groupe.admin.list")
 			->method('GET')
-			->before(function(Request $request) use ($app) {
-				if (!$app['security.authorization_checker']->isGranted('ROLE_SCENARISTE')) {
-					throw new AccessDeniedException();
-				}
-			});
+			->before($mustBeScenariste);
 		
 		/**
 		 * Rechercher un groupe
@@ -52,11 +57,7 @@ class GroupeControllerProvider implements ControllerProviderInterface
 		$controllers->match('/search','LarpManager\Controllers\GroupeController::searchAction')
 			->bind("groupe.search")
 			->method('GET|POST')
-			->before(function(Request $request) use ($app) {
-				if ( !$app['security.authorization_checker']->isGranted('ROLE_ORGA') ) {
-					throw new AccessDeniedException();
-				}
-			});
+			->before($mustBeScenariste);
 			
 		/**
 		 * Detail d'un groupe
@@ -65,11 +66,7 @@ class GroupeControllerProvider implements ControllerProviderInterface
 			->assert('index', '\d+')
 			->bind("groupe.detail")
 			->method('GET')
-			->before(function(Request $request) use ($app) {
-				if (!$app['security.authorization_checker']->isGranted('ROLE_SCENARISTE')) {
-					throw new AccessDeniedException();
-				}
-			});
+			->before($mustBeScenariste);
 			
 		/**
 		 * Ajoute un nouveau personnage dans un groupe

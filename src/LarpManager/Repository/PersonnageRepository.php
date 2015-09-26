@@ -14,7 +14,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 class PersonnageRepository extends EntityRepository
 {
 	/**
-	 * Trouve les annonces correspondant aux critères de recherche
+	 * Trouve le nombre de personnages correspondant aux critères de recherche
 	 *
 	 * @param array $criteria
 	 * @param array $options
@@ -26,7 +26,7 @@ class PersonnageRepository extends EntityRepository
 		$qb->select($qb->expr()->count('p'));
 		$qb->from('LarpManager\Entities\Personnage','p');
 	
-			foreach ( $criteria as $critere )
+		foreach ( $criteria as $critere )
 		{
 			$qb->andWhere($critere);
 			
@@ -35,6 +35,14 @@ class PersonnageRepository extends EntityRepository
 		return $qb->getQuery()->getSingleScalarResult();
 	}
 	
+	/**
+	 * Trouve les personnages correspondant aux critères de recherche
+	 * 
+	 * @param array $criteria
+	 * @param array $order
+	 * @param unknown $limit
+	 * @param unknown $offset
+	 */
 	public function findList(array $criteria = array(), array $order = array(), $limit, $offset)
 	{
 		$qb = $this->getEntityManager()->createQueryBuilder();
@@ -45,7 +53,6 @@ class PersonnageRepository extends EntityRepository
 		foreach ( $criteria as $critere )
 		{
 			$qb->andWhere($critere);
-			
 		}
 		
 		$qb->setFirstResult($offset);

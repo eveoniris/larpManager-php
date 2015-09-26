@@ -7,12 +7,12 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
- * LarpManager\Form\PersonnageFindForm
+ * LarpManager\Form\UserFindForm
  *
  * @author kevin
  *
  */
-class PersonnageFindForm extends AbstractType
+class UserFindForm extends AbstractType
 {
 	/**
 	 * Construction du formulaire
@@ -29,7 +29,8 @@ class PersonnageFindForm extends AbstractType
 				->add('type','choice', array(
 					'required' => true,
 					'choices' => array(
-						'nom' => 'Nom',
+						'username' => 'Nom',
+						'email' => 'Email',
 					),
 					'label' => 'Type',
 				));
@@ -49,6 +50,6 @@ class PersonnageFindForm extends AbstractType
 	 */
 	public function getName()
 	{
-		return 'personnageFind';
+		return 'userFind';
 	}
 }
