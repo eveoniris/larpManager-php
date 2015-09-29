@@ -71,7 +71,7 @@
 	    				{% if groupe.responsable %}<li><strong>{{ groupe.responsable.username }}</strong>&nbsp;(Responsable du groupe)</li>{% endif %}
 						{% for participant in groupe.participants %}
 						<li>
-							<strong>{{ participant }} </strong>: {{ participant.user.email }}
+							<strong>{{ participant }} </strong>: {{ participant.user.email }}&nbsp;<a href="{{ path('groupe.admin.participant.remove', {'groupe': groupe.id, 'participant': participant.id}) }}">Retirer</a>
 						</li>
 						{% endfor %}
 	    				</ul>

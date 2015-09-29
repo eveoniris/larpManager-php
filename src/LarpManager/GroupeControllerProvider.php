@@ -52,6 +52,14 @@ class GroupeControllerProvider implements ControllerProviderInterface
 			->before($mustBeScenariste);
 		
 		/**
+		 * Retirer un participant du groupe
+		 */
+		$controllers->match('/admin/{groupe}/participant/{participant}/remove','LarpManager\Controllers\GroupeController::adminParticipantRemoveAction')
+			->bind("groupe.admin.participant.remove")
+			->method('GET|POST')
+			->before($mustBeScenariste);
+		
+		/**
 		 * Rechercher un groupe
 		 */
 		$controllers->match('/search','LarpManager\Controllers\GroupeController::searchAction')

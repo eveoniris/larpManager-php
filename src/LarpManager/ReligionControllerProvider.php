@@ -36,10 +36,10 @@ class ReligionControllerProvider implements ControllerProviderInterface
 		$controllers = $app['controllers_factory'];
 		
 		/**
-		 * Vérifie que l'utilisateur dispose du role ORGA
+		 * Vérifie que l'utilisateur dispose du role SCENARISTE
 		 */
 		$mustBeOrga = function(Request $request) use ($app) {
-			if (!$app['security.authorization_checker']->isGranted('ROLE_REGLE')) {
+			if (!$app['security.authorization_checker']->isGranted('ROLE_SCENARISTE')) {
 				throw new AccessDeniedException();
 			}
 		};

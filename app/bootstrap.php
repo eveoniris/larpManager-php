@@ -100,14 +100,7 @@ $app->register(new TwigServiceProvider(), array(
 // Email
 $app->register(new SwiftmailerServiceProvider());
 
-$app['swiftmailer.options'] = array(
-		'host' => 'host',
-		'port' => '25',
-		'username' => 'username',
-		'password' => 'password',
-		'encryption' => null,
-		'auth_mode' => null
-);
+$app['swiftmailer.options'] = $app['config']['swiftmailer']; //voir les settings yaml 
 
 // Doctrine DBAL
 $app->register(new DoctrineServiceProvider(), array(
@@ -179,7 +172,7 @@ else
 			   }),
 		),
 		'secured_area' => array(	// le reste necessite d'être connecté
-			'pattern' => '^/[annonce|stock|forum|groupe|gn|personnage|territoire|appelation|langue|ressource|religion|age|genre|level|competence|competenceFamily|joueur]/.*$',
+			'pattern' => '^/[annonce|stock|droit|forum|groupe|gn|personnage|territoire|appelation|langue|ressource|religion|age|genre|level|competence|competenceFamily|joueur|etatCivil]/.*$',
 			'anonymous' => false,
 			'remember_me' => array(),
 			'form' => array(
@@ -198,6 +191,7 @@ else
 	$app->mount('/', new LarpManager\HomepageControllerProvider());
 	$app->mount('/annonce', new LarpManager\AnnonceControllerProvider());
 	$app->mount('/user',  new LarpManager\UserControllerProvider());
+	$app->mount('/droit',  new LarpManager\RightControllerProvider());
 	$app->mount('/stock', new LarpManager\StockControllerProvider());
 	$app->mount('/stock/objet', new LarpManager\StockObjetControllerProvider());
 	$app->mount('/stock/tag', new LarpManager\StockTagControllerProvider());
@@ -254,6 +248,7 @@ else
 		array('^/religion/.*$', 'ROLE_USER'),
 		array('^/groupeSecondaireType/.*$', 'ROLE_SCENARISTE'),
 		array('^/annonce/.*$', 'ROLE_ADMIN'),
+		array('^/droit/.*$', 'ROLE_ADMIN'),
 		array('^/age/.*$', 'ROLE_REGLE'),
 		array('^/genre/.*$', 'ROLE_REGLE'),
 		array('^/appelation/.*$', 'ROLE_SCENARISTE'),

@@ -61,6 +61,44 @@ class GroupeController
 	}
 	
 	/**
+	 * Retirer un participant du groupe
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function adminParticipantRemoveAction(Request $request, Application $app)
+	{
+		$participantId = $request->get('participant');
+		$groupeId = $request->get('groupe');
+		
+		$groupe = $app['orm.em']->find('\LarpManager\Entities\Groupe',$id);
+		$participant = $app['orm.em']->find('\LarpManager\Entities\Participant',$id);
+		
+		$form = $app['form.factory']->createBuilder(new RemoveGroupeParticipantForm(), array())
+			->add('submit','submit', array('label' => 'Retirer'))
+			->getForm();
+		
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
+		{
+			$groupe->removeParticipant($participant);
+			$app['orm.em']->persist($groupe);
+			$app['orm.em']->flush();
+			
+			$app['session']->getFlashBag()->add('success', 'Le participant a été retiré du groupe.');
+			return $app->redirect($app['url_generator']->generate('groupe.detail', array('index'=> $groupe->getId())));
+			
+		}
+				
+		return $app['twig']->render('admin/groupe/removeParticipant.twig', array(
+				'form' => $form->createView(),
+				'groupe' => $groupe,
+				'participant' => $participant,
+		));
+	}
+	
+	/**
 	 * Recherche d'un groupe
 	 *
 	 * @param Request $request

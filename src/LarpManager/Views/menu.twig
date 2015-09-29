@@ -17,7 +17,7 @@
 			<li><a href="http://www.eveoniris.com">Eve-Oniris</a></li>
 			
 			{# Menus reservé aux admins #}
-			{% if is_granted('ROLE_ADMIN', app.user) %}
+			{% if is_granted('ROLE_SCENARISTE', app.user) %}
 				<li class="dropdown">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Admin<span class="caret"></span></a>
 					<ul class="dropdown-menu">
@@ -27,6 +27,7 @@
 						<li><a href="{{ path('groupe.admin.list') }}">Liste des groupes</a></li>
 						<li><a href="{{ path('groupeSecondaire.admin.list') }}">Liste des groupes secondaires</a></li>
 						<li><a href="{{ path('personnage.admin.list') }}">Liste des personnages</a></li>
+						<li><a href="{{ path('right.admin.list') }}">Liste des droits</a></li>
 					</ul>
 				</li>
 			{% endif %}

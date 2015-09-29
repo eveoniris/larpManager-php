@@ -143,6 +143,15 @@ class GroupeSecondaireController
 		
 			$app['orm.em']->persist($postulant);
 			$app['orm.em']->flush();
+			
+			// envoi d'un mail au chef du groupe secondaire
+			$message = "Nouvelle candidature";
+			$app->mail(\Swift_Message::newInstance()
+				->setSubject('[LarpManager] Nouvelle candidature')
+				->setFrom(array('noreply@eveoniris.com'))
+				->setTo(array($groupeSecondaire->getResponsable()->getUser()->getEmail()))
+				->setBody($message));
+			
 			$app['session']->getFlashBag()->add('success', 'Votre candidature a été enregistrée, et transmise au chef de groupe.');
 		
 			return $app->redirect($app['url_generator']->generate('homepage'));

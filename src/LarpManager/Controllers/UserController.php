@@ -21,22 +21,12 @@ use JasonGrimes\Paginator;
  */
 class UserController
 {
+
 	/**
-	 * Fourni la liste des ROLES utilisé dans LarpManager
-	 * @return Array $availablesRoles
+	 * 
+	 * @var boolean $isEmailConfirmationRequired
 	 */
-	protected function getAvailableRoles()
-	{
-		$availableRoles = array(
-				array('label' => 'ROLE_USER', 'descr' => 'Utilisateur de larpManager'),
-				array('label' => 'ROLE_ADMIN', 'descr' => 'Droit de modification sur tout'),
-				array('label' => 'ROLE_STOCK', 'descr' => 'Droit de modification sur le stock'),
-				array('label' => 'ROLE_REGLE', 'descr' => 'Droit de modification sur les règles'),
-				array('label' => 'ROLE_SCENARISTE', 'descr' => 'Droit de modification sur le scénario, les groupes et le background'),
-				array('label' => 'ROLE_MODERATOR', 'descr' => 'Modération du forum'),
-			);
-		return $availableRoles;
-	}
+	private $isEmailConfirmationRequired = true;
 	
 	/**
 	 * Fourni l'url de gravatar pour l'utilisateur
@@ -218,7 +208,7 @@ class UserController
 						
 			$app['orm.em']->persist($participant);
 			$app['orm.em']->flush();
-			$app['session']->getFlashBag()->add('success', 'Vos informations ont été enregistrés.');
+			$app['session']->getFlashBag()->add('success', 'Vos informations ont été enregistrées.');
 			return $app->redirect($app['url_generator']->generate('homepage'),301);
 		}
 		
@@ -279,7 +269,7 @@ class UserController
 		return $app['twig']->render('admin/user/update.twig', array(
 				'error' => implode("\n", $errors),
 				'user' => $user,
-				'available_roles' => $this->getAvailableRoles(),
+				'available_roles' => $app['larp.manager']->getAvailableRoles(),
 				'image_url' => $this->getGravatarUrl($user->getEmail()),
 		));
 	}
@@ -395,29 +385,29 @@ class UserController
 				if ($error = $app['user.manager']->validatePasswordStrength($user, $request->request->get('password'))) {
 					throw new InvalidArgumentException($error);
 				}
-				/*if ($this->isEmailConfirmationRequired) {
+				if ($this->isEmailConfirmationRequired) {
 					$user->setEnabled(false);
 					$user->setConfirmationToken($app['user.tokenGenerator']->generateToken());
-				}*/
+				}
 				$app['user.manager']->insert($user);
 		
-				/*if ($this->isEmailConfirmationRequired) {
+				if ($this->isEmailConfirmationRequired) {
 					// Send email confirmation.
 					$app['user.mailer']->sendConfirmationMessage($user);
 		
 					// Render the "go check your email" page.
 					return $app['twig']->render($this->getTemplate('register-confirmation-sent'), array(
-					'layout_template' => $this->getTemplate('layout'),
-					'email' => $user->getEmail(),
+						'layout_template' => $this->getTemplate('layout'),
+						'email' => $user->getEmail(),
 					));
-				} else {*/
+				} else {
 					// Log the user in to the new account.
 					$app['user.manager']->loginAsUser($user);
 		
 					$app['session']->getFlashBag()->set('success', 'Votre compte a été créé ! vous pouvez maintenant rejoindre un groupe et créer votre personnage');
 		
 					return $app->redirect($app['url_generator']->generate('homepage'));
-				//}
+				}
 		
 			} catch (InvalidArgumentException $e) {
 				$error = $e->getMessage();
@@ -457,7 +447,7 @@ class UserController
 		// trouve tous les rôles
 		return $app['twig']->render('user/right.twig', array(
 				'users' => $users,
-				'roles' => $this->getAvailableRoles())
+				'roles' => $app['larp.manager']->getAvailableRoles())
 		);
 	}
 }

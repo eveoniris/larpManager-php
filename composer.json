@@ -25,7 +25,8 @@
 		"swiftmailer/swiftmailer" : "5.*@stable",
 		"monolog/monolog" : "1.15.0@stable",
 		"nicl/silex-markdown" : "1.1.0",
-		"jasongrimes/paginator" : "1.0"
+		"jasongrimes/paginator" : "1.0",
+		"erivello/pdf-service-provider" : "dev-master"
 	},
 	"autoload" : {
 		"psr-0" : {
