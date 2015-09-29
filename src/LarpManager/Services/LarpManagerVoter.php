@@ -105,8 +105,8 @@ class LarpManagerVoter implements VoterInterface
 				return $this->isNotRegistered($user) ? VoterInterface::ACCESS_GRANTED : VoterInterface::ACCESS_DENIED;
 			}
 			if ($attribute == 'OWN_PERSONNAGE') {
-				$personnage = $object;
-				return $this->isOwnerOfPersonnage($user, $personnage) ? VoterInterface::ACCESS_GRANTED : VoterInterface::ACCESS_DENIED;
+				$personnageId = $object;
+				return $this->isOwnerOfPersonnage($user, $personnageId) ? VoterInterface::ACCESS_GRANTED : VoterInterface::ACCESS_DENIED;
 			}
 			if ($attribute == 'TOPIC_RIGHT') {
 				$topic = $object;
@@ -303,14 +303,14 @@ class LarpManagerVoter implements VoterInterface
 	/**
 	 * Test si un utilisateur posséde bien le personnage
 	 *
-	 * @param unknown $user
-	 * @param Personnage $personnage
+	 * @param User $user
+	 * @param $personnageId
 	 */
-	protected function isOwnerOfPersonnage(User $user, Personnage $personnage)
+	protected function isOwnerOfPersonnage(User $user, $personnageId)
 	{
 		if ( $user->getPersonnage() )
 		{
-			if ( $user->getPersonnage() == $personnage ) return true;
+			if ( $user->getPersonnage()->getId() == $personnageId ) return true;
 		}
 		return false;
 	}

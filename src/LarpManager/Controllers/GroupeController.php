@@ -290,7 +290,7 @@ class GroupeController
 			$app['orm.em']->flush();
 			
 			$app['session']->getFlashBag()->add('success','Le nombre de place disponible a été mis à jour');
-			return $app->redirect($app['url_generator']->generate('groupe.list'),301);
+			return $app->redirect($app['url_generator']->generate('groupe.admin.list'),301);
 		}
 		
 		return $app['twig']->render('admin/groupe/place.twig', array(
@@ -365,7 +365,7 @@ class GroupeController
 			 */
 			if ( $form->get('save')->isClicked())
 			{
-				return $app->redirect($app['url_generator']->generate('groupe.list'),301);
+				return $app->redirect($app['url_generator']->generate('groupe.admin.list'),301);
 			}
 			else if ( $form->get('save_continue')->isClicked())
 			{
@@ -469,7 +469,7 @@ class GroupeController
 				$app['orm.em']->flush();
 					
 				$app['session']->getFlashBag()->add('success', 'Le groupe a été supprimé.');
-				return $app->redirect($app['url_generator']->generate('groupe.list'));
+				return $app->redirect($app['url_generator']->generate('groupe.admin.list'));
 			}
 		
 			

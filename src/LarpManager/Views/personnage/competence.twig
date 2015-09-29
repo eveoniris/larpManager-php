@@ -12,7 +12,7 @@
 	</ol>
 	
 	<div class="well bs-component">
-		<form action="{{ path('personnage.competence.add',{'index':personnage.id}) }}" method="POST" {{ form_enctype(form) }}>
+		<form action="{{ path('personnage.competence.add',{'personnage':personnage.id}) }}" method="POST" {{ form_enctype(form) }}>
 			<fieldset>
 				<legend>{{ personnage.nom }} - <small>Achat d'une compétence</small></legend>
 				

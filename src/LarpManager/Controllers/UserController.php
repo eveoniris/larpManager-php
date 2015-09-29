@@ -249,7 +249,6 @@ class UserController
 		
 		if ($request->isMethod('POST')) 
 		{
-			$user->setName($request->request->get('name'));
 			$user->setEmail($request->request->get('email'));
 			if ($request->request->has('username')) {
 				$user->setUsername($request->request->get('username'));
