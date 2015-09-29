@@ -6,7 +6,7 @@
 
 	<ol class="breadcrumb">
 		<li><a href="{{ path('homepage') }}">Accueil</a></li>
-		<li><a href="{{ path('user.admin.list') }}">Liste des utilisateurs</a></li>
+		{% if is_granted('ROLE_ADMIN', app.user) %}<li><a href="{{ path('user.admin.list') }}">Liste des utilisateurs</a></li>{% endif %}
 		<li class="active">Détail d'un utilisateur</li>
 	</ol>
 	

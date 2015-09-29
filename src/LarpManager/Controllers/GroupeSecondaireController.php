@@ -146,11 +146,13 @@ class GroupeSecondaireController
 			
 			// envoi d'un mail au chef du groupe secondaire
 			$message = "Nouvelle candidature";
-			$app->mail(\Swift_Message::newInstance()
+			$message = \Swift_Message::newInstance()
 				->setSubject('[LarpManager] Nouvelle candidature')
 				->setFrom(array('noreply@eveoniris.com'))
-				->setTo(array($groupeSecondaire->getResponsable()->getUser()->getEmail()))
-				->setBody($message));
+				->setTo(array($groupeSecondaire->getResponsable()->getParticipant()->getUser()->getEmail()))
+				->setBody($message);
+			 
+			$app['mailer']->send($message);
 			
 			$app['session']->getFlashBag()->add('success', 'Votre candidature a été enregistrée, et transmise au chef de groupe.');
 		

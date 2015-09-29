@@ -94,13 +94,19 @@ class UserControllerProvider implements ControllerProviderInterface
 			->method('GET|POST')
 			->before($mustBeAdmin);
 			
+		/**
+		 * Affiche l'état civil d'un utilisateur
+		 */
 		$controllers->match('/admin/{user}/etatCivil', 'LarpManager\Controllers\UserController::adminEtatCivilAction')
 			->assert('id', '\d+')
 			->bind('user.admin.etatCivil')
 			->method('GET')
 			->convert('user', 'converter.user:convert')
 			->before($mustBeAdmin);
-		
+
+		/**
+		 * Gestion des droits
+		 */
 		$controllers->match('/right', 'LarpManager\Controllers\UserController::rightAction')
 			->bind('user.right')
 			->method('GET|POST')
@@ -131,6 +137,18 @@ class UserControllerProvider implements ControllerProviderInterface
 			->bind('user.information.add')
 			->method('GET|POST');
 		
+		$controllers->match('/confirm-email/{token}', 'LarpManager\Controllers\UserController::confirmEmailAction')
+			->bind('user.confirm-email')
+			->method('GET');
+		
+		$controllers->match('/resend-confirmation', 'LarpManager\Controllers\UserController::resendConfirmationAction')
+			->bind('user.resend-confirmation')
+			->method('GET|POST');
+		
+		$controllers->match('/reset-password/{token}', 'LarpManager\Controllers\UserController::resetPasswordAction')
+			->bind('user.reset-password')
+			->method('GET|POST');
+			
 		// login_check and logout are dummy routes so we can use the names.
 		// The security provider should intercept these, so no controller is needed.
 		$controllers->match('/login_check', function() {})

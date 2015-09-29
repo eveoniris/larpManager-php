@@ -30,6 +30,7 @@ namespace LarpManager\User;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use \Swift_Mailer;
 use \Twig_Environment;
+use LarpManager\Entities\User;
 
 class Mailer
 {

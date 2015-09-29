@@ -5,6 +5,8 @@ namespace LarpManager\Controllers;
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Security\Core\Exception\DisabledException;
 use InvalidArgumentException;
 use LarpManager\Form\UserForm;
 use LarpManager\Form\UserFindForm;
@@ -27,6 +29,12 @@ class UserController
 	 * @var boolean $isEmailConfirmationRequired
 	 */
 	private $isEmailConfirmationRequired = true;
+	
+	/**
+	 * 
+	 * @var boolean $isPasswordResetEnabled
+	 */
+	private $isPasswordResetEnabled = true;
 	
 	/**
 	 * Fourni l'url de gravatar pour l'utilisateur
@@ -396,8 +404,7 @@ class UserController
 					$app['user.mailer']->sendConfirmationMessage($user);
 		
 					// Render the "go check your email" page.
-					return $app['twig']->render($this->getTemplate('register-confirmation-sent'), array(
-						'layout_template' => $this->getTemplate('layout'),
+					return $app['twig']->render('user/register-confirmation-sent.twig', array(
 						'email' => $user->getEmail(),
 					));
 				} else {
@@ -419,6 +426,167 @@ class UserController
 				'name' => $request->request->get('name'),
 				'email' => $request->request->get('email'),
 				'username' => $request->request->get('username'),
+		));
+	}
+	
+	
+
+	/**
+	 * Confirmation de l'adresse email
+	 *
+	 * @param Application $app
+	 * @param Request $request
+	 * @param string $token
+	 * @return \Symfony\Component\HttpFoundation\RedirectResponse
+	 * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+	 */
+	public function confirmEmailAction(Application $app, Request $request, $token)
+	{
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\User');
+		$user = $repo->findOneByConfirmationToken($token);
+		
+		if (!$user) {
+			$app['session']->getFlashBag()->set('alert', 'Désolé, votre lien de confirmation a expiré.');
+			return $app->redirect($app['url_generator']->generate('user.login'));
+		}
+		$user->setConfirmationToken(null);
+		$user->setEnabled(true);
+		$app['orm.em']->persist($user);
+		$app['orm.em']->flush();
+		
+		$app['user.manager']->loginAsUser($user);
+		$app['session']->getFlashBag()->set('alert', 'Merci ! Votre compte a été activé.');
+		return $app->redirect($app['url_generator']->generate('user.view', array('id' => $user->getId())));
+	}
+	
+	/**
+	 * Renvoyer un email de confirmation
+	 *
+	 * @param Application $app
+	 * @param Request $request
+	 * @return mixed
+	 * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+	 */
+	public function resendConfirmationAction(Application $app, Request $request)
+	{
+		$email = $request->request->get('email');
+		
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\User');
+		$user = $repo->findOneByEmail($email);
+		
+		if (!$user) {
+			throw new NotFoundHttpException('Aucun compte n\'a été trouvé avec cette adresse email.');
+		}
+		if (!$user->getConfirmationToken()) {
+			$user->setConfirmationToken($app['user.tokenGenerator']->generateToken());
+			$app['orm.em']->persist($user);
+			$app['orm.em']->flush();
+		}
+		$app['user.mailer']->sendConfirmationMessage($user);
+
+		return $app['twig']->render('user/register-confirmation-sent.twig', array(
+			'email' => $user->getEmail(),
+		));
+	}
+	
+
+	/**
+	 * Traitement mot de passe oublié
+	 * 
+	 * @param Application $app
+	 * @param Request $request
+	 * @return \Symfony\Component\HttpFoundation\RedirectResponse
+	 * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+	 */
+	public function forgotPasswordAction(Application $app, Request $request)
+	{
+		if (!$this->isPasswordResetEnabled) {
+			throw new NotFoundHttpException('Password resetting is not enabled.');
+		}
+		$error = null;
+		if ($request->isMethod('POST')) {
+			$email = $request->request->get('email');
+			
+			$repo = $app['orm.em']->getRepository('\LarpManager\Entities\User');
+			$user = $repo->findOneByEmail($email);
+			
+			if ($user) {
+				// Initialize and send the password reset request.
+				$user->setTimePasswordResetRequested(time());
+				if (!$user->getConfirmationToken()) {
+					$user->setConfirmationToken($app['user.tokenGenerator']->generateToken());
+				}
+				$app['orm.em']->persist($user);
+				$app['orm.em']->flush();
+				
+				$app['user.mailer']->sendResetMessage($user);
+				$app['session']->getFlashBag()->set('alert', 'Les instructions pour enregistrer votre mot de passe ont été envoyé par mail.');
+				$app['session']->set('_security.last_username', $email);
+				return $app->redirect($app['url_generator']->generate('user.login'));
+			}
+			$error = 'No user account was found with that email address.';
+		} else {
+			$email = $request->request->get('email') ?: ($request->query->get('email') ?: $app['session']->get('_security.last_username'));
+			if (!filter_var($email, FILTER_VALIDATE_EMAIL)) $email = '';
+		}
+		return $app['twig']->render('user/forgot-password.twig', array(
+				'email' => $email,
+				'fromAddress' => $app['user.mailer']->getFromAddress(),
+				'error' => $error,
+		));
+	}
+	
+
+	/**
+	 * @param Application $app
+	 * @param Request $request
+	 * @param string $token
+	 * @return \Symfony\Component\HttpFoundation\RedirectResponse
+	 * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+	 */
+	public function resetPasswordAction(Application $app, Request $request, $token)
+	{
+		if (!$this->isPasswordResetEnabled) {
+			throw new NotFoundHttpException('Password resetting is not enabled.');
+		}
+		$tokenExpired = false;
+		
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\User');
+		$user = $repo->findOneByConfirmationToken($token);
+		
+		if (!$user) {
+			$tokenExpired = true;
+		} else if ($user->isPasswordResetRequestExpired($app['config']['user']['passwordReset']['tokenTTL'])) {
+			$tokenExpired = true;
+		}
+		if ($tokenExpired) {
+			$app['session']->getFlashBag()->set('alert', 'Sorry, your password reset link has expired.');
+			return $app->redirect($app['url_generator']->generate('user.login'));
+		}
+		$error = '';
+		if ($request->isMethod('POST')) {
+			// Validate the password
+			$password = $request->request->get('password');
+			if ($password != $request->request->get('confirm_password')) {
+				$error = 'Passwords don\'t match.';
+			} else if ($error = $app['user.manager']->validatePasswordStrength($user, $password)) {
+				;
+			} else {
+				// Set the password and log in.
+				$app['user.manager']->setUserPassword($user, $password);
+				$user->setConfirmationToken(null);
+				$user->setEnabled(true);
+				$app['orm.em']->persist($user);
+				$app['orm.em']->flush();
+				$app['user.manager']->loginAsUser($user);
+				$app['session']->getFlashBag()->set('alert', 'Your password has been reset and you are now signed in.');
+				return $app->redirect($app['url_generator']->generate('user.view', array('id' => $user->getId())));
+			}
+		}
+		return $app['twig']->render('user/reset-password.twig', array(
+				'user' => $user,
+				'token' => $token,
+				'error' => $error,
 		));
 	}
 	

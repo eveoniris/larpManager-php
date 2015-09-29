@@ -363,6 +363,20 @@ class User extends BaseUser implements AdvancedUserInterface, \Serializable
 	{
 		return $this->setIsEnabled($isEnabled);
 	}
+	
+	/**
+	 * @param int $ttl Password reset request TTL, in seconds.
+	 * @return bool
+	 */
+	public function isPasswordResetRequestExpired($ttl)
+	{
+		$timeRequested = $this->getTimePasswordResetRequested();
+		if (!$timeRequested) {
+			return true;
+		}
+		return $timeRequested + $ttl < time();
+	}
+	
 	/**
 	 * Checks whether the user's credentials (password) has expired.
 	 *
