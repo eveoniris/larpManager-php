@@ -76,9 +76,21 @@ class GroupeController
 
 		
 		if ($request->isMethod('POST')) {
-						
+			
+			$personnage = $participant->getPersonnage();
+			if ( $personnage )
+			{
+				if ( $personnage->getGroupe() == $groupe)
+				{
+					$personnage->setGroupe(null);
+					$app['orm.em']->persist($personnage);
+				}
+			}
+			
 			$groupe->removeParticipant($participant);
+			$participant->setGroupe(null);
 			$app['orm.em']->persist($groupe);
+			$app['orm.em']->persist($participant);
 			$app['orm.em']->flush();
 			
 			$app['session']->getFlashBag()->add('success', 'Le participant a été retiré du groupe.');

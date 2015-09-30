@@ -6,7 +6,7 @@
 
 	<ol class="breadcrumb">
 		<li><a href="{{ path('homepage') }}">Accueil</a></li>
-		<li><a href="{{ path("groupe.admin.list") }}">Liste des groupes</a></li>
+		{% if is_granted('ROLE_ADMIN', app.user) %}<li><a href="{{ path("groupe.admin.list") }}">Liste des groupes</a></li>{% endif %}
 		<li class="active">Détail d'un groupe</li>
 	</ol>
 	
@@ -71,7 +71,7 @@
 	    				{% if groupe.responsable %}<li><strong>{{ groupe.responsable.username }}</strong>&nbsp;(Responsable du groupe)</li>{% endif %}
 						{% for participant in groupe.participants %}
 						<li>
-							<strong>{{ participant }} </strong>: {{ participant.user.email }}&nbsp;<a href="{{ path('groupe.admin.participant.remove', {'groupe': groupe.id, 'participant': participant.id}) }}">Retirer</a>
+							<strong>{{ participant }} </strong>: {{ participant.user.email }}{% if is_granted('ROLE_ADMIN', app.user) %}&nbsp;<a href="{{ path('groupe.admin.participant.remove', {'groupe': groupe.id, 'participant': participant.id}) }}">Retirer</a>{% endif %}
 						</li>
 						{% endfor %}
 	    				</ul>
