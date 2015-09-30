@@ -133,11 +133,13 @@ class LarpManagerVoter implements VoterInterface
 			case 'GROUPE_MEMBER' :
 				return $this->userGroupeRight($topic->getObjectId(), $user);
 				break;
-			case 'GROUPE_SECONDAIRE_MEMBRE' :
+			case 'GROUPE_SECONDAIRE_MEMBER' :
 				return $this->userGroupeSecondaireRight($topic->getObjectId(), $user);
 				break;
 			case 'CULTE' :
 				return $this->userCulteRight($topic->getObjectId(), $user);
+			case 'ORGA' :
+				return $this->hasRole($token, 'ROLE_ORGA') ? true: false;
 			default :
 				return true;
 		}
@@ -152,15 +154,20 @@ class LarpManagerVoter implements VoterInterface
 	 */
 	protected function userCulteRight($culteId, $user)
 	{
+		if ($this->hasRole($token, 'ROLE_SCENARISTE')) return true;
+		
 		$participants =  $user->getParticipants();
 		
 		foreach ( $participants as $participant )
 		{
 			if ( $participant->getPersonnage() )
 			{
-				if ( $participant->getPersonnage()->getPersonnageReligion()->getReligion()->getId() == $culteId )
+				if ( $participant->getPersonnage()->getPersonnageReligion() )
 				{
-					return true;
+					if ( $participant->getPersonnage()->getPersonnageReligion()->getReligion()->getId() == $culteId )
+					{
+						return true;
+					}
 				}
 			}
 		}
@@ -177,6 +184,8 @@ class LarpManagerVoter implements VoterInterface
 	 */
 	protected function userGnRight($gnId, $user)
 	{
+		if ($this->hasRole($token, 'ROLE_SCENARISTE')) return true;
+		
 		foreach ( $user->getGns() as $gn )
 		{
 			if ( $gn->getId() == $gnId) return true;
@@ -194,11 +203,37 @@ class LarpManagerVoter implements VoterInterface
 	 */
 	protected function userGroupeRight($groupeId, $user)
 	{
+		if ($this->hasRole($token, 'ROLE_SCENARISTE')) return true;
+		
 		if ( $user->getGroupes() )
 		{
 			foreach ( $user->getGroupes() as $groupe)
 			{
 				if ( $groupe->getId() == $groupeId ) return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Determine si l'utilisateur à le droit d'accéder aux forums de ce groupe secondaire
+	 * (l'utilisateur doit être membre du groupe)
+	 * 
+	 * @param unknown $groupeSecondaireId
+	 * @param unknown $user
+	 */
+	protected function userGroupeSecondaireRight($groupeSecondaireId, $user)
+	{
+		if ($this->hasRole($token, 'ROLE_SCENARISTE')) return true;
+		
+		$personnage = $user->getPersonnage();
+		if ( $personnage )
+		{
+			foreach ( $personnage->getSecondaryGroups() as $groupe )
+			{
+				if ( $groupe instanceof \LarpManager\Entities\SecondaryGroup
+						&& $groupe->getId() == $groupeSecondaireId)
+					return true;
 			}
 		}
 		return false;
@@ -288,15 +323,16 @@ class LarpManagerVoter implements VoterInterface
 	 */
 	protected function isGroupeSecondaireMemberOf($user, $groupeSecondaireId)
 	{
-		return true;
-		if ( $user->getGroupes() )
+		$personnage = $user->getPersonnage();
+		if ( $personnage )
 		{
-			foreach ( $user->getGroupes() as $groupe )
+			foreach ( $personnage->getSecondaryGroups() as $groupe )
 			{
-				if ( $groupe->getId() == $groupeId)	return true;
+				if ( $groupe instanceof \LarpManager\Entities\SecondaryGroup
+						&& $groupe->getId() == $groupeSecondaireId)
+					return true;
 			}
-		}
-			
+		}		
 		return false;
 	}
 	

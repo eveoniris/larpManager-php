@@ -55,12 +55,6 @@ class GroupeForm extends AbstractType
 							return $qb;
 						}
 				))
-				->add('responsable', 'entity', array(
-						'label' => 'Responsable',
-						'required' => false,
-						'class' => 'LarpManager\Entities\User',
-						'property' => 'name',
-				))
 				->add('jeuStrategique','checkbox', array(
 						'label' => "Participe au jeu stratégique ?",
 						'required' => false,

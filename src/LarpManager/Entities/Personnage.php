@@ -38,7 +38,14 @@ class Personnage extends BasePersonnage
 	 */
 	public function getIdentity()
 	{
-		return $this->getNom().' ('.$this->getGroupe()->getNom().' - '.$this->getParticipant()->getUser()->getUsername().')';
+		$groupe = $this->getGroupe();
+		$participant = $this->getParticipant();
+		
+		$identity = $this->getNom().' (';
+		if ( $groupe ) $identity .= $groupe->getNom();
+		if ( $participant ) $identity .= " - ". $participant->getUser()->getUsername();
+		$identity .= ')';
+		return $identity;
 	}
 	
 	/**

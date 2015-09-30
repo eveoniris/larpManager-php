@@ -38,6 +38,7 @@ class LarpManagerManager
 	{
 		$availableRoles = array(
 				array('label' => 'ROLE_USER', 'descr' => 'Utilisateur de larpManager'),
+				array('label' => 'ROLE_ORGA', 'descr' => 'Organisateur'),
 				array('label' => 'ROLE_ADMIN', 'descr' => 'Droit de modification sur tout'),
 				array('label' => 'ROLE_STOCK', 'descr' => 'Droit de modification sur le stock'),
 				array('label' => 'ROLE_REGLE', 'descr' => 'Droit de modification sur les règles'),
@@ -45,6 +46,22 @@ class LarpManagerManager
 				array('label' => 'ROLE_MODERATOR', 'descr' => 'Modération du forum'),
 		);
 		return $availableRoles;
+	}
+	
+	/**
+	 * Fourni la 
+	 * @return string[]
+	 */
+	public function getAvailableTopicRight()
+	{
+		$availableTopicRight = array(
+			'GN_PARTICIPANT' => 'L\'utilisateur doit participer au GN',
+			'GROUPE_MEMBER' => 'L\'utilisateur doit être membre du groupe',
+			'GROUPE_SECONDAIRE_MEMBER' => 'Le personnage de l\'utilisateur doit être membre du groupe secondaire',
+			'CULTE' => 'Le personnage de l\'utilisateur doit suivre cette religion',
+			'ORGA' => 'L\'utilisateur doit disposer du role ORGA',
+		);
+		return $availableTopicRight;
 	}
 	
 	/**

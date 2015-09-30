@@ -449,9 +449,23 @@ class GroupeController
 		{
 			$originalGns->add($gn);
 		}
-			
+		
+		/**
+		 * Construit la tableau pour le choix du responsable
+		 * @var Array $choices
+		 */
+		$choices = array();
+		foreach ( $groupe->getParticipants() as $participant )
+		{
+			$choices[$participant->getUser()->getId()] = $participant->getUser()->getDisplayName();
+		}
 		
 		$form = $app['form.factory']->createBuilder(new GroupeForm(), $groupe)
+			->add('responsable', 'choice', array(
+				'label' => 'Responsable',
+				'required' => false,
+				'choices' => $choices, 
+				))
 			->add('update','submit', array('label' => "Sauvegarder"))
 			->add('delete','submit', array('label' => "Supprimer"))
 			->getForm();
