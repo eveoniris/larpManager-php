@@ -457,14 +457,16 @@ class GroupeController
 		$choices = array();
 		foreach ( $groupe->getParticipants() as $participant )
 		{
-			$choices[$participant->getUser()->getId()] = $participant->getUser()->getDisplayName();
+			$choices[] = $participant->getUser();
 		}
 		
 		$form = $app['form.factory']->createBuilder(new GroupeForm(), $groupe)
-			->add('responsable', 'choice', array(
+			->add('responsable', 'entity', array(
 				'label' => 'Responsable',
 				'required' => false,
-				'choices' => $choices, 
+				'property' => 'username',
+				'class' => 'LarpManager\Entities\User',
+				'choices' => $choices,
 				))
 			->add('update','submit', array('label' => "Sauvegarder"))
 			->add('delete','submit', array('label' => "Supprimer"))

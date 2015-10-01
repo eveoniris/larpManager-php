@@ -37,7 +37,13 @@
 					</tr>
 					<tr>
 						<th>Date de naissance</th>
-						<td>{{ user.etatCivil.dateNaissance }}</td>
+						<td>
+							{% if user.etatCivil.dateNaissance %}
+								{{ user.etatCivil.dateNaissance|date('Y-m-d') }}
+							{% else %}
+								Non renseigné
+							{% endif %}
+							</td>
 					</tr>
 					<tr>
 						<th>Prénom d'usage</th>
