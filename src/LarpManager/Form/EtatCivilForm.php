@@ -34,6 +34,10 @@ class EtatCivilForm extends AbstractType
 					'label' => 'Nom d\'usage',
 					'required' => false,
 				))
+				->add('date_naissance','date', array(
+						'label' => 'Date de naissance',
+						'required' => false,
+				))
 				->add('telephone','text', array(
 					'label' => 'Numéro de téléphone',
 					'required' => true,

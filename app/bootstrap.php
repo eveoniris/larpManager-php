@@ -101,7 +101,11 @@ $app->register(new TwigServiceProvider(), array(
 $app->register(new SwiftmailerServiceProvider());
 
 $app['swiftmailer.options'] = $app['config']['swiftmailer']; //voir les settings yaml 
-
+$app['swiftmailer.transport'] =  new \Swift_Transport_SendmailTransport(
+	$app['swiftmailer.transport.buffer'],
+	$app['swiftmailer.transport.eventdispatcher']
+);
+            
 // Doctrine DBAL
 $app->register(new DoctrineServiceProvider(), array(
 	    'db.options' => $app['config']['database'] //voir les settings yaml 
