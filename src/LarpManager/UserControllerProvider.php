@@ -56,7 +56,20 @@ class UserControllerProvider implements ControllerProviderInterface
 				throw new AccessDeniedException();
 			}
 		});
+			
+		$controllers->get('/etatCivil', 'LarpManager\Controllers\UserController::viewSelfEtatCivilAction')
+			->bind('etatCivil')
+			->before(function(Request $request) use ($app) {
+				// Require login. This should never actually cause access to be denied,
+				// but it causes a login form to be rendered if the viewer is not logged in.
+				if (!$app['user']) {
+					throw new AccessDeniedException();
+				}
+		});
 		
+		/**
+		 * Vue d'un utilisateur
+		 */
 		$controllers->match('/{id}', 'LarpManager\Controllers\UserController::viewAction')
 			->bind('user.view')
 			->assert('id', '\d+')
@@ -65,6 +78,19 @@ class UserControllerProvider implements ControllerProviderInterface
 				if (!$app['security.authorization_checker']->isGranted('VIEW_USER_ID', $request->get('id'))) {
 					throw new AccessDeniedException();
 				}				
+			});
+			
+		/**
+		 * Vue de l'état-civil d'un utilisateur
+		 */
+		$controllers->match('/{id}/etatCivil', 'LarpManager\Controllers\UserController::viewEtatCivilAction')
+			->bind('user.etatCivil.view')
+			->assert('id', '\d+')
+			->method('GET')
+			->before(function(Request $request) use ($app) {
+				if (!$app['security.authorization_checker']->isGranted('VIEW_USER_ID', $request->get('id'))) {
+					throw new AccessDeniedException();
+				}
 			});
 			
 		$controllers->match('/add', 'LarpManager\Controllers\UserController::addAction')
@@ -135,6 +161,11 @@ class UserControllerProvider implements ControllerProviderInterface
 		$controllers->match('/{id}/information/add', 'LarpManager\Controllers\UserController::addInformationAction')
 			->assert('id', '\d+')
 			->bind('user.information.add')
+			->method('GET|POST');
+		
+		$controllers->match('/{id}/information/update', 'LarpManager\Controllers\UserController::updateInformationAction')
+			->assert('id', '\d+')
+			->bind('user.information.update')
 			->method('GET|POST');
 		
 		$controllers->match('/confirm-email/{token}', 'LarpManager\Controllers\UserController::confirmEmailAction')

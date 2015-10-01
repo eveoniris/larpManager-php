@@ -467,6 +467,7 @@ class GroupeController
 				'property' => 'username',
 				'class' => 'LarpManager\Entities\User',
 				'choices' => $choices,
+				'empty_data'  => null,
 				))
 			->add('update','submit', array('label' => "Sauvegarder"))
 			->add('delete','submit', array('label' => "Supprimer"))

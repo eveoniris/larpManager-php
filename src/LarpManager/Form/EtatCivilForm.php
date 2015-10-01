@@ -37,6 +37,7 @@ class EtatCivilForm extends AbstractType
 				->add('date_naissance','date', array(
 						'label' => 'Date de naissance',
 						'required' => false,
+						'years' => range(1900,2020),
 				))
 				->add('telephone','text', array(
 					'label' => 'Numéro de téléphone',

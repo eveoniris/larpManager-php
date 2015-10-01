@@ -190,10 +190,13 @@ class ForumController
 							->find($postId);
 							
 		// vérification des droits
-		if ( ! $app['forum.manager']->right($postToResponse->getTopic(),$app['user']) )
+		if (!$app['security.authorization_checker']->isGranted('ROLE_MODERATOR'))
 		{
-			$app['session']->getFlashBag()->add('error', 'Vous n\'avez pas les droits necessaires pour lire ce message');
-			return $app->redirect($app['url_generator']->generate('forum'),301);
+			if ( ! $app['forum.manager']->right($postToResponse->getTopic(),$app['user']) )
+			{
+				$app['session']->getFlashBag()->add('error', 'Vous n\'avez pas les droits necessaires pour lire ce message');
+				return $app->redirect($app['url_generator']->generate('forum'),301);
+			}
 		}
 		
 		$post = new \LarpManager\Entities\Post();
@@ -332,10 +335,13 @@ class ForumController
 			->find($topicId);
 		
 		// vérification des droits
-		if ( ! $app['forum.manager']->right($topicRelated,$app['user']) )
+		if (!$app['security.authorization_checker']->isGranted('ROLE_MODERATOR'))
 		{
-			$app['session']->getFlashBag()->add('error', 'Vous n\'avez pas les droits necessaires pour ajouter un sous-forum dans ce forum');
-			return $app->redirect($app['url_generator']->generate('forum'),301);
+			if ( ! $app['forum.manager']->right($topicRelated,$app['user']) )
+			{
+				$app['session']->getFlashBag()->add('error', 'Vous n\'avez pas les droits necessaires pour ajouter un sous-forum dans ce forum');
+				return $app->redirect($app['url_generator']->generate('forum'),301);
+			}
 		}
 		
 		$topic = new \LarpManager\Entities\Topic();
@@ -382,10 +388,13 @@ class ForumController
 						->find($topicId);
 	
 		// vérification des droits
-		if ( ! $app['forum.manager']->right($topic,$app['user']) )
+		if (!$app['security.authorization_checker']->isGranted('ROLE_MODERATOR')) 
 		{
-			$app['session']->getFlashBag()->add('error', 'Vous n\'avez pas les droits necessaires pour modifier ce topic');
-			return $app->redirect($app['url_generator']->generate('forum'),301);
+			if (! $app['forum.manager']->right($topic,$app['user']) )
+			{
+				$app['session']->getFlashBag()->add('error', 'Vous n\'avez pas les droits necessaires pour modifier ce topic');
+				return $app->redirect($app['url_generator']->generate('forum'),301);
+			}
 		}
 	
 		$form = $app['form.factory']->createBuilder(new TopicForm(), $topic)

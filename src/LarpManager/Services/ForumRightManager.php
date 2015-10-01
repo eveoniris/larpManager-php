@@ -39,16 +39,12 @@ class ForumRightManager
      */
     protected function userGnRight($gnId, $user)
     {
-    	$joueur =  $user->getJoueur();
-    
-    	if ( $joueur)
-    	{
-    		foreach ( $joueur->getGns() as $gn )
-    		{
-    			if ( $gn->getId() == $gnId) return true;
-    		}
-    	}
-    	return false;
+		foreach ( $user->getGns() as $gn )
+		{
+			if ( $gn->getId() == $gnId) return true;
+		}
+
+		return false;
     }
     
     /**

@@ -119,7 +119,19 @@ class UserController
 		return $app->redirect($app['url_generator']->generate('user.view', array('id' => $app['user']->getId())));
 	}
 	
-
+	/**
+	 * Affiche de détail de l'état-civil de l'utilisateur courant
+	 * @param Application $app
+	 * @return \Symfony\Component\HttpFoundation\RedirectResponse
+	 */
+	public function viewSelfEtatCivilAction(Application $app) {
+		if (!$app['user']) {
+			return $app->redirect($app['url_generator']->generate('user.login'));
+		}
+		
+		return $app->redirect($app['url_generator']->generate('user.etatCivil.view', array('id' => $app['user']->getId())));
+	}
+	
 	/**
 	 * View user action.
 	 *
@@ -144,6 +156,32 @@ class UserController
 		return $app['twig']->render('admin/user/detail.twig', array(
 				'user' => $user,
 				'imageUrl' => $this->getGravatarUrl($user->getEmail()),
+		));
+	}
+	
+	/**
+	 * View etatCivil user action.
+	 *
+	 * @param Application $app
+	 * @param Request $request
+	 * @param int $id
+	 * @return Response
+	 * @throws NotFoundHttpException if no user is found with that ID.
+	 */
+	public function viewEtatCivilAction(Application $app, Request $request, $id)
+	{
+		$user = $app['user.manager']->getUser($id);
+	
+		if (!$user) {
+			throw new NotFoundHttpException('No user was found with that ID.');
+		}
+	
+		if (!$user->isEnabled() && !$app['security']->isGranted('ROLE_ADMIN')) {
+			throw new NotFoundHttpException('That user is disabled (pending email confirmation).');
+		}
+	
+		return $app['twig']->render('public/user/etatCivil.twig', array(
+				'user' => $user,
 		));
 	}
 	
@@ -221,6 +259,38 @@ class UserController
 		}
 		
 		return $app['twig']->render('etatCivil/add.twig', array(
+				'form' => $form->createView(),
+		));
+	}
+	
+	
+	/**
+	 * Modification de l'état-civil
+	 * 
+	 * @param Application $app
+	 * @param Request $request
+	 * @param unknown $id
+	 */
+	public function updateInformationAction(Application $app, Request $request, $id)
+	{
+		$etatCivil = $app['user']->getEtatCivil();
+		
+		$form = $app['form.factory']->createBuilder(new EtatCivilForm(), $etatCivil)
+			->add('save','submit', array('label' => "Sauvegarder"))
+			->getForm();
+		
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
+		{
+			$etatCivil = $form->getData();
+			$app['orm.em']->persist($etatCivil);
+				
+			$app['session']->getFlashBag()->add('success', 'Vos informations ont été enregistrées.');
+			return $app->redirect($app['url_generator']->generate('homepage'),301);
+		}
+		
+		return $app['twig']->render('etatCivil/update.twig', array(
 				'form' => $form->createView(),
 		));
 	}

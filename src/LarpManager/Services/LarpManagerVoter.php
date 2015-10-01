@@ -110,7 +110,7 @@ class LarpManagerVoter implements VoterInterface
 			}
 			if ($attribute == 'TOPIC_RIGHT') {
 				$topic = $object;
-				return $this->hasTopicRight($user, $topic) ? VoterInterface::ACCESS_GRANTED : VoterInterface::ACCESS_DENIED;
+				return $this->hasTopicRight($user, $topic, $token) ? VoterInterface::ACCESS_GRANTED : VoterInterface::ACCESS_DENIED;
 			}
 		}
 		
@@ -123,21 +123,21 @@ class LarpManagerVoter implements VoterInterface
 	 * @param unknown $user
 	 * @param unknown $topic
 	 */
-	protected function hasTopicRight($user, $topic)
+	protected function hasTopicRight($user, $topic, $token)
 	{
 		switch ( $topic->getRight() )
 		{
 			case 'GN_PARTICIPANT' :
-				return $this->userGnRight($topic->getObjectId(), $user);
+				return $this->userGnRight($topic->getObjectId(), $user, $token);
 				break;
 			case 'GROUPE_MEMBER' :
-				return $this->userGroupeRight($topic->getObjectId(), $user);
+				return $this->userGroupeRight($topic->getObjectId(), $user, $token);
 				break;
 			case 'GROUPE_SECONDAIRE_MEMBER' :
-				return $this->userGroupeSecondaireRight($topic->getObjectId(), $user);
+				return $this->userGroupeSecondaireRight($topic->getObjectId(), $user, $token);
 				break;
 			case 'CULTE' :
-				return $this->userCulteRight($topic->getObjectId(), $user);
+				return $this->userCulteRight($topic->getObjectId(), $user, $token);
 			case 'ORGA' :
 				return $this->hasRole($token, 'ROLE_ORGA') ? true: false;
 			default :
@@ -152,7 +152,7 @@ class LarpManagerVoter implements VoterInterface
 	 * @param unknown $culteId
 	 * @param unknown $user
 	 */
-	protected function userCulteRight($culteId, $user)
+	protected function userCulteRight($culteId, $user, $token)
 	{
 		if ($this->hasRole($token, 'ROLE_SCENARISTE')) return true;
 		
@@ -182,7 +182,7 @@ class LarpManagerVoter implements VoterInterface
 	 * @param unknown $gnId
 	 * @param unknown $user
 	 */
-	protected function userGnRight($gnId, $user)
+	protected function userGnRight($gnId, $user, $token)
 	{
 		if ($this->hasRole($token, 'ROLE_SCENARISTE')) return true;
 		
@@ -201,7 +201,7 @@ class LarpManagerVoter implements VoterInterface
 	 * @param unknown $groupeId
 	 * @param unknown $user
 	 */
-	protected function userGroupeRight($groupeId, $user)
+	protected function userGroupeRight($groupeId, $user, $token)
 	{
 		if ($this->hasRole($token, 'ROLE_SCENARISTE')) return true;
 		
@@ -222,7 +222,7 @@ class LarpManagerVoter implements VoterInterface
 	 * @param unknown $groupeSecondaireId
 	 * @param unknown $user
 	 */
-	protected function userGroupeSecondaireRight($groupeSecondaireId, $user)
+	protected function userGroupeSecondaireRight($groupeSecondaireId, $user, $token)
 	{
 		if ($this->hasRole($token, 'ROLE_SCENARISTE')) return true;
 		
