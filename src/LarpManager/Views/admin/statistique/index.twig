@@ -1,0 +1,43 @@
+{% extends "layout.twig" %}
+
+{% block title %}Statistique{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li class="active">Statistique</li>
+	</ol>
+	
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			Langues en fonction de leur utilisation comme langue principale par un territoire
+		</div>
+		<div class="panel-body">
+			<p>Plus une langue est utilisée comme langue principale, plus elle prendra d'espace dans ce graphique</p>
+			<p>Ceci est un test, les données présentées ne sont pas forcément intéressantes, mais par la suite on pourra sortir des graphs de ce type
+			pour tout un tas d'informations (notamment pour les ressources, les importations, les exportations, etc ...)</p>
+			<canvas id="myChart"></canvas>
+		</div>
+	</div>
+	
+{% endblock %}
+
+{% block javascript %}
+	{{ parent() }}
+	<script src="{{ app.request.basepath }}/js/Chart.min.js"></script>
+	
+	<script>
+		Chart.defaults.global.responsive = true;
+	
+		var data = {{ langues|raw }};
+		var ctx = document.getElementById("myChart").getContext("2d");
+		var myNewChart = new Chart(ctx).Pie(data, {
+			animation: true,
+			animationSteps: 60,
+			animationEasing: "easeOutQuart",
+			segmentShowStroke : true,
+			segmentStrokeColor : "#fff",
+			});
+	</script>
+{% endblock %}

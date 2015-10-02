@@ -176,7 +176,7 @@ else
 			   }),
 		),
 		'secured_area' => array(	// le reste necessite d'être connecté
-			'pattern' => '^/[annonce|stock|droit|forum|groupe|gn|personnage|territoire|appelation|langue|ressource|religion|age|genre|level|competence|competenceFamily|joueur|etatCivil]/.*$',
+			'pattern' => '^/[annonce|statistique|stock|droit|forum|groupe|gn|personnage|territoire|appelation|langue|ressource|religion|age|genre|level|competence|competenceFamily|joueur|etatCivil]/.*$',
 			'anonymous' => false,
 			'remember_me' => array(),
 			'form' => array(
@@ -221,6 +221,7 @@ else
 	$app->mount('/gn', new LarpManager\GnControllerProvider());
 	$app->mount('/participant', new LarpManager\ParticipantControllerProvider());
 	$app->mount('/forum', new LarpManager\ForumControllerProvider());
+	$app->mount('/statistique', new LarpManager\StatistiqueControllerProvider());
 		
 
 	/**
@@ -257,7 +258,8 @@ else
 		array('^/genre/.*$', 'ROLE_REGLE'),
 		array('^/appelation/.*$', 'ROLE_SCENARISTE'),
 		array('^/langue/.*$', 'ROLE_SCENARISTE'),
-		array('^/ressource/.*$', 'ROLE_SCENARISTE'),			
+		array('^/ressource/.*$', 'ROLE_SCENARISTE'),
+		array('^/statistique/.*$', 'ROLE_SCENARISTE'),
 		array('^/competenceFamily/.*$', 'ROLE_REGLE'),
 		array('^/level/.*$', 'ROLE_REGLE'),
 		array('^/stock/.*$', 'ROLE_STOCK'),
