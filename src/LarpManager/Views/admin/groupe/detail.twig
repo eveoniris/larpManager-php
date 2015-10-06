@@ -30,7 +30,7 @@
     					<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
     					Attention, ce groupe n'a pas de description.
     				{% else %}
-    					{{ groupe.description }}
+    					{{ groupe.description|markdown }}
     				{% endif %}
     				</p>
 	    		</div>

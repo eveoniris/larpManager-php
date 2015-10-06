@@ -29,11 +29,11 @@
 				<h6 class="list-group-item-heading">Liens</h6>
 				
 				{% if groupe.territoire %}
-				<p class="list-group-item-text"><a href="{{ path('territoire.detail', {'index': groupe.territoire.id}) }}">{{ groupe.territoire.nom }}</a></p>
+					<p class="list-group-item-text"><a href="{{ path('territoire.detail', {'index': groupe.territoire.id}) }}">{{ groupe.territoire.nom }}</a></p>
 				{% endif %}
 				
 				{% if groupe.topic %}
-				<p class="list-group-item-text"><a href="{{ path('forum.topic', {'index': groupe.topic.id}) }}">Forum</a></p>
+					<p class="list-group-item-text"><a href="{{ path('forum.topic', {'index': groupe.topic.id}) }}">Forum</a></p>
 				{% endif %}
 											
 				{% if not groupe.getPersonnage(app.user) %}

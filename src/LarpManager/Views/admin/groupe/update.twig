@@ -97,6 +97,20 @@
 {% block javascript %}
 
 	{{  parent() }}
+	
+	{# inclusion du plugin tinymce pour la saisie de la description #}
+	   
+	<script src="{{ app.request.basepath }}/js/tinymce/tinymce.min.js"></script>
+
+	<script type="text/javascript">
+		tinyMCE.init({
+				mode: "textareas",
+				theme: "modern",
+				plugins : "spellchecker,insertdatetime,preview", 
+		});
+		
+	</script>
+	
 	<script>
 
 		function addGroupeClasseForm(collectionHolder, $newLinkLi) {

@@ -351,6 +351,14 @@ class GroupeController
 		$groupe = new \LarpManager\Entities\Groupe();
 		
 		$form = $app['form.factory']->createBuilder(new GroupeForm(), $groupe)
+			->add('responsable', 'entity', array(
+					'label' => 'Responsable',
+					'required' => false,
+					'property' => 'username',
+					'class' => 'LarpManager\Entities\User',
+					'choices' => $choices,
+					'empty_data'  => null,
+			))
 			->add('save','submit', array('label' => 'Sauvegarder et fermer'))
 			->add('save_continue','submit',array('label' => 'Sauvegarder et nouveau'))
 			->getForm();
