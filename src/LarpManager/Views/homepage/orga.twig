@@ -6,7 +6,7 @@
 	   		
 	<div class="row">
 	
-		<div class="col-xs-8 col-md-8">
+		<div class="col-xs-12 col-md-6">
 		
 			<div class="well well-sm">
 				<h4>
@@ -18,22 +18,6 @@
 				{{ include("homepage/fragment/new_posts.twig") }}
 			{% endif %}
 			
-		</div>
-		
-		<div class="col-xs-4 col-md-4">
-		
-			{# affichage de l'annonce la plus récente et du lien vers les archives des annonces #}
-			{% for annonce in annonces %}
-				<div class="panel panel-primary">
-					<div class="panel-heading">
-						{{ annonce.title }}
-					</div>
-					<div class="panel-body">
-						{{ annonce.text|markdown }}
-					</div>
-				</div>
-			{% endfor %}
-						
 			{# si l'utilisateur est scénariste, lui afficher les liens vers les groupes dont
 			   il a la responsabilité #}
 	
@@ -53,6 +37,22 @@
 				</div>
 				{%  endif %}
 			{% endif %}
+		</div>
+		
+		<div class="col-xs-12 col-md-6">
+		
+			{# affichage de l'annonce la plus récente et du lien vers les archives des annonces #}
+			{% for annonce in annonces %}
+				<div class="panel panel-primary">
+					<div class="panel-heading">
+						{{ annonce.title }}
+					</div>
+					<div class="panel-body">
+						{{ annonce.text|markdown }}
+					</div>
+				</div>
+			{% endfor %}
+						
 		</div>
 	</div>
 	

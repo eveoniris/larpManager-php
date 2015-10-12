@@ -240,7 +240,7 @@ class PersonnageController
 			$cout = $app['personnage.manager']->getCompetenceCout($personnage, $competence);
 			$xp = $personnage->getXp();
 			
-			if ( $xp - cout < 0 )
+			if ( $xp - $cout < 0 )
 			{
 				$app['session']->getFlashBag()->add('error','Vos n\'avez pas suffisement de point d\'expérience pour acquérir cette compétence.');
 				return $app->redirect($app['url_generator']->generate('personnage.detail',array('index'=>$personnage->getId()),301));
