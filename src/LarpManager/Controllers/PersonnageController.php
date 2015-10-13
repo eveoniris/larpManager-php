@@ -196,6 +196,63 @@ class PersonnageController
 	}
 	
 	/**
+	 * Retire la dernière compétence acquise par un personnage
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function removeCompetenceAction(Request $request, Application $app)
+	{
+		$personnage = $request->get('personnage');
+		$lastCompetence = $app['personnage.manager']->getLastCompetence($personnage);
+		
+		if ( ! $lastCompetence ) {
+			$app['session']->getFlashBag()->add('error','Désolé, le personnage n\'a pas encore acquis de compétences');
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
+		}
+		
+		$form = $app['form.factory']->createBuilder()
+			->add('save','submit', array('label' => 'Retirer la compétence'))
+			->getForm();
+		
+		$form->handleRequest($request);
+				
+		if ( $form->isValid() )
+		{
+			$data = $form->getData();
+			
+			$cout = $app['personnage.manager']->getCompetenceCout($personnage, $lastCompetence);
+			$xp = $personnage->getXp();
+			
+			$personnage->setXp($xp + $cout);
+			$personnage->removeCompetence($lastCompetence);
+			$lastCompetence->removePersonnage($personnage);
+			
+			// historique
+			$historique = new \LarpManager\Entities\ExperienceGain();
+			$historique->setOperationDate(new \Datetime('NOW'));
+			$historique->setXpGain($cout);
+			$historique->setExplanation('Suppression de la compétence ' . $lastCompetence->getLabel());
+			$historique->setPersonnage($personnage);
+				
+			$app['orm.em']->persist($lastCompetence);
+			$app['orm.em']->persist($personnage);
+			$app['orm.em']->persist($historique);
+			$app['orm.em']->flush();
+			
+			$app['session']->getFlashBag()->add('success','La compétence a été retirée');
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);			
+		}
+		
+		return $app['twig']->render('admin/personnage/removeCompetence.twig', array(
+				'form' => $form->createView(),
+				'personnage' => $personnage,
+				'competence' =>  $lastCompetence,
+		));
+		
+	}
+	
+	/**
 	 * Ajoute une compétence au personnage
 	 * 
 	 * @param Request $request
@@ -243,7 +300,7 @@ class PersonnageController
 			if ( $xp - $cout < 0 )
 			{
 				$app['session']->getFlashBag()->add('error','Vos n\'avez pas suffisement de point d\'expérience pour acquérir cette compétence.');
-				return $app->redirect($app['url_generator']->generate('personnage.detail',array('index'=>$personnage->getId()),301));
+				return $app->redirect($app['url_generator']->generate('homepage'),301);
 			}
 			$personnage->setXp($xp - $cout);
 			$personnage->addCompetence($competence);

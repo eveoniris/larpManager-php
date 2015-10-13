@@ -25,6 +25,7 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 	 *  - personnage.admin.update
 	 *  - personnage.detail
 	 *  - personnage.competence.add
+	 *  - personnage.competence.remove
 	 *  - personnage.religion.add
 	 *
 	 * @param Application $app
@@ -133,6 +134,17 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 			->method('GET|POST')
 			->convert('personnage', 'converter.personnage:convert')
 			->before($mustOwn);
+		
+		/**
+		 * Retire la dernière compétence acquise par un personnage
+		 * Accessible uniquement aux orgas
+		 */
+		$controllers->match('/{personnage}/competence/remove','LarpManager\Controllers\PersonnageController::removeCompetenceAction')
+			->assert('personnage', '\d+')
+			->bind("personnage.competence.remove")
+			->method('GET|POST')
+			->convert('personnage', 'converter.personnage:convert')
+			->before($mustBeOrga);
 			
 		/**
 		 * Choix d'une religion

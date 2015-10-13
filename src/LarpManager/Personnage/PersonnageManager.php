@@ -9,11 +9,22 @@ use LarpManager\Entities\Competence;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
+/**
+ * LarpManager\Personnage\PersonnageManager
+ * 
+ * @author kevin
+ *
+ */
 class PersonnageManager
 {
 	/** @var \Silex\Application */
 	protected $app;
 	
+	/**
+	 * Constructeur
+	 * 
+	 * @param Application $app
+	 */
 	public function __construct(Application $app)
 	{
 		$this->app = $app;
@@ -122,4 +133,35 @@ class PersonnageManager
 		return $availableCompetences;
 	}
 	
+	
+	/**
+	 * Fourni la dernière compétence acquise par un presonnage
+	 * 
+	 * @param Personnage $personnage
+	 */
+	public function getLastCompetence(Personnage $personnage)
+	{
+		$competence = null;
+		$operationDate = null;
+		
+		foreach ( $personnage->getExperienceUsages() as $experienceUsage)
+		{
+			if ( $personnage->getCompetences()->contains($experienceUsage->getCompetence()) )
+			{
+				if ( ! $operationDate )
+				{
+					$operationDate = $experienceUsage->getOperationDate();
+					$competence = $experienceUsage->getCompetence();
+				}	
+				else if ( $operationDate <  $experienceUsage->getOperationDate() )
+				{
+					$operationDate = $experienceUsage->getOperationDate();
+					$competence = $experienceUsage->getCompetence();
+				}
+			}
+		}
+		
+		return $competence;
+			
+	}
 }
