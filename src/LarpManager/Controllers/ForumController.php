@@ -48,6 +48,14 @@ class ForumController
 		$topic = new \LarpManager\Entities\Topic();
 		
 		$form = $app['form.factory']->createBuilder(new TopicForm(), $topic)
+			->add('right','choice', array(
+					'label' => 'Droits',
+					'choices' => $app['larp.manager']->getAvailableTopicRight(),
+			))
+			->add('object_id','number', array(
+					'required' => false,
+					'label' => 'Identifiant'
+			))
 			->add('save','submit', array('label' => "Sauvegarder"))
 			->getForm();
 		
