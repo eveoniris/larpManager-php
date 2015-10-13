@@ -397,8 +397,18 @@ class ForumController
 			}
 		}
 	
-		$form = $app['form.factory']->createBuilder(new TopicForm(), $topic)
-				->add('save','submit', array('label' => "Sauvegarder"))
+		$formBuilder = $app['form.factory']->createBuilder(new TopicForm(), $topic);
+		
+		if ( $app['security.authorization_checker']->isGranted('ROLE_MODERATOR'))
+		{
+			$formBuilder->add('topic','entity', array(
+					'required' => false,
+					'label' => 'Choisissez le topic parent',
+					'property' => 'title',
+					'class' => 'LarpManager\Entities\Topic'
+				));
+		}
+		$form =	$formBuilder->add('save','submit', array('label' => "Sauvegarder"))
 				->getForm();
 	
 		$form->handleRequest($request);
