@@ -140,6 +140,8 @@ class LarpManagerVoter implements VoterInterface
 				return $this->userCulteRight($topic->getObjectId(), $user, $token);
 			case 'ORGA' :
 				return $this->hasRole($token, 'ROLE_ORGA') ? true: false;
+			case 'SCENARISTE' :
+				return $this->hasRole($token, 'ROLE_SCENARISTE') ? true: false;
 			default :
 				return true;
 		}

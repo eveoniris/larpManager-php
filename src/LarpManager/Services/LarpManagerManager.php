@@ -60,6 +60,7 @@ class LarpManagerManager
 			'GROUPE_SECONDAIRE_MEMBER' => 'Le personnage de l\'utilisateur doit être membre du groupe secondaire',
 			'CULTE' => 'Le personnage de l\'utilisateur doit suivre cette religion',
 			'ORGA' => 'L\'utilisateur doit disposer du role ORGA',
+			'SCENARISTE' => 'L\'utilisateur doit disposer du role SCENARISTE',
 		);
 		return $availableTopicRight;
 	}
