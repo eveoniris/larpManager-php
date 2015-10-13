@@ -41,20 +41,20 @@
 			<thead>
 				<tr>
 					<th>
-						{% if app.request.get('order_dir') == 'ASC' and app.request.get('order_by') == 'id' %}
-							<a href="{{ path('groupe.admin.list', {'order_by': 'id', 'order_dir': 'DESC'}) }}">
+						{% if app.request.get('order_dir') == 'ASC' and app.request.get('order_by') == 'numero' %}
+							<a href="{{ path('groupe.admin.list', {'order_by': 'numero', 'order_dir': 'DESC'}) }}">
 						{%  else %}
-							<a href="{{ path('groupe.admin.list', {'order_by': 'id', 'order_dir': 'ASC'}) }}">
+							<a href="{{ path('groupe.admin.list', {'order_by': 'numero', 'order_dir': 'ASC'}) }}">
 						{% endif %}
-							#	
-						{% if app.request.get('order_by') == 'id'  %}
+							Numero
+						{% if app.request.get('order_by') == 'numero'  %}
 							{% if app.request.get('order_dir') == 'ASC' %}
 								<span class="caret"></span>
 							{%else%}
-									<span class="dropup">
-    									<span class="caret"></span>
-									</span>
-								{% endif %}
+								<span class="dropup">
+    								<span class="caret"></span>
+								</span>
+							{% endif %}
 						{% endif %}
 						</a>
 					</th>
@@ -77,24 +77,7 @@
 						{% endif %}
 						</a>
 					</th>
-					<th>
-						{% if app.request.get('order_dir') == 'ASC' and app.request.get('order_by') == 'numero' %}
-							<a href="{{ path('groupe.admin.list', {'order_by': 'numero', 'order_dir': 'DESC'}) }}">
-						{%  else %}
-							<a href="{{ path('groupe.admin.list', {'order_by': 'numero', 'order_dir': 'ASC'}) }}">
-						{% endif %}
-							Numero
-						{% if app.request.get('order_by') == 'numero'  %}
-							{% if app.request.get('order_dir') == 'ASC' %}
-								<span class="caret"></span>
-							{%else%}
-								<span class="dropup">
-    								<span class="caret"></span>
-								</span>
-							{% endif %}
-						{% endif %}
-						</a>
-					</th>
+
 					<th>
 						{% if app.request.get('order_dir') == 'ASC' and app.request.get('order_by') == 'classe_open' %}
 							<a href="{{ path('groupe.admin.list', {'order_by': 'classe_open', 'order_dir': 'DESC'}) }}">
@@ -120,9 +103,8 @@
 			<tbody>
 			{% for groupe in groupes %}
 				<tr>
-					<td><a href="{{ path('groupe.update', {'index':groupe.id}) }}">{{ groupe.id }}</a></td>
+					<td><a href="{{ path('groupe.update', {'index':groupe.id}) }}">{{ groupe.numero }}</a></td>
 					<td><a href="{{ path('groupe.detail', {'index':groupe.id}) }}">{{ groupe.nom }}</a></td>
-					<td>{{ groupe.numero }}</td>
 					<td>{{ groupe.classeOpen }}{% if is_granted('ROLE_ADMIN') %}&nbsp;(<a href=" {{ path('groupe.place', {'index':groupe.id}) }}">Modifier</a>){% endif %} </td>
 					<td>{{ groupe.scenariste.username|default('pas de scénariste') }}</td>
 					<td>{{ groupe.responsable.username|default('pas de responsable') }}</td>
