@@ -18,7 +18,7 @@
 								Sous-forums : {{ topic.topics|join(', ') }} 
 							</p>
 						{% endif %}
-						{% if is_granted('ROLE_MODERATOR', app.user) %}
+						{% if is_granted('ROLE_ORGA', app.user) %}
 							<a href="{{ path('forum.topic.update',{'index':topic.id}) }}">Modifier</a>
 						{% endif %}
 						

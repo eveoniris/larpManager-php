@@ -29,6 +29,16 @@
 				{{ form_rest(form) }}
 			</fieldset>
 		</form>
+		
+		<h4>Détail des competences accessibles</h4>
+		<div class="list-group">
+			{% for competence in competences|sort %}
+				<div class="list-group-item">
+					<div class="list-group-item-heading"><h6>{{ competence.label }}</h6></div>
+					<div class="list-group-item-text">{{ competence.description }}</div>
+				</div>
+			{% endfor %}
+		</div>
 	</div>
 </div>
 {% endblock content %}

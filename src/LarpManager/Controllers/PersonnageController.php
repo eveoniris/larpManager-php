@@ -7,6 +7,7 @@ use JasonGrimes\Paginator;
 use LarpManager\Form\PersonnageReligionForm;
 use LarpManager\Form\PersonnageFindForm;
 use LarpManager\Form\PersonnageForm;
+use LarpManager\Form\PersonnageXpForm;
 
 /**
  * LarpManager\Controllers\PersonnageController
@@ -90,8 +91,39 @@ class PersonnageController
 	public function adminXpAction(Request $request, Application $app)
 	{
 		$personnage = $request->get('personnage');
-		return $app['twig']->render('admin/personnage/xp.twig', array('personnage' => $personnage));
+		$form = $app['form.factory']->createBuilder(new PersonnageXpForm(), array())
+				->add('save','submit', array('label' => 'Sauvegarder'))
+				->getForm();
 		
+		$form->handleRequest($request);
+					
+		if ( $form->isValid() )
+		{
+			$data = $form->getData();
+			
+			$xp = $personnage->getXp();
+				
+			$personnage->setXp($xp + $data['xp']);
+				
+			// historique
+			$historique = new \LarpManager\Entities\ExperienceGain();
+			$historique->setOperationDate(new \Datetime('NOW'));
+			$historique->setXpGain($data['xp']);
+			$historique->setExplanation($data['explanation']);
+			$historique->setPersonnage($personnage);
+			
+			$app['orm.em']->persist($personnage);
+			$app['orm.em']->persist($historique);
+			$app['orm.em']->flush();
+				
+			$app['session']->getFlashBag()->add('success','Les points d\'expériences ont été ajoutés');
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);			
+		}
+		
+		return $app['twig']->render('admin/personnage/xp.twig', array(
+				'personnage' => $personnage,
+				'form' => $form->createView(),
+		));
 	}
 	
 	/**

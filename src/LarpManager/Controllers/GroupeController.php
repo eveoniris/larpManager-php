@@ -9,7 +9,7 @@ use JasonGrimes\Paginator;
 use LarpManager\Form\GroupeForm;
 use LarpManager\Form\PersonnageForm;
 use LarpManager\Form\GroupFindForm;
-
+use LarpManager\Form\BackgroundForm;
 
 
 /**
@@ -338,6 +338,73 @@ class GroupeController
 		
 		return $app['twig']->render('admin/groupe/place.twig', array(
 				'groupe' => $groupe));
+	}
+	
+	/**
+	 * Ajout d'un background à un groupe
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function addBackgroundAction(Request $request, Application $app)
+	{
+		$id = $request->get('index');
+		$groupe = $app['orm.em']->find('\LarpManager\Entities\Groupe', $id);
+		
+		$background = new \LarpManager\Entities\Background();
+		$background->setGroupe($groupe);
+		
+		$form = $app['form.factory']->createBuilder(new BackgroundForm(), $background)
+			->add('save','submit', array('label' => 'Sauvegarder'))
+			->getForm();
+		
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
+		{
+			$app['session']->getFlashBag()->add('success','Le background du groupe a été créé');
+			return $app->redirect($app['url_generator']->generate('groupe.admin.detail', array('index'=> $groupe->getId()) ),301);
+		}
+		
+		return $app['twig']->render('admin/groupe/background/add.twig', array(
+				'groupe' => $groupe,
+				'form' => $form->createView(),
+			));
+	}
+	
+	/**
+	 * Mise à jour du background d'un groupe
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function updateBackgroundAction(Request $request, Application $app)
+	{
+		
+		$id = $request->get('index');
+		$groupe = $app['orm.em']->find('\LarpManager\Entities\Groupe', $id);
+		
+		$form = $app['form.factory']->createBuilder(new BackgroundForm(), $groupe->getBackground())
+			->add('save','submit', array('label' => 'Sauvegarder'))
+			->getForm();
+		
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
+		{
+			$background = $form->getData();
+			
+			$app['orm.em']->persist($background);
+			$app['orm.em']->flush();
+			
+			$app['session']->getFlashBag()->add('success','Le background du groupe a été mis à jour');
+			return $app->redirect($app['url_generator']->generate('groupe.admin.detail', array('index'=> $groupe->getId()) ),301);
+		}
+		
+		return $app['twig']->render('admin/groupe/background/update.twig', array(
+				'groupe' => $groupe,
+				'form' => $form->createView(),
+		));
 	}
 	
 	/**
