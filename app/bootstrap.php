@@ -222,6 +222,7 @@ else
 	$app->mount('/participant', new LarpManager\ParticipantControllerProvider());
 	$app->mount('/forum', new LarpManager\ForumControllerProvider());
 	$app->mount('/statistique', new LarpManager\StatistiqueControllerProvider());
+	$app->mount('/background', new LarpManager\BackgroundControllerProvider());
 		
 
 	/**
@@ -252,6 +253,7 @@ else
 		array('^/territoire/.*$', 'ROLE_USER'),
 		array('^/religion/.*$', 'ROLE_USER'),
 		array('^/groupeSecondaireType/.*$', 'ROLE_SCENARISTE'),
+		array('^/background/.*$', 'ROLE_SCENARISTE'),
 		array('^/annonce/.*$', 'ROLE_ADMIN'),
 		array('^/droit/.*$', 'ROLE_ADMIN'),
 		array('^/age/.*$', 'ROLE_REGLE'),

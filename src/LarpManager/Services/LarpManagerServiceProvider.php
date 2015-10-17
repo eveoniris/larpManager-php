@@ -25,7 +25,7 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 	 */
 	public function register(Application $app)
 	{
-		// Ajoute la gestion des droits propre à larpmanager
+		// Ajoute la gestion des droits de larpmanager
 		$app['security.voters'] = $app->extend('security.voters', function($voters) use ($app) {
 			foreach ($voters as $voter) {
 				if ($voter instanceof RoleHierarchyVoter) {
@@ -61,9 +61,14 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 			return new PersonnageConverter($app['orm.em']);
 		});
 		
-		// personnage converter
+		// user converter
 		$app['converter.user'] = $app->share(function($app) {
 			return new UserConverter($app['orm.em']);
+		});
+		
+		// background converter
+		$app['converter.background'] = $app->share(function($app) {
+			return new BackgroundConverter($app['orm.em']);
 		});
 	}
 

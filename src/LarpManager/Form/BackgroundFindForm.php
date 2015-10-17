@@ -7,12 +7,12 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
- * LarpManager\Form\TopicForm
- * 
+ * LarpManager\Form\BackgroundFindForm
+ *
  * @author kevin
  *
  */
-class TopicForm extends AbstractType
+class BackgroundFindForm extends AbstractType
 {
 	/**
 	 * Construction du formulaire
@@ -22,32 +22,34 @@ class TopicForm extends AbstractType
 	 */
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
-		$builder->add('title','text', array(
+		$builder->add('value','text', array(
 					'required' => true,	
+					'label' => 'Recherche',
 				))
-				->add('description','textarea', array(
-					'required' => false,
-					'attr' => array('rows' => 9),
+				->add('type','choice', array(
+					'required' => true,
+					'choices' => array(
+						'Auteur' => 'auteur',
+						'Groupe' => 'groupe',
+					),
+					'label' => 'Type',
 				));
 	}
 	
 	/**
-	 * Définition de la classe d'entité concernée
+	 * Définition de l'entité concerné
 	 * 
 	 * @param OptionsResolverInterface $resolver
 	 */
 	public function setDefaultOptions(OptionsResolverInterface $resolver)
 	{
-		$resolver->setDefaults(array(
-				'class' => 'LarpManager\Entities\Topic',
-		));
 	}
 	
 	/**
-	 * Nom du formlaire
+	 * Nom du formulaire
 	 */
 	public function getName()
 	{
-		return 'topic';
+		return 'backgroundFind';
 	}
 }

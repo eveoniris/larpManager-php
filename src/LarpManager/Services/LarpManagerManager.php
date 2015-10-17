@@ -49,7 +49,7 @@ class LarpManagerManager
 	}
 	
 	/**
-	 * Fourni la 
+	 * Fourni la liste des droits necessaires pour accéder à un topic
 	 * @return string[]
 	 */
 	public function getAvailableTopicRight()
@@ -63,6 +63,21 @@ class LarpManagerManager
 			'SCENARISTE' => 'L\'utilisateur doit disposer du role SCENARISTE',
 		);
 		return $availableTopicRight;
+	}
+	
+	/**
+	 * Fourni la liste des droits concernant la visibilité des backgrounds
+	 * @return string[]
+	 */
+	public function getVisibility()
+	{
+		$visibility = array(
+			'PRIVATE' => 'Seul les scénaristes peuvent voir ceci',
+			'PUBLIC' => 'Tous les joueurs peuvent voir ceci',
+			'GROUPE_MEMBER' => 'Seul les membres du groupe peuvent voir ceci',
+			'GROUPE_OWNER' => 'Seul le chef de groupe peux voir ceci',
+		);
+		return $visibility;
 	}
 	
 	/**

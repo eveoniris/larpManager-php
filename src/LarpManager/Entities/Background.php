@@ -14,8 +14,18 @@ use LarpManager\Entities\BaseBackground;
 /**
  * LarpManager\Entities\Background
  *
- * @Entity()
+ * @Entity(repositoryClass="LarpManager\Repository\BackgroundRepository")
  */
 class Background extends BaseBackground
 {
+	/**
+	 * Définir la date de création et la date de mise à jour lors de la création d'un nouveau background
+	 */
+	public function __construct()
+	{
+		parent::__construct();
+		$this->setUpdateDate(new \Datetime('NOW'));
+		$this->setCreationDate(new \Datetime('NOW'));
+	}
+	
 }

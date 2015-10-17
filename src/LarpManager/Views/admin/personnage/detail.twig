@@ -44,12 +44,13 @@
 				</div>
 				<div class="list-group-item">
 					<h6 class="list-group-item-heading">Compétences <small>({{ personnage.xp|default(0) }} xp)</small></h6>
+					<p><a href="{{ path('personnage.admin.xp', {'personnage':personnage.id}) }}">Ajouter des points d'expérience</a></p>
 					{% for competence in personnage.competences %}
 						<p class="list-group-item-text">
 							{{ competence.competenceFamily.label }}&nbsp({{ competence.level.label }}) : {{ competence.description }}
 						</p>					
 					{% endfor %}
-					<p><a href="{{ path('personnage.competence.remove', {personnage:personnage.id}) }}">Retirer la dernière compétence acquise</a></p>
+					<p><a href="{{ path('personnage.competence.remove', {'personnage':personnage.id}) }}">Retirer la dernière compétence acquise</a></p>
 				</div>
 				<div class="list-group-item">
 					<h6 class="list-group-item-heading">Historique</h6>		
