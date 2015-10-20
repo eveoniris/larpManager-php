@@ -41,7 +41,7 @@ class GnForm extends AbstractType
 						'required' => false,
 				))
 				->add('dateInstallationJoueur','datetime',array(
-						'label' => 'Date et heure du début de l\'acceuil des joueurs',
+						'label' => 'Date et heure du début de l\'accueil des joueurs',
 						'required' => false,
 				))
 				->add('dateFinOrga','datetime', array(
