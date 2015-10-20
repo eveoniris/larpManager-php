@@ -8,8 +8,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use JasonGrimes\Paginator;
 use LarpManager\Form\GroupeForm;
 use LarpManager\Form\PersonnageForm;
-use LarpManager\Form\FindGroupeForm;
-
+use LarpManager\Form\GroupFindForm;
+use LarpManager\Form\BackgroundForm;
 
 
 /**
@@ -26,13 +26,17 @@ class GroupeController
 	 * @param Request $request
 	 * @param Application $app
 	 */
-	public function listAction(Request $request, Application $app)
+	public function adminListAction(Request $request, Application $app)
 	{
 		$order_by = $request->get('order_by') ?: 'numero';
 		$order_dir = $request->get('order_dir') == 'DESC' ? 'DESC' : 'ASC';
 		$limit = (int)($request->get('limit') ?: 50);
 		$page = (int)($request->get('page') ?: 1);
 		$offset = ($page - 1) * $limit;
+		
+		$form = $app['form.factory']->createBuilder(new GroupFindForm())
+			->add('find','submit', array('label' => 'Rechercher'))
+			->getForm();
 		
 		$criteria = array();
 		
@@ -46,12 +50,56 @@ class GroupeController
 		$numResults = $repo->findCount($criteria);
 		
 		$paginator = new Paginator($numResults, $limit, $page,
-				$app['url_generator']->generate('groupe.list') . '?page=(:num)&limit=' . $limit . '&order_by=' . $order_by . '&order_dir=' . $order_dir
+				$app['url_generator']->generate('groupe.admin.list') . '?page=(:num)&limit=' . $limit . '&order_by=' . $order_by . '&order_dir=' . $order_dir
 				);
 		
 		return $app['twig']->render('admin/groupe/list.twig', array(
+				'form' => $form->createView(),
 				'groupes' => $groupes,
 				'paginator' => $paginator,
+		));
+	}
+	
+	/**
+	 * Retirer un participant du groupe
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function adminParticipantRemoveAction(Request $request, Application $app)
+	{
+		$participantId = $request->get('participant');
+		$groupeId = $request->get('groupe');
+		
+		$groupe = $app['orm.em']->find('\LarpManager\Entities\Groupe',$groupeId);
+		$participant = $app['orm.em']->find('\LarpManager\Entities\Participant',$participantId);
+
+		
+		if ($request->isMethod('POST')) {
+			
+			$personnage = $participant->getPersonnage();
+			if ( $personnage )
+			{
+				if ( $personnage->getGroupe() == $groupe)
+				{
+					$personnage->setGroupe(null);
+					$app['orm.em']->persist($personnage);
+				}
+			}
+			
+			$groupe->removeParticipant($participant);
+			$participant->setGroupe(null);
+			$app['orm.em']->persist($groupe);
+			$app['orm.em']->persist($participant);
+			$app['orm.em']->flush();
+			
+			$app['session']->getFlashBag()->add('success', 'Le participant a été retiré du groupe.');
+			return $app->redirect($app['url_generator']->generate('groupe.detail', array('index'=> $groupe->getId())));
+		}
+				
+		return $app['twig']->render('admin/groupe/removeParticipant.twig', array(
+				'groupe' => $groupe,
+				'participant' => $participant,
 		));
 	}
 	
@@ -199,7 +247,7 @@ class GroupeController
 			$xpAgeBonus = $personnage->getAge()->getBonus();
 			if ( $xpAgeBonus )
 			{
-				$joueur->addXp($xpAgeBonus);
+				$personnage->addXp($xpAgeBonus);
 				$historique = new \LarpManager\Entities\ExperienceGain();
 				$historique->setExplanation("Bonus lié à l'age");
 				$historique->setOperationDate(new \Datetime('NOW'));
@@ -215,7 +263,7 @@ class GroupeController
 	
 	
 			$app['session']->getFlashBag()->add('success','Votre personnage a été sauvegardé.');
-			return $app->redirect($app['url_generator']->generate('homepage',301));
+			return $app->redirect($app['url_generator']->generate('homepage'),301);
 		}
 	
 		return $app['twig']->render('groupe/personnage_add.twig', array(
@@ -285,11 +333,78 @@ class GroupeController
 			$app['orm.em']->flush();
 			
 			$app['session']->getFlashBag()->add('success','Le nombre de place disponible a été mis à jour');
-			return $app->redirect($app['url_generator']->generate('groupe.list'),301);
+			return $app->redirect($app['url_generator']->generate('groupe.admin.list'),301);
 		}
 		
 		return $app['twig']->render('admin/groupe/place.twig', array(
 				'groupe' => $groupe));
+	}
+	
+	/**
+	 * Ajout d'un background à un groupe
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function addBackgroundAction(Request $request, Application $app)
+	{
+		$id = $request->get('index');
+		$groupe = $app['orm.em']->find('\LarpManager\Entities\Groupe', $id);
+		
+		$background = new \LarpManager\Entities\Background();
+		$background->setGroupe($groupe);
+		
+		$form = $app['form.factory']->createBuilder(new BackgroundForm(), $background)
+			->add('save','submit', array('label' => 'Sauvegarder'))
+			->getForm();
+		
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
+		{
+			$app['session']->getFlashBag()->add('success','Le background du groupe a été créé');
+			return $app->redirect($app['url_generator']->generate('groupe.admin.detail', array('index'=> $groupe->getId()) ),301);
+		}
+		
+		return $app['twig']->render('admin/groupe/background/add.twig', array(
+				'groupe' => $groupe,
+				'form' => $form->createView(),
+			));
+	}
+	
+	/**
+	 * Mise à jour du background d'un groupe
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function updateBackgroundAction(Request $request, Application $app)
+	{
+		
+		$id = $request->get('index');
+		$groupe = $app['orm.em']->find('\LarpManager\Entities\Groupe', $id);
+		
+		$form = $app['form.factory']->createBuilder(new BackgroundForm(), $groupe->getBackground())
+			->add('save','submit', array('label' => 'Sauvegarder'))
+			->getForm();
+		
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
+		{
+			$background = $form->getData();
+			
+			$app['orm.em']->persist($background);
+			$app['orm.em']->flush();
+			
+			$app['session']->getFlashBag()->add('success','Le background du groupe a été mis à jour');
+			return $app->redirect($app['url_generator']->generate('groupe.admin.detail', array('index'=> $groupe->getId()) ),301);
+		}
+		
+		return $app['twig']->render('admin/groupe/background/update.twig', array(
+				'groupe' => $groupe,
+				'form' => $form->createView(),
+		));
 	}
 	
 	/**
@@ -303,6 +418,14 @@ class GroupeController
 		$groupe = new \LarpManager\Entities\Groupe();
 		
 		$form = $app['form.factory']->createBuilder(new GroupeForm(), $groupe)
+			->add('responsable', 'entity', array(
+					'label' => 'Responsable',
+					'required' => false,
+					'property' => 'username',
+					'class' => 'LarpManager\Entities\User',
+					'choices' => $choices,
+					'empty_data'  => null,
+			))
 			->add('save','submit', array('label' => 'Sauvegarder et fermer'))
 			->add('save_continue','submit',array('label' => 'Sauvegarder et nouveau'))
 			->getForm();
@@ -360,7 +483,7 @@ class GroupeController
 			 */
 			if ( $form->get('save')->isClicked())
 			{
-				return $app->redirect($app['url_generator']->generate('groupe.list'),301);
+				return $app->redirect($app['url_generator']->generate('groupe.admin.list'),301);
 			}
 			else if ( $form->get('save_continue')->isClicked())
 			{
@@ -401,9 +524,26 @@ class GroupeController
 		{
 			$originalGns->add($gn);
 		}
-			
+		
+		/**
+		 * Construit la tableau pour le choix du responsable
+		 * @var Array $choices
+		 */
+		$choices = array();
+		foreach ( $groupe->getParticipants() as $participant )
+		{
+			$choices[] = $participant->getUser();
+		}
 		
 		$form = $app['form.factory']->createBuilder(new GroupeForm(), $groupe)
+			->add('responsable', 'entity', array(
+				'label' => 'Responsable',
+				'required' => false,
+				'property' => 'username',
+				'class' => 'LarpManager\Entities\User',
+				'choices' => $choices,
+				'empty_data'  => null,
+				))
 			->add('update','submit', array('label' => "Sauvegarder"))
 			->add('delete','submit', array('label' => "Supprimer"))
 			->getForm();
@@ -464,7 +604,7 @@ class GroupeController
 				$app['orm.em']->flush();
 					
 				$app['session']->getFlashBag()->add('success', 'Le groupe a été supprimé.');
-				return $app->redirect($app['url_generator']->generate('groupe.list'));
+				return $app->redirect($app['url_generator']->generate('groupe.admin.list'));
 			}
 		
 			

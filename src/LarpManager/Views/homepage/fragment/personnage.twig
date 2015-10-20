@@ -27,7 +27,7 @@
 				{% if personnage.personnageReligion %}
 					{{ personnage.personnageReligion.religion.label }} - {{ personnage.personnageReligion.religionLevel.label }} - <a href="{{ path('forum.topic',{'index': personnage.personnageReligion.religion.topic.id }) }}">Forum</a>
 				{% else %}
-					<a href="{{ path('personnage.religion.add',{'index': personnage.id}) }}">Choisir une religion</a>
+					<a href="{{ path('personnage.religion.add',{'personnage': personnage.id}) }}">Choisir une religion</a>
 				{% endif %}
 				</p>
 			</div>
@@ -39,7 +39,7 @@
 				</p>
 				{% endfor %}
 				<p class="list-group-item-text">
-					<a href="{{ path('personnage.competence.add', {'index': app.user.personnage.id}) }}">Acheter une nouvelle compétence</a>
+					<a href="{{ path('personnage.competence.add', {'personnage': personnage.id}) }}">Acheter une nouvelle compétence</a>
 				</p>
 			</div>
 			<div class="list-group-item">
@@ -62,6 +62,11 @@
 					{% endfor %}
 				{% endif %}
 				<p class="list-group-item-text"><a href="{{ path('groupeSecondaire.list') }}">Liste des groupes secondaires</a></p>
+				
+			</div>
+			<div class="list-group-item">
+				<h6>Téléchargement</h6>
+				<a href="{{ path('personnage.export', {'personnage':personnage.id}) }}">Télécharger le pdf</a>
 				
 			</div>
 		</div>

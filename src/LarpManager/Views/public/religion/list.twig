@@ -1,0 +1,33 @@
+{% extends "layout.twig" %}
+
+{% block title %}Religions{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage')  }}">Accueil</a></li>
+		<li class="active">Les religions</li>
+	</ol>
+	
+	<div class="row">
+		{% for religion in religions %}
+			<div class="col-sm-4 col-md-4">
+				<div class="well well-sm fixed-height">
+					<div class="media">
+			    		<div class="media-left media-top">
+			      			{# Dans le cas ou on associe une image aux classes
+			      			<a href="#">
+			        			<img class="media-object" src="..." alt="...">
+			      			</a> #}
+			    		</div>
+			    	</div>
+			    	<div class="media-body">
+		      			<h4 class="media-heading">{{ religion.label }}</h4>
+		      			<p>{{ religion.description }}</p>
+		      		</div>
+		    	</div>
+		    </div>
+		{% endfor %}
+	</div>
+	
+{% endblock content %}

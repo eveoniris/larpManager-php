@@ -41,6 +41,21 @@
 	    		</div>
 	    		
 	    		<div class="list-group-item">
+	    			<h4 class="list-group-item-heading">Information d'interprétation</h4>
+	    			<p class="list-group-item-text">
+	    				<ul>
+	    					<li><strong>Type racial : </strong>{{ territoire.typeRacial|default('Non défini') }}</li>
+	    					<li><strong>Inspiration : </strong>{{ territoire.inspiration|default('Non défini') }}</li>
+	    					<li><strong>Armes de prédilection : </strong>{{ territoire.armesPredilection|default('Non défini') }}</li>
+	    					<li><strong>Vétements : </strong>{{ territoire.vetements|default('Non défini') }}</li>
+	    					<li><strong>Nom masculin : </strong>{{ territoire.nomsMasculin|default('Non défini') }}</li> 
+	    					<li><strong>Nom féminin : </strong>{{ territoire.nomsFeminin|default('Non défini') }}</li>
+	    					<li><strong>Fontières : </strong>{{ territoire.frontieres|default('Non défini') }}</li>
+	    				</ul>
+	    			</p>
+	    		</div>
+	    		
+	    		<div class="list-group-item">
 	    			<h4 class="list-group-item-heading">Autres informations</h4>
 	    			<p class="list-group-item-text">
 	    				<ul>
@@ -52,6 +67,16 @@
 	    				</ul>
 	    			</p>
 	    		</div>
+	    			    		
+	     		<div class="list-group-item">
+	    			<h4 class="list-group-item-heading">Cultes</h4>
+    				<p class="list-group-item-text">
+    					<ul>
+    						<li><strong>Religion dominante : </strong>{{ territoire.religion }}</li>
+    						<li><strong>Religion secondaires : </strong>{{territoire.religions|join(', ') }}</li>
+    					</ul>
+    				</p>
+    			</div>
 	    		
 	    		<div class="list-group-item">
 	    			<h4 class="list-group-item-heading">Economie</h4>

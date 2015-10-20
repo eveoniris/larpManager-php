@@ -14,7 +14,7 @@ use LarpManager\Entities\BasePersonnage;
 /**
  * LarpManager\Entities\Personnage
  *
- * @Entity(repositoryClass="LarpManager\Repository\JoueurRepository")
+ * @Entity(repositoryClass="LarpManager\Repository\PersonnageRepository")
  */
 class Personnage extends BasePersonnage
 {
@@ -27,13 +27,25 @@ class Personnage extends BasePersonnage
 		$this->setXp(0);
 	}
 	
+	public function __toString()
+	{
+		return $this->getNom();
+	}
+	
 	
 	/**
 	 * Fourni l'identité complete d'un personnage
 	 */
 	public function getIdentity()
 	{
-		return $this->getNom().' ('.$this->getGroupe()->getNom().' - '.$this->getParticipant()->getUser()->getUsername().')';
+		$groupe = $this->getGroupe();
+		$participant = $this->getParticipant();
+		
+		$identity = $this->getNom().' (';
+		if ( $groupe ) $identity .= $groupe->getNom();
+		if ( $participant ) $identity .= " - ". $participant->getUser()->getUsername();
+		$identity .= ')';
+		return $identity;
 	}
 	
 	/**
@@ -42,6 +54,17 @@ class Personnage extends BasePersonnage
 	public function getSecondaryGroupsAsChief()
 	{
 		return $this->getSecondaryGroupRelatedByPersonnageIds();
+	}
+	
+	/**
+	 * Ajoute des points d'experience à un personnage
+	 *  
+	 * @param integer $xp
+	 */
+	public function addXp($xp)
+	{
+		$this->setXp($this->getXp() + $xp);
+		return $this;
 	}
 				
 }

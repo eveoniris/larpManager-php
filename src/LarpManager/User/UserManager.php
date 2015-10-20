@@ -243,7 +243,6 @@ class UserManager implements UserProviderInterface
 	public function insert(User $user)
 	{
 		$user->setCreationDate(new \Datetime('NOW'));
-		$user->setIsEnabled(true);
 		$user->setUserName($user->getName());
 		
 		$this->app['orm.em']->persist($user);

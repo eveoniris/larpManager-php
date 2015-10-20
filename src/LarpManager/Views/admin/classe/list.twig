@@ -1,0 +1,75 @@
+{% extends "layout.twig" %}
+
+{% block title %}Classes{% endblock title %}
+
+{% block content %}
+
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-xs-12 col-md-12">
+			<div class="well well-sm">
+				<h4>
+					Gestion des classes
+					<small>
+						( {{ classes|length }} classes )
+					</small>
+				</h4>
+			</div>
+
+			<ul class="list-group">
+
+				<a href="{{ path('classe.add') }}" class="list-group-item active">
+					<span class="badge"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></span>
+					<h4 class="list-group-item-heading">Ajouter une classe</h4>
+				</a>
+
+				{%  for classe in classes %}
+				<li class="list-group-item">
+					<h4 class="list-group-item-heading">
+						{{ classe.label }}
+					</h4>
+					<p class="list-group-item-text">
+						<div class="btn-group pull-right" role="group" aria-label="...">
+							<a href="{{ path('classe.detail', {index: classe.id}) }}" class="btn btn-primary" role="button">Voir</a>
+						    <a href="{{ path('classe.update', {index: classe.id}) }}" class="btn btn-default" role="button">Modifier</a>
+						</div>
+						
+						{% if classe.description %}
+							<p>{{ classe.description }}</p>
+						{% else %}
+							<p class="text-warning">Attention, cette classe n'a pas description</p>
+						{%  endif %}
+						
+						{% if classe.competenceFamilyFavorites|length != 0 %}
+							<p>
+								<strong>Famille de compétence favorites : </strong>{{ classe.competenceFamilyFavorites|join(', ') }}
+							</p>
+						{% else %}
+							<p class="text-warning">Attention, cette classe n'a pas de famille de compétences favorites</p>
+						{% endif %}
+					
+						{% if classe.competenceFamilyNormales|length != 0 %}
+							<p>
+								<strong>Famille de compétence normales : </strong>{{ classe.competenceFamilyNormales|join(', ') }}
+							</p>
+						{% else %}
+							<p class="text-warning">Attention, cette classe n'a pas de famille de compétences normales</p>
+						{% endif %}
+					
+						{% if classe.competenceFamilyCreations|length != 0 %}
+							<p>
+								<strong>Famille de compétence acquises à la création : </strong>{{ classe.competenceFamilyCreations|join(', ') }}
+							</p>
+						{% else %}
+							<p class="text-warning">Attention, cette classe n'a pas de famille de compétences acquises à la créations</p>
+						{% endif %}
+					</p>
+				</li>
+				{%  endfor %}
+			</ul>
+		</div>
+	</div>
+
+</div>
+	
+{% endblock %}

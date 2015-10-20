@@ -26,7 +26,7 @@ class TopicForm extends AbstractType
 					'required' => true,	
 				))
 				->add('description','textarea', array(
-					'required' => true,
+					'required' => false,
 					'attr' => array('rows' => 9),
 				));
 	}

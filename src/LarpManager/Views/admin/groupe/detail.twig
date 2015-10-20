@@ -6,35 +6,35 @@
 
 	<ol class="breadcrumb">
 		<li><a href="{{ path('homepage') }}">Accueil</a></li>
-		<li><a href="{{ path("groupe.list") }}">Liste des groupes</a></li>
+		{% if is_granted('ROLE_ADMIN', app.user) %}<li><a href="{{ path("groupe.admin.list") }}">Liste des groupes</a></li>{% endif %}
 		<li class="active">Détail d'un groupe</li>
 	</ol>
 	
 <div class="container-fluid">
 	<div class="row">
-		<div class="col-xs-12 col-md-8">
+		<div class="col-xs-12 col-md-6">
 		
 						
 			<div class="well well-sm bs-component">
 				<h4>
 					{{ groupe.numero|default('?') }} - {{ groupe.nom }}
 				</h4>
-			</div>
+			</div>			
 		  						    		
 	    	<div class="list-group">
 	    		
 	    		<div class="list-group-item">
-		    		<h4 class="list-group-item-heading">Description</h4>
+		    		<h4 class="list-group-item-heading">Description <small>(Visible par tous)</small></h4>
     				<p class="list-group-item-text">
     				{% if not groupe.description %}
     					<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
     					Attention, ce groupe n'a pas de description.
     				{% else %}
-    					{{ groupe.description }}
+    					{{ groupe.description|markdown }}
     				{% endif %}
     				</p>
-	    		</div>
-	    			
+   	    		</div>
+						
 	    		<div class="list-group-item">
 	    			<h4 class="list-group-item-heading">Territoire</h4>
 	    			
@@ -69,12 +69,37 @@
 	    			<p class="list-group-item-text">
 	    				<ul>
 	    				{% if groupe.responsable %}<li><strong>{{ groupe.responsable.username }}</strong>&nbsp;(Responsable du groupe)</li>{% endif %}
-						{% for participant in groupe.participants %}
-						<li>
-							<strong>{{ participant }} </strong>: {{ participant.user.email }}
-						</li>
-						{% endfor %}
 	    				</ul>
+	    				<table class="table">
+	    					<thead>
+	    						<tr>
+	    							<th>User</th>
+	    							<th>Email</th>
+	    							<th>Personnage</th>
+	    							{% if is_granted('ROLE_ADMIN', app.user) %}
+	    								<th></th>
+	    							{% endif %}
+	    						</tr>
+	    					</thead>
+	    					<tbody>
+							{% for participant in groupe.participants %}
+								<tr>
+									<td>{{ participant }}</td>
+									<td>{{ participant.user.email }}</td>
+									<td>
+										{% if participant.personnage %}
+											<a href="{{ path('personnage.admin.detail', {'personnage': participant.personnage.id}) }}">{{ participant.personnage.nom }}</a>
+										{% else %}
+											Ne dispose pas encore de personnage
+										{% endif %}
+									</td>
+									{% if is_granted('ROLE_ADMIN', app.user) %}
+										<td><a href="{{ path('groupe.admin.participant.remove', {'groupe': groupe.id, 'participant': participant.id}) }}">Retirer</a></td>
+									{% endif %}
+								</tr>
+							{% endfor %}
+							</tbody>
+						</table>
 	    			</p>
 	    		</div>
 	    			
@@ -131,6 +156,7 @@
 					<p class="list-group-item-text">
 						{{ groupe.gns|join(', ') }}
 					</p>
+				</div>
     				    				
 
 	  			<div class="list-group-item">
@@ -139,6 +165,31 @@
 					</div>
 				</div>
   			</div>
+		</div>
+		
+		<div class="col-xs-12 col-md-6">
+			<div class="panel panel-default">
+				<div class="panel-heading">Background</div>
+				<div class="panel-body">
+					<a href="{{ path('background.add', {'groupe': groupe.id}) }}">Ajouter un élément de background</a>
+				</div>
+				<div class="list-group">
+					{% for background in groupe.backgrounds %}
+						<div class="list-group-item">
+			    			
+			    			<p class="list-group-item-text text-warning">
+			    				{{ background.visibility|explainVisibility }}
+			    			</p>
+			    			<p class="list-group-item-text">
+			    				{{ background.text|markdown }}
+			    			</p>
+			    			<p class="list-group-item-text">
+		    					<a href="{{ path('background.update', {'groupe': groupe.id, 'background': background.id, 'groupe': groupe.id}) }}">Modifier le background</a>
+		    				</p>
+			    		</div>
+					{% endfor %}
+				</div>	
+			</div>
 		</div>
 	</div>
 </div>

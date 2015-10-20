@@ -67,7 +67,7 @@
 					</div>
 					<div class="panel-body">
 						{% if groupe.description %}
-							{{ groupe.description }}
+							{{ groupe.description|markdown }}
 						{% else %}
 							Votre groupe ne dispose pas de description. Cela sera corrigé d'içi peu.
 						{% endif %}

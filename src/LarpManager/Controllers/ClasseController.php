@@ -23,7 +23,7 @@ class ClasseController
 	{
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Classe');
 		$classes = $repo->findAllOrderedByLabel();
-		return $app['twig']->render('classe/index.twig', array('classes' => $classes));
+		return $app['twig']->render('admin/classe/list.twig', array('classes' => $classes));
 	}
 	
 	/**
@@ -36,7 +36,7 @@ class ClasseController
 	{
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Classe');
 		$classes = $repo->findAllOrderedByLabel();
-		return $app['twig']->render('classe/list_joueur.twig', array('classes' => $classes));
+		return $app['twig']->render('public/classe/list.twig', array('classes' => $classes));
 	}
 	
 	/**
@@ -74,7 +74,7 @@ class ClasseController
 			}
 		}
 		
-		return $app['twig']->render('classe/add.twig', array(
+		return $app['twig']->render('admin/classe/add.twig', array(
 				'form' => $form->createView(),
 		));
 	}
@@ -118,7 +118,7 @@ class ClasseController
 			return $app->redirect($app['url_generator']->generate('classe'));
 		}
 			
-		return $app['twig']->render('classe/update.twig', array(
+		return $app['twig']->render('admin/classe/update.twig', array(
 				'classe' => $classe,
 				'form' => $form->createView(),
 		));
@@ -137,7 +137,7 @@ class ClasseController
 		
 		if ( $classe )
 		{
-			return $app['twig']->render('classe/detail.twig', array('classe' => $classe));
+			return $app['twig']->render('admin/classe/detail.twig', array('classe' => $classe));
 		}
 		else
 		{

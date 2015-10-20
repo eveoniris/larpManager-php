@@ -11,7 +11,7 @@
 	</ol>
 	
 	<div class="well bs-component">
-		<form action="{{ path('personnage.religion.add',{'index':personnage.id}) }}" method="POST" {{ form_enctype(form) }}>
+		<form action="{{ path('personnage.religion.add',{'personnage':personnage.id}) }}" method="POST" {{ form_enctype(form) }}>
 			<fieldset>
 				<legend>{{ personnage.nom }} - <small>Choix d'une religion</small></legend>
 				<p>Attention ! une fois votre religion choisie, vous ne pourrez plus revenir sur votre choix.</p>

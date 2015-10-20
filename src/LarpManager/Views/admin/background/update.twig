@@ -1,0 +1,43 @@
+{% extends "layout.twig" %}
+
+{% block title %}Background{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path('background.list') }}">Liste des background</a></li>
+		<li class="active">Modification d'un background</li>
+	</ol>
+
+	<div class="well bs-component">	
+		<form action="{{ path('background.update', {'background': background.id}) }}" method="POST" {{ form_enctype(form) }}  novalidate>
+			<fieldset>
+				<legend>Modification d'un background</legend>
+				{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+	
+				{{ form(form) }}
+			</fieldset>
+		</form>
+	</div>
+	
+{% endblock content %}
+
+
+{% block javascript %}
+
+	{{ parent() }}
+
+	{# inclusion du plugin tinymce pour la saisie du post #}   
+	<script src="{{ app.request.basepath }}/js/tinymce/tinymce.min.js"></script>
+
+	<script type="text/javascript">
+		tinyMCE.init({
+				mode: "textareas",
+				theme: "modern",
+				plugins : "spellchecker,insertdatetime,preview", 
+		});
+		
+	</script>
+
+{% endblock javascript %}

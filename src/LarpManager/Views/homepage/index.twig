@@ -1,12 +1,12 @@
 {% extends "layout.twig" %}
 
-{% block title %}Acceuil{% endblock title %}
+{% block title %}Accueil{% endblock title %}
 
 {% block content %}
 	   		
 	<div class="row">
 	
-		<div class="col-xs-8 col-md-8">
+		<div class="col-xs-12 col-md-6">
 		
 			<div class="well well-sm">
 				<h4>
@@ -70,7 +70,7 @@
 			{% endif %}
 		</div>
 		
-		<div class="col-xs-4 col-md-4">
+		<div class="col-xs-12 col-md-6">
 		
 			{# affichage de l'annonce la plus récente et du lien vers les archives des annonces #}
 			{% for annonce in annonces %}

@@ -1,0 +1,107 @@
+{% extends "layout.twig" %}
+
+{% block title %}Backgrounds{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li class="active">Liste des backgrounds</li>
+	</ol>
+	
+	<div class="well well-sm">
+		<ul class="list-group">
+			<li class="list-group-item">
+				{% if paginator.totalItems == 1 %}
+		        	<strong>1</strong> background trouvé.
+		    	{% else %}
+		        	<strong>{{ paginator.totalItems }}</strong> backgrounds trouvés.
+		    	{% endif %}
+		
+		    	Montre <strong>{{ paginator.currentPageFirstItem }} - {{ paginator.currentPageLastItem }}</strong>.
+		   	</li>
+		   	<li class="list-group-item">
+		   		<a href="{{ path('background.add') }}">Ajouter un background</a>
+		   	</li>
+		   	<li class="list-group-item">
+		   		<div class="list-group-item"><h6>Rechercher</h6></div>
+		   		
+		   		<form class="form" action="{{ path('background.list') }}" method="POST" {{ form_enctype(form) }}>
+					{% form_theme form 'Form/bootstrap_3_horizontal_layout.html.twig' %}
+					{{ form(form) }}
+		   		</form>
+		   		<a href="{{ path('background.list') }}">Reset</a>
+		   	</li>
+		</ul>
+		
+		{{ paginator|raw }}
+		<table class="table table-striped table-bordered table-condensed table-hover">
+			<thead>
+				<tr>
+					<th>
+						{% if app.request.get('order_dir') == 'ASC' and app.request.get('order_by') == 'id' %}
+							<a href="{{ path('background.list', {'order_by': 'id', 'order_dir': 'DESC'}) }}">
+						{%  else %}
+							<a href="{{ path('background.list', {'order_by': 'id', 'order_dir': 'ASC'}) }}">
+						{% endif %}
+							#	
+						{% if app.request.get('order_by') == 'id'  %}
+							{% if app.request.get('order_dir') == 'ASC' %}
+								<span class="caret"></span>
+							{%else%}
+								<span class="dropup">
+	 									<span class="caret"></span>
+								</span>
+							{% endif %}
+						{% endif %}
+						</a>
+					</th>
+					<th>
+						{% if app.request.get('order_dir') == 'ASC' and app.request.get('order_by') == 'groupe_id' %}
+							<a href="{{ path('background.list', {'order_by': 'groupe_id', 'order_dir': 'DESC'}) }}">
+						{%  else %}
+							<a href="{{ path('background.list', {'order_by': 'groupe_id', 'order_dir': 'ASC'}) }}">
+						{% endif %}
+							Groupe	
+						{% if app.request.get('order_by') == 'groupe_id'  %}
+							{% if app.request.get('order_dir') == 'ASC' %}
+								<span class="caret"></span>
+							{%else%}
+								<span class="dropup">
+	 									<span class="caret"></span>
+								</span>
+							{% endif %}
+						{% endif %}
+						</a>
+					</th>
+					<th>
+						Création
+					</th>
+					<th>
+						Dernière modification
+					</th>
+					<th>
+						Auteur
+					</th>
+					<th>
+						Visibilité
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for background in backgrounds %}
+				<tr>
+					<td><a href="{{ path('background.update', {'background':background.id}) }}">{{ background.id }}</td>
+					<td><a href="{{ path('background', {'background':background.id}) }}">{{ background.groupe.nom }}</td>
+					<td>{{ background.creationDate|date('Y-m-d') }}</td>
+					<td>{{ background.updateDate|date('Y-m-d') }}</td>
+					<td>{{ background.user.displayName }}</td>
+					<td>{{ background.visibility|explainVisibility }}</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+		{{ paginator|raw }}
+	</div>
+	
+{% endblock content %}

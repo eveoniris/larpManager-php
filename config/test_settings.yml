@@ -9,7 +9,7 @@ database:
     password: 
     #memory: true #pour sqlite in memory (rapide !)
 
-swiftmailler:
+swiftmailer:
    host: host
    port: 25
    username: username

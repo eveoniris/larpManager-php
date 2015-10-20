@@ -15,7 +15,7 @@ class UserRepository extends EntityRepository
 {
 
 	/**
-	 * Trouve les utilisateurs correspondant aux critères de recherche
+	 * Trouve le nombre d'utilisateurs correspondant aux critères de recherche
 	 *
 	 * @param array $criteria
 	 * @param array $options
@@ -29,9 +29,36 @@ class UserRepository extends EntityRepository
 		
 		foreach ( $criteria as $criter )
 		{
-			$qb->addWhere($criter);
+			$qb->andWhere($criter);
 		}
 		
 		return $qb->getQuery()->getSingleScalarResult();
+	}
+	
+	/**
+	 * Trouve les utilisateurs correspondant aux critères de recherche
+	 * 
+	 * @param array $criteria
+	 * @param array $order
+	 * @param unknown $limit
+	 * @param unknown $offset
+	 */
+	public function findList(array $criteria = array(), array $order = array(), $limit, $offset)
+	{
+		$qb = $this->getEntityManager()->createQueryBuilder();
+	
+		$qb->select('u');
+		$qb->from('LarpManager\Entities\User','u');
+	
+		foreach ( $criteria as $critere )
+		{
+			$qb->andWhere($critere);
+		}
+	
+		$qb->setFirstResult($offset);
+		$qb->setMaxResults($limit);
+		$qb->orderBy('u.'.$order['by'], $order['dir']);
+	
+		return $qb->getQuery()->getResult();
 	}
 }

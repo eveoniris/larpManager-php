@@ -7,15 +7,15 @@ Variables passed to this template:
 
 {# The subject line. #}
 {%- block subject -%}{%- autoescape false -%}
-    Welcome! Please confirm your email.
+    Bienvenue ! Merci de confirmer votre adresse email.
 {%- endautoescape -%}{%- endblock -%}
 
 {# The plain text message. #}
 {%- block body_text -%}{%- autoescape false -%}
 
-Thanks for joining our site!
+Merci de rejoindre eveOniris ! une grande aventure vous attends !
 
-Please click the link below to confirm your email:
+S'il vous plait, cliquez sur le lien ci-dessous pour confirmer votre adresse mail :
 {{ confirmationUrl }}
 
 {%- endautoescape -%}{%- endblock -%}
@@ -23,10 +23,11 @@ Please click the link below to confirm your email:
 {# The HTML message. Optional. #}
 {%- block body_html -%}
 
-    <h1>Thanks for joining our site!</h1>
+    <h1>Merci de rejoindre eveOniris !</h1>
+    <p>une grande aventure vous attends !</p>
 
     <p>
-        Please <a href="{{ confirmationUrl }}">click here to confirm your email</a>.
+        S'il vous plait, <a href="{{ confirmationUrl }}">suivez ce lien pour confirmer votre adresse mail</a>.
     </p>
 
 {%- endblock -%}

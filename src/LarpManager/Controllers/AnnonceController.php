@@ -102,7 +102,15 @@ class AnnonceController
 		
 		$form = $app['form.factory']->createBuilder(new AnnonceForm(), $annonce)
 			->add('update','submit', array('label' => "Sauvegarder"))
-			->add('delete','submit', array('label' => "Supprimer"))
+			->add('delete','button', array(
+					'label' => "Supprimer",
+					'attr' => array(
+						'value' => "Submit",
+						'data-toggle' => "modal",
+						'data-target' => "#confirm-submit",
+						'class' => 'btn btn-default'
+					),
+			))
 			->getForm();
 		
 		$form->handleRequest($request);
@@ -119,7 +127,7 @@ class AnnonceController
 				$app['orm.em']->flush();
 				$app['session']->getFlashBag()->add('success', 'L\'annonce a été mise à jour.');
 			}
-			else if ($form->get('delete')->isClicked())
+			else
 			{
 				$app['orm.em']->remove($annonce);
 				$app['orm.em']->flush();

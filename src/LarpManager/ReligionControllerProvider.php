@@ -4,6 +4,8 @@ namespace LarpManager;
 
 use Silex\Application;
 use Silex\ControllerProviderInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
  * LarpManager\ReligionControllerProvider
@@ -17,6 +19,7 @@ class ReligionControllerProvider implements ControllerProviderInterface
 	 * Initialise les routes pour les religions
 	 * Routes :
 	 * 	- religion
+	 *  - religion.list
 	 * 	- religion.add
 	 *  - religion.update
 	 *  - religion.detail
@@ -32,41 +35,62 @@ class ReligionControllerProvider implements ControllerProviderInterface
 	{
 		$controllers = $app['controllers_factory'];
 		
+		/**
+		 * Vérifie que l'utilisateur dispose du role SCENARISTE
+		 */
+		$mustBeOrga = function(Request $request) use ($app) {
+			if (!$app['security.authorization_checker']->isGranted('ROLE_SCENARISTE')) {
+				throw new AccessDeniedException();
+			}
+		};
+		
 		$controllers->match('/','LarpManager\Controllers\ReligionController::indexAction')
 			->bind("religion")
+			->method('GET')
+			->before($mustBeOrga);
+		
+		$controllers->match('/list','LarpManager\Controllers\ReligionController::listAction')
+			->bind("religion.list")
 			->method('GET');
 		
 		$controllers->match('/add','LarpManager\Controllers\ReligionController::addAction')
 			->bind("religion.add")
-			->method('GET|POST');
+			->method('GET|POST')
+			->before($mustBeOrga);
 		
 		$controllers->match('/{index}/update','LarpManager\Controllers\ReligionController::updateAction')
 			->assert('index', '\d+')
 			->bind("religion.update")
-			->method('GET|POST');
+			->method('GET|POST')
+			->before($mustBeOrga);
 		
 		$controllers->match('/{index}','LarpManager\Controllers\ReligionController::detailAction')
 			->assert('index', '\d+')
 			->bind("religion.detail")
-			->method('GET');
+			->method('GET')
+			->before($mustBeOrga);
 		
 		$controllers->match('/level','LarpManager\Controllers\ReligionController::levelIndexAction')
 			->bind("religion.level")
-			->method('GET');
+			->method('GET')
+			->before($mustBeOrga);
 		
 		$controllers->match('/level/add','LarpManager\Controllers\ReligionController::levelAddAction')
 			->bind("religion.level.add")
-			->method('GET|POST');
+			->method('GET|POST')
+			->before($mustBeOrga);
 
 		$controllers->match('/level/{index}/update','LarpManager\Controllers\ReligionController::levelUpdateAction')
 			->assert('index', '\d+')
 			->bind("religion.level.update")
-			->method('GET|POST');
+			->method('GET|POST')
+			->before($mustBeOrga);
 		
 		$controllers->match('/level/{index}','LarpManager\Controllers\ReligionController::levelDetailAction')
 			->assert('index', '\d+')
 			->bind("religion.level.detail")
-			->method('GET');
+			->method('GET')
+			->before($mustBeOrga);
 			
 		return $controllers;
 	}

@@ -5,8 +5,11 @@ namespace LarpManager\Controllers;
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Security\Core\Exception\DisabledException;
 use InvalidArgumentException;
 use LarpManager\Form\UserForm;
+use LarpManager\Form\UserFindForm;
 use LarpManager\Form\EtatCivilForm;
 
 use JasonGrimes\Paginator;
@@ -20,22 +23,18 @@ use JasonGrimes\Paginator;
  */
 class UserController
 {
+
 	/**
-	 * Fourni la liste des ROLES utilisé dans LarpManager
-	 * @return Array $availablesRoles
+	 * 
+	 * @var boolean $isEmailConfirmationRequired
 	 */
-	protected function getAvailableRoles()
-	{
-		$availableRoles = array(
-				array('label' => 'ROLE_USER', 'descr' => 'Utilisateur de larpManager'),
-				array('label' => 'ROLE_ADMIN', 'descr' => 'Droit de modification sur tout'),
-				array('label' => 'ROLE_STOCK', 'descr' => 'Droit de modification sur le stock'),
-				array('label' => 'ROLE_REGLE', 'descr' => 'Droit de modification sur les règles'),
-				array('label' => 'ROLE_SCENARISTE', 'descr' => 'Droit de modification sur le scénario, les groupes et le background'),
-				array('label' => 'ROLE_MODERATOR', 'descr' => 'Modération du forum'),
-			);
-		return $availableRoles;
-	}
+	private $isEmailConfirmationRequired = true;
+	
+	/**
+	 * 
+	 * @var boolean $isPasswordResetEnabled
+	 */
+	private $isPasswordResetEnabled = true;
 	
 	/**
 	 * Fourni l'url de gravatar pour l'utilisateur
@@ -120,7 +119,19 @@ class UserController
 		return $app->redirect($app['url_generator']->generate('user.view', array('id' => $app['user']->getId())));
 	}
 	
-
+	/**
+	 * Affiche de détail de l'état-civil de l'utilisateur courant
+	 * @param Application $app
+	 * @return \Symfony\Component\HttpFoundation\RedirectResponse
+	 */
+	public function viewSelfEtatCivilAction(Application $app) {
+		if (!$app['user']) {
+			return $app->redirect($app['url_generator']->generate('user.login'));
+		}
+		
+		return $app->redirect($app['url_generator']->generate('user.etatCivil.view', array('id' => $app['user']->getId())));
+	}
+	
 	/**
 	 * View user action.
 	 *
@@ -145,6 +156,32 @@ class UserController
 		return $app['twig']->render('admin/user/detail.twig', array(
 				'user' => $user,
 				'imageUrl' => $this->getGravatarUrl($user->getEmail()),
+		));
+	}
+	
+	/**
+	 * View etatCivil user action.
+	 *
+	 * @param Application $app
+	 * @param Request $request
+	 * @param int $id
+	 * @return Response
+	 * @throws NotFoundHttpException if no user is found with that ID.
+	 */
+	public function viewEtatCivilAction(Application $app, Request $request, $id)
+	{
+		$user = $app['user.manager']->getUser($id);
+	
+		if (!$user) {
+			throw new NotFoundHttpException('No user was found with that ID.');
+		}
+	
+		if (!$user->isEnabled() && !$app['security']->isGranted('ROLE_ADMIN')) {
+			throw new NotFoundHttpException('That user is disabled (pending email confirmation).');
+		}
+	
+		return $app['twig']->render('public/user/etatCivil.twig', array(
+				'user' => $user,
 		));
 	}
 	
@@ -176,7 +213,7 @@ class UserController
 			
 			$app['session']->getFlashBag()->set('alert', 'L\'utilisateur a été créé. TEMPORAIRE : son mot de passe est '.$password);
 			
-			return $app->redirect($app['url_generator']->generate('user.list'));
+			return $app->redirect($app['url_generator']->generate('user.admin.list'));
 		}
 		
 		return $app['twig']->render('user/add.twig', array(
@@ -217,11 +254,43 @@ class UserController
 						
 			$app['orm.em']->persist($participant);
 			$app['orm.em']->flush();
-			$app['session']->getFlashBag()->add('success', 'Vos informations ont été enregistrés.');
+			$app['session']->getFlashBag()->add('success', 'Vos informations ont été enregistrées.');
 			return $app->redirect($app['url_generator']->generate('homepage'),301);
 		}
 		
 		return $app['twig']->render('etatCivil/add.twig', array(
+				'form' => $form->createView(),
+		));
+	}
+	
+	
+	/**
+	 * Modification de l'état-civil
+	 * 
+	 * @param Application $app
+	 * @param Request $request
+	 * @param unknown $id
+	 */
+	public function updateInformationAction(Application $app, Request $request, $id)
+	{
+		$etatCivil = $app['user']->getEtatCivil();
+		
+		$form = $app['form.factory']->createBuilder(new EtatCivilForm(), $etatCivil)
+			->add('save','submit', array('label' => "Sauvegarder"))
+			->getForm();
+		
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
+		{
+			$etatCivil = $form->getData();
+			$app['orm.em']->persist($etatCivil);
+				
+			$app['session']->getFlashBag()->add('success', 'Vos informations ont été enregistrées.');
+			return $app->redirect($app['url_generator']->generate('homepage'),301);
+		}
+		
+		return $app['twig']->render('etatCivil/update.twig', array(
 				'form' => $form->createView(),
 		));
 	}
@@ -248,7 +317,6 @@ class UserController
 		
 		if ($request->isMethod('POST')) 
 		{
-			$user->setName($request->request->get('name'));
 			$user->setEmail($request->request->get('email'));
 			if ($request->request->has('username')) {
 				$user->setUsername($request->request->get('username'));
@@ -279,7 +347,7 @@ class UserController
 		return $app['twig']->render('admin/user/update.twig', array(
 				'error' => implode("\n", $errors),
 				'user' => $user,
-				'available_roles' => $this->getAvailableRoles(),
+				'available_roles' => $app['larp.manager']->getAvailableRoles(),
 				'image_url' => $this->getGravatarUrl($user->getEmail()),
 		));
 	}
@@ -321,32 +389,61 @@ class UserController
 	 * @param Application $app
 	 * @param Request $request
 	 */
-	public function listAction(Application $app, Request $request)
+	public function adminListAction(Application $app, Request $request)
 	{
-		$order_by = $request->get('order_by') ?: 'name';
+		$order_by = $request->get('order_by') ?: 'username';
 		$order_dir = $request->get('order_dir') == 'DESC' ? 'DESC' : 'ASC';
 		$limit = (int)($request->get('limit') ?: 50);
 		$page = (int)($request->get('page') ?: 1);
 		$offset = ($page - 1) * $limit;
-		
 		$criteria = array();
 
+		$form = $app['form.factory']->createBuilder(new UserFindForm())
+			->add('find','submit', array('label' => 'Rechercher'))
+			->getForm();
+		
+		$form->handleRequest($request);
+				
+		if ( $form->isValid() )
+		{
+			$data = $form->getData();
+			$type = $data['type'];
+			$value = $data['value'];
+			switch ($type){
+				case 'username':
+					$criteria[] = "u.username LIKE '%$value%'";
+					break;
+				case 'email':
+					$criteria[] = "u.email LIKE '%$value%'";
+					break;
+			}
+		}
+		
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\User');
-		$users = $repo->findBy(
+		$users = $repo->findList(
 						$criteria,
-						array( $order_by => $order_dir),
+						array( 'by' =>  $order_by, 'dir' => $order_dir),
 						$limit,
 						$offset);
 		
 		$numResults = $repo->findCount($criteria);
 
 		$paginator = new Paginator($numResults, $limit, $page,
-				$app['url_generator']->generate('user.list') . '?page=(:num)&limit=' . $limit . '&order_by=' . $order_by . '&order_dir=' . $order_dir
+				$app['url_generator']->generate('user.admin.list') . '?page=(:num)&limit=' . $limit . '&order_by=' . $order_by . '&order_dir=' . $order_dir
 				);
 
 		return $app['twig']->render('admin/user/list.twig', array(
 				'users' => $users,
 				'paginator' => $paginator,
+				'form' => $form->createView(),
+		));
+	}
+	
+	public function adminEtatCivilAction(Application $app, Request $request)
+	{
+		$user = $request->get('user');
+		return $app['twig']->render('admin/user/etatCivil.twig', array(
+				'user' => $user,
 		));
 	}
 	
@@ -366,29 +463,28 @@ class UserController
 				if ($error = $app['user.manager']->validatePasswordStrength($user, $request->request->get('password'))) {
 					throw new InvalidArgumentException($error);
 				}
-				/*if ($this->isEmailConfirmationRequired) {
+				if ($this->isEmailConfirmationRequired) {
 					$user->setEnabled(false);
 					$user->setConfirmationToken($app['user.tokenGenerator']->generateToken());
-				}*/
+				}
 				$app['user.manager']->insert($user);
 		
-				/*if ($this->isEmailConfirmationRequired) {
+				if ($this->isEmailConfirmationRequired) {
 					// Send email confirmation.
 					$app['user.mailer']->sendConfirmationMessage($user);
 		
 					// Render the "go check your email" page.
-					return $app['twig']->render($this->getTemplate('register-confirmation-sent'), array(
-					'layout_template' => $this->getTemplate('layout'),
-					'email' => $user->getEmail(),
+					return $app['twig']->render('user/register-confirmation-sent.twig', array(
+						'email' => $user->getEmail(),
 					));
-				} else {*/
+				} else {
 					// Log the user in to the new account.
 					$app['user.manager']->loginAsUser($user);
 		
 					$app['session']->getFlashBag()->set('success', 'Votre compte a été créé ! vous pouvez maintenant rejoindre un groupe et créer votre personnage');
 		
 					return $app->redirect($app['url_generator']->generate('homepage'));
-				//}
+				}
 		
 			} catch (InvalidArgumentException $e) {
 				$error = $e->getMessage();
@@ -400,6 +496,167 @@ class UserController
 				'name' => $request->request->get('name'),
 				'email' => $request->request->get('email'),
 				'username' => $request->request->get('username'),
+		));
+	}
+	
+	
+
+	/**
+	 * Confirmation de l'adresse email
+	 *
+	 * @param Application $app
+	 * @param Request $request
+	 * @param string $token
+	 * @return \Symfony\Component\HttpFoundation\RedirectResponse
+	 * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+	 */
+	public function confirmEmailAction(Application $app, Request $request, $token)
+	{
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\User');
+		$user = $repo->findOneByConfirmationToken($token);
+		
+		if (!$user) {
+			$app['session']->getFlashBag()->set('alert', 'Désolé, votre lien de confirmation a expiré.');
+			return $app->redirect($app['url_generator']->generate('user.login'));
+		}
+		$user->setConfirmationToken(null);
+		$user->setEnabled(true);
+		$app['orm.em']->persist($user);
+		$app['orm.em']->flush();
+		
+		$app['user.manager']->loginAsUser($user);
+		$app['session']->getFlashBag()->set('alert', 'Merci ! Votre compte a été activé.');
+		return $app->redirect($app['url_generator']->generate('user.view', array('id' => $user->getId())));
+	}
+	
+	/**
+	 * Renvoyer un email de confirmation
+	 *
+	 * @param Application $app
+	 * @param Request $request
+	 * @return mixed
+	 * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+	 */
+	public function resendConfirmationAction(Application $app, Request $request)
+	{
+		$email = $request->request->get('email');
+		
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\User');
+		$user = $repo->findOneByEmail($email);
+		
+		if (!$user) {
+			throw new NotFoundHttpException('Aucun compte n\'a été trouvé avec cette adresse email.');
+		}
+		if (!$user->getConfirmationToken()) {
+			$user->setConfirmationToken($app['user.tokenGenerator']->generateToken());
+			$app['orm.em']->persist($user);
+			$app['orm.em']->flush();
+		}
+		$app['user.mailer']->sendConfirmationMessage($user);
+
+		return $app['twig']->render('user/register-confirmation-sent.twig', array(
+			'email' => $user->getEmail(),
+		));
+	}
+	
+
+	/**
+	 * Traitement mot de passe oublié
+	 * 
+	 * @param Application $app
+	 * @param Request $request
+	 * @return \Symfony\Component\HttpFoundation\RedirectResponse
+	 * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+	 */
+	public function forgotPasswordAction(Application $app, Request $request)
+	{
+		if (!$this->isPasswordResetEnabled) {
+			throw new NotFoundHttpException('Password resetting is not enabled.');
+		}
+		$error = null;
+		if ($request->isMethod('POST')) {
+			$email = $request->request->get('email');
+			
+			$repo = $app['orm.em']->getRepository('\LarpManager\Entities\User');
+			$user = $repo->findOneByEmail($email);
+			
+			if ($user) {
+				// Initialize and send the password reset request.
+				$user->setTimePasswordResetRequested(time());
+				if (!$user->getConfirmationToken()) {
+					$user->setConfirmationToken($app['user.tokenGenerator']->generateToken());
+				}
+				$app['orm.em']->persist($user);
+				$app['orm.em']->flush();
+				
+				$app['user.mailer']->sendResetMessage($user);
+				$app['session']->getFlashBag()->set('alert', 'Les instructions pour enregistrer votre mot de passe ont été envoyé par mail.');
+				$app['session']->set('_security.last_username', $email);
+				return $app->redirect($app['url_generator']->generate('user.login'));
+			}
+			$error = 'No user account was found with that email address.';
+		} else {
+			$email = $request->request->get('email') ?: ($request->query->get('email') ?: $app['session']->get('_security.last_username'));
+			if (!filter_var($email, FILTER_VALIDATE_EMAIL)) $email = '';
+		}
+		return $app['twig']->render('user/forgot-password.twig', array(
+				'email' => $email,
+				'fromAddress' => $app['user.mailer']->getFromAddress(),
+				'error' => $error,
+		));
+	}
+	
+
+	/**
+	 * @param Application $app
+	 * @param Request $request
+	 * @param string $token
+	 * @return \Symfony\Component\HttpFoundation\RedirectResponse
+	 * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+	 */
+	public function resetPasswordAction(Application $app, Request $request, $token)
+	{
+		if (!$this->isPasswordResetEnabled) {
+			throw new NotFoundHttpException('Password resetting is not enabled.');
+		}
+		$tokenExpired = false;
+		
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\User');
+		$user = $repo->findOneByConfirmationToken($token);
+		
+		if (!$user) {
+			$tokenExpired = true;
+		} else if ($user->isPasswordResetRequestExpired($app['config']['user']['passwordReset']['tokenTTL'])) {
+			$tokenExpired = true;
+		}
+		if ($tokenExpired) {
+			$app['session']->getFlashBag()->set('alert', 'Sorry, your password reset link has expired.');
+			return $app->redirect($app['url_generator']->generate('user.login'));
+		}
+		$error = '';
+		if ($request->isMethod('POST')) {
+			// Validate the password
+			$password = $request->request->get('password');
+			if ($password != $request->request->get('confirm_password')) {
+				$error = 'Passwords don\'t match.';
+			} else if ($error = $app['user.manager']->validatePasswordStrength($user, $password)) {
+				;
+			} else {
+				// Set the password and log in.
+				$app['user.manager']->setUserPassword($user, $password);
+				$user->setConfirmationToken(null);
+				$user->setEnabled(true);
+				$app['orm.em']->persist($user);
+				$app['orm.em']->flush();
+				$app['user.manager']->loginAsUser($user);
+				$app['session']->getFlashBag()->set('alert', 'Your password has been reset and you are now signed in.');
+				return $app->redirect($app['url_generator']->generate('user.view', array('id' => $user->getId())));
+			}
+		}
+		return $app['twig']->render('user/reset-password.twig', array(
+				'user' => $user,
+				'token' => $token,
+				'error' => $error,
 		));
 	}
 	
@@ -428,7 +685,7 @@ class UserController
 		// trouve tous les rôles
 		return $app['twig']->render('user/right.twig', array(
 				'users' => $users,
-				'roles' => $this->getAvailableRoles())
+				'roles' => $app['larp.manager']->getAvailableRoles())
 		);
 	}
 }

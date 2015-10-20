@@ -41,6 +41,11 @@ class User extends BaseUser implements AdvancedUserInterface, \Serializable
 		return $this->getUsername();
 	}
 	
+	public function getName()
+	{
+		return $this->getUsername();
+	}
+	
 	/**
 	 * Trouve les informations de participation d'un utilisateur à un groupe
 	 * @param Groupe $groupe
@@ -358,6 +363,20 @@ class User extends BaseUser implements AdvancedUserInterface, \Serializable
 	{
 		return $this->setIsEnabled($isEnabled);
 	}
+	
+	/**
+	 * @param int $ttl Password reset request TTL, in seconds.
+	 * @return bool
+	 */
+	public function isPasswordResetRequestExpired($ttl)
+	{
+		$timeRequested = $this->getTimePasswordResetRequested();
+		if (!$timeRequested) {
+			return true;
+		}
+		return $timeRequested + $ttl < time();
+	}
+	
 	/**
 	 * Checks whether the user's credentials (password) has expired.
 	 *
@@ -428,7 +447,7 @@ class User extends BaseUser implements AdvancedUserInterface, \Serializable
 	 */
 	public function getDisplayName()
 	{
-		return $this->name ?: 'Anonymous ' . $this->id;
+		return $this->username ?: 'Anonymous ' . $this->id;
 	}
 	
 	/**
@@ -465,7 +484,7 @@ class User extends BaseUser implements AdvancedUserInterface, \Serializable
 			$errors['password'] = 'Password can\'t be longer than 255 characters.';
 		}
 	
-		if (strlen($this->getName()) > 100) {
+		if (strlen($this->getUsername()) > 100) {
 			$errors['name'] = 'Name can\'t be longer than 100 characters.';
 		}
 	
