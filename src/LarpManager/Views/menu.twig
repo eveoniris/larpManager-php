@@ -86,7 +86,6 @@
 				<li class="dropdown">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Joueur<span class="caret"></span></a>
 					<ul class="dropdown-menu">
-						<li><a href="{{ path('etatCivil') }}">Mon état-civil</a></li>
 						<li><a href="{{ path('forum') }}">Forum</a></li>
 						<li><a href="{{ path('competence.list') }}">Les compétences</a></li>
 						<li><a href="{{ path('classe.list') }}">Les classes</a></li>
@@ -100,6 +99,9 @@
 				<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Compte<span class="caret"></span></a>
 				<ul class="dropdown-menu">
 					{%  if app.user %}			
+						{% if is_granted('ROLE_USER', app.user) %}
+							<li><a href="{{ path('etatCivil') }}">Mon état-civil</a></li>
+						{% endif %}
 						<li><a href="{{ path('user') }}">Mon compte</a></li>					
 						<li><a href="{{ path('user.logout') }}">Déconnection</a></li>
 					{%  else %}

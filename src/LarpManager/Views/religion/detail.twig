@@ -24,7 +24,7 @@
     				<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
     				Attention, cette religion n'a pas de description.
     				{% else %}
-    					{{ religion.description }}
+    					{{ religion.description|markdown }}
     				{% endif %}
     				</p>
 	    		</div>

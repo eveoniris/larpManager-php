@@ -16,7 +16,7 @@
 		</h4>
 		<p class="list-group-item-text">		
 			{% if religion.description %}
-				<p class="text-default">{{ religion.description|slice(0,500) }} ...</p>
+				<p class="text-default">{{ religion.description|markdown }}</p>
 			{% else %}
 				<p class="text-warning">Attention, cette religion n'a pas de description</p>
 			{%  endif %}

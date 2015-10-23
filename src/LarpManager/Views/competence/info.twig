@@ -4,7 +4,7 @@
 			<label class>
 				<input name="competence[{{ competence.id }}]" index="{{ competence.id }}" type="checkbox" class="competence">
 				<span>{{ competence.nom }}</span>
-				<span>{{ competence.description}}</span>
+				<span>{{ competence.description|markdown }}</span>
 			</label>
 		</div>
 	</div>

@@ -5,7 +5,7 @@
 <div class="panel panel-default">
 	<div class="panel-heading">{{ gn.label }}</div>
 	<div class="panel-body">
-		<p>{{ gn.description }}</p>
+		<p>{{ gn.description|markdown }}</p>
 		<p>Ce GN se déroulera du {{ gn.dateDebut|date('Y-m-d') }} au {{ gn.dateFin|date('Y-m-d') }}.</p>
 		<p>Lieu : {{ gn.adresse }}</p>
 		

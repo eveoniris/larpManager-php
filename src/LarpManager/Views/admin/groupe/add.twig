@@ -11,7 +11,7 @@
 	</ol>
 	
 	<div class="well bs-component">
-	<form action="{{ path('groupe.add') }}" method="POST" {{ form_enctype(form) }}>
+	<form action="{{ path('groupe.add') }}" method="POST" {{ form_enctype(form) }} novalidate>
 		<fieldset>
 			<legend>Ajout d'un groupe</legend>
 			{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}

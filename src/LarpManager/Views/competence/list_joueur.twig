@@ -24,8 +24,8 @@
 		    		</div>
 		    		<div class="media-body">
 		      			<h4 class="media-heading">{{ competence.competenceFamily.label }}</h4>
-		      			<p>{{ competence.competenceFamily.description }}</p>
-		      			<p><strong>{{competence.level.label }}</strong> : {{ competence.description }}</p>
+		      			<p>{{ competence.competenceFamily.description|markdown }}</p>
+		      			<p><strong>{{competence.level.label }}</strong> : {{ competence.description|markdown }}</p>
 		    		</div>
 		  		</div>
 		  		</div>

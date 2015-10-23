@@ -35,7 +35,7 @@
 						</div>
 						
 						{% if classe.description %}
-							<p>{{ classe.description }}</p>
+							<p>{{ classe.description|markdown }}</p>
 						{% else %}
 							<p class="text-warning">Attention, cette classe n'a pas description</p>
 						{%  endif %}

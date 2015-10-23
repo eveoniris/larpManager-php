@@ -16,7 +16,7 @@
 		</h4>
 	
 		{% if competence.description %}
-			<p class="list-group-item-text text-default">{{ competence.description }}</p>
+			<p class="list-group-item-text text-default">{{ competence.description|markdown }}</p>
 		{% else %}
 			<p class="list-group-item-text text-warning">Attention, cette compétence n'a pas description</p>
 		{%  endif %}

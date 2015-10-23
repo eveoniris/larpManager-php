@@ -14,7 +14,7 @@
 				    <a href="{{ path('competence.family.update', {index: competenceFamily.id}) }}" class="btn btn-default" role="button">Modifier</a>
 				</div>
 			</h4>
-			{% if competenceFamily.description %}
+			{% if competenceFamily.description|markdown %}
 				<p class="list-group-item-text text-default">{{ competenceFamily.description }}</p>
 			{% else %}
 				<p class="list-group-item-text text-warning">Attention, cette famille de compétence n'a pas description</p>
