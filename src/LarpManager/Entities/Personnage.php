@@ -29,9 +29,18 @@ class Personnage extends BasePersonnage
 	
 	public function __toString()
 	{
-		return $this->getNom();
+		return $this->getPublicName();
 	}
 	
+	/**
+	 * Fourni le surnom si celui-ci a été précisé
+	 * sinon fourni le nom
+	 */
+	public function getPublicName()
+	{
+		if ( $this->getSurnom() ) return $this->getSurnom();
+		return $this->getNom();
+	}
 	
 	/**
 	 * Fourni l'identité complete d'un personnage
@@ -41,7 +50,7 @@ class Personnage extends BasePersonnage
 		$groupe = $this->getGroupe();
 		$participant = $this->getParticipant();
 		
-		$identity = $this->getNom().' (';
+		$identity = $this->getPublicName().' (';
 		if ( $groupe ) $identity .= $groupe->getNom();
 		if ( $participant ) $identity .= " - ". $participant->getUser()->getUsername();
 		$identity .= ')';

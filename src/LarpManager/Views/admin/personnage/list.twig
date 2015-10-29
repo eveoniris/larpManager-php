@@ -94,7 +94,7 @@
 			{% for personnage in personnages %}
 				<tr>
 					<td><a href="{{ path('personnage.admin.update', {'personnage':personnage.id}) }}">{{ personnage.id }}</td>
-					<td><a href="{{ path('personnage.admin.detail', {'personnage':personnage.id}) }}">{{ personnage.nom }}</td>
+					<td><a href="{{ path('personnage.admin.detail', {'personnage':personnage.id}) }}">{{ personnage.publicName }}</td>
 					<td>{{ personnage.classe }}</td>
 					<td>{{ personnage.groupe }}</td>
 					<td>{{ personnage.participant }}</td>

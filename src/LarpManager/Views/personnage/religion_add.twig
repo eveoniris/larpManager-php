@@ -1,6 +1,6 @@
 {% extends "layout.twig" %}
 
-{% block title %}{{ personnage.nom }}{% endblock title %}
+{% block title %}{{ personnage.publicName }}{% endblock title %}
 
 {% block content %}
 <div class="container-fluid">
@@ -13,7 +13,7 @@
 	<div class="well bs-component">
 		<form action="{{ path('personnage.religion.add',{'personnage':personnage.id}) }}" method="POST" {{ form_enctype(form) }}>
 			<fieldset>
-				<legend>{{ personnage.nom }} - <small>Choix d'une religion</small></legend>
+				<legend>{{ personnage.publicName }} - <small>Choix d'une religion</small></legend>
 				<p>Attention ! une fois votre religion choisie, vous ne pourrez plus revenir sur votre choix.</p>
 				{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
 	

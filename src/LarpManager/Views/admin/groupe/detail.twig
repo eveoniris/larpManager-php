@@ -88,7 +88,7 @@
 									<td>{{ participant.user.email }}</td>
 									<td>
 										{% if participant.personnage %}
-											<a href="{{ path('personnage.admin.detail', {'personnage': participant.personnage.id}) }}">{{ participant.personnage.nom }}</a>
+											<a href="{{ path('personnage.admin.detail', {'personnage': participant.personnage.id}) }}">{{ participant.personnage.publicName }}</a>
 										{% else %}
 											Ne dispose pas encore de personnage
 										{% endif %}

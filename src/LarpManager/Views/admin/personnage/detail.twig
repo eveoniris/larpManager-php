@@ -7,16 +7,19 @@
 	<ol class="breadcrumb">
 		<li><a href="{{ path('homepage') }}">Accueil</a></li>
 		<li><a href="{{ path('personnage.admin.list') }}">Liste des personnages</a></li>
-		<li class="active">Détail de {{ personnage.nom }}</li>
+		<li class="active">Détail de {{ personnage.publicName }}</li>
 	</ol>
 	
 	
 	<div class="panel panel-success">
-		<div class="panel-heading">{{ personnage.nom }} - <small>{{ personnage.classe.label }}</small></div>
+		<div class="panel-heading">{{ personnage.publicName }} - <small>{{ personnage.classe.label }}</small></div>
 		<div class="panel-body">
 			<div class="list-group">
 				<div class="list-group-item">
 					<h6 class="list-group-item-heading">Informations</h6>
+					<p class="list-group-item-text">
+						Nom : {{ personnage.nom }}
+					</p>
 					<p class="list-group-item-text">
 						Surnom : {{ personnage.surnom }}
 					</p>

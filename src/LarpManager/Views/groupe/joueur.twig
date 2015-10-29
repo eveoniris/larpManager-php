@@ -62,14 +62,14 @@
 									{% endif %}
 									
 									{% if app.user.joueur.personnage %}
-										Vous êtes <strong>{{ app.user.personnage.nom }} </strong>: {{ app.user.personnage.classe.label }} 
+										Vous êtes <strong>{{ app.user.personnage.publicName }} </strong>: {{ app.user.personnage.classe.label }} 
 									{% else %}
 										<a href="{{ path('personnage.add') }}">Créer votre personnage</a>
 									{% endif %}
 																		
 									{% for personnage in groupe.personnages %}
 										<li >
-											<strong>{{ personnage.nom }} </strong>: {{ personnage.classe.label }}
+											<strong>{{ personnage.publicName }} </strong>: {{ personnage.classe.label }}
 										</li>
 									{% endfor %}
 								</p>

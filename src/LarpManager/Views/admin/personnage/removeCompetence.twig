@@ -7,7 +7,7 @@
 	<ol class="breadcrumb">
 		<li><a href="{{ path('homepage') }}">Accueil</a></li>
 		<li><a href="{{ path('personnage.admin.list') }}">Liste des personnages</a></li>
-		<li><a href="{{ path('personnage.admin.detail', {'personnage': personnage.id}) }}">Détail de {{ personnage.nom }}</a></li>
+		<li><a href="{{ path('personnage.admin.detail', {'personnage': personnage.id}) }}">Détail de {{ personnage.publicName }}</a></li>
 		<li class="active">Retrait d'une compétence</li>
 	</ol>
 
