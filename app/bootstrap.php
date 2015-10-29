@@ -43,7 +43,7 @@ $app->register(new DerAlex\Silex\YamlConfigServiceProvider(__DIR__ . '/../config
  * Préparation des logs en fonction de l'environnement
  * (le niveau de logs est plus élevé en mode dev.)
  */
-if ( $app['config']['env'] == 'prod' )
+if ( $app['config']['env']['env'] == 'prod' )
 {
 	$app['debug'] = false;
 	
