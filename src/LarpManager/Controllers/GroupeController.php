@@ -461,18 +461,18 @@ class GroupeController
 			$topic->setTitle($groupe->getNom());
 			$topic->setDescription($groupe->getDescription());
 			$topic->setUser($app['user']);
-							
-			$app['orm.em']->persist($groupe);
-			$app['orm.em']->flush();
-			
 			// défini les droits d'accés à ce forum
 			// (les membres du groupe ont le droit d'accéder à ce forum)
 			$topic->setRight('GROUPE_MEMBER');
-			$topic->setObjectId($groupe->getId());
+			
 			$groupe->setTopic($topic);
 			
 			$app['orm.em']->persist($topic);
 			$app['orm.em']->persist($groupe);
+			$app['orm.em']->flush();
+			
+			$topic->setObjectId($groupe->getId());
+			$app['orm.em']->persist($topic);
 			$app['orm.em']->flush();
 		
 			$app['session']->getFlashBag()->add('success','Le groupe été sauvegardé');

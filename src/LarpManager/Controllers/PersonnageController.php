@@ -135,7 +135,7 @@ class PersonnageController
 	public function adminAddAction(Request $request, Application $app)
 	{
 		$personnage = new \LarpManager\Entities\Personnage();
-		
+
 		$form = $app['form.factory']->createBuilder(new PersonnageForm(), $personnage)
 			->add('classe','entity', array(
 					'label' =>  'Classes disponibles',

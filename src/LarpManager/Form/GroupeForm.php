@@ -30,6 +30,15 @@ class GroupeForm extends AbstractType
 				->add('numero','integer', array(
 						'required' => true,
 				))
+				->add('pj', 'choice', array(
+						'label' => 'Type de groupe',
+						'required' => true,
+						'choices' => array(
+								true => 'Groupe composé de PJs',
+								false => 'Groupe composé PNJs',
+						),
+						'expanded' => true,
+				))
 				->add('description','textarea', array(
 						'required' => false,
 				))

@@ -4,7 +4,6 @@ namespace LarpManager\Controllers;
 use Silex\Application;
 use Silex\Provider\SecurityServiceProvider;
 use Silex\Provider\DoctrineServiceProvider;
-use LarpManager\User\UserServiceProvider;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Yaml\Dumper;
 
@@ -78,8 +77,8 @@ class InstallController
 	{
 		// preparation du formulaire
 		$form = $app['form.factory']->createBuilder(new \LarpManager\Form\InstallUserAdminForm())
-		->add('create','submit')
-		->getForm();
+			->add('create','submit')
+			->getForm();
 		
 		$form->handleRequest($request);
 		
@@ -92,13 +91,20 @@ class InstallController
 			$name = $data['name'];
 			$email = $data['email'];
 			$password = $data['password'];
-
+		
 			$app->register(new SecurityServiceProvider());
-			$app->register(new UserServiceProvider());
 			
-			// on ajoute des éléments de base
-			$user = $app['user.manager']->createUser($email, $password, $name, array('ROLE_ADMIN'));
-			$app['user.manager']->insert($user);
+			$user = new \LarpManager\Entities\User($email);
+			$encoder = $app['security.encoder_factory']->getEncoder($user);
+			$user->setPassword($encoder->encodePassword($password, $user->getSalt()));
+			$user->setUsername($name);
+			$user->setRoles(array('ROLE_ADMIN'));
+			$user->setCreationDate(new \Datetime('NOW'));
+			$user->setIsEnabled(true);
+			
+			$app['orm.em']->persist($user);
+			$app['orm.em']->flush();
+
 			
 			// supprimer le fichier de cache pour lancer larpmanager en mode normal		
 			unlink(__DIR__.'/../../../cache/maintenance.tag');

@@ -179,7 +179,7 @@ class UserManager implements UserProviderInterface
 		}
 		
 		if ($name !== null) {
-			$user->setName($name);
+			$user->setUsername($name);
 		}
 		
 		if (!empty($roles)) {
@@ -243,7 +243,8 @@ class UserManager implements UserProviderInterface
 	public function insert(User $user)
 	{
 		$user->setCreationDate(new \Datetime('NOW'));
-		$user->setUserName($user->getName());
+		//$user->setUserName($user->getName());
+		$user->setIsEnabled(true);
 		
 		$this->app['orm.em']->persist($user);
 		$this->app['orm.em']->flush();

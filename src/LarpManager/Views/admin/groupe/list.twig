@@ -41,6 +41,24 @@
 			<thead>
 				<tr>
 					<th>
+						{% if app.request.get('order_dir') == 'ASC' and app.request.get('order_by') == 'pj' %}
+							<a href="{{ path('groupe.admin.list', {'order_by': 'pj', 'order_dir': 'DESC'}) }}">
+						{%  else %}
+							<a href="{{ path('groupe.admin.list', {'order_by': 'pj', 'order_dir': 'ASC'}) }}">
+						{% endif %}
+							Numero
+						{% if app.request.get('order_by') == 'pj'  %}
+							{% if app.request.get('order_dir') == 'ASC' %}
+								<span class="caret"></span>
+							{%else%}
+								<span class="dropup">
+    								<span class="caret"></span>
+								</span>
+							{% endif %}
+						{% endif %}
+						</a>
+					</th>
+					<th>
 						{% if app.request.get('order_dir') == 'ASC' and app.request.get('order_by') == 'numero' %}
 							<a href="{{ path('groupe.admin.list', {'order_by': 'numero', 'order_dir': 'DESC'}) }}">
 						{%  else %}
@@ -103,11 +121,12 @@
 			<tbody>
 			{% for groupe in groupes %}
 				<tr>
+					<td>{% if groupe.pj %}PJ{%else%}PNJ{% endif %}</td>
 					<td><a href="{{ path('groupe.update', {'index':groupe.id}) }}">{{ groupe.numero }}</a></td>
 					<td><a href="{{ path('groupe.detail', {'index':groupe.id}) }}">{{ groupe.nom }}</a></td>
 					<td>{{ groupe.classeOpen }}{% if is_granted('ROLE_ADMIN') %}&nbsp;(<a href=" {{ path('groupe.place', {'index':groupe.id}) }}">Modifier</a>){% endif %} </td>
-					<td>{{ groupe.scenariste.username|default('pas de scénariste') }}</td>
-					<td>{{ groupe.responsable.username|default('pas de responsable') }}</td>
+					<td>{% if groupe.scenariste %}{{ groupe.scenariste.username }} {% else %}pas de scénariste{% endif %}</td>
+					<td>{% if groupe.responsable %}{{ groupe.responsable.username }}{% else %}pas de scénariste{% endif %}</td>
 				</tr>
 			{% endfor %}
 			</tbody>

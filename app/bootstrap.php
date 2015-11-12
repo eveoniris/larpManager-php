@@ -223,6 +223,7 @@ else
 	$app->mount('/forum', new LarpManager\ForumControllerProvider());
 	$app->mount('/statistique', new LarpManager\StatistiqueControllerProvider());
 	$app->mount('/background', new LarpManager\BackgroundControllerProvider());
+	$app->mount('/pnj', new LarpManager\PnjControllerProvider());
 		
 
 	/**
@@ -243,6 +244,7 @@ else
 	 */
 	$app['security.access_rules'] = array(
 		array('^/world/.*$', 'ROLE_USER'),
+		array('^/pnj/.*$', 'ROLE_USER'),
 		array('^/groupe/.*$', 'ROLE_USER'),
 		array('^/groupeSecondaire/.*$', 'ROLE_USER'),
 		array('^/competence/.*$', 'ROLE_USER'),
