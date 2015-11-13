@@ -110,6 +110,17 @@ class HomepageController
 	}
 	
 	/**
+	 * Affiche les mentions légales
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function legalAction(Request $request, Application $app)
+	{
+		return $app['twig']->render('homepage/legal.twig');
+	}
+	
+	/**
 	 * Formulaire d'inscription d'un joueur dans un gn
 	 * 
 	 * @param Request $request

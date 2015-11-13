@@ -52,6 +52,11 @@ class HomepageControllerProvider implements ControllerProviderInterface
 					->method('POST')
 					->bind('inscriptionGn');
 		
+		/** détail des mentions légales */
+		$controllers->match('/legal','LarpManager\Controllers\HomepageController::legalAction')
+					->method('GET')
+					->bind('legal');
+		
 		return $controllers;
 	}
 }
