@@ -76,9 +76,7 @@
 	    							<th>User</th>
 	    							<th>Email</th>
 	    							<th>Personnage</th>
-	    							{% if is_granted('ROLE_ADMIN', app.user) %}
-	    								<th></th>
-	    							{% endif %}
+    								<th></th>
 	    						</tr>
 	    					</thead>
 	    					<tbody>
@@ -93,9 +91,7 @@
 											Ne dispose pas encore de personnage
 										{% endif %}
 									</td>
-									{% if is_granted('ROLE_ADMIN', app.user) %}
-										<td><a href="{{ path('groupe.admin.participant.remove', {'groupe': groupe.id, 'participant': participant.id}) }}">Retirer</a></td>
-									{% endif %}
+									<td><a href="{{ path('groupe.admin.participant.remove', {'groupe': groupe.id, 'participant': participant.id}) }}">Retirer</a></td>
 								</tr>
 							{% endfor %}
 							</tbody>
