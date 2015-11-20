@@ -176,6 +176,21 @@ class PersonnageController
 				'personnage' => $personnage
 		));
 	}
+	
+	public function adminDeleteAction(Request $request, Application $app)
+	{
+		$personnage = $request->get('personnage');
+		
+		$form = $app['form.factory']->createBuilder(new PersonnageDeleteForm(), $personnage)
+			->add('delete','submit', array('label' => 'Supprimer'))
+			->getForm();
+		
+		return $app['twig']->render('admin/personnage/delete.twig', array(
+				'form' => $form->createView(),
+				'personnage' => $personnage
+		));
+	}
+	
 			
 			
 		
@@ -226,6 +241,7 @@ class PersonnageController
 				'personnage' => $personnage,
 		));
 	}
+	
 	
 	/**
 	 * Retire la dernière compétence acquise par un personnage

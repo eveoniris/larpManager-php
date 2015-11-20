@@ -24,6 +24,7 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 	 *  - personnage.admin.add
 	 *  - personnage.admin.update
 	 *  - personnage.detail
+	 *  - personnage.delete
 	 *  - personnage.competence.add
 	 *  - personnage.competence.remove
 	 *  - personnage.religion.add
@@ -98,6 +99,16 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 		$controllers->match('/admin/{personnage}/update','LarpManager\Controllers\PersonnageController::adminUpdateAction')
 			->assert('personnage', '\d+')
 			->bind("personnage.admin.update")
+			->method('GET|POST')
+			->convert('personnage', 'converter.personnage:convert')
+			->before($mustBeOrga);
+		
+		/**
+		 * Suppression d'un personnage
+		 */
+		$controllers->match('/admin/{personnage}/delete','LarpManager\Controllers\PersonnageController::adminDeleteAction')
+			->assert('personnage', '\d+')
+			->bind("personnage.admin.delete")
 			->method('GET|POST')
 			->convert('personnage', 'converter.personnage:convert')
 			->before($mustBeOrga);
