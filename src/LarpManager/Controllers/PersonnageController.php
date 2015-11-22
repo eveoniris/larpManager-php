@@ -361,6 +361,7 @@ class PersonnageController
 		));
 	}
 	
+	//JOS - 22/11/2015 - Export de la fiche de personnage en PDF - Phase 1
 	/**
 	 * Exporte la fiche d'un personnage
 	 * 
@@ -371,9 +372,55 @@ class PersonnageController
 	{
 		$personnage = $request->get('personnage');
 		
+		// Define layers
+		$lPdfDataLayer = $app['pdf.manager']->AddLayer('Fiche De Personnage');
+		$lPdfBackgoundLayer = $app['pdf.manager']->AddLayer('Arrière-plans');
+		
+		// Open layer pane in PDF viewer
+		$app['pdf.manager']->OpenLayerPane();
+
 		$app['pdf.manager']->AddPage();
+		
+
+		$app['pdf.manager']->BeginLayer($lPdfBackgoundLayer);
+		
+		$app['pdf.manager']->Image('http://img01.deviantart.net/8c5b/i/2010/048/7/3/texture_a_by_knald.jpg',0,0,210);
+		
+		$app['pdf.manager']->EndLayer();
+
+		
+		$app['pdf.manager']->BeginLayer($lPdfDataLayer);
+
+		//$app['pdf.manager']->SetFont('Arial','B',16);
+		//$app['pdf.manager']->Cell(40,10,$personnage->getNom());
+		//$app['pdf.manager']->Cell(50,10,$personnage->getNom());
+		
+
+		$dataInfoGenerales = array(
+			array(utf8_decode('Nom'), utf8_decode($personnage->getNom())),
+			array(utf8_decode('Surnom'), utf8_decode($personnage->getSurnom())),
+			array(utf8_decode('Age'), utf8_decode($personnage->getAge())),
+			array(utf8_decode('Genre'), utf8_decode($personnage->getGenre())),
+			array(utf8_decode('Classe'), utf8_decode($personnage->getClasse())),
+			array(utf8_decode($personnage->getIntrigue()?"Participe aux intrigues":"Ne participe pas aux intrigues"))
+		);
+		
+		
 		$app['pdf.manager']->SetFont('Arial','B',16);
-		$app['pdf.manager']->Cell(40,10,$personnage->getNom());
+		$app['pdf.manager']->Cell(10,30,utf8_decode('Informations générales'));
+		$app['pdf.manager']->SetXY(10, 35);
+		$app['pdf.manager']->SetFont('Arial','',14);
+		$app['pdf.manager']->FixtedWidthBasicTable($dataInfoGenerales, 100);
+	
+
+		$app['pdf.manager']->ImagePngWithAlpha('http://www.eveoniris.com/images/logo.png',0,100,70);
+		$app['pdf.manager']->Image('http://www.eveoniris.com/images/logo.png',0,100,70);
+
+		$app['pdf.manager']->ImagePngWithAlpha('http://www.eveoniris.com/images/logo_eve.png',70,100,30);
+		$app['pdf.manager']->Image('http://www.eveoniris.com/images/logo_eve.png',70,100,30);
+		
+		$app['pdf.manager']->EndLayer();
+		
 		
 		header("Content-Type: application/pdf");
 		header("Content-Disposition: attachment; filename=".$personnage->getNom()."_".date("Ymd").".pdf");

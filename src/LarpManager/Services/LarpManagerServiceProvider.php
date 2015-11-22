@@ -10,6 +10,7 @@ use LarpManager\Twig\LarpManagerExtension;
 use LarpManager\Services\ForumRightManager;
 use LarpManager\Services\LarpManagerVoter;
 use LarpManager\Services\fpdf\FPDF;
+use LarpManager\Services\fpdf\FpdfExtended;
 
 /**
  * LarpManager\LarpManagerServiceProvider
@@ -51,7 +52,8 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 		
 		// fpdf
 		$app['pdf.manager'] = $app->share(function($app) {
-			$fpdf = new FPDF();
+			//JOS - 22/11/2015 - Export de la fiche de personnage en PDF - Phase 1
+			$fpdf = new FpdfExtended();
 			$fpdf->FPDF();
 			return $fpdf;
 		});
