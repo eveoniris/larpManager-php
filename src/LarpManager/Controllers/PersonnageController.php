@@ -391,9 +391,6 @@ class PersonnageController
 		
 		$app['pdf.manager']->BeginLayer($lPdfDataLayer);
 
-		//$app['pdf.manager']->SetFont('Arial','B',16);
-		//$app['pdf.manager']->Cell(40,10,$personnage->getNom());
-		//$app['pdf.manager']->Cell(50,10,$personnage->getNom());
 		
 
 		$dataInfoGenerales = array(
@@ -405,13 +402,35 @@ class PersonnageController
 			array(utf8_decode($personnage->getIntrigue()?"Participe aux intrigues":"Ne participe pas aux intrigues"))
 		);
 		
+		$miseEnFormeInfoGenerales = array(
+			'default' => array( //row
+				'default' => array( //cell
+					'SetFont' => array( //function arguments
+							'Arial','',10
+					)
+				)
+			),
+			'even' => array( //row
+				'default' => array( //cell
+					'SetFont' => array( //function arguments
+						'Arial','B',10
+					)
+				)					
+			)
+		);
+		
 		
 		$app['pdf.manager']->SetFont('Arial','B',16);
 		$app['pdf.manager']->Cell(10,30,utf8_decode('Informations générales'));
 		$app['pdf.manager']->SetXY(10, 35);
-		$app['pdf.manager']->SetFont('Arial','',14);
-		$app['pdf.manager']->FixtedWidthBasicTable($dataInfoGenerales, 100);
+		$app['pdf.manager']->SetFont('Arial','',10);
+		$app['pdf.manager']->FixtedWidthBasicTable($dataInfoGenerales, 80);
 	
+		$app['pdf.manager']->SetFont('Arial','B',16);
+		$app['pdf.manager']->Cell(100,30,utf8_decode('Informations générales'));
+		$app['pdf.manager']->SetXY(100, 35);
+		$app['pdf.manager']->SetFont('Arial','',10);
+		$app['pdf.manager']->FixtedWidthStyleSheetTable($dataInfoGenerales, $miseEnFormeInfoGenerales, 80);
 
 		$app['pdf.manager']->ImagePngWithAlpha('http://www.eveoniris.com/images/logo.png',0,100,70);
 		$app['pdf.manager']->Image('http://www.eveoniris.com/images/logo.png',0,100,70);

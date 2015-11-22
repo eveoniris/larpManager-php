@@ -400,41 +400,50 @@ class FpdfExtended extends FPDF
 	 *                                                                              *
 	 * Version: 1.1                                                                 *
 	 * Initial Author:  Olivier PLATHEY                                             *
-	 * Author:  Olivier PLATHEY                                                     *
+	 * Author:  Romain FERET                                                        *
 	 * Reference : http://fpdf.org/fr/tutorial/tuto5.htm                            *
 	 *******************************************************************************/
 	
 	// Tableau simple
 	function BasicTable($header = null, $data)
 	{
+		$fPdfCurrentX = $this->GetX();
+		$fPdfCurrentY = $this->GetY();
 		if($header != null)
 		{
 			// En-tête
 			foreach($header as $col)
 			$this->Cell(40,7,$col,1);
-			$this->Ln();
+			$fPdfCurrentY += 7;
+			$this->SetXY($fPdfCurrentX, $fPdfCurrentY);
 		}
 		// Données
 		foreach($data as $row)
 		{
 			foreach($row as $col)
+			{
 				$this->Cell(40,6,$col,1);
-				$this->Ln();
+			}
+			$fPdfCurrentY += 6;
+			$this->SetXY($fPdfCurrentX, $fPdfCurrentY);
 		}
 	}
 	
 	function FixtedWidthBasicTable($data, $tableWidth = 100, $defaultColumHeight = 6)
 	{
+		$fPdfCurrentX = $this->GetX();
+		$fPdfCurrentY = $this->GetY();
 		foreach($data as $row)
 		{
-			$rowCount = count($row);
-			$rowWidth = floor($tableWidth/$rowCount);
-			$rowWidthDelta = $tableWidth - $rowCount * $rowWidth;
-			$rowCpt = 0;
+			$cellCount = count($row);
+			$rowWidth = floor($tableWidth/$cellCount);
+			$rowWidthDelta = $tableWidth - $cellCount * $rowWidth;
+			$cellCpt = 0;
 			foreach($row as $col)
 			{
-				$rowCpt++;
-				if($rowCpt < $rowCount)
+				$cellCpt++;
+				//Ajout du delta si la division des tailles du tableau ne tombe pas juste
+				if($cellCpt < $cellCount)
 				{
 					$this->Cell($rowWidth,$defaultColumHeight,$col,1);
 				}
@@ -443,9 +452,166 @@ class FpdfExtended extends FPDF
 					$this->Cell($rowWidth+$rowWidthDelta,$defaultColumHeight,$col,1);
 				}
 			}
-			$this->Ln();
+			$fPdfCurrentY += $defaultColumHeight;
+			$this->SetXY($fPdfCurrentX, $fPdfCurrentY);
 		}
 	}
 	
+	//JOS - 22/11/2015 - Export de la fiche de personnage en PDF - Phase 2 : Implémentation des feuilles de style pour tableau
+	function FixtedWidthStyleSheetTable($pData, $pStyleSheet = null, $tableWidth = 100, $defaultColumHeight = 6)
+	{
+		$lHasStyleSheet = $pStyleSheet != null;
+		$lDefaultCellStyle = null;
+		$lCurentCellStyle = null;
+		
+		$fPdfCurrentX = $this->GetX();
+		$fPdfCurrentY = $this->GetY();
+		
+		//Arguments check
+		if(!is_array($pData) || $this->_is_assoc($pData))
+		{
+			throw new \InvalidArgumentException(__FUNCTION__.' function pData argument only accepts 2 dimension sequential array. Input type was: '.gettype($pData));
+		}
+		
+		if($lHasStyleSheet)
+		{
+			if(!is_array($pStyleSheet) || !$this->_is_assoc($pStyleSheet))
+			{
+				throw new \InvalidArgumentException(__FUNCTION__.' function pStyleSheet argument only associative array. Input type was: '.gettype($pStyleSheet));
+			}
+			if(!array_key_exists('default', $pStyleSheet))
+			{
+				throw new \InvalidArgumentException(__FUNCTION__.' function pStyleSheet argument only associative array with one \'default\' key. \'default\' key no found in Array.');
+			}
+			if(!is_array($pStyleSheet['default']) || !$this->_is_assoc($pStyleSheet['default']))
+			{
+				throw new \InvalidArgumentException(__FUNCTION__.' function pStyleSheet[\'default\'] argument only associative array. Input type was: '.gettype($pStyleSheet['default']));
+			}
+			if(!array_key_exists('default', $pStyleSheet['default']))
+			{
+				throw new \InvalidArgumentException(__FUNCTION__.' function pStyleSheet[\'default\'] argument only associative array with one \'default\' key. \'default\' key no found in Array.');
+			}
+			
+			$lDefaultCellStyle = $pStyleSheet['default']['default'];
+			$lCurentCellStyle = $lDefaultCellStyle;
+			
+			
+			if(!array_key_exists('even', $pStyleSheet)) //Gestion des styles pair
+			{
+				$pStyleSheet['even'] = $pStyleSheet['default'];
+			}
+			if(!array_key_exists('odd', $pStyleSheet)) //Gestion des styles impair
+			{
+				$pStyleSheet['odd'] = $pStyleSheet['default'];
+			}
+		}
+		
+		
+		$lRowCount = count($pData);
+		for($loCptRow = 0; $loCptRow < $lRowCount; $loCptRow++)
+		{
+			$loRow = $pData[$loCptRow];
+
+			//Arguments check
+			if(!is_array($loRow) || $this->_is_assoc($loRow))
+			{
+				throw new \InvalidArgumentException(__FUNCTION__.' function pData argument only accepts 2 dimension sequential array. Input type was: '.gettype($pData));
+			}
+
+			$loRowDefaultCellStyle = null;
+			$loRowStyleSheet = null;				
+			
+			if($lHasStyleSheet)
+			{
+				if(array_key_exists(strval($loCptRow), $pStyleSheet))
+				{
+					$loRowStyleSheet = $pStyleSheet[strval($loCptRow)];
+					
+					if(!is_array($loRowStyleSheet) /*|| !$this->_is_assoc($loRowStyleSheet)*/) //Fix : même si les clefs sont de type string si leur valeurs sont numériques _is_assoc retourne true
+					{
+						throw new \InvalidArgumentException(__FUNCTION__.' function pStyleSheet[\''.strval($loCptRow).'\'] argument only accept associative array. Input type was: '.gettype($loRowStyleSheet));
+					}
+					
+					//Si pour la ligne le style par défault est paramétré on le prend sinon on prend le style par défaut global
+					if(array_key_exists('default', $loRowStyleSheet))
+					{
+						$loRowDefaultCellStyle = $loRowStyleSheet['default'];
+					}
+					else 
+					{
+						$loRowDefaultCellStyle = $lDefaultCellStyle;
+					}
+				}
+				else 
+				{
+					$loRowStyleSheet = (($loCptRow % 2 == 0) ? $pStyleSheet['even'] : $pStyleSheet['odd']); //Gestion du défault par colonne ? à tester
+					if(array_key_exists('default', $loRowStyleSheet))
+					{
+						$loRowDefaultCellStyle = $loRowStyleSheet['default'];
+					}
+					else
+					{
+						$loRowDefaultCellStyle = $lDefaultCellStyle;
+					}
+				}
+			}
+			
+			$loCellCount = count($loRow);
+			$loRowWidth = floor($tableWidth/$loCellCount);
+			$loRowWidthDelta = $tableWidth - $loCellCount * $loRowWidth;
+			
+			for($loCptCell = 0; $loCptCell < $loCellCount; $loCptCell++)
+			{
+				$loCell = $loRow[$loCptCell];
+				
+				$loCellStyleSheet = $loRowDefaultCellStyle;
+				
+				if($lHasStyleSheet)
+				{
+					if(array_key_exists(strval($loCptCell), $loRowStyleSheet))
+					{
+						$loCellStyleSheet = $loRowStyleSheet[strval($loCptCell)];
+					}
+					
+					foreach ($loCellStyleSheet as $loCellStyleSheetFunctionName => $loCellStyleSheetFunctionArgs)
+					{
+						call_user_func_array(
+							array(
+								$this,
+								$loCellStyleSheetFunctionName
+							),
+							$loCellStyleSheetFunctionArgs
+						);
+					}
+				}
+				
+				//Ajout du delta si la division des tailles du tableau ne tombe pas juste
+				if($loCptCell < ($loCellCount - 1))
+				{
+					$this->Cell($loRowWidth,$defaultColumHeight,$loCell,1);
+				}
+				else
+				{
+					$this->Cell($loRowWidth+$loRowWidthDelta,$defaultColumHeight,$loCell,1);
+				}
+			}
+			$fPdfCurrentY += $defaultColumHeight;
+			$this->SetXY($fPdfCurrentX, $fPdfCurrentY);
+		}
+	}
+	
+	private function _is_assoc(array $array) 
+	{
+		return (bool)count(array_filter(array_keys($array), 'is_string'));
+	}
+	
+}
+
+
+// Handle special IE contype request
+if(isset($_SERVER['HTTP_USER_AGENT']) && $_SERVER['HTTP_USER_AGENT']=='contype')
+{
+	header('Content-Type: application/pdf');
+	exit;
 }
 ?>
