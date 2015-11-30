@@ -7,6 +7,7 @@ use JasonGrimes\Paginator;
 use LarpManager\Form\PersonnageReligionForm;
 use LarpManager\Form\PersonnageFindForm;
 use LarpManager\Form\PersonnageForm;
+use LarpManager\Form\PersonnageUpdateForm;
 use LarpManager\Form\PersonnageXpForm;
 
 /**
@@ -150,33 +151,13 @@ class PersonnageController
 				'form' => $form->createView(),
 		));
 	}
-	
+		
 	/**
-	 * Modification d'un personnage (orga seulement)
+	 * Supression d'un personnage (orga seulement)
 	 * 
 	 * @param Request $request
 	 * @param Application $app
 	 */
-	public function adminUpdateAction(Request $request, Application $app)
-	{
-		$personnage = $request->get('personnage');
-		
-		$form = $app['form.factory']->createBuilder(new PersonnageForm(), $personnage)
-			->add('classe','entity', array(
-					'label' =>  'Classes disponibles',
-					'property' => 'label',
-					'class' => 'LarpManager\Entities\Classe',
-			))
-			->add('save','submit', array('label' => 'Sauvegarder'))
-			->add('delete','submit', array('label' => 'Supprimer'))			
-			->getForm();
-		
-		return $app['twig']->render('admin/personnage/update.twig', array(
-				'form' => $form->createView(),
-				'personnage' => $personnage
-		));
-	}
-	
 	public function adminDeleteAction(Request $request, Application $app)
 	{
 		$personnage = $request->get('personnage');
@@ -184,6 +165,27 @@ class PersonnageController
 		$form = $app['form.factory']->createBuilder(new PersonnageDeleteForm(), $personnage)
 			->add('delete','submit', array('label' => 'Supprimer'))
 			->getForm();
+		
+		$form->handleRequest($request);
+				
+		if ( $form->isValid() )
+		{
+			$personnage = $form->getData();
+			
+			// censé être pris en charge par doctrine (à vérifier) :
+			// suppression de l'historique (expérience usage et expérience gain)
+			// suppression des liens religions
+			// suppression des liens compétences
+			// suppression de son appartenance à un groupe
+			// suppression de son appartenance à un groupe secondaire
+			// suppression de ses demande d'adhésion à un groupe secondaire (postulant)
+						
+			$app['orm.em']->delete($personnage);
+			$app['orm.em']->flush();
+			
+			$app['session']->getFlashBag()->add('success','Le personnage a été supprimé.');
+			return $app->redirect($app['url_generator']->generate('homepage'),301);
+		}
 		
 		return $app['twig']->render('admin/personnage/delete.twig', array(
 				'form' => $form->createView(),
@@ -206,6 +208,70 @@ class PersonnageController
 		return $app['twig']->render('personnage/detail.twig', array('personnage' => $personnage));
 	}
 	
+	/**
+	 * Modification du personnage
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function updateAction(Request $request, Application $app)
+	{
+		$personnage = $request->get('personnage');
+		
+		// il ce peut que des points d'expérience soit à retirer si l'age est modifiée
+		$oldAge = $personnage->getAge();
+		
+		$form = $app['form.factory']->createBuilder(new PersonnageUpdateForm(), $personnage)
+			->add('save','submit', array('label' => 'Valider les modifications'))
+			->getForm();
+		
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$personnage = $form->getData();
+			
+			// Retrait des points d'expérience gagné grace à l'age
+			if ( $oldAge != $personnage->getAge() )
+			{
+				$xpToRemove = $oldAge->getBonus();
+				if ( $xpToRemove )
+				{
+					$personnage->removeXp($xpToRemove);
+					
+					$historique = new \LarpManager\Entities\ExperienceGain();
+					$historique->setExplanation("Retrait du bonus lié à l'age");
+					$historique->setOperationDate(new \Datetime('NOW'));
+					$historique->setPersonnage($personnage);
+					$historique->setXpGain($xpToRemove * -1);
+					$app['orm.em']->persist($historique);
+				}
+			}
+			
+			// Ajout des points d'expérience gagné grace à l'age
+			$xpAgeBonus = $personnage->getAge()->getBonus();
+			if ( $xpAgeBonus )
+			{
+				$personnage->addXp($xpAgeBonus);
+				$historique = new \LarpManager\Entities\ExperienceGain();
+				$historique->setExplanation("Bonus lié à l'age");
+				$historique->setOperationDate(new \Datetime('NOW'));
+				$historique->setPersonnage($personnage);
+				$historique->setXpGain($xpAgeBonus);
+				$app['orm.em']->persist($historique);
+			}
+			
+			$app['orm.em']->persist($personnage);
+			$app['orm.em']->flush();
+			
+			$app['session']->getFlashBag()->add('success','Votre personnage a été sauvegardé.');
+			return $app->redirect($app['url_generator']->generate('homepage'),301);
+		}
+		
+		return $app['twig']->render('personnage/update.twig', array(
+				'form' => $form->createView(),
+				'personnage' => $personnage));
+	}
 	
 	/**
 	 * Ajoute une religion au personnage

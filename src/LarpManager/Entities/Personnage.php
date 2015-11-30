@@ -75,5 +75,15 @@ class Personnage extends BasePersonnage
 		$this->setXp($this->getXp() + $xp);
 		return $this;
 	}
+	
+	/**
+	 * Retire des points d'expérience à un personnage
+	 * @param integer $xp
+	 */
+	public function removeXp($xp)
+	{
+		$this->setXp($this->getXp() - $xp);
+		return $this;
+	}
 				
 }

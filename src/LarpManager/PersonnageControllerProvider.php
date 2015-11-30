@@ -24,6 +24,7 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 	 *  - personnage.admin.add
 	 *  - personnage.admin.update
 	 *  - personnage.detail
+	 *  - personnage.update
 	 *  - personnage.delete
 	 *  - personnage.competence.add
 	 *  - personnage.competence.remove
@@ -84,7 +85,6 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 			->convert('personnage', 'converter.personnage:convert')
 			->before($mustBeOrga);
 			
-		
 		/**
 		 * Ajout d'un personnage (orga)
 		 */
@@ -104,7 +104,7 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 			->before($mustBeOrga);
 		
 		/**
-		 * Suppression d'un personnage
+		 * Suppression d'un personnage (orga)
 		 */
 		$controllers->match('/admin/{personnage}/delete','LarpManager\Controllers\PersonnageController::adminDeleteAction')
 			->assert('personnage', '\d+')
@@ -120,6 +120,17 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 		$controllers->match('/{personnage}/detail','LarpManager\Controllers\PersonnageController::detailAction')
 			->assert('personnage', '\d+')
 			->bind("personnage.detail")
+			->method('GET')
+			->convert('personnage', 'converter.personnage:convert')
+			->before($mustOwn);
+		
+		/**
+		 * Modification d'un personage
+		 * Accessible uniquement au proprietaire du personnage
+		 */
+		$controllers->match('/{personnage}/update','LarpManager\Controllers\PersonnageController::updateAction')
+			->assert('personnage', '\d+')
+			->bind("personnage.update")
 			->method('GET')
 			->convert('personnage', 'converter.personnage:convert')
 			->before($mustOwn);
