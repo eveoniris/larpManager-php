@@ -17,6 +17,7 @@ class PersonnageUpdateForm extends AbstractType
 {
 	/**
 	 * Construction du formulaire
+	 * Seul les éléments ne dépendant pas des points d'expérience sont modifiables
 	 * 
 	 * @param FormBuilderInterface $builder
 	 * @param array $options
@@ -30,17 +31,6 @@ class PersonnageUpdateForm extends AbstractType
 				->add('surnom','text', array(
 						'required' => false,
 						'label' => ''
-				))
-				->add('age','entity', array(
-						'required' => true,
-						'label' => '',
-						'class' => 'LarpManager\Entities\Age',
-						'property' => 'label',
-						'query_builder' => function(EntityRepository $er) {
-							$qb = $er->createQueryBuilder('a');
-							$qb->andWhere('a.enableCreation = true');
-							return $qb;
-						}
 				))
 				->add('genre','entity', array(
 						'required' => true,

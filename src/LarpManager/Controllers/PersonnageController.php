@@ -215,10 +215,7 @@ class PersonnageController
 	public function updateAction(Request $request, Application $app)
 	{
 		$personnage = $request->get('personnage');
-		
-		// il ce peut que des points d'expérience soit à retirer si l'age est modifiée
-		$oldAge = $personnage->getAge();
-		
+				
 		$form = $app['form.factory']->createBuilder(new PersonnageUpdateForm(), $personnage)
 			->add('save','submit', array('label' => 'Valider les modifications'))
 			->getForm();
@@ -228,36 +225,6 @@ class PersonnageController
 		if ( $form->isValid() )
 		{
 			$personnage = $form->getData();
-			
-			// Retrait des points d'expérience gagné grace à l'age
-			if ( $oldAge != $personnage->getAge() )
-			{
-				$xpToRemove = $oldAge->getBonus();
-				if ( $xpToRemove )
-				{
-					$personnage->removeXp($xpToRemove);
-					
-					$historique = new \LarpManager\Entities\ExperienceGain();
-					$historique->setExplanation("Retrait du bonus lié à l'age");
-					$historique->setOperationDate(new \Datetime('NOW'));
-					$historique->setPersonnage($personnage);
-					$historique->setXpGain($xpToRemove * -1);
-					$app['orm.em']->persist($historique);
-				}
-			}
-			
-			// Ajout des points d'expérience gagné grace à l'age
-			$xpAgeBonus = $personnage->getAge()->getBonus();
-			if ( $xpAgeBonus )
-			{
-				$personnage->addXp($xpAgeBonus);
-				$historique = new \LarpManager\Entities\ExperienceGain();
-				$historique->setExplanation("Bonus lié à l'age");
-				$historique->setOperationDate(new \Datetime('NOW'));
-				$historique->setPersonnage($personnage);
-				$historique->setXpGain($xpAgeBonus);
-				$app['orm.em']->persist($historique);
-			}
 			
 			$app['orm.em']->persist($personnage);
 			$app['orm.em']->flush();
