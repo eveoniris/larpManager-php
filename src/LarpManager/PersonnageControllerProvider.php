@@ -131,7 +131,7 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 		$controllers->match('/{personnage}/update','LarpManager\Controllers\PersonnageController::updateAction')
 			->assert('personnage', '\d+')
 			->bind("personnage.update")
-			->method('GET')
+			->method('GET|POST')
 			->convert('personnage', 'converter.personnage:convert')
 			->before($mustOwn);
 		

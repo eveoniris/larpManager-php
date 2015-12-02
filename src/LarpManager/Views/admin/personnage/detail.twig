@@ -10,6 +10,19 @@
 		<li class="active">Détail de {{ personnage.publicName }}</li>
 	</ol>
 	
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h4 class="list-group-item-heading">Actions</h4>
+		</div>
+		<div class="panel-body">
+			<ul class="list-group">
+				<li class="list-group-item">
+					<a href="{{ path('personnage.admin.delete', {'personnage':personnage.id}) }}">Supprimer</a>
+				</li>
+			</ul>
+		</div>
+	</div>
+			
 	
 	<div class="panel panel-success">
 		<div class="panel-heading">{{ personnage.publicName }} - <small>{{ personnage.classe.label }}</small></div>

@@ -11,7 +11,7 @@
 			{{ competence.label }}
 		</h4>
 		<p class="list-group-item-text">
-			{{ competence.description }}			
+			{{ competence.description|markdown() }}			
 		</p>
 	</li>
 	{%  endfor %}

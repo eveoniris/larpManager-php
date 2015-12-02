@@ -181,7 +181,7 @@ class PersonnageController
 			// suppression de son appartenance à un groupe secondaire
 			// suppression de ses demande d'adhésion à un groupe secondaire (postulant)
 						
-			$app['orm.em']->delete($personnage);
+			$app['orm.em']->remove($personnage);
 			$app['orm.em']->flush();
 			
 			$app['session']->getFlashBag()->add('success','Le personnage a été supprimé.');
@@ -346,7 +346,7 @@ class PersonnageController
 		if ( $availableCompetences->count() == 0 )
 		{
 			$app['session']->getFlashBag()->add('error','Désolé, il n\'y a plus de compétence disponible.');
-			return $app->redirect($app['url_generator']->generate('personnage.detail',array('index'=>$id)),301);
+			return $app->redirect($app['url_generator']->generate('homepage'),301);
 		}
 		
 		// construit le tableau de choix
