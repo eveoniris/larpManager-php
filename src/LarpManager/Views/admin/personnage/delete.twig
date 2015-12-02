@@ -14,7 +14,7 @@
 	<div class="well bs-component">	
 		<form action="{{ path('personnage.admin.delete', {'personnage': personnage.id}) }}" method="POST" {{ form_enctype(form) }}>
 			<fieldset>
-				<legend>Supression du personnage</legend>
+				<legend>Supression du personnage {{ personnage.publicName }}</legend>
 				{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
 				Attention, vous vous appretez à supprimer définitivement un personnage
 				{{ form(form) }}

@@ -8,6 +8,7 @@ use LarpManager\Form\PersonnageReligionForm;
 use LarpManager\Form\PersonnageFindForm;
 use LarpManager\Form\PersonnageForm;
 use LarpManager\Form\PersonnageUpdateForm;
+use LarpManager\Form\PersonnageDeleteForm;
 use LarpManager\Form\PersonnageXpForm;
 
 /**
@@ -192,10 +193,7 @@ class PersonnageController
 				'personnage' => $personnage
 		));
 	}
-	
-			
-			
-		
+
 	/**
 	 * Affiche le détail d'un personnage
 	 * 
