@@ -125,17 +125,6 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 			->before($mustOwn);
 		
 		/**
-		 * Modification d'un personage
-		 * Accessible uniquement au proprietaire du personnage
-		 */
-		$controllers->match('/{personnage}/update','LarpManager\Controllers\PersonnageController::updateAction')
-			->assert('personnage', '\d+')
-			->bind("personnage.update")
-			->method('GET|POST')
-			->convert('personnage', 'converter.personnage:convert')
-			->before($mustOwn);
-		
-		/**
 		 * Export du personnage
 		 * Accessible uniquement au proprietaire du personnage
 		 */

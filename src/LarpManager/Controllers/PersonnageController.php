@@ -172,14 +172,6 @@ class PersonnageController
 		if ( $form->isValid() )
 		{
 			$personnage = $form->getData();
-			
-			// censé être pris en charge par doctrine (à vérifier) :
-			// suppression de l'historique (expérience usage et expérience gain)
-			// suppression des liens religions
-			// suppression des liens compétences
-			// suppression de son appartenance à un groupe
-			// suppression de son appartenance à un groupe secondaire
-			// suppression de ses demande d'adhésion à un groupe secondaire (postulant)
 						
 			$app['orm.em']->remove($personnage);
 			$app['orm.em']->flush();
@@ -212,7 +204,7 @@ class PersonnageController
 	 * @param Request $request
 	 * @param Application $app
 	 */
-	public function updateAction(Request $request, Application $app)
+	public function adminUpdateAction(Request $request, Application $app)
 	{
 		$personnage = $request->get('personnage');
 				
@@ -229,11 +221,11 @@ class PersonnageController
 			$app['orm.em']->persist($personnage);
 			$app['orm.em']->flush();
 			
-			$app['session']->getFlashBag()->add('success','Votre personnage a été sauvegardé.');
-			return $app->redirect($app['url_generator']->generate('homepage'),301);
+			$app['session']->getFlashBag()->add('success','Le personnage a été sauvegardé.');
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
 		}
 		
-		return $app['twig']->render('personnage/update.twig', array(
+		return $app['twig']->render('admin/personnage/update.twig', array(
 				'form' => $form->createView(),
 				'personnage' => $personnage));
 	}
