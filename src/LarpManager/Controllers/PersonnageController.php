@@ -267,7 +267,8 @@ class PersonnageController
 	}
 	
 	/**
-	 * Mise à jour de l'origine d'un personnage
+	 * Mise à jour de l'origine d'un personnage.
+	 * Impossible si le personnage dispose déjà d'une origine.
 	 * 
 	 * @param Request $request
 	 * @param Application $app
@@ -275,6 +276,12 @@ class PersonnageController
 	public function updateOriginAction(Request $request, Application $app)
 	{
 		$personnage = $request->get('personnage');
+		
+		if ( $personnage->getTerritoire() )
+		{
+			$app['session']->getFlashBag()->add('error','Désolé, il n\'est pas possible de modifier votre origine. Veuillez contacter votre orga pour exposer votre problème.');
+			return $app->redirect($app['url_generator']->generate('homepage'),301);
+		}
 		
 		$form = $app['form.factory']->createBuilder(new PersonnageOriginForm(), $personnage)
 			->add('save','submit', array('label' => 'Valider votre origine'))

@@ -170,7 +170,7 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 		
 		/**
 		 * Choix d'une origine
-		 * Accessible uniquement au proprietaire du personnage
+		 * Accessible uniquement au proprietaire du personnage, s'il n'a pas déjà choisi d'origine
 		 */
 		$controllers->match('/{personnage}/origin/add','LarpManager\Controllers\PersonnageController::updateOriginAction')
 			->assert('personnage', '\d+')

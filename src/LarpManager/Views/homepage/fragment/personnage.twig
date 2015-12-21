@@ -36,10 +36,11 @@
 				
 				{% if personnage.territoire %}
 					<p class="list-group-item-text">{{ personnage.territoire.nom }}</p>
+				{% else %}
+					<p class="list-group-item-text">
+						<a href="{{ path('personnage.origin.add',{'personnage': personnage.id}) }}">Choisir une origine</a>
+					</p>
 				{% endif %}
-				<p class="list-group-item-text">
-					<a href="{{ path('personnage.origin.add',{'personnage': personnage.id}) }}">Choisir une origine</a>
-				</p>
 			</div>
 			<div class="list-group-item">
 				<h6 class="list-group-item-heading">Compétences <small>({{ personnage.xp|default(0) }} xp)</small></h6>
