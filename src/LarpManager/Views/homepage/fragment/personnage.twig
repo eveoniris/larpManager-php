@@ -32,10 +32,20 @@
 				</p>
 			</div>
 			<div class="list-group-item">
+				<h6 class="list-group-item-heading">Origine</h6>
+				
+				{% if personnage.territoire %}
+					<p class="list-group-item-text">{{ personnage.territoire.nom }}</p>
+				{% endif %}
+				<p class="list-group-item-text">
+					<a href="{{ path('personnage.origin.add',{'personnage': personnage.id}) }}">Choisir une origine</a>
+				</p>
+			</div>
+			<div class="list-group-item">
 				<h6 class="list-group-item-heading">Compétences <small>({{ personnage.xp|default(0) }} xp)</small></h6>
 				{% for competence in personnage.competences %}
 				<p class="list-group-item-text">
-					{{ competence.competenceFamily.label }}&nbsp({{ competence.level.label }}) : {{ competence.description }}
+					{{ competence.competenceFamily.label }}&nbsp({{ competence.level.label }}) : {{ competence.description|markdown }}
 				</p>
 				{% endfor %}
 				<p class="list-group-item-text">

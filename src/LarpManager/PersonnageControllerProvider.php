@@ -167,6 +167,17 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 			->method('GET|POST')
 			->convert('personnage', 'converter.personnage:convert')
 			->before($mustOwn);
+		
+		/**
+		 * Choix d'une origine
+		 * Accessible uniquement au proprietaire du personnage
+		 */
+		$controllers->match('/{personnage}/origin/add','LarpManager\Controllers\PersonnageController::updateOriginAction')
+			->assert('personnage', '\d+')
+			->bind("personnage.origin.add")
+			->method('GET|POST')
+			->convert('personnage', 'converter.personnage:convert')
+			->before($mustOwn);
 					
 		return $controllers;
 	}

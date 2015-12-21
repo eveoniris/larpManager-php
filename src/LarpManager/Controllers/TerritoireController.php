@@ -70,10 +70,30 @@ class TerritoireController
 		if ( $form->isValid() )
 		{
 			$territoire = $form->getData();
-						
+			
+			
+			/**
+			 * Création du topic associés à ce territoire
+			 * @var \LarpManager\Entities\Topic $topic
+			 */
+			$topic = new \LarpManager\Entities\Topic();
+			$topic->setTitle($territoire->getNom());
+			$topic->setDescription($territoire->getDescription());
+			$topic->setUser($app['user']);
+			// défini les droits d'accés à ce forum
+			// (les membres du territoire ont le droit d'accéder à ce forum)
+			$topic->setRight('TERRITOIRE_MEMBER');
+				
+			$territoire->setTopic($topic);
+				
+			$app['orm.em']->persist($topic);
 			$app['orm.em']->persist($territoire);
 			$app['orm.em']->flush();
 			
+			$topic->setObjectId($territoire->getId());
+			$app['orm.em']->persist($topic);
+			$app['orm.em']->flush();
+									
 			$app['session']->getFlashBag()->add('success', 'Le territoire a été ajouté.');
 				
 			if ( $form->get('save')->isClicked())

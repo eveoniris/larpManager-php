@@ -5,6 +5,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Silex\Application;
 use JasonGrimes\Paginator;
 use LarpManager\Form\PersonnageReligionForm;
+use LarpManager\Form\PersonnageOriginForm;
 use LarpManager\Form\PersonnageFindForm;
 use LarpManager\Form\PersonnageForm;
 use LarpManager\Form\PersonnageUpdateForm;
@@ -260,6 +261,38 @@ class PersonnageController
 		}
 		
 		return $app['twig']->render('personnage/religion_add.twig', array(
+				'form' => $form->createView(),
+				'personnage' => $personnage,
+		));
+	}
+	
+	/**
+	 * Mise à jour de l'origine d'un personnage
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function updateOriginAction(Request $request, Application $app)
+	{
+		$personnage = $request->get('personnage');
+		
+		$form = $app['form.factory']->createBuilder(new PersonnageOriginForm(), $personnage)
+			->add('save','submit', array('label' => 'Valider votre origine'))
+			->getForm();
+		
+			$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$personnage = $form->getData();
+			$app['orm.em']->persist($personnage);
+			$app['orm.em']->flush();
+		
+			$app['session']->getFlashBag()->add('success','Votre personnage a été sauvegardé.');
+			return $app->redirect($app['url_generator']->generate('homepage'),301);
+		}
+		
+		return $app['twig']->render('personnage/origin_add.twig', array(
 				'form' => $form->createView(),
 				'personnage' => $personnage,
 		));
