@@ -14,6 +14,7 @@
 		<form action="{{ path('personnage.origin.add',{'personnage':personnage.id}) }}" method="POST" {{ form_enctype(form) }}>
 			<fieldset>
 				<legend>{{ personnage.publicName }} - <small>Choix d'une origine</small></legend>
+				<p>Attention ! une fois votre origine choisie, vous ne pourrez plus revenir sur votre choix.</p>
 				{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
 	
 				{{ form_row(form.territoire) }}
