@@ -59,6 +59,12 @@
 					{# detail du personnage #}
 					{% if app.user.personnage %}
 						{{ include("homepage/fragment/personnage.twig",{'personnage':app.user.personnage}) }}
+						<div class="panel panel-info">
+							<div class="panel-heading">Personnage secondaire</div>
+							<div class="panel-body">
+								<p>Le personnage secondaire est un archétype que vous pouvez utiliser dans le cas ou votre personnage principale venait à trépasser (ce que nous ne souhaitons pas, mais l'hyborée est un monde violent dans lequel les pires choses sont possibles)</p>
+							</div>
+						</div>
 					{% endif %}
 						
 					{# Détail des groupes#}

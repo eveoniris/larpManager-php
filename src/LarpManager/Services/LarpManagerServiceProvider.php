@@ -61,6 +61,11 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 			return new PersonnageConverter($app['orm.em']);
 		});
 		
+		// personnage converter
+		$app['converter.personnageSecondaire'] = $app->share(function($app) {
+			return new PersonnageSecondaireConverter($app['orm.em']);
+		});
+		
 		// user converter
 		$app['converter.user'] = $app->share(function($app) {
 			return new UserConverter($app['orm.em']);

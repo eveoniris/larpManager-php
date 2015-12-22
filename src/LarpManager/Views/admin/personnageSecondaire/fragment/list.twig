@@ -1,0 +1,22 @@
+<ul class="list-group">
+	
+	<a href="{{ path('personnageSecondaire.add') }}" class="list-group-item active">
+		<span class="badge"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></span>
+		<h4 class="list-group-item-heading">Ajouter un personnage secondaire</h4>
+	</a>
+	
+	{%  for personnageSecondaire in personnageSecondaires %}
+	<li class="list-group-item">
+		<h4 class="list-group-item-heading">
+			{{ personnageSecondaire.classe.label }} 
+			<div class="btn-group pull-right" role="group" aria-label="...">
+				<a href="{{ path('personnageSecondaire.detail', {'personnageSecondaire': personnageSecondaire.id}) }}" class="btn btn-primary" role="button">Détail</a>
+			    <a href="{{ path('personnageSecondaire.update', {'personnageSecondaire': personnageSecondaire.id}) }}" class="btn btn-default" role="button">Modifier</a>
+			</div>
+		</h4>
+		{% for competence in personnageSecondaire.competences %}
+			<p class="list-group-item-text text-default">{{ competence.label }}</p>
+		{% endfor %}
+	</li>
+	{%  endfor %}
+</ul>

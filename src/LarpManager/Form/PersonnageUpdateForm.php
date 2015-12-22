@@ -5,10 +5,9 @@ namespace LarpManager\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Doctrine\ORM\EntityRepository;
 
 /**
- * LarpManager\Form\PersonnageForm
+ * LarpManager\Form\PersonnageUpdateForm
  *
  * @author kevin
  *
@@ -44,9 +43,9 @@ class PersonnageUpdateForm extends AbstractType
 						'class' => 'LarpManager\Entities\Territoire',
 						'property' => 'nom',
 						'query_builder' => function(\LarpManager\Repository\TerritoireRepository $er) {
-						$qb = $er->createQueryBuilder('t');
-						$qb->andWhere('t.territoire IS NULL');
-						return $qb;
+							$qb = $er->createQueryBuilder('t');
+							$qb->andWhere('t.territoire IS NULL');
+							return $qb;
 						}
 				))
 				->add('intrigue','choice', array(

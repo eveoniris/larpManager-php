@@ -216,6 +216,7 @@ else
 	$app->mount('/ressource', new LarpManager\RessourceControllerProvider());
 	$app->mount('/religion', new LarpManager\ReligionControllerProvider());
 	$app->mount('/personnage', new LarpManager\PersonnageControllerProvider());
+	$app->mount('/personnageSecondaire', new LarpManager\PersonnageSecondaireControllerProvider());
 	$app->mount('/age', new LarpManager\AgeControllerProvider());
 	$app->mount('/genre', new LarpManager\GenreControllerProvider());
 	$app->mount('/gn', new LarpManager\GnControllerProvider());
@@ -251,6 +252,7 @@ else
 		array('^/classe/.*$', 'ROLE_USER'),
 		array('^/gn/.*$', 'ROLE_USER'),
 		array('^/personnage/.*$', 'ROLE_USER'),
+		array('^/personnageSecondaire/.*$', 'ROLE_SCENARISTE'),
 		array('^/joueur/.*$', 'ROLE_USER'),
 		array('^/territoire/.*$', 'ROLE_USER'),
 		array('^/religion/.*$', 'ROLE_USER'),
