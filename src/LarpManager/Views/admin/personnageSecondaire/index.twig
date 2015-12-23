@@ -2,22 +2,64 @@
 
 {% block content %}
 
-<div class="container-fluid">
-	<div class="row">
-		<div class="col-xs-12 col-md-12">
-			<div class="well well-sm">
-				<h4>
-					Gestion des personnages secondaires
-					<small>
-						( {{ personnageSecondaires|length }} personnage secondaires )
-					</small>
-				</h4>
-			</div>
-			
-			{{ include("admin/personnageSecondaire/fragment/list.twig", {'personnageSecondaires' : personnageSecondaires}) }}
-		</div>
-	</div>
+<ol class="breadcrumb">
+  <li class="active">Personnages secondaires</li>
+</ol>
 
+<div class="well bs-component">	
+	<table class="table">
+		<caption >
+			<h5>Liste des personnages secondaires
+				<a 	href="{{ path('personnageSecondaire.add') }}" 
+					class="btn btn-default"
+					role="button"
+					data-toggle="tooltip" 
+					data-placement="bottom"
+					title="Ajouter un personnage secondaire">
+					<i class="fa fa-plus"></i>
+				</a>
+			</h5>
+		</caption>
+		<thead>
+			<tr>
+				<th>Label</th>
+				<th>Compétences</th>
+				<th></th>
+			</tr>
+		</thead>	
+		<tbody>
+			{%  for personnageSecondaire in personnageSecondaires %}
+				<tr>
+					<td>{{ personnageSecondaire.classe.label }}</td>
+					<td>
+						{{ personnageSecondaire.competences|join(' / ') }}
+					</td>
+					<td>
+						<div class="btn-group pull-right" role="group" aria-label="...">
+		
+							<a 	href="{{ path('personnageSecondaire.update', {'personnageSecondaire': personnageSecondaire.id}) }}" 
+								class="btn btn-default" 
+								role="button"
+								data-toggle="tooltip" 
+								data-placement="top"
+								title="Modifier">
+								<i class="fa fa-pencil"></i>
+							</a>
+							
+							<a 	href="{{ path('personnageSecondaire.delete', {'personnageSecondaire': personnageSecondaire.id}) }}" 
+								class="btn btn-danger" 
+								role="button"
+								data-toggle="tooltip" 
+								data-placement="top"
+								title="Supprimer">
+								<i class="fa fa-close"></i>
+							</a>
+						</div>
+						
+					</td>		
+				</tr>
+			{%  endfor %}
+		</tbody>
+	</table>
 </div>
-	
 {% endblock %}

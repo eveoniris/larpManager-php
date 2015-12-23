@@ -31,4 +31,12 @@ class PersonnageSecondaire extends BasePersonnageSecondaire
 		}
 		return $competences;
 	}
+	
+	/**
+	 * Fourni le label de la classe en guide de la label pour l'archétype
+	 */
+	public function getLabel()
+	{
+		return $this->getClasse()->getLabel();
+	}
 }

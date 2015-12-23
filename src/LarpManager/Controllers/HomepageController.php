@@ -5,7 +5,7 @@ namespace LarpManager\Controllers;
 use Symfony\Component\HttpFoundation\Request;
 use Silex\Application;
 use LarpManager\Form\GroupeInscriptionForm;
-use LarpManager\Form\PersonnageSecondaireForm;
+use LarpManager\Form\PersonnageSecondaireChoiceForm;
 use LarpManager\Form\GnInscriptionForm;
 
 

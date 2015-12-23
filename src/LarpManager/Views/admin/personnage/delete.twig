@@ -16,7 +16,12 @@
 			<fieldset>
 				<legend>Supression du personnage {{ personnage.publicName }}</legend>
 				{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
-				Attention, vous vous appretez à supprimer définitivement un personnage
+				<p class="text-danger">
+					<span class="fa-stack fa-lg">
+						<i class="fa fa-square-o fa-stack-2x"></i>
+						<i class="fa fa-exclamation fa-stack-1x"></i>
+					</span>
+					Attention, vous vous appretez à supprimer définitivement un personnage</p>
 				{{ form(form) }}
 			</fieldset>
 		</form>

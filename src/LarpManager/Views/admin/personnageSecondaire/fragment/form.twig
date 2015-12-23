@@ -6,20 +6,15 @@
 										
 				{{ form_row(form.classe) }}
 				
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						<h6>Composition du groupe</h6>
-					</div>
-					<div class="panel-body">
-						<p>Composez votre personnage secondaire avec une ou plusieurs competences.</p>
-					</div>
-					<ul class="list-group competences" data-prototype="{{ form_widget(form.personnageSecondaireCompetences.vars.prototype)|e }}">
-				    	{% for competence in form.personnageSecondaireCompetences %}
-				           	<li class="list-group-item">{{ form_widget(competence) }}</li>
-				       	{% endfor %}
-					</ul>
-				</div>
-				
+				<h6>Compétences</h6>
+				<p>Composez votre personnage secondaire avec une ou plusieurs competences.</p>
+					
+				<ul class="list-group competences" data-prototype="{{ form_widget(form.personnageSecondaireCompetences.vars.prototype)|e }}">
+					{% for competence in form.personnageSecondaireCompetences %}
+				       	<li class="list-group-item">{{ form_widget(competence) }}</li>
+				    {% endfor %}
+				</ul>
+								
 				{{ form_rest(form) }}
 		</fieldset>
 	</form>

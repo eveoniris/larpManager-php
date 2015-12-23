@@ -1,16 +1,16 @@
 {% extends "layout.twig" %}
 
 {% block content %}
-	<div class="container-fluid">
-		<div class="row">
-			<div class="col-xs-12 col-md-8">
-				{{ include("admin/personnageSecondaire/fragment/form.twig",{
-					'legend': 'Modification d\'un personnage secondaire',
-					'action': path('personnageSecondaire.update',{'personnageSecondaire': personnageSecondaire.id}),
-					'form' : form}) }}
-			</div>
-		</div>
-	</div>
+	<ol class="breadcrumb">
+	  <li><a href="{{ path('personnageSecondaire') }}">Personnages secondaires</a></li>
+	  <li class="active">Modifier</li>
+	</ol>
+
+	{{ include("admin/personnageSecondaire/fragment/form.twig",{
+		'legend': 'Modification d\'un personnage secondaire',
+		'action': path('personnageSecondaire.update',{'personnageSecondaire': personnageSecondaire.id}),
+		'form' : form}) }}
+
 	
 {% endblock content %}
 

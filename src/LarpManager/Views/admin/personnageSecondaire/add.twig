@@ -1,17 +1,17 @@
 {% extends "layout.twig" %}
 
 {% block content %}
+	<ol class="breadcrumb">
+	  <li><a href="{{ path('personnageSecondaire') }}">Personnages secondaires</a></li>
+	  <li class="active">Ajout</li>
+	</ol>
 
-	<div class="container-fluid">
-		<div class="row">
-			<div class="col-xs-12 col-md-8">
-				{{ include("admin/personnageSecondaire/fragment/form.twig",{
-					'legend' : 'Ajout d\'un personnage secondaire',
-					'action': path('personnageSecondaire.add'), 
-					'form' : form}) }}
-			</div>
-		</div>
-	</div>
+	
+	{{ include("admin/personnageSecondaire/fragment/form.twig",{
+		'legend' : 'Ajout d\'un personnage secondaire',
+		'action': path('personnageSecondaire.add'), 
+		'form' : form}) }}
+	
 	
 {% endblock content %}
 

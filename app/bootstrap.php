@@ -252,7 +252,7 @@ else
 		array('^/classe/.*$', 'ROLE_USER'),
 		array('^/gn/.*$', 'ROLE_USER'),
 		array('^/personnage/.*$', 'ROLE_USER'),
-		array('^/personnageSecondaire/.*$', 'ROLE_SCENARISTE'),
+		array('^/personnageSecondaire/.*$', 'ROLE_USER'),
 		array('^/joueur/.*$', 'ROLE_USER'),
 		array('^/territoire/.*$', 'ROLE_USER'),
 		array('^/religion/.*$', 'ROLE_USER'),
