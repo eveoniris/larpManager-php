@@ -51,4 +51,17 @@ class Topic extends BaseTopic
 		
 		return $array;
 	}
+	
+	/**
+	 * Fourni le nombre de post dans ce topic et ces descendants.
+	 */
+	public function getPostCount()
+	{
+		$count = $this->getPosts()->count();
+		foreach ( $this->getTopics() as $topic)
+		{
+			$count += $topic->getPostCount();
+		}
+		return $count;
+	}
 }

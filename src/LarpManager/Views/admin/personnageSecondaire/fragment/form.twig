@@ -1,0 +1,21 @@
+<div class="well bs-component">
+	<form action="{{ action }}" method="POST" {{ form_enctype(form) }} novalidate>
+		<fieldset>
+			<legend>{{ legend }}</legend>
+				{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+										
+				{{ form_row(form.classe) }}
+				
+				<h6>Compétences</h6>
+				<p>Composez votre personnage secondaire avec une ou plusieurs competences.</p>
+					
+				<ul class="list-group competences" data-prototype="{{ form_widget(form.personnageSecondaireCompetences.vars.prototype)|e }}">
+					{% for competence in form.personnageSecondaireCompetences %}
+				       	<li class="list-group-item">{{ form_widget(competence) }}</li>
+				    {% endfor %}
+				</ul>
+								
+				{{ form_rest(form) }}
+		</fieldset>
+	</form>
+</div>

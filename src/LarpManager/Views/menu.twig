@@ -17,16 +17,17 @@
 			<li><a href="http://www.eveoniris.com">Eve-Oniris</a></li>
 			
 			{# Menus reservé aux admins #}
-			{% if is_granted('ROLE_ADMIN', app.user) %}
+			{% if is_granted('ROLE_SCENARISTE', app.user) %}
 				<li class="dropdown">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Admin<span class="caret"></span></a>
 					<ul class="dropdown-menu">
 						<li><a href="{{ path('annonce.list') }}">Liste des annonces</a></li>
 						<li><a href="{{ path('gn.list') }}">Liste des grandeurs natures</a></li>
-						<li><a href="{{ path('user.list') }}">Liste des utilisateurs</a></li>
-						<li><a href="{{ path('groupe.list') }}">Liste des groupes</a></li>
+						<li><a href="{{ path('user.admin.list') }}">Liste des utilisateurs</a></li>
+						<li><a href="{{ path('groupe.admin.list') }}">Liste des groupes</a></li>
 						<li><a href="{{ path('groupeSecondaire.admin.list') }}">Liste des groupes secondaires</a></li>
-						<li><a href="{{ path('personnage.list') }}">Liste des personnages</a></li>
+						<li><a href="{{ path('personnage.admin.list') }}">Liste des personnages</a></li>
+						<li><a href="{{ path('right.admin.list') }}">Liste des droits</a></li>
 					</ul>
 				</li>
 			{% endif %}
@@ -39,11 +40,11 @@
 						<li><a href="{{ path('appelation') }}">Appelations</a></li>
 						<li><a href="{{ path('territoire') }}">Territoires</a></li>
 						<li><a href="{{ path('langue') }}">Langues</a></li>
-						<li><a href="{{ path('groupe.list') }}">Groupes</a></li>
 						<li><a href="{{ path('ressource') }}">Ressources</a></li>
 						<li><a href="{{ path('religion') }}">Religions</a></li>
 						<li><a href="{{ path('religion.level') }}">Fanatisme</a></li>
-						
+						<li><a href="{{ path('statistique') }}">Statistiques</a></li>
+						<li><a href="{{ path('background.list') }}">Backgrounds</a></li>
 					</ul>
 				</li>
 			{% endif %}
@@ -59,6 +60,7 @@
 						<li><a href="{{ path('classe') }}">Classes</a></li>
 						<li><a href="{{ path('age') }}">Ages</a></li>
 						<li><a href="{{ path('genre') }}">Genres</a></li>
+						<li><a href="{{ path('personnageSecondaire') }}">Personnage secondaire</a></li>
 					</ul>
 				</li>
 			{% endif %}
@@ -86,9 +88,12 @@
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Joueur<span class="caret"></span></a>
 					<ul class="dropdown-menu">
 						<li><a href="{{ path('forum') }}">Forum</a></li>
-						<li><a href="{{ path('competence.joueur') }}">Les compétences</a></li>
-						<li><a href="{{ path('classe.joueur') }}">Les classes</a></li>
+						<li><a href="{{ path('competence.list') }}">Les compétences</a></li>
+						<li><a href="{{ path('classe.list') }}">Les classes</a></li>
 						<li><a href="{{ path('groupeSecondaire.list') }}">Les groupes secondaires</a></li>
+						<li><a href="{{ path('religion.list') }}">Les religions</a></li>
+						<li><a href="{{ path('personnageSecondaire.list') }}">Les personnages secondaires</a></li>
+						
 					</ul
 				</li>
 			{% endif %}
@@ -97,12 +102,16 @@
 				<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Compte<span class="caret"></span></a>
 				<ul class="dropdown-menu">
 					{%  if app.user %}			
+						{% if is_granted('ROLE_USER', app.user) %}
+							<li><a href="{{ path('etatCivil') }}">Mon état-civil</a></li>
+						{% endif %}
 						<li><a href="{{ path('user') }}">Mon compte</a></li>					
 						<li><a href="{{ path('user.logout') }}">Déconnection</a></li>
 					{%  else %}
 						<li><a href="{{ path('user.login') }}">Connection</a></li>
 						<li><a href="{{ path('user.register') }}">S'enregistrer</a></li>
 					{%  endif %}
+					<li><a href="{{ path('legal') }}">Mentions légales</a></li>
 				</ul>
 			</li>	
 						

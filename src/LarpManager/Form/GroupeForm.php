@@ -8,7 +8,6 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Doctrine\ORM\EntityRepository;
 
 use LarpManager\Form\Type\ClasseType;
-use LarpManager\Form\Type\GnType;
 
 /**
  * LarpManager\Form\GroupeForm
@@ -29,6 +28,15 @@ class GroupeForm extends AbstractType
 		$builder->add('nom','text')
 				->add('numero','integer', array(
 						'required' => true,
+				))
+				->add('pj', 'choice', array(
+						'label' => 'Type de groupe',
+						'required' => true,
+						'choices' => array(
+								true => 'Groupe composé de PJs',
+								false => 'Groupe composé PNJs',
+						),
+						'expanded' => true,
 				))
 				->add('description','textarea', array(
 						'required' => false,
@@ -54,12 +62,6 @@ class GroupeForm extends AbstractType
 									$qb->expr()->like('u.rights', $qb->expr()->literal('%ROLE_ADMIN%'))));
 							return $qb;
 						}
-				))
-				->add('responsable', 'entity', array(
-						'label' => 'Responsable',
-						'required' => false,
-						'class' => 'LarpManager\Entities\User',
-						'property' => 'name',
 				))
 				->add('jeuStrategique','checkbox', array(
 						'label' => "Participe au jeu stratégique ?",

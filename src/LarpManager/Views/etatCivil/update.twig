@@ -1,0 +1,27 @@
+{% extends "layout.twig" %}
+
+{% block title %}Joueur{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li class="active">Modifier l'état-civil</li>
+	</ol>
+
+	<div class="well">
+		Consulter les <a href="{{ path('legal') }}">mentions légales</a>.
+	</div>
+			
+	<div class="well bs-component">
+		<form action="{{ path('user.information.add', {'id': app.user.id}) }}" method="POST" {{ form_enctype(form) }}>
+			<fieldset>
+				<legend>Modification de votre état-civil</legend>
+					{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+					{{ form(form) }}
+			</fieldset>
+		</form>
+	</div>
+
+	
+{% endblock content %}

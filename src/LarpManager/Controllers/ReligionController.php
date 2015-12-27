@@ -28,6 +28,21 @@ class ReligionController
 		return $app['twig']->render('religion/index.twig', array('religions' => $religions));
 	}
 	
+	
+	/**
+	 * Liste des religions (pour les joueurs)
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function listAction(Request $request, Application $app)
+	{
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Religion');
+		$religions = $repo->findAllOrderedByLabel();
+		
+		return $app['twig']->render('public/religion/list.twig', array('religions' => $religions));
+	}
+	
 	/**
 	 * Detail d'une religion
 	 * 

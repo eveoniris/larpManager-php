@@ -1,0 +1,75 @@
+{% extends "layout.twig" %}
+
+{% block title %}Classes{% endblock title %}
+
+{% block content %}
+
+		<ol class="breadcrumb">
+			<li><a href="{{ path('homepage')  }}">Accueil</a></li>
+			<li class="active">Les classes</li>
+		</ol>
+	
+		<div class="row">
+		{% for classe in classes %}
+			<div class="col-sm-4 col-md-4">
+				<div class="well well-sm fixed-height">
+				<div class="media">
+		    		<div class="media-left media-top">
+		      			{# Dans le cas ou on associe une image aux classes
+		      			<a href="#">
+		        			<img class="media-object" src="..." alt="...">
+		      			</a> #}
+		    		</div>
+		    		<div class="media-body">
+		      			<h4 class="media-heading">{{ classe.label }}</h4>
+		      			<p>{{ classe.description|markdown }}</p>
+		      			<ul class="list-group">
+		      				<li class="list-group-item">
+		      					<h6 class="list-group-item-heading">Compétences acquises à la création</h6>
+				      			<p>
+				      				{% for competenceFamily in classe.competenceFamilyCreations %}
+				      					{% if loop.index != 1 %},&nbsp;{% endif %}
+				      					<span  data-toggle="tooltip" data-placement="top" title="{{ competenceFamily.description }}">{{ competenceFamily.label }}</span>
+				      				{% endfor %}
+				      			</p>
+				      		</li>
+		      				<li class="list-group-item">
+				      			<h6 class="list-group-item-heading">Compétences favorites</h6>
+				      			<p>
+									{% for competenceFamily in classe.competenceFamilyFavorites %}
+										{% if loop.index != 1 %},&nbsp;{% endif %}
+				      					<span  data-toggle="tooltip" data-placement="top" title="{{ competenceFamily.description }}">{{ competenceFamily.label }}</span>
+				      				{% endfor %}
+				      			</p>
+		      				</li>
+		      				
+		      				<li class="list-group-item">
+				      			<h6 class="list-group-item-heading">Compétences normales</h6>
+				      			<p>
+									{% for competenceFamily in classe.competenceFamilyNormales %}
+										{% if loop.index != 1 %},&nbsp;{% endif %}
+				      					<span  data-toggle="tooltip" data-placement="top" title="{{ competenceFamily.description }}">{{ competenceFamily.label }}</span>
+				      				{% endfor %}
+				      			</p>
+		      				</li>
+		      			</ul>
+		    		</div>
+		  		</div>
+		  		</div>
+		  	</div>
+		{% endfor %}
+		</div> <!-- end row -->
+		
+	
+
+{% endblock content %}
+
+{% block javascript %}
+	{{ parent() }}
+	
+	<script>
+	$(function () {
+  		$('[data-toggle="tooltip"]').tooltip()
+	})
+	</script>
+{% endblock javascript %}

@@ -1,5 +1,5 @@
 <div class="panel panel-success">
-	<div class="panel-heading">{{ personnage.nom }} - <small>{{ personnage.classe.label }}</small></div>
+	<div class="panel-heading">{{ personnage.publicName }} - <small>{{ personnage.classe.label }}</small></div>
 	<div class="panel-body">
 		<div class="list-group">
 			<div class="list-group-item">
@@ -27,19 +27,30 @@
 				{% if personnage.personnageReligion %}
 					{{ personnage.personnageReligion.religion.label }} - {{ personnage.personnageReligion.religionLevel.label }} - <a href="{{ path('forum.topic',{'index': personnage.personnageReligion.religion.topic.id }) }}">Forum</a>
 				{% else %}
-					<a href="{{ path('personnage.religion.add',{'index': personnage.id}) }}">Choisir une religion</a>
+					<a href="{{ path('personnage.religion.add',{'personnage': personnage.id}) }}">Choisir une religion</a>
 				{% endif %}
 				</p>
+			</div>
+			<div class="list-group-item">
+				<h6 class="list-group-item-heading">Origine</h6>
+				
+				{% if personnage.territoire %}
+					<p class="list-group-item-text">{{ personnage.territoire.nom }}</p>
+				{% else %}
+					<p class="list-group-item-text">
+						<a href="{{ path('personnage.origin.add',{'personnage': personnage.id}) }}">Choisir une origine</a>
+					</p>
+				{% endif %}
 			</div>
 			<div class="list-group-item">
 				<h6 class="list-group-item-heading">Compétences <small>({{ personnage.xp|default(0) }} xp)</small></h6>
 				{% for competence in personnage.competences %}
 				<p class="list-group-item-text">
-					{{ competence.competenceFamily.label }}&nbsp({{ competence.level.label }}) : {{ competence.description }}
+					{{ competence.competenceFamily.label }}&nbsp({{ competence.level.label }}) : {{ competence.description|markdown }}
 				</p>
 				{% endfor %}
 				<p class="list-group-item-text">
-					<a href="{{ path('personnage.competence.add', {'index': app.user.personnage.id}) }}">Acheter une nouvelle compétence</a>
+					<a href="{{ path('personnage.competence.add', {'personnage': personnage.id}) }}">Acheter une nouvelle compétence</a>
 				</p>
 			</div>
 			<div class="list-group-item">
@@ -62,6 +73,11 @@
 					{% endfor %}
 				{% endif %}
 				<p class="list-group-item-text"><a href="{{ path('groupeSecondaire.list') }}">Liste des groupes secondaires</a></p>
+				
+			</div>
+			<div class="list-group-item">
+				<h6>Téléchargement</h6>
+				<a href="{{ path('personnage.export', {'personnage':personnage.id}) }}">Télécharger le pdf</a>
 				
 			</div>
 		</div>

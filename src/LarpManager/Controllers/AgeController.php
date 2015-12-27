@@ -146,7 +146,15 @@ class AgeController
 		
 		$form = $app['form.factory']->createBuilder(new AgeForm(), $age)
 			->add('update','submit', array('label' => "Sauvegarder"))
-			->add('delete','submit', array('label' => "Supprimer"))
+			->add('delete','button', array(
+					'label' => "Supprimer",
+					'attr' => array(
+						'value' => "Submit",
+						'data-toggle' => "modal",
+						'data-target' => "#confirm-submit",
+						'class' => 'btn btn-default'
+					),
+			))
 			->getForm();
 		
 		return $app['twig']->render('age/update.twig', array(
@@ -180,7 +188,15 @@ class AgeController
 	
 		$form = $app['form.factory']->createBuilder(new AgeForm(), $age)
 			->add('update','submit', array('label' => "Sauvegarder"))
-			->add('delete','submit', array('label' => "Supprimer"))
+			->add('delete','button', array(
+					'label' => "Supprimer",
+					'attr' => array(
+						'value' => "Submit",
+						'data-toggle' => "modal",
+						'data-target' => "#confirm-submit",
+						'class' => 'btn btn-default'
+					),
+			))
 			->getForm();
 		
 		$form->handleRequest($request);
@@ -205,8 +221,7 @@ class AgeController
 			$app['orm.em']->flush();
 			$app['session']->getFlashBag()->add('success', 'L\'age a été mis à jour.');
 		}
-		else if ( $form->get('delete')->isClicked() )
-		{
+		else		{
 			$app['orm.em']->remove($age);
 			$app['orm.em']->flush();	
 			$app['session']->getFlashBag()->add('success', 'L\'age a été supprimé.');

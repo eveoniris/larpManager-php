@@ -9,6 +9,9 @@
 		<li class="active">Enregistrer l'état-civil</li>
 	</ol>
 
+	<div class="well">
+		Consulter les <a href="{{ path('legal') }}">mentions légales</a>.
+	</div>
 			
 	<div class="well bs-component">
 		<form action="{{ path('user.information.add', {'id': app.user.id}) }}" method="POST" {{ form_enctype(form) }}>

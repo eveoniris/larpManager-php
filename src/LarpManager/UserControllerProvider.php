@@ -38,16 +38,38 @@ class UserControllerProvider implements ControllerProviderInterface
 	{
 		$controllers = $app['controllers_factory'];
 		
+		/**
+		 * Vérifie que l'utilisateur dispose du role ADMIN
+		 */
+		$mustBeAdmin = function(Request $request) use ($app) {
+			if (!$app['security.authorization_checker']->isGranted('ROLE_ADMIN')) {
+				throw new AccessDeniedException();
+			}
+		};
+		
 		$controllers->get('/', 'LarpManager\Controllers\UserController::viewSelfAction')
-		->bind('user')
-		->before(function(Request $request) use ($app) {
+			->bind('user')
+			->before(function(Request $request) use ($app) {
 			// Require login. This should never actually cause access to be denied,
 			// but it causes a login form to be rendered if the viewer is not logged in.
 			if (!$app['user']) {
 				throw new AccessDeniedException();
 			}
 		});
+			
+		$controllers->get('/etatCivil', 'LarpManager\Controllers\UserController::viewSelfEtatCivilAction')
+			->bind('etatCivil')
+			->before(function(Request $request) use ($app) {
+				// Require login. This should never actually cause access to be denied,
+				// but it causes a login form to be rendered if the viewer is not logged in.
+				if (!$app['user']) {
+					throw new AccessDeniedException();
+				}
+		});
 		
+		/**
+		 * Vue d'un utilisateur
+		 */
 		$controllers->match('/{id}', 'LarpManager\Controllers\UserController::viewAction')
 			->bind('user.view')
 			->assert('id', '\d+')
@@ -56,6 +78,19 @@ class UserControllerProvider implements ControllerProviderInterface
 				if (!$app['security.authorization_checker']->isGranted('VIEW_USER_ID', $request->get('id'))) {
 					throw new AccessDeniedException();
 				}				
+			});
+			
+		/**
+		 * Vue de l'état-civil d'un utilisateur
+		 */
+		$controllers->match('/{id}/etatCivil', 'LarpManager\Controllers\UserController::viewEtatCivilAction')
+			->bind('user.etatCivil.view')
+			->assert('id', '\d+')
+			->method('GET')
+			->before(function(Request $request) use ($app) {
+				if (!$app['security.authorization_checker']->isGranted('VIEW_USER_ID', $request->get('id'))) {
+					throw new AccessDeniedException();
+				}
 			});
 			
 		$controllers->match('/add', 'LarpManager\Controllers\UserController::addAction')
@@ -76,16 +111,28 @@ class UserControllerProvider implements ControllerProviderInterface
 					throw new AccessDeniedException();
 				}
 			});
-			
-		$controllers->match('/list', 'LarpManager\Controllers\UserController::listAction')
-			->bind('user.list')
-			->method('GET')
-			->before(function(Request $request) use ($app) {
-				if (!$app['security.authorization_checker']->isGranted('ROLE_ADMIN')) {
-					throw new AccessDeniedException();
-				}				
-			});
 		
+		/**
+		 * Affiche la liste des utilisateurs (admin uniquement)
+		 */
+		$controllers->match('/admin/list', 'LarpManager\Controllers\UserController::adminListAction')
+			->bind('user.admin.list')
+			->method('GET|POST')
+			->before($mustBeAdmin);
+			
+		/**
+		 * Affiche l'état civil d'un utilisateur
+		 */
+		$controllers->match('/admin/{user}/etatCivil', 'LarpManager\Controllers\UserController::adminEtatCivilAction')
+			->assert('id', '\d+')
+			->bind('user.admin.etatCivil')
+			->method('GET')
+			->convert('user', 'converter.user:convert')
+			->before($mustBeAdmin);
+
+		/**
+		 * Gestion des droits
+		 */
 		$controllers->match('/right', 'LarpManager\Controllers\UserController::rightAction')
 			->bind('user.right')
 			->method('GET|POST')
@@ -116,6 +163,23 @@ class UserControllerProvider implements ControllerProviderInterface
 			->bind('user.information.add')
 			->method('GET|POST');
 		
+		$controllers->match('/{id}/information/update', 'LarpManager\Controllers\UserController::updateInformationAction')
+			->assert('id', '\d+')
+			->bind('user.information.update')
+			->method('GET|POST');
+		
+		$controllers->match('/confirm-email/{token}', 'LarpManager\Controllers\UserController::confirmEmailAction')
+			->bind('user.confirm-email')
+			->method('GET');
+		
+		$controllers->match('/resend-confirmation', 'LarpManager\Controllers\UserController::resendConfirmationAction')
+			->bind('user.resend-confirmation')
+			->method('GET|POST');
+		
+		$controllers->match('/reset-password/{token}', 'LarpManager\Controllers\UserController::resetPasswordAction')
+			->bind('user.reset-password')
+			->method('GET|POST');
+			
 		// login_check and logout are dummy routes so we can use the names.
 		// The security provider should intercept these, so no controller is needed.
 		$controllers->match('/login_check', function() {})

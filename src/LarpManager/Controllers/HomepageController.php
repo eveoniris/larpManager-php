@@ -5,10 +5,9 @@ namespace LarpManager\Controllers;
 use Symfony\Component\HttpFoundation\Request;
 use Silex\Application;
 use LarpManager\Form\GroupeInscriptionForm;
+use LarpManager\Form\PersonnageSecondaireChoiceForm;
 use LarpManager\Form\GnInscriptionForm;
-use LarpManager\Form\FindJoueurForm;
-use LarpManager\Form\FindGroupForm;
-use LarpManager\Form\FindPersonnageForm;
+
 
 /**
  * LarpManager\Controllers\HomepageController
@@ -67,7 +66,7 @@ class HomepageController
 		$form = $app['form.factory']->createBuilder(new GroupeInscriptionForm(), array())
 			->add('subscribe','submit', array('label' => 'S\'inscrire'))
 			->getForm();
-		
+			
 		$repoGn = $app['orm.em']->getRepository('LarpManager\Entities\Gn');
 		$gns = $repoGn->findByActive();
 		
@@ -89,25 +88,11 @@ class HomepageController
 	 */
 	public function orgaIndexAction(Request $request, Application $app)
 	{
-		$findJoueurForm = $app['form.factory']->createBuilder(new FindJoueurForm(), array())
-			->add('submit','submit', array('label' => 'Rechercher'))
-			->getForm();
-		
-		$findGroupForm = $app['form.factory']->createBuilder(new FindGroupForm(), array())
-			->add('submit','submit', array('label' => 'Rechercher'))
-			->getForm();
-		
-		$findPersonnageForm = $app['form.factory']->createBuilder(new FindPersonnageForm(), array())
-			->add('submit','submit', array('label' => 'Rechercher'))
-			->getForm();
 		
 		$repoAnnonce = $app['orm.em']->getRepository('LarpManager\Entities\Annonce');
 		$annonces = $repoAnnonce->findBy(array('archive' => false));
 		
 		return $app['twig']->render('homepage/orga.twig', array(
-				'findJoueurForm' => $findJoueurForm->createView(),
-				'findGroupForm' => $findGroupForm->createView(),
-				'findPersonnageForm' => $findPersonnageForm->createView(),
 				'annonces' => $annonces,
 		));
 	}
@@ -121,6 +106,17 @@ class HomepageController
 	public function worldAction(Request $request, Application $app)
 	{	
 		return $app['twig']->render('homepage/world.twig');		
+	}
+	
+	/**
+	 * Affiche les mentions légales
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function legalAction(Request $request, Application $app)
+	{
+		return $app['twig']->render('homepage/legal.twig');
 	}
 	
 	/**

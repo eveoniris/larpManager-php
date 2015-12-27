@@ -1,12 +1,12 @@
 {% extends "layout.twig" %}
 
-{% block title %}Acceuil{% endblock title %}
+{% block title %}Accueil{% endblock title %}
 
 {% block content %}
 	   		
 	<div class="row">
 	
-		<div class="col-xs-8 col-md-8">
+		<div class="col-xs-12 col-md-6">
 		
 			<div class="well well-sm">
 				<h4>
@@ -59,6 +59,29 @@
 					{# detail du personnage #}
 					{% if app.user.personnage %}
 						{{ include("homepage/fragment/personnage.twig",{'personnage':app.user.personnage}) }}
+						
+						
+						<div class="panel panel-info">
+							<div class="panel-heading">Personnage secondaire</div>
+							<div class="panel-body">
+								<p>Le personnage secondaire est un archétype que vous pouvez utiliser dans le cas 
+								ou <strong>votre personnage principal viendrait à trépasser</strong> (ce que nous ne souhaitons pas, mais l'Hyborée
+								 est un monde violent dans lequel les pires choses sont possibles) ou <strong>si vous souhaitez l'utiliser
+								  dans une instance à la place de l'autre</strong> (plus utile, ou toute autre raison)</p>
+								  
+								{% if app.user.personnageSecondaire %}
+									<h6>Personnage secondaire : 
+										<small>{{ app.user.personnageSecondaire.classe.label }}
+											{{ app.user.personnageSecondaire.competences|join(' / ') }}</small>
+									</h6>
+									<p><a href="{{ path('personnageSecondaire.choice') }}">Modifier son personnage secondaire</a></p>
+								{% else %}
+									<p>Vous n'avez pas encore choisi votre personnage secondaire.</p>
+									<p><a href="{{ path('personnageSecondaire.choice') }}">Choisir son personnage secondaire</a></p>
+								{% endif %}
+
+							</div>
+						</div>
 					{% endif %}
 						
 					{# Détail des groupes#}
@@ -70,7 +93,7 @@
 			{% endif %}
 		</div>
 		
-		<div class="col-xs-4 col-md-4">
+		<div class="col-xs-12 col-md-6">
 		
 			{# affichage de l'annonce la plus récente et du lien vers les archives des annonces #}
 			{% for annonce in annonces %}

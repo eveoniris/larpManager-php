@@ -25,7 +25,7 @@
     				<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
     				Attention, cette compétence n'a pas de description.
     				{% else %}
-    					{{ competence.description }}
+    					{{ competence.description|markdown }}
     				{% endif %}
     				</p>
 	    		</div>

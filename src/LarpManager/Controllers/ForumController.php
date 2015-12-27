@@ -48,6 +48,14 @@ class ForumController
 		$topic = new \LarpManager\Entities\Topic();
 		
 		$form = $app['form.factory']->createBuilder(new TopicForm(), $topic)
+			->add('right','choice', array(
+					'label' => 'Droits',
+					'choices' => $app['larp.manager']->getAvailableTopicRight(),
+			))
+			->add('object_id','number', array(
+					'required' => false,
+					'label' => 'Identifiant'
+			))
 			->add('save','submit', array('label' => "Sauvegarder"))
 			->getForm();
 		
@@ -188,13 +196,6 @@ class ForumController
 		
 		$postToResponse = $app['orm.em']->getRepository('\LarpManager\Entities\Post')
 							->find($postId);
-							
-		// vérification des droits
-		if ( ! $app['forum.manager']->right($postToResponse->getTopic(),$app['user']) )
-		{
-			$app['session']->getFlashBag()->add('error', 'Vous n\'avez pas les droits necessaires pour lire ce message');
-			return $app->redirect($app['url_generator']->generate('forum'),301);
-		}
 		
 		$post = new \LarpManager\Entities\Post();
 		$post->setTitle($postToResponse->getTitle());
@@ -331,13 +332,6 @@ class ForumController
 		$topicRelated = $app['orm.em']->getRepository('\LarpManager\Entities\Topic')
 			->find($topicId);
 		
-		// vérification des droits
-		if ( ! $app['forum.manager']->right($topicRelated,$app['user']) )
-		{
-			$app['session']->getFlashBag()->add('error', 'Vous n\'avez pas les droits necessaires pour ajouter un sous-forum dans ce forum');
-			return $app->redirect($app['url_generator']->generate('forum'),301);
-		}
-		
 		$topic = new \LarpManager\Entities\Topic();
 		
 		$form = $app['form.factory']->createBuilder(new TopicForm(), $topic)
@@ -381,15 +375,18 @@ class ForumController
 		$topic = $app['orm.em']->getRepository('\LarpManager\Entities\Topic')
 						->find($topicId);
 	
-		// vérification des droits
-		if ( ! $app['forum.manager']->right($topic,$app['user']) )
+		$formBuilder = $app['form.factory']->createBuilder(new TopicForm(), $topic);
+		
+		if ( $app['security.authorization_checker']->isGranted('ROLE_MODERATOR'))
 		{
-			$app['session']->getFlashBag()->add('error', 'Vous n\'avez pas les droits necessaires pour modifier ce topic');
-			return $app->redirect($app['url_generator']->generate('forum'),301);
+			$formBuilder->add('topic','entity', array(
+					'required' => false,
+					'label' => 'Choisissez le topic parent',
+					'property' => 'title',
+					'class' => 'LarpManager\Entities\Topic'
+				));
 		}
-	
-		$form = $app['form.factory']->createBuilder(new TopicForm(), $topic)
-				->add('save','submit', array('label' => "Sauvegarder"))
+		$form =	$formBuilder->add('save','submit', array('label' => "Sauvegarder"))
 				->getForm();
 	
 		$form->handleRequest($request);

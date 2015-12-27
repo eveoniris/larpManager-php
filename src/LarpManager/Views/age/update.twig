@@ -16,4 +16,38 @@
 		</div>
 	</div>
 	
+	<div class="modal fade" id="confirm-submit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	    <div class="modal-dialog">
+	        <div class="modal-content">
+	            <div class="modal-header">
+	                <h6>Confirmer la suppression</h6>
+	            </div>
+	            <div class="modal-body">
+	            	<p>Etes-vous certain de vouloir supprimer l'age suivant :</p>
+	            	{{ age.label }}
+	            	{{ age.description }}
+	            </div>
+	            <div class="modal-footer">
+	            	<button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+	            	<a href="#" id="submit" class="btn btn-success success">Supprimer</a>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+	
 {% endblock content %}
+
+{% block javascript %}
+
+	{{ parent() }}
+	
+	<script type="text/javascript">
+	
+		$(document).ready(function() {
+	
+			$('#submit').click(function(){
+			    $('form').submit();
+			});	
+		});
+	</script>
+{% endblock javascript %}

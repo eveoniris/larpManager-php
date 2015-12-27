@@ -9,6 +9,7 @@ use Symfony\Component\Security\Core\Authorization\Voter\RoleHierarchyVoter;
 use LarpManager\Twig\LarpManagerExtension;
 use LarpManager\Services\ForumRightManager;
 use LarpManager\Services\LarpManagerVoter;
+use LarpManager\Services\fpdf\FPDF;
 
 /**
  * LarpManager\LarpManagerServiceProvider
@@ -24,7 +25,7 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 	 */
 	public function register(Application $app)
 	{
-		// Ajoute la gestion des droits propre à larpmanager
+		// Ajoute la gestion des droits de larpmanager
 		$app['security.voters'] = $app->extend('security.voters', function($voters) use ($app) {
 			foreach ($voters as $voter) {
 				if ($voter instanceof RoleHierarchyVoter) {
@@ -46,6 +47,33 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 		$app['forum.manager'] = $app->share(function($app) {
 			$forumRightManager = new ForumRightManager($app);
 			return $forumRightManager;
+		});
+		
+		// fpdf
+		$app['pdf.manager'] = $app->share(function($app) {
+			$fpdf = new FPDF();
+			$fpdf->FPDF();
+			return $fpdf;
+		});
+		
+		// personnage converter
+		$app['converter.personnage'] = $app->share(function($app) {
+			return new PersonnageConverter($app['orm.em']);
+		});
+		
+		// personnage converter
+		$app['converter.personnageSecondaire'] = $app->share(function($app) {
+			return new PersonnageSecondaireConverter($app['orm.em']);
+		});
+		
+		// user converter
+		$app['converter.user'] = $app->share(function($app) {
+			return new UserConverter($app['orm.em']);
+		});
+		
+		// background converter
+		$app['converter.background'] = $app->share(function($app) {
+			return new BackgroundConverter($app['orm.em']);
 		});
 	}
 

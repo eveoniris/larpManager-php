@@ -10,7 +10,7 @@
     
 	<ol class="breadcrumb">
 		<li><a href="{{ path('homepage') }}">Accueil</a></li>
-		<li><a href="{{ path('user.list') }}">Liste des utilisateurs</a></li>
+		<li><a href="{{ path('user.admin.list') }}">Liste des utilisateurs</a></li>
 		<li class="active">Modifier l'utilisateur : {{ user.displayName }}</li>
 	</ol>
 	
@@ -85,7 +85,7 @@
 	
 	        <div class="form-group">
 	            <div class="col-sm-8 col-sm-offset-2">
-	                <button type="submit" class="btn btn-primary">Savegarder</button>
+	                <button type="submit" class="btn btn-primary">Sauvegarder</button>
 	                <a style="margin-left: 10px;" href="{{ path('user.view', {'id': user.id}) }}">Retourner au profil</a>
 	            </div>
 	        </div>

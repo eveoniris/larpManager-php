@@ -7,6 +7,7 @@ use JasonGrimes\Paginator;
 use LarpManager\Form\GroupeSecondaireForm;
 use LarpManager\Form\GroupeSecondairePostulerForm;
 use LarpManager\Form\PostulantReponseForm;
+use LarpManager\Form\SecondaryGroupFindForm;
 
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
@@ -32,6 +33,10 @@ class GroupeSecondaireController
 		$page = (int)($request->get('page') ?: 1);
 		$offset = ($page - 1) * $limit;
 		
+		$form = $app['form.factory']->createBuilder(new SecondaryGroupFindForm())
+			->add('find','submit', array('label' => 'Rechercher'))
+			->getForm();
+		
 		$criteria = array();
 		
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\SecondaryGroup');
@@ -50,6 +55,7 @@ class GroupeSecondaireController
 		return $app['twig']->render('admin/groupeSecondaire/list.twig', array(
 				'groupeSecondaires' => $groupeSecondaires,
 				'paginator' => $paginator,
+				'form' => $form->createView(),
 		));
 	}
 	
@@ -137,6 +143,21 @@ class GroupeSecondaireController
 		
 			$app['orm.em']->persist($postulant);
 			$app['orm.em']->flush();
+			
+			
+			// envoi d'un mail au chef du groupe secondaire
+			if ( $groupeSecondaire->getResponsable() )
+			{
+				$message = "Nouvelle candidature";
+				$message = \Swift_Message::newInstance()
+					->setSubject('[LarpManager] Nouvelle candidature')
+					->setFrom(array('noreply@eveoniris.com'))
+					->setTo(array($groupeSecondaire->getResponsable()->getParticipant()->getUser()->getEmail()))
+					->setBody($message);
+				 
+				$app['mailer']->send($message);
+			}
+			
 			$app['session']->getFlashBag()->add('success', 'Votre candidature a été enregistrée, et transmise au chef de groupe.');
 		
 			return $app->redirect($app['url_generator']->generate('homepage'));

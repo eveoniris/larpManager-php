@@ -6,12 +6,12 @@
 
 	<ol class="breadcrumb">
 		<li><a href="{{ path('homepage') }}">Accueil</a></li>
-		<li><a href="{{ path("groupe.list") }}">Liste des groupes</a></li>
+		<li><a href="{{ path("groupe.admin.list") }}">Liste des groupes</a></li>
 		<li class="active">Modification d'un groupe</li>
 	</ol>
 
 	<div class="well bs-component">
-	<form action="{{ path('groupe.update', {'index': groupe.id}) }}" method="POST" {{ form_enctype(form) }}>
+	<form action="{{ path('groupe.update', {'index': groupe.id}) }}" method="POST" {{ form_enctype(form) }} novalidate>
 		<fieldset>
 			<legend>Modification d'un groupe</legend>
 			{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
@@ -97,6 +97,20 @@
 {% block javascript %}
 
 	{{  parent() }}
+	
+	{# inclusion du plugin tinymce pour la saisie de la description #}
+	   
+	<script src="{{ app.request.basepath }}/js/tinymce/tinymce.min.js"></script>
+
+	<script type="text/javascript">
+		tinyMCE.init({
+				mode: "textareas",
+				theme: "modern",
+				plugins : "spellchecker,insertdatetime,preview", 
+		});
+		
+	</script>
+	
 	<script>
 
 		function addGroupeClasseForm(collectionHolder, $newLinkLi) {

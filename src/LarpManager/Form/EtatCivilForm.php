@@ -34,6 +34,11 @@ class EtatCivilForm extends AbstractType
 					'label' => 'Nom d\'usage',
 					'required' => false,
 				))
+				->add('date_naissance','date', array(
+						'label' => 'Date de naissance',
+						'required' => false,
+						'years' => range(1900,2020),
+				))
 				->add('telephone','text', array(
 					'label' => 'Numéro de téléphone',
 					'required' => true,
@@ -52,11 +57,11 @@ class EtatCivilForm extends AbstractType
 				))
 				->add('fedegn','text', array(
 					'label' => 'Numéro d’adhérent FédéGN',
-					'required' => true,
+					'required' => false,
 				))
 				->add('dateFinValiditeFedegn','date', array(
 						'label' => 'Date de fin de validité de votre carte FédéGN',
-						'required' => true,
+						'required' => false,
 				));
 	}
 	

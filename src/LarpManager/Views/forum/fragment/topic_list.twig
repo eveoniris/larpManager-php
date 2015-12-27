@@ -18,14 +18,14 @@
 								Sous-forums : {{ topic.topics|join(', ') }} 
 							</p>
 						{% endif %}
-						{% if is_granted('ROLE_MODERATOR', app.user) %}
+						{% if is_granted('ROLE_ORGA', app.user) %}
 							<a href="{{ path('forum.topic.update',{'index':topic.id}) }}">Modifier</a>
 						{% endif %}
 						
 					</div>
 					<div class="col-xs-1 col-md-1">
 						{# nombre de sujets #}
-						{{ topic.posts|length }} Sujets
+						{{ topic.postCount }} Sujets
 					</div>
 					<div class="col-xs-3 col-md-3">
 						{# dernier message #}

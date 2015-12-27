@@ -1,1 +1,28 @@
-{ env: dev, database: { host: 127.0.0.1, dbname: larpmanager, user: root, password: null }, swiftmailler: { host: host, port: 25, username: username, password: password, encryption: null, auth_mode: null } }
+env:
+    env: prod
+
+database:
+    driver: pdo_mysql
+    host: 127.0.0.1
+    dbname: larpmanager
+    user: root
+    password: 
+
+swiftmailer:
+   host: smtp.provider.com
+   port: 25
+   username: username
+   password: password
+   encryption: null
+   auth_mode: null
+   transport: smtp
+   
+user:
+   mailer:
+       fromEmail:
+           address: no-reply@eveoniris.com
+           name: Eve-oniris
+   emailConfirmation:
+       required: true
+   passwordReset:
+       tokenTTL: 86400

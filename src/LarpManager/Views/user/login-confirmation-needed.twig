@@ -3,22 +3,23 @@
 {% block title %}Confirmation de l'email necessaire{% endblock %}
 
 {% block content %}
+	<div class="well well-sm">
 
-	<div class="page-header">
-    	<h1>Votre compte n'est pas encore actif</h1>
-    </div>
-
-    <p>Un email a du vous être envoyé à l'adresse <strong>{{ email }}</strong> lorsque vous vous être enregistré.</p>
-
-    <p>Merci de cliquer sur le lien présent dans ce message pour activer votre compte.</p>
-
-    <div style="margin: 20px 0px;">
-        <form method="POST" action="{{ resendUrl }}">
-            <input type="hidden" name="email" value="{{ email }}">
-            <button type="submit" class="btn btn-default">Renvoyer le message</button>
-        </form>
-    </div>
-
-    <p>Vérifier votre corbeille ou vos spams. L'expéditeur est <strong>{{ fromAddress }}</strong>.</p>
-
+		<div class="page-header">
+	    	<h1>Votre compte n'est pas encore actif</h1>
+	    </div>
+	
+	    <p>Un email a du vous être envoyé à l'adresse <strong>{{ email }}</strong> lorsque vous vous être enregistré.</p>
+	
+	    <p>Merci de cliquer sur le lien présent dans ce message pour activer votre compte.</p>
+	
+	    <div style="margin: 20px 0px;">
+	        <form method="POST" action="{{ resendUrl }}">
+	            <input type="hidden" name="email" value="{{ email }}">
+	            <button type="submit" class="btn btn-default">Renvoyer le message</button>
+	        </form>
+	    </div>
+	
+	    <p>Vérifiez votre corbeille ou vos spams. L'expéditeur est <strong>{{ fromAddress }}</strong>.</p>
+	</div>
 {% endblock %}

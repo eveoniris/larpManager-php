@@ -1,0 +1,45 @@
+{% extends "layout.twig" %}
+
+{% block title %}Classes{% endblock title %}
+
+{% block content %}
+
+	<a href="{{ path("classe") }}">Retour à la liste des classes</a>
+	
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-xs-12 col-md-8">
+			
+				<div class="well bs-component">
+					<form action="{{ path('classe.update',{'index': classe.id}) }}" method="POST" {{ form_enctype(form) }} novalidate>
+						<fieldset>
+							<legend>Modification d'une classe</legend>
+								{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+								{{ form(form) }}
+						</fieldset>
+					</form>
+				</div>
+
+			</div>
+		</div>
+	</div>
+		
+{% endblock content %}
+
+{% block javascript %}
+
+	{{ parent() }}
+
+	{# inclusion du plugin tinymce pour la saisie du post #}   
+	<script src="{{ app.request.basepath }}/js/tinymce/tinymce.min.js"></script>
+
+	<script type="text/javascript">
+		tinyMCE.init({
+				mode: "textareas",
+				theme: "modern",
+				plugins : "spellchecker,insertdatetime,preview", 
+		});
+		
+	</script>
+
+{% endblock javascript %}

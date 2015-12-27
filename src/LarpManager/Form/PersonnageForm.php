@@ -48,6 +48,17 @@ class PersonnageForm extends AbstractType
 						'class' => 'LarpManager\Entities\Genre',
 						'property' => 'label',
 				))
+				->add('territoire','entity', array(
+						'required' => true,
+						'label' => 'Votre origine',
+						'class' => 'LarpManager\Entities\Territoire',
+						'property' => 'nom',
+						'query_builder' => function(\LarpManager\Repository\TerritoireRepository $er) {
+							$qb = $er->createQueryBuilder('t');
+							$qb->andWhere('t.territoire IS NULL');
+							return $qb;
+						}
+				))
 				->add('intrigue','choice', array(
 					'required' => true,
 					'choices' => array(true => 'Oui', false => 'Non'),

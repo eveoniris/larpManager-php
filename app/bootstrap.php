@@ -43,7 +43,7 @@ $app->register(new DerAlex\Silex\YamlConfigServiceProvider(__DIR__ . '/../config
  * Préparation des logs en fonction de l'environnement
  * (le niveau de logs est plus élevé en mode dev.)
  */
-if ( $app['config']['env'] == 'prod' )
+if ( $app['config']['env']['env'] == 'prod' )
 {
 	$app['debug'] = false;
 	
@@ -100,15 +100,12 @@ $app->register(new TwigServiceProvider(), array(
 // Email
 $app->register(new SwiftmailerServiceProvider());
 
-$app['swiftmailer.options'] = array(
-		'host' => 'host',
-		'port' => '25',
-		'username' => 'username',
-		'password' => 'password',
-		'encryption' => null,
-		'auth_mode' => null
+$app['swiftmailer.options'] = $app['config']['swiftmailer']; //voir les settings yaml 
+$app['swiftmailer.transport'] =  new \Swift_Transport_SendmailTransport(
+	$app['swiftmailer.transport.buffer'],
+	$app['swiftmailer.transport.eventdispatcher']
 );
-
+            
 // Doctrine DBAL
 $app->register(new DoctrineServiceProvider(), array(
 	    'db.options' => $app['config']['database'] //voir les settings yaml 
@@ -179,7 +176,7 @@ else
 			   }),
 		),
 		'secured_area' => array(	// le reste necessite d'être connecté
-			'pattern' => '^/[annonce|stock|forum|groupe|gn|personnage|territoire|appelation|langue|ressource|religion|age|genre|level|competence|competenceFamily|joueur]/.*$',
+			'pattern' => '^/[annonce|statistique|stock|droit|forum|groupe|gn|personnage|territoire|appelation|langue|ressource|religion|age|genre|level|competence|competenceFamily|joueur|etatCivil]/.*$',
 			'anonymous' => false,
 			'remember_me' => array(),
 			'form' => array(
@@ -198,6 +195,7 @@ else
 	$app->mount('/', new LarpManager\HomepageControllerProvider());
 	$app->mount('/annonce', new LarpManager\AnnonceControllerProvider());
 	$app->mount('/user',  new LarpManager\UserControllerProvider());
+	$app->mount('/droit',  new LarpManager\RightControllerProvider());
 	$app->mount('/stock', new LarpManager\StockControllerProvider());
 	$app->mount('/stock/objet', new LarpManager\StockObjetControllerProvider());
 	$app->mount('/stock/tag', new LarpManager\StockTagControllerProvider());
@@ -218,11 +216,15 @@ else
 	$app->mount('/ressource', new LarpManager\RessourceControllerProvider());
 	$app->mount('/religion', new LarpManager\ReligionControllerProvider());
 	$app->mount('/personnage', new LarpManager\PersonnageControllerProvider());
+	$app->mount('/personnageSecondaire', new LarpManager\PersonnageSecondaireControllerProvider());
 	$app->mount('/age', new LarpManager\AgeControllerProvider());
 	$app->mount('/genre', new LarpManager\GenreControllerProvider());
 	$app->mount('/gn', new LarpManager\GnControllerProvider());
 	$app->mount('/participant', new LarpManager\ParticipantControllerProvider());
 	$app->mount('/forum', new LarpManager\ForumControllerProvider());
+	$app->mount('/statistique', new LarpManager\StatistiqueControllerProvider());
+	$app->mount('/background', new LarpManager\BackgroundControllerProvider());
+	$app->mount('/pnj', new LarpManager\PnjControllerProvider());
 		
 
 	/**
@@ -243,22 +245,27 @@ else
 	 */
 	$app['security.access_rules'] = array(
 		array('^/world/.*$', 'ROLE_USER'),
+		array('^/pnj/.*$', 'ROLE_USER'),
 		array('^/groupe/.*$', 'ROLE_USER'),
 		array('^/groupeSecondaire/.*$', 'ROLE_USER'),
 		array('^/competence/.*$', 'ROLE_USER'),
 		array('^/classe/.*$', 'ROLE_USER'),
 		array('^/gn/.*$', 'ROLE_USER'),
 		array('^/personnage/.*$', 'ROLE_USER'),
+		array('^/personnageSecondaire/.*$', 'ROLE_USER'),
 		array('^/joueur/.*$', 'ROLE_USER'),
 		array('^/territoire/.*$', 'ROLE_USER'),
+		array('^/religion/.*$', 'ROLE_USER'),
 		array('^/groupeSecondaireType/.*$', 'ROLE_SCENARISTE'),
+		array('^/background/.*$', 'ROLE_SCENARISTE'),
 		array('^/annonce/.*$', 'ROLE_ADMIN'),
+		array('^/droit/.*$', 'ROLE_ADMIN'),
 		array('^/age/.*$', 'ROLE_REGLE'),
 		array('^/genre/.*$', 'ROLE_REGLE'),
 		array('^/appelation/.*$', 'ROLE_SCENARISTE'),
 		array('^/langue/.*$', 'ROLE_SCENARISTE'),
-		array('^/ressource/.*$', 'ROLE_SCENARISTE'),			
-		array('^/religion/.*$', 'ROLE_SCENARISTE'),
+		array('^/ressource/.*$', 'ROLE_SCENARISTE'),
+		array('^/statistique/.*$', 'ROLE_SCENARISTE'),
 		array('^/competenceFamily/.*$', 'ROLE_REGLE'),
 		array('^/level/.*$', 'ROLE_REGLE'),
 		array('^/stock/.*$', 'ROLE_STOCK'),

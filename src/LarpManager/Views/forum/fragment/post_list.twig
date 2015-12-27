@@ -26,7 +26,7 @@
 				<h6 class="list-group-item-heading">
 					<a href="{{ path('forum.post',{'index':post.id}) }}">{{ post.title }}</a>
 				</h6>
-				Sujet démaré {{ post.creationDate|time_diff }} 	par <a href="{{ path('user.view', {'id':post.user.id}) }}">{{ post.user.username }}</a>
+				Sujet démarré {{ post.creationDate|time_diff }} 	par <a href="{{ path('user.view', {'id':post.user.id}) }}">{{ post.user.username }}</a>
 			</div>
 			<div class="col-xs-1 col-md-1">
 				{# nombre de sujets #}

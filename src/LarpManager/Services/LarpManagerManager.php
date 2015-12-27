@@ -31,6 +31,56 @@ class LarpManagerManager
 	}
 	
 	/**
+	 * Fourni la liste des ROLES utilisé dans LarpManager
+	 * @return Array $availablesRoles
+	 */
+	public function getAvailableRoles()
+	{
+		$availableRoles = array(
+				array('label' => 'ROLE_USER', 'descr' => 'Utilisateur de larpManager'),
+				array('label' => 'ROLE_ORGA', 'descr' => 'Organisateur'),
+				array('label' => 'ROLE_ADMIN', 'descr' => 'Droit de modification sur tout'),
+				array('label' => 'ROLE_STOCK', 'descr' => 'Droit de modification sur le stock'),
+				array('label' => 'ROLE_REGLE', 'descr' => 'Droit de modification sur les règles'),
+				array('label' => 'ROLE_SCENARISTE', 'descr' => 'Droit de modification sur le scénario, les groupes et le background'),
+				array('label' => 'ROLE_MODERATOR', 'descr' => 'Modération du forum'),
+		);
+		return $availableRoles;
+	}
+	
+	/**
+	 * Fourni la liste des droits necessaires pour accéder à un topic
+	 * @return string[]
+	 */
+	public function getAvailableTopicRight()
+	{
+		$availableTopicRight = array(
+			'GN_PARTICIPANT' => 'L\'utilisateur doit participer au GN',
+			'GROUPE_MEMBER' => 'L\'utilisateur doit être membre du groupe',
+			'GROUPE_SECONDAIRE_MEMBER' => 'Le personnage de l\'utilisateur doit être membre du groupe secondaire',
+			'CULTE' => 'Le personnage de l\'utilisateur doit suivre cette religion',
+			'ORGA' => 'L\'utilisateur doit disposer du role ORGA',
+			'SCENARISTE' => 'L\'utilisateur doit disposer du role SCENARISTE',
+		);
+		return $availableTopicRight;
+	}
+	
+	/**
+	 * Fourni la liste des droits concernant la visibilité des backgrounds
+	 * @return string[]
+	 */
+	public function getVisibility()
+	{
+		$visibility = array(
+			'PRIVATE' => 'Seul les scénaristes peuvent voir ceci',
+			'PUBLIC' => 'Tous les joueurs peuvent voir ceci',
+			'GROUPE_MEMBER' => 'Seul les membres du groupe peuvent voir ceci',
+			'GROUPE_OWNER' => 'Seul le chef de groupe peux voir ceci',
+		);
+		return $visibility;
+	}
+	
+	/**
 	 * Fourni la liste des compétences de premier niveau
 	 * @return Collection $competences
 	 */

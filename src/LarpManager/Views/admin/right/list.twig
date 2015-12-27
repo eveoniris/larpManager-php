@@ -1,0 +1,25 @@
+{% extends "layout.twig" %}
+
+{% block title %}Droits{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li class="active">Liste des droits</li>
+	</ol>
+	
+	<div class="well well-sm">
+		<div class="list-group">
+			{% for right in rights %}
+				<div class="list-group-item">
+					<div class="list-group-item-heading"><h6>{{ right.label }}</h6></div>
+					<div class="list-group-item-text">
+						 {{ right.descr }}
+					</div>
+				</div>
+			{% endfor %}
+		</div>
+	</div>
+	
+{% endblock %}

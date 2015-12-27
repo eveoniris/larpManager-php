@@ -1,0 +1,102 @@
+{% extends "layout.twig" %}
+
+{% block title %}Personnages{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path('personnage.admin.list') }}">Liste des personnages</a></li>
+		<li class="active">Détail de {{ personnage.publicName }}</li>
+	</ol>
+	
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h4 class="list-group-item-heading">Actions</h4>
+		</div>
+		<div class="panel-body">
+			<ul class="list-group">
+				<li class="list-group-item">
+					<a href="{{ path('personnage.admin.delete', {'personnage':personnage.id}) }}">Supprimer</a>
+				</li>
+			</ul>
+		</div>
+	</div>
+			
+	
+	<div class="panel panel-success">
+		<div class="panel-heading">{{ personnage.publicName }} - <small>{{ personnage.classe.label }}</small></div>
+		<div class="panel-body">
+			<div class="list-group">
+				<div class="list-group-item">
+					<h6 class="list-group-item-heading">Informations</h6>
+					<p class="list-group-item-text">
+						Nom : {{ personnage.nom }}
+					</p>
+					<p class="list-group-item-text">
+						Surnom : {{ personnage.surnom }}
+					</p>
+					<p class="list-group-item-text">
+						Age : {{ personnage.age }}
+					</p>
+					<p class="list-group-item-text">
+						Genre : {{ personnage.genre }}
+					</p>
+					<p class="list-group-item-text">
+						{% if personnage.intrigue %}
+							Participe aux intrigues
+						{% else %}
+							Ne participe pas aux intrigues
+						{% endif %}
+					</p>
+					<p class="list-group-item-text">
+						<a href="{{ path('personnage.admin.update', {'personnage':personnage.id}) }}">Modifier</a>
+					</p>
+				</div>
+				<div class="list-group-item">
+					<h6 class="list-group-item-heading">Religion</h6>
+					<p class="list-group-item-text">
+					{% if personnage.personnageReligion %}
+						{{ personnage.personnageReligion.religion.label }} - {{ personnage.personnageReligion.religionLevel.label }}
+					{% endif %}
+					</p>
+				</div>
+				<div class="list-group-item">
+					<h6 class="list-group-item-heading">Compétences <small>({{ personnage.xp|default(0) }} xp)</small></h6>
+					<p><a href="{{ path('personnage.admin.xp', {'personnage':personnage.id}) }}">Ajouter des points d'expérience</a></p>
+					{% for competence in personnage.competences %}
+						<p class="list-group-item-text">
+							{{ competence.competenceFamily.label }}&nbsp({{ competence.level.label }}) : {{ competence.description }}
+						</p>					
+					{% endfor %}
+					<p><a href="{{ path('personnage.competence.remove', {'personnage':personnage.id}) }}">Retirer la dernière compétence acquise</a></p>
+				</div>
+				<div class="list-group-item">
+					<h6 class="list-group-item-heading">Historique</h6>		
+					{% for historique in personnage.experienceGains %}
+						<p class="list-group-item-text">{{ historique.operationDate|date("Y-m-d h:i:s") }} : + {{ historique.xpGain }} xp {% if historique.explanation %} pour la raison suivante : "{{ historique.explanation }}"{% endif %}.</p>
+					{% endfor %}
+					{% for historique in personnage.experienceUsages %}
+						<p class="list-group-item-text">{{ historique.operationDate|date("Y-m-d h:i:s") }} : - {{ historique.xpUse }} xp pour acquérir {{ historique.competence.label }}.</p>
+					{% endfor %}
+				</div>
+				<div class="list-group-item">
+					<h6 class="list-group-item-heading">Groupes secondaires</h6>
+					{% for groupeSecondaire in personnage.secondaryGroups %}
+						<a href="{{ path('groupeSecondaire.detail', {'index':groupeSecondaire.id}) }}">{{ groupeSecondaire.label }}</a>
+					{% endfor %}
+					{% if personnage.postulants|length > 0 %}
+						{% for postulant in personnage.postulants %}
+							<p class="list-group-item-text">Votre candidature au groupe {{ postulant.secondaryGroup.label }} est en attente de validation.</p>
+						{% endfor %}
+					{% endif %}
+				</div>
+				<div class="list-group-item">
+					<h6>Téléchargement</h6>
+					<a href="{{ path('personnage.export', {'personnage':personnage.id}) }}">Télécharger le pdf</a>
+					
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock content %}

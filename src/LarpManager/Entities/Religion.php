@@ -10,6 +10,7 @@
 namespace LarpManager\Entities;
 
 use LarpManager\Entities\BaseReligion;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * LarpManager\Entities\Religion
@@ -18,4 +19,59 @@ use LarpManager\Entities\BaseReligion;
  */
 class Religion extends BaseReligion
 {
+	/**
+	 * @ManyToMany(targetEntity="Territoire", mappedBy="religions")
+	 */
+	protected $territoireSecondaires;
+	
+	/**
+	 * Constructeur
+	 */
+	public function __construct()
+	{
+		$this->territoireSecondaires = new ArrayCollection();
+		parent::__construct();
+	}
+	
+	public function __toString()
+	{
+		return $this->getLabel();	
+	}
+	
+	/**
+	 * Fourni la liste des territoires ou la religion est une religion secondaire 
+	 */
+	public function getTerritoireSecondaires()
+	{
+		return $this->territoireSecondaires;
+	}
+	
+	/**
+	 * Ajoute un territoire dans la liste des territoires ou la religion est une religion secondaire
+	 * @param Territoire $territoire
+	 */
+	public function addTerritoireSecondaire(Territoire $territoire)
+	{
+		$this->territoireSecondaires[] = $territoire;
+		return $this;
+	}
+	
+	/**
+	 * Retire un territoire de la liste des territoires ou la religion est une religion secondaire
+	 * @param Territoire $territoire
+	 */
+	public function removeTerritoireSecondaire(Territoire $territoire)
+	{
+		$this->territoireSecondaires->removeElement($territoire);
+		return $this;
+	
+	}
+	
+	/**
+	 * Fourni la liste des territoires ou la religion est la religion principale.
+	 */
+	public function getTerritoirePrincipaux()
+	{
+		return $this->getTerritoires();
+	}
 }

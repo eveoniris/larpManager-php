@@ -24,6 +24,15 @@
 		   	<li class="list-group-item">
 		   		<a href="{{ path('groupe.add') }}">Ajouter un groupe</a>
 		   	</li>
+		   	<li class="list-group-item">
+		   		<div class="list-group-item"><h6>Rechercher</h6></div>
+		   		
+		   		<form class="form" action="{{ path('groupe.admin.list') }}" method="POST" {{ form_enctype(form) }}>
+					{% form_theme form 'Form/bootstrap_3_horizontal_layout.html.twig' %}
+					{{ form(form) }}
+		   		</form>
+		   		<a href="{{ path('groupe.admin.list') }}">Reset</a>
+		   	</li>
 		</ul>
 		 
 		{{ paginator|raw }}
@@ -32,32 +41,13 @@
 			<thead>
 				<tr>
 					<th>
-						{% if app.request.get('order_dir') == 'ASC' and app.request.get('order_by') == 'id' %}
-							<a href="{{ path('groupe.list', {'order_by': 'id', 'order_dir': 'DESC'}) }}">
+						{% if app.request.get('order_dir') == 'ASC' and app.request.get('order_by') == 'pj' %}
+							<a href="{{ path('groupe.admin.list', {'order_by': 'pj', 'order_dir': 'DESC'}) }}">
 						{%  else %}
-							<a href="{{ path('groupe.list', {'order_by': 'id', 'order_dir': 'ASC'}) }}">
+							<a href="{{ path('groupe.admin.list', {'order_by': 'pj', 'order_dir': 'ASC'}) }}">
 						{% endif %}
-							#	
-						{% if app.request.get('order_by') == 'id'  %}
-							{% if app.request.get('order_dir') == 'ASC' %}
-								<span class="caret"></span>
-							{%else%}
-									<span class="dropup">
-    									<span class="caret"></span>
-									</span>
-								{% endif %}
-						{% endif %}
-						</a>
-					</th>
-
-					<th>
-						{% if app.request.get('order_dir') == 'ASC' and app.request.get('order_by') == 'nom' %}
-							<a href="{{ path('groupe.list', {'order_by': 'nom', 'order_dir': 'DESC'}) }}">
-						{%  else %}
-							<a href="{{ path('groupe.list', {'order_by': 'nom', 'order_dir': 'ASC'}) }}">
-						{% endif %}
-							Nom
-						{% if app.request.get('order_by') == 'nom'  %}
+							Numero
+						{% if app.request.get('order_by') == 'pj'  %}
 							{% if app.request.get('order_dir') == 'ASC' %}
 								<span class="caret"></span>
 							{%else%}
@@ -70,9 +60,9 @@
 					</th>
 					<th>
 						{% if app.request.get('order_dir') == 'ASC' and app.request.get('order_by') == 'numero' %}
-							<a href="{{ path('groupe.list', {'order_by': 'numero', 'order_dir': 'DESC'}) }}">
+							<a href="{{ path('groupe.admin.list', {'order_by': 'numero', 'order_dir': 'DESC'}) }}">
 						{%  else %}
-							<a href="{{ path('groupe.list', {'order_by': 'numero', 'order_dir': 'ASC'}) }}">
+							<a href="{{ path('groupe.admin.list', {'order_by': 'numero', 'order_dir': 'ASC'}) }}">
 						{% endif %}
 							Numero
 						{% if app.request.get('order_by') == 'numero'  %}
@@ -86,11 +76,31 @@
 						{% endif %}
 						</a>
 					</th>
+
+					<th>
+						{% if app.request.get('order_dir') == 'ASC' and app.request.get('order_by') == 'nom' %}
+							<a href="{{ path('groupe.admin.list', {'order_by': 'nom', 'order_dir': 'DESC'}) }}">
+						{%  else %}
+							<a href="{{ path('groupe.admin.list', {'order_by': 'nom', 'order_dir': 'ASC'}) }}">
+						{% endif %}
+							Nom
+						{% if app.request.get('order_by') == 'nom'  %}
+							{% if app.request.get('order_dir') == 'ASC' %}
+								<span class="caret"></span>
+							{%else%}
+								<span class="dropup">
+    								<span class="caret"></span>
+								</span>
+							{% endif %}
+						{% endif %}
+						</a>
+					</th>
+
 					<th>
 						{% if app.request.get('order_dir') == 'ASC' and app.request.get('order_by') == 'classe_open' %}
-							<a href="{{ path('groupe.list', {'order_by': 'classe_open', 'order_dir': 'DESC'}) }}">
+							<a href="{{ path('groupe.admin.list', {'order_by': 'classe_open', 'order_dir': 'DESC'}) }}">
 						{%  else %}
-							<a href="{{ path('groupe.list', {'order_by': 'classe_open', 'order_dir': 'ASC'}) }}">
+							<a href="{{ path('groupe.admin.list', {'order_by': 'classe_open', 'order_dir': 'ASC'}) }}">
 						{% endif %}
 							Places ouvertes
 						{% if app.request.get('order_by') == 'classe_open'  %}
@@ -111,12 +121,12 @@
 			<tbody>
 			{% for groupe in groupes %}
 				<tr>
-					<td><a href="{{ path('groupe.update', {'index':groupe.id}) }}">{{ groupe.id }}</a></td>
+					<td>{% if groupe.pj %}PJ{%else%}PNJ{% endif %}</td>
+					<td><a href="{{ path('groupe.update', {'index':groupe.id}) }}">{{ groupe.numero }}</a></td>
 					<td><a href="{{ path('groupe.detail', {'index':groupe.id}) }}">{{ groupe.nom }}</a></td>
-					<td>{{ groupe.numero }}</td>
 					<td>{{ groupe.classeOpen }}{% if is_granted('ROLE_ADMIN') %}&nbsp;(<a href=" {{ path('groupe.place', {'index':groupe.id}) }}">Modifier</a>){% endif %} </td>
-					<td>{{ groupe.scenariste.username|default('pas de scénariste') }}</td>
-					<td>{{ groupe.responsable.username|default('pas de responsable') }}</td>
+					<td>{% if groupe.scenariste %}{{ groupe.scenariste.username }} {% else %}pas de scénariste{% endif %}</td>
+					<td>{% if groupe.responsable %}{{ groupe.responsable.username }}{% else %}pas de scénariste{% endif %}</td>
 				</tr>
 			{% endfor %}
 			</tbody>

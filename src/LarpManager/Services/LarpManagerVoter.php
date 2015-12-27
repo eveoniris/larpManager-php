@@ -6,6 +6,9 @@ use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\RoleHierarchyVoter;
 
+use LarpManager\Entities\User;
+use LarpManager\Entities\Personnage;
+
 /**
  * LarpManager\LarpManagerVoter
  * @author kevin
@@ -107,7 +110,7 @@ class LarpManagerVoter implements VoterInterface
 			}
 			if ($attribute == 'TOPIC_RIGHT') {
 				$topic = $object;
-				return $this->hasTopicRight($user, $topic) ? VoterInterface::ACCESS_GRANTED : VoterInterface::ACCESS_DENIED;
+				return $this->hasTopicRight($user, $topic, $token) ? VoterInterface::ACCESS_GRANTED : VoterInterface::ACCESS_DENIED;
 			}
 		}
 		
@@ -120,21 +123,28 @@ class LarpManagerVoter implements VoterInterface
 	 * @param unknown $user
 	 * @param unknown $topic
 	 */
-	protected function hasTopicRight($user, $topic)
+	protected function hasTopicRight($user, $topic, $token)
 	{
 		switch ( $topic->getRight() )
 		{
 			case 'GN_PARTICIPANT' :
-				return $this->userGnRight($topic->getObjectId(), $user);
+				return $this->userGnRight($topic->getObjectId(), $user, $token);
 				break;
 			case 'GROUPE_MEMBER' :
-				return $this->userGroupeRight($topic->getObjectId(), $user);
+				return $this->userGroupeRight($topic->getObjectId(), $user, $token);
 				break;
-			case 'GROUPE_SECONDAIRE_MEMBRE' :
-				return $this->userGroupeSecondaireRight($topic->getObjectId(), $user);
+			case 'TERRITOIRE_MEMBER' :
+				return $this->userTerritoireRight($topic->getObjectId(), $user, $token);
+				break;
+			case 'GROUPE_SECONDAIRE_MEMBER' :
+				return $this->userGroupeSecondaireRight($topic->getObjectId(), $user, $token);
 				break;
 			case 'CULTE' :
-				return $this->userCulteRight($topic->getObjectId(), $user);
+				return $this->userCulteRight($topic->getObjectId(), $user, $token);
+			case 'ORGA' :
+				return $this->hasRole($token, 'ROLE_ORGA') ? true: false;
+			case 'SCENARISTE' :
+				return $this->hasRole($token, 'ROLE_SCENARISTE') ? true: false;
 			default :
 				return true;
 		}
@@ -147,17 +157,22 @@ class LarpManagerVoter implements VoterInterface
 	 * @param unknown $culteId
 	 * @param unknown $user
 	 */
-	protected function userCulteRight($culteId, $user)
+	protected function userCulteRight($culteId, $user, $token)
 	{
+		if ($this->hasRole($token, 'ROLE_SCENARISTE')) return true;
+		
 		$participants =  $user->getParticipants();
 		
 		foreach ( $participants as $participant )
 		{
 			if ( $participant->getPersonnage() )
 			{
-				if ( $participant->getPersonnage()->getPersonnageReligion()->getReligion()->getId() == $culteId )
+				if ( $participant->getPersonnage()->getPersonnageReligion() )
 				{
-					return true;
+					if ( $participant->getPersonnage()->getPersonnageReligion()->getReligion()->getId() == $culteId )
+					{
+						return true;
+					}
 				}
 			}
 		}
@@ -172,8 +187,10 @@ class LarpManagerVoter implements VoterInterface
 	 * @param unknown $gnId
 	 * @param unknown $user
 	 */
-	protected function userGnRight($gnId, $user)
+	protected function userGnRight($gnId, $user, $token)
 	{
+		if ($this->hasRole($token, 'ROLE_SCENARISTE')) return true;
+		
 		foreach ( $user->getGns() as $gn )
 		{
 			if ( $gn->getId() == $gnId) return true;
@@ -189,13 +206,60 @@ class LarpManagerVoter implements VoterInterface
 	 * @param unknown $groupeId
 	 * @param unknown $user
 	 */
-	protected function userGroupeRight($groupeId, $user)
+	protected function userGroupeRight($groupeId, $user, $token)
 	{
+		if ($this->hasRole($token, 'ROLE_SCENARISTE')) return true;
+		
 		if ( $user->getGroupes() )
 		{
 			foreach ( $user->getGroupes() as $groupe)
 			{
 				if ( $groupe->getId() == $groupeId ) return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Determine si l'utilisateur à le droit d'accéder au forum de ce territoire
+	 * (l'utilisateur doit être membre d'un groupe lié à ce territoire)
+	 * @param unknown $territoireId
+	 * @param unknown $user
+	 */
+	protected function userTerritoireRight($territoireId, $user, $token)
+	{
+		if ($this->hasRole($token, 'ROLE_SCENARISTE')) return true;
+		
+		if ( $user->getGroupes() )
+		{
+			foreach ( $user->getGroupes() as $groupe)
+			{
+				$territoire = $groupe()->getTerritoire();
+				if ( $territoire && $territoire->getId() == $territoireId) return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Determine si l'utilisateur à le droit d'accéder aux forums de ce groupe secondaire
+	 * (l'utilisateur doit être membre du groupe)
+	 * 
+	 * @param unknown $groupeSecondaireId
+	 * @param unknown $user
+	 */
+	protected function userGroupeSecondaireRight($groupeSecondaireId, $user, $token)
+	{
+		if ($this->hasRole($token, 'ROLE_SCENARISTE')) return true;
+		
+		$personnage = $user->getPersonnage();
+		if ( $personnage )
+		{
+			foreach ( $personnage->getSecondaryGroups() as $groupe )
+			{
+				if ( $groupe instanceof \LarpManager\Entities\SecondaryGroup
+						&& $groupe->getId() == $groupeSecondaireId)
+					return true;
 			}
 		}
 		return false;
@@ -285,25 +349,26 @@ class LarpManagerVoter implements VoterInterface
 	 */
 	protected function isGroupeSecondaireMemberOf($user, $groupeSecondaireId)
 	{
-		return true;
-		if ( $user->getGroupes() )
+		$personnage = $user->getPersonnage();
+		if ( $personnage )
 		{
-			foreach ( $user->getGroupes() as $groupe )
+			foreach ( $personnage->getSecondaryGroups() as $groupe )
 			{
-				if ( $groupe->getId() == $groupeId)	return true;
+				if ( $groupe instanceof \LarpManager\Entities\SecondaryGroup
+						&& $groupe->getId() == $groupeSecondaireId)
+					return true;
 			}
-		}
-			
+		}		
 		return false;
 	}
 	
 	/**
 	 * Test si un utilisateur posséde bien le personnage
 	 *
-	 * @param unknown $user
-	 * @param unknown $personnageId
+	 * @param User $user
+	 * @param $personnageId
 	 */
-	protected function isOwnerOfPersonnage($user, $personnageId)
+	protected function isOwnerOfPersonnage(User $user, $personnageId)
 	{
 		if ( $user->getPersonnage() )
 		{

@@ -78,7 +78,7 @@ class ForumControllerProvider implements ControllerProviderInterface
 			->bind("forum.topic.update")
 			->method('GET|POST')
 			->before(function(Request $request) use ($app) {
-			if (!$app['security.authorization_checker']->isGranted('ROLE_MODERATOR')) {
+			if (!$app['security.authorization_checker']->isGranted('ROLE_SCENARISTE')) {
 				throw new AccessDeniedException();
 			}
 		});			
