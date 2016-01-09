@@ -24,6 +24,8 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 	 *  - personnage.admin.add
 	 *  - personnage.admin.update
 	 *  - personnage.detail
+	 *  - personnage.update
+	 *  - personnage.delete
 	 *  - personnage.competence.add
 	 *  - personnage.competence.remove
 	 *  - personnage.religion.add
@@ -83,7 +85,6 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 			->convert('personnage', 'converter.personnage:convert')
 			->before($mustBeOrga);
 			
-		
 		/**
 		 * Ajout d'un personnage (orga)
 		 */
@@ -98,6 +99,16 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 		$controllers->match('/admin/{personnage}/update','LarpManager\Controllers\PersonnageController::adminUpdateAction')
 			->assert('personnage', '\d+')
 			->bind("personnage.admin.update")
+			->method('GET|POST')
+			->convert('personnage', 'converter.personnage:convert')
+			->before($mustBeOrga);
+		
+		/**
+		 * Suppression d'un personnage (orga)
+		 */
+		$controllers->match('/admin/{personnage}/delete','LarpManager\Controllers\PersonnageController::adminDeleteAction')
+			->assert('personnage', '\d+')
+			->bind("personnage.admin.delete")
 			->method('GET|POST')
 			->convert('personnage', 'converter.personnage:convert')
 			->before($mustBeOrga);
@@ -153,6 +164,17 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 		$controllers->match('/{personnage}/religion/add','LarpManager\Controllers\PersonnageController::addReligionAction')
 			->assert('personnage', '\d+')
 			->bind("personnage.religion.add")
+			->method('GET|POST')
+			->convert('personnage', 'converter.personnage:convert')
+			->before($mustOwn);
+		
+		/**
+		 * Choix d'une origine
+		 * Accessible uniquement au proprietaire du personnage, s'il n'a pas déjà choisi d'origine
+		 */
+		$controllers->match('/{personnage}/origin/add','LarpManager\Controllers\PersonnageController::updateOriginAction')
+			->assert('personnage', '\d+')
+			->bind("personnage.origin.add")
 			->method('GET|POST')
 			->convert('personnage', 'converter.personnage:convert')
 			->before($mustOwn);

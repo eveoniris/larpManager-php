@@ -8,7 +8,6 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Doctrine\ORM\EntityRepository;
 
 use LarpManager\Form\Type\ClasseType;
-use LarpManager\Form\Type\GnType;
 
 /**
  * LarpManager\Form\GroupeForm

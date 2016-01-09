@@ -123,6 +123,27 @@ class User extends BaseUser implements AdvancedUserInterface, \Serializable
 	}
 	
 	/**
+	 * Fourni le personnage secondaire du GN actif
+	 */
+	public function getPersonnageSecondaire()
+	{
+		foreach ( $this->getParticipants() as $participant )
+		{
+			if ( $participant->getGn()->getActif() == true ) return $participant->getPersonnageSecondaire();
+		}
+		return null;
+	}
+	
+	public function getParticipant()
+	{
+		foreach ( $this->getParticipants() as $participant )
+		{
+			if ( $participant->getGn()->getActif() == true ) return $participant;
+		}
+		return null;
+	}
+	
+	/**
 	 * Fourni la liste des gns auquel l'utilisateur est inscrit
 	 */
 	public function getGns()

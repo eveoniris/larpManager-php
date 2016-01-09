@@ -133,6 +133,9 @@ class LarpManagerVoter implements VoterInterface
 			case 'GROUPE_MEMBER' :
 				return $this->userGroupeRight($topic->getObjectId(), $user, $token);
 				break;
+			case 'TERRITOIRE_MEMBER' :
+				return $this->userTerritoireRight($topic->getObjectId(), $user, $token);
+				break;
 			case 'GROUPE_SECONDAIRE_MEMBER' :
 				return $this->userGroupeSecondaireRight($topic->getObjectId(), $user, $token);
 				break;
@@ -212,6 +215,27 @@ class LarpManagerVoter implements VoterInterface
 			foreach ( $user->getGroupes() as $groupe)
 			{
 				if ( $groupe->getId() == $groupeId ) return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Determine si l'utilisateur à le droit d'accéder au forum de ce territoire
+	 * (l'utilisateur doit être membre d'un groupe lié à ce territoire)
+	 * @param unknown $territoireId
+	 * @param unknown $user
+	 */
+	protected function userTerritoireRight($territoireId, $user, $token)
+	{
+		if ($this->hasRole($token, 'ROLE_SCENARISTE')) return true;
+		
+		if ( $user->getGroupes() )
+		{
+			foreach ( $user->getGroupes() as $groupe)
+			{
+				$territoire = $groupe()->getTerritoire();
+				if ( $territoire && $territoire->getId() == $territoireId) return true;
 			}
 		}
 		return false;

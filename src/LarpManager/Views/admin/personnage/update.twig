@@ -16,14 +16,7 @@
 				<legend>Modification de {{ personnage.publicName }}</legend>
 				{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
 	
-				{{ form_row(form.nom) }}
-				{{ form_row(form.surnom) }}
-				{{ form_row(form.age) }}
-				{{ form_row(form.genre) }}
-				{{ form_row(form.intrigue) }}
-				{{ form_row(form.classe) }}
-				
-				{{ form_rest(form) }}
+				{{ form(form) }}
 			</fieldset>
 		</form>
 	</div>

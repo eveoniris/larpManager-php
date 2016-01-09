@@ -5,10 +5,9 @@ namespace LarpManager\Controllers;
 use Symfony\Component\HttpFoundation\Request;
 use Silex\Application;
 use LarpManager\Form\GroupeInscriptionForm;
+use LarpManager\Form\PersonnageSecondaireChoiceForm;
 use LarpManager\Form\GnInscriptionForm;
-use LarpManager\Form\FindJoueurForm;
-use LarpManager\Form\FindGroupForm;
-use LarpManager\Form\FindPersonnageForm;
+
 
 /**
  * LarpManager\Controllers\HomepageController
@@ -67,7 +66,7 @@ class HomepageController
 		$form = $app['form.factory']->createBuilder(new GroupeInscriptionForm(), array())
 			->add('subscribe','submit', array('label' => 'S\'inscrire'))
 			->getForm();
-		
+			
 		$repoGn = $app['orm.em']->getRepository('LarpManager\Entities\Gn');
 		$gns = $repoGn->findByActive();
 		
