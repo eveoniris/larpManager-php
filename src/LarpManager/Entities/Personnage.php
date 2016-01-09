@@ -85,5 +85,32 @@ class Personnage extends BasePersonnage
 		$this->setXp($this->getXp() - $xp);
 		return $this;
 	}
+	
+	/**
+	 * Recupère le nom de classe genrifié du personnage 
+	 * @todo : Evoluer vers un modèle de données ou les libélés de ressource sont variable en fonction du genre
+	 */
+	public function getClasseName()
+	{
+		$lGenreMasculin = true;
+		if($this->getGenre() != null)
+		{
+			$lGenreMasculin = $this->getGenre()->getLabel() == "Masculin";
+		}
+		
+		if($this->getClasse() == null) 
+		{
+			return '';
+		}
+		else if($lGenreMasculin)
+		{
+			return $this->getClasse()->getLabelMasculin();
+		}
+		else 
+		{
+			return $this->getClasse()->getLabelFeminin();
+		}
+		
+	}
 				
 }

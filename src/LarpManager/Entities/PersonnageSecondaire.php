@@ -39,4 +39,5 @@ class PersonnageSecondaire extends BasePersonnageSecondaire
 	{
 		return $this->getClasse()->getLabel();
 	}
+	
 }

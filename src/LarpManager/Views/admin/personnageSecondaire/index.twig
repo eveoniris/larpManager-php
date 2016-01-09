@@ -30,6 +30,7 @@
 		<tbody>
 			{%  for personnageSecondaire in personnageSecondaires %}
 				<tr>
+					{# Josef - 2010109 - Cette vue concernant l'ensemble des joueurs les libélés non genrés sont adoptés #}
 					<td>{{ personnageSecondaire.classe.label }}</td>
 					<td>
 						{{ personnageSecondaire.competences|join(' / ') }}
