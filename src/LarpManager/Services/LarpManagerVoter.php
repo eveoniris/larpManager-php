@@ -234,7 +234,7 @@ class LarpManagerVoter implements VoterInterface
 		{
 			foreach ( $user->getGroupes() as $groupe)
 			{
-				$territoire = $groupe()->getTerritoire();
+				$territoire = $groupe->getTerritoire();
 				if ( $territoire && $territoire->getId() == $territoireId) return true;
 			}
 		}
