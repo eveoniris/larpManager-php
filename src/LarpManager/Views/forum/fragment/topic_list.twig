@@ -13,11 +13,7 @@
 						<p class="list-group-item-text text-default">
 							{{ topic.description|default('pas de description') }}
 						</p>
-						{% if topic.topics|length > 0 %}
-							<p class="list-group-item-text text-default">
-								Sous-forums : {{ topic.topics|join(', ') }} 
-							</p>
-						{% endif %}
+						
 						{% if is_granted('ROLE_ORGA', app.user) %}
 							<a href="{{ path('forum.topic.update',{'index':topic.id}) }}">Modifier</a>
 						{% endif %}

@@ -10,10 +10,12 @@
 				<ol class="breadcrumb">
 					<li><a href="{{ path('homepage') }}">Accueil</a></li>
 					<li><a href="{{ path('forum')  }}">Forum</a></li>
-					{% for ancestor in post.topic.ancestor %}
-						<li><a href="{{ path('forum.topic',{'index':ancestor.id})  }}">{{ ancestor.title }}</a></li>
-					{% endfor %}
-					<li><a href="{{ path('forum.topic',{'index':post.topic.id}) }}">{{ post.topic.title }}</a></li>
+					{% if  post.topic %}
+						{% for ancestor in post.topic.ancestor %}
+							<li><a href="{{ path('forum.topic',{'index':ancestor.id})  }}">{{ ancestor.title }}</a></li>
+						{% endfor %}
+						<li><a href="{{ path('forum.topic',{'index':post.topic.id}) }}">{{ post.topic.title }}</a></li>
+					{% endif %}
 					<li class="active">{{ post.title }}</li>
 				</ol>
 				{{ include("forum/fragment/post.twig",{'post': post}) }}
