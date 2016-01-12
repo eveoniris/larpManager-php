@@ -22,13 +22,7 @@ class PersonnageReligionForm extends AbstractType
 	 */
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
-		$builder->add('religion','entity', array(
-					'required' => true,
-					'label' => 'Votre religion',
-					'class' => 'LarpManager\Entities\Religion',
-					'property' => 'label',
-				))
-				->add('religionLevel', 'entity', array(
+		$builder->add('religionLevel', 'entity', array(
 					'required' => true,
 					'label' => 'Votre degré de fanatisme',
 					'class' => 'LarpManager\Entities\ReligionLevel',
@@ -45,7 +39,7 @@ class PersonnageReligionForm extends AbstractType
 	public function configureOptions(OptionsResolver $resolver)
 	{
 		$resolver->setDefaults(array(
-				'data_class' => 'LarpManager\Entities\PersonnageReligion',
+				'data_class' => 'LarpManager\Entities\PersonnagesReligions',
 		));
 	}
 	

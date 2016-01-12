@@ -22,14 +22,20 @@
 				</p>
 			</div>
 			<div class="list-group-item">
-				<h6 class="list-group-item-heading">Religion</h6>
+				<h6 class="list-group-item-heading">Religions</h6>
 				<p class="list-group-item-text">
-				{% if personnage.personnageReligion %}
-					{{ personnage.personnageReligion.religion.label }} - {{ personnage.personnageReligion.religionLevel.label }} - <a href="{{ path('forum.topic',{'index': personnage.personnageReligion.religion.topic.id }) }}">Forum</a>
-				{% else %}
-					<a href="{{ path('personnage.religion.add',{'personnage': personnage.id}) }}">Choisir une religion</a>
-				{% endif %}
+					Vous pouvez choisir autant de religions que vous voulez. Attention toutefois, les règles suivantes s'appliquent :
+					<ul>
+						<li>Vous ne pouvez avoir qu'une seule religion au niveau "Fervent"</li>
+						<li>Si vous choisissez une religion au niveau "Fanatique", vous perdez toutes vos autres religions (un Fanatique n'a qu'une seule religion).</li>
+					</ul>
 				</p>
+				{% for personnageReligion in personnage.personnagesReligions %}
+					<p class="list-group-item-text">
+						{{ personnageReligion.religion.label }} - {{ personnageReligion.religionLevel.label }} - <a href="{{ path('forum.topic',{'index': personnageReligion.religion.topic.id }) }}">Forum</a>
+					</p>
+				{% endfor %}
+				<a href="{{ path('personnage.religion.add',{'personnage': personnage.id}) }}">Choisir une nouvelle religion</a>
 			</div>
 			<div class="list-group-item">
 				<h6 class="list-group-item-heading">Origine</h6>

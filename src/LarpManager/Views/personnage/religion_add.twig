@@ -14,7 +14,14 @@
 		<form action="{{ path('personnage.religion.add',{'personnage':personnage.id}) }}" method="POST" {{ form_enctype(form) }}>
 			<fieldset>
 				<legend>{{ personnage.publicName }} - <small>Choix d'une religion</small></legend>
-				<p>Attention ! une fois votre religion choisie, vous ne pourrez plus revenir sur votre choix.</p>
+				<p class="text-warning">Attention ! une fois votre religion choisie, vous ne pourrez plus revenir sur votre choix.</p>
+				<p class="list-group-item-text">
+					Vous pouvez choisir autant de religions que vous voulez. Attention toutefois, les règles suivantes s'appliquent :
+					<ul>
+						<li>Vous ne pouvez avoir qu'une seule religion au niveau "Fervent"</li>
+						<li>Si vous choisissez une religion au niveau "Fanatique", vous perdez toutes vos autres religions (un Fanatique n'a qu'une seule religion).</li>
+					</ul>
+				</p>
 				{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
 	
 				{{ form_row(form.religion) }}

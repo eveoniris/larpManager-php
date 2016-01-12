@@ -241,9 +241,40 @@ class PersonnageController
 	{
 		$personnage = $request->get('personnage');
 		
-		$personnageReligion = new \LarpManager\Entities\PersonnageReligion();		
+		// refuser la demande si le personnage est Fanatique
+		if ( $personnage->isFanatique() )
+		{
+			$app['session']->getFlashBag()->add('error','Désolé, vous êtes un Fanatique, il vous est impossible de choisir une nouvelle religion. Veuillez contacter votre orga en cas de problème.');
+			return $app->redirect($app['url_generator']->generate('homepage'),301);
+		}
+		
+		$personnageReligion = new \LarpManager\Entities\PersonnagesReligions();
+		$personnageReligion->setPersonnage($personnage);
+		
+		// ne proposer que les religions que le personnage ne pratique pas déjà ...
+		$availableReligions = $app['personnage.manager']->getAvailableReligions($personnage);
+		
+		if ( $availableReligions->count() == 0 )
+		{
+			$app['session']->getFlashBag()->add('error','Désolé, il n\'y a plus de religion disponibles ( Sérieusement ? vous êtes éclectique, c\'est bien, mais ... faudrait savoir ce que vous voulez non ? L\'heure n\'est-il pas venu de faire un choix parmi tous ces dieux ?)');
+			return $app->redirect($app['url_generator']->generate('homepage'),301);
+		}
+		
+		// construit le tableau de choix
+		$choices = array();
+		foreach ( $availableReligions as $religion)
+		{
+			$choices[] = $religion;
+		}
 		
 		$form = $app['form.factory']->createBuilder(new PersonnageReligionForm(), $personnageReligion)
+			->add('religion','entity', array(
+					'required' => true,
+					'label' => 'Votre religion',
+					'class' => 'LarpManager\Entities\Religion',
+					'choices' => $availableReligions,
+					'property' => 'label',
+			))
 			->add('save','submit', array('label' => 'Valider votre religion'))
 			->getForm();
 		
@@ -252,7 +283,26 @@ class PersonnageController
 		if ( $form->isValid() )
 		{
 			$personnageReligion = $form->getData();
-			$personnageReligion->setPersonnage($personnage);
+			
+			// supprimer toutes les autres religions si l'utilisateur à choisi fanatique
+			// n'autoriser que un Fervent que si l'utilisateur n'a pas encore Fervent.
+			if ( $personnageReligion->getReligionLevel()->getIndex() == 3 )
+			{
+				$personnagesReligions = $personnage->getPersonnagesReligions();
+				foreach ( $personnagesReligions as $oldReligion)
+				{
+					$app['orm.em']->remove($oldReligion);
+				}
+			}
+			else if ( $personnageReligion->getReligionLevel()->getIndex() == 2 )
+			{
+				if ( $personnage->isFervent() )
+				{
+					$app['session']->getFlashBag()->add('error','Désolé, vous êtes déjà Fervent d\'une autre religion, il vous est impossible de choisir une nouvelle religion en tant que Fervent. Veuillez contacter votre orga en cas de problème.');
+					return $app->redirect($app['url_generator']->generate('homepage'),301);
+				}
+			}
+						
 			$app['orm.em']->persist($personnageReligion);
 			$app['orm.em']->flush();
 				

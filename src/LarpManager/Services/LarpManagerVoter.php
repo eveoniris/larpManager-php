@@ -167,9 +167,9 @@ class LarpManagerVoter implements VoterInterface
 		{
 			if ( $participant->getPersonnage() )
 			{
-				if ( $participant->getPersonnage()->getPersonnageReligion() )
+				foreach ( $participant->getPersonnage()->getPersonnagesReligions() as $personnageReligion )
 				{
-					if ( $participant->getPersonnage()->getPersonnageReligion()->getReligion()->getId() == $culteId )
+					if ( $personnageReligion->getReligion()->getId() == $culteId )
 					{
 						return true;
 					}

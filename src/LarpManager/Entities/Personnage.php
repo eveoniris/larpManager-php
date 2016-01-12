@@ -58,6 +58,38 @@ class Personnage extends BasePersonnage
 	}
 	
 	/**
+	 * Indique si le personnage est un Fanatique
+	 */
+	public function isFanatique()
+	{
+		$personnagesReligions = $this->getPersonnagesReligions();
+		foreach ( $personnagesReligions as $personnageReligion )
+		{
+			if ( $personnageReligion->getReligionLevel()->getIndex() == 3 )
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Indique si le personnage est un Fervent
+	 */
+	public function isFervent()
+	{
+		$personnagesReligions = $this->getPersonnagesReligions();
+		foreach ( $personnagesReligions as $personnageReligion )
+		{
+			if ( $personnageReligion->getReligionLevel()->getIndex() == 2 )
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
 	 * Fourni la liste des groupes secondaires pour lesquel ce personnage est chef
 	 */
 	public function getSecondaryGroupsAsChief()

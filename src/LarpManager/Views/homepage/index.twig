@@ -71,9 +71,12 @@
 								  
 								{% if app.user.personnageSecondaire %}
 									<h6>Personnage secondaire : 
-										<small>{{ app.user.personnageSecondaire.classe.label }}
-											{{ app.user.personnageSecondaire.competences|join(' / ') }}</small>
+										<strong>{{ app.user.personnageSecondaire.classe.label }}</strong>
 									</h6>
+									<p>
+										<small>{{ app.user.personnageSecondaire.competences|join(' / ') }}</small>
+									</p>
+									
 									<p><a href="{{ path('personnageSecondaire.choice') }}">Modifier son personnage secondaire</a></p>
 								{% else %}
 									<p>Vous n'avez pas encore choisi votre personnage secondaire.</p>
