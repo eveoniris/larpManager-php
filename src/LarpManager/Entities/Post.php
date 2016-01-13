@@ -49,6 +49,23 @@ class Post extends BasePost
 	}
 	
 	/**
+	 * Fourni tous les users ayant répondu à ce post (ainsi que l'auteur initial)
+	 */
+	public function getWatchingUsers()
+	{
+		$users = new ArrayCollection();
+		
+		$users[] = $this->getUser();
+		
+		foreach ( $this->getPosts()	as $post)
+		{
+			$users[] = $post->getUser();
+		}
+		
+		return $users;
+	}
+	
+	/**
 	 * Determine si le post est un post racine
 	 */
 	public function isRoot()

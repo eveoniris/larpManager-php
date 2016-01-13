@@ -25,6 +25,7 @@ class UserServiceProvider implements ServiceProviderInterface
 			$mailer->setFromName($app['config']['user']['mailer']['fromEmail']['name'] ?: null);
 			$mailer->setConfirmationTemplate('user/email/confirm-email.twig');
 			$mailer->setResetTemplate('user/email/reset-password.twig');
+			$mailer->setNotificationTemplate('user/email/notification.twig');
 			$mailer->setResetTokenTtl($app['config']['user']['passwordReset']['tokenTTL']);
 			return $mailer;
 		});

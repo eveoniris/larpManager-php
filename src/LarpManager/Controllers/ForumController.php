@@ -207,13 +207,23 @@ class ForumController
 		$form->handleRequest($request);
 		
 		if ( $form->isValid() )
-		{
+		{			
+			// envoie des notifications mails
+			$watchingUsers = $postToResponse->getWatchingUsers();
+			foreach ($watchingUsers as $user)
+			{
+				// TODO envoyer qu'un seul mail par utilisateur
+				// TODO retirer l'auteur de la liste des utilisateurs
+				$app['user.mailer']->sendNotificationMessage($user, $postToResponse);
+			}
+
 			$post = $form->getData();
 			$post->setPost($postToResponse);
 			$post->setUser($app['user']);
 				
 			$app['orm.em']->persist($post);
 			$app['orm.em']->flush();
+			
 				
 			$app['session']->getFlashBag()->add('success', 'Le message a été ajouté.');
 				

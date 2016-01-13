@@ -31,11 +31,13 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use \Swift_Mailer;
 use \Twig_Environment;
 use LarpManager\Entities\User;
+use LarpManager\Entities\Post;
 
 class Mailer
 {
     const ROUTE_CONFIRM_EMAIL = 'user.confirm-email';
     const ROUTE_RESET_PASSWORD = 'user.reset-password';
+    const ROUTE_FORUM_POST = 'forum.post';
 
     /** @var \Swift_Mailer */
     protected $mailer;
@@ -52,6 +54,7 @@ class Mailer
     protected $fromAddress;
     protected $fromName;
     protected $confirmationTemplate;
+    protected $notificationTemplate;
     protected $resetTemplate;
     protected $resetTokenTtl = 86400;
 
@@ -68,6 +71,14 @@ class Mailer
     public function setConfirmationTemplate($confirmationTemplate)
     {
         $this->confirmationTemplate = $confirmationTemplate;
+    }
+    
+    /**
+     * @param string $notificationTemplate
+     */
+    public function setNotificationTemplate($notificationTemplate)
+    {
+    	$this->notificationTemplate = $notificationTemplate;
     }
 
     /**
@@ -154,6 +165,10 @@ class Mailer
         $this->sendMessage($this->confirmationTemplate, $context, $this->getFromEmail(), $user->getEmail());
     }
 
+    /**
+     * Envoi le mail pour mettre à zero son mot de passe
+     * @param User $user
+     */
     public function sendResetMessage(User $user)
     {
         $url = $this->urlGenerator->generate(self::ROUTE_RESET_PASSWORD, array('token' => $user->getConfirmationToken()), true);
@@ -164,6 +179,24 @@ class Mailer
         );
 
         $this->sendMessage($this->resetTemplate, $context, $this->getFromEmail(), $user->getEmail());
+    }
+    
+    /**
+     * Send a notification mail to an user
+     * 
+     * @param User $user
+     * @param Post $post
+     */
+    public function sendNotificationMessage(User $user, Post $post)
+    {
+    	$url = $this->urlGenerator->generate(self::ROUTE_FORUM_POST,array('index'=> $post->getId()), true);
+    	
+    	$context = array(
+    			'user' => $user,
+    			'postUrl' => $url
+    	);
+    	
+    	$this->sendMessage($this->notificationTemplate, $context, $this->getFromEmail(), $user->getEmail());    	
     }
 
     /**
