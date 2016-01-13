@@ -34,8 +34,27 @@ class StatistiqueController
 				'label' => $langue->getLabel(),
 			);
 		}
+		
+		$repo = $app['orm.em']->getRepository('LarpManager\Entities\Classe');
+		$classes = $repo->findAll();
+		$statClasses = array();
 				
+		foreach( $classes as $classe)
+		{
+			$colors = RandomColor::many(2, array(
+					'luminosity' => array('light', 'bright'),
+					'hue' => 'random'
+			));
+			$statClasses[] = array(
+					'value' => $classe->getPersonnages()->count(),
+					'color' => $colors[0],
+					'highlight' => $colors[1],
+					'label' => $classe->getLabel(),
+			);
+		}
 		return $app['twig']->render('admin/statistique/index.twig', array(
-				'langues' => json_encode($stats)));
+				'langues' => json_encode($stats),
+				'classes' => json_encode($statClasses),
+		));
 	}
 }

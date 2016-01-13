@@ -9,15 +9,26 @@
 		<li class="active">Statistique</li>
 	</ol>
 	
-	<div class="panel panel-default">
-		<div class="panel-heading">
-			Langues en fonction de leur utilisation comme langue principale par un territoire
+	<div class="row">
+		<div class="col-sm-6">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					Langues en fonction de leur utilisation comme langue principale par un territoire
+				</div>
+				<div class="panel-body">
+					<canvas id="myChart"></canvas>
+				</div>
+			</div>
 		</div>
-		<div class="panel-body">
-			<p>Plus une langue est utilisée comme langue principale, plus elle prendra d'espace dans ce graphique</p>
-			<p>Ceci est un test, les données présentées ne sont pas forcément intéressantes, mais par la suite on pourra sortir des graphs de ce type
-			pour tout un tas d'informations (notamment pour les ressources, les importations, les exportations, etc ...)</p>
-			<canvas id="myChart"></canvas>
+		<div class="col-sm-6">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					Classes utilisées par les personnages.
+				</div>
+				<div class="panel-body">
+					<canvas id="myChartClasses"></canvas>
+				</div>
+			</div>
 		</div>
 	</div>
 	
@@ -32,6 +43,16 @@
 	
 		var data = {{ langues|raw }};
 		var ctx = document.getElementById("myChart").getContext("2d");
+		var myNewChart = new Chart(ctx).Pie(data, {
+			animation: true,
+			animationSteps: 60,
+			animationEasing: "easeOutQuart",
+			segmentShowStroke : true,
+			segmentStrokeColor : "#fff",
+			});
+
+		var data = {{ classes|raw }};
+		var ctx = document.getElementById("myChartClasses").getContext("2d");
 		var myNewChart = new Chart(ctx).Pie(data, {
 			animation: true,
 			animationSteps: 60,
