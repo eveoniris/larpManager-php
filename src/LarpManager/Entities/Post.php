@@ -53,16 +53,39 @@ class Post extends BasePost
 	 */
 	public function getWatchingUsers()
 	{
-		$users = new ArrayCollection();
-		
-		$users[] = $this->getUser();
-		
-		foreach ( $this->getPosts()	as $post)
+		return $this->getUsers();
+	}
+	
+	/**
+	 * Ajoute un utilisateur dans la liste des utilisateurs qui surveillent le sujet
+	 * Uniquement s'il n'est pas déjà dans la liste.
+	 * @param unknown $user
+	 */
+	public function addWatchingUser($user)
+	{
+		for ($this->getWatchingUsers() as $u)
 		{
-			$users[] = $post->getUser();
+			if ($u == $user) return $this;
 		}
-		
-		return $users;
+			
+		return $this->addUser($user);
+	}
+	
+	/**
+	 * Fourni l'auteur du post
+	 */
+	public function getUser()
+	{
+		return $this->getUserRelatedByUserId();
+	}
+	
+	/**
+	 * Met a jour l'auteur du post
+	 * @param unknown $user
+	 */
+	public function setUser($user)
+	{
+		return $this->setUserRelatedByUserId($user);
 	}
 	
 	/**

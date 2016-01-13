@@ -125,6 +125,7 @@ class ForumController
 			$post = $form->getData();			
 			$post->setTopic($topic);
 			$post->setUser($app['user']);
+			$post->addWatchingUser($app['user']);
 			
 			$app['orm.em']->persist($post);
 			$app['orm.em']->flush();
@@ -212,15 +213,16 @@ class ForumController
 			$watchingUsers = $postToResponse->getWatchingUsers();
 			foreach ($watchingUsers as $user)
 			{
-				// TODO envoyer qu'un seul mail par utilisateur
-				// TODO retirer l'auteur de la liste des utilisateurs
+				if ( $user == $postToResponse->getUser() ) continue;
+				if ( $user == $app['user'] ) continue;
 				$app['user.mailer']->sendNotificationMessage($user, $postToResponse);
 			}
 
 			$post = $form->getData();
 			$post->setPost($postToResponse);
 			$post->setUser($app['user']);
-				
+			$postToResponse->addWatchingUser($app['user']);
+			$app['orm.em']->persist($postToResponse);
 			$app['orm.em']->persist($post);
 			$app['orm.em']->flush();
 			
