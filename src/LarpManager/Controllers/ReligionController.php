@@ -91,15 +91,15 @@ class ReligionController
 			$topic->setUser($app['user']);
 			$topic->setTopic($app['larp.manager']->findTopic('TOPIC_CULTE'));
 			$topic->setRight('CULTE');
+				
+			$app['orm.em']->persist($topic);
+			$app['orm.em']->flush();
 			
+			$religion->setTopic($topic);
 			$app['orm.em']->persist($religion);
 			$app['orm.em']->flush();
 			
 			$topic->setObjectId($religion->getId());
-			$religion->setTopic($topic);
-				
-			$app['orm.em']->persist($topic);
-			$app['orm.em']->persist($religion);
 			$app['orm.em']->flush();
 			
 			$app['session']->getFlashBag()->add('success', 'La religion a été ajoutée.');

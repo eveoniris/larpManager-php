@@ -3,23 +3,34 @@
 	<div class="panel-body">
 		<div class="list-group">
 			<div class="list-group-item">
-				<h6 class="list-group-item-heading">Informations</h6>
-				<p class="list-group-item-text">
-					Surnom : {{ personnage.surnom }}
-				</p>
-				<p class="list-group-item-text">
-					Age : {{ personnage.age }}
-				</p>
-				<p class="list-group-item-text">
-					Genre : {{ personnage.genre }}
-				</p>
-				<p class="list-group-item-text">
-					{% if personnage.intrigue %}
-						Participe aux intrigues
-					{% else %}
-						Ne participe pas aux intrigues
-					{% endif %}
-				</p>
+				<div class="row">
+					<div class="col-lg-6">
+						<h6 class="list-group-item-heading">Informations</h6>
+						<p class="list-group-item-text">
+							Surnom : {{ personnage.surnom }}
+						</p>
+						<p class="list-group-item-text">
+							Age : {{ personnage.age }}
+						</p>
+						<p class="list-group-item-text">
+							Genre : {{ personnage.genre }}
+						</p>
+						<p class="list-group-item-text">
+							{% if personnage.intrigue %}
+								Participe aux intrigues
+							{% else %}
+								Ne participe pas aux intrigues
+							{% endif %}
+						</p>
+					</div>
+					<div class="col-lg-6">
+						{% if personnage.genre == 'Masculin' %}
+							<img width="144" height="200" alt="{{ personnage.classe.labelMasculin }}" src="{{ app.request.basepath }}/img/{{ personnage.classe.imageM }}" />
+						{% else %}
+							<img width="144" height="200" alt="{{ personnage.classe.labelMasculin }}" src="{{ app.request.basepath }}/img/{{ personnage.classe.imageM }}" />
+						{% endif %}
+					</div>
+				</div>
 			</div>
 			<div class="list-group-item">
 				<h6 class="list-group-item-heading">Religions</h6>

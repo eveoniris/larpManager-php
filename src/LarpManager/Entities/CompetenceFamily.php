@@ -209,5 +209,11 @@ class CompetenceFamily extends BaseCompetenceFamily
 		return $this->classeCreations;
 	}
 	
-	
+	/**
+	 * Fourni la description débarassé de sa mise en forme
+	 */
+	public function getDescriptionRaw()
+	{
+		return strip_tags($this->getDescription());
+	}
 }
