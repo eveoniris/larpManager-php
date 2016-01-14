@@ -193,7 +193,8 @@ class Mailer
     	
     	$context = array(
     			'user' => $user,
-    			'postUrl' => $url
+    			'postUrl' => $url,
+    			'post' => $post,
     	);
     	
     	$this->sendMessage($this->notificationTemplate, $context, $this->getFromEmail(), $user->getEmail());    	

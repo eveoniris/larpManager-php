@@ -37,6 +37,51 @@ class Topic extends BaseTopic
 	}
 	
 	/**
+	 * Fourni le dernier post d'un topic
+	 */
+	public function getLastPost($app)
+	{
+		$lastPost = null;
+		
+		foreach ( $this->getPosts() as $post )
+		{
+			if ( $lastPost )
+			{
+				if ( $post->getCreationDate() > $lastPost->getCreationDate() )
+				{
+					$lastPost = $post;
+				}
+			}
+			else
+			{
+				$lastPost = $post;
+			}
+		}
+		
+		foreach ( $this->getTopics() as $topic)
+		{
+			if ( ! $app['security']->isGranted('TOPIC_RIGHT', $topic) )
+				continue;
+			
+			$topicLastPost = $topic->getLastPost($app);
+			
+			if ( $lastPost && $topicLastPost )
+			{
+				if ( $topicLastPost->getCreationDate() > $lastPost->getCreationDate() )
+				{
+					$lastPost = $topicLastPost; 
+				}
+			}
+			else if ( $topicLastPost )
+			{
+				$lastPost = $topicLastPost;
+			}
+		}
+		
+		return $lastPost;
+	}
+	
+	/**
 	 * Fourni la liste de tous les ancêtres d'un topic
 	 * @param unknown $array
 	 */

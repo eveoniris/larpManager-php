@@ -35,7 +35,7 @@
 					<div class="col-xs-3 col-md-3">
 						{# dernier message #}
 						
-						{% set lastPost = topic.posts|last %}
+						{% set lastPost = topic.lastPost(app) %}
 						{% if lastPost %}
 							Dernier message :
 							<a href="{{ path('forum.post',{'index':lastPost.id}) }}">
