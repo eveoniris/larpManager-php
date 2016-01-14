@@ -151,7 +151,13 @@ class PersonnageManager
 			$availableCompetences->add($competence);		
 		}
 		
-		return $availableCompetences;
+		// trie des competences disponibles
+		$iterator = $availableCompetences->getIterator();
+		$iterator->uasort(function ($a, $b) {
+			return ($a->getLabel() < $b->getLabel()) ? -1 : 1;
+		});
+		
+		return  new ArrayCollection(iterator_to_array($iterator));
 	}
 	
 	/**
