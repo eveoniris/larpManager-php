@@ -99,8 +99,14 @@ class LarpManagerManager
 				$rootCompetences->add($competence);
 			}
 		}
-	
-		return $rootCompetences;
+		
+		// trie des competences disponibles
+		$iterator = $rootCompetences->getIterator();
+		$iterator->uasort(function ($a, $b) {
+			return ($a->getLabel() < $b->getLabel()) ? -1 : 1;
+		});
+		
+		return  new ArrayCollection(iterator_to_array($iterator));
 	}
 	
 	/**
