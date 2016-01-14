@@ -63,12 +63,21 @@ class Post extends BasePost
 	 */
 	public function addWatchingUser($user)
 	{
-		for ($this->getWatchingUsers() as $u)
+		foreach ($this->getWatchingUsers() as $u)
 		{
 			if ($u == $user) return $this;
 		}
 			
 		return $this->addUser($user);
+	}
+	
+	/**
+	 * Retire un utilisateur de la liste des utilisateurs qui surveillent le sujet
+	 * @param unknown $user
+	 */
+	public function removeWatchingUser($user)
+	{
+		return $this->removeUser($user);
 	}
 	
 	/**

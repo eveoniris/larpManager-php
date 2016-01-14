@@ -273,7 +273,7 @@ class LarpManagerVoter implements VoterInterface
 	 */
 	protected function isHisPost($user, $postId)
 	{
-		foreach( $user->getPosts() as $post)
+		foreach( $user->getPostRelatedByUserIds() as $post)
 		{
 			if ( $post instanceOf \LarpManager\Entities\Post
 				&& $post->getId() == $postId)

@@ -47,6 +47,18 @@ class User extends BaseUser implements AdvancedUserInterface, \Serializable
 	}
 	
 	/**
+	 * Vérifie si un post est surveillé par l'utilisateur
+	 */
+	public function isInWatchingList($post)
+	{
+		foreach ($this->getPosts() as $p)
+		{
+			if ( $post == $p ) return true;
+		}
+		return false;
+	}
+	
+	/**
 	 * Trouve les informations de participation d'un utilisateur à un groupe
 	 * @param Groupe $groupe
 	 */

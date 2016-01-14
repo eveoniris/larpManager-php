@@ -53,6 +53,17 @@ body {
   border: none; /* get rid of the border */
 }
 
+ul.forum 
+{
+ background-color:#fff;
+ color: #000;
+}
+
+ul.forum li
+{
+  background-color:#fff;
+  border-color: #aaa;
+}
 
 #footer {
   position: absolute;

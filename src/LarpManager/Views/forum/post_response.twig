@@ -24,12 +24,12 @@
 						</div>
 						{% for post in postToResponse.posts|reverse %}
 						<div class="list-group-item">
-							<p class="list-group-item-text">{{ post.text|markdown }}</p>
+							<p class="list-group-item-text"><strong>{{ post.user.username }}</strong>{{ post.text|markdown }}</p>
 						</div>	
 						{% endfor %}
 						
 						<div class="list-group-item">
-							<p class="list-group-item-text">{{ postToResponse.text|markdown }}</p>
+							<p class="list-group-item-text"><strong>{{ postToResponse.user.username }}</strong>{{ postToResponse.text|markdown }}</p>
 						</div>	
 					</div>
 				</div>

@@ -10,7 +10,7 @@
 			{# le formulaire pour saisir son message #}
 			<div class="col-xs-12 col-md-8">
 				{{ include("forum/fragment/post_form.twig",{
-					'legend': 'Ajout d\'un message',
+					'legend': 'Modification d\'un message',
 					'action': path('forum.post.update', {'index': post.id}), 
 					'form' : form}) }}
 			</div>

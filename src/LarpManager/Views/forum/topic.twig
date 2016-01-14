@@ -4,60 +4,62 @@
 
 {% block content %}
 
-<div class="container-fluid">
-	<div class="row">
-		<div class="col-xs-12 col-md-12">
+<ol class="breadcrumb">
+	<li><a href="{{ path('homepage') }}">Accueil</a></li>
+	<li><a href="{{ path('forum')  }}">Forum</a></li>
+	{% for ancestor in topic.ancestor %}
+		<li><a href="{{ path('forum.topic',{'index':ancestor.id})  }}">{{ ancestor.title }}</a></li>
+	{% endfor %}
+	<li class="active">{{ topic.title }}</li>
+</ol>
+			
+<div class="well well-sm">
+	<h6>{{ topic.title }}</h6>
+	{{ topic.description|markdown }}
+</div>
 
-		
-			<ol class="breadcrumb">
-				<li><a href="{{ path('homepage') }}">Accueil</a></li>
-				<li><a href="{{ path('forum')  }}">Forum</a></li>
-				{% for ancestor in topic.ancestor %}
-					<li><a href="{{ path('forum.topic',{'index':ancestor.id})  }}">{{ ancestor.title }}</a></li>
-				{% endfor %}
-				<li class="active">{{ topic.title }}</li>
-			</ol>
-			
-			<div class="well well-sm">
-				<h6>{{ topic.title }}</h6>
-				{{ topic.description|markdown }}
+<div class="panel panel-default">
+	<div class="panel-heading">
+		{% if is_granted('ROLE_MODERATOR', app.user) %}
+			<div class="pull-right">
+					<a 	title="Ajouter un nouveau sous-forum"
+						data-toggle="tooltip" 
+						data-placement="left" 
+						class="btn btn-primary" 
+						href="{{ path('forum.topic.add',{'index': topic.id}) }}">
+						<i class="fa fa-plus"></i>
+					</a>
 			</div>
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					{% if is_granted('ROLE_MODERATOR', app.user) %}
-						<div class="pull-right">
-								<a class="btn btn-primary" href="{{ path('forum.topic.add',{'index': topic.id}) }}">Ajouter un nouveau sous-forum</a>
-						</div>
-					{% endif %}
-					<h5>
-						Catégories
-					</h5>
-				</div>
-				<div class="panel-body">
-					
-					{# liste des topics #}
-					{{ include("forum/fragment/topic_list.twig", {'topics' : topic.topics}) }}
-				</div>
-			</div>
-			
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<div class="pull-right">
-						<small><a class="btn btn-primary" href="{{ path('forum.post.add', {'index':topic.id}) }}">Ajouter un nouveau sujet</a></small>
-					</div>
-					<h5>
-						Sujets de la catégorie : {{ topic.title }}
-					<h5>
-				</div>
-				<div class="panel-body">
-				
-					{# liste des posts #}
-					{{ include("forum/fragment/post_list.twig", {'posts' : topic.posts}) }}
-				</div>
-			</div>
-		</div>
+		{% endif %}
+		<h5>
+			Catégories
+		</h5>
 	</div>
-
+			
+	{# liste des topics #}
+	{{ include("forum/fragment/topic_list.twig", {'topics' : topic.topics}) }}
+	
+</div>
+			
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<div class="pull-right">
+			<a 	title="Ajouter un nouveau sujet"
+				data-toggle="tooltip" 
+				data-placement="left" 
+				class="btn btn-primary" 
+				href="{{ path('forum.post.add', {'index':topic.id}) }}">
+				<i class="fa fa-plus"></i>
+			</a>
+		</div>
+		<h5>
+			Sujets de la catégorie : {{ topic.title }}
+		<h5>
+	</div>
+		
+	{# liste des posts #}
+	{{ include("forum/fragment/post_list.twig", {'posts' : topic.posts}) }}
+	
 </div>
 	
 {% endblock %}

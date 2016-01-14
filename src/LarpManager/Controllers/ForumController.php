@@ -277,6 +277,48 @@ class ForumController
 	}
 	
 	/**
+	 * Active les notifications sur un post
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function postNotificationOnAction(Request $request, Application $app)
+	{
+		$postId = $request->get('index');
+		
+		$post = $app['orm.em']->getRepository('\LarpManager\Entities\Post')
+			->find($postId);
+		
+		$post->addWatchingUser($app['user']);
+		
+		$app['orm.em']->persist($post);
+		$app['orm.em']->flush();
+		
+		$app['session']->getFlashBag()->add('success', 'Les notifications sont maintenant activées.');
+		return $app->redirect($app['url_generator']->generate('forum.post',array('index'=> $post->getId())),301);
+	}
+	
+	/**
+	 * Desactive les notifications sur un post
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function postNotificationOffAction(Request $request, Application $app)
+	{
+		$postId = $request->get('index');
+	
+		$post = $app['orm.em']->getRepository('\LarpManager\Entities\Post')
+			->find($postId);
+	
+		$post->removeWatchingUser($app['user']);
+	
+		$app['orm.em']->persist($post);
+		$app['orm.em']->flush();
+	
+		$app['session']->getFlashBag()->add('success', 'Les notifications sont maintenant desactivées.');
+		return $app->redirect($app['url_generator']->generate('forum.post',array('index'=> $post->getId())),301);
+	}
+	
+	/**
 	 * Supprimer un post
 	 * 
 	 * @param Request $request

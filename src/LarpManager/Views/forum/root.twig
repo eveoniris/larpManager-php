@@ -4,32 +4,36 @@
 
 {% block content %}
 
-<div class="container-fluid">
-	<div class="row">
-		<div class="col-xs-12 col-md-12">
-		
-			<ol class="breadcrumb">
-				<li><a href="{{ path('homepage') }}">Accueil</a></li>
-				<li class="active">Forum</li>
-			</ol>
-			<div class="panel">
-				<div class="panel-heading">
-					<h5>
-						{% if is_granted('ROLE_MODERATOR', app.user) %}
-							<div class="pull-right">
-								<a class="btn btn-default" href="{{ path('forum.add') }}">Ajouter un nouveau forum</a>
-							</div>
-						{% endif %}
-						Forum
-					</h5>
-				</div>
-				<div class="panel-body">
-					{# liste des topics #}
-					{{ include("forum/fragment/topic_list.twig", {'topics' : topics}) }}
-				</div>
+
+<ol class="breadcrumb">
+	<li><a href="{{ path('homepage') }}">Accueil</a></li>
+	<li class="active">Forum</li>
+</ol>
+
+<div class="panel">
+	<div class="panel-heading">
+		{% if is_granted('ROLE_MODERATOR', app.user) %}
+			<div class="pull-right">
+				<a 	title="Ajouter un nouveau forum" 
+					data-toggle="tooltip" 
+					data-placement="left" 
+					class="btn btn-primary" 
+					href="{{ path('forum.add') }}">
+					<i class="fa fa-plus"></i>
+				</a>
 			</div>
-		</div>
+		{% endif %}
+		<h5>
+			Forum
+		</h5>
 	</div>
+	
+	{# liste des topics #}
+	{{ include("forum/fragment/topic_list.twig", {'topics' : topics}) }}
+	
 </div>
+
+
+
 	
 {% endblock %}

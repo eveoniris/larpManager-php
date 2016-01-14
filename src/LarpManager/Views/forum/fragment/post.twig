@@ -5,26 +5,69 @@
 		</h4>
 	</div>
 	
-	<div class="panel-body">
-		<ul class="list-group">
-			<li class="list-group-item">
-			
-				<div class="row">
-					<div class="col-xs-8 col-md-8">
-						<p>
-							<a href="{{ path('user.view',{'id': post.user.id}) }}">{{ post.user.username }}</a>&nbsp;:
-						</p>
-						{% if post.creationDate != post.updateDate %}
-							<p>Mis à jour {{ post.updateDate|time_diff() }}</p>
+	<ul class="list-group forum">
+		<li class="list-group-item">	
+			<div class="row">
+				<div class="col-xs-3 col-md-3">
+				{# auteur #}
+					<div>
+						{% if is_granted('ROLE_MODERATOR', app.user) %}
+							<a href="{{ path('user.view',{'id': post.user.id}) }}">{{ post.user.username }}</a>
+						{% else %}
+							{{ post.user.username }}
 						{% endif %}
-						<p class="list-group-item-text">{{ post.text|markdown }}</p>
 					</div>
 					
+					<div>
+						{% if post.user.hasRole('ROLE_ADMIN') %}
+							Admin
+						{% elseif post.user.hasRole('ROLE_SCENARISTE') %}
+							Scénariste
+						{% elseif post.user.hasRole('ROLE_ORGA') %}
+							Orga
+						{% elseif post.user.hasRole('ROLE_USER') %}
+							Joueur
+						{% endif %}
+					</div>
+						
+					{% if post.user.personnage %}
+					{% set perso = p.user.personnage %}
+						<div>{{ perso.nom }}, {{ perso.surnom }}</div>
+						<div>{{ perso.groupe.nom }}</div>
+						<div>
+							{% if perso.genre.label == 'Masculin' %}
+								{{ perso.classe.labelMasculin }}
+							{% else %}
+								{{ perso.classe.labelFeminin }}
+							{% endif %}
+						</div>
+					{% endif %}
+				</div>
+				<div class="col-xs-5 col-md-5">
+					
+					
+					{# metadata #}
+					{% if post.creationDate != post.updateDate %}
+						<p>Mis à jour {{ post.updateDate|time_diff() }}</p>
+					{% endif %}
+					
+					{# texte #}
+					<p class="list-group-item-text">{{ post.text|markdown }}</p>
+				</div>
+					
 					<div class="col-xs-4 col-md-4">
-						<div class="pull-right">							 
-							{% if is_granted('POST_OWNER', post.id) %}<a href="{{ path('forum.post.update',{'index':post.id}) }}">Editer</a>{% endif %} 
-							{% if is_granted('ROLE_MODERATOR', app.user) %}<a href="">Modérer</a>{% endif %} 
-							{% if is_granted('ROLE_MODERATOR', app.user) %}<a href="">Supprimer</a>{% endif %}
+						<div class="pull-right">
+													 
+							{% if is_granted('POST_OWNER', post.id) %}
+								<a 	title="Editer"
+									data-toggle="tooltip" 
+									data-placement="left" 
+									class="btn btn-primary" 
+									href="{{ path('forum.post.update',{'index':post.id}) }}">
+									<i class="fa fa-pencil"></i>
+								</a>
+							{% endif %}
+							 
 							<br />
 							<p>
 								Créé {{ post.creationDate|time_diff() }}
@@ -44,10 +87,45 @@
 			{% for p in post.posts %}
 			<li class="list-group-item"  id="post_{{ p.id }}">
 				<div class="row">
-					<div class="col-xs-8 col-md-8">
-						<p>
-							<a href="{{ path('user.view',{'id': p.user.id}) }}">{{ p.user.username }}</a>&nbsp;:
-						</p>
+					<div class="col-xs-3 col-md-3">
+						<div style="background-color:#eee;padding-left:5px;">
+							{# auteur #}
+							<div>
+								{% if is_granted('ROLE_MODERATOR', app.user) %}
+									<a href="{{ path('user.view',{'id': p.user.id}) }}">{{ p.user.username }}</a>
+								{% else %}
+									{{ p.user.username }}
+								{% endif %}
+							</div>
+	
+							<div>
+								{% if p.user.hasRole('ROLE_ADMIN') %}
+									Admin
+								{% elseif p.user.hasRole('ROLE_SCENARISTE') %}
+									Scénariste
+								{% elseif p.user.hasRole('ROLE_ORGA') %}
+									Orga
+								{% elseif p.user.hasRole('ROLE_USER') %}
+									Joueur
+								{% endif %}
+							</div>
+								
+							{% if p.user.personnage %}
+							{% set perso = p.user.personnage %}
+								<div>{{ perso.nom }}, {{ perso.surnom }}</div>
+								<div>{{ perso.groupe.nom }}</div>
+								<div>
+									{% if perso.genre.label == 'Masculin' %}
+										{{ perso.classe.labelMasculin }}
+									{% else %}
+										{{ perso.classe.labelFeminin }}
+									{% endif %}
+								</div>
+							{% endif %}
+						</div>
+						
+					</div>
+					<div class="col-xs-5 col-md-5">
 						{% if not p.creationDate == p.updateDate %}
 							<p>Mis à jour le {{ p.updateDate|time_diff() }}</p>
 						{% endif %}
@@ -55,9 +133,17 @@
 					</div>
 					
 					<div class="col-xs-4 col-md-4">
-						<div class="pull-right"> 
-							{% if is_granted('POST_OWNER', p.id) %}<a href="{{ path('forum.post.update',{'index':p.id}) }}">Editer</a>{% endif %} 
-							{% if is_granted('ROLE_MODERATOR', app.user) %}<a href="">Modérer</a> {% endif %} 
+						<div class="pull-right">
+							{% if is_granted('POST_OWNER', p.id) %}
+								<a 	title="Editer"
+									data-toggle="tooltip" 
+									data-placement="left" 
+									class="btn btn-primary" 
+									href="{{ path('forum.post.update',{'index':p.id}) }}">
+									<i class="fa fa-pencil"></i>
+								</a>
+							{% endif %}
+							
 							{% if is_granted('ROLE_MODERATOR', app.user) %}<a href="{{ path('forum.post.delete', {'index': post.id}) }}" href="">Supprimer</a>{% endif %}
 							<br />
 							<p>
@@ -74,16 +160,39 @@
 			</li>
 			{%  endfor %}
 		</ul>
-	</div>
+	
 	<div class="panel-footer">
+		
 		<div class="btn-group">
-			<a class="btn btn-primary" href="{{ path('forum.post.response',{'index':post.id}) }}">Repondre</a>
-			<a class="btn btn-default">S'abonner</a>
-			<a class="btn btn-default">Favori</a>
-			<a class="btn btn-default">Epinglé</a>
-			<a class="btn btn-default">Vérrouiller</a>			
-			{% if is_granted('ROLE_MODERATOR', app.user) %}<a class="btn btn-warning">Modérer le sujet</a>{% endif %}
+			<a	title="Repondre"
+				data-toggle="tooltip" 
+				data-placement="top" 
+				class="btn btn-primary" 
+				href="{{ path('forum.post.response',{'index':post.id}) }}">
+				<i class="fa fa-reply"></i>
+			</a>
+			{# si l'utilisateur fait partit des watchingUser, lui proposer de ne plus surveiller le sujet #}
+			{# sinon, lui proposer de suivre le sujet #}
+			{% if not app.user.isInWatchingList(post) %}
+				<a 	data-toggle="tooltip" 
+					data-placement="top" 
+					title="Activer les notifications mails" 
+					class="btn btn-default"
+					href="{{ path('forum.post.notification.on',{'index':post.id}) }}">
+					<i class="fa fa-envelope"></i>
+				</a>	
+			{% else %}
+				<a 	data-toggle="tooltip" 
+					data-placement="top" 
+					title="Désactiver les notifications mails" 
+					class="btn btn-default"
+					href="{{ path('forum.post.notification.off',{'index':post.id}) }}">
+					<i class="fa fa-envelope-o"></i>
+				</a>
+			{% endif %}
+
 			{% if is_granted('ROLE_MODERATOR', app.user) %}<a href="{{ path('forum.post.delete', {'index': post.id}) }}" class="btn btn-danger">Supprimer le sujet</a>{% endif %}
 		</div>
+	
 	</div>
 </div>

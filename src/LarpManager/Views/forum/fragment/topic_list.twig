@@ -1,4 +1,4 @@
-<ul class="list-group">
+<ul class="list-group forum">
 	{%  for topic in topics %}
 		{% if is_granted('TOPIC_RIGHT',topic) %}
 			<li class="list-group-item">
@@ -19,7 +19,12 @@
 						</p>
 						
 						{% if is_granted('ROLE_ORGA', app.user) %}
-							<a href="{{ path('forum.topic.update',{'index':topic.id}) }}">Modifier</a>
+							<a 	title="Modifier le topic {{ topic.title }}"
+								data-toggle="tooltip" 
+								data-placement="right"
+								href="{{ path('forum.topic.update',{'index':topic.id}) }}">
+								<i class="fa fa-pencil"></i>
+							</a>
 						{% endif %}
 						
 					</div>
