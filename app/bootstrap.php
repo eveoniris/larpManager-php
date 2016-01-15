@@ -213,6 +213,7 @@ else
 	$app->mount('/competenceFamily', new LarpManager\CompetenceFamilyControllerProvider());
 	$app->mount('/level', new LarpManager\LevelControllerProvider());
 	$app->mount('/classe', new LarpManager\ClasseControllerProvider());
+	$app->mount('/chronologie', new LarpManager\ChronologieControllerProvider());
 	$app->mount('/ressource', new LarpManager\RessourceControllerProvider());
 	$app->mount('/religion', new LarpManager\ReligionControllerProvider());
 	$app->mount('/personnage', new LarpManager\PersonnageControllerProvider());
@@ -250,6 +251,7 @@ else
 		array('^/groupeSecondaire/.*$', 'ROLE_USER'),
 		array('^/competence/.*$', 'ROLE_USER'),
 		array('^/classe/.*$', 'ROLE_USER'),
+		array('^/chronologie/.*$', 'ROLE_USER'),
 		array('^/gn/.*$', 'ROLE_USER'),
 		array('^/personnage/.*$', 'ROLE_USER'),
 		array('^/personnageSecondaire/.*$', 'ROLE_USER'),

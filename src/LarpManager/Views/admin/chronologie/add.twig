@@ -1,7 +1,25 @@
 {% extends "layout.twig" %}
 
 {% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path('background.list') }}">Liste des background</a></li>
+		<li class="active">Ajout d'un background</li>
+	</ol>
 	
+	<div class="well bs-component">
+		<form action="{{ path('chronologie.admin.add') }}" method="POST" {{ form_enctype(form) }}  novalidate>
+			<fieldset>
+				<legend>Ajout d'un événement</legend>
+				{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+	
+				{{ form(form) }}
+			</fieldset>
+		</form>
+	</div>
+	
+	{#
 	<form action="{{ path('chrono_add') }}" method="POST">
 		<div>
 			<label for="paysId">Pays</label>
@@ -17,5 +35,5 @@
 		</div>
 		<input type="submit" value="Enregistrer" />
 	</form>
-	
+	#}
 {% endblock %}
