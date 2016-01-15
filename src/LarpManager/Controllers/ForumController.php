@@ -209,15 +209,6 @@ class ForumController
 		
 		if ( $form->isValid() )
 		{			
-			// envoie des notifications mails
-			$watchingUsers = $postToResponse->getWatchingUsers();
-			foreach ($watchingUsers as $user)
-			{
-				if ( $user == $postToResponse->getUser() ) continue;
-				if ( $user == $app['user'] ) continue;
-				$app['user.mailer']->sendNotificationMessage($user, $postToResponse);
-			}
-
 			$post = $form->getData();
 			$post->setPost($postToResponse);
 			$post->setUser($app['user']);
@@ -225,7 +216,15 @@ class ForumController
 			$app['orm.em']->persist($postToResponse);
 			$app['orm.em']->persist($post);
 			$app['orm.em']->flush();
-			
+
+			// envoie des notifications mails
+			$watchingUsers = $postToResponse->getWatchingUsers();
+			foreach ($watchingUsers as $user)
+			{
+				if ( $user == $postToResponse->getUser() ) continue;
+				if ( $user == $app['user'] ) continue;
+				$app['user.mailer']->sendNotificationMessage($user, $post);
+			}
 				
 			$app['session']->getFlashBag()->add('success', 'Le message a été ajouté.');
 				
