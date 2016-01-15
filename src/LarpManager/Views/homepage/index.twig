@@ -3,127 +3,250 @@
 {% block title %}Accueil{% endblock title %}
 
 {% block content %}
-	   		
-	<div class="row">
-	
-		<div class="col-xs-12 col-md-6">
-		
-			<div class="well well-sm">
-				<h4>
-					Bienvenue {{ app.user.name }}
-				</h4>
-			</div>
-						
-			{% if not app.user.etatCivil  
-				or app.user.groupes|length == 0 
-				or app.user.personnages|length == 0 %}
-				<div class="well well-sm">
-					<h6>Liste des choses importantes à faire :</h6>
-					<ol>
-					{% if not app.user.etatCivil %}
-						<li>Enregistrer mon état-civil</li>
-					{% endif %}
-									
-					{% if app.user.groupes|length == 0 %}
-						<li>S'inscrire dans un groupe</li>
-					{% endif %}
-					
-					{% if app.user.personnages|length == 0 %}
-						<li>Créer mon personnage</li>
-					{% endif %}
-					</ol>
-				</div>
-			{% endif %}
-		
-			{# enregistrement de l'état-civil #}
-			{% if not app.user.etatCivil %}
-				<div class="panel panel-success">
-					<div class="panel-heading">{% trans %}record_player_title{% endtrans %}</div>
-					<div class="panel-body">
-						<p>{% trans %}record_player_explain{% endtrans %}</p>
-						<a class="btn btn-default" href="{{ path('user.information.add', {'id': app.user.id}) }}">{% trans %}record_player_link{% endtrans %}</a>
-					</div>
-				</div>
-			{% else %}
-			
-				{% if app.user.groupes|length == 0 %}
-					{# inscription dans un groupe #}
-					<div class="panel panel-success">
-						<div class="panel-heading">{% trans %}subscribe_group_title{% endtrans %}</div>
-						<div class="panel-body">
-							<p>{% trans %}subscribe_group_explain{% endtrans %}</p>
-							{{ include("homepage/fragment/form_groupe.twig",{'form': form_groupe,'action': path('homepage.inscription')}) }}
-						</div>
-					</div>
-				{% else %}
-					{# detail du personnage #}
-					{% if app.user.personnage %}
-						{{ include("homepage/fragment/personnage.twig",{'personnage':app.user.personnage}) }}
-						
-						
-						<div class="panel panel-info">
-							<div class="panel-heading">Personnage secondaire</div>
-							<div class="panel-body">
-								<p>Le personnage secondaire est un archétype que vous pouvez utiliser dans le cas 
-								ou <strong>votre personnage principal viendrait à trépasser</strong> (ce que nous ne souhaitons pas, mais l'Hyborée
-								 est un monde violent dans lequel les pires choses sont possibles) ou <strong>si vous souhaitez l'utiliser
-								  dans une instance à la place de l'autre</strong> (plus utile, ou toute autre raison)</p>
-								  
-								{% if app.user.personnageSecondaire %}
-									<h6>Personnage secondaire : 
-										<strong>{{ app.user.personnageSecondaire.classe.label }}</strong>
-									</h6>
-									<p>
-										<small>{{ app.user.personnageSecondaire.competences|join(' / ') }}</small>
-									</p>
-									
-									<p><a href="{{ path('personnageSecondaire.choice') }}">Modifier son personnage secondaire</a></p>
-								{% else %}
-									<p>Vous n'avez pas encore choisi votre personnage secondaire.</p>
-									<p><a href="{{ path('personnageSecondaire.choice') }}">Choisir son personnage secondaire</a></p>
-								{% endif %}
 
-							</div>
-						</div>
-					{% endif %}
-						
-					{# Détail des groupes#}
-					{% for groupe in app.user.groupes %}
-						{{ include("homepage/fragment/groupe.twig",{'groupe':groupe}) }}
-					{% endfor %}
-						
-				{% endif %}
-			{% endif %}
-		</div>
+	<div style="background-color: #000000;">
+		<ul class="nav nav-tabs" role="tablist">
+			<li role="news" class="active">
+				<a href="#news" aria-controls="news" role="tab" data-toggle="tab">
+					<i class="fa fa-newspaper-o"></i>
+					Infos
+				</a>
+			</li>
+			<li role="groupe">
+				<a href="#groupe" aria-controls="groupe" role="tab" data-toggle="tab">
+					<i class="fa fa-users"></i>
+					Groupe
+				</a>
+			</li>
+			<li role="personnage">
+				<a href="#personnage" aria-controls="personnage" role="tab" data-toggle="tab">
+					<i class="fa fa-user"></i>
+					Personnage
+				</a>
+			</li>
+			<li role="personnageSecondaire">
+				<a href="#personnageSecondaire" aria-controls="personnageSecondaire" role="tab" data-toggle="tab">
+					<i class="fa fa-user-plus"></i>
+					Personnage Secondaire
+				</a>
+			</li>
+			<li role="evenement">
+				<a href="#evenement" aria-controls="evenement" role="tab" data-toggle="tab">
+					<i class="fa fa-calendar"></i>
+					Evenements
+				</a>
+			</li>
+			<li role="forum">
+				<a href="#forum" aria-controls="forum" role="tab" data-toggle="tab">
+					<i class="fa fa-comments"></i>
+					Discuter
+				</a>
+			</li>
+		</ul>
 		
-		<div class="col-xs-12 col-md-6">
+		<div class="tab-content">
 		
-			{# affichage de l'annonce la plus récente et du lien vers les archives des annonces #}
-			{% for annonce in annonces %}
-				<div class="panel panel-primary">
-					<div class="panel-heading">
-						{{ annonce.title }}
-					</div>
-					<div class="panel-body">
-						{{ annonce.text|markdown }}
-					</div>
-				</div>
-			{% endfor %}
-		
-			{# afficher la liste des gns dans lequel le joueur est inscrit #}
-			{% if app.user.gns|length > 0 %}
+			<div role="tabpanel" class="tab-pane fade in active" id="news">
 				<div class="panel panel-default">
-					<div class="panel-heading">{% trans %}gn_list_title{% endtrans %}</div>
+					<div class="panel-heading">
+						Bienvenue {{ app.user.name }}
+					</div>
 					<div class="panel-body">
-						<div class="list-group">
-						{% for gn in app.user.gns %}
-							<a class="list-group-item" href="{{ path('gn.detail', {'index': gn.id}) }}">{{ gn.label }}</a>
+						{# Liste des choses à faire #}
+						{% if not app.user.etatCivil  
+							or app.user.groupes|length == 0 
+							or app.user.personnages|length == 0 %}
+							<div class="well well-sm">
+								<h6>Liste des choses importantes à faire :</h6>
+								<ol>
+								{% if not app.user.etatCivil %}
+									<li>Enregistrer mon état-civil</li>
+								{% endif %}
+												
+								{% if app.user.groupes|length == 0 %}
+									<li>S'inscrire dans un groupe</li>
+								{% endif %}
+								
+								{% if app.user.personnages|length == 0 %}
+									<li>Créer mon personnage</li>
+								{% endif %}
+								</ol>
+							</div>
+						{% endif %}
+						
+						{# enregistrement de l'état-civil #}
+						{% if not app.user.etatCivil %}
+							<div class="panel panel-success">
+								<div class="panel-heading">{% trans %}record_player_title{% endtrans %}</div>
+								<div class="panel-body">
+									<p>{% trans %}record_player_explain{% endtrans %}</p>
+									<a class="btn btn-default" href="{{ path('user.information.add', {'id': app.user.id}) }}">{% trans %}record_player_link{% endtrans %}</a>
+								</div>
+							</div>
+						{% endif %}
+						
+						{# affichage de l'annonce la plus récente et du lien vers les archives des annonces #}
+						{% for annonce in annonces %}
+							<div class="header">
+								<h5>{{ annonce.title }}</h5>
+							</div>
+							{{ annonce.text|markdown }}
+							<br/>
 						{% endfor %}
-						</div>
 					</div>
 				</div>
-			{% endif %}
-		</div>
-	</div>		
+			</div>
+			
+			<div role="tabpanel" class="tab-pane fade" id="groupe">
+				<div class="panel panel-default">
+					<div class="panel-body">
+						{% if app.user.groupes|length == 0 %}
+							<div class="header">
+								<h5>{% trans %}subscribe_group_title{% endtrans %}</h5>
+							</div>
+								
+							<p>{% trans %}subscribe_group_explain{% endtrans %}</p>
+							
+							{{ include("homepage/fragment/form_groupe.twig",{'form': form_groupe,'action': path('homepage.inscription')}) }}
+						{% else %}
+							{# Détail des groupes#}
+							{% for groupe in app.user.groupes %}
+								{{ include("homepage/fragment/groupe.twig",{'groupe':groupe}) }}
+							{% endfor %}
+						{% endif %}
+					</div>
+				</div>
+			</div>
+			
+			<div role="tabpanel" class="tab-pane fade" id="personnage">
+				<div class="panel panel-default">
+					<div class="panel-body">
+						{% if app.user.personnage %}
+							{{ include("homepage/fragment/personnage.twig",{'personnage':app.user.personnage}) }}
+						{% else %}
+							Vous n'avez pas encore de personnage. Rejoignez un groupe pour y créer un personnage.
+							
+							{% for groupe in app.user.groupes %}
+								{% if not groupe.getPersonnage(app.user) %}
+									<a class="btn btn default" href="{{ path('groupe.personnage.add', {'index': groupe.id}) }}">Créer votre personnage</a>
+								{% endif %}
+							{% endfor %}
+						{% endif %}
+					</div>
+				</div>
+			</div>
+			
+			<div role="tabpanel" class="tab-pane fade" id="personnageSecondaire">				
+				<div class="panel panel-default">
+					<div class="panel-body">
+						<blockquote>
+							<p>Le personnage secondaire est un archétype que vous pouvez utiliser dans le cas 
+							ou <strong>votre personnage principal viendrait à trépasser</strong> (ce que nous ne souhaitons pas, mais l'Hyborée
+							 est un monde violent dans lequel les pires choses sont possibles) ou <strong>si vous souhaitez l'utiliser
+							  dans une instance à la place de l'autre</strong> (plus utile, ou toute autre raison)</p>
+						 </blockquote>
+						  
+						{% if app.user.personnageSecondaire %}
+							<h6>Personnage secondaire : 
+								<strong>{{ app.user.personnageSecondaire.classe.label }}</strong>
+							</h6>
+							<p>
+								<small>{{ app.user.personnageSecondaire.competences|join(' / ') }}</small>
+							</p>
+							
+							<p><a href="{{ path('personnageSecondaire.choice') }}">Modifier son personnage secondaire</a></p>
+						{% else %}
+							<p>Vous n'avez pas encore choisi votre personnage secondaire.</p>
+							<p>
+								<a class="btn btn-default" href="{{ path('personnageSecondaire.choice') }}">
+									Choisir son personnage secondaire
+								</a>
+							</p>
+						{% endif %}
+
+					</div>
+				</div>
+			</div>
+			
+			<div role="tabpanel" class="tab-pane fade" id="evenement">
+				{# afficher la liste des gns dans lequel le joueur est inscrit #}
+				{% if app.user.gns|length > 0 %}
+					<div class="panel panel-default">
+						<div class="panel-body">
+							<h6>{% trans %}gn_list_title{% endtrans %}</h6>
+							<ul class="list-group">
+								{% for gn in app.user.gns %}
+									<a class="list-group-item" href="{{ path('gn.detail', {'index': gn.id}) }}">{{ gn.label }}</a>
+								{% endfor %}
+							</ul>
+						</div>
+					</div>
+				{% endif %}
+			</div>
+			
+			<div role="tabpanel" class="tab-pane fade" id="forum">
+				<div class="panel panel-default">
+					<div class="panel-body">
+						<blockquote>Vous trouverez les liens vers les différents forums que vous pouvez utiliser ci-dessous.</blockquote>
+						
+						<div class="header"><h5>Forums</h5></div>
+						<ul class="list-group">
+							<li class="list-group-item">
+								<a href="{{ path('forum') }}">
+									<i class="fa fa-comment"></i>
+									Forum
+								</a>
+							</li>
+							{% if app.user.groupes|length > 0 %}
+								{% for groupe in app.user.groupes %}
+									{% if groupe.topic %}
+										<li class="list-group-item">
+											<a href="{{ path('forum.topic', {'index': groupe.topic.id}) }}">
+												<i class="fa fa-comment"></i>
+												Forum du groupe "{{ groupe.nom }}"
+											</a>
+										</li>
+									{% endif %}
+								{% endfor %}
+							{% endif %}
+							{% if app.user.personnage %}
+								{% if app.user.personnage.territoire %}
+									{% if app.user.personnage.territoire.topic %}
+										<li class="list-group-item">
+											<a href="{{ path('forum.topic', {'index': app.user.personnage.territoire.topic.id}) }}">
+												<i class="fa fa-comment"></i>
+												Forum du territoire "{{ app.user.personnage.territoire.nom }}"
+											</a>
+										</li>
+									{% endif %}
+								{% endif %}
+								{% for personnageReligion in app.user.personnage.personnagesReligions %}
+									<li class="list-group-item">
+										<a href="{{ path('forum.topic',{'index': personnageReligion.religion.topic.id }) }}">
+											<i class="fa fa-comment"></i>							
+											Forum de la religion "{{ personnageReligion.religion.label }}"
+										</a>
+									</li>
+								{% endfor %}
+							{% endif %}
+						</ul>
+						
+						<div class="header"><h5>Mails</h5></div>
+						
+						{% if app.user.groupes|length > 0 %}
+							{% for groupe in app.user.groupes %}
+								<ul class="list-group">
+									{% if groupe.scenariste %}<li class="list-group-item"><strong>Votre scénariste est </strong>{{ groupe.scenariste.username }} / {{ groupe.scenariste.email }}</li> {% endif %}
+									{% if groupe.responsable %}<li class="list-group-item"><strong>Votre responsable de groupe est </strong>{{ groupe.responsable.username }} / {{ groupe.responsable.email }}</li>{% endif %}
+								</ul>
+							{% endfor %}
+						{% endif %}
+					</div>
+				</div>					
+			</div>
+
+		</div> {# fin tab-content #}
+		
+	</div>
 	
 {% endblock content %}

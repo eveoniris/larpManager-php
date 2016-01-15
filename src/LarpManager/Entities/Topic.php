@@ -45,16 +45,18 @@ class Topic extends BaseTopic
 		
 		foreach ( $this->getPosts() as $post )
 		{
+			$postChecked = $post->getLastPost();
+			
 			if ( $lastPost )
 			{
-				if ( $post->getCreationDate() > $lastPost->getCreationDate() )
+				if ( $postChecked->getCreationDate() > $lastPost->getCreationDate() )
 				{
-					$lastPost = $post;
+					$lastPost = $postChecked;
 				}
 			}
 			else
 			{
-				$lastPost = $post;
+				$lastPost = $postChecked->getLastPost();
 			}
 		}
 		

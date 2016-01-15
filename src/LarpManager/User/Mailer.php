@@ -189,7 +189,7 @@ class Mailer
      */
     public function sendNotificationMessage(User $user, Post $post)
     {
-    	$url = $this->urlGenerator->generate(self::ROUTE_FORUM_POST,array('index'=> $post->getId()), true);
+    	$url = $this->urlGenerator->generate(self::ROUTE_FORUM_POST,array('index'=> $post->getAncestor()->getId()), true);
     	
     	$context = array(
     			'user' => $user,

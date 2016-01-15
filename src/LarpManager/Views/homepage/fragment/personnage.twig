@@ -1,102 +1,175 @@
-<div class="panel panel-success">
-	<div class="panel-heading">{{ personnage.publicName }} - <small>{{ personnage.classeName }}</small></div>
-	<div class="panel-body">
-		<div class="list-group">
-			<div class="list-group-item">
-				<div class="row">
-					<div class="col-lg-6">
-						<h6 class="list-group-item-heading">Informations</h6>
-						<p class="list-group-item-text">
-							Surnom : {{ personnage.surnom }}
-						</p>
-						<p class="list-group-item-text">
-							Age : {{ personnage.age }}
-						</p>
-						<p class="list-group-item-text">
-							Genre : {{ personnage.genre }}
-						</p>
-						<p class="list-group-item-text">
-							{% if personnage.intrigue %}
-								Participe aux intrigues
-							{% else %}
-								Ne participe pas aux intrigues
-							{% endif %}
-						</p>
-					</div>
-					<div class="col-lg-6">
-						{% if personnage.genre == 'Masculin' %}
-							<img width="144" height="200" alt="{{ personnage.classe.labelMasculin }}" src="{{ app.request.basepath }}/img/{{ personnage.classe.imageM }}" />
+		{# informations générales #}
+		<div class="header">
+			<h5>Informations</h5>
+		</div>
+		
+		<div class="row">
+			<div class="col-sm-6">
+				<ul class="list-group">
+					<li class="list-group-item">
+						<strong>Nom :</strong> {{ personnage.nom }}
+					</li>
+					<li class="list-group-item">
+						<strong>Surnom :</strong> {{ personnage.surnom }}
+					</li>
+					<li class="list-group-item">
+						<strong>Classe :</strong> {{ personnage.classeName }}
+					</li>
+					<li class="list-group-item">
+						<strong>Age :</strong> {{ personnage.age }}
+					</li>
+					<li class="list-group-item">
+						<strong>Genre :</strong> {{ personnage.genre }}
+					</li>
+					<li class="list-group-item">
+						{% if personnage.intrigue %}
+							Participe aux intrigues
 						{% else %}
-							<img width="144" height="200" alt="{{ personnage.classe.labelMasculin }}" src="{{ app.request.basepath }}/img/{{ personnage.classe.imageM }}" />
+							Ne participe pas aux intrigues
 						{% endif %}
-					</div>
+					</li>
+				</ul>
+			</div>
+			
+			{# Illustration de la classe #}
+			<div class="col-sm-6">
+				<div class="pull-right">
+					{% if personnage.genre == 'Masculin' %}
+						<img width="144" height="200" alt="{{ personnage.classe.labelMasculin }}" src="{{ app.request.basepath }}/img/{{ personnage.classe.imageM }}" />
+					{% else %}
+						<img width="144" height="200" alt="{{ personnage.classe.labelMasculin }}" src="{{ app.request.basepath }}/img/{{ personnage.classe.imageM }}" />
+					{% endif %}
 				</div>
 			</div>
-			<div class="list-group-item">
-				<h6 class="list-group-item-heading">Religions</h6>
-				<p class="list-group-item-text">
-					Vous pouvez choisir autant de religions que vous voulez. Attention toutefois, les règles suivantes s'appliquent :
-					<ul>
-						<li>Vous ne pouvez avoir qu'une seule religion au niveau "Fervent"</li>
-						<li>Si vous choisissez une religion au niveau "Fanatique", vous perdez toutes vos autres religions (un Fanatique n'a qu'une seule religion).</li>
-					</ul>
-				</p>
-				{% for personnageReligion in personnage.personnagesReligions %}
-					<p class="list-group-item-text">
-						{{ personnageReligion.religion.label }} - {{ personnageReligion.religionLevel.label }} - <a href="{{ path('forum.topic',{'index': personnageReligion.religion.topic.id }) }}">Forum</a>
-					</p>
-				{% endfor %}
-				<a href="{{ path('personnage.religion.add',{'personnage': personnage.id}) }}">Choisir une nouvelle religion</a>
+		</div>
+		
+		{# Religion #}
+		<div class="header">
+			<h5>Religion</h5>
+		</div>
+		
+		<div class="row">
+			<div class="col-sm-6">
+				Vous pouvez choisir autant de religions que vous voulez. Attention toutefois, les règles suivantes s'appliquent :
+				<ul>
+					<li>Vous ne pouvez avoir qu'une seule religion au niveau "Fervent"</li>
+					<li>Si vous choisissez une religion au niveau "Fanatique", vous perdez toutes vos autres religions (un Fanatique n'a qu'une seule religion).</li>
+				</ul>			
 			</div>
-			<div class="list-group-item">
-				<h6 class="list-group-item-heading">Origine</h6>
-				
-				{% if personnage.territoire %}
-					<p class="list-group-item-text">{{ personnage.territoire.nom }}</p>
-				{% else %}
-					<p class="list-group-item-text">
-						<a href="{{ path('personnage.origin.add',{'personnage': personnage.id}) }}">Choisir une origine</a>
-					</p>
-				{% endif %}
-			</div>
-			<div class="list-group-item">
-				<h6 class="list-group-item-heading">Compétences <small>({{ personnage.xp|default(0) }} xp)</small></h6>
-				{% for competence in personnage.competences %}
-				<p class="list-group-item-text">
-					{{ competence.competenceFamily.label }}&nbsp({{ competence.level.label }}) : {{ competence.description|markdown }}
-				</p>
-				{% endfor %}
-				<p class="list-group-item-text">
-					<a href="{{ path('personnage.competence.add', {'personnage': personnage.id}) }}">Acheter une nouvelle compétence</a>
-				</p>
-			</div>
-			<div class="list-group-item">
-				<h6 class="list-group-item-heading">Historique</h6>		
-				{% for historique in personnage.experienceGains %}
-					<p class="list-group-item-text">{{ historique.operationDate|date("Y-m-d h:i:s") }} : + {{ historique.xpGain }} xp {% if historique.explanation %} pour la raison suivante : "{{ historique.explanation }}"{% endif %}.</p>
-				{% endfor %}
-				{% for historique in personnage.experienceUsages %}
-					<p class="list-group-item-text">{{ historique.operationDate|date("Y-m-d h:i:s") }} : - {{ historique.xpUse }} xp pour acquérir {{ historique.competence.label }}.</p>
-				{% endfor %}
-			</div>
-			<div class="list-group-item">
-				<h6 class="list-group-item-heading">Groupes secondaires</h6>
-				{% for groupeSecondaire in personnage.secondaryGroups %}
-					<a href="{{ path('groupeSecondaire.detail', {'index':groupeSecondaire.id}) }}">{{ groupeSecondaire.label }}</a>
-				{% endfor %}
-				{% if personnage.postulants|length > 0 %}
-					{% for postulant in personnage.postulants %}
-						<p class="list-group-item-text">Votre candidature au groupe {{ postulant.secondaryGroup.label }} est en attente de validation.</p>
+			<div class="col-sm-6">
+				<ul class="list-group">
+					{% for personnageReligion in personnage.personnagesReligions %}
+						<li class="list-group-item">
+							{{ personnageReligion.religion.label }} - {{ personnageReligion.religionLevel.label }} - <a href="{{ path('forum.topic',{'index': personnageReligion.religion.topic.id }) }}">Forum</a>
+						</li>
 					{% endfor %}
-				{% endif %}
-				<p class="list-group-item-text"><a href="{{ path('groupeSecondaire.list') }}">Liste des groupes secondaires</a></p>
-				
-			</div>
-			<div class="list-group-item">
-				<h6>Téléchargement</h6>
-				<a href="{{ path('personnage.export', {'personnage':personnage.id}) }}">Télécharger le pdf</a>
-				
+					<li class="list-group-item">
+						<a class="btn btn-default" href="{{ path('personnage.religion.add',{'personnage': personnage.id}) }}">
+							<i class="fa fa-plus"></i>
+							Choisir une nouvelle religion
+						</a>
+					</li>
+				</ul>
 			</div>
 		</div>
-	</div>
-</div>
+		
+		{# Origine #}
+		<div class="header">
+			<h5>Origine</h5>
+		</div>
+		
+		<div class="row">
+			<div class="col-sm-6">
+				{% if personnage.territoire %}
+					<p><strong>{{ personnage.territoire.nom }}</strong></p>
+				{% else %}
+					<p>
+						<a class="btn btn-default" href="{{ path('personnage.origin.add',{'personnage': personnage.id}) }}">Choisir une origine</a>
+					</p>
+				{% endif %}
+			</div>
+			<div class="col-sm-6">
+				{{ personnage.territoire.description|markdown }}
+			</div>
+		</div>
+		
+		
+		{# Compétences #}
+		<div class="header">
+			<h5>Compétences</h5>
+		</div>
+		
+		<div class="row">
+			<div class="col-sm-6">
+				<h6>Compétences <small>({{ personnage.xp|default(0) }} xp)</small></h6>
+				
+				<ul class="list-group">
+					
+					{% for competence in personnage.competences %}
+						<li class="list-group-item">
+							<strong>{{ competence.competenceFamily.label }}</strong>&nbsp({{ competence.level.label }}) : {{ competence.description|markdown }}
+						</li>
+					{% endfor %}
+					<li class="list-group-item">
+						<a class="btn btn-default" href="{{ path('personnage.competence.add', {'personnage': personnage.id}) }}">
+							<i class="fa fa-plus"></i>
+							Acheter une nouvelle compétence
+						</a>
+					</li>
+				</ul>
+			</div>
+			
+			<div class="col-sm-6">
+				<h6>Historique</h6>
+				<ul class="list-group">		
+				{% for historique in personnage.experienceGains %}
+					<li class="list-group-item">{{ historique.operationDate|date("Y-m-d h:i:s") }} : + {{ historique.xpGain }} xp {% if historique.explanation %} pour la raison suivante : "{{ historique.explanation }}"{% endif %}.</li>
+				{% endfor %}
+				{% for historique in personnage.experienceUsages %}
+					<li class="list-group-item">{{ historique.operationDate|date("Y-m-d h:i:s") }} : - {{ historique.xpUse }} xp pour acquérir {{ historique.competence.label }}.</li>
+				{% endfor %}
+			</div>
+		</div>
+			
+		{# Groupes secondaires #}
+		<div class="header">
+			<h5>Groupes secondaires</h5>
+		</div>
+		
+		<div class="row">
+			<div class="col-sm-6">
+				<ul class="list-group">
+						
+					{% for groupeSecondaire in personnage.secondaryGroups %}
+						<li class="list-group-item">
+							<a href="{{ path('groupeSecondaire.detail', {'index':groupeSecondaire.id}) }}">{{ groupeSecondaire.label }}</a>
+						</li>
+					{% endfor %}
+					<li class="list-group-item">
+						<a class="btn btn-default" href="{{ path('groupeSecondaire.list') }}">
+							<i class="fa fa-list"></i>
+							Liste des groupes secondaires
+						</a>
+					</li>
+				</ul>
+			</div>
+		
+			<div class="col-sm-6">
+				{% if personnage.postulants|length > 0 %}
+					<ul class="list-group">
+						{% for postulant in personnage.postulants %}
+							<li class="list-group-item">Votre candidature au groupe {{ postulant.secondaryGroup.label }} est en attente de validation.</li>
+						{% endfor %}
+					</ul>
+				{% endif %}
+			</div>
+		</div>
+
+		{# Autre 
+		<div class="header">
+			<h5>Autre</h5>
+		</div>
+		
+		<h6>Téléchargement</h6>
+		<a class="btn btn-default" href="{{ path('personnage.export', {'personnage':personnage.id}) }}">Télécharger le pdf</a>
+		#}	

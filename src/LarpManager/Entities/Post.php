@@ -49,6 +49,19 @@ class Post extends BasePost
 	}
 	
 	/**
+	 * Fourni la dernière réponse (ou à défaut lui-même)
+	 */
+	public function getLastPost()
+	{
+		if ( $this->getPosts()->count() > 0 )
+		{
+			return $this->getPosts()->last();
+		}
+		
+		return $this;	
+	}
+	
+	/**
 	 * Fourni tous les users ayant répondu à ce post (ainsi que l'auteur initial)
 	 */
 	public function getWatchingUsers()

@@ -1,45 +1,37 @@
 {# detail du groupe #}
 
-<div class="panel panel-default">
-	<div class="panel-heading">{{ groupe.nom }}</div>
-	<div class="panel-body">
-		<div class="list-group">
-		
-			<div class="list-group-item">
-				<h6 class="list-group-item-heading">Composition</h6>
-				
-				{% if groupe.responsable %}
-				<p class="list-group-item-text"><strong>Responsable : </strong>{{ groupe.responsable.username }} / {{ groupe.responsable.email }}</p>
-				{% endif %}
-				
-				{% if groupe.scenariste %}
-				<p class="list-group-item-text"><strong>Scénariste : </strong>{{ groupe.scenariste.username }} / {{ groupe.scenariste.email }}</p>
-				{% endif %}
-				
-				<p class="list-group-item-text"><strong>Membre du groupe</strong>
-					<ul>
-					{% for participant in  groupe.participants %}
-						<li>{{ participant.user.username }} / {{ participant.user.email }}</li>
-					{% endfor %}
-					</ul>
-				</p>
-			</div>
-			
-			<div class="list-group-item">
-				<h6 class="list-group-item-heading">Liens</h6>
-				
-				{% if groupe.territoire %}
-					<p class="list-group-item-text"><a href="{{ path('territoire.detail', {'index': groupe.territoire.id}) }}">{{ groupe.territoire.nom }}</a></p>
-				{% endif %}
-				
-				{% if groupe.topic %}
-					<p class="list-group-item-text"><a href="{{ path('forum.topic', {'index': groupe.topic.id}) }}">Forum</a></p>
-				{% endif %}
-											
-				{% if not groupe.getPersonnage(app.user) %}
-					<p class="list-group-item-text"><a href="{{ path('groupe.personnage.add', {'index': groupe.id}) }}">Créer votre personnage</a></p>
-				{% endif %}
-			</div>
-		</div>
-	</div>
+<h4>{{ groupe.nom }}</h4>
+
+<div class="header">
+	<h5>Composition</h5>
 </div>
+
+<ul class="list-group">
+	{% if groupe.responsable %}
+		<li class="list-group-item"><strong>Responsable : </strong>{{ groupe.responsable.username }} / {{ groupe.responsable.email }}</li>
+	{% endif %}
+	{% if groupe.scenariste %}
+		<li class="list-group-item"><strong>Scénariste : </strong>{{ groupe.scenariste.username }} / {{ groupe.scenariste.email }}</li>
+	{% endif %}
+	{% for participant in  groupe.participants %}
+		<li class="list-group-item">{{ participant.user.username }} / {{ participant.user.email }}</li>
+	{% endfor %}
+</ul>
+
+<br />
+
+<div class="header">
+	<h5>Territoire</h5>
+</div>
+	
+{% if groupe.territoire %}
+	<h6>{{ groupe.territoire.nom }}</h6>
+	{{ groupe.territoire.description|markdown }}
+{% else %}
+	Votre groupe n'est pas lié à un territoire.
+{% endif %}
+				
+
+
+
+

@@ -13,7 +13,9 @@
 		{% for competence in competences %}
 			<div class="col-sm-4 col-md-4">
 				<div class="panel panel-default fixed-height">
-					<div class="panel-heading">{{ competence.competenceFamily.label }}</div>
+					<div class="header">
+						<h5>{{ competence.competenceFamily.label }}</h5>
+					</div>
 					<div class="panel-body">
 		      			<blockquote>
 		      				<p>{{ competence.competenceFamily.description|markdown }}</p>
