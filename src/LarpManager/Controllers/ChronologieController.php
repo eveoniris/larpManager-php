@@ -31,6 +31,18 @@ class ChronologieController
 	{
 		$chronologie = new \LarpManager\Entities\Chronologie();
 		
+		// Un territoire peut avoir été passé en paramètre
+		$territoireId = $request->get('territoire');
+		
+		if ( $territoireId )
+		{
+			$territoire = $app['orm.em']->find('\LarpManager\Entities\Territoire', $territoireId);
+			if ( $territoire )
+			{
+				$chronologie->setTerritoire($territoire);
+			}
+		}
+		
 		$form = $app['form.factory']->createBuilder(new ChronologieForm(), $chronologie)
 			->add('visibilite','choice', array(
 					'required' => true,
