@@ -9,16 +9,17 @@
 	
 	<div class="panel panel-default">
 		<div class="panel-body">
-			<a class="btn btn-primary pull-right" href="{{ path('chronologie.admin.add') }}">Ajouter une chronologie</a>
+			<a class="btn btn-primary pull-right" href="{{ path('chronologie.admin.add') }}">Ajouter un événement</a>
 		
 		
 			<table class="table table-striped table-bordered table-condensed table-hover">
-				<caption>Liste des chronologies</caption>
+				<caption>Liste des événements</caption>
 				<thead>
 					<tr>
 						<th>ID</th>
 						<th>Pays</th>
 						<th>Date</th>
+						<th>Visibilité</th>
 						<th>Description</th>
 						<th/>
 						<th/>
@@ -29,10 +30,25 @@
 						<tr>
 							<td>{{ chrono.id }}</td>
 							<td>{{ chrono.territoire.nom }}</td>
-							<td>{{ chrono.date|date('Y-m-d') }}</td>
-							<td>{{ chrono.description }}</td>
-							<td><a href="{{ path('chronologie.admin.update', {index: chrono.id}) }}">Modifier</a></td>
-							<td><a href="{{ path('chronologie.admin.remove', {index: chrono.id}) }}">Supprimer</a></td>
+							<td>{{ chrono.year }} {{ chrono.month }} {{ chrono.day }}</td>
+							<td>{{ chrono.visibilite }}</td>
+							<td>{{ chrono.description|markdown }}</td>
+							<td>
+								<a 	class="btn btn-default"
+									title="Modifier" 
+									data-toggle="tooltip" data-placement="top"
+									href="{{ path('chronologie.admin.update', {index: chrono.id}) }}">
+									<i class="fa fa-pencil"></i>
+								</a>
+							</td>
+							<td>
+								<a 	class="btn btn-danger"
+									title="Supprimer" 
+									data-toggle="tooltip" data-placement="top"
+									href="{{ path('chronologie.admin.remove', {index: chrono.id}) }}">
+									<i class="fa fa-times"></i>
+								</a>
+							</td>
 						</tr>
 					{% endfor %}
 				</tbody>

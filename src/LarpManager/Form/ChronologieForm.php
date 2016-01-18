@@ -35,9 +35,20 @@ class ChronologieForm extends AbstractType
 					'label' => 'Description',
 					'attr' => array('rows' => 9),
 			))
-			->add('date','datetime', array(
+			->add('year','integer', array(
 					'required' => true,
-					'label' => 'Date',
+					'label' => 'Année',
+					
+			))
+			->add('month','integer', array(
+					'required' => false,
+					'label' => 'Mois (falcultatif)',
+					
+			))
+			->add('day','integer', array(
+					'required' => false,
+					'label' => 'Jour (falcultatif)',
+					
 			));
 				
 	}

@@ -14,7 +14,7 @@ use LarpManager\Entities\BaseChronologie;
 /**
  * LarpManager\Entities\Chronologie
  *
- * @Entity()
+ * @Entity(repositoryClass="LarpManager\Repository\ChronologieRepository")
  */
 class Chronologie extends BaseChronologie
 {

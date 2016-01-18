@@ -80,6 +80,17 @@ class LarpManagerManager
 		return $visibility;
 	}
 	
+	public function getChronologieVisibility()
+	{
+		$visibility = array(
+			'PRIVATE' => 'Seul les scénaristes peuvent voir ceci',
+			'PUBLIC' => 'Tous les joueurs peuvent voir ceci',
+			'GROUPE_MEMBER' => 'Seul les membres d\'un groupe lié à ce territoire peuvent voir ceci',
+		);
+		
+		return $visibility;
+	}
+	
 	/**
 	 * Fourni la liste des compétences de premier niveau
 	 * @return Collection $competences

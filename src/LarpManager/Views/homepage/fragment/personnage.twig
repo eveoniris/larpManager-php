@@ -89,7 +89,9 @@
 				{% endif %}
 			</div>
 			<div class="col-sm-6">
-				{{ personnage.territoire.description|markdown }}
+				{% if personnage.territoire %}
+					{{ personnage.territoire.description|markdown }}
+				{% endif %}
 			</div>
 		</div>
 		

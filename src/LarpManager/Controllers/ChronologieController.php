@@ -5,6 +5,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Silex\Application;
 
 use LarpManager\Form\ChronologieForm;
+use LarpManager\Form\ChronologieRemoveForm;
 
 /**
  * LarpManager\Controllers\ChronologieController
@@ -31,6 +32,11 @@ class ChronologieController
 		$chronologie = new \LarpManager\Entities\Chronologie();
 		
 		$form = $app['form.factory']->createBuilder(new ChronologieForm(), $chronologie)
+			->add('visibilite','choice', array(
+					'required' => true,
+					'label' =>  'Visibilité',
+					'choices' => $app['larp.manager']->getChronologieVisibility(),
+			))
 			->add('save','submit', array('label' => 'Sauvegarder'))
 			->getForm();
 		
@@ -58,36 +64,39 @@ class ChronologieController
 	public function updateAction(Request $request, Application $app)
 	{
 		$id = $request->get('index');
-		$chrono = $app['orm.em']->find('\LarpManager\Entities\Chronologie',$id);
-		if(!$chrono)
+		
+		$chronologie = $app['orm.em']->find('\LarpManager\Entities\Chronologie',$id);
+		if ( !$chronologie )
 		{
-			return $app->redirect($app['url_generator']->generate('chrono_list'));
+			return $app->redirect($app['url_generator']->generate('chronologie'));
 		}
 		
-		if ( $request->getMethod() === 'POST' )
+		$form = $app['form.factory']->createBuilder(new ChronologieForm(), $chronologie)
+			->add('visibilite','choice', array(
+					'required' => true,
+					'label' =>  'Visibilité',
+					'choices' => $app['larp.manager']->getChronologieVisibility(),
+			))
+			->add('save','submit', array('label' => 'Sauvegarder'))
+			->getForm();
+		
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
 		{
-			$date = $request->get('date');
-			$paysId = $request->get('paysId');
-			$description = $request->get('description');
-			
-			$chrono->setDate(new \DateTime($date));
-			$pays = $app['orm.em']->find('\LarpManager\Entities\Pays',$paysId);
-			if(!$pays)
-			{
-				return $app->redirect($app['url_generator']->generate('chrono_list'));
-			}
+			$chronologie = $form->getData();
 				
-			$chrono->setPays($pays);
-			$chrono->setDescription($description);
-			
+			$app['orm.em']->persist($chronologie);
 			$app['orm.em']->flush();
-	
-			return $app->redirect($app['url_generator']->generate('chrono_list'));
+				
+			$app['session']->getFlashBag()->add('success', 'L\'événement a été mis à jour.');
+			return $app->redirect($app['url_generator']->generate('chronologie'));
 		}
-		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Pays');
-		$pays = $repo->findAll();
-		$chrono->getPays();
-		return $app['twig']->render('admin/chronologie/update.twig', array('chronologie' => $chrono, 'pays' => $pays));
+		
+		return $app['twig']->render('admin/chronologie/update.twig', array(
+				'form' => $form->createView(),
+				'chronologie' => $chronologie
+		));
 	}
 	
 	/**
@@ -97,22 +106,33 @@ class ChronologieController
 	{
 		$id = $request->get('index');
 
-		$chrono = $app['orm.em']->find('\LarpManager\Entities\Chronologie',$id);
-
-		if ( $chrono )
+		$chronologie = $app['orm.em']->find('\LarpManager\Entities\Chronologie',$id);
+		if ( !$chronologie )
 		{
-			if ( $request->getMethod() === 'POST' )
-			{
-				$app['orm.em']->remove($chrono);
-				$app['orm.em']->flush();
-				return $app->redirect($app['url_generator']->generate('chrono_list'));
-			}
-			$chrono->getPays();
-			return $app['twig']->render('chronologie/remove.twig', array('chronologie' => $chrono));
+			return $app->redirect($app['url_generator']->generate('chronologie'));
 		}
-		else
+		
+		$form = $app['form.factory']->createBuilder(new ChronologieRemoveForm(), $chronologie)
+			->add('save','submit', array('label' => 'Supprimer'))
+			->getForm();
+		
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
 		{
-			return $app->redirect($app['url_generator']->generate('chrono_list'));
+			$chronologie = $form->getData();
+			
+			$app['orm.em']->remove($chronologie);
+			$app['orm.em']->flush();
+			
+			$app['session']->getFlashBag()->add('success', 'L\'événement a été supprimé.');
+			return $app->redirect($app['url_generator']->generate('chronologie'));
 		}
+		
+		return $app['twig']->render('admin/chronologie/remove.twig', array(
+				'chronologie' => $chronologie,
+				'form' => $form->createView(),
+		));
+		
 	}
 }
