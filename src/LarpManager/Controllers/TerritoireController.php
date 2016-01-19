@@ -2,9 +2,9 @@
 namespace LarpManager\Controllers;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Silex\Application;
 use LarpManager\Form\TerritoireForm;
-
 
 /**
  * LarpManager\Controllers\TerritoireController
@@ -14,6 +14,100 @@ use LarpManager\Form\TerritoireForm;
  */
 class TerritoireController
 {
+	
+	/**
+	 * Retourne tous les événements lié à un territoire
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function eventListAction(Request $request, Application $app)
+	{
+		$territoire = $request->get('territoire');		
+		return new JsonResponse($territoire->getChronologies());
+	}
+	
+	/**
+	 * Ajoute un événement à un territoire
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function eventAddAction(Request $request, Application $app)
+	{
+		$territoire = $request->get('territoire');
+		
+		$payload = json_decode($request->getContent());
+		$event  = new \LarpManager\Entities\Chronologie();
+		
+		$event->setTerritoire($territoire);
+		$event->setYear($payload->year);
+		$event->setMonth($payload->month);
+		$event->setDay($payload->day);
+		$event->setDescription($payload->description);
+		$event->setVisibilite($payload->visibilite);
+		
+		$app['orm.em']->persist($event);
+		$app['orm.em']->flush();
+		
+		return new JsonResponse($event);
+	}
+	
+	/**
+	 * Récupére le détail d'un evenmeent particulier
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function eventDetailAction(Request $request, Application $app)
+	{
+		$territoire = $request->get('territoire');
+		$event = $request->get('event');
+		
+		return new JsonResponse($event);
+	}
+	
+	/**
+	 * Met à jour un événement
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function eventUpdateAction(Request $request, Application $app)
+	{
+		$territoire = $request->get('territoire');
+		$event = $request->get('event');
+		
+		$payload = json_decode($request->getContent());
+		
+		$event->setTerritoire($territoire);
+		$event->setYear($payload->year);
+		$event->setMonth($payload->month);
+		$event->setDay($payload->day);
+		$event->setDescription($payload->description);
+		$event->setVisibilite($payload->visibilite);
+		
+		$app['orm.em']->persist($event);
+		$app['orm.em']->flush();
+		
+		return new JsonResponse($event);
+	}
+	
+	/**
+	 * Supprime un événement
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function eventDeleteAction(Request $request, Application $app)
+	{
+		$territoire = $request->get('territoire');
+		$event = $request->get('event');
+		
+		$app['orm.em']->remove($event);
+		$app['orm.em']->flush();
+		return '';
+	}
+	
+	
 	/**
 	 * Liste des territoires
 	 * 
@@ -41,13 +135,20 @@ class TerritoireController
 		$territoire = $app['orm.em']->find('\LarpManager\Entities\Territoire',$id);
 		
 		if ( $app['security.authorization_checker']->isGranted('ROLE_SCENARISTE') )
-		{
-			return $app['twig']->render('territoire/detail.twig', array('territoire' => $territoire));
+		{		
+			return $app['twig']->render('territoire/detail.twig', array(
+					'territoire' => $territoire
+			));
 		}
 		else
 		{
 			return $app['twig']->render('territoire/detail_joueur.twig', array('territoire' => $territoire));
 		}
+	}
+	
+	public function addEvent(Request $request, Application $app)
+	{
+		
 	}
 	
 	/**

@@ -1,0 +1,92 @@
+<?php
+
+namespace LarpManager;
+
+use Symfony\Component\HttpFoundation\Request;
+use Silex\Application;
+use Silex\ControllerProviderInterface;
+
+/**
+ * LarpManager\ApiControllerProvider
+ * 
+ * @author kevin
+ *
+ */
+class ApiControllerProvider implements ControllerProviderInterface
+{
+	/**
+	 * Routes :
+	 * 	- api.territoire.event.list
+	 * 	- api.territoire.event.add
+	 * 	- api.territoire.event.update
+	 * 	- api.territoire.event.remove
+	 * 	- api.territoire.event.detail
+	 *
+	 * @param Application $app
+	 * @return Controllers $controllers
+	 */
+	public function connect(Application $app)
+	{
+		// creates a new controller based on the default route
+		$controllers = $app['controllers_factory'];
+		
+		/**
+		 * Vérifie que l'utilisateur dispose du role ORGA
+		 */
+		$mustBeOrga = function(Request $request) use ($app) {
+			if (!$app['security.authorization_checker']->isGranted('ROLE_ORGA')) {
+				throw new AccessDeniedException();
+			}
+		};
+		
+		// Récupére tous les événements
+		$controllers->match('/territoire/{territoire}/event','LarpManager\Controllers\TerritoireController::eventListAction')
+			->bind("api.territoire.event.list")
+			->assert('territoire', '\d+')
+			->convert('territoire', 'converter.territoire:convert')
+			->method('GET')
+			->before($mustBeOrga);
+		
+		// Ajoute un nouvel événement
+			$controllers->match('/territoire/{territoire}/event','LarpManager\Controllers\TerritoireController::eventAddAction')
+			->bind("api.territoire.event.add")
+			->assert('territoire', '\d+')
+			->convert('territoire', 'converter.territoire:convert')
+			->method('POST')
+			->before($mustBeOrga);
+		
+		// Récupére un événement en particulier
+		$controllers->match('/territoire/{territoire}/event/{event}','LarpManager\Controllers\TerritoireController::eventDetailAction')
+			->bind("api.territoire.event.detail")
+			->assert('territoire', '\d+')
+			->assert('event', '\d+')
+			->convert('territoire', 'converter.territoire:convert')
+			->convert('event', 'converter.event:convert')
+			->method('GET')
+			->before($mustBeOrga);
+		
+		// Supprime un événement
+		$controllers->match('/territoire/{territoire}/event/{event}','LarpManager\Controllers\TerritoireController::eventDeleteAction')
+			->bind("api.territoire.event.delete")
+			->assert('territoire', '\d+')
+			->assert('event', '\d+')
+			->convert('territoire', 'converter.territoire:convert')
+			->convert('event', 'converter.event:convert')
+			->method('DELETE')
+			->before($mustBeOrga);
+		
+		// Modifie un événement
+		$controllers->match('/territoire/{territoire}/event/{event}','LarpManager\Controllers\TerritoireController::eventUpdateAction')
+			->bind("api.territoire.event.update")
+			->assert('territoire', '\d+')
+			->assert('event', '\d+')
+			->convert('territoire', 'converter.territoire:convert')
+			->convert('event', 'converter.event:convert')
+			->method('POST')
+			->before($mustBeOrga);		
+		
+		return $controllers;
+		
+		
+	}
+}

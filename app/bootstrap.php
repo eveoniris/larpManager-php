@@ -226,6 +226,7 @@ else
 	$app->mount('/statistique', new LarpManager\StatistiqueControllerProvider());
 	$app->mount('/background', new LarpManager\BackgroundControllerProvider());
 	$app->mount('/pnj', new LarpManager\PnjControllerProvider());
+	$app->mount('/api', new LarpManager\ApiControllerProvider());
 		
 
 	/**
@@ -262,6 +263,7 @@ else
 		array('^/background/.*$', 'ROLE_SCENARISTE'),
 		array('^/annonce/.*$', 'ROLE_ADMIN'),
 		array('^/droit/.*$', 'ROLE_ADMIN'),
+		array('^/api/.*$', 'ROLE_SCENARISTE'),
 		array('^/age/.*$', 'ROLE_REGLE'),
 		array('^/genre/.*$', 'ROLE_REGLE'),
 		array('^/appelation/.*$', 'ROLE_SCENARISTE'),

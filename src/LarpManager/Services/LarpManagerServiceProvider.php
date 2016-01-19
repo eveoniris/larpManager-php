@@ -61,7 +61,17 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 			return new PersonnageConverter($app['orm.em']);
 		});
 		
-		// personnage converter
+		// territoire converter
+		$app['converter.territoire'] = $app->share(function($app) {
+			return new TerritoireConverter($app['orm.em']);
+		});
+		
+		// event converter
+		$app['converter.event'] = $app->share(function($app) {
+			return new EventConverter($app['orm.em']);
+		});
+		
+		// personnage secondaire converter
 		$app['converter.personnageSecondaire'] = $app->share(function($app) {
 			return new PersonnageSecondaireConverter($app['orm.em']);
 		});
