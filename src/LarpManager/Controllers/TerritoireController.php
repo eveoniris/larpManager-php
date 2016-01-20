@@ -5,6 +5,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Silex\Application;
 use LarpManager\Form\TerritoireForm;
+use Doctrine\ORM\Query;
 
 /**
  * LarpManager\Controllers\TerritoireController
@@ -14,6 +15,71 @@ use LarpManager\Form\TerritoireForm;
  */
 class TerritoireController
 {
+	/**
+	 * API: fourni la liste des territoires
+	 * GET /api/territoire
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function apiListAction(Request $request, Application $app)
+	{
+		$qb = $app['orm.em']->createQueryBuilder();
+		$qb->select('Territoire, Chronologies, Groupes, Langue, Religion')
+			->from('\LarpManager\Entities\Territoire','Territoire')
+			->leftJoin('Territoire.groupes', 'Groupes')
+			->leftJoin('Territoire.langue', 'Langue')
+			->leftJoin('Territoire.religion', 'Religion')
+			->leftJoin('Territoire.chronologies', 'Chronologies');
+		
+		$query = $qb->getQuery();
+		
+		$territoires = $query->getResult(Query::HYDRATE_ARRAY);
+		return new JsonResponse($territoires);
+	}
+	
+	/**
+	 * API : mettre à jour un territoire
+	 * POST /api/territoire/{territoire}
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function apiUpdateAction(Request $request, Application $app)
+	{
+		$territoire = $request->get('territoire');
+		
+		$payload = json_decode($request->getContent());
+		
+		$territoire->setNom($payload->nom);
+		$territoire->setDescription($payload->description);
+		$territoire->setCapitale($payload->capitale);
+		$territoire->setPolitique($payload->politique);
+		$territoire->setDirigeant($payload->dirigeant);
+		
+		foreach ( $payload->chronologies as $event)
+		{
+			
+			if ( ! $territoire->getChronologies()->contain($event) )
+			{
+				$e  = new \LarpManager\Entities\Chronologie();
+				$e->setTerritoire($territoire);
+				$e->setYear($event->year);
+				$e->setMonth($event->month);
+				$e->setDay($event->day);
+				$e->setDescription($event->description);
+				$e->setVisibilite($event->visibilite);
+				
+				$app['orm.em']->persist($event);
+			}
+		}
+		
+		$app['orm.em']->persist($territoire);
+		$app['orm.em']->flush();
+		
+				
+		return new JsonResponse($payload);
+	}
 	
 	/**
 	 * Retourne tous les événements lié à un territoire

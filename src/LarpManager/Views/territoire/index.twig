@@ -2,22 +2,253 @@
 
 {% block content %}
 
-<div class="container-fluid">
-	<div class="row">
-		<div class="col-xs-12 col-md-12">
-			<div class="well well-sm">
-				<h4>
-					Gestion des territoires
-					<small>
-						( {{ territoires|length }} territoires )
-					</small>
-				</h4>
+<div class="well well-sm">
+	<div class="row" ng-controller="TerritoireController">
+		<div class="col-xs-3 col-md-3">
+		
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h4>Liste des territoires</h4>
+					<div class="btn-group" role="group" aria-label="...">
+						<a 	class="btn btn-primary"
+							href="#" 
+							ng-click="refresh()"
+							title="Rafraichir">
+							<i class="fa fa-refresh"></i>
+						</a>
+						<a 	class="btn btn-default"
+							href="#" 
+							ng-click="refresh()">
+							<i class="fa fa-plus"></i>Créer un nouveau territoire
+						</a>
+					</div>
+				</div>
+				<div class="panel-body">
+					<div class="list-group">
+						
+							<a 
+								href="#" 
+								class="list-group-item"
+								ng-click="select(territoire)"
+								ng-repeat="territoire in territoires">
+								{[{ territoire.nom }]}
+							</a>
+						
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-xs-9 col-md-9" ng-show="selected">
+
+			<h2>
+				<span editable-text="selected.nom"
+					buttons="no"
+					onaftersave="updateSelected()"
+					e-form="nomBtnForm">
+					{[{ selected.nom || "non renseigné" }]}
+				</span>
+				<small>
+					<a href="#" ng-click="nomBtnForm.$show()" ng-hide="nomBtnForm.$visible">
+   						<i class="fa fa-pencil"></i>
+					</a>
+				</small>
+			</h2>
+	  					 
+	  		<div class="header">
+				<h5>Description</h5>
 			</div>
 			
-			{{ include("territoire/fragment/list.twig", {'territoires' : territoires, 'add' : true}) }}
+			<p 	editable-textarea="selected.description"
+				e-rows="10" 
+				e-cols="90"
+				e-form="descriptionBtnForm">
+				{[{ selected.description }]}
+				<a href="#" ng-click="descriptionBtnForm.$show()" ng-hide="descriptionBtnForm.$visible">
+   					<i class="fa fa-pencil"></i>
+				</a>
+			</p>
+			
+			<div class="header">
+				<h5>Informations politiques</h5>
+			</div>
+			
+			<p>Capitale : 
+				<span editable-text="selected.capitale"
+					e-form="capitaleBtnForm">
+					{[{ selected.capitale || "non renseigné" }]}
+				</span>
+				<a href="#" ng-click="capitaleBtnForm.$show()" ng-hide="capitaleBtnForm.$visible">
+   					<i class="fa fa-pencil"></i>
+				</a>
+			</p>
+			
+			<p>Politique :
+				<span editable-text="selected.politique"
+					e-form="politiqueBtnForm">
+					{[{ selected.politique || "non renseigné" }]}
+				</span>
+				<a href="#" ng-click="politiqueBtnForm.$show()" ng-hide="politiqueBtnForm.$visible">
+   					<i class="fa fa-pencil"></i>
+				</a>
+			</p>
+			
+			<p>Dirigeant : 
+				<span editable-text="selected.dirigeant"
+					e-form="dirigeantBtnForm">
+					{[{ selected.dirigeant || "non renseigné" }]}
+				</span>
+				<a href="#" ng-click="dirigeantBtnForm.$show()" ng-hide="dirigeantBtnForm.$visible">
+   					<i class="fa fa-pencil"></i>
+				</a>
+			</p>
+			
+			<p>Population : 
+				<span editable-text="selected.population"
+					e-form="populationBtnForm">
+					{[{ selected.population || "non renseigné" }]}
+				</span>
+				<a href="#" ng-click="populationBtnForm.$show()" ng-hide="populationBtnForm.$visible">
+   					<i class="fa fa-pencil"></i>
+				</a>
+			</p>
+			
+			<p>Symbole :
+				<span editable-text="selected.symbole"
+					e-form="symboleBtnForm">
+					{[{ selected.symbole || "non renseigné" }]}
+				</span>
+				<a href="#" ng-click="symboleBtnForm.$show()" ng-hide="symboleBtnForm.$visible">
+   					<i class="fa fa-pencil"></i>
+				</a>
+			</p>
+			
+			<p>Niveau technologique :
+				<span editable-text="selected.tech_level"
+					e-form="techBtnForm">
+					{[{ selected.tech_level || "non renseigné" }]}
+				</span>
+				<a href="#" ng-click="techLevelBtnForm.$show()" ng-hide="techLevelBtnForm.$visible">
+   					<i class="fa fa-pencil"></i>
+				</a>
+			</p>
+			
+			<p>Type :
+				<span editable-text="selected.type_racial"
+					e-form="typeRacialBtnForm">
+					{[{ selected.type_racial || "non renseigné" }]}
+				</span>
+				<a href="#" ng-click="typeRacialBtnForm.$show()" ng-hide="typeRacialBtnForm.$visible">
+   					<i class="fa fa-pencil"></i>
+				</a>
+			</p>
+			
+			<p>Frontières :
+				<span editable-text="selected.frontieres"
+					e-form="frontieresBtnForm">
+					{[{ selected.frontieres || "non renseigné" }]}
+				</span>
+				<a href="#" ng-click="frontieresBtnForm.$show()" ng-hide="frontieresBtnForm.$visible">
+   					<i class="fa fa-pencil"></i>
+				</a>
+			</p>
+			
+			<div class="header">
+				<h5>Religions</h5>
+			</div>
+			
+			<div class="header">
+				<h5>Langues</h5>
+			</div>
+			
+			<div class="header">
+				<h5>Economie</h5>
+			</div>
+			
+			<div class="header">
+				<h5>Interprétation</h5>
+			</div>
+			
+			<p>Inspiration</p>
+			<p>Armes de prédilection</p>
+			<p>Vétements</p>
+			<p>Noms masculins</p>
+			<p>Noms Féminins</p>
+						
+			<div class="header">
+				<h5>Chronologie</h5>
+			</div>
+			
+			
+  				<table class="table table-bordered table-hover table-condensed">
+  					<thead>
+	  					<tr>
+	  						<th>Année</th>
+	  						<th>Description</th>
+	  						<th>Visibilité</th>
+	  						<th>Edit</th>
+	  					</tr>
+	  				</thead>
+	  				<tbody>
+  					<tr ng-repeat="event in selected.chronologies">
+  						<td>
+	  						<span editable-text="event.year" 
+	  							e-name="year" 
+	  							e-form="rowform" 
+	  							onbeforesave="checkYear($data, event.id)" 
+	  							e-required>
+  							{[{ event.year }]}
+  							</span>
+  						</td>
+  						<td>
+  							<span editable-textarea="event.description" 
+	  							e-name="description" 
+	  							e-form="rowform" 
+	  							onbeforesave="checkDescription($data, event.id)" 
+	  							e-required>
+  							{[{ event.description }]}
+  							</span>
+  						</td>
+  						<td>
+  							<span editable-text="event.visibilite" 
+	  							e-name="visibilite" 
+	  							e-form="rowform" 
+	  							onbeforesave="checkVisibilite($data, event.id)" 
+	  							e-required>
+  							{[{ event.visibilite }]}
+  							</span>
+  						</td>
+  						<td>
+	  						<!-- form -->
+					        <form 
+					        	editable-form 
+					        	name="rowform" 
+					        	onbeforesave="updateSelected()" 
+					        	ng-show="rowform.$visible" 
+					        	class="form-buttons form-inline" 
+					        	shown="inserted == event">
+					          <button type="submit" ng-disabled="rowform.$waiting" class="btn btn-primary">
+					            save
+					          </button>
+					          <button type="button" ng-disabled="rowform.$waiting" ng-click="rowform.$cancel()" class="btn btn-default">
+					            cancel
+					          </button>
+					        </form>
+					        <div class="buttons" ng-show="!rowform.$visible">
+					          <button class="btn btn-primary" ng-click="rowform.$show()">edit</button>
+					          <button class="btn btn-danger" ng-click="removeEvent($index)">del</button>
+					        </div>  
+  						</td>
+  					</tr>
+  					</tbody>
+  				</table>
+  				
+  				<button class="btn btn-default" ng-click="addEvent()">Ajouter un événement</button>
+  					
+			<div class="header">
+				<h5>Groupes liés</h5>
+			</div>
 		</div>
 	</div>
-
 </div>
 	
 {% endblock %}

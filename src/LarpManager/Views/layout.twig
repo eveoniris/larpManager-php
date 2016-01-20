@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app="LarpManager">
+<html ng-app="LarpManagerApp">
     <head>
         {% block head %}
             <meta charset="utf-8">
@@ -14,6 +14,7 @@
             <link rel="stylesheet" href="{{ app.request.basepath }}/css/font-awesome.min.css" />
             <link rel="stylesheet" href="{{ app.request.basepath }}/css/bootstrap.min.css" />
             <link rel="stylesheet" href="{{ app.request.basepath }}/css/cyborg_bootstrap.min.css" />
+            <link rel="stylesheet" href="{{ app.request.basepath }}/css/xeditable.css" />
                         
             <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
 			            
@@ -49,16 +50,21 @@
          
         <script src="{{ app.request.basepath }}/js/jquery-1.11.3.min.js"></script>
         <script src="{{ app.request.basepath }}/js/bootstrap.min.js"></script>
+        
+        {# manipulation des dates #}
         <script src="{{ app.request.basepath }}/js/moment.js"></script>
         <script>
         	moment.locale('fr');
         </script>
-        <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+                
+        {# Active les tooltip de bootstrap #}
         <script type="text/javascript">
 	    	$(function () {
 	        	$("[data-toggle='tooltip']").tooltip();
 	    	});
 		</script>
+		
+		{# editeur tinyMCE #}
 		<script src="{{ app.request.basepath }}/js/tinymce/tinymce.min.js"></script>
 	
 		<script type="text/javascript">
@@ -72,9 +78,14 @@
 				link_assume_external_targets: true
 			});
 		</script>
-				
-		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script>
-	    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular-resource.min.js"></script>
+					    
+		{# Angular #}
+	    <script src="{{ app.request.basepath }}/js/angular/1.4.8/angular.min.js"></script>
+	    <script src="{{ app.request.basepath }}/js/angular/1.4.8/angular-resource.min.js"></script>
+	    {#<script src="{{ app.request.basepath }}/js/angular/1.4.8/formly.min.js"></script>
+	    <script src="{{ app.request.basepath }}/js/angular/1.4.8/angular-formly-templates-bootstrap.min.js"></script>#}
+	    <script src="{{ app.request.basepath }}/js/angular/1.4.8/xeditable.min.js"></script>
+	    
 	    <script src="{{ app.request.basepath }}/js/api/services.js"></script>
 	    <script src="{{ app.request.basepath }}/js/api/controllers.js"></script>
     	

@@ -78,7 +78,7 @@ class Territoire extends BaseTerritoire
 	{
 		return $this->getNomTree();
 	}
-	
+		
 	/**
 	 * Calcule le nombre d'étape necessaire pour revenir au parent le plus ancien
 	 */

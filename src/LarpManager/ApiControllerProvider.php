@@ -39,6 +39,20 @@ class ApiControllerProvider implements ControllerProviderInterface
 			}
 		};
 		
+		// Récupére tous les territoires
+		$controllers->match('/territoire','LarpManager\Controllers\TerritoireController::apiListAction')
+			->bind("api.territoire.list")
+			->method('GET')
+			->before($mustBeOrga);
+		
+		// Modifie un territoire
+		$controllers->match('/territoire/{territoire}','LarpManager\Controllers\TerritoireController::apiUpdateAction')
+			->bind("api.territoire.update")
+			->assert('territoire', '\d+')
+			->convert('territoire', 'converter.territoire:convert')
+			->method('POST')
+			->before($mustBeOrga);			
+		
 		// Récupére tous les événements
 		$controllers->match('/territoire/{territoire}/event','LarpManager\Controllers\TerritoireController::eventListAction')
 			->bind("api.territoire.event.list")

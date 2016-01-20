@@ -1,4 +1,27 @@
-<ul class="list-group">
+
+	
+	<li class="list-group-item" ng-repeat="territoire in territoires">
+		<h6>{[{ territoire.nom }]}</h6>
+		<div class="row">
+			<div class="col-sm-6">
+				{[{ territoire.description }]}
+			</div>
+			<div class="col-sm-6">
+				<strong>Groupes</strong>
+				<strong>Chronologie</strong>
+				<ul>
+					<li ng-repeat="event in territoire.chronologies">
+						{[{ event.year }]}
+						{[{ event.nom }]}
+						{[{ event.description }]}
+					</li>
+				</ul>
+			</div>
+		</div>
+	</li>
+</ul>
+
+{#}
 	{%  if add != false %}
 		<a href="{{ path('territoire.add') }}" class="list-group-item active">
 			<span class="badge"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></span>
@@ -30,4 +53,4 @@
 		{% endif %}
 	</li>
 	{%  endfor %}
-</ul>
+</ul> #}
