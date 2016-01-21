@@ -25,12 +25,12 @@ class TerritoireController
 	public function apiListAction(Request $request, Application $app)
 	{
 		$qb = $app['orm.em']->createQueryBuilder();
-		$qb->select('Territoire, Chronologies, Groupes, Langue, Religion')
+		$qb->select('Territoire, Groupes, Langue, Religion')
 			->from('\LarpManager\Entities\Territoire','Territoire')
 			->leftJoin('Territoire.groupes', 'Groupes')
 			->leftJoin('Territoire.langue', 'Langue')
-			->leftJoin('Territoire.religion', 'Religion')
-			->leftJoin('Territoire.chronologies', 'Chronologies');
+			->leftJoin('Territoire.religion', 'Religion');
+			
 		
 		$query = $qb->getQuery();
 		
@@ -57,23 +57,6 @@ class TerritoireController
 		$territoire->setPolitique($payload->politique);
 		$territoire->setDirigeant($payload->dirigeant);
 		
-		foreach ( $payload->chronologies as $event)
-		{
-			
-			if ( ! $territoire->getChronologies()->contain($event) )
-			{
-				$e  = new \LarpManager\Entities\Chronologie();
-				$e->setTerritoire($territoire);
-				$e->setYear($event->year);
-				$e->setMonth($event->month);
-				$e->setDay($event->day);
-				$e->setDescription($event->description);
-				$e->setVisibilite($event->visibilite);
-				
-				$app['orm.em']->persist($event);
-			}
-		}
-		
 		$app['orm.em']->persist($territoire);
 		$app['orm.em']->flush();
 		
@@ -86,10 +69,10 @@ class TerritoireController
 	 * @param Request $request
 	 * @param Application $app
 	 */
-	public function eventListAction(Request $request, Application $app)
+	public function apiEventListAction(Request $request, Application $app)
 	{
 		$territoire = $request->get('territoire');		
-		return new JsonResponse($territoire->getChronologies());
+		return new JsonResponse($territoire->getChronologies()->toArray());
 	}
 	
 	/**

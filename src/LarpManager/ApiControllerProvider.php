@@ -54,7 +54,7 @@ class ApiControllerProvider implements ControllerProviderInterface
 			->before($mustBeOrga);			
 		
 		// Récupére tous les événements
-		$controllers->match('/territoire/{territoire}/event','LarpManager\Controllers\TerritoireController::eventListAction')
+		$controllers->match('/territoire/{territoire}/chronologie','LarpManager\Controllers\TerritoireController::apiEventListAction')
 			->bind("api.territoire.event.list")
 			->assert('territoire', '\d+')
 			->convert('territoire', 'converter.territoire:convert')

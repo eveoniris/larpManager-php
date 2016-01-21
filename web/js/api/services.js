@@ -1,11 +1,10 @@
 // initialisation de l'application et déclaration des modules utilisé
-var LarpManagerApp = angular.module("LarpManagerApp", ['ngResource','xeditable']);
+var LarpManagerApp = angular.module("LarpManagerApp", ['restangular','xeditable']);
 
-// inclusion du controller Territoire
-LarpManagerApp.factory('Territoire', ['$resource', function ($resource) {
-		return $resource('/api/territoire/:territoireId', {territoireId: '@id'});
-	}]);
-
+// configuration de restangular
+LarpManagerApp.config(function(RestangularProvider) {
+	RestangularProvider.setBaseUrl('/api');	
+});
 
 // compatibilité avec Twig
 LarpManagerApp.config(function($interpolateProvider){
