@@ -80,8 +80,12 @@ class ApiControllerProvider implements ControllerProviderInterface
 			->bind("api.event.add")
 			->method('POST')
 			->before($mustBeOrga);			
-			
-			
+		
+		// Récupére toutes les religions
+		$controllers->match('/religion','LarpManager\Controllers\ReligionController::apiListAction')
+			->bind("api.religion.list")
+			->method('GET')
+			->before($mustBeOrga);	
 			
 			
 			

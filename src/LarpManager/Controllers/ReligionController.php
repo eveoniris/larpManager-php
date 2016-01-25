@@ -15,6 +15,25 @@ use LarpManager\Form\ReligionLevelForm;
 class ReligionController
 {
 	/**
+	 * API: fourni la liste des territoires
+	 * GET /api/territoire
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function apiListAction(Request $request, Application $app)
+	{
+		$qb = $app['orm.em']->createQueryBuilder();
+		$qb->select('Religion')
+			->from('\LarpManager\Entities\Religion','Religion');
+
+		$query = $qb->getQuery();
+	
+		$religions = $query->getResult(Query::HYDRATE_ARRAY);
+		return new JsonResponse($religions);
+	}
+	
+	/**
 	 * affiche la liste des religions
 	 * 
 	 * @param Request $request

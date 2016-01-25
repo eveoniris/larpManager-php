@@ -71,27 +71,61 @@ class Territoire extends BaseTerritoire implements \JsonSerializable
 		parent::__construct();
 	}
 	
+	/**
+	 * Serializer
+	 */
 	public function jsonSerialize() {
 		return array(
+				'id' => $this->getId(),
 				'nom' => $this->getNom(),
 				'description' => $this->getDescription(),
 				'capitale' => $this->getCapitale(),
+				'politique' => $this->getPolitique(),
 				'dirigeant' => $this->getDirigeant(),
 				'population' => $this->getPopulation(),
 				'symbole' => $this->getSymbole(),
 				'tech_level' => $this->getTechLevel(),
 				'type_racial' => $this->getTypeRacial(),
-				'frontieres' => $this->getFrontieres(),
 				'inspiration' => $this->getInspiration(),
+				'armes_predilection' => $this->getArmesPredilection(),
+				'vetements' => $this->getVetements(),
+				'noms_masculin' => $this->getNomsMasculin(),
+				'noms_feminin' => $this->getNomsFeminin(),
+				'frontieres' => $this->getFrontieres(),
+				'religion_id' => ( $this->getReligion() ) ? $this->getReligion()->getId() : '',
+				/*'chronologies'
+				'groupes'
+				'langue_principale'
+				'religion_principale'
+				'langues'
+				'religions'
+				'importations'
+				'exporations'*/
+				
 		);
 	}
 	
+	/**
+	 * Unserializer
+	 * 
+	 * @param unknown $payload
+	 */
 	public function jsonUnserialize($payload) {
 		$this->setNom($payload->nom);
 		$this->setDescription($payload->description);
 		$this->setCapitale($payload->capitale);
 		$this->setPolitique($payload->politique);
 		$this->setDirigeant($payload->dirigeant);
+		$this->setPopulation($payload->population);
+		$this->setSymbole($payload->symbole);
+		$this->setTechLevel($payload->tech_level);
+		$this->setTypeRacial($payload->type_racial);
+		$this->setInspiration($payload->inspiration);
+		$this->setArmesPredilection($payload->armes_predilection);
+		$this->setVetements($payload->vetements);
+		$this->setNomsMasculin($payload->noms_masculin);
+		$this->setNomsFeminin($payload->noms_feminin);
+		$this->setFrontieres($payload->fonrtieres);
 	}
 	
 	/**

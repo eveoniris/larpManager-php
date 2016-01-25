@@ -30,7 +30,7 @@ LarpManagerApp.controller('TerritoireController', function ($scope, Restangular)
 	        ];
 		
 	/**
-	 * Raffraichir la liste des territoires
+	 * Rafraichir la liste des territoires
 	 */
 	$scope.refresh = function()	{
 		$scope.selected = undefined;
@@ -39,6 +39,9 @@ LarpManagerApp.controller('TerritoireController', function ($scope, Restangular)
 	    });
 	}
 	
+	/**
+	 * Créer un nouveau territoire
+	 */
 	$scope.new = function() {
 		newTerritoire = Restangular.restangularizeElement(null, {}, "territoire",null);
 		$scope.territoires.push(newTerritoire);
@@ -46,11 +49,10 @@ LarpManagerApp.controller('TerritoireController', function ($scope, Restangular)
 	}
 	
 	/**
-	 * Selection
+	 * Selection d'un territoire dans la liste
 	 */
 	$scope.selectTerritoire = function(territoire) {
 		$scope.selected = territoire;
-		//Restangular.restangularizeCollection(territoire, territoire.chronologies, "chronologies");
 	}
 	
 	/**
@@ -61,23 +63,23 @@ LarpManagerApp.controller('TerritoireController', function ($scope, Restangular)
 	}
 	
 	/**
-	 * Sauvegarde d'un événement
+	 * Sauvegarde d'un événement appartenant à un territoire
 	 */
 	$scope.updateEvent = function(event)  {
 		event.territoire_id = $scope.selected.id;
 		e = Restangular.restangularizeElement(null, event, "chronologies",null);
 		e.save().then(function(result) {
-            $scope.selected.chronologies.splice(event.id, 1);
 			console.log(result);	
 		});
 	}
 	
 	/**
-	 * Suppression d'un événement
+	 * Suppression d'un événement appartenant à un territoire
 	 */
 	$scope.removeEvent = function(event) {
 		e = Restangular.restangularizeElement(null, event, "chronologies",null);
 		e.remove().then(function(result) {
+			$scope.selected.chronologies.splice(_.indexOf($scope.selected.chronologies,event), 1);
 			console.log(result);
 		});
 	}
@@ -97,9 +99,24 @@ LarpManagerApp.controller('TerritoireController', function ($scope, Restangular)
 	}
 	
 	/**
+	 * Changer de religion principale
+	 */
+	$scope.updateReligionPrincipale = function(religion) {
+		$scope.selected.religion_id = religion.id;
+		$scope.selected.post();
+	}
+	
+	/**
 	 *  récupérer tous les territoires
 	 */
 	$scope.refresh();
+	
+	/**
+	 * Récupérer toutes les religions
+	 */
+	Restangular.all('religion').getList().then(function(result) {
+        $scope.religions = result;
+    });
 	
 	/*var baseTeritoires = Restangular.all('territoire');
 	

@@ -25,12 +25,13 @@ class TerritoireController
 	public function apiListAction(Request $request, Application $app)
 	{
 		$qb = $app['orm.em']->createQueryBuilder();
-		$qb->select('Territoire, Groupes, Chronologies, Langue, Religion')
+		$qb->select('Territoire, Groupes, Chronologies, Langue, Religion, Religions')
 			->from('\LarpManager\Entities\Territoire','Territoire')
 			->leftJoin('Territoire.groupes', 'Groupes')
 			->leftJoin('Territoire.langue', 'Langue')
 			->leftJoin('Territoire.chronologies', 'Chronologies')
-			->leftJoin('Territoire.religion', 'Religion');
+			->leftJoin('Territoire.religion', 'Religion')
+			->leftJoin('Territoire.religions', 'Religions');
 			
 		
 		$query = $qb->getQuery();
@@ -73,12 +74,21 @@ class TerritoireController
 		$payload = json_decode($request->getContent());
 		$territoire->jsonUnserialize($payload);
 		
+		if ( $payload->religion_id )
+		{
+			$religion = $app['orm.em']->find('\LarpManager\Entities\Religion',$payload->religion_id);
+			$territoire->setReligionPrincipale($religion);
+		}
+		
 		$app['orm.em']->persist($territoire);
 		$app['orm.em']->flush();
 		
 				
 		return new JsonResponse($payload);
 	}
+	
+	
+	
 	
 	/**
 	 * Retourne tous les événements lié à un territoire

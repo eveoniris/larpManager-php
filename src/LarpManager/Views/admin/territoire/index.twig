@@ -47,240 +47,345 @@
 		</div>
 		<div class="col-xs-9 col-md-9" ng-show="selected">
 
-			<h2>
-				<span editable-text="selected.nom"
-					onaftersave="saveTerritoire(selected)"
-					e-form="nomBtnForm">
-					{[{ selected.nom || "non renseigné" }]}
-				</span>
-				<small>
-					<a href="#" ng-click="nomBtnForm.$show()" ng-hide="nomBtnForm.$visible">
-   						<i class="fa fa-pencil"></i>
+			<ul class="nav nav-tabs" role="tablist">
+				<li role="general" class="active">
+					<a href="#general" aria-controls="general" role="tab" data-toggle="tab">
+						Informations générale
 					</a>
-				</small>
-			</h2>
-	  					 
-	  		<div class="header">
-				<h5>Description</h5>
-			</div>
+				</li>
+				<li role="interpretation">
+					<a href="#interpretation" aria-controls="interpretation" role="tab" data-toggle="tab">
+						Interprétation
+					</a>
+				</li>
+				<li role="chronologie">
+					<a href="#chronologie" aria-controls="chronologie" role="tab" data-toggle="tab">
+						Chronologie
+					</a>
+				</li>
+				<li role="religion">
+					<a href="#religion" aria-controls="chronologie" role="tab" data-toggle="tab">
+						Religion
+					</a>
+				</li>
+			</ul>
 			
-			<p 	editable-textarea="selected.description"
-				onaftersave="update(selected)"
-				e-rows="10" 
-				e-cols="90"
-				e-form="descriptionBtnForm">
-				{[{ selected.description }]}
-				<a href="#" ng-click="descriptionBtnForm.$show()" ng-hide="descriptionBtnForm.$visible">
-   					<i class="fa fa-pencil"></i>
-				</a>
-			</p>
-			
-			<div class="header">
-				<h5>Informations politiques</h5>
-			</div>
-			
-			<p>Capitale : 
-				<span editable-text="selected.capitale"
-					onaftersave="update(selected)"
-					e-form="capitaleBtnForm">
-					{[{ selected.capitale || "non renseigné" }]}
-				</span>
-				<a href="#" ng-click="capitaleBtnForm.$show()" ng-hide="capitaleBtnForm.$visible">
-   					<i class="fa fa-pencil"></i>
-				</a>
-			</p>
-			
-			<p>Politique :
-				<span editable-text="selected.politique"
-					onaftersave="update(selected)"
-					e-form="politiqueBtnForm">
-					{[{ selected.politique || "non renseigné" }]}
-				</span>
-				<a href="#" ng-click="politiqueBtnForm.$show()" ng-hide="politiqueBtnForm.$visible">
-   					<i class="fa fa-pencil"></i>
-				</a>
-			</p>
-			
-			<p>Dirigeant : 
-				<span editable-text="selected.dirigeant"
-					onaftersave="update(selected)"
-					e-form="dirigeantBtnForm">
-					{[{ selected.dirigeant || "non renseigné" }]}
-				</span>
-				<a href="#" ng-click="dirigeantBtnForm.$show()" ng-hide="dirigeantBtnForm.$visible">
-   					<i class="fa fa-pencil"></i>
-				</a>
-			</p>
-			
-			<p>Population : 
-				<span editable-text="selected.population"
-					onaftersave="update(selected)"
-					e-form="populationBtnForm">
-					{[{ selected.population || "non renseigné" }]}
-				</span>
-				<a href="#" ng-click="populationBtnForm.$show()" ng-hide="populationBtnForm.$visible">
-   					<i class="fa fa-pencil"></i>
-				</a>
-			</p>
-			
-			<p>Symbole :
-				<span editable-text="selected.symbole"
-					onaftersave="update(selected)"
-					e-form="symboleBtnForm">
-					{[{ selected.symbole || "non renseigné" }]}
-				</span>
-				<a href="#" ng-click="symboleBtnForm.$show()" ng-hide="symboleBtnForm.$visible">
-   					<i class="fa fa-pencil"></i>
-				</a>
-			</p>
-			
-			<p>Niveau technologique :
-				<span editable-text="selected.tech_level"
-					onaftersave="update(selected)"
-					e-form="techBtnForm">
-					{[{ selected.tech_level || "non renseigné" }]}
-				</span>
-				<a href="#" ng-click="techLevelBtnForm.$show()" ng-hide="techLevelBtnForm.$visible">
-   					<i class="fa fa-pencil"></i>
-				</a>
-			</p>
-			
-			<p>Type racial:
-				<span editable-text="selected.type_racial"
-					onaftersave="update(selected)"
-					e-form="typeRacialBtnForm">
-					{[{ selected.type_racial || "non renseigné" }]}
-				</span>
-				<a href="#" ng-click="typeRacialBtnForm.$show()" ng-hide="typeRacialBtnForm.$visible">
-   					<i class="fa fa-pencil"></i>
-				</a>
-			</p>
-			
-			<p>Frontières :
-				<span editable-text="selected.frontieres"
-					onaftersave="update(selected)"
-					e-form="frontieresBtnForm">
-					{[{ selected.frontieres || "non renseigné" }]}
-				</span>
-				<a href="#" ng-click="frontieresBtnForm.$show()" ng-hide="frontieresBtnForm.$visible">
-   					<i class="fa fa-pencil"></i>
-				</a>
-			</p>
-			
-			<div class="header">
-				<h5>Religions</h5>
-			</div>
-			
-			<div class="header">
-				<h5>Langues</h5>
-			</div>
-			
-			<div class="header">
-				<h5>Economie</h5>
-			</div>
-			
-			<div class="header">
-				<h5>Interprétation</h5>
-			</div>
-			
-			<p>Inspiration</p>
-			<p>Armes de prédilection</p>
-			<p>Vétements</p>
-			<p>Noms masculins</p>
-			<p>Noms Féminins</p>
-						
-						
-			
-				<div class="header">
-					<h5>Chronologie</h5>
+			<div class="tab-content">
+				<div role="tabpanel" class="tab-pane fade in active" id="general">
+					<div class="panel panel-default">
+						<div class="panel-body">
+							<h2>
+								<span editable-text="selected.nom"
+									onaftersave="saveTerritoire(selected)"
+									e-form="nomBtnForm">
+									{[{ selected.nom || "non renseigné" }]}
+								</span>
+								<small>
+									<a href="#" ng-click="nomBtnForm.$show()" ng-hide="nomBtnForm.$visible">
+				   						<i class="fa fa-pencil"></i>
+									</a>
+								</small>
+							</h2>
+					  					 
+					  		<div class="header">
+								<h5>Description</h5>
+							</div>
+							
+							<p 	editable-textarea="selected.description"
+								onaftersave="saveTerritoire(selected)"
+								e-rows="10" 
+								e-cols="90"
+								e-form="descriptionBtnForm">
+								{[{ selected.description }]}
+								<a href="#" ng-click="descriptionBtnForm.$show()" ng-hide="descriptionBtnForm.$visible">
+				   					<i class="fa fa-pencil"></i>
+								</a>
+							</p>
+
+							<div class="header">
+								<h5>Informations politiques</h5>
+							</div>
+							
+							<p>Capitale : 
+								<span editable-text="selected.capitale"
+									onaftersave="saveTerritoire(selected)"
+									e-form="capitaleBtnForm">
+									{[{ selected.capitale || "non renseigné" }]}
+								</span>
+								<a href="#" ng-click="capitaleBtnForm.$show()" ng-hide="capitaleBtnForm.$visible">
+				   					<i class="fa fa-pencil"></i>
+								</a>
+							</p>
+							
+							<p>Politique :
+								<span editable-text="selected.politique"
+									onaftersave="saveTerritoire(selected)"
+									e-form="politiqueBtnForm">
+									{[{ selected.politique || "non renseigné" }]}
+								</span>
+								<a href="#" ng-click="politiqueBtnForm.$show()" ng-hide="politiqueBtnForm.$visible">
+				   					<i class="fa fa-pencil"></i>
+								</a>
+							</p>
+							
+							<p>Dirigeant : 
+								<span editable-text="selected.dirigeant"
+									onaftersave="saveTerritoire(selected)"
+									e-form="dirigeantBtnForm">
+									{[{ selected.dirigeant || "non renseigné" }]}
+								</span>
+								<a href="#" ng-click="dirigeantBtnForm.$show()" ng-hide="dirigeantBtnForm.$visible">
+				   					<i class="fa fa-pencil"></i>
+								</a>
+							</p>
+							
+							<p>Population : 
+								<span editable-text="selected.population"
+									onaftersave="saveTerritoire(selected)"
+									e-form="populationBtnForm">
+									{[{ selected.population || "non renseigné" }]}
+								</span>
+								<a href="#" ng-click="populationBtnForm.$show()" ng-hide="populationBtnForm.$visible">
+				   					<i class="fa fa-pencil"></i>
+								</a>
+							</p>
+							
+							<p>Symbole :
+								<span editable-text="selected.symbole"
+									onaftersave="saveTerritoire(selected)"
+									e-form="symboleBtnForm">
+									{[{ selected.symbole || "non renseigné" }]}
+								</span>
+								<a href="#" ng-click="symboleBtnForm.$show()" ng-hide="symboleBtnForm.$visible">
+				   					<i class="fa fa-pencil"></i>
+								</a>
+							</p>
+							
+							<p>Niveau technologique :
+								<span editable-text="selected.tech_level"
+									onaftersave="saveTerritoire(selected)"
+									e-form="techLevelBtnForm">
+									{[{ selected.tech_level || "non renseigné" }]}
+								</span>
+								<a href="#" ng-click="techLevelBtnForm.$show()" ng-hide="techLevelBtnForm.$visible">
+				   					<i class="fa fa-pencil"></i>
+								</a>
+							</p>
+							
+							<p>Type racial:
+								<span editable-text="selected.type_racial"
+									onaftersave="saveTerritoire(selected)"
+									e-form="typeRacialBtnForm">
+									{[{ selected.type_racial || "non renseigné" }]}
+								</span>
+								<a href="#" ng-click="typeRacialBtnForm.$show()" ng-hide="typeRacialBtnForm.$visible">
+				   					<i class="fa fa-pencil"></i>
+								</a>
+							</p>
+							
+							<p>Frontières :
+								<span editable-text="selected.frontieres"
+									onaftersave="saveTerritoire(selected)"
+									e-form="frontieresBtnForm">
+									{[{ selected.frontieres || "non renseigné" }]}
+								</span>
+								<a href="#" ng-click="frontieresBtnForm.$show()" ng-hide="frontieresBtnForm.$visible">
+				   					<i class="fa fa-pencil"></i>
+								</a>
+							</p>
+							
+							
+						</div>
+					</div>
 				</div>
 				
+				<div role="tabpanel" class="tab-pane fade" id="interpretation">
+					<div class="panel panel-default">
+						<div class="panel-body">
+						
+							<p>Inspiration :
+								<span editable-text="selected.inspiration"
+									onaftersave="saveTerritoire(selected)"
+									e-form="inspirationBtnForm">
+									{[{ selected.inspiration || "non renseigné" }]}
+								</span>
+								<a href="#" ng-click="inspirationBtnForm.$show()" ng-hide="inspirationBtnForm.$visible">
+				   					<i class="fa fa-pencil"></i>
+								</a>
+							</p>
+							
+							<p>Armes de prédilection :
+								<span editable-text="selected.armes_predilection"
+									onaftersave="saveTerritoire(selected)"
+									e-form="armesPredilectionBtnForm">
+									{[{ selected.armes_predilection || "non renseigné" }]}
+								</span>
+								<a href="#" ng-click="armesPredilectionBtnForm.$show()" ng-hide="armesPredilectionBtnForm.$visible">
+				   					<i class="fa fa-pencil"></i>
+								</a>
+							</p>
+							
+							<p>Vétements :
+								<span editable-text="selected.vetements"
+									onaftersave="saveTerritoire(selected)"
+									e-form="vetementsBtnForm">
+									{[{ selected.vetements || "non renseigné" }]}
+								</span>
+								<a href="#" ng-click="vetementsBtnForm.$show()" ng-hide="vetementsBtnForm.$visible">
+				   					<i class="fa fa-pencil"></i>
+								</a>
+							</p>
+							
+							<p>Noms masculins :
+								<span editable-text="selected.noms_masculin"
+									onaftersave="saveTerritoire(selected)"
+									e-form="nomsMasculinBtnForm">
+									{[{ selected.noms_masculin || "non renseigné" }]}
+								</span>
+								<a href="#" ng-click="nomsMasculinBtnForm.$show()" ng-hide="nomsMasculinBtnForm.$visible">
+				   					<i class="fa fa-pencil"></i>
+								</a>
+							</p>
+							<p>Noms Féminins :
+								<span editable-text="selected.noms_feminin"
+									onaftersave="saveTerritoire(selected)"
+									e-form="nomsFemininBtnForm">
+									{[{ selected.noms_feminin || "non renseigné" }]}
+								</span>
+								<a href="#" ng-click="nomsFemininBtnForm.$show()" ng-hide="nomsFemininBtnForm.$visible">
+				   					<i class="fa fa-pencil"></i>
+								</a>
+							</p>
+						</div>
+					</div>
+				</div>
 				
-  				<table class="table table-bordered table-hover table-condensed">
-  					<thead>
-	  					<tr>
-	  						<th>Année</th>
-	  						<th>Mois</th>
-	  						<th>Jour</th>
-	  						<th>Description</th>
-	  						<th>Visibilité</th>
-	  						<th>Edit</th>
-	  					</tr>
-	  				</thead>
-	  				<tbody>
-  					<tr ng-repeat="event in selected.chronologies">
-  						<td>
-	  						<span editable-number="event.year" 
-	  							e-name="year" 
-	  							e-form="rowform" 
-	  							e-required>
-  							{[{ event.year }]}
-  							</span>
-  						</td>
-  						 <td>
-	  						<span editable-number="event.month" 
-	  							e-name="month" 
-	  							e-form="rowform" 
-	  							e-required>
-  							{[{ event.month }]}
-  							</span>
-  						</td>
-  						 <td>
-	  						<span editable-number="event.day" 
-	  							e-name="day" 
-	  							e-form="rowform" 
-	  							e-required>
-  							{[{ event.day }]}
-  							</span>
-  						</td>
-  						<td>
-  							<span editable-textarea="event.description"
-  							 	e-rows="7" e-cols="40" 
-	  							e-name="description" 
-	  							e-form="rowform"  
-	  							e-required>
-  							{[{ event.description }]}
-  							</span>
-  						</td>
-  						<td>
-  							<span editable-select="event.visibilite"
-  								e-ng-options="s.value as s.text for s in EventVisiblite" 
-	  							e-name="visibilite" 
-	  							e-form="rowform"  
-	  							e-required>
-  							{[{ event.visibilite }]}
-  							</span>
-  						</td>
-  						<td>
-	  						<!-- form -->
-					        <form 
-					        	editable-form 
-					        	name="rowform" 
-					        	onaftersave="updateEvent(event)" 
-					        	ng-show="rowform.$visible" 
-					        	class="form-buttons form-inline" 
-					        	shown="inserted == event">
-					          <button type="submit" ng-disabled="rowform.$waiting" class="btn btn-primary">
-					            <i class="fa fa-floppy-o"></i>
-					          </button>
-					          <button type="button" ng-disabled="rowform.$waiting" ng-click="rowform.$cancel()" class="btn btn-default">
-					            <i class="fa fa-undo"></i>
-					          </button>
-					        </form>
-					        <div class="buttons" ng-show="!rowform.$visible">
-					          <button class="btn btn-primary" ng-click="rowform.$show()"><i class="fa fa-pencil"></i></button>
-					          <button class="btn btn-danger" ng-click="removeEvent(event)"><i class="fa fa-times"></i></button>
-					        </div>  
-  						</td>
-  					</tr>
-  					</tbody>
-  				</table>
-  				
-  				<button class="btn btn-default" ng-click="addEvent()">Ajouter un événement</button>
-	  			
-	  			
-			<div class="header">
-				<h5>Groupes liés</h5>
+				<div role="tabpanel" class="tab-pane fade" id="chronologie">
+					<div class="panel panel-default">
+						<div class="panel-body">
+							<table class="table table-bordered table-hover table-condensed">
+			  					<thead>
+				  					<tr>
+				  						<th>Année</th>
+				  						<th>Mois</th>
+				  						<th>Jour</th>
+				  						<th>Description</th>
+				  						<th>Visibilité</th>
+				  						<th>Edit</th>
+				  					</tr>
+				  				</thead>
+				  				<tbody>
+			  					<tr ng-repeat="event in selected.chronologies | orderBy:'+year +month +day'">
+			  						<td>
+				  						<span editable-number="event.year" 
+				  							e-name="year" 
+				  							e-form="rowform" 
+				  							e-required>
+			  							{[{ event.year }]}
+			  							</span>
+			  						</td>
+			  						 <td>
+				  						<span editable-number="event.month" 
+				  							e-name="month" 
+				  							e-form="rowform" 
+				  							e-required>
+			  							{[{ event.month }]}
+			  							</span>
+			  						</td>
+			  						 <td>
+				  						<span editable-number="event.day" 
+				  							e-name="day" 
+				  							e-form="rowform" 
+				  							e-required>
+			  							{[{ event.day }]}
+			  							</span>
+			  						</td>
+			  						<td>
+			  							<span editable-textarea="event.description"
+			  							 	e-rows="7" e-cols="40" 
+				  							e-name="description" 
+				  							e-form="rowform"  
+				  							e-required>
+			  							{[{ event.description }]}
+			  							</span>
+			  						</td>
+			  						<td>
+			  							<span editable-select="event.visibilite"
+			  								e-ng-options="s.value as s.text for s in EventVisiblite" 
+				  							e-name="visibilite" 
+				  							e-form="rowform"  
+				  							e-required>
+			  							{[{ event.visibilite }]}
+			  							</span>
+			  						</td>
+			  						<td>
+				  						<!-- form -->
+								        <form 
+								        	editable-form 
+								        	name="rowform" 
+								        	onaftersave="updateEvent(event)" 
+								        	ng-show="rowform.$visible" 
+								        	class="form-buttons form-inline" 
+								        	shown="inserted == event">
+								          <button type="submit" ng-disabled="rowform.$waiting" class="btn btn-primary">
+								            <i class="fa fa-floppy-o"></i>
+								          </button>
+								          <button type="button" ng-disabled="rowform.$waiting" ng-click="rowform.$cancel()" class="btn btn-default">
+								            <i class="fa fa-undo"></i>
+								          </button>
+								        </form>
+								        <div class="buttons" ng-show="!rowform.$visible">
+								          <button class="btn btn-primary" ng-click="rowform.$show()"><i class="fa fa-pencil"></i></button>
+								          <button class="btn btn-danger" ng-click="removeEvent(event)"><i class="fa fa-times"></i></button>
+								        </div>  
+			  						</td>
+			  					</tr>
+			  					</tbody>
+			  				</table>
+			  				
+			  				<button class="btn btn-default" ng-click="addEvent()">Ajouter un événement</button>
+						
+						</div>
+					</div>
+				</div>
+				
+				<div role="tabpanel" class="tab-pane fade" id="religion">
+					<div class="panel panel-default">
+						<div class="panel-body">
+							
+							<div class="header">
+								<h5>Religion principale</h5>
+							</div>
+							
+							{[{ selected.religion.label }]}
+							
+							
+							<div class="header">
+								<h5>Religions secondaires</h5>
+							</div>
+							
+							
+							<table class="table table-bordered table-hover table-condensed">
+			  					<thead>
+				  					<tr>
+				  						<th>Religion</th>
+				  						<th>Description</th>
+				  						<th>Edit</th>
+				  					</tr>
+				  				</thead>
+				  				<tbody>
+				  					<tr ng-repeat="religion in selected.religions | orderBy:'+label'">
+				  						<td></td>
+				  						<td></td>
+				  						<td></td>
+				  					</tr>
+				  				</tbody>
+				  			</table>
+							
+						</div>
+					</div>
+				</div>
+				
 			</div>
 		</div>
 	</div>

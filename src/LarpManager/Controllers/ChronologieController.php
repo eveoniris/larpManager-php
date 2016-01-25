@@ -31,11 +31,7 @@ class ChronologieController
 		$territoire = $app['orm.em']->find('\LarpManager\Entities\Territoire',$payload->territoire_id);
 		
 		$event->setTerritoire($territoire);
-		$event->setYear($payload->year);
-		$event->setMonth($payload->month);
-		$event->setDay($payload->day);
-		$event->setVisibilite($payload->visibilite);
-		$event->setDescription($payload->description);
+		$event->JsonUnserialize($payload);
 			
 		$app['orm.em']->persist($event);
 		$app['orm.em']->flush();
@@ -59,6 +55,13 @@ class ChronologieController
 		return new JsonResponse();
 	}
 	
+	/**
+	 * API : ajouter un événement
+	 * POST /api/chronologies
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
 	public function apiAddAction(Request $request, Application $app)
 	{
 		$payload = json_decode($request->getContent());
@@ -68,11 +71,7 @@ class ChronologieController
 		$event = new \LarpManager\Entities\Chronologie();
 		
 		$event->setTerritoire($territoire);
-		$event->setYear($payload->year);
-		$event->setMonth($payload->month);
-		$event->setDay($payload->day);
-		$event->setVisibilite($payload->visibilite);
-		$event->setDescription($payload->description);
+		$event->JsonUnserialize($payload);
 		
 		$app['orm.em']->persist($event);
 		$app['orm.em']->flush();
