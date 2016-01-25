@@ -2,6 +2,7 @@
 namespace LarpManager\Controllers;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Silex\Application;
 
 use LarpManager\Form\ChronologieForm;
@@ -13,6 +14,72 @@ use LarpManager\Form\ChronologieRemoveForm;
  */
 class ChronologieController
 {
+	
+	/**
+	 * API : mettre à jour un événement
+	 * POST /api/chronologies/{event}
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function apiUpdateAction(Request $request, Application $app)
+	{
+		$event = $request->get('event');
+	
+		$payload = json_decode($request->getContent());
+	
+		$territoire = $app['orm.em']->find('\LarpManager\Entities\Territoire',$payload->territoire_id);
+		
+		$event->setTerritoire($territoire);
+		$event->setYear($payload->year);
+		$event->setMonth($payload->month);
+		$event->setDay($payload->day);
+		$event->setVisibilite($payload->visibilite);
+		$event->setDescription($payload->description);
+			
+		$app['orm.em']->persist($event);
+		$app['orm.em']->flush();
+	
+		return new JsonResponse($payload);
+	}
+		
+	/**
+	 * API : supprimer un événement
+	 * DELETE /api/chronologies/{event}
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function apiDeleteAction(Request $request, Application $app)
+	{
+		$event = $request->get('event');
+		$app['orm.em']->remove($event);
+		$app['orm.em']->flush();
+		
+		return new JsonResponse();
+	}
+	
+	public function apiAddAction(Request $request, Application $app)
+	{
+		$payload = json_decode($request->getContent());
+		
+		$territoire = $app['orm.em']->find('\LarpManager\Entities\Territoire',$payload->territoire_id);
+		
+		$event = new \LarpManager\Entities\Chronologie();
+		
+		$event->setTerritoire($territoire);
+		$event->setYear($payload->year);
+		$event->setMonth($payload->month);
+		$event->setDay($payload->day);
+		$event->setVisibilite($payload->visibilite);
+		$event->setDescription($payload->description);
+		
+		$app['orm.em']->persist($event);
+		$app['orm.em']->flush();
+		
+		return new JsonResponse($payload);
+	}
+	
 	/**
 	 * @description affiche la vue index.twig
 	 */

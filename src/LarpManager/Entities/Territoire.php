@@ -21,7 +21,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  *
  * @Entity(repositoryClass="LarpManager\Repository\TerritoireRepository")
  */
-class Territoire extends BaseTerritoire
+class Territoire extends BaseTerritoire implements \JsonSerializable
 {
 	/**
 	 * @ManyToMany(targetEntity="Ressource", inversedBy="importateurs")
@@ -69,6 +69,29 @@ class Territoire extends BaseTerritoire
 		$this->langues = new ArrayCollection();
 		$this->religions = new ArrayCollection();
 		parent::__construct();
+	}
+	
+	public function jsonSerialize() {
+		return array(
+				'nom' => $this->getNom(),
+				'description' => $this->getDescription(),
+				'capitale' => $this->getCapitale(),
+				'dirigeant' => $this->getDirigeant(),
+				'population' => $this->getPopulation(),
+				'symbole' => $this->getSymbole(),
+				'tech_level' => $this->getTechLevel(),
+				'type_racial' => $this->getTypeRacial(),
+				'frontieres' => $this->getFrontieres(),
+				'inspiration' => $this->getInspiration(),
+		);
+	}
+	
+	public function jsonUnserialize($payload) {
+		$this->setNom($payload->nom);
+		$this->setDescription($payload->description);
+		$this->setCapitale($payload->capitale);
+		$this->setPolitique($payload->politique);
+		$this->setDirigeant($payload->dirigeant);
 	}
 	
 	/**

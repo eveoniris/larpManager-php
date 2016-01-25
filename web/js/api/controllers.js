@@ -23,20 +23,34 @@ LarpManagerApp.controller('ChronologieController', function ($scope, Restangular
  */
 LarpManagerApp.controller('TerritoireController', function ($scope, Restangular) {
 	
-	$scope.selected = null;
+	$scope.EventVisiblite = [
+	        {value: 'PRIVATE', text:'PRIVATE'},
+	        {value: 'PUBLIC', text:'PUBLIC'},
+	        {value: 'GROUPE_MEMBER', text:'GROUPE_MEMBER'}
+	        ];
+		
+	/**
+	 * Raffraichir la liste des territoires
+	 */
+	$scope.refresh = function()	{
+		$scope.selected = undefined;
+		Restangular.all('territoire').getList().then(function(result) {
+	        $scope.territoires = result;
+	    });
+	}
 	
-	Restangular.all('territoire').getList().then(function(result) {
-        $scope.territoires = result;
-    });
+	$scope.new = function() {
+		newTerritoire = Restangular.restangularizeElement(null, {}, "territoire",null);
+		$scope.territoires.push(newTerritoire);
+		$scope.selectTerritoire(newTerritoire);
+	}
 	
 	/**
 	 * Selection
 	 */
 	$scope.selectTerritoire = function(territoire) {
-		territoire.all('chronologie').getList().then( function(result) {
-			territoire.chronologies = result;
-			$scope.selected = territoire;
-		});
+		$scope.selected = territoire;
+		//Restangular.restangularizeCollection(territoire, territoire.chronologies, "chronologies");
 	}
 	
 	/**
@@ -46,10 +60,47 @@ LarpManagerApp.controller('TerritoireController', function ($scope, Restangular)
 		territoire.post();
 	}
 	
-	
-	$scope.removeEvent = function(event) {
-		event.remove();
+	/**
+	 * Sauvegarde d'un événement
+	 */
+	$scope.updateEvent = function(event)  {
+		event.territoire_id = $scope.selected.id;
+		e = Restangular.restangularizeElement(null, event, "chronologies",null);
+		e.save().then(function(result) {
+            $scope.selected.chronologies.splice(event.id, 1);
+			console.log(result);	
+		});
 	}
+	
+	/**
+	 * Suppression d'un événement
+	 */
+	$scope.removeEvent = function(event) {
+		e = Restangular.restangularizeElement(null, event, "chronologies",null);
+		e.remove().then(function(result) {
+			console.log(result);
+		});
+	}
+	
+	/**
+	 * Formulaire d'ajout d'un événement
+	 */
+	$scope.addEvent = function() {
+		$scope.insertMode = true;
+		$scope.inserted = {
+				id: '',
+				year : '',
+				description : '',
+				visibilite : ''
+		};
+		$scope.selected.chronologies.push($scope.inserted);
+	}
+	
+	/**
+	 *  récupérer tous les territoires
+	 */
+	$scope.refresh();
+	
 	/*var baseTeritoires = Restangular.all('territoire');
 	
 	baseTerritoires.getList().then(function(territoires) {

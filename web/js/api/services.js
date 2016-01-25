@@ -3,7 +3,7 @@ var LarpManagerApp = angular.module("LarpManagerApp", ['restangular','xeditable'
 
 // configuration de restangular
 LarpManagerApp.config(function(RestangularProvider) {
-	RestangularProvider.setBaseUrl('/api');	
+	RestangularProvider.setBaseUrl('/larp-manager-php/api');	
 });
 
 // compatibilité avec Twig

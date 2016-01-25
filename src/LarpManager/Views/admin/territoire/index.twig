@@ -13,17 +13,22 @@
 						<a 	class="btn btn-primary"
 							href="#" 
 							ng-click="refresh()"
+							data-toggle="tooltip" data-placement="top"
 							title="Rafraichir">
 							<i class="fa fa-refresh"></i>
 						</a>
 						<a 	class="btn btn-default"
-							href="#" 
-							ng-click="refresh()">
-							<i class="fa fa-plus"></i>Créer un nouveau territoire
+							href="#"
+							data-toggle="tooltip" data-placement="top"
+							title="Créer un nouveau territoire" 
+							ng-click="new()">
+							<i class="fa fa-plus"></i>
 						</a>
-					</div>
-					
-					<input type="text" ng-model="search" placeholder="Search">
+		      			<div class="input-group">
+		        			<span class="input-group-addon"><i class="fa fa-search"></i></span>
+		        			<input ng-model="search" type="text" class="form-control" placeholder="Rechercher" />
+		      			</div>
+	      			</div>
 				</div>
 				<div class="panel-body">
 					<div class="list-group">
@@ -195,6 +200,8 @@
   					<thead>
 	  					<tr>
 	  						<th>Année</th>
+	  						<th>Mois</th>
+	  						<th>Jour</th>
 	  						<th>Description</th>
 	  						<th>Visibilité</th>
 	  						<th>Edit</th>
@@ -203,28 +210,43 @@
 	  				<tbody>
   					<tr ng-repeat="event in selected.chronologies">
   						<td>
-	  						<span editable-text="event.year" 
+	  						<span editable-number="event.year" 
 	  							e-name="year" 
 	  							e-form="rowform" 
-	  							onbeforesave="checkYear($data, event.id)" 
 	  							e-required>
   							{[{ event.year }]}
   							</span>
   						</td>
-  						<td>
-  							<span editable-text="event.description" 
-	  							e-name="description" 
+  						 <td>
+	  						<span editable-number="event.month" 
+	  							e-name="month" 
 	  							e-form="rowform" 
-	  							onbeforesave="checkDescription($data, event.id)" 
+	  							e-required>
+  							{[{ event.month }]}
+  							</span>
+  						</td>
+  						 <td>
+	  						<span editable-number="event.day" 
+	  							e-name="day" 
+	  							e-form="rowform" 
+	  							e-required>
+  							{[{ event.day }]}
+  							</span>
+  						</td>
+  						<td>
+  							<span editable-textarea="event.description"
+  							 	e-rows="7" e-cols="40" 
+	  							e-name="description" 
+	  							e-form="rowform"  
 	  							e-required>
   							{[{ event.description }]}
   							</span>
   						</td>
   						<td>
-  							<span editable-text="event.visibilite" 
+  							<span editable-select="event.visibilite"
+  								e-ng-options="s.value as s.text for s in EventVisiblite" 
 	  							e-name="visibilite" 
-	  							e-form="rowform" 
-	  							onbeforesave="checkVisibilite($data, event.id)" 
+	  							e-form="rowform"  
 	  							e-required>
   							{[{ event.visibilite }]}
   							</span>
@@ -234,11 +256,11 @@
 					        <form 
 					        	editable-form 
 					        	name="rowform" 
-					        	onbeforesave="updateEvent()" 
+					        	onaftersave="updateEvent(event)" 
 					        	ng-show="rowform.$visible" 
 					        	class="form-buttons form-inline" 
 					        	shown="inserted == event">
-					          <button type="submit" ng-disabled="rowform.$waiting" ng-click="updateEvent(event)" class="btn btn-primary">
+					          <button type="submit" ng-disabled="rowform.$waiting" class="btn btn-primary">
 					            <i class="fa fa-floppy-o"></i>
 					          </button>
 					          <button type="button" ng-disabled="rowform.$waiting" ng-click="rowform.$cancel()" class="btn btn-default">

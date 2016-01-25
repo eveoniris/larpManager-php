@@ -25,10 +25,11 @@ class TerritoireController
 	public function apiListAction(Request $request, Application $app)
 	{
 		$qb = $app['orm.em']->createQueryBuilder();
-		$qb->select('Territoire, Groupes, Langue, Religion')
+		$qb->select('Territoire, Groupes, Chronologies, Langue, Religion')
 			->from('\LarpManager\Entities\Territoire','Territoire')
 			->leftJoin('Territoire.groupes', 'Groupes')
 			->leftJoin('Territoire.langue', 'Langue')
+			->leftJoin('Territoire.chronologies', 'Chronologies')
 			->leftJoin('Territoire.religion', 'Religion');
 			
 		
@@ -36,6 +37,26 @@ class TerritoireController
 		
 		$territoires = $query->getResult(Query::HYDRATE_ARRAY);
 		return new JsonResponse($territoires);
+	}
+	
+	/**
+	 * API : créer un nouveau territoire
+	 * POST /api/territoire
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function apiAddAction(Request $request, Application $app)
+	{
+		$territoire = new \LarpManager\Entities\Territoire();
+		
+		$payload = json_decode($request->getContent());
+		$territoire->jsonUnserialize($payload);
+		
+		$app['orm.em']->persist($territoire);
+		$app['orm.em']->flush();
+		
+		return new JsonResponse($payload);
 	}
 	
 	/**
@@ -50,12 +71,7 @@ class TerritoireController
 		$territoire = $request->get('territoire');
 		
 		$payload = json_decode($request->getContent());
-		
-		$territoire->setNom($payload->nom);
-		$territoire->setDescription($payload->description);
-		$territoire->setCapitale($payload->capitale);
-		$territoire->setPolitique($payload->politique);
-		$territoire->setDirigeant($payload->dirigeant);
+		$territoire->jsonUnserialize($payload);
 		
 		$app['orm.em']->persist($territoire);
 		$app['orm.em']->flush();
@@ -75,6 +91,20 @@ class TerritoireController
 		return new JsonResponse($territoire->getChronologies()->toArray());
 	}
 	
+	public function apiEventUpdateAction(Request $request, Application $app)
+	{
+		$territoire = $request->get('territoire');
+		$event = $request->get('event');
+		
+		$payload = json_decode($request->getContent());
+		
+		$event->setYear($payload->year);
+		
+		$app['orm.em']->persist($event);
+		$app['orm.em']->flush();
+		
+		return new JsonResponse($payload);
+	}
 	/**
 	 * Ajoute un événement à un territoire
 	 * 
@@ -168,7 +198,7 @@ class TerritoireController
 		$territoires = $app['orm.em']->getRepository('\LarpManager\Entities\Territoire')->findAll();
 		$territoires = $app['larp.manager']->sortTerritoire($territoires);
 		
-		return $app['twig']->render('territoire/index.twig', array('territoires' => $territoires));
+		return $app['twig']->render('admin/territoire/index.twig', array('territoires' => $territoires));
 	}
 	
 	/**
