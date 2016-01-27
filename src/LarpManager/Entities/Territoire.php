@@ -125,7 +125,7 @@ class Territoire extends BaseTerritoire implements \JsonSerializable
 		$this->setVetements($payload->vetements);
 		$this->setNomsMasculin($payload->noms_masculin);
 		$this->setNomsFeminin($payload->noms_feminin);
-		$this->setFrontieres($payload->fonrtieres);
+		$this->setFrontieres($payload->frontieres);
 	}
 	
 	/**
@@ -335,7 +335,7 @@ class Territoire extends BaseTerritoire implements \JsonSerializable
 	public function removeReligion(Religion $religion)
 	{
 		$religion->removeTerritoireSecondaire($this);
-		$this->$religions->removeElement($religion);
+		$this->religions->removeElement($religion);
 	
 		return $this;
 	}

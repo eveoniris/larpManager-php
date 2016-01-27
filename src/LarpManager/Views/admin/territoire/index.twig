@@ -357,31 +357,50 @@
 								<h5>Religion principale</h5>
 							</div>
 							
-							{[{ selected.religion.label }]}
+							<p>
+								<span 
+									editable-select="selected.religion.id"
+			  						e-ng-options="r.id as r.label for r in availableReligions"
+			  						e-form="religionBtnForm"
+			  						onshow="loadAvailableReligions()"
+			  						onaftersave="updateReligion($data)"
+			  						>
+				  					<strong>{[{ selected.religion.label }]}</strong>
+			  					</span>
+								<a href="#" ng-click="religionBtnForm.$show()" ng-hide="religionBtnForm.$visible">
+				   					<i class="fa fa-pencil"></i>
+								</a>
+							</p>
+							<p>
+								{[{ selected.religion.description | htmlToPlaintext }]}
+							</p>
 							
 							
 							<div class="header">
 								<h5>Religions secondaires</h5>
 							</div>
-							
-							
-							<table class="table table-bordered table-hover table-condensed">
-			  					<thead>
-				  					<tr>
-				  						<th>Religion</th>
-				  						<th>Description</th>
-				  						<th>Edit</th>
-				  					</tr>
-				  				</thead>
-				  				<tbody>
-				  					<tr ng-repeat="religion in selected.religions | orderBy:'+label'">
-				  						<td></td>
-				  						<td></td>
-				  						<td></td>
-				  					</tr>
-				  				</tbody>
-				  			</table>
-							
+														
+							<div 
+								editable-select="selected.religions"
+		  						e-ng-options="r.id as r.label for r in availableReligions"
+		  						e-multiple
+		  						e-form="religionsBtnForm"
+		  						onshow="loadAvailableReligions()"
+		  						onaftersave="updateReligionSecondaires($data)"
+		  						>
+		  						
+			  					<ul class="list-group">						
+					  				<li class="list-group-item" ng-repeat="religion in selected.religions | orderBy:'+label'">
+					  					<strong>{[{ religion.label }]}</strong>
+					  					<p>{[{ religion.description |htmlToPlaintext }]}</p>
+									</li>
+					  			</ul>
+		  					</div>
+			  					
+		  					<a href="#" ng-click="religionsBtnForm.$show()" ng-hide="religionsBtnForm.$visible">
+			   					Modifier les religions secondaires
+							</a>
+
 						</div>
 					</div>
 				</div>

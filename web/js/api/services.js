@@ -1,5 +1,14 @@
+// pour netoyer les chaines
+angular.module('htmlToPlaintext', []).
+	filter('htmlToPlaintext', function() {
+		return function(text) {
+			return  text ? String(text).replace(/<[^>]+>/gm, '') : '';
+		};
+	}
+);
+
 // initialisation de l'application et déclaration des modules utilisé
-var LarpManagerApp = angular.module("LarpManagerApp", ['restangular','xeditable']);
+var LarpManagerApp = angular.module("LarpManagerApp", ['restangular','xeditable','htmlToPlaintext']);
 
 // configuration de restangular
 LarpManagerApp.config(function(RestangularProvider) {
@@ -15,3 +24,11 @@ LarpManagerApp.config(function($interpolateProvider){
 LarpManagerApp.run(function(editableOptions) {
 	editableOptions.theme = 'bs3';
 });
+
+function inArray(needle, haystack) {
+    var length = haystack.length;
+    for(var i = 0; i < length; i++) {
+        if(haystack[i] == needle) return true;
+    }
+    return false;
+}

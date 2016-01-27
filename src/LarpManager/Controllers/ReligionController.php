@@ -2,9 +2,11 @@
 namespace LarpManager\Controllers;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Silex\Application;
 use LarpManager\Form\ReligionForm;
 use LarpManager\Form\ReligionLevelForm;
+use Doctrine\ORM\Query;
 
 /**
  * LarpManager\Controllers\ReligionController

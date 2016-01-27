@@ -74,10 +74,30 @@ class TerritoireController
 		$payload = json_decode($request->getContent());
 		$territoire->jsonUnserialize($payload);
 		
-		if ( $payload->religion_id )
+		if ( isset($payload->religion_id) )
 		{
 			$religion = $app['orm.em']->find('\LarpManager\Entities\Religion',$payload->religion_id);
 			$territoire->setReligionPrincipale($religion);
+		}
+		
+ 		if ( isset($payload->religion_id_list) )
+		{
+			$oldReligions = $territoire->getReligions();
+			foreach ( $oldReligions as $religion )
+			{
+				if ( ! in_array( $religion->getId(),$payload->religion_id_list)  )
+				{
+					$territoire->removeReligion($religion);
+				}
+			}
+			foreach ( $payload->religion_id_list as $id )
+			{
+				$religion = $app['orm.em']->find('\LarpManager\Entities\Religion',$id);
+				if (  ! $oldReligions->contains($religion) )
+				{
+					$territoire->addReligion($religion);
+				}
+			}
 		}
 		
 		$app['orm.em']->persist($territoire);
