@@ -206,8 +206,8 @@ class Territoire extends BaseTerritoire implements \JsonSerializable
 	 */
 	public function addExportation(Ressource $ressource)
 	{
-		$ressource->addExporteur($this);
-		$this->exporations[] = $ressource;
+		$ressource->addExportateur($this);
+		$this->exportations[] = $ressource;
 	
 		return $this;
 	}
@@ -221,7 +221,7 @@ class Territoire extends BaseTerritoire implements \JsonSerializable
 	public function removeExportation(Ressource $ressource)
 	{
 		$ressource->removeExportateur($this);
-		$this->$exporations->removeElement($ressource);
+		$this->exportations->removeElement($ressource);
 	
 		return $this;
 	}
@@ -244,7 +244,7 @@ class Territoire extends BaseTerritoire implements \JsonSerializable
 	 */
 	public function addImportation(Ressource $ressource)
 	{
-		$ressource->addImporteur($this);
+		$ressource->addImportateur($this);
 		$this->importations[] = $ressource;
 	
 		return $this;
@@ -258,8 +258,8 @@ class Territoire extends BaseTerritoire implements \JsonSerializable
 	 */
 	public function removeImportation(Ressource $ressource)
 	{
-		$ressource->removeImporteur($this);
-		$this->$importations->removeElement($ressource);
+		$ressource->removeImportateur($this);
+		$this->importations->removeElement($ressource);
 	
 		return $this;
 	}
@@ -282,7 +282,7 @@ class Territoire extends BaseTerritoire implements \JsonSerializable
 	 */
 	public function addLangue(Langue $langue)
 	{
-		$ressource->addTerritoireSecondaire($this);
+		$langue->addTerritoireSecondaire($this);
 		$this->langues[] = $langue;
 	
 		return $this;

@@ -8,7 +8,14 @@ angular.module('htmlToPlaintext', []).
 );
 
 // initialisation de l'application et déclaration des modules utilisé
-var LarpManagerApp = angular.module("LarpManagerApp", ['restangular','xeditable','htmlToPlaintext']);
+var LarpManagerApp = angular.module("LarpManagerApp", ['restangular','xeditable','htmlToPlaintext','textAngular']);
+
+// interprétation des balises html
+LarpManagerApp.filter('unsafe', function ($sce) {
+	return function(val) {
+        return $sce.trustAsHtml(val);
+    };
+});
 
 // configuration de restangular
 LarpManagerApp.config(function(RestangularProvider) {

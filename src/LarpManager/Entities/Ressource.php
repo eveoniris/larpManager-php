@@ -51,4 +51,29 @@ class Ressource extends BaseRessource
 	{
 		return $this->importateurs;
 	}
+	
+	public function addImportateur($territoire)
+	{
+		$this->importateurs[] = $territoire;
+		return $this;
+	}
+	
+	public function removeImportateur($territoire)
+	{
+		$this->importateurs->removeElement($territoire);
+		return $this;
+	}
+	
+	public function addExportateur($territoire)
+	{
+		$this->exportateurs[] = $territoire;
+		return $this;
+	}
+	
+	public function removeExportateur($territoire)
+	{
+		$this->exportateurs->removeElement($territoire);
+		return $this;
+	}
+		
 }

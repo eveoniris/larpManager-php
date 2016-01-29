@@ -64,8 +64,18 @@
 					</a>
 				</li>
 				<li role="religion">
-					<a href="#religion" aria-controls="chronologie" role="tab" data-toggle="tab">
+					<a href="#religion" aria-controls="religion" role="tab" data-toggle="tab">
 						Religion
+					</a>
+				</li>
+				<li role="langue">
+					<a href="#langue" aria-controls="langue" role="tab" data-toggle="tab">
+						Langue
+					</a>
+				</li>
+				<li role="economie">
+					<a href="#economie" aria-controls="economie" role="tab" data-toggle="tab">
+						Economie
 					</a>
 				</li>
 			</ul>
@@ -91,12 +101,13 @@
 								<h5>Description</h5>
 							</div>
 							
-							<p 	editable-textarea="selected.description"
+														
+							<p 	editable-text-angular="selected.description"
 								onaftersave="saveTerritoire(selected)"
 								e-rows="10" 
 								e-cols="90"
 								e-form="descriptionBtnForm">
-								{[{ selected.description }]}
+								<p ng-bind-html="selected.description | unsafe"></p>
 								<a href="#" ng-click="descriptionBtnForm.$show()" ng-hide="descriptionBtnForm.$visible">
 				   					<i class="fa fa-pencil"></i>
 								</a>
@@ -381,7 +392,7 @@
 							</div>
 														
 							<div 
-								editable-select="selected.religions"
+								editable-select="selected.religionsArray"
 		  						e-ng-options="r.id as r.label for r in availableReligions"
 		  						e-multiple
 		  						e-form="religionsBtnForm"
@@ -405,6 +416,119 @@
 					</div>
 				</div>
 				
+				<div role="tabpanel" class="tab-pane fade" id="langue">
+					<div class="panel panel-default">
+						<div class="panel-body">
+						
+							<div class="header">
+								<h5>Langue principale</h5>
+							</div>
+							
+							<p>
+								<span 
+									editable-select="selected.langue.id"
+			  						e-ng-options="r.id as r.label for r in availableLangues"
+			  						e-form="langueBtnForm"
+			  						onshow="loadAvailableLangues()"
+			  						onaftersave="updateLangue($data)"
+			  						>
+				  					<strong>{[{ selected.langue.label }]}</strong>
+			  					</span>
+								<a href="#" ng-click="langueBtnForm.$show()" ng-hide="langueBtnForm.$visible">
+				   					<i class="fa fa-pencil"></i>
+								</a>
+							</p>
+							<p>
+								{[{ selected.langue.description | htmlToPlaintext }]}
+							</p>
+							
+							<div class="header">
+								<h5>Langues parlées</h5>
+							</div>
+						
+							<div 
+								editable-select="selected.languesArray"
+		  						e-ng-options="r.id as r.label for r in availableLangues"
+		  						e-multiple
+		  						e-form="languesBtnForm"
+		  						onshow="loadAvailableLangues()"
+		  						onaftersave="updateLangueSecondaires($data)"
+		  						>
+		  						
+			  					<ul class="list-group">						
+					  				<li class="list-group-item" ng-repeat="langue in selected.langues | orderBy:'+label'">
+					  					<strong>{[{ langue.label }]}</strong>
+					  					<p>{[{ langue.description |htmlToPlaintext }]}</p>
+									</li>
+					  			</ul>
+		  					</div>
+			  					
+		  					<a href="#" ng-click="languesBtnForm.$show()" ng-hide="languesBtnForm.$visible">
+			   					Modifier les langues parlées
+							</a>
+						
+						</div>
+					</div>
+				</div>
+				
+				
+				<div role="tabpanel" class="tab-pane fade" id="economie">
+					<div class="panel panel-default">
+						<div class="panel-body">
+							<div class="header">
+								<h5>Importations</h5>
+							</div>
+							
+							<div 
+								editable-select="selected.importationsArray"
+		  						e-ng-options="r.id as r.label for r in availableRessources"
+		  						e-multiple
+		  						e-form="importationsBtnForm"
+		  						onshow="loadAvailableRessources()"
+		  						onaftersave="updateImportations($data)"
+		  						>
+		  						
+			  					<ul class="list-group">						
+					  				<li class="list-group-item" ng-repeat="ressource in selected.importations | orderBy:'+label'">
+					  					<strong>{[{ ressource.label }]}</strong>
+					  					<p>{[{ ressource.description |htmlToPlaintext }]}</p>
+									</li>
+					  			</ul>
+		  					</div>
+			  					
+		  					<a href="#" ng-click="importationsBtnForm.$show()" ng-hide="importationsBtnForm.$visible">
+			   					Modifier les importations
+							</a>
+							
+							<div class="header">
+								<h5>Exportations</h5>
+							</div>
+							
+							<div 
+								editable-select="selected.exportationsArray"
+		  						e-ng-options="r.id as r.label for r in availableRessources"
+		  						e-multiple
+		  						e-form="exportationsBtnForm"
+		  						onshow="loadAvailableRessources()"
+		  						onaftersave="updateExportations($data)"
+		  						>
+		  						
+			  					<ul class="list-group">						
+					  				<li class="list-group-item" ng-repeat="ressource in selected.exportations | orderBy:'+label'">
+					  					<strong>{[{ ressource.label }]}</strong>
+					  					<p>{[{ ressource.description |htmlToPlaintext }]}</p>
+									</li>
+					  			</ul>
+		  					</div>
+			  					
+		  					<a href="#" ng-click="exportationsBtnForm.$show()" ng-hide="exportationsBtnForm.$visible">
+			   					Modifier les exportations
+							</a>
+							
+						</div>
+					</div>
+				</div>
+						
 			</div>
 		</div>
 	</div>

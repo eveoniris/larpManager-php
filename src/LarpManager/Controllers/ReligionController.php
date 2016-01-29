@@ -17,8 +17,8 @@ use Doctrine\ORM\Query;
 class ReligionController
 {
 	/**
-	 * API: fourni la liste des territoires
-	 * GET /api/territoire
+	 * API: fourni la liste des religions
+	 * GET /api/religion
 	 *
 	 * @param Request $request
 	 * @param Application $app

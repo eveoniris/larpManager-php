@@ -25,18 +25,48 @@ class TerritoireController
 	public function apiListAction(Request $request, Application $app)
 	{
 		$qb = $app['orm.em']->createQueryBuilder();
-		$qb->select('Territoire, Groupes, Chronologies, Langue, Religion, Religions')
+		$qb->select('Territoire, Groupes, Chronologies, Langue, Langues, Religion, Religions, Exportations, Importations')
 			->from('\LarpManager\Entities\Territoire','Territoire')
 			->leftJoin('Territoire.groupes', 'Groupes')
 			->leftJoin('Territoire.langue', 'Langue')
+			->leftJoin('Territoire.langues', 'Langues')
 			->leftJoin('Territoire.chronologies', 'Chronologies')
 			->leftJoin('Territoire.religion', 'Religion')
-			->leftJoin('Territoire.religions', 'Religions');
+			->leftJoin('Territoire.religions', 'Religions')
+			->leftJoin('Territoire.exportations', 'Exportations')
+			->leftJoin('Territoire.importations', 'Importations');
 			
 		
 		$query = $qb->getQuery();
 		
 		$territoires = $query->getResult(Query::HYDRATE_ARRAY);
+		
+		foreach ( $territoires as $key => $territoire)
+		{
+			$territoires[$key]['religionsArray'] = array();
+			$territoires[$key]['languesArray'] = array();
+			
+			foreach ( $territoire['religions'] as $religion)
+			{
+				$territoires[$key]['religionsArray'][] = $religion['id'];
+			}
+			
+			foreach ( $territoire['langues'] as $langue)
+			{
+				$territoires[$key]['languesArray'][] = $langue['id'];
+			}
+			
+			foreach ( $territoire['importations'] as $importation)
+			{
+				$territoires[$key]['importationsArray'][] = $importation['id'];
+			}
+			
+			foreach ( $territoire['exportations'] as $exportation)
+			{
+				$territoires[$key]['exportationsArray'][] = $exportation['id'];
+			}
+			
+		}
 		return new JsonResponse($territoires);
 	}
 	
@@ -74,12 +104,21 @@ class TerritoireController
 		$payload = json_decode($request->getContent());
 		$territoire->jsonUnserialize($payload);
 		
+		// si la religion principale est mise à jour
 		if ( isset($payload->religion_id) )
 		{
 			$religion = $app['orm.em']->find('\LarpManager\Entities\Religion',$payload->religion_id);
 			$territoire->setReligionPrincipale($religion);
 		}
 		
+		// si la langue principale est mise à jour
+		if ( isset($payload->langue_id) )
+		{
+			$langue = $app['orm.em']->find('\LarpManager\Entities\Langue',$payload->langue_id);
+			$territoire->setLanguePrincipale($langue);
+		}
+		
+		// si les religions secondaires sont mises à jour
  		if ( isset($payload->religion_id_list) )
 		{
 			$oldReligions = $territoire->getReligions();
@@ -96,6 +135,69 @@ class TerritoireController
 				if (  ! $oldReligions->contains($religion) )
 				{
 					$territoire->addReligion($religion);
+				}
+			}
+		}
+		
+		// si les langues secondaires sont mises à jour
+		if ( isset($payload->langue_id_list) )
+		{
+			$oldLangues = $territoire->getLangues();
+			foreach ( $oldLangues as $langue )
+			{
+				if ( ! in_array( $langue->getId(),$payload->langue_id_list)  )
+				{
+					$territoire->removeLangue($langue);
+				}
+			}
+			foreach ( $payload->langue_id_list as $id )
+			{
+				$langue = $app['orm.em']->find('\LarpManager\Entities\Langue',$id);
+				if (  ! $oldLangues->contains($langue) )
+				{
+					$territoire->addLangue($langue);
+				}
+			}
+		}
+		
+		// si les importations sont mises à jour
+		if ( isset($payload->importation_id_list) )
+		{
+			$oldImportations = $territoire->getImportations();
+			foreach ( $oldImportations as $importation )
+			{
+				if ( ! in_array( $importation->getId(),$payload->importation_id_list)  )
+				{
+					$territoire->removeImportation($importation);
+				}
+			}
+			foreach ( $payload->importation_id_list as $id )
+			{
+				$importation = $app['orm.em']->find('\LarpManager\Entities\Ressource',$id);
+				if (  ! $oldImportations->contains($importation) )
+				{
+					$territoire->addImportation($importation);
+				}
+			}
+		}
+		
+		// si les exportations sont mises à jour
+		if ( isset($payload->exportation_id_list) )
+		{
+			$oldExportations = $territoire->getExportations();
+			foreach ( $oldExportations as $exportation )
+			{
+				if ( ! in_array( $exportation->getId(),$payload->exportation_id_list)  )
+				{
+					$territoire->removeExportation($exportation);
+				}
+			}
+			foreach ( $payload->exportation_id_list as $id )
+			{
+				$exportation = $app['orm.em']->find('\LarpManager\Entities\Ressource',$id);
+				if (  ! $oldExportations->contains($exportation) )
+				{
+					$territoire->addExportation($exportation);
 				}
 			}
 		}

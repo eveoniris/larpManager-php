@@ -85,7 +85,19 @@ class ApiControllerProvider implements ControllerProviderInterface
 		$controllers->match('/religion','LarpManager\Controllers\ReligionController::apiListAction')
 			->bind("api.religion.list")
 			->method('GET')
-			->before($mustBeOrga);	
+			->before($mustBeOrga);
+		
+		// Récupére toutes les langues
+		$controllers->match('/langue','LarpManager\Controllers\LangueController::apiListAction')
+			->bind("api.langue.list")
+			->method('GET')
+			->before($mustBeOrga);
+		
+		// Récupére toutes les ressources
+		$controllers->match('/ressource','LarpManager\Controllers\RessourceController::apiListAction')
+			->bind("api.ressource.list")
+			->method('GET')
+			->before($mustBeOrga);
 			
 			
 			

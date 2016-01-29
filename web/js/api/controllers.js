@@ -129,6 +129,67 @@ LarpManagerApp.controller('TerritoireController', function ($scope,  $filter, Re
 		$scope.selected.post();
 	}
 	
+	
+	/**
+	 * Changer de langue principale
+	 */
+	$scope.updateLangue = function(langueId) {
+		$scope.selected.langue_id = langueId;
+		
+		var arrayLength = $scope.availableLangues.length;
+		for (var i = 0; i < arrayLength; i++ ) {
+			if  ( $scope.availableLangues[i].id == langueId ) {
+				$scope.selected.langue = $scope.availableLangues[i]
+			}
+		}
+		$scope.selected.post();
+	}
+	
+	/**
+	 * Modifier les langues parlées
+	 */
+	$scope.updateLangueSecondaires = function(langueIdArray) {
+		$scope.selected.langue_id_list = langueIdArray;
+		$scope.selected.langues = [];
+		var arrayLength = $scope.availableLangues.length;
+		for (var i = 0; i < arrayLength; i++ ) {
+			if  ( inArray($scope.availableLangues[i].id,langueIdArray) ) {
+				$scope.selected.langues.push( $scope.availableLangues[i]);
+			}
+		}
+		$scope.selected.post();
+	}
+	
+	/**
+	 * Modifier les importations
+	 */
+	$scope.updateImportations = function(importationIdArray) {
+		$scope.selected.importation_id_list = importationIdArray;
+		$scope.selected.importations = [];
+		var arrayLength = $scope.availableRessources.length;
+		for (var i = 0; i < arrayLength; i++ ) {
+			if  ( inArray($scope.availableRessources[i].id,importationIdArray) ) {
+				$scope.selected.importations.push( $scope.availableRessources[i]);
+			}
+		}
+		$scope.selected.post();
+	}
+	
+	/**
+	 * Modifier les exportations
+	 */
+	$scope.updateExportations = function(exportationIdArray) {
+		$scope.selected.exportation_id_list = exportationIdArray;
+		$scope.selected.exportations = [];
+		var arrayLength = $scope.availableRessources.length;
+		for (var i = 0; i < arrayLength; i++ ) {
+			if  ( inArray($scope.availableRessources[i].id,exportationIdArray) ) {
+				$scope.selected.exportations.push( $scope.availableRessources[i]);
+			}
+		}
+		$scope.selected.post();
+	}
+	
 	/**
 	 *  récupérer tous les territoires
 	 */
@@ -146,7 +207,35 @@ LarpManagerApp.controller('TerritoireController', function ($scope,  $filter, Re
 			for (var i = 0; i < arrayLength; i++ ) {
 				$scope.availableReligions.push(result[i].plain());
 			}
-			
+		});
+	}
+	
+	/**
+	 * Recupérer toutes les langues
+	 */
+	$scope.availableLangues = [];
+	
+	$scope.loadAvailableLangues = function() {
+		return $scope.availableLangues.length ? null : Restangular.all('langue').getList().then(function(result) {
+			var arrayLength = result.length;
+			for (var i = 0; i < arrayLength; i++ ) {
+				$scope.availableLangues.push(result[i].plain());
+			}
+		});
+	}
+	
+	/**
+	 * Récupérer toutes les ressources
+	 */
+	
+	$scope.availableRessources = [];
+	
+	$scope.loadAvailableRessources = function() {
+		return $scope.availableRessources.length ? null : Restangular.all('ressource').getList().then(function(result) {
+			var arrayLength = result.length;
+			for (var i = 0; i < arrayLength; i++ ) {
+				$scope.availableRessources.push(result[i].plain());
+			}
 		});
 	}
 });
