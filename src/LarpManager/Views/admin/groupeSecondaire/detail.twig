@@ -47,8 +47,12 @@
 			<div class="list-group">
 				{% for postulant in groupeSecondaire.postulants %}
 				<div class="list-group-item">
-					<h6 class="list-group-item-heading">{{ postulant.personnage.identity }}</h6>
-					<p class="list-group-item-text">{{ postulant.date|date('Y-m-d') }}</p>
+					<h6 class="list-group-item-heading">
+						<a href="{{ path('personnage.admin.detail', {'personnage':postulant.personnage.id}) }}">{{ postulant.personnage.nom }}&nbsp;{{ postulant.personnage.surnom }}</a>
+					</h6>
+					{% if postulant.personnage.groupe %}<p class="list-group-item-text">Groupe : <a href="{{ path('groupe.detail', {'index': postulant.personnage.groupe.id}) }}">{{ postulant.personnage.groupe.nom }}</a></p>{% endif %}
+					{% if postulant.personnage.participant %}<p class="list-group-item-text">Utilisateur : <a href="{{ path('user.view', {'id': postulant.personnage.participant.user.id}) }}">{{ postulant.personnage.participant.user.username }}</a></p>{% endif %}
+					<p class="list-group-item-text">Date de la demande : {{ postulant.date|date('Y-m-d') }}</p>
 					<p class="list-group-item-text">{{ postulant.explanation|markdown }}</p>
 					<a href="{{ path('groupeSecondaire.admin.reponse', {'index': groupeSecondaire.id, 'postulantId' : postulant.id}) }}">Répondre</a>
 				</div>

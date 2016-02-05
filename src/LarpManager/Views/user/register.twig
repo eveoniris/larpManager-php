@@ -19,7 +19,7 @@
 	            <div class="alert alert-danger">{{ error|nl2br }}</div>
 	        {% endif %}
 
-	        <form class="form-horizontal" method="POST">
+	        <form class="form-horizontal" method="POST" action="{{ path('user.register') }}">
 	
 	            <div class="form-group">
 	                <label class="col-sm-2 control-label" for="input-email">Email</label>
