@@ -85,6 +85,12 @@
 							</div>
 						{% endif %}
 						
+						{% if app.user.personnage  %}
+							{% for groupe in app.user.personnage.getSecondaryGroupsAsChief %}
+								{{ include("homepage/fragment/groupeSecondaireAsChief.twig",{'groupe':groupe}) }}
+							{% endfor %}
+						{% endif %}
+						
 						{# affichage de l'annonce la plus récente et du lien vers les archives des annonces #}
 						{% for annonce in annonces %}
 							<div class="header">

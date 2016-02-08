@@ -26,9 +26,6 @@
 			{% set perso = post.user.personnage %}
 				<div>{{ perso.nom }}, {{ perso.surnom }}</div>
 				{% if perso.groupe %}<div>{{ perso.groupe.nom }}</div>{% endif %}
-				<div>
-					{{ perso.classeName }}
-				</div>
 			{% endif %}
 		</div>
 	</div>
