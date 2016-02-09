@@ -43,10 +43,10 @@ LarpManagerApp.controller('TerritoireController', function ($scope,  $filter, Re
 	/**
 	 * Créer un nouveau territoire
 	 */
-	$scope.new = function() {
-		newTerritoire = Restangular.restangularizeElement(null, {}, "territoire",null);
-		$scope.territoires.push(newTerritoire);
-		$scope.selectTerritoire(newTerritoire);
+	$scope.createNew = function() {
+		$scope.selected = Restangular.restangularizeElement(null, {}, "territoire",null);
+		$scope.territoires.push($scope.selected);
+		$scope.territoires.post($scope.selected);
 	}
 	
 	/**
@@ -60,7 +60,7 @@ LarpManagerApp.controller('TerritoireController', function ($scope,  $filter, Re
 	 * Sauvegarde d'un territoire
 	 */
 	$scope.saveTerritoire = function(territoire) {
-		territoire.post();
+		$scope.selected.save();
 	}
 	
 	/**

@@ -86,9 +86,21 @@
 						{% endif %}
 						
 						{% if app.user.personnage  %}
-							{% for groupe in app.user.personnage.getSecondaryGroupsAsChief %}
-								{{ include("homepage/fragment/groupeSecondaireAsChief.twig",{'groupe':groupe}) }}
-							{% endfor %}
+						
+							<div class="header">
+								<h5>Groupes secondaires</h5>
+							</div>
+							{% if app.user.personnage.secondaryGroupsAsChief|length > 0 %}
+								
+								<p>Vous êtes responsable d'un ou de plusieurs groupes secondaires. Suivez le lien ci-dessous pour gérer vos groupes secondaires</p>
+								<ul>
+								{% for groupe in app.user.personnage.secondaryGroupsAsChief %}
+									<li><a href="{{ path('groupeSecondaire.gestion', {'index': groupe.id}) }}">Gerer le groupe {{ groupe.label }}</a></li>
+								{% endfor %}
+								</ul>
+							{% endif %}
+							
+							<p>Si vous faites partie d'un groupe secondaire (secte, confrérie, guilde, etc ...), ou avez l'intention de rejoindre l'un de ces groupes, n'oubliez pas de vous y inscrire ! <a href="{{ path('groupeSecondaire.list') }}">Liste des groupes secondaires</a></p> 
 						{% endif %}
 						
 						{# affichage de l'annonce la plus récente et du lien vers les archives des annonces #}
@@ -106,19 +118,23 @@
 			<div role="tabpanel" class="tab-pane fade" id="groupe">
 				<div class="panel panel-default">
 					<div class="panel-body">
-						{% if app.user.groupes|length == 0 %}
-							<div class="header">
-								<h5>{% trans %}subscribe_group_title{% endtrans %}</h5>
-							</div>
-								
-							<p>{% trans %}subscribe_group_explain{% endtrans %}</p>
-							
-							{{ include("homepage/fragment/form_groupe.twig",{'form': form_groupe,'action': path('homepage.inscription')}) }}
+						{% if not app.user.etatCivil %}
+							Vous devez remplir votre état civil avant de pouvoir rejoindre un groupe
 						{% else %}
-							{# Détail des groupes#}
-							{% for groupe in app.user.groupes %}
-								{{ include("homepage/fragment/groupe.twig",{'groupe':groupe}) }}
-							{% endfor %}
+							{% if app.user.groupes|length == 0 %}
+								<div class="header">
+									<h5>{% trans %}subscribe_group_title{% endtrans %}</h5>
+								</div>
+									
+								<p>{% trans %}subscribe_group_explain{% endtrans %}</p>
+								
+								{{ include("homepage/fragment/form_groupe.twig",{'form': form_groupe,'action': path('homepage.inscription')}) }}
+							{% else %}
+								{# Détail des groupes#}
+								{% for groupe in app.user.groupes %}
+									{{ include("homepage/fragment/groupe.twig",{'groupe':groupe}) }}
+								{% endfor %}
+							{% endif %}
 						{% endif %}
 					</div>
 				</div>
@@ -127,16 +143,20 @@
 			<div role="tabpanel" class="tab-pane fade" id="personnage">
 				<div class="panel panel-default">
 					<div class="panel-body">
-						{% if app.user.personnage %}
-							{{ include("homepage/fragment/personnage.twig",{'personnage':app.user.personnage}) }}
+						{% if not app.user.etatCivil or app.user.groupes|length == 0  %}
+							Vous devez remplir votre état civil et rejoindre un groupe avant de pouvoir créer un personnage.
 						{% else %}
-							Vous n'avez pas encore de personnage. Rejoignez un groupe pour y créer un personnage.
-							
-							{% for groupe in app.user.groupes %}
-								{% if not groupe.getPersonnage(app.user) %}
-									<a class="btn btn default" href="{{ path('groupe.personnage.add', {'index': groupe.id}) }}">Créer votre personnage</a>
-								{% endif %}
-							{% endfor %}
+							{% if app.user.personnage %}
+								{{ include("homepage/fragment/personnage.twig",{'personnage':app.user.personnage}) }}
+							{% else %}
+								Vous n'avez pas encore de personnage. Rejoignez un groupe pour y créer un personnage.
+								
+								{% for groupe in app.user.groupes %}
+									{% if not groupe.getPersonnage(app.user) %}
+										<a class="btn btn default" href="{{ path('groupe.personnage.add', {'index': groupe.id}) }}">Créer votre personnage</a>
+									{% endif %}
+								{% endfor %}
+							{% endif %}
 						{% endif %}
 					</div>
 				</div>

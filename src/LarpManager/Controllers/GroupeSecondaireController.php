@@ -416,19 +416,133 @@ class GroupeSecondaireController
 	 * @param Request $request
 	 * @param Application $app
 	 */
-	public function reponseAction(Request $request, Application $app)
+	public function gestionAcceptAction(Request $request, Application $app)
 	{
-		$id = $request->get('index');
-		$postulantId = $request->get('postulantId');
+		$id = $request->get('groupe');
+		$postulantId = $request->get('postulant');
 		
 		$groupeSecondaire = $app['orm.em']->find('\LarpManager\Entities\SecondaryGroup',$id);
 		$postulant = $app['orm.em']->find('\LarpManager\Entities\Postulant',$postulantId);
 		
-		// le candidat doit effectivement candidater à ce groupe
-		return $app['twig']->render('public/groupeSecondaire/reponse.twig', array(
+		$form = $app['form.factory']->createBuilder()
+			->add('envoyer','submit', array('label' => "Accepter le postulant"))
+			->getForm();
+		
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$personnage = $postulant->getPersonnage();
+			$personnage->addSecondaryGroup($groupeSecondaire);
+			$groupeSecondaire->addPersonnage($personnage);
+			
+			$app['orm.em']->remove($postulant);
+			$app['orm.em']->persist($groupeSecondaire);
+			$app['orm.em']->persist($personnage);
+			$app['orm.em']->flush();
+			
+			$app['user.mailer']->sendGroupeSecondaireAcceptMessage($personnage->getUser(), $groupeSecondaire);
+			
+			$app['session']->getFlashBag()->add('success', 'Vous avez accepté la candidature. Un message a été envoyé au joueur concerné.');
+			return $app->redirect($app['url_generator']->generate('groupeSecondaire.gestion', array('index' => $groupeSecondaire->getId())),301);
+		}
+		
+		return $app['twig']->render('groupeSecondaire/gestion_accept.twig', array(
 			'groupeSecondaire' => $groupeSecondaire,
 			'postulant' => $postulant,
 			'form' => $form->createView(),
+		));
+	}
+	
+	/**
+	 * Accepter une candidature à un groupe secondaire
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function gestionRejectAction(Request $request, Application $app)
+	{
+		$id = $request->get('groupe');
+		$postulantId = $request->get('postulant');
+	
+		$groupeSecondaire = $app['orm.em']->find('\LarpManager\Entities\SecondaryGroup',$id);
+		$postulant = $app['orm.em']->find('\LarpManager\Entities\Postulant',$postulantId);
+	
+		$form = $app['form.factory']->createBuilder()
+		->add('envoyer','submit', array('label' => "Refuser le postulant"))
+		->getForm();
+		
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$personnage = $postulant->getPersonnage();
+			$personnage->removeSecondaryGroup($groupeSecondaire);
+				
+			$app['orm.em']->persist($personnage);
+			$app['orm.em']->remove($postulant);
+			$app['orm.em']->flush();
+				
+			$app['user.mailer']->sendGroupeSecondaireRejectMessage($personnage->getUser(), $groupeSecondaire);
+				
+			$app['session']->getFlashBag()->add('success', 'Vous avez refusé la candidature. Un message a été envoyé au joueur concerné.');
+			return $app->redirect($app['url_generator']->generate('groupeSecondaire.gestion', array('index' => $groupeSecondaire->getId())),301);
+		}
+		
+		
+		return $app['twig']->render('groupeSecondaire/gestion_reject.twig', array(
+				'groupeSecondaire' => $groupeSecondaire,
+				'postulant' => $postulant,
+				'form' => $form->createView(),
+		));
+	}
+	
+	/**
+	 * Laisser la candidature dans les postulant
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function gestionWaitAction(Request $request, Application $app)
+	{
+		$id = $request->get('groupe');
+		$postulantId = $request->get('postulant');
+	
+		$groupeSecondaire = $app['orm.em']->find('\LarpManager\Entities\SecondaryGroup',$id);
+		$postulant = $app['orm.em']->find('\LarpManager\Entities\Postulant',$postulantId);
+	
+		$form = $app['form.factory']->createBuilder()
+			->add('envoyer','submit', array('label' => "Laisser en attente"))
+			->getForm();
+	
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$app['user.mailer']->sendGroupeSecondaireWaitMessage($personnage->getUser(), $groupeSecondaire);
+	
+			$app['session']->getFlashBag()->add('success', 'La candidature reste en attente. Un message a été envoyé au joueur concerné.');
+			return $app->redirect($app['url_generator']->generate('groupeSecondaire.gestion', array('index' => $groupeSecondaire->getId())),301);
+		}
+	
+	
+		return $app['twig']->render('groupeSecondaire/gestion_wait.twig', array(
+				'groupeSecondaire' => $groupeSecondaire,
+				'postulant' => $postulant,
+				'form' => $form->createView(),
+		));
+	}
+	
+	/**
+	 * Gestion d'un groupe secondaire (pour le chef du groupe secondaire)
+	 */
+	public function gestionAction(Request $request, Application $app)
+	{
+		$id = $request->get('index');
+		$groupeSecondaire = $app['orm.em']->find('\LarpManager\Entities\SecondaryGroup',$id);
+		
+		return $app['twig']->render('groupeSecondaire/gestion.twig', array(
+			'groupeSecondaire' => $groupeSecondaire,	
 		));
 	}
 

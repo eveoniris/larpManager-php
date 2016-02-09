@@ -160,7 +160,7 @@ class ForumControllerProvider implements ControllerProviderInterface
 				}
 			});
 
-		/** Ajouter un sous-forum */
+		/** Supprimer un post */
 		$controllers->match('/post/{index}/delete','LarpManager\Controllers\ForumController::postDeleteAction')
 			->assert('index', '\d+')
 			->bind("forum.post.delete")

@@ -55,6 +55,9 @@ class Mailer
     protected $fromName;
     protected $confirmationTemplate;
     protected $notificationTemplate;
+    protected $groupeSecondaireAcceptTemplate;
+    protected $groupeSecondaireRejectTemplate;
+    protected $groupeSecondaireWaitTemplate;
     protected $resetTemplate;
     protected $resetTokenTtl = 86400;
 
@@ -80,7 +83,31 @@ class Mailer
     {
     	$this->notificationTemplate = $notificationTemplate;
     }
-
+    
+    /**
+     * @param unknown $groupeSecondaireAcceptTemplate
+     */
+    public function setGroupeSecondaireAcceptTemplate($groupeSecondaireAcceptTemplate)
+    {
+    	$this->groupeSecondaireAcceptTemplate = $groupeSecondaireAcceptTemplate;
+    }
+    
+    /**
+     * @param unknown $groupeSecondaireRejectTemplate
+     */
+    public function setGroupeSecondaireRejectTemplate($groupeSecondaireRejectTemplate)
+    {
+    	$this->groupeSecondaireRejectTemplate = $groupeSecondaireRejectTemplate;
+    }
+    
+    /**
+     * @param unknown $groupeSecondaireWaitTemplate
+     */
+    public function setGroupeSecondaireWaitTemplate($groupeSecondaireWaitTemplate)
+    {
+    	$this->groupeSecondaireWaitTemplate = $groupeSecondaireWaitTemplate;
+    }
+    
     /**
      * @return string
      */
@@ -153,6 +180,56 @@ class Mailer
         return $this->resetTokenTtl;
     }
 
+    
+    /**
+     * Envoi du message de refus d'un groupe secondaire
+     * @param User $user
+     * @param GroupeSecondaire $groupeSecondaire
+     */
+    public function sendGroupeSecondaireRejectMessage(User $user, GroupeSecondaire $groupeSecondaire)
+    {
+    	$context = array(
+    			'user' => $user,
+    			'groupeSecondaire' => $groupeSecondaire,
+    	);
+    	
+    	$this->sendMessage($this->groupeSecondaireRejectTemplate, $context, $this->getFromEmail(), $user->getEmail());
+    }
+    
+    /**
+     * Envoi du message d'acceptation d'un groupe secondaire
+     * @param User $user
+     * @param GroupeSecondaire $groupeSecondaire
+     */
+    public function sendGroupeSecondaireAcceptMessage(User $user, GroupeSecondaire $groupeSecondaire)
+    {
+    	$context = array(
+    			'user' => $user,
+    			'groupeSecondaire' => $groupeSecondaire,
+    	);
+    	 
+    	$this->sendMessage($this->groupeSecondaireAcceptTemplate, $context, $this->getFromEmail(), $user->getEmail());
+    }
+    
+    /**
+     * Envoi du message mise en attente d'un groupe secondaire
+     * @param User $user
+     * @param GroupeSecondaire $groupeSecondaire
+     */
+    public function sendGroupeSecondaireWaitMessage(User $user, GroupeSecondaire $groupeSecondaire)
+    {
+    	$context = array(
+    			'user' => $user,
+    			'groupeSecondaire' => $groupeSecondaire,
+    	);
+    
+    	$this->sendMessage($this->groupeSecondaireWaitTemplate, $context, $this->getFromEmail(), $user->getEmail());
+    }
+    
+    /**
+     * Envoi du message de confirmation
+     * @param User $user
+     */
     public function sendConfirmationMessage(User $user)
     {
         $url = $this->urlGenerator->generate(self::ROUTE_CONFIRM_EMAIL, array('token' => $user->getConfirmationToken()), true);

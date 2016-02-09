@@ -1,0 +1,23 @@
+{#
+Template for an email message sent to confirm an email address.
+Variables passed to this template:
+    user: The SimpleUser\User instance.
+    confirmationUrl: The link to click to complete the confirmation process.
+#}
+
+{# The subject line. #}
+{%- block subject -%}{%- autoescape false -%}
+    {{ groupeSecondaire.label }} -- Candidature en attente
+{%- endautoescape -%}{%- endblock -%}
+
+{# The plain text message. #}
+{%- block body_text -%}{%- autoescape false -%}
+
+Vous êtes accepté en tant que postulant, vous avez rendez-vous sur le GN pour que nous en parlions en jeu. Vous recevrez un rendez vous avant le GN.
+
+{%- endautoescape -%}{%- endblock -%}
+
+{# The HTML message. Optional. #}
+{%- block body_html -%}
+    <p>Vous êtes accepté en tant que postulant, vous avez rendez-vous sur le GN pour que nous en parlions en jeu. Vous recevrez un rendez vous avant le GN</p>
+{%- endblock -%}

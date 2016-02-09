@@ -132,6 +132,49 @@ class GroupeSecondaireControllerProvider implements ControllerProviderInterface
 					throw new AccessDeniedException();
 				}
 			});
+
+		/**
+		 * Rejeter la demande d'un postulant
+		 */
+		$controllers->match('/{groupe}/gestion/postulant/{postulant}/reject','LarpManager\Controllers\GroupeSecondaireController::gestionRejectAction')
+			->assert('groupe', '\d+')
+			->assert('postulant', '\d+')
+			->bind("groupeSecondaire.gestion.reject")
+			->method('GET|POST')
+			->before(function(Request $request) use ($app) {
+				if (!$app['security.authorization_checker']->isGranted('GROUPE_SECONDAIRE_RESPONSABLE', $request->get('groupe'))) {
+					throw new AccessDeniedException();
+				}
+			});
+		
+		/**
+		 * Accepter la demande d'un postulant
+		 */
+		$controllers->match('/{groupe}/gestion/postulant/{postulant}/accept','LarpManager\Controllers\GroupeSecondaireController::gestionAcceptAction')
+			->assert('groupe', '\d+')
+			->assert('postulant', '\d+')
+			->bind("groupeSecondaire.gestion.accept")
+			->method('GET|POST')
+			->before(function(Request $request) use ($app) {
+				if (!$app['security.authorization_checker']->isGranted('GROUPE_SECONDAIRE_RESPONSABLE', $request->get('groupe'))) {
+					throw new AccessDeniedException();
+				}
+			});
+			
+		/**
+		 * Mettre en attente la demande d'un postulant
+		 */
+		$controllers->match('/{groupe}/gestion/postulant/{postulant}/wait','LarpManager\Controllers\GroupeSecondaireController::gestionWaitAction')
+			->assert('groupe', '\d+')
+			->assert('postulant', '\d+')
+			->bind("groupeSecondaire.gestion.wait")
+			->method('GET|POST')
+			->before(function(Request $request) use ($app) {
+				if (!$app['security.authorization_checker']->isGranted('GROUPE_SECONDAIRE_RESPONSABLE', $request->get('groupe'))) {
+					throw new AccessDeniedException();
+				}
+			});
+					
 			
 		/**
 		 * Detail d'un groupe secondaire à destication des membres de ce groupe
