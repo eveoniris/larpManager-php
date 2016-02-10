@@ -28,7 +28,7 @@
 		{% for postulant in groupeSecondaire.postulants %}
 			<div class="list-group-item">
 				<div class="list-group-item-heading">
-					<strong>{{ postulant.personnage.nom }} - {{ postulant.personnage.surnom }}</strong>
+					<strong>{{ postulant.personnage.surnom }}</strong>
 					{% if groupeSecondaire.secondaryGroupType.label == 'Religion' %}
 						Religion(s) du postulant :
 						<ul>
@@ -65,7 +65,7 @@
 		{% for personnage in groupeSecondaire.personnages %}
 			<div class="list-group-item">
 				<div class="list-group-item-heading">
-					<strong>{{ personnage.nom }} - {{ personnage.surnom }}</strong>
+					<strong>{{ personnage.surnom }}</strong>
 				</div>
 				<a class="btn btn-primary" 
 					href="{{ path('groupeSecondaire.gestion.remove', {'groupe': groupeSecondaire.id, 'personnage': personnage.id }) }}">

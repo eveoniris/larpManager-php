@@ -13,9 +13,23 @@
 		
 	<div class="well bs-component">
 		<form action="{{ path('user.messagerie.message.response',{'id': user.id, 'message':message.id}) }}" 
-				method="POST" {{ form_enctype(form) }}>
+				method="POST" {{ form_enctype(form) }}
+				novalidate >
 			<fieldset>
 				<legend>Répondre à un message</legend>
+				
+				<div class="list-group">
+					<div class="list-group-item">
+						<div class="list-group-item-heading">
+							<u>{{ message.title }}</u>&nbsp;envoyé par&nbsp;<strong>{{ message.userRelatedByAuteur.username }}</strong><br />
+							<em>Envoyé le {{ message.creationDate|date('Y-m-d H:i:s') }}</em>
+						</div>
+						<div class="list-group-item-text">
+							<p>{{ message.text|markdown }}</p>
+						</div>
+					</div>
+				</div>
+				
 				{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
 							
 				{{ form(form) }}

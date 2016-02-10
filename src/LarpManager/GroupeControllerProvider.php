@@ -100,7 +100,9 @@ class GroupeControllerProvider implements ControllerProviderInterface
 			});
 			
 		
-		
+		/**
+		 * Gestion d'un groupe secondaire (pour le chef de groupe)
+		 */
 		$controllers->match('/{index}/gestion','LarpManager\Controllers\GroupeController::gestionAction')
 			->assert('index', '\d+')
 			->bind("groupe.gestion")

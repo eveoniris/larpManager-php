@@ -73,7 +73,7 @@ class UserControllerProvider implements ControllerProviderInterface
 		$controllers->get('/messagerie', 'LarpManager\Controllers\UserController::viewSelfMessagerieAction')
 			->bind('user.messagerie')
 			->before(function(Request $request) use ($app) {
-				if ( !app['user']) {
+				if ( !$app['user']) {
 					throw new AccessDeniedException();
 				}
 		});

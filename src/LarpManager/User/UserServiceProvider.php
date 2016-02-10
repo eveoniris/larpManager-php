@@ -27,8 +27,9 @@ class UserServiceProvider implements ServiceProviderInterface
 			$mailer->setResetTemplate('user/email/reset-password.twig');
 			$mailer->setNotificationTemplate('user/email/notification.twig');
 			$mailer->setNewMessageTemplate('user/email/newMessage.twig');
-			$mailer->setGroupeSecondaireAcceptTemplate('user/email/groupeSecondaire_accept.twig');
-			$mailer->setGroupeSecondaireRejectTemplate('user/email/groupeSecondaire_reject.twig');
+			$mailer->setGroupeSecondaireAcceptTemplate('user/email/groupeSecondaireAccept.twig');
+			$mailer->setGroupeSecondaireRejectTemplate('user/email/groupeSecondaireReject.twig');
+			$mailer->setGroupeSecondaireWaitTemplate('user/email/groupeSecondaireWait.twig');
 			$mailer->setGroupeSecondaireRemoveTemplate('user/email/groupeSecondaire_remove.twig');
 			$mailer->setResetTokenTtl($app['config']['user']['passwordReset']['tokenTTL']);
 			return $mailer;

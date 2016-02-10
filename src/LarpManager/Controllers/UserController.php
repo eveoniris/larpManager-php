@@ -312,8 +312,10 @@ class UserController
 			return $app->redirect($app['url_generator']->generate('user.messagerie.view', array('id' => $user->getId())),301);
 		}
 	
-		return $app['twig']->render('public/user/messagerie.twig', array(
+		return $app['twig']->render('public/user/repondre.twig', array(
 				'user' => $user,
+				'message' => $message,
+				'form' => $form->createView(),
 		));
 	}
 	

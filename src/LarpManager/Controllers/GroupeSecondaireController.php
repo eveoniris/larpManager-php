@@ -521,7 +521,7 @@ class GroupeSecondaireController
 			
 		if ( $form->isValid() )
 		{
-			$app['user.mailer']->sendGroupeSecondaireWaitMessage($postulant->getPersonnage()->getUser(), $groupeSecondaire);
+			$app['user.mailer']->sendGroupeSecondaireWaitMessage($postulant->getPersonnage()->getParticipant()->getUser(), $groupeSecondaire);
 	
 			$app['session']->getFlashBag()->add('success', 'La candidature reste en attente. Un message a été envoyé au joueur concerné.');
 			return $app->redirect($app['url_generator']->generate('groupeSecondaire.gestion', array('index' => $groupeSecondaire->getId())),301);

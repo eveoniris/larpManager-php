@@ -33,6 +33,7 @@ use \Twig_Environment;
 use LarpManager\Entities\User;
 use LarpManager\Entities\Post;
 use LarpManager\Entities\Message;
+use LarpManager\Entities\SecondaryGroup;
 
 class Mailer
 {
@@ -229,7 +230,7 @@ class Mailer
      * @param User $user
      * @param GroupeSecondaire $groupeSecondaire
      */
-    public function sendGroupeSecondaireRejectMessage(User $user, GroupeSecondaire $groupeSecondaire)
+    public function sendGroupeSecondaireRejectMessage(User $user, SecondaryGroup $groupeSecondaire)
     {
     	$context = array(
     			'user' => $user,
@@ -244,7 +245,7 @@ class Mailer
      * @param User $user
      * @param GroupeSecondaire $groupeSecondaire
      */
-    public function sendGroupeSecondaireAcceptMessage(User $user, GroupeSecondaire $groupeSecondaire)
+    public function sendGroupeSecondaireAcceptMessage(User $user, SecondaryGroup $groupeSecondaire)
     {
     	$context = array(
     			'user' => $user,
@@ -259,7 +260,7 @@ class Mailer
      * @param User $user
      * @param GroupeSecondaire $groupeSecondaire
      */
-    public function sendGroupeSecondaireWaitMessage(User $user, GroupeSecondaire $groupeSecondaire)
+    public function sendGroupeSecondaireWaitMessage(User $user, SecondaryGroup $groupeSecondaire)
     {
     	$context = array(
     			'user' => $user,

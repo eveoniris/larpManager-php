@@ -38,19 +38,19 @@
 			{% for message in user.messageRelatedByDestinataires if not message.lu %}
 				<div class="panel panel-default">
 					<div class="panel-heading">
-						<u>{{ message.title }}</u>&nbsp;<strong>envoyé par</strong>&nbsp;{{ message.userRelatedByDestinataire.personnage.surnom }}<br />
+						<u>{{ message.title }}</u>&nbsp;<strong>envoyé par</strong>&nbsp;{{ message.userRelatedByAuteur.personnage.surnom }}<br />
 						<em>Reçu le {{ message.creationDate|date('Y-m-d H:i:s') }}</em>
 					</div>
 					<div class="panel-body">
 						{{ message.text|markdown }}
 					</div>
 					<div class="panel-footer">
-						<a href="{{ path('user.messagerie.message.response',{'id': user.id, 'message':message.id}) }}" class="btn btn-default">Répondre</a>
+						<a href="{{ path('user.messagerie.message.response',{'id': user.id, 'message':message.id}) }}" class="btn btn-primary">Répondre</a>
 						<a href="{{ path('user.messagerie.message.archive',{'id': user.id, 'message':message.id}) }}" class="btn btn-default">Archiver</a>
 					</div>
 				</div>
 			{% else %}
-				<p>Vous n'avez aucun message en attente.</p>
+				<blockquote><p>Vous n'avez aucun message en attente.</p></blockquote>
 			{% endfor %}
 		</div>
 		
@@ -66,7 +66,7 @@
 					</div>
 				</div>
 			{% else %}
-				<p>Vous n'avez envoyé aucun message.</p>
+				<blockquote><p>Vous n'avez envoyé aucun message.</p></blockquote>
 			{% endfor %}
 		</div>
 		
@@ -85,7 +85,7 @@
 					</div>
 				</div>
 			{% else %}
-				<p>Vous n'avez aucun messages archivés.</p>
+				<blockquote><p>Vous n'avez aucun messages archivés.</p></blockquote>
 			{% endfor %}
 		</div>
 	</div>
