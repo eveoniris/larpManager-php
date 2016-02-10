@@ -174,7 +174,34 @@ class GroupeSecondaireControllerProvider implements ControllerProviderInterface
 					throw new AccessDeniedException();
 				}
 			});
-					
+			
+		/**
+		 * Répondre à un postulant
+		 */
+		$controllers->match('/{groupe}/gestion/postulant/{postulant}/response','LarpManager\Controllers\GroupeSecondaireController::gestionResponseAction')
+			->assert('groupe', '\d+')
+			->assert('postulant', '\d+')
+			->bind("groupeSecondaire.gestion.response")
+			->method('GET|POST')
+			->before(function(Request $request) use ($app) {
+				if (!$app['security.authorization_checker']->isGranted('GROUPE_SECONDAIRE_RESPONSABLE', $request->get('groupe'))) {
+					throw new AccessDeniedException();
+				}
+			});			
+
+		/**
+		 * Répondre à un postulant
+		 */
+		$controllers->match('/{groupe}/gestion/membre/{personnage}/remove','LarpManager\Controllers\GroupeSecondaireController::gestionRemoveAction')
+			->assert('groupe', '\d+')
+			->assert('personnage', '\d+')
+			->bind("groupeSecondaire.gestion.remove")
+			->method('GET|POST')
+			->before(function(Request $request) use ($app) {
+				if (!$app['security.authorization_checker']->isGranted('GROUPE_SECONDAIRE_RESPONSABLE', $request->get('groupe'))) {
+					throw new AccessDeniedException();
+				}
+			});
 			
 		/**
 		 * Detail d'un groupe secondaire à destication des membres de ce groupe

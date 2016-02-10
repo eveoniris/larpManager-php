@@ -32,12 +32,14 @@ use \Swift_Mailer;
 use \Twig_Environment;
 use LarpManager\Entities\User;
 use LarpManager\Entities\Post;
+use LarpManager\Entities\Message;
 
 class Mailer
 {
     const ROUTE_CONFIRM_EMAIL = 'user.confirm-email';
     const ROUTE_RESET_PASSWORD = 'user.reset-password';
     const ROUTE_FORUM_POST = 'forum.post';
+    const ROUTE_MESSAGERIE = 'user.messagerie';
 
     /** @var \Swift_Mailer */
     protected $mailer;
@@ -58,9 +60,18 @@ class Mailer
     protected $groupeSecondaireAcceptTemplate;
     protected $groupeSecondaireRejectTemplate;
     protected $groupeSecondaireWaitTemplate;
+    protected $groupeSecondaireRemoveTemplate;
+    protected $newMessageTemplate;
     protected $resetTemplate;
     protected $resetTokenTtl = 86400;
 
+    /**
+     * Constructeur
+     * 
+     * @param \Swift_Mailer $mailer
+     * @param UrlGeneratorInterface $urlGenerator
+     * @param \Twig_Environment $twig
+     */
     public function __construct(\Swift_Mailer $mailer, UrlGeneratorInterface $urlGenerator, \Twig_Environment $twig)
     {
         $this->mailer = $mailer;
@@ -68,6 +79,15 @@ class Mailer
         $this->twig = $twig;
     }
 
+    /**
+     * Définie la template de notification d'un nouveau message
+     * @param unknown $messageTemplate
+     */
+    public function setNewMessageTemplate($newMessageTemplate)
+    {
+    	$this->newMessageTemplate = $newMessageTemplate;
+    }
+    
     /**
      * @param string $confirmationTemplate
      */
@@ -85,7 +105,7 @@ class Mailer
     }
     
     /**
-     * @param unknown $groupeSecondaireAcceptTemplate
+     * @param string $groupeSecondaireAcceptTemplate
      */
     public function setGroupeSecondaireAcceptTemplate($groupeSecondaireAcceptTemplate)
     {
@@ -93,7 +113,7 @@ class Mailer
     }
     
     /**
-     * @param unknown $groupeSecondaireRejectTemplate
+     * @param string $groupeSecondaireRejectTemplate
      */
     public function setGroupeSecondaireRejectTemplate($groupeSecondaireRejectTemplate)
     {
@@ -101,11 +121,19 @@ class Mailer
     }
     
     /**
-     * @param unknown $groupeSecondaireWaitTemplate
+     * @param string $groupeSecondaireWaitTemplate
      */
     public function setGroupeSecondaireWaitTemplate($groupeSecondaireWaitTemplate)
     {
     	$this->groupeSecondaireWaitTemplate = $groupeSecondaireWaitTemplate;
+    }
+    
+    /**
+     * @param string $groupeSecondaireRejectTemplate
+     */
+    public function setGroupeSecondaireRemoveTemplate($groupeSecondaireRemoveTemplate)
+    {
+    	$this->groupeSecondaireRemoveTemplate = $groupeSecondaireRemoveTemplate;
     }
     
     /**
@@ -180,7 +208,22 @@ class Mailer
         return $this->resetTokenTtl;
     }
 
-    
+    /**
+     * 
+     * @param Message $message
+     */
+    public function sendNewMessage(Message $message)
+    {
+    	$url = $this->urlGenerator->generate(self::ROUTE_MESSAGERIE, true);
+    	
+    	$context = array(
+    		'message' => $message,
+    		'messagerieUrl' => $url
+    	);
+    	 
+    	$this->sendMessage($this->newMessageTemplate, $context, $this->getFromEmail(), $message->getUserRelatedByDestinataire()->getEmail());    	
+    }
+    		
     /**
      * Envoi du message de refus d'un groupe secondaire
      * @param User $user
@@ -224,6 +267,21 @@ class Mailer
     	);
     
     	$this->sendMessage($this->groupeSecondaireWaitTemplate, $context, $this->getFromEmail(), $user->getEmail());
+    }
+    
+    /**
+     * Envoi du message de desabonnement d'un groupe secondaire
+     * @param User $user
+     * @param GroupeSecondaire $groupeSecondaire
+     */
+    public function sendGroupeSecondaireRemoveMessage(User $user, GroupeSecondaire $groupeSecondaire)
+    {
+    	$context = array(
+    			'user' => $user,
+    			'groupeSecondaire' => $groupeSecondaire,
+    	);
+    
+    	$this->sendMessage($this->groupeSecondaireRemoveTemplate, $context, $this->getFromEmail(), $user->getEmail());
     }
     
     /**

@@ -10,15 +10,15 @@
 namespace LarpManager\Entities;
 
 /**
- * LarpManager\Entities\Annonce
+ * LarpManager\Entities\Message
  *
  * @Entity()
- * @Table(name="annonce")
+ * @Table(name="message", indexes={@Index(name="fk_message_user1_idx", columns={"auteur"}), @Index(name="fk_message_user2_idx", columns={"destinataire"})})
  * @InheritanceType("SINGLE_TABLE")
  * @DiscriminatorColumn(name="discr", type="string")
- * @DiscriminatorMap({"base":"BaseAnnonce", "extended":"Annonce"})
+ * @DiscriminatorMap({"base":"BaseMessage", "extended":"Message"})
  */
-class BaseAnnonce
+class BaseMessage
 {
     /**
      * @Id
@@ -28,29 +28,41 @@ class BaseAnnonce
     protected $id;
 
     /**
-     * @Column(type="string", length=45)
+     * @Column(type="string", length=45, nullable=true)
      */
     protected $title;
 
     /**
-     * @Column(name="`text`", type="text")
+     * @Column(name="`text`", type="text", nullable=true)
      */
     protected $text;
 
     /**
-     * @Column(type="datetime")
+     * @Column(type="datetime", nullable=true)
      */
     protected $creation_date;
 
     /**
-     * @Column(type="datetime")
+     * @Column(type="datetime", nullable=true)
      */
     protected $update_date;
 
     /**
-     * @Column(type="boolean")
+     * @Column(type="boolean", nullable=true)
      */
-    protected $archive;
+    protected $lu;
+
+    /**
+     * @ManyToOne(targetEntity="User", inversedBy="messageRelatedByAuteurs")
+     * @JoinColumn(name="auteur", referencedColumnName="id", nullable=false)
+     */
+    protected $userRelatedByAuteur;
+
+    /**
+     * @ManyToOne(targetEntity="User", inversedBy="messageRelatedByDestinataires")
+     * @JoinColumn(name="destinataire", referencedColumnName="id", nullable=false)
+     */
+    protected $userRelatedByDestinataire;
 
     public function __construct()
     {
@@ -60,7 +72,7 @@ class BaseAnnonce
      * Set the value of id.
      *
      * @param integer $id
-     * @return \LarpManager\Entities\Annonce
+     * @return \LarpManager\Entities\Message
      */
     public function setId($id)
     {
@@ -83,7 +95,7 @@ class BaseAnnonce
      * Set the value of title.
      *
      * @param string $title
-     * @return \LarpManager\Entities\Annonce
+     * @return \LarpManager\Entities\Message
      */
     public function setTitle($title)
     {
@@ -106,7 +118,7 @@ class BaseAnnonce
      * Set the value of text.
      *
      * @param string $text
-     * @return \LarpManager\Entities\Annonce
+     * @return \LarpManager\Entities\Message
      */
     public function setText($text)
     {
@@ -129,7 +141,7 @@ class BaseAnnonce
      * Set the value of creation_date.
      *
      * @param \DateTime $creation_date
-     * @return \LarpManager\Entities\Annonce
+     * @return \LarpManager\Entities\Message
      */
     public function setCreationDate($creation_date)
     {
@@ -152,7 +164,7 @@ class BaseAnnonce
      * Set the value of update_date.
      *
      * @param \DateTime $update_date
-     * @return \LarpManager\Entities\Annonce
+     * @return \LarpManager\Entities\Message
      */
     public function setUpdateDate($update_date)
     {
@@ -172,30 +184,76 @@ class BaseAnnonce
     }
 
     /**
-     * Set the value of archive.
+     * Set the value of lu.
      *
-     * @param boolean $archive
-     * @return \LarpManager\Entities\Annonce
+     * @param boolean $lu
+     * @return \LarpManager\Entities\Message
      */
-    public function setArchive($archive)
+    public function setLu($lu)
     {
-        $this->archive = $archive;
+        $this->lu = $lu;
 
         return $this;
     }
 
     /**
-     * Get the value of archive.
+     * Get the value of lu.
      *
      * @return boolean
      */
-    public function getArchive()
+    public function getLu()
     {
-        return $this->archive;
+        return $this->lu;
+    }
+
+    /**
+     * Set User entity related by `auteur` (many to one).
+     *
+     * @param \LarpManager\Entities\User $user
+     * @return \LarpManager\Entities\Message
+     */
+    public function setUserRelatedByAuteur(User $user = null)
+    {
+        $this->userRelatedByAuteur = $user;
+
+        return $this;
+    }
+
+    /**
+     * Get User entity related by `auteur` (many to one).
+     *
+     * @return \LarpManager\Entities\User
+     */
+    public function getUserRelatedByAuteur()
+    {
+        return $this->userRelatedByAuteur;
+    }
+
+    /**
+     * Set User entity related by `destinataire` (many to one).
+     *
+     * @param \LarpManager\Entities\User $user
+     * @return \LarpManager\Entities\Message
+     */
+    public function setUserRelatedByDestinataire(User $user = null)
+    {
+        $this->userRelatedByDestinataire = $user;
+
+        return $this;
+    }
+
+    /**
+     * Get User entity related by `destinataire` (many to one).
+     *
+     * @return \LarpManager\Entities\User
+     */
+    public function getUserRelatedByDestinataire()
+    {
+        return $this->userRelatedByDestinataire;
     }
 
     public function __sleep()
     {
-        return array('id', 'title', 'text', 'creation_date', 'update_date', 'archive');
+        return array('id', 'title', 'text', 'creation_date', 'update_date', 'lu', 'auteur', 'destinataire');
     }
 }

@@ -1,0 +1,40 @@
+{#
+Template for an email message sent to notifie about a new post.
+Variables passed to this template:
+    user: The SimpleUser\User instance.
+    postUrl : Url 
+#}
+
+{# The subject line. #}
+{%- block subject -%}{%- autoescape false -%}
+    {{ message.title }} -- Nouvelle message.
+{%- endautoescape -%}{%- endblock -%}
+
+{# The plain text message. #}
+{%- block body_text -%}{%- autoescape false -%}
+
+Vous venez de recevoir un nouveau message de {{ message.userRelatedByAuteur.username }}.
+
+{{ message.title }}
+
+{{ message.text }}
+
+Cliquez sur le lien ci-dessous pour accéder directement a votre messagerie :
+{{ messagerieUrl }}
+
+{%- endautoescape -%}{%- endblock -%}
+
+{# The HTML message. Optional. #}
+{%- block body_html -%}
+
+    <h3>Vous venez de recevoir un nouveau message de {{ message.userRelatedByAuteur.username }}</h3>
+    
+    <h5>{{ message.title }}</h5>
+
+	<p>{{ message.text|markdown }}</p>
+
+    <p>
+        <a href="{{ messagerieUrl }}"> Suivez ce lien pour accéder directement a votre messagerie</a>.
+    </p>
+
+{%- endblock -%}

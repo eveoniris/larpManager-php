@@ -1,0 +1,38 @@
+{% extends "layout.twig" %}
+
+{% block title %}Groupes secondaires{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path("groupeSecondaire.gestion", {'index':groupeSecondaire.id}) }}">{{ groupeSecondaire.label }}</a></li>
+		<li class="active">Répondre à un postulant</li>
+	</ol>
+	
+		
+	<div class="well bs-component">
+		<form action="{{ path('groupeSecondaire.gestion.response', {'groupe': groupeSecondaire.id, 'postulant': postulant.id}) }}" method="POST" {{ form_enctype(form) }}>
+			<fieldset>
+				<legend>Répondre à un postulant</legend>
+				
+				<div class="list-group">
+					<div class="list-group-item">
+						<div class="list-group-item-heading">
+							<strong>{{ postulant.personnage.nom }} - {{ postulant.personnage.surnom }}</strong>
+						</div>
+						<div class="list-group-item-text">
+							{{ postulant.explanation|markdown }}
+						</div>
+					</div>
+				</div>			
+				
+				{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+				<p>Le message suivant sera envoyé au postulant</p>
+				
+				{{ form(form) }}
+			</fieldset>
+		</form>
+	</div>
+	
+{% endblock content %}

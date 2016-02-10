@@ -29,10 +29,21 @@
 			<div class="list-group-item">
 				<div class="list-group-item-heading">
 					<strong>{{ postulant.personnage.nom }} - {{ postulant.personnage.surnom }}</strong>
+					{% if groupeSecondaire.secondaryGroupType.label == 'Religion' %}
+						Religion(s) du postulant :
+						<ul>
+						{% for personnageReligion in postulant.personnage.personnagesReligions %}
+							<li>{{ personnageReligion.religion.label }} - {{ personnageReligion.religionLevel.label }}</li>
+						{% endfor %}
+						</ul>
+					{% endif %}
 				</div>
 				<div class="list-group-item-text">
 					{{ postulant.explanation|markdown }}
 				</div>
+				<a class="btn btn-primary" 
+					href="{{ path('groupeSecondaire.gestion.response', {'groupe': groupeSecondaire.id, 'postulant': postulant.id }) }}">
+					Répondre</a>
 				<a class="btn btn-primary" 
 					href="{{ path('groupeSecondaire.gestion.accept', {'groupe': groupeSecondaire.id, 'postulant': postulant.id }) }}">
 					Accepter</a>
@@ -50,13 +61,18 @@
 			<h5>Liste des membres</h5>
 		</div>
 		
-		<ul>
+		<div class="list-group">
 		{% for personnage in groupeSecondaire.personnages %}
-			<li>
-				{{ personnage.nom }} - {{ personnage.surnom }}
-			</li>
+			<div class="list-group-item">
+				<div class="list-group-item-heading">
+					<strong>{{ personnage.nom }} - {{ personnage.surnom }}</strong>
+				</div>
+				<a class="btn btn-primary" 
+					href="{{ path('groupeSecondaire.gestion.remove', {'groupe': groupeSecondaire.id, 'personnage': personnage.id }) }}">
+					Retirer du groupe</a>
+			</div>
 		{% endfor %}
-		</ul>
+		</div>
 	</div>
 </div>
 {% endblock content %}

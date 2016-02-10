@@ -11,6 +11,7 @@ use InvalidArgumentException;
 use LarpManager\Form\UserForm;
 use LarpManager\Form\UserFindForm;
 use LarpManager\Form\EtatCivilForm;
+use LarpManager\Form\MessageForm;
 
 use JasonGrimes\Paginator;
 
@@ -133,6 +134,19 @@ class UserController
 	}
 	
 	/**
+	 * Affiche la messagerie de l'utilisateur courant
+	 * 
+	 * @param Application $app
+	 */
+	public function viewSelfMessagerieAction(Application $app) {
+		if (!$app['user']) {
+			return $app->redirect($app['url_generator']->generate('user.login'));
+		}
+		
+		return $app->redirect($app['url_generator']->generate('user.messagerie.view', array('id' => $app['user']->getId())));
+	}
+	
+	/**
 	 * View user action.
 	 *
 	 * @param Application $app
@@ -181,6 +195,124 @@ class UserController
 		}
 	
 		return $app['twig']->render('public/user/etatCivil.twig', array(
+				'user' => $user,
+		));
+	}
+	
+	/**
+	 * Affiche la messagerie de l'utilisateur
+	 * 
+	 * @param Application $app
+	 * @param Request $request
+	 * @param unknown $id
+	 * @throws NotFoundHttpException
+	 */
+	public function viewMessagerieAction(Application $app, Request $request, $id)
+	{
+		$user = $app['user.manager']->getUser($id);
+		
+		if (!$user) {
+			throw new NotFoundHttpException('No user was found with that ID.');
+		}
+		
+		if (!$user->isEnabled() && !$app['security']->isGranted('ROLE_ADMIN')) {
+			throw new NotFoundHttpException('That user is disabled (pending email confirmation).');
+		}
+		
+		return $app['twig']->render('public/user/messagerie.twig', array(
+				'user' => $user,
+		));
+	}
+	
+	/**
+	 * Archiver un message
+	 * 
+	 * @param Application $app
+	 * @param Request $request
+	 * @throws NotFoundHttpException
+	 * @throws AccessDeniedException
+	 */
+	public function messageArchiveAction(Application $app, Request $request)
+	{
+		$userId = $request->get('id');
+		$messageId = $request->get('message');
+		
+		$user = $app['user.manager']->getUser($userId);
+		
+		if (!$user) {
+			throw new NotFoundHttpException('No user was found with that ID.');
+		}
+		
+		$message = $app['orm.em']->find('\LarpManager\Entities\Message',$messageId);
+		
+		if ( $message->getUserRelatedByDestinataire() != $user )
+		{
+			throw new AccessDeniedException();
+		}
+		
+		$message->setLu(true);
+		$app['orm.em']->persist($message);
+		$app['orm.em']->flush();
+		
+		return $app['twig']->render('public/user/messagerie.twig', array(
+				'user' => $user,
+		));
+	}
+	
+	/**
+	 * Répondre à un message
+	 *
+	 * @param Application $app
+	 * @param Request $request
+	 * @throws NotFoundHttpException
+	 * @throws AccessDeniedException
+	 */
+	public function messageResponseAction(Application $app, Request $request)
+	{
+		$userId = $request->get('id');
+		$messageId = $request->get('message');
+	
+		$user = $app['user.manager']->getUser($userId);
+	
+		if (!$user) {
+			throw new NotFoundHttpException('No user was found with that ID.');
+		}
+	
+		$message = $app['orm.em']->find('\LarpManager\Entities\Message',$messageId);
+	
+		if ( $message->getUserRelatedByDestinataire() != $user )
+		{
+			throw new AccessDeniedException();
+		}
+		
+		$reponse = new \LarpManager\Entities\Message();
+		
+		$reponse->setUserRelatedByAuteur($app['user']);
+		$reponse->setUserRelatedByDestinataire($message->getUserRelatedByAuteur());
+		$reponse->setCreationDate(new \Datetime('NOW'));
+		$reponse->setUpdateDate(new \Datetime('NOW'));
+		
+		$form = $app['form.factory']->createBuilder(new MessageForm(), $reponse)
+			->add('envoyer','submit', array('label' => "Envoyer votre réponse"))
+			->getForm();
+		
+	
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$reponse = $form->getData();
+				
+			$app['orm.em']->persist($reponse);
+			$app['orm.em']->flush();
+				
+			$app['user.mailer']->sendNewMessage($reponse);
+		
+			$app['session']->getFlashBag()->add('success', 'Votre message a été envoyé au joueur concerné.');
+			return $app->redirect($app['url_generator']->generate('user.messagerie.view', array('id' => $user->getId())),301);
+		}
+	
+		return $app['twig']->render('public/user/messagerie.twig', array(
 				'user' => $user,
 		));
 	}
@@ -439,6 +571,11 @@ class UserController
 		));
 	}
 	
+	/**
+	 * Affiche l'état civil de l'utilisateur
+	 * @param Application $app
+	 * @param Request $request
+	 */
 	public function adminEtatCivilAction(Application $app, Request $request)
 	{
 		$user = $request->get('user');

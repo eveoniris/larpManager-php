@@ -8,6 +8,8 @@ use LarpManager\Form\GroupeSecondaireForm;
 use LarpManager\Form\GroupeSecondairePostulerForm;
 use LarpManager\Form\PostulantReponseForm;
 use LarpManager\Form\SecondaryGroupFindForm;
+use LarpManager\Entities\Message;
+use LarpManager\Form\MessageForm;
 
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
@@ -519,7 +521,7 @@ class GroupeSecondaireController
 			
 		if ( $form->isValid() )
 		{
-			$app['user.mailer']->sendGroupeSecondaireWaitMessage($personnage->getUser(), $groupeSecondaire);
+			$app['user.mailer']->sendGroupeSecondaireWaitMessage($postulant->getPersonnage()->getUser(), $groupeSecondaire);
 	
 			$app['session']->getFlashBag()->add('success', 'La candidature reste en attente. Un message a été envoyé au joueur concerné.');
 			return $app->redirect($app['url_generator']->generate('groupeSecondaire.gestion', array('index' => $groupeSecondaire->getId())),301);
@@ -529,6 +531,89 @@ class GroupeSecondaireController
 		return $app['twig']->render('groupeSecondaire/gestion_wait.twig', array(
 				'groupeSecondaire' => $groupeSecondaire,
 				'postulant' => $postulant,
+				'form' => $form->createView(),
+		));
+	}
+	
+	/**
+	 * Répondre à un postulant
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function gestionResponseAction(Request $request, Application $app)
+	{
+		$id = $request->get('groupe');
+		$postulantId = $request->get('postulant');
+	
+		$groupeSecondaire = $app['orm.em']->find('\LarpManager\Entities\SecondaryGroup',$id);
+		$postulant = $app['orm.em']->find('\LarpManager\Entities\Postulant',$postulantId);
+		$message = new Message();
+		
+		$message->setUserRelatedByAuteur($app['user']);
+		$message->setUserRelatedByDestinataire($postulant->getPersonnage()->getParticipant()->getUser());
+		$message->setCreationDate(new \Datetime('NOW'));
+		$message->setUpdateDate(new \Datetime('NOW'));
+	
+		$form = $app['form.factory']->createBuilder(new MessageForm(), $message)
+			->add('envoyer','submit', array('label' => "Envoyer votre réponse"))
+			->getForm();
+	
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$message = $form->getData();
+			
+			$app['orm.em']->persist($message);
+			$app['orm.em']->flush();
+			
+			$app['user.mailer']->sendNewMessage($message);
+	
+			$app['session']->getFlashBag()->add('success', 'Votre message a été envoyé au joueur concerné.');
+			return $app->redirect($app['url_generator']->generate('groupeSecondaire.gestion', array('index' => $groupeSecondaire->getId())),301);
+		}
+	
+	
+		return $app['twig']->render('groupeSecondaire/gestion_response.twig', array(
+				'groupeSecondaire' => $groupeSecondaire,
+				'postulant' => $postulant,
+				'form' => $form->createView(),
+		));
+	}
+	
+	/**
+	 * Retirer un membre du groupe
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function gestionRemoveAction(Request $request, Application $app)
+	{
+		$id = $request->get('groupe');
+		$personnageId = $request->get('personnage');
+	
+		$groupeSecondaire = $app['orm.em']->find('\LarpManager\Entities\SecondaryGroup',$id);
+		$personnage = $app['orm.em']->find('\LarpManager\Entities\Personnage',$personnageId);
+	
+		$form = $app['form.factory']->createBuilder()
+			->add('envoyer','submit', array('label' => "Retirer du groupe"))
+			->getForm();
+	
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$app['user.mailer']->sendGroupeSecondaireRemoveMessage($personnage->getParticipant()->getUser(), $groupeSecondaire);
+	
+			$app['session']->getFlashBag()->add('success', 'La personnage a été retiré du groupe. Un message a été envoyé au joueur concerné.');
+			return $app->redirect($app['url_generator']->generate('groupeSecondaire.gestion', array('index' => $groupeSecondaire->getId())),301);
+		}
+	
+	
+		return $app['twig']->render('groupeSecondaire/gestion_remove.twig', array(
+				'groupeSecondaire' => $groupeSecondaire,
+				'personnage' => $personnage,
 				'form' => $form->createView(),
 		));
 	}

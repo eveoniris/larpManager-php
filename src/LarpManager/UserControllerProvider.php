@@ -68,6 +68,17 @@ class UserControllerProvider implements ControllerProviderInterface
 		});
 		
 		/**
+		 * Affichage de la messagie de l'utilisateur 
+		 */
+		$controllers->get('/messagerie', 'LarpManager\Controllers\UserController::viewSelfMessagerieAction')
+			->bind('user.messagerie')
+			->before(function(Request $request) use ($app) {
+				if ( !app['user']) {
+					throw new AccessDeniedException();
+				}
+		});
+		
+		/**
 		 * Vue d'un utilisateur
 		 */
 		$controllers->match('/{id}', 'LarpManager\Controllers\UserController::viewAction')
@@ -93,6 +104,50 @@ class UserControllerProvider implements ControllerProviderInterface
 				}
 			});
 			
+		/**
+		 * Vue de la messagerie d'un utilisateur
+		 */
+		$controllers->match('/{id}/messagerie', 'LarpManager\Controllers\UserController::viewMessagerieAction')
+			->bind('user.messagerie.view')
+			->assert('id', '\d+')
+			->method('GET')
+			->before(function(Request $request) use ($app) {
+				if (!$app['security.authorization_checker']->isGranted('VIEW_USER_ID', $request->get('id'))) {
+					throw new AccessDeniedException();
+				}
+			});
+			
+		/**
+		 * Archiver un message
+		 */
+		$controllers->match('/{id}/messagerie/{message}/archive', 'LarpManager\Controllers\UserController::messageArchiveAction')
+			->bind('user.messagerie.message.archive')
+			->assert('id', '\d+')
+			->assert('message', '\d+')
+			->method('GET')
+			->before(function(Request $request) use ($app) {
+				if (!$app['security.authorization_checker']->isGranted('VIEW_USER_ID', $request->get('id'))) {
+					throw new AccessDeniedException();
+				}
+			});			
+			
+		/**
+		 * Répondre à un message
+		 */
+		$controllers->match('/{id}/messagerie/{message}/response', 'LarpManager\Controllers\UserController::messageResponseAction')
+			->bind('user.messagerie.message.response')
+			->assert('id', '\d+')
+			->assert('message', '\d+')
+			->method('GET|POST')
+			->before(function(Request $request) use ($app) {
+				if (!$app['security.authorization_checker']->isGranted('VIEW_USER_ID', $request->get('id'))) {
+					throw new AccessDeniedException();
+				}
+			});			
+		
+		/**
+		 * Ajout d'un utilisateur
+		 */
 		$controllers->match('/add', 'LarpManager\Controllers\UserController::addAction')
 			->bind('user.add')
 			->method('GET|POST')
