@@ -85,6 +85,21 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 		$app['converter.background'] = $app->share(function($app) {
 			return new BackgroundConverter($app['orm.em']);
 		});
+		
+		// secondaryGroup converter
+		$app['converter.secondaryGroup'] = $app->share(function($app) {
+			return new SecondaryGroupConverter($app['orm.em']);
+		});
+		
+		// postulant converter
+		$app['converter.postulant'] = $app->share(function($app) {
+			return new PostulantConverter($app['orm.em']);
+		});
+		
+		// membre converter
+		$app['converter.membre'] = $app->share(function($app) {
+			return new MembreConverter($app['orm.em']);
+		});
 	}
 
 	/**

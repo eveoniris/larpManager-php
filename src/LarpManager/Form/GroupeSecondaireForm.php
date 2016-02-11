@@ -26,7 +26,17 @@ class GroupeSecondaireForm extends AbstractType
 				->add('description','textarea', array(
 						'required' => true,
 						'label' => 'Description',
-						'attr' => array('rows' => 9)
+						'attr' => array(
+								'rows' => 9,
+								'class' => 'tinymce')
+				))
+				->add('description_secrete','textarea', array(
+						'required' => true,
+						'label' => 'Description des secrets',
+						'attr' => array(
+								'rows' => 9,
+								'class' => 'tinymce',
+								'help' => 'les secrets ne sont accessibles qu\'aux membres selectionnés par le scénariste')
 				))
 				->add('responsable', 'entity', array(
 						'required' => false,

@@ -62,14 +62,11 @@
 		</div>
 		
 		<div class="list-group">
-		{% for personnage in groupeSecondaire.personnages %}
+		{% for membre in groupeSecondaire.membres %}
 			<div class="list-group-item">
 				<div class="list-group-item-heading">
-					<strong>{{ personnage.surnom }}</strong>
+					<strong>{{ membre.personnage.surnom }}</strong>
 				</div>
-				<a class="btn btn-primary" 
-					href="{{ path('groupeSecondaire.gestion.remove', {'groupe': groupeSecondaire.id, 'personnage': personnage.id }) }}">
-					Retirer du groupe</a>
 			</div>
 		{% endfor %}
 		</div>

@@ -20,29 +20,49 @@ class GroupeSecondaireControllerProvider implements ControllerProviderInterface
 		$controllers = $app['controllers_factory'];
 		
 		/**
+		 * Vérifie que l'utilisateur dispose du role REGLE
+		 */
+		$mustBeOrga = function(Request $request) use ($app) {
+			if (!$app['security.authorization_checker']->isGranted('ROLE_ORGA')) {
+				throw new AccessDeniedException();
+			}
+		};
+		
+		/**
+		 * Vérifie que l'utilisateur est le responsable du groupe
+		 */
+		$mustBeResponsable = function(Request $request) use ($app) {
+			if (!$app['security.authorization_checker']->isGranted('GROUPE_SECONDAIRE_RESPONSABLE', $request->get('groupe'))) {
+				throw new AccessDeniedException();
+			}
+		};
+		
+		/**
+		 * Vérifie que l'utilisateur est membre du groupe
+		 */
+		$mustBeMembre = function(Request $request) use ($app) {
+			if (!$app['security.authorization_checker']->isGranted('GROUPE_SECONDAIRE_MEMBER', $request->get('groupe'))) {
+				throw new AccessDeniedException();
+			}
+		};
+				
+		/**
 		 * Liste des groupes secondaires (pour les orgas)
 		 */		
 		$controllers->match('/admin/list','LarpManager\Controllers\GroupeSecondaireController::adminListAction')
 			->bind("groupeSecondaire.admin.list")
 			->method('GET')
-			->before(function(Request $request) use ($app) {
-				if (!$app['security.authorization_checker']->isGranted('ROLE_ORGA')) {
-					throw new AccessDeniedException();
-				}
-			});
+			->before($mustBeOrga);
 			
 		/**
 		 * Detail d'un groupe secondaire (pour les orgas)
 		 */
-		$controllers->match('/admin/{index}','LarpManager\Controllers\GroupeSecondaireController::adminDetailAction')
-			->assert('index', '\d+')
+		$controllers->match('/admin/{groupe}','LarpManager\Controllers\GroupeSecondaireController::adminDetailAction')
+			->assert('groupe', '\d+')
 			->bind("groupeSecondaire.admin.detail")
 			->method('GET')
-			->before(function(Request $request) use ($app) {
-				if (!$app['security.authorization_checker']->isGranted('ROLE_ORGA')) {
-					throw new AccessDeniedException();
-				}
-			});
+			->convert('groupe', 'converter.secondaryGroup:convert')
+			->before($mustBeOrga);
 		
 
 		/**
@@ -51,37 +71,27 @@ class GroupeSecondaireControllerProvider implements ControllerProviderInterface
 		$controllers->match('/admin/add','LarpManager\Controllers\GroupeSecondaireController::adminAddAction')
 			->bind("groupeSecondaire.admin.add")
 			->method('GET|POST')
-			->before(function(Request $request) use ($app) {
-				if (!$app['security.authorization_checker']->isGranted('ROLE_ORGA')) {
-					throw new AccessDeniedException();
-				}
-			});
+			->before($mustBeOrga);
 						
 		/**
 		 * Modification d'un groupe secondaire (pour les orgas)
 		 */
-		$controllers->match('/admin/{index}/update','LarpManager\Controllers\GroupeSecondaireController::adminUpdateAction')
-			->assert('index', '\d+')
+		$controllers->match('/admin/{groupe}/update','LarpManager\Controllers\GroupeSecondaireController::adminUpdateAction')
+			->assert('groupe', '\d+')
 			->bind("groupeSecondaire.admin.update")
 			->method('GET|POST')
-			->before(function(Request $request) use ($app) {
-				if (!$app['security.authorization_checker']->isGranted('ROLE_ORGA')) {
-					throw new AccessDeniedException();
-				}
-			});
+			->convert('groupe', 'converter.secondaryGroup:convert')
+			->before($mustBeOrga);
 
 		/**
 		 * Accepter une candidature (pour les orgas)
 		 */
-		$controllers->match('/{index}/reponse','LarpManager\Controllers\GroupeSecondaireController::adminReponseAction')
-			->assert('index', '\d+')
+		$controllers->match('/{groupe}/reponse','LarpManager\Controllers\GroupeSecondaireController::adminReponseAction')
+			->assert('groupe', '\d+')
 			->bind("groupeSecondaire.admin.reponse")
 			->method('GET|POST')
-			->before(function(Request $request) use ($app) {
-				if (!$app['security.authorization_checker']->isGranted('ROLE_ORGA')) {
-					throw new AccessDeniedException();
-				}
-			});
+			->convert('groupe', 'converter.secondaryGroup:convert')
+			->before($mustBeOrga);
 							
 		/**
 		 * Liste des groupes secondaires (pour les joueurs)
@@ -93,45 +103,41 @@ class GroupeSecondaireControllerProvider implements ControllerProviderInterface
 		/**
 		 * Detail d'un groupe secondaire
 		 */
-		$controllers->match('/{index}','LarpManager\Controllers\GroupeSecondaireController::detailAction')
-			->assert('index', '\d+')
+		$controllers->match('/{groupe}','LarpManager\Controllers\GroupeSecondaireController::detailAction')
+			->assert('groupe', '\d+')
 			->bind("groupeSecondaire.detail")
+			->convert('groupe', 'converter.secondaryGroup:convert')
 			->method('GET');
 					
 		/**
 		 * Postuler à un groupe secondaire
 		 */
-		$controllers->match('/{index}/postuler','LarpManager\Controllers\GroupeSecondaireController::postulerAction')
-			->assert('index', '\d+')
+		$controllers->match('/{groupe}/postuler','LarpManager\Controllers\GroupeSecondaireController::postulerAction')
+			->assert('groupe', '\d+')
 			->bind("groupeSecondaire.postuler")
+			->convert('groupe', 'converter.secondaryGroup:convert')
 			->method('GET|POST');
 			
 		/**
 		 * Accepter une candidature (chef de groupe)
 		 */
-		$controllers->match('/{index}/reponse','LarpManager\Controllers\GroupeSecondaireController::reponseAction')
-			->assert('index', '\d+')
+		$controllers->match('/{groupe}/reponse','LarpManager\Controllers\GroupeSecondaireController::reponseAction')
+			->assert('groupe', '\d+')
 			->bind("groupeSecondaire.reponse")
 			->method('GET|POST')
-			->before(function(Request $request) use ($app) {
-				if (!$app['security.authorization_checker']->isGranted('GROUPE_SECONDAIRE_RESPONSABLE', $request->get('index'))) {
-					throw new AccessDeniedException();
-				}
-			});
+			->convert('groupe', 'converter.secondaryGroup:convert')
+			->before($mustBeResponsable);
 				
 			
 		/**
 		 * Detail d'un groupe secondaire à destication du chef de groupe
 		 */
-		$controllers->match('/{index}/gestion','LarpManager\Controllers\GroupeSecondaireController::gestionAction')
-			->assert('index', '\d+')
+		$controllers->match('/{groupe}/gestion','LarpManager\Controllers\GroupeSecondaireController::gestionAction')
+			->assert('groupe', '\d+')
 			->bind("groupeSecondaire.gestion")
 			->method('GET')
-			->before(function(Request $request) use ($app) {
-				if (!$app['security.authorization_checker']->isGranted('GROUPE_SECONDAIRE_RESPONSABLE', $request->get('index'))) {
-					throw new AccessDeniedException();
-				}
-			});
+			->convert('groupe', 'converter.secondaryGroup:convert')
+			->before($mustBeResponsable);
 
 		/**
 		 * Rejeter la demande d'un postulant
@@ -141,11 +147,9 @@ class GroupeSecondaireControllerProvider implements ControllerProviderInterface
 			->assert('postulant', '\d+')
 			->bind("groupeSecondaire.gestion.reject")
 			->method('GET|POST')
-			->before(function(Request $request) use ($app) {
-				if (!$app['security.authorization_checker']->isGranted('GROUPE_SECONDAIRE_RESPONSABLE', $request->get('groupe'))) {
-					throw new AccessDeniedException();
-				}
-			});
+			->convert('groupe', 'converter.secondaryGroup:convert')
+			->convert('postulant', 'converter.postulant:convert')
+			->before($mustBeResponsable);
 		
 		/**
 		 * Accepter la demande d'un postulant
@@ -155,11 +159,9 @@ class GroupeSecondaireControllerProvider implements ControllerProviderInterface
 			->assert('postulant', '\d+')
 			->bind("groupeSecondaire.gestion.accept")
 			->method('GET|POST')
-			->before(function(Request $request) use ($app) {
-				if (!$app['security.authorization_checker']->isGranted('GROUPE_SECONDAIRE_RESPONSABLE', $request->get('groupe'))) {
-					throw new AccessDeniedException();
-				}
-			});
+			->convert('groupe', 'converter.secondaryGroup:convert')
+			->convert('postulant', 'converter.postulant:convert')
+			->before($mustBeResponsable);
 			
 		/**
 		 * Mettre en attente la demande d'un postulant
@@ -169,11 +171,9 @@ class GroupeSecondaireControllerProvider implements ControllerProviderInterface
 			->assert('postulant', '\d+')
 			->bind("groupeSecondaire.gestion.wait")
 			->method('GET|POST')
-			->before(function(Request $request) use ($app) {
-				if (!$app['security.authorization_checker']->isGranted('GROUPE_SECONDAIRE_RESPONSABLE', $request->get('groupe'))) {
-					throw new AccessDeniedException();
-				}
-			});
+			->convert('groupe', 'converter.secondaryGroup:convert')
+			->convert('postulant', 'converter.postulant:convert')
+			->before($mustBeResponsable);
 			
 		/**
 		 * Répondre à un postulant
@@ -183,38 +183,20 @@ class GroupeSecondaireControllerProvider implements ControllerProviderInterface
 			->assert('postulant', '\d+')
 			->bind("groupeSecondaire.gestion.response")
 			->method('GET|POST')
-			->before(function(Request $request) use ($app) {
-				if (!$app['security.authorization_checker']->isGranted('GROUPE_SECONDAIRE_RESPONSABLE', $request->get('groupe'))) {
-					throw new AccessDeniedException();
-				}
-			});			
+			->convert('groupe', 'converter.secondaryGroup:convert')
+			->convert('postulant', 'converter.postulant:convert')
+			->before($mustBeResponsable);			
 
-		/**
-		 * Répondre à un postulant
-		 */
-		$controllers->match('/{groupe}/gestion/membre/{personnage}/remove','LarpManager\Controllers\GroupeSecondaireController::gestionRemoveAction')
-			->assert('groupe', '\d+')
-			->assert('personnage', '\d+')
-			->bind("groupeSecondaire.gestion.remove")
-			->method('GET|POST')
-			->before(function(Request $request) use ($app) {
-				if (!$app['security.authorization_checker']->isGranted('GROUPE_SECONDAIRE_RESPONSABLE', $request->get('groupe'))) {
-					throw new AccessDeniedException();
-				}
-			});
 			
 		/**
-		 * Detail d'un groupe secondaire à destication des membres de ce groupe
+		 * Detail d'un groupe secondaire à destination des membres de ce groupe
 		 */
-		$controllers->match('/{index}/joueur','LarpManager\Controllers\GroupeSecondaireController::joueurAction')
-			->assert('index', '\d+')
+		$controllers->match('/{groupe}/joueur','LarpManager\Controllers\GroupeSecondaireController::joueurAction')
+			->assert('groupe', '\d+')
 			->bind("groupeSecondaire.joueur")
 			->method('GET')
-			->before(function(Request $request) use ($app) {
-				if (!$app['security.authorization_checker']->isGranted('GROUPE_SECONDAIRE_MEMBER', $request->get('index'))) {
-					throw new AccessDeniedException();
-				}
-			});
+			->convert('groupe', 'converter.secondaryGroup:convert')
+			->before($mustBeMembre);
 
 			
 		return $controllers;

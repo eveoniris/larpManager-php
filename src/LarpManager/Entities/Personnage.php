@@ -94,7 +94,21 @@ class Personnage extends BasePersonnage
 	 */
 	public function getSecondaryGroupsAsChief()
 	{
-		return $this->getSecondaryGroupRelatedByPersonnageIds();
+		return $this->getSecondaryGroups();
+	}
+	
+	/**
+	 * Fourni la description du membre correspondant au groupe passé en paramètre
+	 * @param SecondaryGroup $groupe
+	 */
+	public function getMembre(SecondaryGroup $groupe)
+	{
+		foreach ($this->getMembres() as $membre)
+		{
+			if ( $membre->getSecondaryGroup() == $groupe)
+				return $membre;
+		}
+		return false;
 	}
 	
 	/**

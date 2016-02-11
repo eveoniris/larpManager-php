@@ -14,11 +14,15 @@
 		</ol>
 	
 		<div class="well bs-component">
-			<form action="{{ path('groupeSecondaire.postuler',{'index': groupeSecondaire.id}) }}" method="POST" {{ form_enctype(form) }} novalidate>
+			<form action="{{ path('groupeSecondaire.postuler',{'groupe': groupeSecondaire.id}) }}" method="POST" {{ form_enctype(form) }} novalidate>
 				<fieldset>
 					<legend>Postuler à {{ groupeSecondaire.label}}</legend>
-						{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
-						{{ form(form) }}
+					<h6>Remarque</h6>
+					<p>Seul votre surnom sera transmis au responsable du groupe secondaire<p>
+					<p>Dans le cas de groupes religieux, la liste de vos religions (ainsi que votre ferveur) sera transmis au responsable du groupe secondaire</p>
+					
+					{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+					{{ form(form) }}
 				</fieldset>
 			</form>
 		</div>
@@ -26,21 +30,3 @@
 	</div>
 
 {% endblock content %}
-
-{% block javascript %}
-
-	{{ parent() }}
-
-	{# inclusion du plugin tinymce pour la saisie du post #}   
-	<script src="{{ app.request.basepath }}/js/tinymce/tinymce.min.js"></script>
-
-	<script type="text/javascript">
-		tinyMCE.init({
-				mode: "textareas",
-				theme: "modern",
-				plugins : "spellchecker,insertdatetime,preview", 
-		});
-		
-	</script>
-
-{% endblock javascript %}

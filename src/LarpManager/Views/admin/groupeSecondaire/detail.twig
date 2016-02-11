@@ -65,9 +65,9 @@
 		<div class="panel-heading">Liste des membres</div>
 		<div class="panel-body">
 			<div class="list-group">
-				{% for personnage in groupeSecondaire.personnages %}
+				{% for membre in groupeSecondaire.membres %}
 					<div class="list-group-item">
-						<h6 class="list-group-item-heading">{{ personnage.identity }}</h6>
+						<h6 class="list-group-item-heading">{{ membre.personnage.identity }}</h6>
 					</div>
 				{% endfor %}
 			</div>

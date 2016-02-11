@@ -95,11 +95,27 @@
 								<p>Vous êtes responsable d'un ou de plusieurs groupes secondaires. Suivez le lien ci-dessous pour gérer vos groupes secondaires</p>
 								<ul>
 								{% for groupe in app.user.personnage.secondaryGroupsAsChief %}
-									<li><a href="{{ path('groupeSecondaire.gestion', {'index': groupe.id}) }}">Gerer le groupe {{ groupe.label }}</a></li>
+									<li><a href="{{ path('groupeSecondaire.gestion', {'groupe': groupe.id}) }}">Gerer le groupe {{ groupe.label }}</a></li>
 								{% endfor %}
 								</ul>
 							{% endif %}
 							
+							{% if app.user.personnage.postulants|length > 0 %}
+								<ul class="list-group">
+									{% for postulant in app.user.personnage.postulants %}
+										<li class="list-group-item">Votre candidature au groupe <strong>{{ postulant.secondaryGroup.label }}</strong> est en attente de validation.</li>
+									{% endfor %}
+								</ul>
+							{% endif %}
+							
+							{% if app.user.personnage.membres|length > 0 %}
+								<ul class="list-group">
+									{% for membre in app.user.personnage.membres %}
+										<a 	href="{{ path('groupeSecondaire.joueur', {'groupe': membre.secondaryGroup.id}) }}" 
+											class="list-group-item">{{ membre.secondaryGroup.label }}</a>
+									{% endfor %}
+								</ul>
+							{% endif %}
 							<p>Si vous faites partie d'un groupe secondaire (secte, confrérie, guilde, etc ...), ou avez l'intention de rejoindre l'un de ces groupes, n'oubliez pas de vous y inscrire ! <a href="{{ path('groupeSecondaire.list') }}">Liste des groupes secondaires</a></p> 
 						{% endif %}
 						

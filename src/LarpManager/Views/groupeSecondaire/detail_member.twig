@@ -1,0 +1,48 @@
+{% extends "layout.twig" %}
+
+{% block title %}Groupe secondaire {{groupeSecondaire.label }}{% endblock title %}
+
+{% block content %}
+
+<ol class="breadcrumb">
+	<li><a href="{{ path('homepage')  }}">Accueil</a></li>
+	<li class="active">{{ groupeSecondaire.label }}</li>
+</ol>
+
+<div class="panel panel-default">
+	<div class="panel-body">
+	
+		<div class="header">
+			<h5>Description</h5>
+		</div>
+		
+		<p>{{ groupeSecondaire.description|markdown }}</p>
+		
+		{% if membre.secret %}
+			<div class="header">
+				<h5>Les secrets</h5>
+			</div>
+			
+			<p>{{ groupeSecondaire.description_secrete|markdown }}</p>
+		{% endif %}
+		
+		<div class="header">
+			<h5>Chef du groupe</h5>
+		</div>
+
+		<div class="header">
+			<h5>Liste des membres</h5>
+		</div>
+		
+		<div class="list-group">
+		{% for membre in groupeSecondaire.membres %}
+			<div class="list-group-item">
+				<div class="list-group-item-heading">
+					<strong>{{ membre.personnage.surnom }}</strong>
+				</div>
+			</div>
+		{% endfor %}
+		</div>
+	</div>
+</div>
+{% endblock content %}

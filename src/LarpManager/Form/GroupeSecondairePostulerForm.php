@@ -26,6 +26,7 @@ class GroupeSecondairePostulerForm extends AbstractType
 				'required' => true,
 				'attr' => array(
 						'rows' => 9,
+						'class' => 'tinymce',
 						'help' => 'Soyez convaincant, votre explication sera transmise au chef de groupe qui validera (ou pas) votre demande.'),
 		));
 	}
