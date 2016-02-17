@@ -337,29 +337,43 @@ class GroupeSecondaireController
 	}
 	
 	/**
-	 * Detail d'un type de groupe secondaire
-	 *
+	 * Retirer le droit de lire les secrets à un utilisateur
+	 * 
 	 * @param Request $request
-	 * @param Application $app
+	 * @param Applicetion $app
 	 */
-	public function detailAction(Request $request, Application $app)
+	public function adminSecretOffAction(Request $request, Application $app)
 	{
 		$groupeSecondaire = $request->get('groupe');
-	
-		if ( $app['security.authorization_checker']->isGranted('GROUPE_SECONDAIRE_RESPONSABLE',$groupeSecondaire->getId()) )
-		{
-			return $app['twig']->render('groupeSecondaire/detail_responsable.twig', array('groupeSecondaire' => $groupeSecondaire));
-		}
-		if ( $app['security.authorization_checker']->isGranted('GROUPE_SECONDAIRE_MEMBER',$groupeSecondaire->getId()) )
-		{
-			return $app['twig']->render('groupeSecondaire/detail_member.twig', array('groupeSecondaire' => $groupeSecondaire));
-		}
-		else
-		{
-			throw new AccessDeniedException();
-		}
+		$membre = $request->get('membre');
+		
+		$membre->setSecret(false);
+		$app['orm.em']->persist($membre);
+		$app['orm.em']->flush();
+		
+		return $app['twig']->render('admin/groupeSecondaire/detail.twig', array(
+				'groupeSecondaire' => $groupeSecondaire));
 	}
 	
+	/**
+	 * Active le droit de lire les secrets à un utilisateur
+	 *
+	 * @param Request $request
+	 * @param Applicetion $app
+	 */
+	public function adminSecretOnAction(Request $request, Application $app)
+	{
+		$groupeSecondaire = $request->get('groupe');
+		$membre = $request->get('membre');
+	
+		$membre->setSecret(true);
+		$app['orm.em']->persist($membre);
+		$app['orm.em']->flush();
+	
+		return $app['twig']->render('admin/groupeSecondaire/detail.twig', array(
+				'groupeSecondaire' => $groupeSecondaire));
+	}
+		
 	/**
 	 * Affichage à destination d'un membre du groupe secondaire
 	 * @param Request $request
@@ -376,76 +390,7 @@ class GroupeSecondaireController
 				'groupeSecondaire' => $groupeSecondaire,
 				'membre' => $membre,
 		));		
-	}
-	
-
-	/**
-	 * Accepter une candidature à un groupe secondaire (orgas)
-	 *
-	 * @param Request $request
-	 * @param Application $app
-	 */
-	public function adminReponseAction(Request $request, Application $app)
-	{
-		$groupeSecondaire = $request->get('groupe');
-		$postulant = $request->get('postulant');
-	
-		// le candidat doit effectivement candidater à ce groupe
-		if ( $postulant->getSecondaryGroup() != $groupeSecondaire )
-		{
-			$app['session']->getFlashBag()->add('error', 'Le postulant ne demande pas à participer à ce groupe! .');
-			return $app->redirect($app['url_generator']->generate('homepage'),301);
-		}
-		
-		$form = $app['form.factory']->createBuilder(new PostulantReponseForm())
-			->add('accepter','submit', array('label' => "Accepter"))
-			->add('refuser','submit', array('label' => "Refuser"))
-			->getForm();
-
-		$form->handleRequest($request);
-			
-		if ( $form->isValid() )
-		{
-			$data = $form->getData();
-			
-			if ($form->get('accepter')->isClicked())
-			{	
-				$personnage = $postulant->getPersonnage();
-				
-				$membre = new \LarpManager\Entities\Membre();
-				$membre->setPersonnage($personnage);
-				$membre->setSecondaryGroup($groupeSecondaire);
-				$membre->setSecret(false);
-					
-				$app['orm.em']->persist($membre);
-				$app['orm.em']->remove($postulant);
-				$app['orm.em']->flush();
-					
-				$groupeSecondaire->addMembre($membre);
-				
-				$app['session']->getFlashBag()->add('success', 'La candidature a été acceptée.');
-				return $app->redirect($app['url_generator']->generate('groupeSecondaire.admin.detail', array('groupe' => $groupeSecondaire->getId())),301);
-			}
-			else if ( $form->get('refuser')->isClicked())
-			{
-				$app['orm.em']->remove($postulant);
-				$app['orm.em']->flush();
-				
-				$groupeSecondaire->removeMembre($postulant);
-				
-				$app['session']->getFlashBag()->add('success', 'La candidature a été refusée.');
-				return $app->redirect($app['url_generator']->generate('groupeSecondaire.admin.detail', array('groupe' => $groupeSecondaire->getId())),301);
-			}
-			
-		}
-		
-		return $app['twig']->render('admin/groupeSecondaire/reponse.twig', array(
-			'groupeSecondaire' => $groupeSecondaire,
-			'postulant' => $postulant,
-			'form' => $form->createView(),
-		));
-	}
-	
+	}	
 	
 	/**
 	 * Accepter une candidature à un groupe secondaire
@@ -480,7 +425,7 @@ class GroupeSecondaireController
 			$app['user.mailer']->sendGroupeSecondaireAcceptMessage($personnage->getParticipant()->getUser(), $groupeSecondaire);
 			
 			$app['session']->getFlashBag()->add('success', 'Vous avez accepté la candidature. Un message a été envoyé au joueur concerné.');
-			return $app->redirect($app['url_generator']->generate('groupeSecondaire.gestion', array('groupe' => $groupeSecondaire->getId())),301);
+			return $app->redirect($app['url_generator']->generate('groupeSecondaire.joueur', array('groupe' => $groupeSecondaire->getId())),301);
 		}
 		
 		return $app['twig']->render('groupeSecondaire/gestion_accept.twig', array(
@@ -516,7 +461,7 @@ class GroupeSecondaireController
 			$app['user.mailer']->sendGroupeSecondaireRejectMessage($personnage()->getParticipant()->getUser(), $groupeSecondaire);
 				
 			$app['session']->getFlashBag()->add('success', 'Vous avez refusé la candidature. Un message a été envoyé au joueur concerné.');
-			return $app->redirect($app['url_generator']->generate('groupeSecondaire.gestion', array('groupe' => $groupeSecondaire->getId())),301);
+			return $app->redirect($app['url_generator']->generate('groupeSecondaire.joueur', array('groupe' => $groupeSecondaire->getId())),301);
 		}
 		
 		
@@ -546,10 +491,14 @@ class GroupeSecondaireController
 			
 		if ( $form->isValid() )
 		{
+			$postulant->setWaiting(true);
+			$app['orm.em']->persist($postulant);
+			$app['orm.em']->flush($postulant);
+			
 			$app['user.mailer']->sendGroupeSecondaireWaitMessage($postulant->getPersonnage()->getParticipant()->getUser(), $groupeSecondaire);
 	
 			$app['session']->getFlashBag()->add('success', 'La candidature reste en attente. Un message a été envoyé au joueur concerné.');
-			return $app->redirect($app['url_generator']->generate('groupeSecondaire.gestion', array('groupe' => $groupeSecondaire->getId())),301);
+			return $app->redirect($app['url_generator']->generate('groupeSecondaire.joueur', array('groupe' => $groupeSecondaire->getId())),301);
 		}
 	
 	
@@ -594,7 +543,7 @@ class GroupeSecondaireController
 			$app['user.mailer']->sendNewMessage($message);
 	
 			$app['session']->getFlashBag()->add('success', 'Votre message a été envoyé au joueur concerné.');
-			return $app->redirect($app['url_generator']->generate('groupeSecondaire.gestion', array('index' => $groupeSecondaire->getId())),301);
+			return $app->redirect($app['url_generator']->generate('groupeSecondaire.joueur', array('groupe' => $groupeSecondaire->getId())),301);
 		}
 	
 	
@@ -604,17 +553,4 @@ class GroupeSecondaireController
 				'form' => $form->createView(),
 		));
 	}
-	
-	/**
-	 * Gestion d'un groupe secondaire (pour le chef du groupe secondaire)
-	 */
-	public function gestionAction(Request $request, Application $app)
-	{
-		$groupeSecondaire = $request->get('groupe');
-
-		return $app['twig']->render('groupeSecondaire/gestion.twig', array(
-			'groupeSecondaire' => $groupeSecondaire,	
-		));
-	}
-
 }

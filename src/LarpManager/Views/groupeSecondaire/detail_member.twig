@@ -23,11 +23,65 @@
 				<h5>Les secrets</h5>
 			</div>
 			
-			<p>{{ groupeSecondaire.description_secrete|markdown }}</p>
+			<p>{{ groupeSecondaire.descriptionSecrete|markdown }}</p>
+		{% endif %}
+		
+		{% if membre.isChief %}
+			<div class="header">
+				<h5>Liste des postulants</h5>
+			</div>
+			<blockquote>
+				<p>Voici la liste des personnages ayant postulé pour rejoindre votre groupe secondaire. Vous avez la possibilité d'accepter la demande, de la refuser ou de laisser le personnage parmis les postulants</p>
+			</blockquote>
+			<ul class="list-group">
+			{% for postulant in groupeSecondaire.postulants %}
+				<div class="list-group-item">
+					<div class="list-group-item-heading">
+						<strong>{{ postulant.personnage.publicName }}</strong>
+						{% if groupeSecondaire.secondaryGroupType.label == 'Religion' %}
+							Religion(s) du postulant :
+							<ul>
+							{% for personnageReligion in postulant.personnage.personnagesReligions %}
+								<li>{{ personnageReligion.religion.label }} - {{ personnageReligion.religionLevel.label }}</li>
+							{% endfor %}
+							</ul>
+						{% endif %}
+					</div>
+					{% if postulant.waiting %}
+						<div class="list-group-item-text">
+							Mis en attente.
+						</div>
+					{% endif %}
+					<div class="list-group-item-text">
+						{{ postulant.explanation|markdown }}
+					</div>
+					<a class="btn btn-primary" 
+						href="{{ path('groupeSecondaire.gestion.response', {'groupe': groupeSecondaire.id, 'postulant': postulant.id }) }}">
+						Répondre</a>
+					<a class="btn btn-primary" 
+						href="{{ path('groupeSecondaire.gestion.accept', {'groupe': groupeSecondaire.id, 'postulant': postulant.id }) }}">
+						Accepter</a>
+					<a class="btn btn-default" 
+						href="{{ path('groupeSecondaire.gestion.wait', {'groupe': groupeSecondaire.id, 'postulant': postulant.id }) }}">
+						Mettre en attente</a>
+					<a class="btn btn-danger" 
+						href="{{ path('groupeSecondaire.gestion.reject', {'groupe': groupeSecondaire.id, 'postulant': postulant.id }) }}">
+						Rejeter</a>
+				</div>
+			{% endfor %}
+			</ul>
 		{% endif %}
 		
 		<div class="header">
 			<h5>Chef du groupe</h5>
+		</div>
+		
+		<div class="list-group">
+			<div class="list-group-item">
+				<div class="list-group-item-heading">
+					<strong>{{ groupeSecondaire.responsable.publicName }}</strong>
+				</div>
+			</div>
 		</div>
 
 		<div class="header">
@@ -38,11 +92,24 @@
 		{% for membre in groupeSecondaire.membres %}
 			<div class="list-group-item">
 				<div class="list-group-item-heading">
-					<strong>{{ membre.personnage.surnom }}</strong>
+					<strong>{{ membre.personnage.publicName }}</strong>
 				</div>
 			</div>
 		{% endfor %}
 		</div>
+		
+		<div class="header">
+			<h5>Discuter entre vous</h5>
+		</div>
+		
+		<div class="list-group">
+			<div class="list-group-item">
+				<a href="{{ path('forum.topic',{'index': groupeSecondaire.topic.id}) }}">
+					<i class="fa fa-comment"></i>
+					Forum groupe secondaire "{{ groupeSecondaire.label }}"</a>
+			</div>
+		</div>
+				
 	</div>
 </div>
 {% endblock content %}

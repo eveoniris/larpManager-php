@@ -90,15 +90,6 @@
 							<div class="header">
 								<h5>Groupes secondaires</h5>
 							</div>
-							{% if app.user.personnage.secondaryGroupsAsChief|length > 0 %}
-								
-								<p>Vous êtes responsable d'un ou de plusieurs groupes secondaires. Suivez le lien ci-dessous pour gérer vos groupes secondaires</p>
-								<ul>
-								{% for groupe in app.user.personnage.secondaryGroupsAsChief %}
-									<li><a href="{{ path('groupeSecondaire.gestion', {'groupe': groupe.id}) }}">Gerer le groupe {{ groupe.label }}</a></li>
-								{% endfor %}
-								</ul>
-							{% endif %}
 							
 							{% if app.user.personnage.postulants|length > 0 %}
 								<ul class="list-group">
@@ -270,6 +261,15 @@
 										</a>
 									</li>
 								{% endfor %}
+								{% for membre in app.user.personnage.membres %}
+									<li class="list-group-item">
+										<a href="{{ path('forum.topic',{'index': membre.secondaryGroup.topic.id}) }}">
+											<i class="fa fa-comment"></i>
+											Forum du groupe secondaire "{{ membre.secondaryGroup.label }}"
+										</a>
+									</li>
+								{% endfor %}
+								
 							{% endif %}
 						</ul>
 						

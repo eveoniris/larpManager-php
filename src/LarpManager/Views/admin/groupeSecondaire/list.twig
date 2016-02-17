@@ -89,8 +89,8 @@
 			<tbody>
 			{% for groupeSecondaire in groupeSecondaires %}
 				<tr>
-					<td><a href="{{ path('groupeSecondaire.admin.update', {'index':groupeSecondaire.id}) }}">{{ groupeSecondaire.id }}</td>
-					<td><a href="{{ path('groupeSecondaire.admin.detail', {'index':groupeSecondaire.id}) }}">{{ groupeSecondaire.label }}</td>
+					<td><a href="{{ path('groupeSecondaire.admin.update', {'groupe':groupeSecondaire.id}) }}">{{ groupeSecondaire.id }}</td>
+					<td><a href="{{ path('groupeSecondaire.admin.detail', {'groupe':groupeSecondaire.id}) }}">{{ groupeSecondaire.label }}</td>
 					<td>{{ groupeSecondaire.description|markdown }}</td>
 					<td>{{ groupeSecondaire.secondaryGroupType.label }}</td>
 				</tr>

@@ -6,7 +6,7 @@
 
 	<ol class="breadcrumb">
 		<li><a href="{{ path('homepage') }}">Accueil</a></li>
-		<li><a href="{{ path("groupeSecondaire.gestion", {'index':groupeSecondaire.id}) }}">{{ groupeSecondaire.label }}</a></li>
+		<li><a href="{{ path("groupeSecondaire.joueur", {'index':groupeSecondaire.id}) }}">{{ groupeSecondaire.label }}</a></li>
 		<li class="active">Mise en attente d'un postulant</li>
 	</ol>
 	
@@ -14,10 +14,22 @@
 		<form action="{{ path('groupeSecondaire.gestion.wait', {'groupe': groupeSecondaire.id, 'postulant': postulant.id}) }}" method="POST" {{ form_enctype(form) }}>
 			<fieldset>
 				<legend>Mise en attente d'un postulant</legend>
-					<p>Le message suivant sera envoyé au postulant :</p>
-					<p>"Vous êtes accepté en tant que postulant, vous avez rendez-vous sur le GN pour que nous en parlions en jeu. Vous recevrez un rendez vous avant le GN"</p>
-					{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
-					{{ form(form) }}
+				
+				<div class="list-group">
+					<div class="list-group-item">
+						<div class="list-group-item-heading">
+							<strong>{{ postulant.personnage.publicName }}</strong>
+						</div>
+						<div class="list-group-item-text">
+							{{ postulant.explanation|markdown }}
+						</div>
+					</div>
+				</div>
+				
+				<p>Le message suivant sera envoyé au postulant :</p>
+				<p>"Vous êtes accepté en tant que postulant, vous avez rendez-vous sur le GN pour que nous en parlions en jeu. Vous recevrez un rendez vous avant le GN"</p>
+				{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+				{{ form(form) }}
 			</fieldset>
 		</form>
 	</div>

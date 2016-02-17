@@ -64,6 +64,29 @@ class GroupeSecondaireControllerProvider implements ControllerProviderInterface
 			->convert('groupe', 'converter.secondaryGroup:convert')
 			->before($mustBeOrga);
 		
+		/**
+		 * Autorise l'accés aux secrets à un membre du groupe
+		 */
+		$controllers->match('/admin/{groupe}/secret/{membre}/on','LarpManager\Controllers\GroupeSecondaireController::adminSecretOnAction')
+			->assert('groupe', '\d+')
+			->assert('membre', '\d+')
+			->bind("groupeSecondaire.admin.secret.on")
+			->method('GET')
+			->convert('groupe', 'converter.secondaryGroup:convert')
+			->convert('membre', 'converter.membre:convert')
+			->before($mustBeOrga);
+		
+		/**
+		 * Retire l'accés aux secrets à un membre du groupe
+		 */
+		$controllers->match('/admin/{groupe}/secret/{membre}/off','LarpManager\Controllers\GroupeSecondaireController::adminSecretOffAction')
+			->assert('groupe', '\d+')
+			->assert('membre', '\d+')
+			->bind("groupeSecondaire.admin.secret.off")
+			->method('GET')
+			->convert('groupe', 'converter.secondaryGroup:convert')
+			->convert('membre', 'converter.membre:convert')
+			->before($mustBeOrga);			
 
 		/**
 		 * Ajouter un groupe secondaire (pour les orgas)

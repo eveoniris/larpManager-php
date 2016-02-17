@@ -18,4 +18,14 @@ use LarpManager\Entities\BaseMembre;
  */
 class Membre extends BaseMembre
 {
+	/**
+	 * Determine si le membre est le chef du groupe
+	 */
+	public function isChief()
+	{
+		$chef = $this->getSecondaryGroup()->getPersonnage();
+		if ( $chef == $this->getPersonnage() ) return true;
+		return false;
+	}
+	
 }

@@ -11,7 +11,7 @@
 	</ol>
 	
 	<div class="well bs-component">
-		<form action="{{ path('groupeSecondaire.admin.update',{'index':groupeSecondaire.id}) }}" method="POST" {{ form_enctype(form) }} novalidate>
+		<form action="{{ path('groupeSecondaire.admin.update',{'groupe':groupeSecondaire.id}) }}" method="POST" {{ form_enctype(form) }} novalidate>
 			<fieldset>
 				<legend>Modification d'un groupe secondaire</legend>
 					{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
