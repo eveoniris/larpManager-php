@@ -56,6 +56,14 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 				throw new AccessDeniedException();
 			}
 		};
+		
+		/**
+		 * Liste des personnages (orga)
+		 */
+		$controllers->match('/','LarpManager\Controllers\PersonnageController::accueilAction')
+			->bind("personnage")
+			->method('GET');
+			
 
 		/**
 		 * Liste des personnages (orga)

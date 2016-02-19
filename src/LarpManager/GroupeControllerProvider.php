@@ -54,6 +54,34 @@ class GroupeControllerProvider implements ControllerProviderInterface
 		};
 		
 		/**
+		 * Vérifie que l'utilisateur est membre du groupe
+		 * @var unknown $mustBeMember
+		 */
+		$mustBeMember = function(Request $request) use ($app) {
+			if (!$app['security.authorization_checker']->isGranted('GROUPE_MEMBER', $request->get('index'))) {
+				throw new AccessDeniedException();
+			}
+		};
+		
+		/**
+		 * Vérifie que l'utilisateur est responsable du groupe
+		 * @var unknown $mustBeResponsable
+		 */
+		$mustBeResponsable = function(Request $request) use ($app) {
+			if (!$app['security.authorization_checker']->isGranted('GROUPE_RESPONSABLE', $request->get('index'))) {
+				throw new AccessDeniedException();
+			}
+		};
+		
+		/**
+		 * Liste des groupes
+		 */
+		$controllers->match('/','LarpManager\Controllers\GroupeController::accueilAction')
+			->bind("groupe")
+			->method('GET');
+			
+		
+		/**
 		 * Liste des groupes
 		 */
 		$controllers->match('/admin/list','LarpManager\Controllers\GroupeController::adminListAction')
@@ -93,35 +121,26 @@ class GroupeControllerProvider implements ControllerProviderInterface
 			->assert('index', '\d+')
 			->bind("groupe.personnage.add")
 			->method('GET|POST')
-			->before(function(Request $request) use ($app) {
-				if (!$app['security.authorization_checker']->isGranted('GROUPE_MEMBER', $request->get('index'))) {
-					throw new AccessDeniedException();
-				}
-			});
+			->before($mustBeMember);
 			
 		
 		/**
-		 * Gestion d'un groupe secondaire (pour le chef de groupe)
+		 * Gestion d'un groupe (pour le chef de groupe)
 		 */
 		$controllers->match('/{index}/gestion','LarpManager\Controllers\GroupeController::gestionAction')
 			->assert('index', '\d+')
 			->bind("groupe.gestion")
 			->method('GET')
-			->before(function(Request $request) use ($app) {
-				if (!$app['security.authorization_checker']->isGranted('GROUPE_RESPONSABLE', $request->get('index'))) {
-					throw new AccessDeniedException();
-				}
-			});
+			->before($mustBeResponsable);
 		
+		/**
+		 * Détail d'un groupe (pour les membres du groupe)
+		 */
 		$controllers->match('/{index}/joueur','LarpManager\Controllers\GroupeController::joueurAction')
 			->assert('index', '\d+')
 			->bind("groupe.joueur")
 			->method('GET')
-			->before(function(Request $request) use ($app) {
-				if (!$app['security.authorization_checker']->isGranted('GROUPE_MEMBER', $request->get('index'))) {
-					throw new AccessDeniedException();
-				}
-			});
+			->before($mustBeMember);
 					
 		// Ajout d'un groupe (Scénariste uniquement)
 		$controllers->match('/add','LarpManager\Controllers\GroupeController::addAction')

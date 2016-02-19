@@ -28,10 +28,14 @@ class PersonnageSecondaireControllerProvider implements ControllerProviderInterf
 				throw new AccessDeniedException();
 			}
 		};
+
+		$controllers->match('/','LarpManager\Controllers\PersonnageSecondaireController::accueilAction')
+			->bind("personnageSecondaire")
+			->method('GET');
 		
 		/** Liste des archétypes de personnage secondaire */
-		$controllers->match('/','LarpManager\Controllers\PersonnageSecondaireController::indexAction')
-			->bind("personnageSecondaire")
+		$controllers->match('/list','LarpManager\Controllers\PersonnageSecondaireController::indexAction')
+			->bind("personnageSecondaire.list")
 			->before($mustBeAdmin)
 			->method('GET');
 

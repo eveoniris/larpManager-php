@@ -36,7 +36,17 @@ class HomepageControllerProvider implements ControllerProviderInterface
 		$controllers->match('/world','LarpManager\Controllers\HomepageController::worldAction')
 					->method('GET')
 					->bind('world');
+
+		/** Page de récapitulatif des liens pour discuter */
+		$controllers->match('/discuter','LarpManager\Controllers\HomepageController::discuterAction')
+					->method('GET')
+					->bind('discuter');
 		
+		/** Page de récapitulatif des liens pour discuter */
+		$controllers->match('/evenement','LarpManager\Controllers\HomepageController::evenementAction')
+					->method('GET')
+					->bind('evenement');					
+					
 		/** Traitement du formulaire d'inscription d'un joueur dans un groupe */
 		$controllers->match('/inscription','LarpManager\Controllers\HomepageController::inscriptionAction')
 					->method('POST')

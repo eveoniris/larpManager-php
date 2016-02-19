@@ -31,7 +31,17 @@
 	Votre groupe n'est pas lié à un territoire.
 {% endif %}
 				
+<div class="header">
+	<h5>Vos alliés</h5>
+</div>
 
+{% for alliance in groupe.alliances %}
+	{{ alliance.groupe }}
+{% endfor %}
+
+<div class="header">
+	<h5>Vos ennemis</h5>
+</div>
 
 
 

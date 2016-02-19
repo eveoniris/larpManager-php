@@ -53,6 +53,27 @@ body {
   border: none; /* get rid of the border */
 }
 
+.huge {
+    font-size: 30px;
+    line-height: normal;
+}
+
+.link
+{
+	padding: 7px;
+	margin-bottom: 10px;
+	background: url('/img/header.png') repeat scroll 0% 0% / 100% 100% transparent;
+}
+
+.link a
+{
+	color: #292929;
+}
+
+.link:hover {
+	color: #000;
+}
+
 .header
 {
   background: url('/img/header.png') repeat scroll 0% 0% / 100% 100% transparent;

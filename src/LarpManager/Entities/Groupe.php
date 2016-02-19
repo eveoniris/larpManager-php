@@ -43,6 +43,94 @@ class Groupe extends BaseGroupe
 		return $this->getNom();	
 	}
 	
+	/**
+	 * Fourni la liste des toutes les alliances de ce groupe
+	 */
+	public function getAlliances()
+	{
+		$alliances = new ArrayCollection();
+		
+		foreach ( $groupeAllieRelatedByGroupeIds as $alliance)
+		{
+			if ( $alliance->getGroupeAccepted() && $alliance->getGroupAllieAccepted() )
+			{
+				$alliances[] = $alliance;
+			}
+		}
+		
+		foreach ( $groupeAllieRelatedByGroupeAllieIds as $alliance)
+		{
+			if ( $alliance->getGroupeAccepted() && $alliance->getGroupAllieAccepted() )
+			{
+				$alliances[] = $alliance;
+			}
+		}
+		
+		return $alliances;
+	}
+	
+	/**
+	 * Fourni la liste de toutes les alliances en cours de négotiation 
+	 */
+	public function getWaitingAlliances()
+	{
+		$alliances = new ArrayCollection();
+		
+		foreach ( $groupeAllieRelatedByGroupeIds as $alliance)
+		{
+			if ( ! $alliance->getGroupeAccepted() || ! $alliance->getGroupAllieAccepted() )
+			{
+				$alliances[] = $alliance;
+			}
+		}
+		
+		foreach ( $groupeAllieRelatedByGroupeAllieIds as $alliance)
+		{
+			if ( ! $alliance->getGroupeAccepted() || ! $alliance->getGroupAllieAccepted() )
+			{
+				$alliances[] = $alliance;
+			}
+		}
+		
+		return $alliances;
+	}
+	
+	/**
+	 * Fourni la liste de toutes les demandes d'alliances
+	 */
+	public function getRequestedAlliances()
+	{
+		$alliances = new ArrayCollection();
+		
+		foreach ( $groupeAllieRelatedByGroupeAllieIds as $alliance)
+		{
+			if ( ! $alliance->getGroupeAllieAccepted() )
+			{
+				$alliances[] = $alliance;
+			}
+				
+		}
+		return $alliances;
+	}
+	
+	/**
+	 * Fourni la liste de toutes les alliances demandés
+	 */
+	public function getSelfRequestedAlliances()
+	{
+		$alliances = new ArrayCollection();
+		
+		foreach ( $groupeAllieRelatedByGroupeIds as $alliance)
+		{
+			if ( ! $alliance->getGroupeAllieAccepted() )
+			{
+				$alliances[] = $alliance;
+			}
+		
+		}
+		return $alliances;		
+	}
+	
 	
 	/**
 	 * Trouve le personnage de l'utilisateur dans ce groupe

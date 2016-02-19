@@ -107,6 +107,28 @@ class HomepageController
 	{	
 		return $app['twig']->render('homepage/world.twig');		
 	}
+
+	/**
+	 * Affiche une page récapitulatif des liens pour discuter
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function discuterAction(Request $request, Application $app)
+	{
+		return $app['twig']->render('public/discuter.twig');
+	}
+	
+	/**
+	 * Affiche une page récapitulatif des événements
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function evenementAction(Request $request, Application $app)
+	{
+		return $app['twig']->render('public/evenement.twig');
+	}
 	
 	/**
 	 * Affiche les mentions légales

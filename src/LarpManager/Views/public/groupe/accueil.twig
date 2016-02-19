@@ -1,0 +1,33 @@
+{% extends "layout.twig" %}
+
+{% block title %}Groupe{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Page d'accueil</a></li>
+		<li class="active">Votre groupe</li>
+	</ol>
+	
+	<div class="well bs-component">
+		{% if not app.user.etatCivil %}
+			Vous devez remplir votre état civil avant de pouvoir rejoindre un groupe
+		{% else %}
+			{% if app.user.groupes|length == 0 %}
+				<div class="header">
+					<h5>{% trans %}subscribe_group_title{% endtrans %}</h5>
+				</div>
+					
+				<p>{% trans %}subscribe_group_explain{% endtrans %}</p>
+				
+				{{ include("public/groupe/fragment/form_groupe.twig",{'form': form_groupe,'action': path('homepage.inscription')}) }}
+			{% else %}
+				{# Détail des groupes#}
+				{% for groupe in app.user.groupes %}
+					{{ include("public/groupe/fragment/groupe.twig",{'groupe':groupe}) }}
+				{% endfor %}
+			{% endif %}
+		{% endif %}
+	</div>
+
+{% endblock content %}

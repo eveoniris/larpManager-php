@@ -1,0 +1,29 @@
+{% extends "layout.twig" %}
+
+{% block title %}Evenements{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Page d'accueil</a></li>
+		<li class="active">Evenements</li>
+	</ol>
+	
+	<div class="well bs-component">
+
+		{# afficher la liste des gns dans lequel le joueur est inscrit #}
+		{% if app.user.gns|length > 0 %}
+			<div class="panel panel-default">
+				<div class="panel-body">
+					<h6>{% trans %}gn_list_title{% endtrans %}</h6>
+					<ul class="list-group">
+						{% for gn in app.user.gns %}
+							<a class="list-group-item" href="{{ path('gn.detail', {'index': gn.id}) }}">{{ gn.label }}</a>
+						{% endfor %}
+					</ul>
+				</div>
+			</div>
+		{% endif %}
+	</div>
+	
+{% endblock content %}

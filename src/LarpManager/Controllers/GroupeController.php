@@ -21,6 +21,16 @@ use LarpManager\Form\BackgroundForm;
 class GroupeController
 {
 	/**
+	 * Page d'accueil de gestion des groupes
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function accueilAction(Request $request, Application $app)
+	{
+		return $app['twig']->render('public/groupe/accueil.twig', array());
+	}
+	
+	/**
 	 * Liste des groupes
 	 * 
 	 * @param Request $request

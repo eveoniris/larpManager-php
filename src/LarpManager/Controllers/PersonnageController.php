@@ -22,6 +22,16 @@ class PersonnageController
 {
 	
 	/**
+	 * Page d'accueil de gestion des personnage
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function accueilAction(Request $request, Application $app)
+	{
+		return $app['twig']->render('public/personnage/accueil.twig', array());
+	}
+	
+	/**
 	 * Liste des personnages
 	 * 
 	 * @param Request $request
@@ -307,7 +317,7 @@ class PersonnageController
 			$app['orm.em']->flush();
 				
 			$app['session']->getFlashBag()->add('success','Votre personnage a été sauvegardé.');
-			return $app->redirect($app['url_generator']->generate('homepage'),301);
+			return $app->redirect($app['url_generator']->generate('personnage'),301);
 		}
 		
 		return $app['twig']->render('personnage/religion_add.twig', array(
@@ -346,7 +356,7 @@ class PersonnageController
 			$app['orm.em']->flush();
 		
 			$app['session']->getFlashBag()->add('success','Votre personnage a été sauvegardé.');
-			return $app->redirect($app['url_generator']->generate('homepage'),301);
+			return $app->redirect($app['url_generator']->generate('personnage'),301);
 		}
 		
 		return $app['twig']->render('personnage/origin_add.twig', array(
@@ -480,7 +490,7 @@ class PersonnageController
 			$app['orm.em']->flush();
 			
 			$app['session']->getFlashBag()->add('success','Votre personnage a été sauvegardé.');
-			return $app->redirect($app['url_generator']->generate('homepage'),301);
+			return $app->redirect($app['url_generator']->generate('personnage'),301);
 		}
 		
 		return $app['twig']->render('personnage/competence.twig', array(

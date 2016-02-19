@@ -6,12 +6,9 @@ use Silex\Application;
 use JasonGrimes\Paginator;
 use LarpManager\Form\GroupeSecondaireForm;
 use LarpManager\Form\GroupeSecondairePostulerForm;
-use LarpManager\Form\PostulantReponseForm;
 use LarpManager\Form\SecondaryGroupFindForm;
 use LarpManager\Entities\Message;
 use LarpManager\Form\MessageForm;
-
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
  * LarpManager\Controllers\GroupeSecondaireController
@@ -21,6 +18,16 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
  */
 class GroupeSecondaireController
 {
+	/**
+	 * Page d'accueil de gestion des groupes secondaires
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function accueilAction(Request $request, Application $app)
+	{
+		return $app['twig']->render('public/groupeSecondaire/accueil.twig', array());
+	}
+	
 	/**
 	 * Liste des groupes secondaires (pour les orgas)
 	 *

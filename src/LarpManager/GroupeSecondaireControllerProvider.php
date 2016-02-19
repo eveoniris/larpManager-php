@@ -45,6 +45,13 @@ class GroupeSecondaireControllerProvider implements ControllerProviderInterface
 				throw new AccessDeniedException();
 			}
 		};
+		
+		/**
+		 * Liste des groupes secondaires (pour les orgas)
+		 */
+		$controllers->match('/','LarpManager\Controllers\GroupeSecondaireController::accueilAction')
+			->bind("groupeSecondaire")
+			->method('GET');
 				
 		/**
 		 * Liste des groupes secondaires (pour les orgas)
