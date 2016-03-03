@@ -22,6 +22,14 @@ class Participant extends BaseParticipant
 	{
 		return $this->getUser()->getDisplayName();
 	}
-			
 	
+	/**
+	 * Retire un participant d'un groupe
+	 * @param Groupe $groupe
+	 */
+	public function removeGroupe(Groupe $groupe)
+	{
+		$groupe->removeParticipant($this);
+		$this->setGroupe(null);
+	}	
 }

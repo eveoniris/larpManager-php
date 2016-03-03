@@ -144,7 +144,7 @@
 						
 					{% for groupeSecondaire in personnage.secondaryGroups %}
 						<li class="list-group-item">
-							<a href="{{ path('groupeSecondaire.detail', {'groupe':groupeSecondaire.id}) }}">{{ groupeSecondaire.label }}</a>
+							<a href="{{ path('groupeSecondaire.joueur', {'groupe':groupeSecondaire.id}) }}">{{ groupeSecondaire.label }}</a>
 						</li>
 					{% endfor %}
 					<li class="list-group-item">

@@ -34,8 +34,8 @@ class PersonnageSecondaireControllerProvider implements ControllerProviderInterf
 			->method('GET');
 		
 		/** Liste des archétypes de personnage secondaire */
-		$controllers->match('/list','LarpManager\Controllers\PersonnageSecondaireController::indexAction')
-			->bind("personnageSecondaire.list")
+		$controllers->match('/admin/list','LarpManager\Controllers\PersonnageSecondaireController::indexAction')
+			->bind("personnageSecondaire.admin.list")
 			->before($mustBeAdmin)
 			->method('GET');
 

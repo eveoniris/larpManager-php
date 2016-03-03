@@ -9,6 +9,7 @@
 
 namespace LarpManager\Entities;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use LarpManager\Entities\BaseGroupe;
 
 /**
@@ -129,6 +130,27 @@ class Groupe extends BaseGroupe
 		
 		}
 		return $alliances;		
+	}
+	
+	/**
+	 * Fourni tous les ennemis du groupe
+	 */
+	public function getEnnemies()
+	{
+		$ennemies = new ArrayCollection();
+		
+		foreach ( $groupeEnnemyRelatedByGroupeIds as $ennemy)
+		{
+			$ennemies[] = $ennemy;
+			
+		}
+		
+		foreach ( $groupeEnnemyRelatedByGroupeEnnemyIds as $ennemy)
+		{
+			$ennemies[] = $ennemy;
+		}
+		
+		return $ennemies;
 	}
 	
 	
@@ -278,4 +300,5 @@ class Groupe extends BaseGroupe
 	{
 		return $this->removeGroupeClasse($groupeClasse);
 	}
+	
 }

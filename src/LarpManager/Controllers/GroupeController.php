@@ -10,6 +10,7 @@ use LarpManager\Form\GroupeForm;
 use LarpManager\Form\PersonnageForm;
 use LarpManager\Form\GroupFindForm;
 use LarpManager\Form\BackgroundForm;
+use LarpManager\Form\GroupeInscriptionForm;
 
 
 /**
@@ -27,8 +28,118 @@ class GroupeController
 	 */
 	public function accueilAction(Request $request, Application $app)
 	{
-		return $app['twig']->render('public/groupe/accueil.twig', array());
+		$form = $app['form.factory']->createBuilder(new GroupeInscriptionForm(), array())
+			->add('subscribe','submit', array('label' => 'S\'inscrire'))
+			->getForm();
+		
+		return $app['twig']->render('public/groupe/accueil.twig', array(
+				'form' => $form->createView()
+		));
 	}
+	
+	/**
+	 * Demander une nouvelle alliance
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function requestAlliance(Request $request, Application $app)
+	{
+		$form = $app['form.factory']->createBuilder(new RequestAllianceForm(), array())
+			->add('send','submit', array('label' => 'Envoyer'))
+			->getForm();
+		
+		return $app['twig']->render('public/groupe/request_alliance.twig', array(
+				'form' => $form->createView()
+		));
+	}
+	
+	/**
+	 * Accepter une alliance
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function acceptAlliance(Request $request, Application $app)
+	{
+		$form = $app['form.factory']->createBuilder(new AcceptAllianceForm(), array())
+			->add('send','submit', array('label' => 'Envoyer'))
+			->getForm();
+		
+		return $app['twig']->render('public/groupe/accept_alliance.twig', array(
+				'form' => $form->createView()
+		));
+	}
+	
+	/**
+	 * Refuser une alliance
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function refuseAlliance(Request $request, Application $app)
+	{
+		$form = $app['form.factory']->createBuilder(new RefuseAllianceForm(), array())
+		->add('send','submit', array('label' => 'Envoyer'))
+		->getForm();
+		
+		return $app['twig']->render('public/groupe/refuse_alliance.twig', array(
+				'form' => $form->createView()
+		));
+	}
+	
+	/**
+	 * Briser une alliance
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function breakAlliance(Request $request, Application $app)
+	{
+		$form = $app['form.factory']->createBuilder(new BreakAllianceForm(), array())
+		->add('send','submit', array('label' => 'Envoyer'))
+		->getForm();
+		
+		return $app['twig']->render('public/groupe/break_alliance.twig', array(
+				'form' => $form->createView()
+		));
+	}
+	
+	/**
+	 * Déclarer la guerre
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function declareWar(Request $request, Application $app)
+	{
+		$form = $app['form.factory']->createBuilder(new DeclareWareForm(), array())
+		->add('send','submit', array('label' => 'Envoyer'))
+		->getForm();
+		
+		return $app['twig']->render('public/groupe/declare_war.twig', array(
+				'form' => $form->createView()
+		));
+	}
+
+	/**
+	 * Faire la paix
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function makePeace(Request $request, Application $app)
+	{
+		$form = $app['form.factory']->createBuilder(new MakePeaceForm(), array())
+		->add('send','submit', array('label' => 'Envoyer'))
+		->getForm();
+		
+		return $app['twig']->render('public/groupe/make_peace.twig', array(
+				'form' => $form->createView()
+		));
+	}
+	
+	
 	
 	/**
 	 * Liste des groupes
@@ -92,15 +203,15 @@ class GroupeController
 			{
 				if ( $personnage->getGroupe() == $groupe)
 				{
-					$personnage->setGroupe(null);
-					$app['orm.em']->persist($personnage);
+					$personnage->removeGroupe($groupe);
 				}
 			}
+
+			$participant->removeGroupe($groupe);
 			
-			$groupe->removeParticipant($participant);
-			$participant->setGroupe(null);
-			$app['orm.em']->persist($groupe);
+			$app['orm.em']->persist($personnage);
 			$app['orm.em']->persist($participant);
+			$app['orm.em']->persist($groupe);
 			$app['orm.em']->flush();
 			
 			$app['session']->getFlashBag()->add('success', 'Le participant a été retiré du groupe.');
@@ -282,13 +393,14 @@ class GroupeController
 			'groupe' => $groupe,
 		));
 	}
+	
 	/**
 	 * Page de gestion d'un groupe pour son responsable
 	 * 
 	 * @param Request $request
 	 * @param Application $app
 	 */
-	public function gestionAction(Request $request, Application $app)
+	/*public function gestionAction(Request $request, Application $app)
 	{
 		$id = $request->get('index');
 		
@@ -296,7 +408,7 @@ class GroupeController
 		
 		return $app['twig']->render('groupe/gestion.twig', array(
 				'groupe' => $groupe));
-	}
+	}*/
 	
 	
 	
@@ -306,7 +418,7 @@ class GroupeController
 	 * @param Request $request
 	 * @param Application $app
 	 */
-	public function joueurAction(Request $request, Application $app)
+	/*public function joueurAction(Request $request, Application $app)
 	{
 		$id = $request->get('index');
 		
@@ -314,7 +426,7 @@ class GroupeController
 		
 		return $app['twig']->render('groupe/joueur.twig', array(
 				'groupe' => $groupe));
-	}
+	}*/
 	
 	/**
 	 * Modification du nombre de place disponibles dans un groupe

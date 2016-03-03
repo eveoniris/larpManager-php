@@ -158,5 +158,16 @@ class Personnage extends BasePersonnage
 		}
 		
 	}
+	
+	/**
+	 * Retire un personnage d'un groupe
+	 * 
+	 * @param Groupe $groupe
+	 */
+	public function removeGroupe(Groupe $groupe)
+	{
+		$groupe->removePersonnage($this);
+		$this->setGroupe(null);
+	}
 				
 }

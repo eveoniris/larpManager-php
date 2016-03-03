@@ -20,7 +20,7 @@
 					
 				<p>{% trans %}subscribe_group_explain{% endtrans %}</p>
 				
-				{{ include("public/groupe/fragment/form_groupe.twig",{'form': form_groupe,'action': path('homepage.inscription')}) }}
+				{{ include("public/groupe/fragment/form_groupe.twig",{'form': form,'action': path('homepage.inscription')}) }}
 			{% else %}
 				{# Détail des groupes#}
 				{% for groupe in app.user.groupes %}
