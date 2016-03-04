@@ -10,6 +10,13 @@ use LarpManager\Form\GroupeForm;
 use LarpManager\Form\PersonnageForm;
 use LarpManager\Form\GroupFindForm;
 use LarpManager\Form\BackgroundForm;
+use LarpManager\Form\RequestAllianceForm;
+use LarpManager\Form\AcceptAllianceForm;
+use LarpManager\Form\RefuseAllianceForm;
+use LarpManager\Form\BreakAllianceForm;
+use LarpManager\Form\DeclareWarForm;
+use LarpManager\Form\RequestPeaceForm;
+use LarpManager\Form\AcceptPeaceForm;
 use LarpManager\Form\GroupeInscriptionForm;
 
 
@@ -43,13 +50,75 @@ class GroupeController
 	 * @param Request $request
 	 * @param Application $app
 	 */
-	public function requestAlliance(Request $request, Application $app)
+	public function requestAllianceAction(Request $request, Application $app)
 	{
-		$form = $app['form.factory']->createBuilder(new RequestAllianceForm(), array())
+		$groupe = $request->get('groupe');
+		
+		// un groupe ne peux pas avoir plus de 3 alliances
+		if ( $groupe->getAlliances()->count() >= 3 )
+		{
+			$app['session']->getFlashBag()->add('error', 'Désolé, vous avez déjà 3 alliances, ce qui est le maximum possible.');
+			return $app->redirect($app['url_generator']->generate('groupe'));
+		}
+		
+		// un groupe ne peux pas avoir plus d'alliances que d'ennemis
+		if ( $groupe->getEnnemies()->count() - $groupe->getAlliances()->count() <= 0 )
+		{
+			$app['session']->getFlashBag()->add('error', 'Désolé, vous n\'avez pas suffisement d\'ennemis pour pouvoir vous choisir un allié.');
+			return $app->redirect($app['url_generator']->generate('groupe'));
+		}
+		
+		$alliance = new \LarpManager\Entities\GroupeAllie();
+		$alliance->setGroupe($groupe);
+		
+		$form = $app['form.factory']->createBuilder(new RequestAllianceForm(), $alliance)
 			->add('send','submit', array('label' => 'Envoyer'))
 			->getForm();
 		
-		return $app['twig']->render('public/groupe/request_alliance.twig', array(
+		$form->handleRequest($request);
+		
+		if ($request->isMethod('POST')) {
+			
+			$alliance = $form->getData();
+			$alliance->setGroupeAccepted(true);
+			
+			// vérification des conditions pour le groupe choisi
+			$requestedGroupe = $alliance->getRequestedGroupe();
+			if ( $requestedGroupe == $groupe)
+			{
+				$app['session']->getFlashBag()->add('error', 'Désolé, vous ne pouvez pas choisir votre propre groupe pour faire une alliance ...');
+				return $app->redirect($app['url_generator']->generate('groupe'));
+			}
+			
+			if ( $groupe->isAllyTo($requestedGroupe))
+			{
+				$app['session']->getFlashBag()->add('error', 'Désolé, vous êtes déjà allié avec ce groupe');
+				return $app->redirect($app['url_generator']->generate('groupe'));
+			}
+			
+			if ( $requestedGroupe->getAlliances()->count() >= 3 )
+			{
+				$app['session']->getFlashBag()->add('error', 'Désolé, le groupe demandé dispose déjà de 3 alliances, ce qui est le maximum possible.');
+				return $app->redirect($app['url_generator']->generate('groupe'));
+			}
+			
+			if ( $requestedGroupe->getEnnemies()->count() - $requestedGroupe->getAlliances()->count() <= 0 )
+			{
+				$app['session']->getFlashBag()->add('error', 'Désolé, le groupe demandé n\'a pas suffisement d\'ennemis pour pouvoir obtenir un allié supplémentaire.');
+				return $app->redirect($app['url_generator']->generate('groupe'));
+			}
+			
+			$app['orm.em']->persist($alliance);
+			$app['orm.em']->flush();
+			
+			$app['user.mailer']->sendRequestAlliance($alliance);
+			
+			$app['session']->getFlashBag()->add('success', 'Votre demande a été envoyé.');
+			return $app->redirect($app['url_generator']->generate('groupe'));
+		}
+		
+		return $app['twig']->render('public/groupe/requestAlliance.twig', array(
+				'groupe' => $groupe,
 				'form' => $form->createView()
 		));
 	}
@@ -60,13 +129,16 @@ class GroupeController
 	 * @param Request $request
 	 * @param Application $app
 	 */
-	public function acceptAlliance(Request $request, Application $app)
+	public function acceptAllianceAction(Request $request, Application $app)
 	{
+		$groupe = $request->get('groupe');
+		
 		$form = $app['form.factory']->createBuilder(new AcceptAllianceForm(), array())
 			->add('send','submit', array('label' => 'Envoyer'))
 			->getForm();
 		
-		return $app['twig']->render('public/groupe/accept_alliance.twig', array(
+		return $app['twig']->render('public/groupe/acceptAlliance.twig', array(
+				'groupe' => $groupe,
 				'form' => $form->createView()
 		));
 	}
@@ -77,13 +149,16 @@ class GroupeController
 	 * @param Request $request
 	 * @param Application $app
 	 */
-	public function refuseAlliance(Request $request, Application $app)
+	public function refuseAllianceAction(Request $request, Application $app)
 	{
-		$form = $app['form.factory']->createBuilder(new RefuseAllianceForm(), array())
-		->add('send','submit', array('label' => 'Envoyer'))
-		->getForm();
+		$groupe = $request->get('groupe');
 		
-		return $app['twig']->render('public/groupe/refuse_alliance.twig', array(
+		$form = $app['form.factory']->createBuilder(new RefuseAllianceForm(), array())
+			->add('send','submit', array('label' => 'Envoyer'))
+			->getForm();
+		
+		return $app['twig']->render('public/groupe/refuseAlliance.twig', array(
+				'groupe' => $groupe,
 				'form' => $form->createView()
 		));
 	}
@@ -94,13 +169,16 @@ class GroupeController
 	 * @param Request $request
 	 * @param Application $app
 	 */
-	public function breakAlliance(Request $request, Application $app)
+	public function breakAllianceAction(Request $request, Application $app)
 	{
-		$form = $app['form.factory']->createBuilder(new BreakAllianceForm(), array())
-		->add('send','submit', array('label' => 'Envoyer'))
-		->getForm();
+		$groupe = $request->get('groupe');
 		
-		return $app['twig']->render('public/groupe/break_alliance.twig', array(
+		$form = $app['form.factory']->createBuilder(new BreakAllianceForm(), array())
+			->add('send','submit', array('label' => 'Envoyer'))
+			->getForm();
+		
+		return $app['twig']->render('public/groupe/breakAlliance.twig', array(
+				'groupe' => $groupe,
 				'form' => $form->createView()
 		));
 	}
@@ -111,30 +189,104 @@ class GroupeController
 	 * @param Request $request
 	 * @param Application $app
 	 */
-	public function declareWar(Request $request, Application $app)
+	public function declareWarAction(Request $request, Application $app)
 	{
-		$form = $app['form.factory']->createBuilder(new DeclareWareForm(), array())
-		->add('send','submit', array('label' => 'Envoyer'))
-		->getForm();
+		$groupe = $request->get('groupe');
 		
-		return $app['twig']->render('public/groupe/declare_war.twig', array(
+		// un groupe ne peux pas faire de déclaration de guerre si il a 3 ou plus ennemis
+		if ( $groupe->getEnnemies()->count() >= 3 )
+		{
+			$app['session']->getFlashBag()->add('error', 'Désolé, vous avez déjà 3 ennemis ou plus, impossible de faire une nouvelle déclaration de guerre .');
+			return $app->redirect($app['url_generator']->generate('groupe'));
+		}
+		
+		$war = new \LarpManager\Entities\GroupeEnemy();
+		$war->setGroupe($groupe);
+		
+		$form = $app['form.factory']->createBuilder(new DeclareWarForm(), $war)
+			->add('send','submit', array('label' => 'Envoyer'))
+			->getForm();
+		
+		$form->handleRequest($request);
+			
+		if ($request->isMethod('POST')) {
+					
+				$war = $form->getData();
+				$war->setGroupePeace(false);
+				$war->setGroupeEnemyPeace(false);
+				
+				// vérification des conditions pour le groupe choisi
+				$requestedGroupe = $war->getRequestedGroupe();
+				if ( $requestedGroupe == $groupe)
+				{
+					$app['session']->getFlashBag()->add('error', 'Désolé, vous ne pouvez pas choisir votre propre groupe comme ennemi ...');
+					return $app->redirect($app['url_generator']->generate('groupe'));
+				}
+				
+				if ( $groupe->isEnemyTo($requestedGroupe))
+				{
+					$app['session']->getFlashBag()->add('error', 'Désolé, vous êtes déjà en guerre avec ce groupe');
+					return $app->redirect($app['url_generator']->generate('groupe'));
+				}
+					
+				if ( $requestedGroupe->getEnnemies()->count() >= 5 )
+				{
+					$app['session']->getFlashBag()->add('error', 'Désolé, le groupe demandé dispose déjà de 5 ennemis, ce qui est le maximum possible.');
+					return $app->redirect($app['url_generator']->generate('groupe'));
+				}
+				
+				if ( $groupe->isEnnemyTo($requestedGroupe))
+				{
+					$app['session']->getFlashBag()->add('error', 'Désolé, vous êtes déjà allié avec ce groupe');
+					return $app->redirect($app['url_generator']->generate('groupe'));
+				}
+				
+				$app['orm.em']->persist($war);
+				$app['orm.em']->flush();
+					
+				$app['user.mailer']->sendDeclareWar($war);
+					
+				$app['session']->getFlashBag()->add('success', 'Votre déclaration de guerre viens d\'être envoyé.');
+				return $app->redirect($app['url_generator']->generate('groupe'));
+				
+		}
+			
+		return $app['twig']->render('public/groupe/declareWar.twig', array(
+				'groupe' => $groupe,
 				'form' => $form->createView()
 		));
 	}
 
 	/**
-	 * Faire la paix
+	 * Demander la paix
 	 * 
 	 * @param Request $request
 	 * @param Application $app
 	 */
-	public function makePeace(Request $request, Application $app)
+	public function requestPeaceAction(Request $request, Application $app)
 	{
-		$form = $app['form.factory']->createBuilder(new MakePeaceForm(), array())
-		->add('send','submit', array('label' => 'Envoyer'))
-		->getForm();
+		$groupe = $request->get('groupe');
 		
-		return $app['twig']->render('public/groupe/make_peace.twig', array(
+		$form = $app['form.factory']->createBuilder(new RequestPeaceForm(), array())
+			->add('send','submit', array('label' => 'Envoyer'))
+			->getForm();
+		
+		return $app['twig']->render('public/groupe/requestPeace.twig', array(
+				'groupe' => $groupe,
+				'form' => $form->createView()
+		));
+	}
+	
+	public function acceptPeaceAction(Request $request, Application $app)
+	{
+		$groupe = $request->get('groupe');
+	
+		$form = $app['form.factory']->createBuilder(new AcceptPeaceForm(), array())
+			->add('send','submit', array('label' => 'Envoyer'))
+			->getForm();
+	
+		return $app['twig']->render('public/groupe/acceptPeace.twig', array(
+				'groupe' => $groupe,
 				'form' => $form->createView()
 		));
 	}

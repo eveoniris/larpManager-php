@@ -45,13 +45,47 @@ class Groupe extends BaseGroupe
 	}
 	
 	/**
+	 * Determine si un groupe est allié avec ce groupe
+	 * @param Groupe $groupe
+	 */
+	public function isAllyTo(Groupe $groupe)
+	{
+		foreach ( $this->getAlliances() as $alliance)
+		{
+			if ($alliance->getGroupe() == $groupe
+				|| $alliance->getRequestedGroupe() == $groupe )
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Determine si un groupe est ennemi avec ce groupe
+	 * @param Groupe $groupe
+	 */
+	public function isEnemyTo(Groupe $groupe)
+	{
+		foreach ( $this->getEnnemies() as $war)
+		{
+			if ($war->getGroupe() == $groupe
+				|| $war->getRequestedGroupe() == $groupe )
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
 	 * Fourni la liste des toutes les alliances de ce groupe
 	 */
 	public function getAlliances()
 	{
 		$alliances = new ArrayCollection();
 		
-		foreach ( $groupeAllieRelatedByGroupeIds as $alliance)
+		foreach ( $this->groupeAllieRelatedByGroupeIds as $alliance)
 		{
 			if ( $alliance->getGroupeAccepted() && $alliance->getGroupAllieAccepted() )
 			{
@@ -59,7 +93,7 @@ class Groupe extends BaseGroupe
 			}
 		}
 		
-		foreach ( $groupeAllieRelatedByGroupeAllieIds as $alliance)
+		foreach ( $this->groupeAllieRelatedByGroupeAllieIds as $alliance)
 		{
 			if ( $alliance->getGroupeAccepted() && $alliance->getGroupAllieAccepted() )
 			{
@@ -77,7 +111,7 @@ class Groupe extends BaseGroupe
 	{
 		$alliances = new ArrayCollection();
 		
-		foreach ( $groupeAllieRelatedByGroupeIds as $alliance)
+		foreach ( $this->groupeAllieRelatedByGroupeIds as $alliance)
 		{
 			if ( ! $alliance->getGroupeAccepted() || ! $alliance->getGroupAllieAccepted() )
 			{
@@ -85,7 +119,7 @@ class Groupe extends BaseGroupe
 			}
 		}
 		
-		foreach ( $groupeAllieRelatedByGroupeAllieIds as $alliance)
+		foreach ( $this->groupeAllieRelatedByGroupeAllieIds as $alliance)
 		{
 			if ( ! $alliance->getGroupeAccepted() || ! $alliance->getGroupAllieAccepted() )
 			{
@@ -103,7 +137,7 @@ class Groupe extends BaseGroupe
 	{
 		$alliances = new ArrayCollection();
 		
-		foreach ( $groupeAllieRelatedByGroupeAllieIds as $alliance)
+		foreach ( $this->groupeAllieRelatedByGroupeAllieIds as $alliance)
 		{
 			if ( ! $alliance->getGroupeAllieAccepted() )
 			{
@@ -121,7 +155,7 @@ class Groupe extends BaseGroupe
 	{
 		$alliances = new ArrayCollection();
 		
-		foreach ( $groupeAllieRelatedByGroupeIds as $alliance)
+		foreach ( $this->groupeAllieRelatedByGroupeIds as $alliance)
 		{
 			if ( ! $alliance->getGroupeAllieAccepted() )
 			{
@@ -137,20 +171,20 @@ class Groupe extends BaseGroupe
 	 */
 	public function getEnnemies()
 	{
-		$ennemies = new ArrayCollection();
+		$enemies = new ArrayCollection();
 		
-		foreach ( $groupeEnnemyRelatedByGroupeIds as $ennemy)
+		foreach ( $this->groupeEnemyRelatedByGroupeIds as $enemy)
 		{
-			$ennemies[] = $ennemy;
+			$enemies[] = $enemy;
 			
 		}
 		
-		foreach ( $groupeEnnemyRelatedByGroupeEnnemyIds as $ennemy)
+		foreach ( $this->groupeEnemyRelatedByGroupeEnemyIds as $enemy)
 		{
-			$ennemies[] = $ennemy;
+			$enemies[] = $enemy;
 		}
 		
-		return $ennemies;
+		return $enemies;
 	}
 	
 	

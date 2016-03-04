@@ -18,4 +18,23 @@ use LarpManager\Entities\BaseGroupeAllie;
  */
 class GroupeAllie extends BaseGroupeAllie
 {
+	public function setGroupe($groupe)
+	{
+		return $this->setGroupeRelatedByGroupeId($groupe);
+	}
+	
+	public function getGroupe()
+	{
+		return $this->getGroupeRelatedByGroupeId();
+	}
+	
+	public function setRequestedGroupe($groupe)
+	{
+		return $this->setGroupeRelatedByGroupeAllieId($groupe);
+	}
+	
+	public function getRequestedGroupe()
+	{
+		return $this->getGroupeRelatedByGroupeAllieId();
+	}
 }

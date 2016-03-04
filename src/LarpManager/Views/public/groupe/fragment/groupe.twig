@@ -2,6 +2,12 @@
 
 <h4>{{ groupe.nom }}</h4>
 
+{% if app.user.isResponsable(groupe) %}
+<blockquote>
+Vous êtes responsable de ce groupe.
+</blockquote>
+{% endif %}
+
 <div class="header">
 	<h5>Composition</h5>
 </div>
@@ -13,9 +19,36 @@
 	{% if groupe.scenariste %}
 		<li class="list-group-item"><strong>Scénariste : </strong>{{ groupe.scenariste.username }} / {{ groupe.scenariste.email }}</li>
 	{% endif %}
-	{% for participant in  groupe.participants %}
-		<li class="list-group-item">{{ participant.user.username }} / {{ participant.user.email }}</li>
-	{% endfor %}
+	
+	<li class="list-group-item">
+		<table class="table">
+			<thead>
+				<tr>
+					<th>Utilisateur</th>
+					<th>Nom du personnage</th>
+					<th>Classe</th>
+				</tr>
+			</thead>
+			<tbody>
+			
+				{% for participant in  groupe.participants %}
+					<tr>						
+						<td>{{ participant.user.username }} / {{ participant.user.email }}</td>
+						<td>
+							{% if participant.personnage %}
+								{{ participant.personnage.publicName }}
+							{% endif %}
+						</td>
+						<td>
+							{% if participant.personnage %}
+								{{ participant.personnage.classeName }}
+							{% endif %}
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</li>
 </ul>
 
 <br />
@@ -36,11 +69,10 @@
 </div>
 
 <blockquote>
-	<p>Vous disposez de <strong>{{ groupe.alliances|length }}</strong> alliance sur un maximum de <strong>3</strong></p>
-	<p>Le nombre d'ennemi doit toujours être supérieur à votre nombre d'alliés</p>
-	<p>Vous pouvez choisir <strong>{{ groupe.ennemies|length - groupe.alliances|length }}</strong> supplémentaire</p>
-	<p>Pour augmenter le nombe d'alliance possible (jusqu'à un maximum de 3), choisissez plus d'ennemis</p>
-	</blockquote>
+	<p>Vous disposez de <strong>{{ groupe.alliances|length }}</strong> alliance(s) sur un maximum de <strong>3</strong>.</p>
+	<p>Vous pouvez choisir <strong>{{ groupe.ennemies|length - groupe.alliances|length }}</strong> allié(s) supplémentaire(s).</p>
+	<p>Votre nombre d'ennemis doit toujours être supérieur à votre nombre d'alliés. Pour augmenter le nombe d'alliance possible (jusqu'à un maximum de 3), choisissez plus d'ennemis</p>
+</blockquote>
 
 <ul class="list-group">
 {% for alliance in groupe.alliances %}
@@ -50,14 +82,16 @@
 {% endfor %}
 </ul>
 
-<a class="btn btn-default" href="#">Demander une alliance</a>
+{% if app.user.isResponsable(groupe) %}
+	<a class="btn btn-default" href="{{ path('groupe.requestAlliance', {'groupe': groupe.id}) }}">Demander une alliance</a>
+{% endif %}
 
 <div class="header">
 	<h5>Vos ennemis</h5>
 </div>
 
 <blockquote>
-	<p>Vous disposez de <strong>{{ groupe.ennemies|length }}</strong> ennemis sur un maximum de <strong>5</strong></p>
+	<p>Vous disposez de <strong>{{ groupe.ennemies|length }}</strong> ennemi(s) sur un maximum de <strong>5</strong>.</p>
 	<p>Si vous avez 3 ennemis ou plus, vous ne pouvez plus faire de Déclaration de guerre (mais vous pouvez toujours en recevoir)</p>
 	<p>Etre l’ennemi d’un groupe ne signifie pas que vous devez tuer à vue ses membres, simplement que vous avez un différent important à régler avec lui. Le but est de générer du jeu, pas de l’appauvrir en générant des massacres.</p>
 </blockquote>
@@ -69,4 +103,6 @@
 {% endfor %}
 </ul>
 
-<a class="btn btn-default" href="#">Choisir un ennemi</a>
+{% if app.user.isResponsable(groupe) %}
+	<a class="btn btn-default" href="{{ path('groupe.declareWar', {'groupe': groupe.id}) }}">Choisir un ennemi</a>
+{% endif %}

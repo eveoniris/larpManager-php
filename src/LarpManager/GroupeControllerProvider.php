@@ -25,6 +25,14 @@ class GroupeControllerProvider implements ControllerProviderInterface
 	 *  - groupe.gestion
 	 *  - groupe.joueur
 	 *  - groupe.place
+	 *  - groupe.requestAlliance
+	 *  - groupe.acceptAlliance
+	 *  - groupe.refuseAlliance
+	 *  - groupe.breakAlliance
+	 *  - groupe.declareWar
+	 *  - groupe.requestPeace
+	 *  - groupe.acceptPeace
+	 *  - groupe.refusePeace
 	 *
 	 * @param Application $app
 	 * @return Controllers $controllers
@@ -68,51 +76,17 @@ class GroupeControllerProvider implements ControllerProviderInterface
 		 * @var unknown $mustBeResponsable
 		 */
 		$mustBeResponsable = function(Request $request) use ($app) {
-			if (!$app['security.authorization_checker']->isGranted('GROUPE_RESPONSABLE', $request->get('index'))) {
+			if (!$app['security.authorization_checker']->isGranted('GROUPE_RESPONSABLE', $request->get('groupe'))) {
 				throw new AccessDeniedException();
 			}
 		};
 		
 		/**
-		 * Liste des groupes
+		 * Accueil groupe pour les joueurs
 		 */
 		$controllers->match('/','LarpManager\Controllers\GroupeController::accueilAction')
 			->bind("groupe")
 			->method('GET');
-			
-		
-		/**
-		 * Liste des groupes
-		 */
-		$controllers->match('/admin/list','LarpManager\Controllers\GroupeController::adminListAction')
-			->bind("groupe.admin.list")
-			->method('GET')
-			->before($mustBeScenariste);
-		
-		/**
-		 * Retirer un participant du groupe
-		 */
-		$controllers->match('/admin/{groupe}/participant/{participant}/remove','LarpManager\Controllers\GroupeController::adminParticipantRemoveAction')
-			->bind("groupe.admin.participant.remove")
-			->method('GET|POST')
-			->before($mustBeScenariste);
-		
-		/**
-		 * Rechercher un groupe
-		 */
-		$controllers->match('/search','LarpManager\Controllers\GroupeController::searchAction')
-			->bind("groupe.search")
-			->method('GET|POST')
-			->before($mustBeScenariste);
-			
-		/**
-		 * Detail d'un groupe
-		 */
-		$controllers->match('/{index}','LarpManager\Controllers\GroupeController::detailAction')
-			->assert('index', '\d+')
-			->bind("groupe.detail")
-			->method('GET')
-			->before($mustBeScenariste);
 			
 		/**
 		 * Ajoute un nouveau personnage dans un groupe
@@ -122,53 +96,158 @@ class GroupeControllerProvider implements ControllerProviderInterface
 			->bind("groupe.personnage.add")
 			->method('GET|POST')
 			->before($mustBeMember);
-			
-		
+							
 		/**
-		 * Gestion d'un groupe (pour le chef de groupe)
+		 * Demander une alliance
 		 */
-		$controllers->match('/{index}/gestion','LarpManager\Controllers\GroupeController::gestionAction')
-			->assert('index', '\d+')
-			->bind("groupe.gestion")
-			->method('GET')
+		$controllers->match('/{groupe}/requestAlliance','LarpManager\Controllers\GroupeController::requestAllianceAction')
+			->assert('groupe', '\d+')
+			->bind("groupe.requestAlliance")
+			->method('GET|POST')
+			->convert('groupe', 'converter.groupe:convert')
 			->before($mustBeResponsable);
 		
 		/**
-		 * Détail d'un groupe (pour les membres du groupe)
+		 * Accepter une alliance
 		 */
-		$controllers->match('/{index}/joueur','LarpManager\Controllers\GroupeController::joueurAction')
-			->assert('index', '\d+')
-			->bind("groupe.joueur")
+		$controllers->match('/{groupe}/acceptAlliance','LarpManager\Controllers\GroupeController::acceptAllianceAction')
+			->assert('groupe', '\d+')
+			->bind("groupe.acceptAlliance")
+			->method('GET|POST')
+			->convert('groupe', 'converter.groupe:convert')
+			->before($mustBeResponsable);
+		
+		/**
+		 * Refuser une alliance
+		 */
+		$controllers->match('/{groupe}/refuseAlliance','LarpManager\Controllers\GroupeController::refuseAllianceAction')
+			->assert('groupe', '\d+')
+			->bind("groupe.refuseAlliance")
+			->method('GET|POST')
+			->convert('groupe', 'converter.groupe:convert')
+			->before($mustBeResponsable);			
+
+		/**
+		 * Casser une alliance
+		 */
+		$controllers->match('/{groupe}/breakAlliance','LarpManager\Controllers\GroupeController::breakAllianceAction')
+			->assert('groupe', '\d+')
+			->bind("groupe.breakAlliance")
+			->method('GET|POST')
+			->convert('groupe', 'converter.groupe:convert')
+			->before($mustBeResponsable);
+
+		/**
+		 * Déclarer la guerre
+		 */
+		$controllers->match('/{groupe}/declareWar','LarpManager\Controllers\GroupeController::declareWarAction')
+			->assert('groupe', '\d+')
+			->bind("groupe.declareWar")
+			->method('GET|POST')
+			->convert('groupe', 'converter.groupe:convert')
+			->before($mustBeResponsable);			
+			
+
+		/**
+		 * Demander la paix
+		 */
+		$controllers->match('/{groupe}/requestPeace','LarpManager\Controllers\GroupeController::requestPeaceAction')
+			->assert('groupe', '\d+')
+			->bind("groupe.requestPeace")
+			->method('GET|POST')
+			->convert('groupe', 'converter.groupe:convert')
+			->before($mustBeResponsable);
+		
+		/**
+		 * Accepter la paix
+		 */
+		$controllers->match('/{groupe}/acceptPeace','LarpManager\Controllers\GroupeController::acceptPeaceAction')
+			->assert('groupe', '\d+')
+			->bind("groupe.acceptPeace")
+			->method('GET|POST')
+			->convert('groupe', 'converter.groupe:convert')
+			->before($mustBeResponsable);			
+		
+		/**
+		 * Refuser la paix
+		 */
+		$controllers->match('/{groupe}/refusePeace','LarpManager\Controllers\GroupeController::refusePeaceAction')
+			->assert('groupe', '\d+')
+			->bind("groupe.refusePeace")
+			->method('GET|POST')
+			->convert('groupe', 'converter.groupe:convert')
+			->before($mustBeResponsable);			
+			
+		/**
+		 * Liste des groupes
+		 */
+		$controllers->match('/admin/list','LarpManager\Controllers\GroupeController::adminListAction')
+			->bind("groupe.admin.list")
 			->method('GET')
-			->before($mustBeMember);
-					
-		// Ajout d'un groupe (Scénariste uniquement)
+			->before($mustBeScenariste);
+			
+		/**
+		 * Retirer un participant du groupe
+		 */
+		$controllers->match('/admin/{groupe}/participant/{participant}/remove','LarpManager\Controllers\GroupeController::adminParticipantRemoveAction')
+			->bind("groupe.admin.participant.remove")
+			->method('GET|POST')
+			->before($mustBeScenariste);
+			
+		/**
+		 * Rechercher un groupe
+		 */
+		$controllers->match('/search','LarpManager\Controllers\GroupeController::searchAction')
+			->bind("groupe.search")
+			->method('GET|POST')
+			->before($mustBeScenariste);
+				
+		/**
+		 * Detail d'un groupe
+		 */
+		$controllers->match('/{index}','LarpManager\Controllers\GroupeController::detailAction')
+			->assert('index', '\d+')
+			->bind("groupe.detail")
+			->method('GET')
+			->before($mustBeScenariste);			
+		
+		/**
+		 *  Ajout d'un groupe (Scénariste uniquement)
+		 */
 		$controllers->match('/add','LarpManager\Controllers\GroupeController::addAction')
 			->bind("groupe.add")
 			->method('GET|POST')
 			->before($mustBeScenariste);
 
-		// Modification des places disponibles (Admin uniquement)
+		/**
+		 * Modification des places disponibles (Admin uniquement)
+		 */
 		$controllers->match('/place','LarpManager\Controllers\GroupeController::placeAction')
 			->bind("groupe.place")
 			->method('GET|POST')
 			->before($mustBeAdmin);
 			
-		// Mise à jour d'un groupe (scénariste uniquement)
+		/**
+		 *  Mise à jour d'un groupe (scénariste uniquement)
+		 */
 		$controllers->match('/{index}/update','LarpManager\Controllers\GroupeController::updateAction')
 			->assert('index', '\d+')
 			->bind("groupe.update")
 			->method('GET|POST')
 			->before($mustBeScenariste);
 
-		// Ajout d'un background (scénariste uniquement)
+		/**
+		 * Ajout d'un background (scénariste uniquement)
+		 */
 		$controllers->match('/{index}/background/add','LarpManager\Controllers\GroupeController::addBackgroundAction')
 			->assert('index', '\d+')
 			->bind("groupe.background.add")
 			->method('GET|POST')
 			->before($mustBeScenariste);
 			
-		// Modification d'un background (scénariste uniquement)
+		/**
+		 *  Modification d'un background (scénariste uniquement)
+		 */
 		$controllers->match('/{index}/background/update','LarpManager\Controllers\GroupeController::updateBackgroundAction')
 			->assert('index', '\d+')
 			->bind("groupe.background.update")

@@ -18,4 +18,23 @@ use LarpManager\Entities\BaseGroupeEnemy;
  */
 class GroupeEnemy extends BaseGroupeEnemy
 {
+	public function setGroupe($groupe)
+	{
+		return $this->setGroupeRelatedByGroupeId($groupe);
+	}
+	
+	public function getGroupe()
+	{
+		return $this->getGroupeRelatedByGroupeId();
+	}
+	
+	public function setRequestedGroupe($groupe)
+	{
+		return $this->setGroupeRelatedByGroupeEnemyId($groupe);	
+	}
+	
+	public function getRequestedGroupe()
+	{
+		return $this->getGroupeRelatedByGroupeEnemyId();
+	}
 }

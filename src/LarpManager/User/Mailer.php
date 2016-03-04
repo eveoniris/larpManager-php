@@ -34,6 +34,8 @@ use LarpManager\Entities\User;
 use LarpManager\Entities\Post;
 use LarpManager\Entities\Message;
 use LarpManager\Entities\SecondaryGroup;
+use LarpManager\Entities\GroupeAllie;
+use LarpManager\Entities\GroupeEnnemy;
 
 class Mailer
 {
@@ -41,6 +43,7 @@ class Mailer
     const ROUTE_RESET_PASSWORD = 'user.reset-password';
     const ROUTE_FORUM_POST = 'forum.post';
     const ROUTE_MESSAGERIE = 'user.messagerie';
+    const ROUTE_GROUPE = 'groupe';
 
     /** @var \Swift_Mailer */
     protected $mailer;
@@ -63,6 +66,14 @@ class Mailer
     protected $groupeSecondaireWaitTemplate;
     protected $groupeSecondaireRemoveTemplate;
     protected $newMessageTemplate;
+    protected $requestAllianceTemplate;
+    protected $acceptAllianceTemplate;
+    protected $refuseAllianceTemplate;
+    protected $breakAllianceTemplate;
+    protected $declareWarTemplate;
+    protected $requestPeaceTemplate;
+    protected $acceptPeaceTemplate;
+    protected $refusePeaceTemplate;
     protected $resetTemplate;
     protected $resetTokenTtl = 86400;
 
@@ -79,7 +90,79 @@ class Mailer
         $this->urlGenerator = $urlGenerator;
         $this->twig = $twig;
     }
+    
+    /**
+     * Définie la template de notification d'une demande d'alliance
+     * @param unknown $requestAllianceTemplate
+     */
+    public function setRequestAllianceTemplate($requestAllianceTemplate)
+    {
+    	$this->requestAllianceTemplate = $requestAllianceTemplate;
+    }
+    
+    /**
+     * Définie la template de notification d'une acceptation d'alliance
+     * @param unknown $acceptAllianceTemplate
+     */
+    public function setAcceptAllianceTemplate($acceptAllianceTemplate)
+    {
+    	$this->acceptAllianceTemplate = $acceptAllianceTemplate;
+    }
+    
+    /**
+     * Définie la template de notification d'un refus d'alliance
+     * @param unknown $requestAllianceTemplate
+     */
+    public function setRefuseAllianceTemplate($refuseAllianceTemplate)
+    {
+    	$this->refuseAllianceTemplate = $refuseAllianceTemplate;
+    }
+    
+    /**
+     * Définie la template de notification d'une rupture d'alliance
+     * @param unknown $requestAllianceTemplate
+     */
+    public function setBreakAllianceTemplate($breakAllianceTemplate)
+    {
+    	$this->breakAllianceTemplate = $breakAllianceTemplate;
+    }
+    
+    /**
+     * Définie la template de notification d'une déclaration de guerre
+     * @param unknown $declareWarTemplate
+     */
+    public function setDeclareWarTemplate($declareWarTemplate)
+    {
+    	$this->declareWarTemplate = $declareWarTemplate;
+    }    
+    
+    /**
+     * Définie la template de notification d'une demande de paix
+     * @param unknown $requestPeaceTemplate
+     */
+    public function setRequestPeaceTemplate($requestPeaceTemplate)
+    {
+    	$this->requestPeaceTemplate = $requestPeaceTemplate;
+    }
 
+    /**
+     * Définie la template de notification d'une demande de paix
+     * @param unknown $acceptPeaceTemplate
+     */
+    public function setAcceptPeaceTemplate($acceptPeaceTemplate)
+    {
+    	$this->acceptPeaceTemplate = $acceptPeaceTemplate;
+    }
+    
+    /**
+     * Définie la template de notification de refus d'une demande de paix
+     * @param unknown $refusePeaceTemplate
+     */
+    public function setRefusePeaceTemplate($refusePeaceTemplate)
+    {
+    	$this->refusePeaceTemplate = $refusePeaceTemplate;
+    }
+    
     /**
      * Définie la template de notification d'un nouveau message
      * @param unknown $messageTemplate
@@ -209,6 +292,74 @@ class Mailer
         return $this->resetTokenTtl;
     }
 
+    /**
+     * Envoi de la notification de demande d'alliance
+     * @param unknown $alliance
+     */
+    public function sendRequestAlliance(GroupeAllie $alliance)
+    {
+    	$requestedGroupe = $alliance->getRequestedGroupe();
+    	$responsable = $requestedGroupe->getResponsable();
+    	if ( ! $responsable ) return;
+    	
+    	$context = array(
+    		'alliance' => $alliance,
+    	);
+    	
+    	$this->sendMessage($this->requestAllianceTemplate, $context, $this->getFromEmail(), $responsable->getEmail());
+    }
+    
+    /**
+     * Envoi de la notification de demande d'alliance
+     * @param unknown $alliance
+     */
+    public function sendDeclareWar(GroupeEnnemy $war)
+    {
+    	$requestedGroupe = $war->getRequestedGroupe();
+    	$responsable = $requestedGroupe->getResponsable();
+    	if ( ! $responsable ) return;
+    	 
+    	$context = array(
+    			'war' => $war,
+    	);
+    	 
+    	$this->sendMessage($this->declareWarTemplate, $context, $this->getFromEmail(), $responsable->getEmail());
+    }
+    
+    /**
+     * Envoi de la notification d'acceptation d'alliance
+     */
+    public function sendAcceptAlliance(GroupeAllie $alliance)
+    {
+    	$groupe = $alliance->getGroupe();
+    	$responsable = $groupe->getResponsable();
+    	if ( ! $responsable ) return;
+    	 
+    	$context = array(
+    			'alliance' => $alliance
+    	);
+    	
+    	$this->sendMessage($this->acceptAllianceTemplate, $context, $this->getFromEmail(), $responsable->getEmail());
+    }
+    
+    /**
+     * Envoi de la notification de refus d'alliance
+     */
+    public function sendRefuseAlliance(GroupeAllie $alliance)
+    {
+    	$groupe = $alliance->getGroupe();
+    	$responsable = $groupe->getResponsable();
+    	if ( ! $responsable ) return;
+    
+    	$context = array(
+    			'alliance' => $alliance
+    	);
+    	 
+    	$this->sendMessage($this->refuseAllianceTemplate, $context, $this->getFromEmail(), $responsable->getEmail());
+    }
+    
+    
+    
     /**
      * 
      * @param Message $message

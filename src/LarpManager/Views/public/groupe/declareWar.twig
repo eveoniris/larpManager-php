@@ -1,0 +1,26 @@
+{% extends "layout.twig" %}
+
+{% block title %}Déclarer la guerre{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Page d'accueil</a></li>
+		<li><a href="{{ path('groupe') }}">Votre groupe</a></li>
+		<li class="active">Déclarer la guerre</li>
+	</ol>
+	
+	<div class="well bs-component">
+	
+		<form action="{{ path('groupe.declareWar', {'groupe': groupe.id}) }}" method="POST" {{ form_enctype(form) }}>
+			{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+
+			{{ form(form) }}
+			
+			<p>Le chef de groupe recevra une notification pour le prévenir de votre déclaration de guerre.</p>
+			 
+		</form>
+	
+	</div>
+	
+{% endblock %}
