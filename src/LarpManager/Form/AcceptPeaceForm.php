@@ -33,6 +33,9 @@ class AcceptPeaceForm extends AbstractType
 	 */
 	public function setDefaultOptions(OptionsResolverInterface $resolver)
 	{
+		$resolver->setDefaults(array(
+				'class' => 'LarpManager\Entities\GroupeEnnemi',
+		));
 	}
 	
 	/**

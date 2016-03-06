@@ -23,7 +23,14 @@ class RefuseAllianceForm extends AbstractType
 	 */
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
-
+		$builder->add('messageAllie','textarea', array(
+				'label' => 'Un petit mot pour expliquer votre démarche',
+				'required' => true,
+				'attr' => array(
+						'class' => 'tinymce',
+						'rows' => 9,
+						'help' => 'Ce texte sera transmis au chef de groupe concerné.'),
+		));
 	}
 
 	/**
@@ -33,6 +40,9 @@ class RefuseAllianceForm extends AbstractType
 	 */
 	public function setDefaultOptions(OptionsResolverInterface $resolver)
 	{
+		$resolver->setDefaults(array(
+				'class' => 'LarpManager\Entities\GroupeAllie',
+		));
 	}
 
 	/**

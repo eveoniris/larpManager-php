@@ -1,0 +1,27 @@
+{% extends "layout.twig" %}
+
+{% block title %}Demander la paix{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Page d'accueil</a></li>
+		<li><a href="{{ path('groupe') }}">Votre groupe</a></li>
+		<li class="active">Demander la paix</li>
+	</ol>
+	
+	<div class="well bs-component">
+	
+		<form action="{{ path('groupe.requestPeace', {'groupe': groupe.id, 'enemy': war.id}) }}" method="POST" {{ form_enctype(form) }} novalidate>
+			{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+
+			<p>Vous allez demander la paix dans le conflit qui oppose <strong>{{ war.groupe.nom }}</strong> et <strong>{{ war.requestedGroupe.nom }}</strong>. 
+			{{ form(form) }}
+			
+			<p>Le chef de groupe recevra une notification pour le prévenir de votre choix. Pour que la paix soit effective, il devra accepter la paix.</p>
+			 
+		</form>
+	
+	</div>
+	
+{% endblock %}

@@ -105,6 +105,16 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 		$app['converter.membre'] = $app->share(function($app) {
 			return new MembreConverter($app['orm.em']);
 		});
+		
+		// alliance converter
+		$app['converter.alliance'] = $app->share(function($app) {
+			return new AllianceConverter($app['orm.em']);
+		});
+			
+		// enemy converter
+		$app['converter.enemy'] = $app->share(function($app) {
+			return new EnemyConverter($app['orm.em']);
+		});			
 	}
 
 	/**

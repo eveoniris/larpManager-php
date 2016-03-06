@@ -27,15 +27,15 @@ class DeclareWarForm extends AbstractType
 				'label' => 'Groupe que vous choisissez comme ennemi',
 				'class' => 'LarpManager\Entities\Groupe',
 				'property' => 'nom',
-		))
-		->add('message','textarea', array(
-				'label' => 'Un petit mot pour expliquer votre démarche',
-				'required' => true,
-				'attr' => array(
-						'class' => 'tinymce',
-						'rows' => 9,
-						'help' => 'Ce texte sera transmis au chef de groupe concerné.'),
-		));
+			))
+			->add('message','textarea', array(
+					'label' => 'Un petit mot pour expliquer votre démarche',
+					'required' => true,
+					'attr' => array(
+							'class' => 'tinymce',
+							'rows' => 9,
+							'help' => 'Ce texte sera transmis au chef de groupe concerné.'),
+			));
 	}
 
 	/**
@@ -46,7 +46,7 @@ class DeclareWarForm extends AbstractType
 	public function setDefaultOptions(OptionsResolverInterface $resolver)
 	{
 		$resolver->setDefaults(array(
-				'class' => 'LarpManager\Entities\GroupeEnnemi',
+				'class' => 'LarpManager\Entities\GroupeEnemy',
 		));
 	}
 

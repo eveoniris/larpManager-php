@@ -32,6 +32,7 @@ class UserServiceProvider implements ServiceProviderInterface
 			$mailer->setGroupeSecondaireWaitTemplate('user/email/groupeSecondaireWait.twig');
 			$mailer->setGroupeSecondaireRemoveTemplate('user/email/groupeSecondaire_remove.twig');
 			$mailer->setRequestAllianceTemplate('user/email/requestAlliance.twig');
+			$mailer->setCancelRequestedAllianceTemplate('user/email/cancelRequestedAlliance.twig');
 			$mailer->setAcceptAllianceTemplate('user/email/acceptAlliance.twig');
 			$mailer->setRefuseAllianceTemplate('user/email/refuseAlliance.twig');
 			$mailer->setBreakAllianceTemplate('user/email/breakAlliance.twig');
@@ -39,6 +40,7 @@ class UserServiceProvider implements ServiceProviderInterface
 			$mailer->setAcceptPeaceTemplate('user/email/acceptPeace.twig');
 			$mailer->setRefusePeaceTemplate('user/email/refusePeace.twig');
 			$mailer->setDeclareWarTemplate('user/email/declareWar.twig');
+			$mailer->setCancelRequestedPeaceTemplate('user/email/cancelPeace.twig');
 			$mailer->setResetTokenTtl($app['config']['user']['passwordReset']['tokenTTL']);
 			return $mailer;
 		});

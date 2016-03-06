@@ -12,11 +12,14 @@ use LarpManager\Form\GroupFindForm;
 use LarpManager\Form\BackgroundForm;
 use LarpManager\Form\RequestAllianceForm;
 use LarpManager\Form\AcceptAllianceForm;
+use LarpManager\Form\CancelRequestedAllianceForm;
 use LarpManager\Form\RefuseAllianceForm;
 use LarpManager\Form\BreakAllianceForm;
 use LarpManager\Form\DeclareWarForm;
 use LarpManager\Form\RequestPeaceForm;
 use LarpManager\Form\AcceptPeaceForm;
+use LarpManager\Form\RefusePeaceForm;
+use LarpManager\Form\CancelRequestedPeaceForm;
 use LarpManager\Form\GroupeInscriptionForm;
 
 
@@ -81,6 +84,7 @@ class GroupeController
 			
 			$alliance = $form->getData();
 			$alliance->setGroupeAccepted(true);
+			$alliance->setGroupeAllieAccepted(false);
 			
 			// vérification des conditions pour le groupe choisi
 			$requestedGroupe = $alliance->getRequestedGroupe();
@@ -93,6 +97,12 @@ class GroupeController
 			if ( $groupe->isAllyTo($requestedGroupe))
 			{
 				$app['session']->getFlashBag()->add('error', 'Désolé, vous êtes déjà allié avec ce groupe');
+				return $app->redirect($app['url_generator']->generate('groupe'));
+			}
+			
+			if ( $groupe->isEnemyTo($requestedGroupe))
+			{
+				$app['session']->getFlashBag()->add('error', 'Désolé, vous êtes ennemi avec ce groupe. Impossible de faire une alliance, faites d\'abord la paix !');
 				return $app->redirect($app['url_generator']->generate('groupe'));
 			}
 			
@@ -124,6 +134,42 @@ class GroupeController
 	}
 	
 	/**
+	 * Annuler une demande d'alliance
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function cancelRequestedAllianceAction(Request $request, Application $app)
+	{
+		$groupe = $request->get('groupe');
+		$alliance = $request->get('alliance');
+		
+		$form = $app['form.factory']->createBuilder(new CancelRequestedAllianceForm(), $alliance)
+			->add('send','submit', array('label' => 'Oui, j\'annule ma demande'))
+			->getForm();
+		
+		$form->handleRequest($request);
+		
+		if ($request->isMethod('POST')) {
+			
+			$alliance = $form->getData();
+			
+			$app['orm.em']->remove($alliance);
+			$app['orm.em']->flush();
+			
+			$app['user.mailer']->sendCancelAlliance($alliance);
+			
+			$app['session']->getFlashBag()->add('success', 'Votre demande d\'alliance a été annulée.');
+			return $app->redirect($app['url_generator']->generate('groupe'));
+		}
+		
+		return $app['twig']->render('public/groupe/cancelAlliance.twig', array(
+				'alliance' => $alliance,
+				'groupe' => $groupe,
+				'form' => $form->createView()
+		));
+	}
+	
+	/**
 	 * Accepter une alliance
 	 * 
 	 * @param Request $request
@@ -132,12 +178,30 @@ class GroupeController
 	public function acceptAllianceAction(Request $request, Application $app)
 	{
 		$groupe = $request->get('groupe');
+		$alliance = $request->get('alliance');
 		
-		$form = $app['form.factory']->createBuilder(new AcceptAllianceForm(), array())
+		$form = $app['form.factory']->createBuilder(new AcceptAllianceForm(), $alliance)
 			->add('send','submit', array('label' => 'Envoyer'))
 			->getForm();
+
+		$form->handleRequest($request);
 		
+		if ($request->isMethod('POST')) {
+		
+			$alliance = $form->getData();
+			
+			$alliance->setGroupeAllieAccepted(true);
+			$app['orm.em']->persist($alliance);
+			$app['orm.em']->flush();
+		
+			$app['user.mailer']->sendAcceptAlliance($alliance);
+		
+			$app['session']->getFlashBag()->add('success', 'Vous avez accepté la proposition d\'alliance.');
+			return $app->redirect($app['url_generator']->generate('groupe'));
+		}
+			
 		return $app['twig']->render('public/groupe/acceptAlliance.twig', array(
+				'alliance' => $alliance,
 				'groupe' => $groupe,
 				'form' => $form->createView()
 		));
@@ -152,12 +216,29 @@ class GroupeController
 	public function refuseAllianceAction(Request $request, Application $app)
 	{
 		$groupe = $request->get('groupe');
+		$alliance = $request->get('alliance');
 		
-		$form = $app['form.factory']->createBuilder(new RefuseAllianceForm(), array())
+		$form = $app['form.factory']->createBuilder(new RefuseAllianceForm(), $alliance)
 			->add('send','submit', array('label' => 'Envoyer'))
 			->getForm();
 		
+		$form->handleRequest($request);
+		
+		if ($request->isMethod('POST')) {
+				
+			$alliance = $form->getData();
+				
+			$app['orm.em']->remove($alliance);
+			$app['orm.em']->flush();
+				
+			$app['user.mailer']->sendRefuseAlliance($alliance);
+				
+			$app['session']->getFlashBag()->add('success', 'Vous avez refusé la proposition d\'alliance.');
+			return $app->redirect($app['url_generator']->generate('groupe'));
+		}
+			
 		return $app['twig']->render('public/groupe/refuseAlliance.twig', array(
+				'alliance' => $alliance,
 				'groupe' => $groupe,
 				'form' => $form->createView()
 		));
@@ -172,12 +253,38 @@ class GroupeController
 	public function breakAllianceAction(Request $request, Application $app)
 	{
 		$groupe = $request->get('groupe');
+		$alliance = $request->get('alliance');
 		
-		$form = $app['form.factory']->createBuilder(new BreakAllianceForm(), array())
+		$form = $app['form.factory']->createBuilder(new BreakAllianceForm(), $alliance)
 			->add('send','submit', array('label' => 'Envoyer'))
 			->getForm();
+
+		$form->handleRequest($request);
 		
+		if ($request->isMethod('POST')) {
+		
+			$alliance = $form->getData();
+						
+		
+			$app['orm.em']->remove($alliance);
+			$app['orm.em']->flush();
+		
+			if  ( $alliance->getGroupe() == $groupe )
+			{
+				$app['user.mailer']->sendBreakAlliance($alliance, $alliance->getRequestedGroupe());
+			}
+			else
+			{
+				$app['user.mailer']->sendBreakAlliance($alliance, $groupe);
+			}
+			
+		
+			$app['session']->getFlashBag()->add('success', 'Vous avez brisé une alliance.');
+			return $app->redirect($app['url_generator']->generate('groupe'));
+		}
+			
 		return $app['twig']->render('public/groupe/breakAlliance.twig', array(
+				'alliance' => $alliance,
 				'groupe' => $groupe,
 				'form' => $form->createView()
 		));
@@ -202,14 +309,16 @@ class GroupeController
 		
 		$war = new \LarpManager\Entities\GroupeEnemy();
 		$war->setGroupe($groupe);
+		$war->setGroupePeace(false);
+		$war->setGroupeEnemyPeace(false);
 		
 		$form = $app['form.factory']->createBuilder(new DeclareWarForm(), $war)
 			->add('send','submit', array('label' => 'Envoyer'))
 			->getForm();
 		
-		$form->handleRequest($request);
-			
 		if ($request->isMethod('POST')) {
+			
+				$form->handleRequest($request);
 					
 				$war = $form->getData();
 				$war->setGroupePeace(false);
@@ -235,7 +344,7 @@ class GroupeController
 					return $app->redirect($app['url_generator']->generate('groupe'));
 				}
 				
-				if ( $groupe->isEnnemyTo($requestedGroupe))
+				if ( $groupe->isEnemyTo($requestedGroupe))
 				{
 					$app['session']->getFlashBag()->add('error', 'Désolé, vous êtes déjà allié avec ce groupe');
 					return $app->redirect($app['url_generator']->generate('groupe'));
@@ -246,7 +355,7 @@ class GroupeController
 					
 				$app['user.mailer']->sendDeclareWar($war);
 					
-				$app['session']->getFlashBag()->add('success', 'Votre déclaration de guerre viens d\'être envoyé.');
+				$app['session']->getFlashBag()->add('success', 'Votre déclaration de guerre vient d\'être envoyé.');
 				return $app->redirect($app['url_generator']->generate('groupe'));
 				
 		}
@@ -266,26 +375,167 @@ class GroupeController
 	public function requestPeaceAction(Request $request, Application $app)
 	{
 		$groupe = $request->get('groupe');
+		$war = $request->get('enemy');
 		
-		$form = $app['form.factory']->createBuilder(new RequestPeaceForm(), array())
+		$form = $app['form.factory']->createBuilder(new RequestPeaceForm(), $war)
 			->add('send','submit', array('label' => 'Envoyer'))
 			->getForm();
 		
+		if ($request->isMethod('POST')) {
+				
+			$form->handleRequest($request);
+			$war = $form->getData();
+			
+			if ( $groupe == $war->getGroupe() )
+			{
+				$war->setGroupePeace(true);
+			}
+			else
+			{
+				$war->setGroupeEnemyPeace(true);
+			}
+			
+			$app['orm.em']->persist($war);
+			$app['orm.em']->flush();
+			
+			$app['user.mailer']->sendRequestPeace($war, $groupe);
+			
+			$app['session']->getFlashBag()->add('success', 'Votre demande de paix vient d\'être envoyé.');
+			return $app->redirect($app['url_generator']->generate('groupe'));
+		}
+		
 		return $app['twig']->render('public/groupe/requestPeace.twig', array(
+				'war' => $war,
 				'groupe' => $groupe,
 				'form' => $form->createView()
 		));
 	}
 	
+	/**
+	 * Accepter la paix
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
 	public function acceptPeaceAction(Request $request, Application $app)
 	{
 		$groupe = $request->get('groupe');
+		$war = $request->get('enemy');
+		
 	
-		$form = $app['form.factory']->createBuilder(new AcceptPeaceForm(), array())
+		$form = $app['form.factory']->createBuilder(new AcceptPeaceForm(), $war)
 			->add('send','submit', array('label' => 'Envoyer'))
 			->getForm();
 	
+		if ($request->isMethod('POST')) {
+		
+			$form->handleRequest($request);
+			$war = $form->getData();
+				
+			if ( $groupe == $war->getGroupe() )
+			{
+				$war->setGroupePeace(true);
+			}
+			else
+			{
+				$war->setGroupeEnemyPeace(true);
+			}
+			
+			$app['orm.em']->persist($war);
+			$app['orm.em']->flush();
+				
+			$app['user.mailer']->sendAcceptPeace($war, $groupe);
+			
+			$app['session']->getFlashBag()->add('success', 'Vous avez fait la paix !');
+			return $app->redirect($app['url_generator']->generate('groupe'));
+		}	
+			
 		return $app['twig']->render('public/groupe/acceptPeace.twig', array(
+				'war' => $war,
+				'groupe' => $groupe,
+				'form' => $form->createView()
+		));
+	}
+	
+	/**
+	 * Refuser la paix
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function refusePeaceAction(Request $request, Application $app)
+	{
+		$groupe = $request->get('groupe');
+		$war = $request->get('enemy');
+		
+		$form = $app['form.factory']->createBuilder(new RefusePeaceForm(), $war)
+			->add('send','submit', array('label' => 'Envoyer'))
+			->getForm();
+		
+		if ($request->isMethod('POST')) {
+		
+			$form->handleRequest($request);
+			$war = $form->getData();
+		
+			$war->setGroupePeace(false);
+			$war->setGroupeEnemyPeace(false);
+
+			$app['orm.em']->persist($war);
+			$app['orm.em']->flush();
+		
+			$app['user.mailer']->sendRefusePeace($war, $groupe);
+			
+			$app['session']->getFlashBag()->add('success', 'Vous avez refusé la proposition de paix.');
+			return $app->redirect($app['url_generator']->generate('groupe'));
+		}
+			
+		return $app['twig']->render('public/groupe/refusePeace.twig', array(
+				'war' => $war,
+				'groupe' => $groupe,
+				'form' => $form->createView()
+		));
+	}
+	
+	/**
+	 * Annuler la demande de paix
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function cancelRequestedPeaceAction(Request $request, Application $app)
+	{
+		$groupe = $request->get('groupe');
+		$war = $request->get('enemy');
+	
+		$form = $app['form.factory']->createBuilder(new CancelRequestedPeaceForm(), $war)
+			->add('send','submit', array('label' => 'Envoyer'))
+			->getForm();
+	
+		if ($request->isMethod('POST')) {
+	
+			$form->handleRequest($request);
+			$war = $form->getData();
+	
+			if ( $groupe == $war->getGroupe() )
+			{
+				$war->setGroupePeace(false);
+			}
+			else
+			{
+				$war->setGroupeEnemyPeace(false);
+			}
+						
+			$app['orm.em']->persist($war);
+			$app['orm.em']->flush();
+	
+			$app['user.mailer']->sendRefusePeace($war, $groupe);
+				
+			$app['session']->getFlashBag()->add('success', 'Vous avez annulé votre proposition de paix.');
+			return $app->redirect($app['url_generator']->generate('groupe'));
+		}
+			
+		return $app['twig']->render('public/groupe/cancelPeace.twig', array(
+				'war' => $war,
 				'groupe' => $groupe,
 				'form' => $form->createView()
 		));

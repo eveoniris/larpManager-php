@@ -1,23 +1,20 @@
 {% extends "layout.twig" %}
 
-{% block title %}Accepter une alliance{% endblock title %}
+{% block title %}Annuler la demande de paix{% endblock title %}
 
 {% block content %}
 
 	<ol class="breadcrumb">
 		<li><a href="{{ path('homepage') }}">Page d'accueil</a></li>
 		<li><a href="{{ path('groupe') }}">Votre groupe</a></li>
-		<li class="active">Accepter une demande d'alliance</li>
+		<li class="active">Annuler la demande de paix</li>
 	</ol>
 	
 	<div class="well bs-component">
 	
-		<form action="{{ path('groupe.acceptAlliance', {'groupe': groupe.id, 'alliance': alliance.id}) }}" method="POST" {{ form_enctype(form) }} novalidate>
+		<form action="{{ path('groupe.cancelRequestedPeace', {'groupe': groupe.id, 'enemy': war.id}) }}" method="POST" {{ form_enctype(form) }} novalidate>
 			{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
-
-			<p>Vous allez accepter une demande d'alliance faite par <strong>{{ alliance.groupe.nom }}</strong>.</p>
-			<p>Etes-vous certain ?</p>
-
+			<p>Vous allez annuler votre proposition de paix dans le conflit qui oppose <strong>{{ war.groupe.nom }}</strong> et <strong>{{ war.requestedGroupe.nom }}</strong>.
 			{{ form(form) }}
 			
 			<p>Le chef de groupe recevra une notification pour le prévenir de votre choix.</p>

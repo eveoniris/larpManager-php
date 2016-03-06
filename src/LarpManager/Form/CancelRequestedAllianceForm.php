@@ -7,12 +7,12 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
- * LarpManager\Form\AgeForm
+ * LarpManager\Form\RequestForm
  *
  * @author kevin
  *
  */
-class AcceptAllianceForm extends AbstractType
+class CancelRequestedAllianceForm extends AbstractType
 {
 
 	/**
@@ -23,14 +23,6 @@ class AcceptAllianceForm extends AbstractType
 	 */
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
-		$builder->add('messageAllie','textarea', array(
-				'label' => 'Un petit mot pour expliquer votre démarche',
-				'required' => true,
-				'attr' => array(
-						'class' => 'tinymce',
-						'rows' => 9,
-						'help' => 'Ce texte sera transmis au chef de groupe concerné.'),
-		));
 	}
 
 	/**
@@ -50,6 +42,6 @@ class AcceptAllianceForm extends AbstractType
 	 */
 	public function getName()
 	{
-		return 'acceptAlliance';
+		return 'cancelRequestedAlliance';
 	}
 }

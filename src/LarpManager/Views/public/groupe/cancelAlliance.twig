@@ -7,20 +7,20 @@
 	<ol class="breadcrumb">
 		<li><a href="{{ path('homepage') }}">Page d'accueil</a></li>
 		<li><a href="{{ path('groupe') }}">Votre groupe</a></li>
-		<li class="active">Refuser une demande d'alliance</li>
+		<li class="active">Annuler une demande d'alliance</li>
 	</ol>
 	
 	<div class="well bs-component">
 	
-		<form action="{{ path('groupe.refuseAlliance', {'groupe': groupe.id, 'alliance': alliance.id}) }}" method="POST" {{ form_enctype(form) }} novalidate>
+		<form action="{{ path('groupe.cancelRequestedAlliance', {'groupe': groupe.id, 'alliance': alliance.id}) }}" method="POST" {{ form_enctype(form) }}>
 			{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
 
-			<p>Vous allez refuser une demande d'alliance faite par <strong>{{ alliance.groupe.nom }}</strong>.</p>
+			<p>Vous allez annuler votre demande d'alliance faite à <strong>{{ alliance.requestedGroupe.nom }}</strong>.</p>
 			<p>Etes-vous certain ?</p>
 
 			{{ form(form) }}
 			
-			<p>Le chef de groupe recevra une notification pour le prévenir de votre refus.</p>
+			<p>Le chef de groupe recevra une notification pour le prévenir de l'annulation de votre demande.</p>
 			 
 		</form>
 	

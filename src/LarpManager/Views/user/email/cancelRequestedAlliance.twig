@@ -1,14 +1,12 @@
 {# The subject line. #}
 {%- block subject -%}{%- autoescape false -%}
-    Votre proposition d'alliance a été refusée.
+    Demande d'alliance annulée.
 {%- endautoescape -%}{%- endblock -%}
 
 {# The plain text message. #}
 {%- block body_text -%}{%- autoescape false -%}
 
-Le groupe {{ alliance.requestedGroupe.nom }} a refusé votre proposition d'alliance.
-
-{{ alliance.messageAllie }}
+Le groupe {{ alliance.groupe.nom }} vient d'annuler sa demande d'alliance
 
 Cliquez sur le lien ci-dessous pour accéder directement a la page de gestion de votre groupe :
 
@@ -19,10 +17,8 @@ Cliquez sur le lien ci-dessous pour accéder directement a la page de gestion de
 {# The HTML message. Optional. #}
 {%- block body_html -%}
 
-    <h3>Le groupe {{ alliance.requestedGroupe.nom }} a refusé votre proposition d'alliance</h3>
+    <h3>Le groupe {{ alliance.groupe.nom }} vient d'annuler sa demande d'alliance</h3>
     
-    <p>{{ alliance.messageAllie|markdown }}</p>
-
     <p>
         <a href="{{ path('groupe') }}"> Suivez ce lien pour accéder directement a la page de gestion de votre groupe</a>.
     </p>

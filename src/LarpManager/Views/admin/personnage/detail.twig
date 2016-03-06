@@ -83,7 +83,7 @@
 				<div class="list-group-item">
 					<h6 class="list-group-item-heading">Groupes secondaires</h6>
 					{% for groupeSecondaire in personnage.secondaryGroups %}
-						<a href="{{ path('groupeSecondaire.detail', {'index':groupeSecondaire.id}) }}">{{ groupeSecondaire.label }}</a>
+						<a href="{{ path('groupeSecondaire.admin.detail', {'groupe':groupeSecondaire.id}) }}">{{ groupeSecondaire.label }}</a>
 					{% endfor %}
 					{% if personnage.postulants|length > 0 %}
 						{% for postulant in personnage.postulants %}

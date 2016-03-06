@@ -7,7 +7,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
- * LarpManager\Form\AgeForm
+ * LarpManager\Form\RequestPeaceForm
  *
  * @author kevin
  *
@@ -33,6 +33,9 @@ class RequestPeaceForm extends AbstractType
 	 */
 	public function setDefaultOptions(OptionsResolverInterface $resolver)
 	{
+		$resolver->setDefaults(array(
+				'class' => 'LarpManager\Entities\GroupeEnnemi',
+		));
 	}
 	
 	/**

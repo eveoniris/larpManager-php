@@ -35,7 +35,8 @@ use LarpManager\Entities\Post;
 use LarpManager\Entities\Message;
 use LarpManager\Entities\SecondaryGroup;
 use LarpManager\Entities\GroupeAllie;
-use LarpManager\Entities\GroupeEnnemy;
+use LarpManager\Entities\GroupeEnemy;
+use LarpManager\Entities\Groupe;
 
 class Mailer
 {
@@ -67,6 +68,7 @@ class Mailer
     protected $groupeSecondaireRemoveTemplate;
     protected $newMessageTemplate;
     protected $requestAllianceTemplate;
+    protected $cancelRequestedAllianceTemplate;
     protected $acceptAllianceTemplate;
     protected $refuseAllianceTemplate;
     protected $breakAllianceTemplate;
@@ -74,6 +76,7 @@ class Mailer
     protected $requestPeaceTemplate;
     protected $acceptPeaceTemplate;
     protected $refusePeaceTemplate;
+    protected $cancelRequestedPeaceTemplate;
     protected $resetTemplate;
     protected $resetTokenTtl = 86400;
 
@@ -98,6 +101,15 @@ class Mailer
     public function setRequestAllianceTemplate($requestAllianceTemplate)
     {
     	$this->requestAllianceTemplate = $requestAllianceTemplate;
+    }
+    
+    /**
+     * Défini la template de notification d'une annulation d'une demande d'alliance
+     * @param unknown $cancelRequestedAllianceTemplate
+     */
+    public function setCancelRequestedAllianceTemplate($cancelRequestedAllianceTemplate)
+    {
+    	$this->cancelRequestedAllianceTemplate = $cancelRequestedAllianceTemplate;
     }
     
     /**
@@ -161,6 +173,15 @@ class Mailer
     public function setRefusePeaceTemplate($refusePeaceTemplate)
     {
     	$this->refusePeaceTemplate = $refusePeaceTemplate;
+    }
+    
+    /**
+     * Défini la template de notification d'une annulation d'une demande de paix
+     * @param unknown $cancelRequestedPeaceTemplate
+     */
+    public function setCancelRequestedPeaceTemplate($cancelRequestedPeaceTemplate)
+    {
+    	$this->cancelRequestedPeaceTemplate = $cancelRequestedPeaceTemplate;
     }
     
     /**
@@ -310,10 +331,27 @@ class Mailer
     }
     
     /**
+     * Envoi de la notification d'annulation d'une demande d'alliance
+     * @param unknown $alliance
+     */
+    public function sendCancelRequestedAlliance(GroupeAllie $alliance)
+    {
+    	$requestedGroupe = $alliance->getRequestedGroupe();
+    	$responsable = $requestedGroupe->getResponsable();
+    	if ( ! $responsable ) return;
+    	 
+    	$context = array(
+    			'alliance' => $alliance,
+    	);
+    	 
+    	$this->sendMessage($this->cancelRequestedAllianceTemplate, $context, $this->getFromEmail(), $responsable->getEmail());
+    }
+    
+    /**
      * Envoi de la notification de demande d'alliance
      * @param unknown $alliance
      */
-    public function sendDeclareWar(GroupeEnnemy $war)
+    public function sendDeclareWar(GroupeEnemy $war)
     {
     	$requestedGroupe = $war->getRequestedGroupe();
     	$responsable = $requestedGroupe->getResponsable();
@@ -358,7 +396,119 @@ class Mailer
     	$this->sendMessage($this->refuseAllianceTemplate, $context, $this->getFromEmail(), $responsable->getEmail());
     }
     
+    /**
+     * Notification Brisée une alliance
+     * 
+     * @param GroupeAllie $alliance
+     * @param Groupe $groupe
+     */
+    public function sendBreakAlliance(GroupeAllie $alliance, Groupe $groupe)
+    {   	
+    	$responsable = $groupe->getResponsable();
+    	if ( ! $responsable ) return;
+    	
+    	$context = array(
+    			'alliance' => $alliance
+    	);
+    	
+    	$this->sendMessage($this->breakAllianceTemplate, $context, $this->getFromEmail(), $responsable->getEmail());
+    }
     
+    /**
+     * Notification Demander la paix
+     * 
+     * @param Groupe $groupe
+     */
+    public function sendRequestPeace(GroupeEnemy $war, Groupe $groupe)
+    {
+    	if ( $war->getGroupe() == $groupe)
+    	{
+    		$responsable = $war->getRequestedGroupe()->getResponsable();
+    	}
+    	else
+    	{
+    		$responsable = $war->getGroupe()->getResponsable();
+    	}
+    	if ( ! $responsable ) return;
+    	 
+    	$context = array(
+    			'groupe' => $groupe
+    	);
+    	 
+    	$this->sendMessage($this->requestPeaceTemplate, $context, $this->getFromEmail(), $responsable->getEmail());
+    }
+    
+    /**
+     * Notification Accepter la paix
+     * 
+     * @param Groupe $groupe
+     */
+    public function sendAcceptPeace(GroupeEnemy $war, Groupe $groupe)
+    {
+        if ( $war->getGroupe() == $groupe)
+    	{
+    		$responsable = $war->getRequestedGroupe()->getResponsable();
+    	}
+    	else
+    	{
+    		$responsable = $war->getGroupe()->getResponsable();
+    	}
+    	if ( ! $responsable ) return;
+    
+    	$context = array(
+    			'groupe' => $groupe
+    	);
+    
+    	$this->sendMessage($this->acceptPeaceTemplate, $context, $this->getFromEmail(), $responsable->getEmail());
+    }
+    
+    /**
+     * Notification Accepter la paix
+     *
+     * @param Groupe $groupe
+     */
+    public function sendRefusePeace(GroupeEnemy $war, Groupe $groupe)
+    {
+        if ( $war->getGroupe() == $groupe)
+    	{
+    		$responsable = $war->getRequestedGroupe()->getResponsable();
+    	}
+    	else
+    	{
+    		$responsable = $war->getGroupe()->getResponsable();
+    	}
+    	if ( ! $responsable ) return;
+    
+    	$context = array(
+    			'groupe' => $groupe
+    	);
+    
+    	$this->sendMessage($this->refusePeaceTemplate, $context, $this->getFromEmail(), $responsable->getEmail());
+    }
+    
+    /**
+     * Notification Annuler la demande de paix
+     *
+     * @param Groupe $groupe
+     */
+    public function sendCancelRequestedPeace(GroupeEnemy $war, Groupe $groupe)
+    {
+        if ( $war->getGroupe() == $groupe)
+    	{
+    		$responsable = $war->getRequestedGroupe()->getResponsable();
+    	}
+    	else
+    	{
+    		$responsable = $war->getGroupe()->getResponsable();
+    	}
+    	if ( ! $responsable ) return;
+    
+    	$context = array(
+    			'groupe' => $groupe
+    	);
+    
+    	$this->sendMessage($this->cancelRequestedPeaceTemplate, $context, $this->getFromEmail(), $responsable->getEmail());
+    }
     
     /**
      * 

@@ -1,0 +1,26 @@
+{# The subject line. #}
+{%- block subject -%}{%- autoescape false -%}
+    La paix est refusé.
+{%- endautoescape -%}{%- endblock -%}
+
+{# The plain text message. #}
+{%- block body_text -%}{%- autoescape false -%}
+
+Le groupe {{ groupe.nom }} a refusé votre demande de paix !
+
+Cliquez sur le lien ci-dessous pour accéder directement a la page de gestion de votre groupe :
+
+{{ path('groupe') }}
+
+{%- endautoescape -%}{%- endblock -%}
+
+{# The HTML message. Optional. #}
+{%- block body_html -%}
+
+    <h3>Le groupe {{ groupe.nom }} a refusé votre demande de paix</h3>
+
+    <p>
+        <a href="{{ path('groupe') }}"> Suivez ce lien pour accéder directement a la page de gestion de votre groupe</a>.
+    </p>
+
+{%- endblock -%}
