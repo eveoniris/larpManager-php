@@ -221,7 +221,7 @@ class GroupeSecondaireController
 			$topic->setTitle($groupeSecondaire->getLabel());
 			$topic->setDescription($groupeSecondaire->getDescription());
 			$topic->setUser($app['user']);
-
+			$app['orm.em']->persist($topic);
 			$app['orm.em']->persist($groupeSecondaire);
 			$app['orm.em']->flush();
 			

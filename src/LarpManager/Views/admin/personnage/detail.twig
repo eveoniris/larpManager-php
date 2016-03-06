@@ -56,9 +56,9 @@
 				<div class="list-group-item">
 					<h6 class="list-group-item-heading">Religion</h6>
 					<p class="list-group-item-text">
-					{% if personnage.personnageReligion %}
-						{{ personnage.personnageReligion.religion.label }} - {{ personnage.personnageReligion.religionLevel.label }}
-					{% endif %}
+					{% for personnageReligion in personnage.personnagesReligions %}
+						{{ personnageReligion.religion.label }} - {{ personnageReligion.religionLevel.label }}<br />
+					{% endfor %}
 					</p>
 				</div>
 				<div class="list-group-item">

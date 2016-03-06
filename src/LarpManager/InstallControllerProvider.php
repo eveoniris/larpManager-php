@@ -32,6 +32,10 @@ class InstallControllerProvider implements ControllerProviderInterface
 			->bind("install_index")
 			->method('GET|POST');
 		
+		$controllers->match('/update','LarpManager\Controllers\InstallController::updateAction')
+			->bind("update")
+			->method('GET|POST');			
+		
 		$controllers->match('/user/create','LarpManager\Controllers\InstallController::createUserAction')
 			->bind("install_create_user")
 			->method('GET|POST');

@@ -1,0 +1,20 @@
+{% extends "install/layout.twig" %}
+
+{% block title %}Mise à jour{% endblock %}
+
+{% block content %}
+
+	<div class="page-header">
+		<h1>Mise à jour de LarpManager</h1>
+	</div>
+	
+	<div class="well bs-component">
+		<form action="{{ path('update') }}" method="POST" {{ form_enctype(form) }}>
+			<fieldset>
+	    	<legend>Configuration de la base de données</legend>
+				{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+				{{ form(form) }}
+			</fieldset>
+		</form>
+	</div>
+{% endblock %}
