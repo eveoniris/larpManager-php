@@ -509,14 +509,14 @@ class Mailer
     
     	$this->sendMessage($this->cancelRequestedPeaceTemplate, $context, $this->getFromEmail(), $responsable->getEmail());
     }
-    
+        
     /**
      * 
      * @param Message $message
      */
     public function sendNewMessage(Message $message)
     {
-    	$url = $this->urlGenerator->generate(self::ROUTE_MESSAGERIE, true);
+    	$url = $this->urlGenerator->generate(self::ROUTE_MESSAGERIE, array(), true);
     	
     	$context = array(
     		'message' => $message,

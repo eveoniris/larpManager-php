@@ -255,8 +255,9 @@ class LarpManagerVoter implements VoterInterface
 		$personnage = $user->getPersonnage();
 		if ( $personnage )
 		{
-			foreach ( $personnage->getSecondaryGroups() as $groupe )
+			foreach ( $personnage->getMembres() as $groupeMember )
 			{
+				$groupe = $groupeMember->getSecondaryGroup();
 				if ( $groupe instanceof \LarpManager\Entities\SecondaryGroup
 						&& $groupe->getId() == $groupeSecondaireId)
 					return true;
