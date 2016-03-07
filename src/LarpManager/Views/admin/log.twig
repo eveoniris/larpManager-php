@@ -1,0 +1,31 @@
+{% extends "layout.twig" %}
+
+{% block title %}Admin{% endblock title %}
+
+{% block content %}
+
+<div class="container-fluid">
+	<ol class="breadcrumb">
+		<li><a href="{{ path('admin') }}">Interface d'administration</a></li>
+		<li class="active">Visualisation des logs</li>
+	</ol>
+	
+	
+	<h5>Logs</h5>
+	
+	<h6>les erreurs fatales</h6>
+	<ul class="list-group">
+		{% for line in linesFatal %}
+			<li class="list-group-item">{{ line }}</li>
+		{% endfor %}
+	</ul>
+	
+	<h6>les 20 dernières lignes</h6>
+	<ul class="list-group">
+		{% for line in lines %}
+			<li class="list-group-item">{{ line }}</li>
+		{% endfor %}
+	</ul>
+</div>
+
+{% endblock  %}

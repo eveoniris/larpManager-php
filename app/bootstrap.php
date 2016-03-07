@@ -66,7 +66,7 @@ else
  * Enregistrer les libs dans l'application 
  */
  
-// cache
+
 $app->register(new HttpCacheServiceProvider(), array(
 		'http_cache.cache_dir' => __DIR__.'/../cache/',
 		'http_cache.esi'       => null,
@@ -226,7 +226,7 @@ else
 	$app->mount('/statistique', new LarpManager\StatistiqueControllerProvider());
 	$app->mount('/background', new LarpManager\BackgroundControllerProvider());
 	$app->mount('/pnj', new LarpManager\PnjControllerProvider());
-	$app->mount('/api', new LarpManager\ApiControllerProvider());
+	$app->mount('/admin', new LarpManager\AdminControllerProvider());
 		
 
 	/**
@@ -246,6 +246,7 @@ else
 	 * Gestion des droits d'accés
 	 */
 	$app['security.access_rules'] = array(
+		array('^/admin/.*$', 'ROLE_ADMIN'),
 		array('^/world/.*$', 'ROLE_USER'),
 		array('^/pnj/.*$', 'ROLE_USER'),
 		array('^/groupe/.*$', 'ROLE_USER'),

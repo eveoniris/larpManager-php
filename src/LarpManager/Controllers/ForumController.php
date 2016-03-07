@@ -56,6 +56,10 @@ class ForumController
 					'required' => false,
 					'label' => 'Identifiant'
 			))
+			->add('key','text', array(
+					'required' => false,
+					'label' => 'Clé'
+			))
 			->add('save','submit', array('label' => "Sauvegarder"))
 			->getForm();
 		

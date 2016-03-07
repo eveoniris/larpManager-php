@@ -1,0 +1,24 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-xs-12 col-md-8">
+				<div class="well bs-component">
+				
+					<form action="{{ path('territoire.admin.add') }}" method="POST" {{ form_enctype(form) }}>
+						<fieldset>
+							<legend>Modification d'un territoire</legend>
+							{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+							{{ form(form) }}
+						</fieldset>
+					</form>
+					
+					
+				</div>
+			</div>
+		</div>
+	</div>
+	
+{% endblock content %}

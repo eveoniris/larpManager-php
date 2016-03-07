@@ -47,7 +47,7 @@ class GroupeSecondaireControllerProvider implements ControllerProviderInterface
 		};
 		
 		/**
-		 * Liste des groupes secondaires (pour les orgas)
+		 * Liste des groupes secondaires
 		 */
 		$controllers->match('/','LarpManager\Controllers\GroupeSecondaireController::accueilAction')
 			->bind("groupeSecondaire")
@@ -129,15 +129,6 @@ class GroupeSecondaireControllerProvider implements ControllerProviderInterface
 		$controllers->match('/list','LarpManager\Controllers\GroupeSecondaireController::listAction')
 			->bind("groupeSecondaire.list")
 			->method('GET');
-
-		/**
-		 * Detail d'un groupe secondaire
-		 */
-		$controllers->match('/{groupe}','LarpManager\Controllers\GroupeSecondaireController::detailAction')
-			->assert('groupe', '\d+')
-			->bind("groupeSecondaire.detail")
-			->convert('groupe', 'converter.secondaryGroup:convert')
-			->method('GET');
 					
 		/**
 		 * Postuler à un groupe secondaire
@@ -147,27 +138,6 @@ class GroupeSecondaireControllerProvider implements ControllerProviderInterface
 			->bind("groupeSecondaire.postuler")
 			->convert('groupe', 'converter.secondaryGroup:convert')
 			->method('GET|POST');
-			
-		/**
-		 * Accepter une candidature (chef de groupe)
-		 */
-		$controllers->match('/{groupe}/reponse','LarpManager\Controllers\GroupeSecondaireController::reponseAction')
-			->assert('groupe', '\d+')
-			->bind("groupeSecondaire.reponse")
-			->method('GET|POST')
-			->convert('groupe', 'converter.secondaryGroup:convert')
-			->before($mustBeResponsable);
-				
-			
-		/**
-		 * Detail d'un groupe secondaire à destication du chef de groupe
-		 */
-		$controllers->match('/{groupe}/gestion','LarpManager\Controllers\GroupeSecondaireController::gestionAction')
-			->assert('groupe', '\d+')
-			->bind("groupeSecondaire.gestion")
-			->method('GET')
-			->convert('groupe', 'converter.secondaryGroup:convert')
-			->before($mustBeResponsable);
 
 		/**
 		 * Rejeter la demande d'un postulant

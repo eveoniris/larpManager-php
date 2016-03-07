@@ -1,0 +1,129 @@
+{% extends "layout.twig" %}
+
+{% block title %}Territoire{% endblock title %}
+
+{% block content %}
+
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-xs-12 col-md-8">
+		
+			<div class="well well-sm bs-component">
+			<a href="{{ path('territoire.admin.list') }}">Retour à la liste des territoires</a>
+				<h4>
+					{{ territoire.nom }}
+				</h4>
+			</div>
+		
+  			<div class="list-group">
+		    		
+		    	<div class="list-group-item">
+			    	<h4 class="list-group-item-heading">Description</h4>
+	    			<p class="list-group-item-text">
+	    			{% if not territoire.description %}
+    				<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+    				Attention, ce territoire n'a pas de description.
+    				{% else %}
+    					{{ territoire.description }}
+    				{% endif %}
+    				</p>
+	    		</div>
+	    		
+	    		<div class="list-group-item">
+	    			<h4 class="list-group-item-heading">Informations politiques</h4>
+	    			<p class="list-group-item-text">
+	    				<ul>
+	    					<li><strong>Capitale : </strong>{{ territoire.capitale|default('Aucune') }}</li>
+	    					<li><strong>Système politique : </strong>{{ territoire.politique|default('Inconnu') }}</li>
+	    					<li><strong>Dirigeant : </strong>{{ territoire.dirigeant|default('Aucun') }}</li>
+	    				</ul>
+	    			</p>
+	    		</div>
+	    		
+	    		<div class="list-group-item">
+	    			<h4 class="list-group-item-heading">Information d'interprétation</h4>
+	    			<p class="list-group-item-text">
+	    				<ul>
+	    					<li><strong>Type racial : </strong>{{ territoire.typeRacial|default('Non défini') }}</li>
+	    					<li><strong>Inspiration : </strong>{{ territoire.inspiration|default('Non défini') }}</li>
+	    					<li><strong>Armes de prédilection : </strong>{{ territoire.armesPredilection|default('Non défini') }}</li>
+	    					<li><strong>Vétements : </strong>{{ territoire.vetements|default('Non défini') }}</li>
+	    					<li><strong>Nom masculin : </strong>{{ territoire.nomsMasculin|default('Non défini') }}</li> 
+	    					<li><strong>Nom féminin : </strong>{{ territoire.nomsFeminin|default('Non défini') }}</li>
+	    					<li><strong>Fontières : </strong>{{ territoire.frontieres|default('Non défini') }}</li>
+	    				</ul>
+	    			</p>
+	    		</div>
+	    		
+	    		<div class="list-group-item">
+	    			<h4 class="list-group-item-heading">Autres informations</h4>
+	    			<p class="list-group-item-text">
+	    				<ul>
+	    					<li><strong>Population : </strong>{{ territoire.population|default('Inconnue') }}</li>
+	    					<li><strong>Symbole : </strong>{{ territoire.symbole|default('Aucun') }}</li>
+	    					<li><strong>Niveau technologique : </strong>{{ territoire.techLevel|default('Aucun') }}</li>
+	    					<li><strong>Langues parlée : </strong>{{ territoire.langues|join(', ') }}</li>
+	    					<li><strong>Langue principale : </strong>{{ territoire.langue }}</li> 
+	    				</ul>
+	    			</p>
+	    		</div>
+	    			    		
+	     		<div class="list-group-item">
+	    			<h4 class="list-group-item-heading">Cultes</h4>
+    				<p class="list-group-item-text">
+    					<ul>
+    						<li><strong>Religion dominante : </strong>{{ territoire.religion }}</li>
+    						<li><strong>Religion secondaires : </strong>{{territoire.religions|join(', ') }}</li>
+    					</ul>
+    				</p>
+    			</div>
+	    		
+	    		<div class="list-group-item">
+	    			<h4 class="list-group-item-heading">Economie</h4>
+    				<p class="list-group-item-text">
+    					<ul>
+    						<li><strong>Importations : </strong>{% if territoire.importations|length > 0 %}{{ territoire.importations|join(', ') }}{% else %}Rien{% endif %}</li>
+    						<li><strong>Exportations : </strong>{% if territoire.exportations|length > 0 %}{{ territoire.exportations|join(', ') }}{% else %}Rien{% endif %}</li>
+    					</ul>
+    				</p>
+    			</div>
+	    		
+	    		{% if territoire.territoire %}	
+	    		<div class="list-group-item">
+		    		<h4 class="list-group-item-heading">Ce territoire dépend de</h4>
+    				<p class="list-group-item-text">
+    					<a href="{{ path('territoire.admin.detail',{'territoire': territoire.territoire.id}) }}">{{ territoire.territoire.nom }}</a>
+    				</p>
+    			</div>
+    			{% endif %}
+    			
+	    		<div class="list-group-item">
+		    		<h4 class="list-group-item-heading">Liste des territoires rattachés à ce territoire ({{ territoire.territoires|length }} territoires)</h4>
+    				<p class="list-group-item-text">
+						<ul>
+						{% for territoire in territoire.territoires %}
+							<li><a href="{{ path('territoire.admin.detail',{'territoire': territoire.id}) }}">{{ territoire.nomTree }}</a></li>
+						{% endfor %}
+						</ul>
+					</p>
+				</div>
+				
+				<div class="list-group-item">
+  					<div class="btn-group" role="group" aria-label="...">
+  						<a  class="btn btn-primary" role="button" href="{{ path('territoire.admin.update', {'territoire' : territoire.id}) }}">Modifier</a>
+  						<a  class="btn btn-danger" role="button" href="{{ path('territoire.admin.delete', {'territoire' : territoire.id}) }}">Supprimer</a>
+  						
+  						{% if territoire.topic %}
+  							<a class="btn btn-default" href="{{ path('territoire.admin.topic.delete', {'territoire':territoire.id}) }}">Supprimer le topic</a>
+  						{% else %}
+							<a class="btn btn-default" href="{{ path('territoire.admin.topic.add', {'territoire':territoire.id}) }}">Ajouter un topic</a>  											
+  						{% endif %}
+  						
+					</div>
+  				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+{% endblock %}

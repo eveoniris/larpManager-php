@@ -797,40 +797,6 @@ class GroupeController
 	}
 	
 	/**
-	 * Page de gestion d'un groupe pour son responsable
-	 * 
-	 * @param Request $request
-	 * @param Application $app
-	 */
-	/*public function gestionAction(Request $request, Application $app)
-	{
-		$id = $request->get('index');
-		
-		$groupe = $app['orm.em']->find('\LarpManager\Entities\Groupe',$id);
-		
-		return $app['twig']->render('groupe/gestion.twig', array(
-				'groupe' => $groupe));
-	}*/
-	
-	
-	
-	/**
-	 * Page de gestion d'un groupe pour un membre du groupe
-	 * 
-	 * @param Request $request
-	 * @param Application $app
-	 */
-	/*public function joueurAction(Request $request, Application $app)
-	{
-		$id = $request->get('index');
-		
-		$groupe = $app['orm.em']->find('\LarpManager\Entities\Groupe',$id);
-		
-		return $app['twig']->render('groupe/joueur.twig', array(
-				'groupe' => $groupe));
-	}*/
-	
-	/**
 	 * Modification du nombre de place disponibles dans un groupe
 	 * 
 	 * @param Request $request
@@ -988,6 +954,7 @@ class GroupeController
 			// défini les droits d'accés à ce forum
 			// (les membres du groupe ont le droit d'accéder à ce forum)
 			$topic->setRight('GROUPE_MEMBER');
+			$topic->setTopic($app['larp.manager']->findTopic('TOPIC_GROUPE'));
 			
 			$groupe->setTopic($topic);
 			

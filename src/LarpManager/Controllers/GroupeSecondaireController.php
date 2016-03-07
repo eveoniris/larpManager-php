@@ -221,6 +221,7 @@ class GroupeSecondaireController
 			$topic->setTitle($groupeSecondaire->getLabel());
 			$topic->setDescription($groupeSecondaire->getDescription());
 			$topic->setUser($app['user']);
+			$topic->setTopic($app['larp.manager']->findTopic('TOPIC_GROUPE_SECONDAIRE'));
 			$app['orm.em']->persist($topic);
 			$app['orm.em']->persist($groupeSecondaire);
 			$app['orm.em']->flush();
@@ -393,7 +394,7 @@ class GroupeSecondaireController
 		$personnage = $app['user']->getPersonnage();
 		$membre = $personnage->getMembre($groupeSecondaire);
 		
-		return $app['twig']->render('groupeSecondaire/detail_member.twig', array(
+		return $app['twig']->render('public/groupeSecondaire/detail.twig', array(
 				'groupeSecondaire' => $groupeSecondaire,
 				'membre' => $membre,
 		));		
@@ -435,7 +436,7 @@ class GroupeSecondaireController
 			return $app->redirect($app['url_generator']->generate('groupeSecondaire.joueur', array('groupe' => $groupeSecondaire->getId())),301);
 		}
 		
-		return $app['twig']->render('groupeSecondaire/gestion_accept.twig', array(
+		return $app['twig']->render('public/groupeSecondaire/gestion_accept.twig', array(
 			'groupeSecondaire' => $groupeSecondaire,
 			'postulant' => $postulant,
 			'form' => $form->createView(),
@@ -472,7 +473,7 @@ class GroupeSecondaireController
 		}
 		
 		
-		return $app['twig']->render('groupeSecondaire/gestion_reject.twig', array(
+		return $app['twig']->render('public/groupeSecondaire/gestion_reject.twig', array(
 				'groupeSecondaire' => $groupeSecondaire,
 				'postulant' => $postulant,
 				'form' => $form->createView(),
@@ -509,7 +510,7 @@ class GroupeSecondaireController
 		}
 	
 	
-		return $app['twig']->render('groupeSecondaire/gestion_wait.twig', array(
+		return $app['twig']->render('public/groupeSecondaire/gestion_wait.twig', array(
 				'groupeSecondaire' => $groupeSecondaire,
 				'postulant' => $postulant,
 				'form' => $form->createView(),
@@ -554,7 +555,7 @@ class GroupeSecondaireController
 		}
 	
 	
-		return $app['twig']->render('groupeSecondaire/gestion_response.twig', array(
+		return $app['twig']->render('public/groupeSecondaire/gestion_response.twig', array(
 				'groupeSecondaire' => $groupeSecondaire,
 				'postulant' => $postulant,
 				'form' => $form->createView(),
