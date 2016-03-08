@@ -183,6 +183,36 @@ class PersonnageController
 		if ( $form->isValid() )
 		{
 			$personnage = $form->getData();
+
+			foreach ($personnage->getExperienceGains() as $xp)
+			{
+				$personnage->removeExperienceGain($xp);
+				$app['orm.em']->remove($xp);
+			}
+			
+			foreach ($personnage->getExperienceUsages() as $xp)
+			{
+				$personnage->removeExperienceUsage($xp);
+				$app['orm.em']->remove($xp);
+			}
+			
+			foreach ($personnage->getMembres() as $membre)
+			{
+				$personnage->removeMembre($membre);
+				$app['orm.em']->remove($membre);
+			}
+			
+			foreach ( $personnage->getPersonnagesReligions() as $personnagesReligions)
+			{
+				$personnage->removePersonnagesReligions($personnagesReligions);
+				$app['orm.em']->remove($personnagesReligions);
+			}
+			
+			foreach ($personnage->getPostulants() as $postulant)
+			{
+				$personnage->removePostulant($postulant);
+				$app['orm.em']->remove($postulant);
+			}
 						
 			$app['orm.em']->remove($personnage);
 			$app['orm.em']->flush();
