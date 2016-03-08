@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app="LarpManagerApp">
+<html>
     <head>
         {% block head %}
             <meta charset="utf-8">
@@ -15,8 +15,10 @@
             <link rel="stylesheet" href="{{ app.request.basepath }}/css/bootstrap.min.css" />
             <link rel="stylesheet" href="{{ app.request.basepath }}/css/cyborg_bootstrap.min.css" />
                         
-            <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
-			            
+            <link rel="stylesheet" href="{{ app.request.basepath }}/leaflet/leaflet.css" />
+            
+			{% block style %}{% endblock style %}
+						            
             <title>LarpManager - {% block title %}{% endblock title %}</title>
         {% endblock head %}
     </head>
@@ -77,6 +79,9 @@
 				link_assume_external_targets: true
 			});
 		</script>
+		
+		<script src="{{ app.request.basepath }}/leaflet/leaflet.js"></script>
+		
 					        	
     	{% block javascript %}	
 		{% endblock javascript %}

@@ -59,6 +59,7 @@
 					{% if postulant.personnage.participant %}<p class="list-group-item-text">Utilisateur : <a href="{{ path('user.view', {'id': postulant.personnage.participant.user.id}) }}">{{ postulant.personnage.participant.user.username }}</a></p>{% endif %}
 					<p class="list-group-item-text">Date de la demande : {{ postulant.date|date('Y-m-d') }}</p>
 					<p class="list-group-item-text">{{ postulant.explanation|markdown }}</p>
+					<p class="list-group-item-text"><a href="{{ path('groupeSecondaire.admin.postulant.remove', {'groupe': groupeSecondaire.id,'postulant': postulant.id}) }}">Supprimer cette candidature</a></p>
 				</div>
 				{% endfor %}		
 			</div>

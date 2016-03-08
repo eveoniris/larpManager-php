@@ -93,6 +93,18 @@ class GroupeSecondaireControllerProvider implements ControllerProviderInterface
 			->method('GET')
 			->convert('groupe', 'converter.secondaryGroup:convert')
 			->convert('membre', 'converter.membre:convert')
+			->before($mustBeOrga);
+		
+		/**
+		 * Supprime une candidature
+		 */
+		$controllers->match('/admin/{groupe}/postulant/{postulant}/remove','LarpManager\Controllers\GroupeSecondaireController::adminRemovePostulantAction')
+			->assert('groupe', '\d+')
+			->assert('postulant', '\d+')
+			->bind("groupeSecondaire.admin.postulant.remove")
+			->method('GET')
+			->convert('groupe', 'converter.secondaryGroup:convert')
+			->convert('postulant', 'converter.postulant:convert')
 			->before($mustBeOrga);			
 
 		/**

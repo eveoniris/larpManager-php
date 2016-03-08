@@ -1,11 +1,54 @@
 {% extends "layout.twig" %}
 
+{% block title %}Le monde{% endblock title %}
+       
+{% block style %}
+
+		<style>
+			body {
+			    padding: 0;
+			    margin: 0;
+			}
+			html, body, #content, #map {
+			    height: 100%;
+			}
+			#content {
+				padding: 0 0 0 0;
+			}
+		</style>
+{% endblock %}
+
 {% block content %}
+		<div id="map"></div>
+{% endblock %}
 
-<div class="container container--ph">
-	<iframe class="iframe--responsive" src="{{ app.request.basepath }}/img/hyboree.svg">
-		<h3>error</h3>
-	</iframe>
-</div>
+{% block javascript %}		
+<script>
 
-{% endblock content %}
+// 6103 / 4297
+
+var map = L.map('map', {
+    crs: L.CRS.Simple,
+    minZoom: -3,
+    maxZoom: 18
+});
+var yx = L.latLng;
+
+var xy = function(x, y) {
+	if (L.Util.isArray(x)) {    // When doing xy([x, y]);
+		return yx(x[1], x[0]);
+	}
+	return yx(y, x);  // When doing xy(x, y);
+};
+
+var bounds = [xy(0, 0), xy(1000, 1000)];
+
+var image = L.imageOverlay('img/carte.jpg', bounds).addTo(map);
+L.marker([1000, 50],{'title':'Le centre du monde'}).addTo(map);
+map.fitBounds(bounds);
+map.setView(xy(500, 500), 1);
+
+
+</script>
+
+{% endblock %}

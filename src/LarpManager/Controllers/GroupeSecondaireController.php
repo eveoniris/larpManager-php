@@ -310,6 +310,17 @@ class GroupeSecondaireController
 					$groupeSecondaire->addMembre($membre);
 				}
 				
+				/**
+				 * Retire la candidature du responsable si elle existe
+				 */
+				foreach ( $groupeSecondaire->getPostulants() as $postulant)
+				{
+					if ( $postulant->getPersonnage() == $personnage )
+					{
+						$app['orm.em']->remove($postulant);
+					}
+				}
+				
 				$app['orm.em']->persist($groupeSecondaire);
 				$app['orm.em']->flush();
 				$app['session']->getFlashBag()->add('success', 'Le groupe secondaire a été mis à jour.');
@@ -340,6 +351,26 @@ class GroupeSecondaireController
 	{
 		$groupeSecondaire = $request->get('groupe');
 
+		return $app['twig']->render('admin/groupeSecondaire/detail.twig', array(
+				'groupeSecondaire' => $groupeSecondaire));
+	}
+	
+	/**
+	 * Retire un postulant du groupe
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function adminRemovePostulantAction(Request $request, Application $app)
+	{
+		$groupeSecondaire = $request->get('groupe');
+		$postulant = $request->get('postulant');
+		
+		$app['orm.em']->remove($postulant);
+		$app['orm.em']->flush();
+				
+		$app['session']->getFlashBag()->add('success', 'la candidature a été supprimée.');
+		
 		return $app['twig']->render('admin/groupeSecondaire/detail.twig', array(
 				'groupeSecondaire' => $groupeSecondaire));
 	}
