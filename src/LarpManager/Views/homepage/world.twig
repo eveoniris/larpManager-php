@@ -3,18 +3,28 @@
 {% block title %}Le monde{% endblock title %}
        
 {% block style %}
-
-		<style>
-			body {
-			    padding: 0;
-			    margin: 0;
-			}
-			html, body, #content, #map {
+		<style>		
+			html, body, #content {
 			    height: 100%;
+			    width: 100%;
+  				overflow: hidden;
+			}
+			body {
+				padding-top: 50px;
+			}
+			
+			#map {
+				width: auto;
+  				height: 100%;
+			}
+			.navbar {
+				margin-bottom:0px;
+				margin-top: -50px;
 			}
 			#content {
 				padding: 0 0 0 0;
 			}
+
 		</style>
 {% endblock %}
 
@@ -30,7 +40,7 @@
 var map = L.map('map', {
     crs: L.CRS.Simple,
     minZoom: -3,
-    maxZoom: 18
+    maxZoom: 1
 });
 var yx = L.latLng;
 
@@ -41,12 +51,24 @@ var xy = function(x, y) {
 	return yx(y, x);  // When doing xy(x, y);
 };
 
-var bounds = [xy(0, 0), xy(1000, 1000)];
+var bounds = [xy(0, 0), xy(6103, 4297)];
 
 var image = L.imageOverlay('img/carte.jpg', bounds).addTo(map);
-L.marker([1000, 50],{'title':'Le centre du monde'}).addTo(map);
+
+L.marker([2145,3051 ]).addTo(map).bindPopup('Le centre du monde');
+L.polyline([               [2145, 3051],
+                           [2145, 2861],
+                           [2500, 2515],
+                           [2412, 2024],
+                           [2315, 1862]]
+                           ).addTo(map).bindPopup('une route commerciale');
+
+L.marker([2315, 1862]).addTo(map).bindPopup('Une forteresse perdue dans les montagnes');
+
+
 map.fitBounds(bounds);
-map.setView(xy(500, 500), 1);
+map.setView(xy(3051, 2145), -1);
+
 
 
 </script>
