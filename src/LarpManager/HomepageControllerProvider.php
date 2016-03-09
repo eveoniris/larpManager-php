@@ -36,6 +36,11 @@ class HomepageControllerProvider implements ControllerProviderInterface
 		$controllers->match('/world','LarpManager\Controllers\HomepageController::worldAction')
 					->method('GET')
 					->bind('world');
+		
+		/** Affichage de la cartographie du monde de conan */
+		$controllers->match('/world/countries.json','LarpManager\Controllers\HomepageController::countriesAction')
+					->method('GET')
+					->bind('world.countries.json');					
 
 		/** Page de récapitulatif des liens pour discuter */
 		$controllers->match('/discuter','LarpManager\Controllers\HomepageController::discuterAction')

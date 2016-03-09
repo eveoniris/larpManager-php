@@ -111,10 +111,25 @@ var bounds = [xy(0, 0), xy(1420.29, 1000)];
 
 var image = L.imageOverlay('img/carte.jpg', bounds).addTo(map);
 
+var countries_boundary = new L.geoJson();
+countries_boundary.addTo(map);
+
+$.ajax({
+	dataType: "json",
+	url: "world/countries.json",
+	success: function(data) {
+		console.log('test');
+	    $(data).each(function(key, geom) {
+	    	console.log('test');
+	    	countries_boundary.addData(JSON.parse(geom));
+	    });
+	}
+	}).error(function() {});
+	
 //ajoute khauran
-L.geoJson(khauran, {
+/*L.geoJson(khauran, {
     onEachFeature: onEachFeature
-}).addTo(map);
+}).addTo(map);*/
 
 L.control.mousePosition().addTo(map);
 

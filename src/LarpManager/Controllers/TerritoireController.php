@@ -106,7 +106,7 @@ class TerritoireController
 			$app['orm.em']->flush();
 			$app['session']->getFlashBag()->add('success', 'Le territoire a été mis à jour.');
 		
-			return $app->redirect($app['url_generator']->generate('territoire.admin.detail',array('territoire' => $id)),301);
+			return $app->redirect($app['url_generator']->generate('territoire.admin.detail',array('territoire' => $territoire->getId())),301);
 		}		
 
 		return $app['twig']->render('admin/territoire/update.twig', array(

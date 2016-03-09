@@ -5,7 +5,6 @@ namespace LarpManager\Controllers;
 use Symfony\Component\HttpFoundation\Request;
 use Silex\Application;
 use LarpManager\Form\GroupeInscriptionForm;
-use LarpManager\Form\PersonnageSecondaireChoiceForm;
 use LarpManager\Form\GnInscriptionForm;
 
 
@@ -106,6 +105,22 @@ class HomepageController
 	public function worldAction(Request $request, Application $app)
 	{	
 		return $app['twig']->render('homepage/world.twig');		
+	}
+	
+	
+	public function countriesAction(Request $request, Application $app)
+	{
+		$repoTerritoire = $app['orm.em']->getRepository('LarpManager\Entities\Territoire');
+		$territoires = $repoTerritoire->findAll();
+		
+		$countries = array();
+		foreach ( $territoires as $territoire)
+		{
+			if ( ! empty($territoire->getGeojson()))
+				$countries[] = $territoire->getGeojson();	
+		}
+		
+		return $app->json($countries);
 	}
 
 	/**
