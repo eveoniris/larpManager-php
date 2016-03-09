@@ -3,6 +3,10 @@
 {% block title %}Le monde{% endblock title %}
        
 {% block style %}
+        <link rel="stylesheet" href="{{ app.request.basepath }}/leaflet/leaflet.css" />
+        <link rel="stylesheet" href="{{ app.request.basepath }}/leaflet/L.Control.MousePosition.css" />
+        <link rel="stylesheet" href="{{ app.request.basepath }}/leaflet/leaflet.draw.css" />
+        
 		<style>		
 			html, body, #content {
 			    height: 100%;
@@ -32,16 +36,66 @@
 		<div id="map"></div>
 {% endblock %}
 
-{% block javascript %}		
+{% block javascript %}
+
+<script src="{{ app.request.basepath }}/leaflet/leaflet.js"></script>
+<script src="{{ app.request.basepath }}/leaflet/L.Control.MousePosition.js"></script>
+<script src="{{ app.request.basepath }}/leaflet/leaflet.draw.js"></script>
+				
 <script>
 
-// 6103 / 4297
+var khauran = {"type":"Feature","properties":{"popupContent": "Khauran"},"geometry":{"type":"Polygon","coordinates":[[[537,537.125],[542.625,537.25],[547.25,538],[550.25,538.75],[553.625,539.375],[557.125,541.25],[560.125,542.75],[563.5,544.875],[565.375,546.875],[567.5,549.625],[571.75,548.375],[575,547.875],[577.75,548.5],[577.25,544],[577.5,541.875],[575.375,537.625],[570.625,531.25],[569.625,528.25],[567,525.75],[563.375,524.375],[560.125,524.125],[557.875,520.5],[555.25,518.5],[554.375,515.875],[553,514.625],[551,512.375],[550.5,509.625],[550,507.25],[547.875,504.25],[545.125,503.875],[542,502.625],[540.25,500.125],[536.875,498.75],[533.75,498.5],[531.875,500.5],[529.125,502.625],[526.625,503],[524.625,503.875],[523.5,505.875],[522.5,506.125],[519.375,505.875],[519.375,508.125],[518.375,511.875],[518.5,513.125],[523.625,514.25],[526.625,516.25],[529.375,518.875],[532.375,521.875],[533.125,524.625],[534.625,527.25],[535.375,529.625],[535.25,532.75],[535.875,534.75],[537,537.125]]]}};
+
 
 var map = L.map('map', {
     crs: L.CRS.Simple,
-    minZoom: -3,
-    maxZoom: 1
+    minZoom: -1,
+    maxZoom: 3
 });
+
+map.keyboard.enable();
+
+function onEachFeature(feature, layer) {
+    // does this feature have a property named popupContent?
+    if (feature.properties && feature.properties.popupContent) {
+        layer.bindPopup(feature.properties.popupContent);
+    }
+}
+
+//Initialise the FeatureGroup to store editable layers
+var drawnItems = new L.FeatureGroup();
+map.addLayer(drawnItems);
+
+// Initialise the draw control and pass it the FeatureGroup of editable layers
+var drawControl = new L.Control.Draw({
+    edit: {
+        featureGroup: drawnItems
+    }
+});
+map.addControl(drawControl);
+
+map.on('draw:created', function (e) {
+    var type = e.layerType,
+        layer = e.layer;
+
+    if (type === 'marker') {
+        // Do marker specific actions
+    }
+
+    // Do whatever else you need to. (save to db, add to map etc)
+    alert(JSON.stringify(layer.toGeoJSON()));
+    layer.addTo(drawnItems);
+    map.addLayer(layer);
+});
+
+map.on('draw:edited', function (e) {
+    var layers = e.layers;
+    layers.eachLayer(function (layer) {
+        //do whatever you want, most likely save back to db
+    	alert(JSON.stringify(layer.toGeoJSON()));
+    });
+});
+
 var yx = L.latLng;
 
 var xy = function(x, y) {
@@ -51,23 +105,21 @@ var xy = function(x, y) {
 	return yx(y, x);  // When doing xy(x, y);
 };
 
-var bounds = [xy(0, 0), xy(6103, 4297)];
+// dimension de l'image : 6103 / 4297 ( projection 1/4 en respectant les proportions : 1420.29 / 1000)
+// c'est pour simplifier les coordonnées des points
+var bounds = [xy(0, 0), xy(1420.29, 1000)];
 
 var image = L.imageOverlay('img/carte.jpg', bounds).addTo(map);
 
-L.marker([2145,3051 ]).addTo(map).bindPopup('Le centre du monde');
-L.polyline([               [2145, 3051],
-                           [2145, 2861],
-                           [2500, 2515],
-                           [2412, 2024],
-                           [2315, 1862]]
-                           ).addTo(map).bindPopup('une route commerciale');
+//ajoute khauran
+L.geoJson(khauran, {
+    onEachFeature: onEachFeature
+}).addTo(map);
 
-L.marker([2315, 1862]).addTo(map).bindPopup('Une forteresse perdue dans les montagnes');
-
+L.control.mousePosition().addTo(map);
 
 map.fitBounds(bounds);
-map.setView(xy(3051, 2145), -1);
+map.setView(xy(700, 500), -1);
 
 
 
