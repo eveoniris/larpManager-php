@@ -117,7 +117,11 @@ class HomepageController
 		foreach ( $territoires as $territoire)
 		{
 			if ( ! empty($territoire->getGeojson()))
-				$countries[] = $territoire->getGeojson();	
+				$countries[] = array(
+						'geom' => $territoire->getGeojson(),
+						'name' => $territoire->getNom(),
+						'description' => $territoire->getDescription()
+					);
 		}
 		
 		return $app->json($countries);
