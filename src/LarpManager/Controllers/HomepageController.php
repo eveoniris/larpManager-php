@@ -120,7 +120,7 @@ class HomepageController
 				$countries[] = array(
 						'geom' => $territoire->getGeojson(),
 						'name' => $territoire->getNom(),
-						'description' => $territoire->getDescription()
+						'description' => strip_tags($territoire->getDescription())
 					);
 		}
 		
