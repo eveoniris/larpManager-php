@@ -45,6 +45,10 @@
 				margin: 0 0 5px;
 				color: #777;
 			}
+			
+			.geom {
+				display: none;
+			}
 
 		</style>
 {% endblock %}
@@ -70,21 +74,26 @@
 		}
 		return yx(y, x);  // When doing xy(x, y);
 	};
-	
+
+	// creation de la carte
 	var mapMinZoom = 0;
-	var mapMaxZoom = 5;
+	var mapMaxZoom = 6;
+	var img = [ 6103, 4297 ];
+	
 	var map = L.map('map', {
 	  maxZoom: mapMaxZoom,
 	  minZoom: mapMinZoom,
 	  crs: L.CRS.Simple
-	}).setView([0, 0], mapMaxZoom);
+	}).setView([0,0], mapMaxZoom);
 	
 	var mapBounds = new L.LatLngBounds(
-	    map.unproject([0, 4352], mapMaxZoom),
-	    map.unproject([6144, 0], mapMaxZoom));
+		map.unproject([0,11536], mapMaxZoom),
+		map.unproject([16384,0], mapMaxZoom)	    
+	);
 
 	map.fitBounds(mapBounds);
 
+	// creation du panneau d'information
 	var info = L.control();
 	info.onAdd = function(map) {
 		this._div = L.DomUtil.create('div', 'info');
@@ -94,53 +103,104 @@
 
 	info.update = function (props) {
 		if ( props && ! props.description ) props.description = 'Aucune description';
-		this._div.innerHTML = '<h4>Informations</h4>' + (props ? '<b>' + props.name + '</b><br />'
-				+ props.description : 'Passez la sourie par dessus un territoire');
+		this._div.innerHTML = (props ? '<h4>' + props.name + '</h4>'
+				+ '<p>' + props.description + '</p>': '<p>Passez la sourie par dessus un territoire</p>');
 	};
 
 	info.addTo(map);
 
-
+	// creation du panneau de creation de territoire
 	var geom = L.control();
 	geom.onAdd = function(map) {
 		this._div = L.DomUtil.create('div', 'geom');
-		this.update("");
+		this.update();
 		return this._div;
 	};
-	
-	geom.update = function (texte) {	
-		this._div.innerHTML = '<p>' + texte + '</p>';
+
+	var currentGeom = '';
+	geom.update = function (geom) {
+		if ( ! geom ) 
+		{
+			this._div.innerHTML = '';
+			$(this._div).hide();
+			currentGeom = '';
+		}	
+		else 
+		{
+			currentGeom = geom;
+			var select = '<label>Choisissez le territoire : </label>';
+			select = select + '<select id="selectedCountry">';
+			for(var key in countries)
+			{
+				select = select + '<option value="'+countries[key].id+'">'+countries[key].name+'</option>'
+			}
+			select = select +  '</select>';
+			select = select + '<input type="submit" value="Sauver" onclick="updateGeom()"/>'
+			
+			this._div.innerHTML = select;			
+			
+			$(this._div).show();
+		}
 	};
+
+	updateGeom = function() {
+		var country = document.getElementById("selectedCountry");
+		var territoireId = country.options[country.selectedIndex].value;
+		
+		$.ajax({
+			type: "POST",
+			dataType: 'json',
+			url: "world/countries/"+territoireId+"/update",
+			data: {geom: currentGeom},
+			success: function(data) {
+			    alert("la geographie a été enregistrée");
+			    var geom = JSON.parse(country.geom);
+		    	geom.properties.name = country.name;  	
+		    	geom.properties.description = country.description;
+			    countries_boundary.addData(geom);
+			}
+			}).error(function() {
+				alert("désolé, une erreur est survenue");
+			});
+		
+		geom.update();
+	}
 
 	geom.addTo(map);
 		
 
+	// branchement de la carte sur le tile provider
 	L.tileLayer('img/map/{z}/{x}/{y}.png', {
         minZoom: mapMinZoom, 
         maxZoom: mapMaxZoom,
         bounds: mapBounds,
-        attribution: 'Rendered with <a href="http://www.maptiler.com/">MapTiler</a>',
-        noWrap: true,
+        attribution: 'Rendered with <a href="http://www.gdal.org/gdal2tiles.html">Gdal2Tile</a>',
+        noWrap: false,
         tms: false,
         id: 'hyboree',
         continuousWorld: true
       }).addTo(map);
 
+	// ajout des controles au clavier
 	map.keyboard.enable();
+
+	// ajout des coordonnées de la sourie
 	L.control.mousePosition().addTo(map);	
 
-	// attache une popup a toutes les geométrie
+	// evenement mouseover sur une geometrie
 	function mouseoverfunction(e) 
 	{
 		var layer = e.target;
 		info.update(layer.feature.properties);
 	}
 
+	// evenement mouseout sur une geometrie
 	function mouseoutfunction(e)
 	{
 		info.update();
 	}
-	
+
+	// attache les evenements mouseover et mouseout sur les geometries
 	function onEachFeature(feature, layer) {
 	    if (feature.properties ) {
 	        layer.bindPopup(feature.properties.name);
@@ -151,25 +211,34 @@
 	    }
 	}
 
+	// récupére les geometrie des pays
 	var countries_boundary = new L.geoJson(false, {onEachFeature: onEachFeature});
 	countries_boundary.addTo(map);
+
+	// liste des pays
+	var countries = new Object();
 
 	$.ajax({
 		dataType: "json",
 		url: "world/countries.json",
 		success: function(data) {
 		    $(data).each(function(key, country) {
-		    	var geom = JSON.parse(country.geom);
-		    	geom.properties.name = country.name;  	
-		    	geom.properties.description = country.description;
-		    	countries_boundary.addData(geom);
+			    if ( country.geom != null )
+			    {
+			    	var geom = JSON.parse(country.geom);
+			    	geom.properties.name = country.name;  	
+			    	geom.properties.description = country.description;
+			    	countries_boundary.addData(geom);
+			    }
+
+			    countries[country.id] = country;
 		    });
 		}
 		}).error(function() {});
 
 
 	
-	//Initialise the FeatureGroup to store editable layers
+	// Initialise un FeatureGroup pour stocker les geometries dessinée
 	var drawnItems = new L.FeatureGroup();
 	map.addLayer(drawnItems);
 

@@ -4,6 +4,7 @@ namespace LarpManager;
 
 use Silex\Application;
 use Silex\ControllerProviderInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * LarpManager\HomepageControllerProvider
@@ -27,6 +28,16 @@ class HomepageControllerProvider implements ControllerProviderInterface
 	{
 		$controllers = $app['controllers_factory'];
 		
+		/**
+		 * Vérifie que l'utilisateur dispose du role SCENARISTE
+		 */
+		$mustBeScenariste = function(Request $request) use ($app) {
+			if (!$app['security.authorization_checker']->isGranted('ROLE_SCENARISTE')) {
+				throw new AccessDeniedException();
+			}
+		};
+		
+		
 		/** Affichage de la page d'acceuil */
 		$controllers->match('/','LarpManager\Controllers\HomepageController::indexAction')
 					->method('GET')
@@ -40,7 +51,14 @@ class HomepageControllerProvider implements ControllerProviderInterface
 		/** Affichage de la cartographie du monde de conan */
 		$controllers->match('/world/countries.json','LarpManager\Controllers\HomepageController::countriesAction')
 					->method('GET')
-					->bind('world.countries.json');					
+					->bind('world.countries.json');
+		
+		/** Mise a jour d'une geographie */
+		$controllers->match('/world/countries/{territoire}/update','LarpManager\Controllers\HomepageController::updateCountryGeomAction')
+					->method('POST')
+					->convert('territoire', 'converter.territoire:convert')
+					->bind('world.country.update')
+					->before($mustBeScenariste);					
 
 		/** Page de récapitulatif des liens pour discuter */
 		$controllers->match('/discuter','LarpManager\Controllers\HomepageController::discuterAction')

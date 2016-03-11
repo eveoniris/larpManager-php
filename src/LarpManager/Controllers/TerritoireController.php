@@ -62,9 +62,26 @@ class TerritoireController
 		{
 			$territoire = $form->getData();
 			
+			/**
+			 * Création des topics associés à ce groupe
+			 * un topic doit être créé par GN auquel ce groupe est inscrit
+			 * @var \LarpManager\Entities\Topic $topic
+			 */
+			$topic = new \LarpManager\Entities\Topic();
+			$topic->setTitle($territoire->getNom());
+			$topic->setDescription($territoire->getDescription());
+			$topic->setUser($app['user']);
+			// défini les droits d'accés à ce forum
+			// (les membres du groupe ont le droit d'accéder à ce forum)
+			$topic->setRight('TERRITOIRE_MEMBER');
+			$topic->setTopic($app['larp.manager']->findTopic('TOPIC_TERRITOIRE'));
+				
+			$territoire->setTopic($topic);
+				
+			$app['orm.em']->persist($topic);
 			$app['orm.em']->persist($territoire);
 			$app['orm.em']->flush();
-											
+														
 			$app['session']->getFlashBag()->add('success', 'Le territoire a été ajouté.');
 				
 			if ( $form->get('save')->isClicked())

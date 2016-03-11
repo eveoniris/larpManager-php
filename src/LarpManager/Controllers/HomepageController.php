@@ -107,7 +107,12 @@ class HomepageController
 		return $app['twig']->render('homepage/world.twig');		
 	}
 	
-	
+	/**
+	 * Fourni la liste des pays, leur geographie et leur description
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
 	public function countriesAction(Request $request, Application $app)
 	{
 		$repoTerritoire = $app['orm.em']->getRepository('LarpManager\Entities\Territoire');
@@ -116,17 +121,42 @@ class HomepageController
 		$countries = array();
 		foreach ( $territoires as $territoire)
 		{
-			if ( $territoire->getGeojson() != null )
-				$countries[] = array(
-						'geom' => $territoire->getGeojson(),
-						'name' => $territoire->getNom(),
-						'description' => strip_tags($territoire->getDescription())
-					);
+			$countries[] = array(
+					'id' => $territoire->getId(),
+					'geom' => $territoire->getGeojson(),
+					'name' => $territoire->getNom(),
+					'description' => strip_tags($territoire->getDescription())
+				);
 		}
 		
 		return $app->json($countries);
 	}
 
+	/**
+	 * Met à jour la geographie d'un pays
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function updateCountryGeomAction(Request $request, Application $app)
+	{
+		$territoire = $request->get('territoire');
+		$geom = $request->get('geom');
+		
+		$territoire->setGeojson($geom);
+		
+		$app['orm.em']->persist($territoire);
+		$app['orm.em']->flush();
+		
+		$country = array(
+					'id' => $territoire->getId(),
+					'geom' => $territoire->getGeojson(),
+					'name' => $territoire->getNom(),
+					'description' => strip_tags($territoire->getDescription())
+				);
+		return $app->json($country);
+	}
+	
 	/**
 	 * Affiche une page récapitulatif des liens pour discuter
 	 *
