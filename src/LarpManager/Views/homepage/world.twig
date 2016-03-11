@@ -32,7 +32,7 @@
 				padding: 0 0 0 0;
 			}
 			
-			.info {
+			.info, .geom {
 				padding: 6px 8px;
 				font: 14px/16px Arial, Helvetica, sans-serif;
 				background: white;
@@ -99,6 +99,20 @@
 	};
 
 	info.addTo(map);
+
+
+	var geom = L.control();
+	geom.onAdd = function(map) {
+		this._div = L.DomUtil.create('div', 'geom');
+		this.update("");
+		return this._div;
+	};
+	
+	geom.update = function (texte) {	
+		this._div.innerHTML = '<p>' + texte + '</p>';
+	};
+
+	geom.addTo(map);
 		
 
 	L.tileLayer('img/map/{z}/{x}/{y}.png', {
@@ -176,7 +190,7 @@
 	    }
 	
 	    // Do whatever else you need to. (save to db, add to map etc)
-	    alert(JSON.stringify(layer.toGeoJSON()));
+	    geom.update(JSON.stringify(layer.toGeoJSON()));
 	    layer.addTo(drawnItems);
 	    map.addLayer(layer);
 	});
@@ -185,7 +199,7 @@
 	    var layers = e.layers;
 	    layers.eachLayer(function (layer) {
 	        //do whatever you want, most likely save back to db
-	    	alert(JSON.stringify(layer.toGeoJSON()));
+	    	geom.update(JSON.stringify(layer.toGeoJSON()));
 	    });
 	});
 

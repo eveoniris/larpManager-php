@@ -25,7 +25,7 @@
 					{%  set step = territoire.stepCount %}
 					<li class="list-group-item" {% if step > 0 %} style="padding-left: {{ step * 50 }}px"{% endif %}>
 						<h4 class="list-group-item-heading">
-							{{ territoire.nom }} ({% if territoire.appelation %}{{ territoire.appelation.label }}{% else %}<span class="text-warning">Attention, ce territoire n'a d'appelation</span>{% endif %})
+							{{ territoire.nom }} ({% if territoire.appelation %}{{ territoire.appelation.label }}{% else %}<span class="text-warning">Attention, ce territoire n'a pas d'appelation</span>{% endif %})
 							<div class="btn-group pull-right" role="group" aria-label="...">
 								<a href="{{ path('territoire.admin.detail', {'territoire': territoire.id}) }}" class="btn btn-primary" role="button">Détail</a>
 							    <a href="{{ path('territoire.admin.update', {'territoire': territoire.id}) }}" class="btn btn-default" role="button">Modifier</a>
