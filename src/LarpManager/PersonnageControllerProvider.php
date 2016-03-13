@@ -110,6 +110,16 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 			->method('GET|POST')
 			->convert('personnage', 'converter.personnage:convert')
 			->before($mustBeOrga);
+			
+		/**
+		 * Modification de la renomme d'un personnage (orga)
+		 */
+		$controllers->match('/admin/{personnage}/update/renomme','LarpManager\Controllers\PersonnageController::adminUpdateRenommeAction')
+			->assert('personnage', '\d+')
+			->bind("personnage.admin.update.renomme")
+			->method('GET|POST')
+			->convert('personnage', 'converter.personnage:convert')
+			->before($mustBeOrga);			
 		
 		/**
 		 * Suppression d'un personnage (orga)

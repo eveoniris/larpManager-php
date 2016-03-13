@@ -9,6 +9,7 @@ use LarpManager\Form\PersonnageOriginForm;
 use LarpManager\Form\PersonnageFindForm;
 use LarpManager\Form\PersonnageForm;
 use LarpManager\Form\PersonnageUpdateForm;
+use LarpManager\Form\PersonnageUpdateRenommeForm;
 use LarpManager\Form\PersonnageDeleteForm;
 use LarpManager\Form\PersonnageXpForm;
 
@@ -267,6 +268,38 @@ class PersonnageController
 		}
 		
 		return $app['twig']->render('admin/personnage/update.twig', array(
+				'form' => $form->createView(),
+				'personnage' => $personnage));
+	}
+	
+
+	/**
+	 * Modification de la renommee du personnage
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function adminUpdateRenommeAction(Request $request, Application $app)
+	{
+		$personnage = $request->get('personnage');
+		
+		$form = $app['form.factory']->createBuilder(new PersonnageUpdateRenommeForm(), $personnage)
+		->add('save','submit', array('label' => 'Valider les modifications'))
+		->getForm();
+		
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$personnage = $form->getData();
+				
+			$app['orm.em']->persist($personnage);
+			$app['orm.em']->flush();
+				
+			$app['session']->getFlashBag()->add('success','Le personnage a été sauvegardé.');
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
+		}
+		
+		return $app['twig']->render('admin/personnage/updateRenomme.twig', array(
 				'form' => $form->createView(),
 				'personnage' => $personnage));
 	}

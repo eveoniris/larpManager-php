@@ -104,7 +104,15 @@
 					<td><a href="{{ path('user.edit',{'id':user.id}) }}">{{ user.id }}</a></td>
 					<td><a href="{{ path('user.view',{'id':user.id}) }}">{{ user.username }}</td>
 					<td>{{ user.email }}</td>
-					<td>{%  if not user.etatCivil %}<span class="text-warning">Etat-civil non renseigné</span>{% else %}<a href=" {{ path('user.admin.etatCivil', {'user':user.id}) }}">Voir l'etat-civil</a>{% endif %}</td>
+					<td>
+						{%  if not user.etatCivil %}
+							<span class="text-warning">Etat-civil non renseigné</span>
+						{% else %}
+							<a href=" {{ path('user.admin.etatCivil', {'user':user.id}) }}">									
+								{{ user.etatCivil.nom }} {{ user.etatCivil.prenom }}
+							</a>									
+						{% endif %}
+					</td>
 					<td>{{ user.roles|join(', ') }}</td>
 				</tr>
 			{% endfor %}

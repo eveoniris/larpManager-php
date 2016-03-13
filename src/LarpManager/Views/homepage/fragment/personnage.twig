@@ -28,6 +28,12 @@
 							Ne participe pas aux intrigues
 						{% endif %}
 					</li>
+					<li class="list-group-item">
+						<strong>Expérience :</strong> {{ personnage.xp|default(0) }}
+					</li>
+					<li class="list-group-item">
+						<strong>Renommée :</strong> {{ personnage.renomme|default(0) }}
+					</li>
 				</ul>
 			</div>
 			
@@ -35,9 +41,9 @@
 			<div class="col-sm-6">
 				<div class="pull-right">
 					{% if personnage.genre == 'Masculin' %}
-						<img width="144" height="200" alt="{{ personnage.classe.labelMasculin }}" src="{{ app.request.basepath }}/img/{{ personnage.classe.imageM }}" />
+						<img width="216" height="300" alt="{{ personnage.classe.labelMasculin }}" src="{{ app.request.basepath }}/img/{{ personnage.classe.imageM }}" />
 					{% else %}
-						<img width="144" height="200" alt="{{ personnage.classe.labelMasculin }}" src="{{ app.request.basepath }}/img/{{ personnage.classe.imageM }}" />
+						<img width="216" height="200" alt="{{ personnage.classe.labelMasculin }}" src="{{ app.request.basepath }}/img/{{ personnage.classe.imageM }}" />
 					{% endif %}
 				</div>
 			</div>

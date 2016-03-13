@@ -5,7 +5,7 @@ namespace LarpManager\Repository;
 use Doctrine\ORM\EntityRepository;
 
 /**
- * LarpManager\Repository\AgeRepository
+ * LarpManager\Repository\TerritoireRepository
  *  
  * @author kevin
  */
@@ -17,9 +17,20 @@ class TerritoireRepository extends EntityRepository
 	 */
 	public function findRoot()
 	{
-		$query = $this->app['orm.em']->createQuery('SELECT t FROM LarpManager\Entities\Territoire t WHERE t.territoire IS NULL');
+		$query = $this->getEntityManager()->createQuery('SELECT t FROM LarpManager\Entities\Territoire t WHERE t.territoire IS NULL ORDER BY t.nom ASC');
 		$territoires = $query->getResult();
 	
+		return $territoires;
+	}
+	
+	/**
+	 * Fourni la liste des territoires étant dépendant d'un autre territoire
+	 */
+	public function findFiefs()
+	{
+		$query = $this->getEntityManager()->createQuery('SELECT t FROM LarpManager\Entities\Territoire t WHERE t.territoire IS NOT NULL ORDER BY t.nom ASC');
+		$territoires = $query->getResult();
+		
 		return $territoires;
 	}
 }

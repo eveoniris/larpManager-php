@@ -1,7 +1,5 @@
 {% extends "layout.twig" %}
 
-
-
 {% block content %}
 
 	<ol class="breadcrumb">
@@ -73,7 +71,8 @@
 	    				<table class="table">
 	    					<thead>
 	    						<tr>
-	    							<th>User</th>
+	    							<th>Utilisateur</th>
+	    							<th>Nom prénom</th>
 	    							<th>Email</th>
 	    							<th>Personnage</th>
     								<th></th>
@@ -83,6 +82,11 @@
 							{% for participant in groupe.participants %}
 								<tr>
 									<td>{{ participant }}</td>
+									<td>
+										{% if participant.user.etatCivil %}
+											{{ participant.user.etatCivil.nom }} {{ participant.user.etatCivil.prenom }}
+										{% endif %}
+									</td>
 									<td>{{ participant.user.email }}</td>
 									<td>
 										{% if participant.personnage %}
@@ -98,6 +102,20 @@
 						</table>
 	    			</p>
 	    		</div>
+	    		
+	    		<div class="list-group-item">
+		    		<h4 class="list-group-item-heading">Trombinoscope</h4>
+
+					<div class="row">
+					{% for participant in  groupe.participants %}
+						<div class="col-xs-6 col-md-3">
+							{% if participant.user.trombineUrl %}
+								<img width="160" height="200" src="{{ path('trombine.get', {'trombine' : participant.user.trombineUrl }) }}" />
+							{% endif %}
+						</div>
+					{% endfor %}
+					</div>
+				</div>
 	    			
 	    		<div class="list-group-item">
 		    		<h4 class="list-group-item-heading">Code</h4>
@@ -147,6 +165,50 @@
     			</div>
     			
     			<div class="list-group-item">
+    				<h4 class="list-group-item-heading">Alliés</h4>
+					{% for alliance in groupe.alliances %}
+	    				<p class="list-group-item-text">
+	    					{% if alliance.groupe == groupe %}
+								{{ alliance.requestedGroupe }}
+							{% else %}
+								{{ alliance.groupe }}
+							{% endif %}
+	    				</p>
+    				{% endfor %}
+    				{% for alliance in groupe.waitingAlliances %}
+	    				<p class="list-group-item-text">
+	    					{% if alliance.groupe == groupe %}
+	    						A demandé une alliance avec <strong>{{ alliance.requestedGroupe }}</strong>.
+	    					{% else %}
+	    						Sollicité pour une alliance par <strong>{{ alliance.groupe }}</strong>.
+	    					{% endif %}
+	    				</p>
+    				{% endfor %}
+    			</div>
+    			
+    			<div class="list-group-item">
+    				<h4 class="list-group-item-heading">Ennemis</h4>
+    				{% for ennemi in groupe.ennemies %}
+    					<p class="list-group-item-text">
+    						{% if ennemi.groupe == groupe %}
+								A avez déclaré la guerre à <strong>{{ ennemi.requestedGroupe }}</strong>.
+							{% else %}
+								<strong>{{ ennemi.groupe }}</strong> leur a déclaré la guerre.
+							{% endif %}
+    					</p>
+    				{% endfor %}
+    				{% for war in groupe.waitingPeace %}
+    					<p class="list-group-item-text">
+    						{% if war.groupe == groupe %}
+    							A avez demandé la paix avec <strong>{{ war.requestedGroupe }}</strong>.
+    						{% else %}
+    							<strong>{{ war.groupe }}</strong> propose la paix.
+    						{% endif %}
+    					</p>
+    				{% endfor %}
+    			</div>
+
+    			<div class="list-group-item">
     				<h4 class="list-group-item-heading">Gns</h4>
 					
 					<p class="list-group-item-text">
@@ -164,6 +226,7 @@
 		</div>
 		
 		<div class="col-xs-12 col-md-6">
+		
 			<div class="panel panel-default">
 				<div class="panel-heading">Background</div>
 				<div class="panel-body">

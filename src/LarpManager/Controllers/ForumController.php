@@ -350,17 +350,28 @@ class ForumController
 			}
 			else
 			{
-				$ancestor = $post->getAncestor();
-				/*$ancestor->removePost($post);
-				$app['orm.em']->persist($ancestor);*/
-				
+				$ancestor = $post->getAncestor();			
 				$url = $app['url_generator']->generate('forum.post',array('index'=> $ancestor->getId()));
 			}
+			
+			// supprimer toutes les vues
+			foreach ( $post->getPostViews() as $view )
+			{
+				$app['orm.em']->remove($view);
+			}
+			
+			
 			// supprimer tous les posts qui en dépendent
 			foreach ( $post->getPosts() as $child)
 			{
+				foreach ( $child->getPostViews() as $view )
+				{
+					$app['orm.em']->remove($view);
+				}
+					
 				$app['orm.em']->remove($child);
 			}
+
 			
 			$app['orm.em']->remove($post);
 			$app['orm.em']->flush();

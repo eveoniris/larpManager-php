@@ -49,7 +49,7 @@ if ( $app['config']['env']['env'] == 'prod' )
 	
 	$app->register(new Silex\Provider\MonologServiceProvider(), array(
 			'monolog.logfile' => __DIR__.'/../logs/production.log',
-			'monolog.level' => \Monolog\Logger::ERROR
+			'monolog.level' => \Monolog\Logger::CRITICAL
 	));
 }
 else

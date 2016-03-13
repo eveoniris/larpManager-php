@@ -53,6 +53,20 @@ Vous êtes responsable de ce groupe.
 	</li>
 </ul>
 
+<div class="header">
+	<h5>trombinoscope</h5>
+</div>
+
+<div class="row">
+{% for participant in  groupe.participants %}
+	<div class="col-xs-6 col-md-3">
+		{% if participant.user.trombineUrl %}
+			<img width="160" height="200" src="{{ path('trombine.get', {'trombine' : participant.user.trombineUrl }) }}" />
+		{% endif %}
+	</div>
+{% endfor %}
+</div>
+
 <br />
 
 <div class="header">
@@ -85,7 +99,11 @@ Vous êtes responsable de ce groupe.
 	<li class="list-group-item">
 		<div class="row">
 			<div class="col-md-8">
-				{{ alliance.groupe }}
+				{% if alliance.groupe == groupe %}
+					{{ alliance.requestedGroupe }}
+				{% else %}
+					{{ alliance.groupe }}
+				{% endif %}
 			</div>
 			<div class="col-md-4">
 				<a href="{{ path('groupe.breakAlliance', {'groupe': groupe.id, 'alliance': alliance.id}) }}">Rompre cette alliance</a>

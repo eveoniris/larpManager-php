@@ -6,6 +6,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Silex\Application;
 use LarpManager\Form\GroupeInscriptionForm;
 use LarpManager\Form\GnInscriptionForm;
+use LarpManager\Form\TrombineForm;
 
 
 /**
@@ -35,6 +36,62 @@ class HomepageController
 		}
 		
 		return $this->joueurIndexAction($request, $app);
+	}
+	
+	/**
+	 * Modification de la photo
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function trombineAction(Request $request, Application $app)
+	{
+		$form = $app['form.factory']->createBuilder(new TrombineForm(), array())
+			->add('envoyer','submit', array('label' => 'Envoyer'))
+			->getForm();
+		
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$files = $request->files->get($form->getName());
+
+			$path = __DIR__.'/../../../private/img/';
+			$filename = $files['trombine']->getClientOriginalName();
+			$extension = $files['trombine']->guessExtension();
+			
+			if (!$extension || ! in_array($extension, array('png', 'jpg', 'jpeg','bmp'))) {
+				$app['session']->getFlashBag()->add('error','Désolé, votre image ne semble pas valide (vérifiez le format de votre image)');
+				return $app->redirect($app['url_generator']->generate('trombine'),301);
+			}
+						
+			$trombineFilename = hash('md5',$app['user']->getUsername().$filename . time()).$extension; 
+			
+			$files['trombine']->move($path,$trombineFilename);
+			
+			$app['user']->setTrombineUrl($trombineFilename);
+			$app['orm.em']->persist($app['user']);
+			$app['orm.em']->flush();
+			
+			$app['session']->getFlashBag()->add('success','Votre photo a été enregistrée');
+			return $app->redirect($app['url_generator']->generate('trombine'),301);
+		}
+		
+		return $app['twig']->render('public/trombine.twig', array(
+				'form' => $form->createView()
+		));
+	}
+	
+	/**
+	 * Obtenir une image protégée
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function getTrombineAction(Request $request, Application $app)
+	{
+		$trombine = $request->get('trombine');
+		return $app->sendFile(__DIR__.'/../../../private/img/'.$trombine);
 	}
 	
 	/**
@@ -116,7 +173,7 @@ class HomepageController
 	public function countriesAction(Request $request, Application $app)
 	{
 		$repoTerritoire = $app['orm.em']->getRepository('LarpManager\Entities\Territoire');
-		$territoires = $repoTerritoire->findAll();
+		$territoires = $repoTerritoire->findRoot();
 		
 		$countries = array();
 		foreach ( $territoires as $territoire)
@@ -125,11 +182,32 @@ class HomepageController
 					'id' => $territoire->getId(),
 					'geom' => $territoire->getGeojson(),
 					'name' => $territoire->getNom(),
+					'color' => $territoire->getColor(),
 					'description' => strip_tags($territoire->getDescription())
 				);
 		}
 		
 		return $app->json($countries);
+	}
+	
+	public function fiefsAction(Request $request, Application $app)
+	{
+		$repoTerritoire = $app['orm.em']->getRepository('LarpManager\Entities\Territoire');
+		$territoires = $repoTerritoire->findFiefs();
+		
+		$fiefs = array();
+		foreach ( $territoires as $territoire)
+		{
+			$fiefs[] = array(
+					'id' => $territoire->getId(),
+					'geom' => $territoire->getGeojson(),
+					'name' => $territoire->getNom(),
+					'color' => $territoire->getColor(),
+					'description' => strip_tags($territoire->getDescription())
+			);
+		}
+		
+		return $app->json($fiefs);
 	}
 
 	/**
@@ -142,8 +220,10 @@ class HomepageController
 	{
 		$territoire = $request->get('territoire');
 		$geom = $request->get('geom');
+		$color = $request->get('color');
 		
 		$territoire->setGeojson($geom);
+		$territoire->setColor($color);
 		
 		$app['orm.em']->persist($territoire);
 		$app['orm.em']->flush();
