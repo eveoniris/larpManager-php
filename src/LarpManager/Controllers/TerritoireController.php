@@ -21,9 +21,8 @@ class TerritoireController
 	 */
 	public function listAction(Request $request, Application $app)
 	{
-		$territoires = $app['orm.em']->getRepository('\LarpManager\Entities\Territoire')->findAll();
-		$territoires = $app['larp.manager']->sortTerritoire($territoires);
-		
+		$territoires = $app['orm.em']->getRepository('\LarpManager\Entities\Territoire')->findRoot();
+				
 		return $app['twig']->render('admin/territoire/list.twig', array('territoires' => $territoires));
 	}
 	
