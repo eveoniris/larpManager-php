@@ -7,6 +7,8 @@ use Silex\Application;
 use LarpManager\Form\GroupeInscriptionForm;
 use LarpManager\Form\GnInscriptionForm;
 use LarpManager\Form\TrombineForm;
+use Imagine\Image\Box;
+
 
 
 /**
@@ -67,8 +69,10 @@ class HomepageController
 						
 			$trombineFilename = hash('md5',$app['user']->getUsername().$filename . time()).'.'.$extension; 
 			
-			$files['trombine']->move($path,$trombineFilename);
-			
+			$image = $app['imagine']->open($files['trombine']->getPathname());
+			$image->resize($image->getSize()->widen( 160 ));
+			$image->save($path. $trombineFilename);
+
 			$app['user']->setTrombineUrl($trombineFilename);
 			$app['orm.em']->persist($app['user']);
 			$app['orm.em']->flush();
@@ -91,7 +95,8 @@ class HomepageController
 	public function getTrombineAction(Request $request, Application $app)
 	{
 		$trombine = $request->get('trombine');
-		return $app->sendFile(__DIR__.'/../../../private/img/'.$trombine);
+		$filename = __DIR__.'/../../../private/img/'.$trombine;
+		return $app->sendFile($filename);
 	}
 	
 	/**

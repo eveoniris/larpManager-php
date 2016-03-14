@@ -61,7 +61,7 @@ Vous êtes responsable de ce groupe.
 {% for participant in  groupe.participants %}
 	<div class="col-xs-6 col-md-3">
 		{% if participant.user.trombineUrl %}
-			<img width="160" height="200" src="{{ path('trombine.get', {'trombine' : participant.user.trombineUrl }) }}" />
+			<img width="160" src="{{ path('trombine.get', {'trombine' : participant.user.trombineUrl }) }}" />
 			<div class="caption">
 				{% if participant.personnage %}
 					{{ participant.personnage.publicName }}

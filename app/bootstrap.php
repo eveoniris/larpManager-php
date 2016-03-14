@@ -13,6 +13,7 @@ use Silex\Provider\DoctrineServiceProvider;
 use Silex\Provider\HttpCacheServiceProvider;
 use Silex\Provider\SwiftmailerServiceProvider;
 use Silex\Provider\HttpFragmentServiceProvider;
+use Neutron\Silex\Provider\ImagineServiceProvider;
 use Dflydev\Silex\Provider\DoctrineOrm\DoctrineOrmServiceProvider;
 use Saxulum\DoctrineOrmManagerRegistry\Silex\Provider\DoctrineOrmManagerRegistryProvider;
 use Nicl\Silex\MarkdownServiceProvider;
@@ -85,6 +86,9 @@ $app->register(new ValidatorServiceProvider());
 $app->register(new TranslationServiceProvider(), array(
 		'translator.domains' => array(),
 ));
+
+// imagine
+$app->register(new ImagineServiceProvider());
 
 // http fragment
 $app->register(new HttpFragmentServiceProvider());

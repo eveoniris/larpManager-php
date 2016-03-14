@@ -16,7 +16,7 @@
 		<div class="header"><h5>Votre trombine</h5></div>
 
 		{% if app.user.trombineUrl %}		
-			<img width="216" height="300" src="{{ path('trombine.get', {'trombine' : app.user.trombineUrl }) }}" />
+			<img src="{{ path('trombine.get', {'trombine' : app.user.trombineUrl }) }}" />
 		{% else %}
 			Aucune photo.
 		{% endif %}

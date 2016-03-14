@@ -15,6 +15,26 @@
 				<li class="list-group-item"><a href="{{ path('admin.database.update') }}">Mettre à jour la base de données</a></li>
 			</ul>
 		</div>
+		
+		<div class="col-md-8">
+			<div class="well well-sm">
+				<ul class="list-group">
+					<li class="list-group-item">
+						<strong>Version de PHP :</strong> {{ phpVersion }}
+					</li>
+					<li class="list-group-item">
+						<strong>Taille maximum d'un fichier uploadé</strong> : {{ uploadMaxSize / 1024 }} Ko
+					</li>
+					<li class="list-group-item">
+						<strong>Liste des extensions :</strong>
+						<ul class="list-group">
+							{% for extension in extensions %}
+								<li class="list-group-item">{{ extension }}</li>
+							{% endfor %}
+						</ul>
+					</li>
+			</div>
+		</div>
 	</div>
 </div>
 
