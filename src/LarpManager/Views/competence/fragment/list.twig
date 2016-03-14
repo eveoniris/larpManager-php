@@ -21,6 +21,12 @@
 			<p class="list-group-item-text text-warning">Attention, cette compétence n'a pas description</p>
 		{%  endif %}
 		
+		{% if not competence.documentUrl %}
+			<p class="list-group-item-text text-warning">Attention, cette compétence n'a pas de document associé</p>
+		{% else %}
+			<p class="list-group-item-text text-default"><a href="{{ path('competence.document',{'competence' : competence.id, 'document':competence.documentUrl}) }}">Téléchargez le document</a></p>
+		{% endif %}
+		
 	</li>
 	{%  endfor %}
 </ul>

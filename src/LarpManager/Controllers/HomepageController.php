@@ -65,7 +65,7 @@ class HomepageController
 				return $app->redirect($app['url_generator']->generate('trombine'),301);
 			}
 						
-			$trombineFilename = hash('md5',$app['user']->getUsername().$filename . time()).$extension; 
+			$trombineFilename = hash('md5',$app['user']->getUsername().$filename . time()).'.'.$extension; 
 			
 			$files['trombine']->move($path,$trombineFilename);
 			

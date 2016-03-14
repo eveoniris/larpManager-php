@@ -8,11 +8,11 @@
 	<div class="row">
 		<div class="col-xs-12 col-md-8">
 		
-			<a href="{{ path("competence.family") }}">Retour à la liste des compétences</a>
+			<a href="{{ path("competence") }}">Retour à la liste des compétences</a>
 						
 			<div class="well well-sm bs-component">
 				<h4>
-					{{ competence.nom }}
+					{{ competence.label }}
 				</h4>
 			</div>
 
@@ -27,6 +27,15 @@
     				{% else %}
     					{{ competence.description|markdown }}
     				{% endif %}
+    				</p>   				
+    				
+    				<h4 class="list-group-item-heading">Document</h4>
+    				<p class="list-group-item-text">
+	    				{% if not competence.documentUrl %}
+	    					Aucun document n'est disponible
+	    				{% else %}
+	    					<a href="{{ path('competence.document',{'competence' : competence.id, 'document':competence.documentUrl}) }}">Téléchargez le document</a>
+	    				{% endif %}
     				</p>
 	    		</div>
 	    		
@@ -37,7 +46,7 @@
   				</div>
 			</div>
 			
-			{{ include("competence/fragment/niveau.twig",{'competence': competence,'add' : false}) }}
+			
 		</div>
 	</div>
 </div>

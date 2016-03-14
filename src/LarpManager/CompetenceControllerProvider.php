@@ -46,6 +46,11 @@ class CompetenceControllerProvider implements ControllerProviderInterface
 			->method('GET')
 			->before($mustBeOrga);
 		
+		$controllers->match('{competence}/document/{document}','LarpManager\Controllers\CompetenceController::getDocumentAction')
+			->bind("competence.document")
+			->convert('competence', 'converter.competence:convert')
+			->method('GET');
+		
 		$controllers->match('/list','LarpManager\Controllers\CompetenceController::listAction')
 			->bind("competence.list")
 			->method('GET');

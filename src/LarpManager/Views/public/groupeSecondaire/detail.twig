@@ -99,6 +99,23 @@
 		</div>
 		
 		<div class="header">
+			<h5>Trombinoscope</h5>
+		</div>
+		
+		<div class="row">
+		{% for membre in groupeSecondaire.membres %}
+			<div class="col-xs-6 col-md-3">
+				{% if membre.personnage.participant.user.trombineUrl %}
+					<img width="160" height="200" src="{{ path('trombine.get', {'trombine' : membre.personnage.participant.user.trombineUrl }) }}" />
+					<div class="caption">
+						{{ membre.personnage.publicName }}
+					</div>
+				{% endif %}
+			</div>
+		{% endfor %}
+		</div>
+		
+		<div class="header">
 			<h5>Discuter entre vous</h5>
 		</div>
 		

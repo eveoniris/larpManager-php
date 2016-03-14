@@ -116,6 +116,13 @@
 					{% for competence in personnage.competences %}
 						<li class="list-group-item">
 							<strong>{{ competence.competenceFamily.label }}</strong>&nbsp({{ competence.level.label }}) : {{ competence.description|markdown }}
+							<p class="list-group-item-text">
+			    				{% if competence.documentUrl %}
+			    					<a class="btn btn-default btn-sm" href="{{ path('competence.document',{'competence' : competence.id, 'document':competence.documentUrl}) }}">
+			    						<i class="fa fa-file"></i> Téléchargez l'aide de jeu
+			    					</a>
+			    				{% endif %}
+		    				</p>							
 						</li>
 					{% endfor %}
 					<li class="list-group-item">

@@ -114,7 +114,12 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 		// enemy converter
 		$app['converter.enemy'] = $app->share(function($app) {
 			return new EnemyConverter($app['orm.em']);
-		});			
+		});
+		
+		// competence converter
+		$app['converter.competence'] = $app->share(function($app) {
+			return new CompetenceConverter($app['orm.em']);
+		});
 	}
 
 	/**

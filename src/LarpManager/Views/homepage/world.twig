@@ -87,6 +87,8 @@
 <script src="{{ app.request.basepath }}/js/randomColor.min.js"></script>
 
 <script>
+
+
 	var cartographie = {
 			// Url du tileset
 			mapUrl: 'img/map/{z}/{x}/{y}.png',
@@ -122,18 +124,7 @@
 			map: null,
 
 			// limites de la carte
-			mapBounds : null,
-
-			// Options communes à tous les layers
-			tileLayerOptions : {
-				minZoom: this.mapMinZoom, 
-		        maxZoom: this.mapMaxZoom,
-		        bounds: this.mapBounds,
-		        attribution: 'Rendered with <a href="http://www.gdal.org/gdal2tiles.html">Gdal2Tile</a> | Icons made by <a href="http://www.freepik.com" title="Freepik">Freepik</a> from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a>',
-		        noWrap: false,
-		        tms: false,
-		        continuousWorld: true
-			},
+			mapBounds : null,	
 
 			// Panneau d'information
 			infoPanel : null,
@@ -161,11 +152,6 @@
 			// Collection des geometrie dessiné
 			drawnItems : null,
 
-			// Création du tileLayer de base
-			createBaseTileLayer : function() {
-				this.baseTileLayer = L.tileLayer(this.mapUrl, 
-						$.extend({},this.tileLayerOptions, {id: 'hyboree'}))
-			},
 
 			// Création de la carte
 			createMap: function() {
@@ -173,16 +159,43 @@
 					  maxZoom: this.mapMaxZoom,
 					  minZoom: this.mapMinZoom,
 					  crs: L.CRS.Simple,
-					  layers: [this.baseTileLayer] // layers: [basemap, workingmap]
-					}).setView([-86,128], this.mapNormalZoom);
+					  detectRetina: true
+					});
 			},
-
+			
 			// Création des limites de la carte
 			createMapBounds: function() {
 				this.mapBounds = new L.LatLngBounds(
 						this.map.unproject([0,11536], this.mapMaxZoom),
 						this.map.unproject([16384,0], this.mapMaxZoom)	    
-					)
+					);
+				this.map.setMaxBounds(this.mapBounds);
+
+				var _mapCenter = this.map.unproject([16384/2, 11536/2], this.mapMaxZoom);
+				this.map.setView(_mapCenter, this.mapNormalZoom);
+			},
+
+			distanceTo: function() {
+				var w = 16384 / 255;
+				var h = 11536 / 180;
+				
+			},
+			
+			// Création du tileLayer de base
+			createBaseTileLayer : function() {
+				
+				this.baseTileLayer = L.tileLayer(this.mapUrl, {
+					minZoom: this.mapMinZoom, 
+			        maxZoom: this.mapMaxZoom,
+			        bounds: this.mapBounds,
+			        attribution: 'Rendered with <a href="http://www.gdal.org/gdal2tiles.html">Gdal2Tile</a> | Icons made by <a href="http://www.freepik.com" title="Freepik">Freepik</a> from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a>',
+			        tms: false,
+			        continuousWorld: true,
+			        noWrap: false,
+			        tilesize:255,
+			        crs: L.CRS.Simple,
+			        detectRetina: false
+				}).addTo(this.map);
 			},
 
 			// Applique les limites de la carte à la carte
@@ -630,10 +643,13 @@
 			}
 			
 	};
-	cartographie.createBaseTileLayer();
+
 	cartographie.createMap();
 	cartographie.createMapBounds();
+	cartographie.createBaseTileLayer();
+	
 	cartographie.fitMap();
+	
 	cartographie.createGeomCollection();
 	cartographie.createInfoPanel();
 	cartographie.createDrawControl();
@@ -645,7 +661,7 @@
 	cartographie.loadFiefs();
 	
 	cartographie.applyOnMap();
-	
+
 </script>
 
 {% endblock %}
