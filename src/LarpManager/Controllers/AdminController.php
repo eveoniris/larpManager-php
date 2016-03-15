@@ -46,6 +46,42 @@ class AdminController
 	}
 	
 	/**
+	 * Simplifie une taille en bytes et fourni le symbole adequat
+	 * @param unknown $bytes
+	 */
+	private function getSymbolByQuantity($bytes) {
+		$symbols = array('B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB');
+		$exp =  $bytes ? floor(log($bytes) / log(1024)) : 0;
+		return sprintf('%.2f '.$symbols[$exp], ($bytes/pow(1024, floor($exp))));
+	}
+	
+	/**
+	 * Calcul la taille d'un dossier
+	 * @param unknown $path
+	 */
+	private function foldersize($path) {
+		$total_size = 0;
+		$files = scandir($path);
+		$cleanPath = rtrim($path, '/'). '/';
+	
+		foreach($files as $t) {
+			if ($t<>"." && $t<>"..") {
+				$currentFile = $cleanPath . $t;
+				if (is_dir($currentFile)) {
+					$size = $this->foldersize($currentFile);
+					$total_size += $size;
+				}
+				else {
+					$size = filesize($currentFile);
+					$total_size += $size;
+				}
+			}
+		}
+	
+		return $total_size;
+	}
+	
+	/**
 	 * Page d'accueil de l'interface d'administration
 	 * 
 	 * @param Request $request
@@ -57,11 +93,29 @@ class AdminController
 		$phpVersion = phpversion();
 		$zendVersion = zend_version();
 		$uploadMaxSize = $this->file_upload_max_size();
+		
+		// taille du cache
+		$cacheTotalSpace = $this->foldersize(__DIR__.'/../../../cache');
+		if ( $cacheTotalSpace )
+		{
+			$cacheTotalSpace = $this->getSymbolByQuantity($cacheTotalSpace);
+		}
+		
+		// taille du log
+		$logTotalSpace = $this->getSymbolByQuantity($this->foldersize(__DIR__.'/../../../logs'));
+		
+		// taille des documents
+		$docTotalSpace = $this->getSymbolByQuantity($this->foldersize(__DIR__.'/../../../private'));
+		
 		return $app['twig']->render('admin/index.twig', array(
 				'phpVersion' => $phpVersion,
 				'zendVersion' => $zendVersion,
 				'uploadMaxSize' => $uploadMaxSize,
-				'extensions' => $extensions));
+				'extensions' => $extensions,
+				'cacheTotalSpace' => $cacheTotalSpace,
+				'logTotalSpace' => $logTotalSpace,
+				'docTotalSpace' => $docTotalSpace,
+		));
 	}
 	
 	/**
@@ -156,6 +210,56 @@ class AdminController
 	 */
 	public function cacheEmptyAction(Request $request, Application $app)
 	{
-		return $app['twig']->render('admin/cacheEmpty.twig');
+		$app['twig']->clearTemplateCache();
+		$app['twig']->clearCacheFiles();
+			
+		$app['session']->getFlashBag()->add('success', 'Le cache a été vidé.');
+		return $app->redirect($app['url_generator']->generate('admin'),301);
+	}
+	
+	/**
+	 * Vider les logs
+	 */
+	public function logEmptyAction(Request $request, Application $app)
+	{
+		$filename = __DIR__.'/../../../logs/production.log';
+
+		$myTextFileHandler = @fopen("$filename","r+");
+		@ftruncate($myTextFileHandler, 0);
+		@fclose($myTextFileHandle);
+		
+		$filename = __DIR__.'/../../../logs/development.log';
+		
+		$myTextFileHandler = @fopen("$filename","r+");
+		@ftruncate($myTextFileHandler, 0);
+		@fclose($myTextFileHandle);
+		
+		$app['session']->getFlashBag()->add('success', 'Les logs ont été vidés.');
+		return $app->redirect($app['url_generator']->generate('admin'),301);
+	}
+	
+	/**
+	 * Fourni les listes des utilisateurs n'ayants pas remplis certaines conditions
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function rappelsAction(Request $request, Application $app)
+	{
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\User');
+		
+		$usersWithoutEtatCivil = $repo->findWithoutEtatCivil();
+		$usersWithoutTrombine = $repo->findWithoutTrombine();
+		$usersWithoutGroup = $repo->findWithoutGroup();
+		$usersWithoutPersonnage = $repo->findWithoutPersonnage();
+		$usersWithoutSecondaryPersonnage = $repo->findWithoutSecondaryPersonnage();
+		
+		return $app['twig']->render('admin/rappels.twig', array(
+				'usersWithoutEtatCivil' => $usersWithoutEtatCivil,
+				'usersWithoutTrombine' =>  $usersWithoutTrombine,
+				'usersWithoutGroup' =>  $usersWithoutGroup,
+				'usersWithoutPersonnage' =>  $usersWithoutPersonnage,
+				'usersWithoutSecondaryPersonnage' =>  $usersWithoutSecondaryPersonnage,
+		));
 	}
 }

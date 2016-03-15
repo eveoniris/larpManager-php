@@ -24,6 +24,13 @@ class AdminControllerProvider implements ControllerProviderInterface
 			->method('GET');
 		
 		/**
+		 * Page d'accueil de l'interface d'administration
+		 */
+		$controllers->match('/rappels','LarpManager\Controllers\AdminController::rappelsAction')
+			->bind("admin.rappels")
+			->method('GET');			
+		
+		/**
 		 * Voir les logs
 		 */
 		$controllers->match('/log','LarpManager\Controllers\AdminController::logAction')
@@ -49,7 +56,14 @@ class AdminControllerProvider implements ControllerProviderInterface
 		 */
 		$controllers->match('/cache/empty','LarpManager\Controllers\AdminController::cacheEmptyAction')
 			->bind("admin.cache.empty")
-			->method('GET');			
+			->method('GET');
+		
+		/**
+		 * Vider les logs
+		 */
+		$controllers->match('/cache/log','LarpManager\Controllers\AdminController::logEmptyAction')
+			->bind("admin.log.empty")
+			->method('GET');
 			
 		return $controllers;
 	}

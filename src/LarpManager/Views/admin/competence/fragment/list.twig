@@ -10,8 +10,8 @@
 		<h4 class="list-group-item-heading">
 			{{ competence.competenceFamily.label }} - <small>Niveau {{ competence.level.label }}</small>
 			<div class="pull-right btn-group" role="group" aria-label="...">
-				<a href="{{ path('competence.detail', {index: competence.id}) }}" class="btn btn-primary" role="button">Voir</a>
-			    <a href="{{ path('competence.update', {index: competence.id}) }}" class="btn btn-default" role="button">Modifier</a>
+				<a href="{{ path('competence.detail', {'competence': competence.id}) }}" class="btn btn-primary" role="button">Voir</a>
+			    <a href="{{ path('competence.update', {'competence': competence.id}) }}" class="btn btn-default" role="button">Modifier</a>
 			</div>
 		</h4>
 	

@@ -1,0 +1,19 @@
+{% extends "layout.twig" %}
+
+{% block title %}Compétences{% endblock title %}
+
+{% block content %}
+	
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-xs-12 col-md-8">
+				<a href="{{ path("competence") }}">Retour à la liste des compétences</a>
+				{{ include("admin/competence/fragment/form.twig",{
+					'legend': 'modification d\'une compétence',
+					'action': path('competence.update',{'competence': competence.id}), 
+					'form' : form}) }}
+			</div>
+		</div>
+	</div>
+		
+{% endblock content %}

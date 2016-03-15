@@ -231,6 +231,7 @@ else
 	$app->mount('/background', new LarpManager\BackgroundControllerProvider());
 	$app->mount('/pnj', new LarpManager\PnjControllerProvider());
 	$app->mount('/admin', new LarpManager\AdminControllerProvider());
+	$app->mount('/trombinoscope', new LarpManager\TrombinoscopeControllerProvider());
 		
 
 	/**
@@ -251,6 +252,7 @@ else
 	 */
 	$app['security.access_rules'] = array(
 		array('^/admin/.*$', 'ROLE_ADMIN'),
+		array('^/trombinoscope/.*$', 'ROLE_SCENARISTE'),
 		array('^/world/.*$', 'ROLE_USER'),
 		array('^/pnj/.*$', 'ROLE_USER'),
 		array('^/groupe/.*$', 'ROLE_USER'),

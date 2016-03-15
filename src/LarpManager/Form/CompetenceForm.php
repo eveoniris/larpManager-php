@@ -35,7 +35,10 @@ class CompetenceForm extends AbstractType
 					'property' => 'label',
 				))
 				->add('description','textarea', array(
-					'required' => false,	
+					'required' => false,
+					'attr' => array(
+							'class' => 'tinymce'
+					),
 				))
 				->add('document','file', array(
 					'label' => 'Téléversez un document',

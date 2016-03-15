@@ -10,9 +10,14 @@
 			
 			<ul class="list-group">
 				<li class="list-group-item"><a href="{{ path('admin.log') }}">Voir les logs</a></li>
-				<li class="list-group-item"><a href="{{ path('admin.cache.empty') }}">Vider le cache</a></li>
 				<li class="list-group-item"><a href="{{ path('admin.database.export') }}">Exporter la base de données</a></li>
 				<li class="list-group-item"><a href="{{ path('admin.database.update') }}">Mettre à jour la base de données</a></li>
+			</ul>
+			
+			<ul class="list-group">
+				<li class="list-group-item"><strong>Taille du cache :</strong> {{ cacheTotalSpace }} (<a href="{{ path('admin.cache.empty') }}">vider</a>)</li>
+				<li class="list-group-item"><strong>Taille des logs :</strong> {{ logTotalSpace }} (<a href="{{ path('admin.log.empty') }}">vider</a>)</li>
+				<li class="list-group-item"><strong>Taille des documents :</strong> {{ docTotalSpace }}</li>
 			</ul>
 		</div>
 		
