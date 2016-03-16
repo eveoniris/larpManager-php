@@ -39,6 +39,11 @@ class TerritoireForm extends AbstractType
 					'required' => false,
 					'attr' => array('rows' => 10),
 				))
+				->add('geojson', 'textarea', array(
+					'label' => 'GeoJSON',
+					'required' => false,
+					'attr' => array('rows' => 10),
+				))
 				->add('capitale','text', array(
 					'label' => 'Capitale',
 					'required' => false,

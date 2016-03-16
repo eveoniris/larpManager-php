@@ -14,8 +14,34 @@ use LarpManager\Entities\BaseChronologie;
 /**
  * LarpManager\Entities\Chronologie
  *
- * @Entity()
+ * @Entity(repositoryClass="LarpManager\Repository\ChronologieRepository")
  */
-class Chronologie extends BaseChronologie
+class Chronologie extends BaseChronologie implements \JsonSerializable
 {
+	/**
+	 * Serializer
+	 */
+	public function jsonSerialize() {
+		return array(
+			'year' => $this->getYear(),
+			'month' => $this->getMonth(),
+			'day' => $this->getDay(),
+			'description' => $this->getDescription(),
+			'visibilite' => $this->getVisibilite(),
+			'territoire_id' => ($this->getTerritoire() ) ? $this->getTerritoire()->getId() : '',
+		);
+	}
+	
+	/**
+	 * Unserializer
+	 * 
+	 * @param unknown $payload
+	 */
+	public function jsonUnserialize($payload) {
+		$this->setYear($payload->year);
+		$this->setMonth($payload->month);
+		$this->setDay($payload->day);
+		$this->setDescription($payload->description);
+		$this->setVisibilite($payload->visibilite);
+	}
 }

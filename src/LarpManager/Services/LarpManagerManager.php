@@ -80,6 +80,17 @@ class LarpManagerManager
 		return $visibility;
 	}
 	
+	public function getChronologieVisibility()
+	{
+		$visibility = array(
+			'PRIVATE' => 'Seul les scénaristes peuvent voir ceci',
+			'PUBLIC' => 'Tous les joueurs peuvent voir ceci',
+			'GROUPE_MEMBER' => 'Seul les membres d\'un groupe lié à ce territoire peuvent voir ceci',
+		);
+		
+		return $visibility;
+	}
+	
 	/**
 	 * Fourni la liste des compétences de premier niveau
 	 * @return Collection $competences
@@ -99,8 +110,14 @@ class LarpManagerManager
 				$rootCompetences->add($competence);
 			}
 		}
-	
-		return $rootCompetences;
+		
+		// trie des competences disponibles
+		$iterator = $rootCompetences->getIterator();
+		$iterator->uasort(function ($a, $b) {
+			return ($a->getLabel() < $b->getLabel()) ? -1 : 1;
+		});
+		
+		return  new ArrayCollection(iterator_to_array($iterator));
 	}
 	
 	/**

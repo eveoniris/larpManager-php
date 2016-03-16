@@ -9,23 +9,9 @@
 		<li><a href="{{ path('personnage.admin.list') }}">Liste des personnages</a></li>
 		<li class="active">Détail de {{ personnage.publicName }}</li>
 	</ol>
-	
-	<div class="panel panel-default">
-		<div class="panel-heading">
-			<h4 class="list-group-item-heading">Actions</h4>
-		</div>
-		<div class="panel-body">
-			<ul class="list-group">
-				<li class="list-group-item">
-					<a href="{{ path('personnage.admin.delete', {'personnage':personnage.id}) }}">Supprimer</a>
-				</li>
-			</ul>
-		</div>
-	</div>
-			
-	
+		
 	<div class="panel panel-success">
-		<div class="panel-heading">{{ personnage.publicName }} - <small>{{ personnage.classe.label }}</small></div>
+		<div class="panel-heading">{{ personnage.publicName }} - <small>{{ personnage.classeName }}</small></div>
 		<div class="panel-body">
 			<div class="list-group">
 				<div class="list-group-item">
@@ -53,12 +39,23 @@
 						<a href="{{ path('personnage.admin.update', {'personnage':personnage.id}) }}">Modifier</a>
 					</p>
 				</div>
+				
+				<div class="list-group-item">
+					<h6 class="list-group-item-heading">Renommée</h6>
+					<p class="list-group-item-text">
+						{{ personnage.renomme|default(0) }}
+					</p>
+					<p class="list-group-item-text">
+						<a href="{{ path('personnage.admin.update.renomme', {'personnage': personnage.id}) }}">Modifier la renommée</a>
+					</p>
+				</div>
+				
 				<div class="list-group-item">
 					<h6 class="list-group-item-heading">Religion</h6>
 					<p class="list-group-item-text">
-					{% if personnage.personnageReligion %}
-						{{ personnage.personnageReligion.religion.label }} - {{ personnage.personnageReligion.religionLevel.label }}
-					{% endif %}
+					{% for personnageReligion in personnage.personnagesReligions %}
+						{{ personnageReligion.religion.label }} - {{ personnageReligion.religionLevel.label }}<br />
+					{% endfor %}
 					</p>
 				</div>
 				<div class="list-group-item">
@@ -66,7 +63,7 @@
 					<p><a href="{{ path('personnage.admin.xp', {'personnage':personnage.id}) }}">Ajouter des points d'expérience</a></p>
 					{% for competence in personnage.competences %}
 						<p class="list-group-item-text">
-							{{ competence.competenceFamily.label }}&nbsp({{ competence.level.label }}) : {{ competence.description }}
+							{{ competence.competenceFamily.label }}&nbsp({{ competence.level.label }}) : {{ competence.description|markdown }}
 						</p>					
 					{% endfor %}
 					<p><a href="{{ path('personnage.competence.remove', {'personnage':personnage.id}) }}">Retirer la dernière compétence acquise</a></p>
@@ -83,7 +80,7 @@
 				<div class="list-group-item">
 					<h6 class="list-group-item-heading">Groupes secondaires</h6>
 					{% for groupeSecondaire in personnage.secondaryGroups %}
-						<a href="{{ path('groupeSecondaire.detail', {'index':groupeSecondaire.id}) }}">{{ groupeSecondaire.label }}</a>
+						<a href="{{ path('groupeSecondaire.admin.detail', {'groupe':groupeSecondaire.id}) }}">{{ groupeSecondaire.label }}</a>
 					{% endfor %}
 					{% if personnage.postulants|length > 0 %}
 						{% for postulant in personnage.postulants %}
@@ -99,4 +96,18 @@
 			</div>
 		</div>
 	</div>
+	
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h4 class="list-group-item-heading">Actions</h4>
+		</div>
+		<div class="panel-body">
+			<ul class="list-group">
+				<li class="list-group-item">
+					<a class="btn btn-danger" href="{{ path('personnage.admin.delete', {'personnage':personnage.id}) }}">Supprimer</a>
+				</li>
+			</ul>
+		</div>
+	</div>
+			
 {% endblock content %}

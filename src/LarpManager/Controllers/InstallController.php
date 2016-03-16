@@ -117,6 +117,63 @@ class InstallController
 		return $app['twig']->render('install/installfirstuser.twig', array('form' => $form->createView()));
 	}
 	
+	public function updateAction(Request $request, Application $app)
+	{
+		$default = array(
+				'database_host' => $app['config']['database']['host'],
+				'database_name' => $app['config']['database']['dbname'],
+				'database_user' => $app['config']['database']['user'],
+		);
+		
+		// preparation du formulaire
+		$form = $app['form.factory']->createBuilder(new \LarpManager\Form\InstallDatabaseForm(), $default)
+		->add('create','submit')
+		->getForm();
+		
+		$form->handleRequest($request);
+		
+		// si la requête est valide
+		if ( $form->isValid() )
+		{
+			$databaseConfig = $form->getData();
+				
+			$newConfig = $app['config'];
+				
+			$newConfig['database'] = array(
+					'host' => $databaseConfig['database_host'],
+					'dbname' => $databaseConfig['database_name'],
+					'user' =>  $databaseConfig['database_user'],
+					'password' => $databaseConfig['database_password'],
+			);
+			
+			// write the new config
+			$dumper = new Dumper();
+			$yaml = $dumper->dump($newConfig);
+			file_put_contents(__DIR__ . '/../../../config/settings.yml', $yaml);
+				
+			// reload doctrine with the new configuration
+			$app->register(new DoctrineServiceProvider(), array(
+			'db.options' => $newConfig['database']
+			));
+			
+			// load doctrine tools
+			$tool = new \Doctrine\ORM\Tools\SchemaTool($app['orm.em']);
+			
+			// l'opération peut prendre du temps, il faut donc régler le temps maximum d'execution
+			set_time_limit(240);
+				
+			// on récupére les méta-data de toutes les tables
+			$classes = $app['orm.em']->getMetadataFactory()->getAllMetadata();
+			
+			var_dump('test');
+			// on met a jour la base de donnée
+			$tool->updateSchema($classes);
+			
+			return $app['twig']->render('install/installdone.twig');
+		}
+		return $app['twig']->render('install/update.twig',array('form' => $form->createView()));
+	}
+	
 	/**
 	 * @description Affiche la page d'installation de LarpManager
 	 * @param Request $request

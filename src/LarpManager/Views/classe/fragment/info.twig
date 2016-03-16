@@ -1,19 +1,55 @@
 <div class="panel panel-default">
-	<div class="panel-heading">
-		{{ classe.label }}
+
+	<div class="header">
+		<h5>{{ classe.label }}</h5>
 	</div>
+	
 	<div class="panel-body">
-		<p>{{ classe.description|markdown }}</p>
-	</div>
-	<div class="list-group">
-		<div class="list-group-item">
-			Compétences acquises à la création : {{ classe.competenceFamilyCreations|join(', ') }}
-		</div>
-		<div class="list-group-item">
-			Compétences favorites : {{ classe.competenceFamilyFavorites|join(', ') }}
-		</div>
-		<div class="list-group-item">
-			Compétences normales : {{ classe.competenceFamilyNormales|join(', ') }}
+		<blockquote>
+			<p class="text-justify">{{ classe.description|markdown }}</p>
+		</blockquote>
+		<div class="row">
+			<div class="col-lg-3">
+				<img width="184" height="250" alt="{{ classe.labelFeminin }}" src="{{ app.request.basepath }}/img/{{ classe.imageF }}" />
+			</div>
+			<div class="col-lg-6">
+				<h6>
+					<p class="text-center">Compétences acquises à la création</p>
+				</h6>
+				
+				<p>
+		      		{% for competenceFamily in classe.competenceFamilyCreations %}
+						{% if loop.index != 1 %}&nbsp;<i class="fa fa-ellipsis-h"></i>&nbsp;{% endif %}
+	      				<span data-toggle="tooltip" data-placement="top" title="{{ competenceFamily.descriptionRaw }}">{{ competenceFamily.label }}</span>
+	      			{% endfor %}
+		      	</p>
+			
+				<h6>
+					<p class="text-center">Compétences favorites</p>
+				</h6>
+				
+		      	<p>
+					{% for competenceFamily in classe.competenceFamilyFavorites %}
+						{% if loop.index != 1 %}&nbsp;<i class="fa fa-ellipsis-h"></i>&nbsp;{% endif %}
+	      				<span data-toggle="tooltip" data-placement="top" title="{{ competenceFamily.descriptionRaw }}">{{ competenceFamily.label }}</span>
+	      			{% endfor %}
+		      	</p>
+		      	
+				<h6>
+					<p class="text-center">Compétences normales</p>
+				</h6>
+				
+		      	<p>
+					{% for competenceFamily in classe.competenceFamilyNormales %}
+						{% if loop.index != 1 %}&nbsp;<i class="fa fa-ellipsis-h"></i>&nbsp;{% endif %}
+	      				<span  data-toggle="tooltip" data-placement="top" title="{{ competenceFamily.descriptionRaw }}">{{ competenceFamily.label }}</span>
+	      			{% endfor %}
+			    </p>
+	      		
+			</div>
+			<div class="col-lg-3">
+				<img width="184" height="250" alt="{{ classe.labelMasculin }}" src="{{ app.request.basepath }}/img/{{ classe.imageM }}" />
+			</div>
 		</div>
 	</div>
 </div>

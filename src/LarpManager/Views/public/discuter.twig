@@ -1,0 +1,81 @@
+{% extends "layout.twig" %}
+
+{% block title %}Discuter{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Page d'accueil</a></li>
+		<li class="active">Discuter</li>
+	</ol>
+	
+	<div class="well bs-component">
+	
+		<blockquote>Vous trouverez les liens vers les différents forums que vous pouvez utiliser ci-dessous.</blockquote>
+								
+		<div class="header"><h5>Forums</h5></div>
+		<ul class="list-group">
+			<li class="list-group-item">
+				<a href="{{ path('forum') }}">
+					<i class="fa fa-comment"></i>
+					Forum
+				</a>
+			</li>
+			{% if app.user.groupes|length > 0 %}
+				{% for groupe in app.user.groupes %}
+					{% if groupe.topic %}
+						<li class="list-group-item">
+							<a href="{{ path('forum.topic', {'index': groupe.topic.id}) }}">
+								<i class="fa fa-comment"></i>
+								Forum du groupe "{{ groupe.nom }}"
+							</a>
+						</li>
+					{% endif %}
+				{% endfor %}
+			{% endif %}
+			{% if app.user.personnage %}
+				{% if app.user.personnage.territoire %}
+					{% if app.user.personnage.territoire.topic %}
+						<li class="list-group-item">
+							<a href="{{ path('forum.topic', {'index': app.user.personnage.territoire.topic.id}) }}">
+								<i class="fa fa-comment"></i>
+								Forum du territoire "{{ app.user.personnage.territoire.nom }}"
+							</a>
+						</li>
+					{% endif %}
+				{% endif %}
+				{% for personnageReligion in app.user.personnage.personnagesReligions %}
+					<li class="list-group-item">
+						<a href="{{ path('forum.topic',{'index': personnageReligion.religion.topic.id }) }}">
+							<i class="fa fa-comment"></i>							
+							Forum de la religion "{{ personnageReligion.religion.label }}"
+						</a>
+					</li>
+				{% endfor %}
+				{% for membre in app.user.personnage.membres %}
+					<li class="list-group-item">
+						<a href="{{ path('forum.topic',{'index': membre.secondaryGroup.topic.id}) }}">
+							<i class="fa fa-comment"></i>
+							Forum du groupe secondaire "{{ membre.secondaryGroup.label }}"
+						</a>
+					</li>
+				{% endfor %}
+				
+			{% endif %}
+		</ul>
+		
+		<div class="header"><h5>Mails</h5></div>
+		
+		<ul class="list-group">
+			<li class="list-group-item"><a href="{{ path('user.messagerie') }}">Ma messagerie</a></li>
+		
+			{% if app.user.groupes|length > 0 %}
+				{% for groupe in app.user.groupes %}
+					{% if groupe.scenariste %}<li class="list-group-item"><strong>Votre scénariste est </strong>{{ groupe.scenariste.username }} / {{ groupe.scenariste.email }}</li> {% endif %}
+					{% if groupe.responsable %}<li class="list-group-item"><strong>Votre responsable de groupe est </strong>{{ groupe.responsable.username }} / {{ groupe.responsable.email }}</li>{% endif %}			
+				{% endfor %}
+			{% endif %}
+		</ul>
+	</div>
+	
+{% endblock content %}

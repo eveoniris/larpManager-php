@@ -1,0 +1,40 @@
+{% extends "layout.twig" %}
+
+{% block title %}Personnage secondaire{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Page d'accueil</a></li>
+		<li class="active">Votre personnage secondaire</li>
+	</ol>
+	
+	<div class="well bs-component">
+
+		<blockquote>
+			<p>Le personnage secondaire est un archétype que vous pouvez utiliser dans le cas 
+			ou <strong>votre personnage principal viendrait à trépasser</strong> (ce que nous ne souhaitons pas, mais l'Hyborée
+			 est un monde violent dans lequel les pires choses sont possibles) ou <strong>si vous souhaitez l'utiliser
+			  dans une instance à la place de l'autre</strong> (plus utile, ou toute autre raison)</p>
+		 </blockquote>
+		  
+		{% if app.user.personnageSecondaire %}
+			<h6>Personnage secondaire : 
+				<strong>{{ app.user.personnageSecondaire.classe.label }}</strong>
+			</h6>
+			<p>
+				<small>{{ app.user.personnageSecondaire.competences|join(' / ') }}</small>
+			</p>
+			
+			<p><a href="{{ path('personnageSecondaire.choice') }}">Modifier son personnage secondaire</a></p>
+		{% else %}
+			<p>Vous n'avez pas encore choisi votre personnage secondaire.</p>
+			<p>
+				<a class="btn btn-default" href="{{ path('personnageSecondaire.choice') }}">
+					Choisir son personnage secondaire
+				</a>
+			</p>
+		{% endif %}
+	</div>
+	
+{% endblock content %}

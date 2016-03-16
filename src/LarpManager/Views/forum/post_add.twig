@@ -27,11 +27,15 @@
 	<script src="{{ app.request.basepath }}/js/tinymce/tinymce.min.js"></script>
 
 	<script type="text/javascript">
-		tinyMCE.init({
-				mode: "textareas",
-				theme: "modern",
-				plugins : "spellchecker,insertdatetime,preview", 
-		});
+	tinyMCE.init({
+		mode: "textareas",
+		theme: "modern",
+		plugins : "spellchecker,insertdatetime,preview,link,autolink",
+		browser_spellcheck: true,
+		menubar: "edit, insert, view, format, tools",
+		toolbar:  "undo, redo, formatselect, bold, italic, alignright, aligncenter, alignright, alignjustify, bullist, numlist  link",
+		link_assume_external_targets: true
+	});
 		
 	</script>
 

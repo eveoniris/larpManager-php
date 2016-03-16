@@ -1,0 +1,59 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+	
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li class="active">Chronologie</li>
+	</ol>
+	
+	<div class="panel panel-default">
+		<div class="panel-body">
+			<a class="btn btn-primary pull-right" href="{{ path('chronologie.admin.add') }}">Ajouter un événement</a>
+		
+		
+			<table class="table table-striped table-bordered table-condensed table-hover">
+				<caption>Liste des événements</caption>
+				<thead>
+					<tr>
+						<th>ID</th>
+						<th>Pays</th>
+						<th>Date</th>
+						<th>Visibilité</th>
+						<th>Description</th>
+						<th/>
+						<th/>
+					</tr>
+				</thead>
+				<tbody>
+					{% for chrono in chronologies %}
+						<tr>
+							<td>{{ chrono.id }}</td>
+							<td>{{ chrono.territoire.nom }}</td>
+							<td>{{ chrono.year }} {{ chrono.month }} {{ chrono.day }}</td>
+							<td>{{ chrono.visibilite }}</td>
+							<td>{{ chrono.description|markdown }}</td>
+							<td>
+								<a 	class="btn btn-default"
+									title="Modifier" 
+									data-toggle="tooltip" data-placement="top"
+									href="{{ path('chronologie.admin.update', {index: chrono.id}) }}">
+									<i class="fa fa-pencil"></i>
+								</a>
+							</td>
+							<td>
+								<a 	class="btn btn-danger"
+									title="Supprimer" 
+									data-toggle="tooltip" data-placement="top"
+									href="{{ path('chronologie.admin.remove', {index: chrono.id}) }}">
+									<i class="fa fa-times"></i>
+								</a>
+							</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+	
+{% endblock %}

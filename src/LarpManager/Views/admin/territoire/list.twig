@@ -1,0 +1,103 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-xs-12 col-md-12">
+			<div class="well well-sm">
+				<h4>
+					Gestion des territoires
+					<small>
+						( {{ territoires|length }} territoires )
+					</small>
+				</h4>
+			</div>
+			
+			<ul class="list-group">
+					<a href="{{ path('territoire.admin.add') }}" class="list-group-item active">
+						<span class="badge"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></span>
+						<h4 class="list-group-item-heading">Ajouter un territoire</h4>
+					</a>
+
+				{%  for territoire in territoires %}
+					
+					{%  set step = territoire.stepCount %}
+					<li class="list-group-item" {% if step > 0 %} style="padding-left: {{ step * 50 }}px"{% endif %}>
+						<h4 class="list-group-item-heading">
+							{{ territoire.nom }} ({% if territoire.appelation %}{{ territoire.appelation.label }}{% else %}<span class="text-warning">Attention, ce territoire n'a pas d'appelation</span>{% endif %})
+							<div class="btn-group pull-right" role="group" aria-label="...">
+								<a href="{{ path('territoire.admin.detail', {'territoire': territoire.id}) }}" class="btn btn-primary" role="button">Détail</a>
+							    <a href="{{ path('territoire.admin.update', {'territoire': territoire.id}) }}" class="btn btn-default" role="button">Modifier</a>
+							</div>
+						</h4>
+						<p class="list-group-item-text">		
+							{% if territoire.description %}
+								<p class="text-default">{{ territoire.description|slice(0,500) }} ...</p>
+							{% else %}
+								<p class="text-warning">Attention, ce territoire n'a pas description</p>
+							{%  endif %}
+						</p>
+						{%  if territoire.territoires|length > 0 %}
+							<p class="list-group-item-text">
+								Contient les territoires suivants : {{ territoire.territoires|join(', ') }}
+							</p>
+						{% endif %}
+					</li>	
+					{% for region in territoire.territoires %}
+						{%  set step = region.stepCount %}
+						<li class="list-group-item" {% if step > 0 %} style="padding-left: {{ step * 50 }}px"{% endif %}>
+							<h4 class="list-group-item-heading">
+								{{ region.nom }} ({% if region.appelation %}{{ region.appelation.label }}{% else %}<span class="text-warning">Attention, ce territoire n'a pas d'appelation</span>{% endif %})
+								<div class="btn-group pull-right" role="group" aria-label="...">
+									<a href="{{ path('territoire.admin.detail', {'territoire': region.id}) }}" class="btn btn-primary" role="button">Détail</a>
+								    <a href="{{ path('territoire.admin.update', {'territoire': region.id}) }}" class="btn btn-default" role="button">Modifier</a>
+								</div>
+							</h4>
+							<p class="list-group-item-text">		
+								{% if region.description %}
+									<p class="text-default">{{ region.description|slice(0,500) }} ...</p>
+								{% else %}
+									<p class="text-warning">Attention, ce territoire n'a pas description</p>
+								{%  endif %}
+							</p>
+							{%  if region.territoires|length > 0 %}
+								<p class="list-group-item-text">
+									Contient les territoires suivants : {{ region.territoires|join(', ') }}
+								</p>
+							{% endif %}
+						</li>
+						{% for fief in region.territoires %}
+							{%  set step = fief.stepCount %}
+							<li class="list-group-item" {% if step > 0 %} style="padding-left: {{ step * 50 }}px"{% endif %}>
+								<h4 class="list-group-item-heading">
+									{{ fief.nom }} ({% if fief.appelation %}{{ fief.appelation.label }}{% else %}<span class="text-warning">Attention, ce territoire n'a pas d'appelation</span>{% endif %})
+									<div class="btn-group pull-right" role="group" aria-label="...">
+										<a href="{{ path('territoire.admin.detail', {'territoire': fief.id}) }}" class="btn btn-primary" role="button">Détail</a>
+									    <a href="{{ path('territoire.admin.update', {'territoire': fief.id}) }}" class="btn btn-default" role="button">Modifier</a>
+									</div>
+								</h4>
+								<p class="list-group-item-text">		
+									{% if fief.description %}
+										<p class="text-default">{{ fief.description|slice(0,500) }} ...</p>
+									{% else %}
+										<p class="text-warning">Attention, ce territoire n'a pas description</p>
+									{%  endif %}
+								</p>
+								{%  if fief.territoires|length > 0 %}
+									<p class="list-group-item-text">
+										Contient les territoires suivants : {{ fief.territoires|join(', ') }}
+									</p>
+								{% endif %}
+							</li>
+						{% endfor %}
+					{% endfor %}
+					
+				{%  endfor %}
+			</ul>
+		</div>
+	</div>
+
+</div>
+	
+{% endblock %}

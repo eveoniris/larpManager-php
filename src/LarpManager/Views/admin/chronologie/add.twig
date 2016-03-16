@@ -1,0 +1,43 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path('chronologie') }}">Liste des événements</a></li>
+		<li class="active">Ajout d'un événement</li>
+	</ol>
+	
+	<div class="well bs-component">
+		<form action="{{ path('chronologie.admin.add') }}" method="POST" {{ form_enctype(form) }}  novalidate>
+			<fieldset>
+				<legend>Ajout d'un événement</legend>
+				{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+	
+				{{ form(form) }}
+			</fieldset>
+		</form>
+	</div>
+	
+{% endblock %}
+
+{% block javascript %}
+
+	{{ parent() }}
+
+	{# inclusion du plugin tinymce pour la saisie du post #}   
+	<script src="{{ app.request.basepath }}/js/tinymce/tinymce.min.js"></script>
+
+	<script type="text/javascript">
+	tinyMCE.init({
+		mode: "textareas",
+		theme: "modern",
+		plugins : "spellchecker,insertdatetime,preview,link,autolink",
+		browser_spellcheck: true,
+		menubar: "edit, insert, view, format, tools",
+		toolbar:  "undo, redo, formatselect, bold, italic, alignright, aligncenter, alignright, alignjustify, bullist, numlist  link",
+		link_assume_external_targets: true
+	});
+		
+	</script>
+{% endblock javascript %}

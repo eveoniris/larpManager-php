@@ -9,6 +9,7 @@ use LarpManager\Form\PersonnageOriginForm;
 use LarpManager\Form\PersonnageFindForm;
 use LarpManager\Form\PersonnageForm;
 use LarpManager\Form\PersonnageUpdateForm;
+use LarpManager\Form\PersonnageUpdateRenommeForm;
 use LarpManager\Form\PersonnageDeleteForm;
 use LarpManager\Form\PersonnageXpForm;
 
@@ -20,6 +21,16 @@ use LarpManager\Form\PersonnageXpForm;
  */
 class PersonnageController
 {
+	
+	/**
+	 * Page d'accueil de gestion des personnage
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function accueilAction(Request $request, Application $app)
+	{
+		return $app['twig']->render('public/personnage/accueil.twig', array());
+	}
 	
 	/**
 	 * Liste des personnages
@@ -173,6 +184,36 @@ class PersonnageController
 		if ( $form->isValid() )
 		{
 			$personnage = $form->getData();
+
+			foreach ($personnage->getExperienceGains() as $xp)
+			{
+				$personnage->removeExperienceGain($xp);
+				$app['orm.em']->remove($xp);
+			}
+			
+			foreach ($personnage->getExperienceUsages() as $xp)
+			{
+				$personnage->removeExperienceUsage($xp);
+				$app['orm.em']->remove($xp);
+			}
+			
+			foreach ($personnage->getMembres() as $membre)
+			{
+				$personnage->removeMembre($membre);
+				$app['orm.em']->remove($membre);
+			}
+			
+			foreach ( $personnage->getPersonnagesReligions() as $personnagesReligions)
+			{
+				$personnage->removePersonnagesReligions($personnagesReligions);
+				$app['orm.em']->remove($personnagesReligions);
+			}
+			
+			foreach ($personnage->getPostulants() as $postulant)
+			{
+				$personnage->removePostulant($postulant);
+				$app['orm.em']->remove($postulant);
+			}
 						
 			$app['orm.em']->remove($personnage);
 			$app['orm.em']->flush();
@@ -231,6 +272,38 @@ class PersonnageController
 				'personnage' => $personnage));
 	}
 	
+
+	/**
+	 * Modification de la renommee du personnage
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function adminUpdateRenommeAction(Request $request, Application $app)
+	{
+		$personnage = $request->get('personnage');
+		
+		$form = $app['form.factory']->createBuilder(new PersonnageUpdateRenommeForm(), $personnage)
+		->add('save','submit', array('label' => 'Valider les modifications'))
+		->getForm();
+		
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$personnage = $form->getData();
+				
+			$app['orm.em']->persist($personnage);
+			$app['orm.em']->flush();
+				
+			$app['session']->getFlashBag()->add('success','Le personnage a été sauvegardé.');
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
+		}
+		
+		return $app['twig']->render('admin/personnage/updateRenomme.twig', array(
+				'form' => $form->createView(),
+				'personnage' => $personnage));
+	}
+	
 	/**
 	 * Ajoute une religion au personnage
 	 * 
@@ -241,9 +314,40 @@ class PersonnageController
 	{
 		$personnage = $request->get('personnage');
 		
-		$personnageReligion = new \LarpManager\Entities\PersonnageReligion();		
+		// refuser la demande si le personnage est Fanatique
+		if ( $personnage->isFanatique() )
+		{
+			$app['session']->getFlashBag()->add('error','Désolé, vous êtes un Fanatique, il vous est impossible de choisir une nouvelle religion. Veuillez contacter votre orga en cas de problème.');
+			return $app->redirect($app['url_generator']->generate('homepage'),301);
+		}
+		
+		$personnageReligion = new \LarpManager\Entities\PersonnagesReligions();
+		$personnageReligion->setPersonnage($personnage);
+		
+		// ne proposer que les religions que le personnage ne pratique pas déjà ...
+		$availableReligions = $app['personnage.manager']->getAvailableReligions($personnage);
+		
+		if ( $availableReligions->count() == 0 )
+		{
+			$app['session']->getFlashBag()->add('error','Désolé, il n\'y a plus de religion disponibles ( Sérieusement ? vous êtes éclectique, c\'est bien, mais ... faudrait savoir ce que vous voulez non ? L\'heure n\'est-il pas venu de faire un choix parmi tous ces dieux ?)');
+			return $app->redirect($app['url_generator']->generate('homepage'),301);
+		}
+		
+		// construit le tableau de choix
+		$choices = array();
+		foreach ( $availableReligions as $religion)
+		{
+			$choices[] = $religion;
+		}
 		
 		$form = $app['form.factory']->createBuilder(new PersonnageReligionForm(), $personnageReligion)
+			->add('religion','entity', array(
+					'required' => true,
+					'label' => 'Votre religion',
+					'class' => 'LarpManager\Entities\Religion',
+					'choices' => $availableReligions,
+					'property' => 'label',
+			))
 			->add('save','submit', array('label' => 'Valider votre religion'))
 			->getForm();
 		
@@ -252,12 +356,31 @@ class PersonnageController
 		if ( $form->isValid() )
 		{
 			$personnageReligion = $form->getData();
-			$personnageReligion->setPersonnage($personnage);
+			
+			// supprimer toutes les autres religions si l'utilisateur à choisi fanatique
+			// n'autoriser que un Fervent que si l'utilisateur n'a pas encore Fervent.
+			if ( $personnageReligion->getReligionLevel()->getIndex() == 3 )
+			{
+				$personnagesReligions = $personnage->getPersonnagesReligions();
+				foreach ( $personnagesReligions as $oldReligion)
+				{
+					$app['orm.em']->remove($oldReligion);
+				}
+			}
+			else if ( $personnageReligion->getReligionLevel()->getIndex() == 2 )
+			{
+				if ( $personnage->isFervent() )
+				{
+					$app['session']->getFlashBag()->add('error','Désolé, vous êtes déjà Fervent d\'une autre religion, il vous est impossible de choisir une nouvelle religion en tant que Fervent. Veuillez contacter votre orga en cas de problème.');
+					return $app->redirect($app['url_generator']->generate('homepage'),301);
+				}
+			}
+						
 			$app['orm.em']->persist($personnageReligion);
 			$app['orm.em']->flush();
 				
 			$app['session']->getFlashBag()->add('success','Votre personnage a été sauvegardé.');
-			return $app->redirect($app['url_generator']->generate('homepage'),301);
+			return $app->redirect($app['url_generator']->generate('personnage'),301);
 		}
 		
 		return $app['twig']->render('personnage/religion_add.twig', array(
@@ -296,7 +419,7 @@ class PersonnageController
 			$app['orm.em']->flush();
 		
 			$app['session']->getFlashBag()->add('success','Votre personnage a été sauvegardé.');
-			return $app->redirect($app['url_generator']->generate('homepage'),301);
+			return $app->redirect($app['url_generator']->generate('personnage'),301);
 		}
 		
 		return $app['twig']->render('personnage/origin_add.twig', array(
@@ -338,6 +461,27 @@ class PersonnageController
 			$personnage->setXp($xp + $cout);
 			$personnage->removeCompetence($lastCompetence);
 			$lastCompetence->removePersonnage($personnage);
+			
+			// cas special noblesse
+			// noblesse apprentit +2 renomme
+			// noblesse initie  +3 renomme
+			// noblesse expert +2 renomme
+			// TODO : trouver un moyen pour ne pas implémenter les règles spéciales de ce type dans le code.
+			if ( $lastCompetence->getCompetenceFamily()->getLabel() == "Noblesse")
+			{
+				switch ($lastCompetence->getLevel()->getId())
+				{
+					case 1:
+						$personnage->removeRenomme(2);
+						break;
+					case 2:
+						$personnage->removeRenomme(3);
+						break;
+					case 3:
+						$personnage->removeRenomme(2);
+						break;
+				}
+			}
 			
 			// historique
 			$historique = new \LarpManager\Entities\ExperienceGain();
@@ -417,6 +561,27 @@ class PersonnageController
 			$personnage->addCompetence($competence);
 			$competence->addPersonnage($personnage);
 			
+			// cas special noblesse
+			// noblesse apprentit +2 renomme
+			// noblesse initie  +3 renomme
+			// noblesse expert +2 renomme
+			// TODO : trouver un moyen pour ne pas implémenter les règles spéciales de ce type dans le code.
+			if ( $competence->getCompetenceFamily()->getLabel() == "Noblesse")
+			{
+				switch ($competence->getLevel()->getId())
+				{
+					case 1:
+						$personnage->addRenomme(2);
+						break;
+					case 2:
+						$personnage->addRenomme(3);
+						break;
+					case 3:
+						$personnage->addRenomme(2);
+						break;
+				}
+			}
+			
 			// historique
 			$historique = new \LarpManager\Entities\ExperienceUsage();
 			$historique->setOperationDate(new \Datetime('NOW'));
@@ -430,7 +595,7 @@ class PersonnageController
 			$app['orm.em']->flush();
 			
 			$app['session']->getFlashBag()->add('success','Votre personnage a été sauvegardé.');
-			return $app->redirect($app['url_generator']->generate('homepage'),301);
+			return $app->redirect($app['url_generator']->generate('personnage'),301);
 		}
 		
 		return $app['twig']->render('personnage/competence.twig', array(

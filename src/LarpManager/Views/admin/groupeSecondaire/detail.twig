@@ -22,7 +22,12 @@
 		<div class="panel-body">
 			<div class="list-group">
 				<div class="list-group-item">
+					<h6>Description (publique)</h6>
 					<p>{{ groupeSecondaire.description|markdown }}</p>
+				</div>
+				<div class="list-group-item">
+					<h6>Description (secrete)</h6>
+					<p>{{ groupeSecondaire.descriptionSecrete|markdown }}</p>
 				</div>
 				<div class="list-group-item">
 					<div class="list-group-item-heading">
@@ -47,10 +52,14 @@
 			<div class="list-group">
 				{% for postulant in groupeSecondaire.postulants %}
 				<div class="list-group-item">
-					<h6 class="list-group-item-heading">{{ postulant.personnage.identity }}</h6>
-					<p class="list-group-item-text">{{ postulant.date|date('Y-m-d') }}</p>
+					<h6 class="list-group-item-heading">
+						<a href="{{ path('personnage.admin.detail', {'personnage':postulant.personnage.id}) }}">{{ postulant.personnage.nom }}&nbsp;{{ postulant.personnage.surnom }}</a>
+					</h6>
+					{% if postulant.personnage.groupe %}<p class="list-group-item-text">Groupe : <a href="{{ path('groupe.detail', {'index': postulant.personnage.groupe.id}) }}">{{ postulant.personnage.groupe.nom }}</a></p>{% endif %}
+					{% if postulant.personnage.participant %}<p class="list-group-item-text">Utilisateur : <a href="{{ path('user.view', {'id': postulant.personnage.participant.user.id}) }}">{{ postulant.personnage.participant.user.username }}</a></p>{% endif %}
+					<p class="list-group-item-text">Date de la demande : {{ postulant.date|date('Y-m-d') }}</p>
 					<p class="list-group-item-text">{{ postulant.explanation|markdown }}</p>
-					<a href="{{ path('groupeSecondaire.admin.reponse', {'index': groupeSecondaire.id, 'postulantId' : postulant.id}) }}">Répondre</a>
+					<p class="list-group-item-text"><a href="{{ path('groupeSecondaire.admin.postulant.remove', {'groupe': groupeSecondaire.id,'postulant': postulant.id}) }}">Supprimer cette candidature</a></p>
 				</div>
 				{% endfor %}		
 			</div>
@@ -61,20 +70,44 @@
 		<div class="panel-heading">Liste des membres</div>
 		<div class="panel-body">
 			<div class="list-group">
-				{% for personnage in groupeSecondaire.personnages %}
+				{% for membre in groupeSecondaire.membres %}
 					<div class="list-group-item">
-						<h6 class="list-group-item-heading">{{ personnage.identity }}</h6>
+						<div class="list-group-item-heading">
+							<h6 class="list-group-item-heading">{{ membre.personnage.identity }}</h6>
+						</div>
+						<div class="list-group-item-text">
+							{% if membre.secret %}
+								<p class="text-danger">A accès aux secrets du groupe</p>
+								<a href="{{ path('groupeSecondaire.admin.secret.off', {'groupe': groupeSecondaire.id , 'membre':membre.id}) }}">
+									Retirer l'accés aux secrets
+								</a>
+							{% else %}
+								<p>N'a pas accès aux secrets du groupe</p>
+								<a href="{{ path('groupeSecondaire.admin.secret.on', {'groupe': groupeSecondaire.id , 'membre':membre.id}) }}">
+									Donner accés aux secrets
+								</a>
+							{% endif %}
+						</div>
 					</div>
 				{% endfor %}
 			</div>
 		</div>
 	</div>
 	
+	<div class="panel panel-default">
+		<div class="panel-heading">Forum associé</div>
+		<div class="panel-body">
+			<a href="{{ path('forum.topic',{'index': groupeSecondaire.topic.id}) }}">
+				<i class="fa fa-comment"></i>
+				Forum groupe secondaire "{{ groupeSecondaire.label }}"</a>
+		</div>
+	</div>
+		
 
 				
 	<div class="list-group-item">
 		<div class="btn-group" role="group" aria-label="...">
-			<a  class="btn btn-primary" role="button" href="{{ path('groupeSecondaire.admin.update', {'index' : groupeSecondaire.id}) }}">Modifier</a>
+			<a  class="btn btn-primary" role="button" href="{{ path('groupeSecondaire.admin.update', {'groupe' : groupeSecondaire.id}) }}">Modifier</a>
 		</div>
   	</div>
 	

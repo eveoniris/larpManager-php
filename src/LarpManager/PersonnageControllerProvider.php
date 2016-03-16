@@ -56,6 +56,14 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 				throw new AccessDeniedException();
 			}
 		};
+		
+		/**
+		 * Liste des personnages (orga)
+		 */
+		$controllers->match('/','LarpManager\Controllers\PersonnageController::accueilAction')
+			->bind("personnage")
+			->method('GET');
+			
 
 		/**
 		 * Liste des personnages (orga)
@@ -102,6 +110,16 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 			->method('GET|POST')
 			->convert('personnage', 'converter.personnage:convert')
 			->before($mustBeOrga);
+			
+		/**
+		 * Modification de la renomme d'un personnage (orga)
+		 */
+		$controllers->match('/admin/{personnage}/update/renomme','LarpManager\Controllers\PersonnageController::adminUpdateRenommeAction')
+			->assert('personnage', '\d+')
+			->bind("personnage.admin.update.renomme")
+			->method('GET|POST')
+			->convert('personnage', 'converter.personnage:convert')
+			->before($mustBeOrga);			
 		
 		/**
 		 * Suppression d'un personnage (orga)

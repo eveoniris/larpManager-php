@@ -3,124 +3,103 @@
 {% block title %}Accueil{% endblock title %}
 
 {% block content %}
-	   		
-	<div class="row">
-	
-		<div class="col-xs-12 col-md-6">
-		
-			<div class="well well-sm">
-				<h4>
-					Bienvenue {{ app.user.name }}
-				</h4>
-			</div>
-						
-			{% if not app.user.etatCivil  
-				or app.user.groupes|length == 0 
-				or app.user.personnages|length == 0 %}
-				<div class="well well-sm">
-					<h6>Liste des choses importantes à faire :</h6>
-					<ol>
-					{% if not app.user.etatCivil %}
-						<li>Enregistrer mon état-civil</li>
-					{% endif %}
-									
-					{% if app.user.groupes|length == 0 %}
-						<li>S'inscrire dans un groupe</li>
-					{% endif %}
-					
-					{% if app.user.personnages|length == 0 %}
-						<li>Créer mon personnage</li>
-					{% endif %}
-					</ol>
-				</div>
-			{% endif %}
-		
-			{# enregistrement de l'état-civil #}
-			{% if not app.user.etatCivil %}
-				<div class="panel panel-success">
-					<div class="panel-heading">{% trans %}record_player_title{% endtrans %}</div>
-					<div class="panel-body">
-						<p>{% trans %}record_player_explain{% endtrans %}</p>
-						<a class="btn btn-default" href="{{ path('user.information.add', {'id': app.user.id}) }}">{% trans %}record_player_link{% endtrans %}</a>
-					</div>
-				</div>
-			{% else %}
-			
-				{% if app.user.groupes|length == 0 %}
-					{# inscription dans un groupe #}
-					<div class="panel panel-success">
-						<div class="panel-heading">{% trans %}subscribe_group_title{% endtrans %}</div>
-						<div class="panel-body">
-							<p>{% trans %}subscribe_group_explain{% endtrans %}</p>
-							{{ include("homepage/fragment/form_groupe.twig",{'form': form_groupe,'action': path('homepage.inscription')}) }}
-						</div>
-					</div>
-				{% else %}
-					{# detail du personnage #}
-					{% if app.user.personnage %}
-						{{ include("homepage/fragment/personnage.twig",{'personnage':app.user.personnage}) }}
-						
-						
-						<div class="panel panel-info">
-							<div class="panel-heading">Personnage secondaire</div>
-							<div class="panel-body">
-								<p>Le personnage secondaire est un archétype que vous pouvez utiliser dans le cas 
-								ou <strong>votre personnage principal viendrait à trépasser</strong> (ce que nous ne souhaitons pas, mais l'Hyborée
-								 est un monde violent dans lequel les pires choses sont possibles) ou <strong>si vous souhaitez l'utiliser
-								  dans une instance à la place de l'autre</strong> (plus utile, ou toute autre raison)</p>
-								  
-								{% if app.user.personnageSecondaire %}
-									<h6>Personnage secondaire : 
-										<small>{{ app.user.personnageSecondaire.classe.label }}
-											{{ app.user.personnageSecondaire.competences|join(' / ') }}</small>
-									</h6>
-									<p><a href="{{ path('personnageSecondaire.choice') }}">Modifier son personnage secondaire</a></p>
-								{% else %}
-									<p>Vous n'avez pas encore choisi votre personnage secondaire.</p>
-									<p><a href="{{ path('personnageSecondaire.choice') }}">Choisir son personnage secondaire</a></p>
-								{% endif %}
 
-							</div>
-						</div>
-					{% endif %}
-						
-					{# Détail des groupes#}
-					{% for groupe in app.user.groupes %}
-						{{ include("homepage/fragment/groupe.twig",{'groupe':groupe}) }}
-					{% endfor %}
-						
+	<div class="well bs-component">
+	
+		{# Liste des choses à faire #}
+		{% if not app.user.etatCivil  
+			or app.user.groupes|length == 0 
+			or app.user.personnages|length == 0 %}
+			<div class="well well-sm">
+				<h6>Liste des choses importantes à faire :</h6>
+				<ol>
+				{% if not app.user.etatCivil %}
+					<li>Enregistrer mon état-civil</li>
 				{% endif %}
-			{% endif %}
+								
+				{% if app.user.groupes|length == 0 %}
+					<li>S'inscrire dans un groupe</li>
+				{% endif %}
+				
+				{% if app.user.personnages|length == 0 %}
+					<li>Créer mon personnage</li>
+				{% endif %}
+				</ol>
+			</div>
+		{% endif %}
+		
+		{# enregistrement de l'état-civil #}
+		{% if not app.user.etatCivil %}
+			<div class="panel panel-success">
+				<div class="panel-heading">{% trans %}record_player_title{% endtrans %}</div>
+				<div class="panel-body">
+					<p>{% trans %}record_player_explain{% endtrans %}</p>
+					<a class="btn btn-default" href="{{ path('user.information.add', {'id': app.user.id}) }}">{% trans %}record_player_link{% endtrans %}</a>
+				</div>
+			</div>
+		{% endif %}
+		
+		<div class="row">
+			{% include "link.twig" with {
+				'title' : "Votre groupe",
+				'link' :  path('groupe'),
+				'color' : "bg-primary",
+				'icon': 'fa-users' 
+				} %}
+				
+			{% include "link.twig" with {
+				'title' : "Vos groupes secondaires",
+				'link' :  path('groupeSecondaire'),
+				'color' : "bg-success",
+				'icon': 'fa-users' 
+				} %}
+				
+			{% include "link.twig" with {
+				'title' : "Votre personnage",
+				'link' :  path('personnage'),
+				'color' : "bg-primary",
+				'icon': 'fa-user' 
+				} %}
+				
+			{% include "link.twig" with {
+				'title' : "Votre personnage secondaire",
+				'link' :  path('personnageSecondaire'),
+				'color' : "bg-success",
+				'icon': 'fa-user-plus' 
+				} %}
+				
+			{% include "link.twig" with {
+				'title' : "Discuter",
+				'link' :  path('discuter'),
+				'color' : "bg-primary",
+				'icon': 'fa-comments' 
+				} %}
+				
+			{% include "link.twig" with {
+				'title' : "Evenements",
+				'link' :  path('evenement'),
+				'color' : "bg-success",
+				'icon': 'fa-calendar' 
+				} %}
+				
+			{% include "link.twig" with {
+				'title' : "Ma trombine",
+				'link' :  path('trombine'),
+				'color' : "bg-success",
+				'icon': 'fa-camera' 
+				} %}	
 		</div>
 		
-		<div class="col-xs-12 col-md-6">
 		
-			{# affichage de l'annonce la plus récente et du lien vers les archives des annonces #}
-			{% for annonce in annonces %}
-				<div class="panel panel-primary">
-					<div class="panel-heading">
-						{{ annonce.title }}
-					</div>
-					<div class="panel-body">
-						{{ annonce.text|markdown }}
-					</div>
-				</div>
-			{% endfor %}
 		
-			{# afficher la liste des gns dans lequel le joueur est inscrit #}
-			{% if app.user.gns|length > 0 %}
-				<div class="panel panel-default">
-					<div class="panel-heading">{% trans %}gn_list_title{% endtrans %}</div>
-					<div class="panel-body">
-						<div class="list-group">
-						{% for gn in app.user.gns %}
-							<a class="list-group-item" href="{{ path('gn.detail', {'index': gn.id}) }}">{{ gn.label }}</a>
-						{% endfor %}
-						</div>
-					</div>
-				</div>
-			{% endif %}
-		</div>
-	</div>		
+		{# affichage de l'annonce la plus récente et du lien vers les archives des annonces #}
+		{% for annonce in annonces %}
+			<div class="header">
+				<h5>{{ annonce.title }}</h5>
+			</div>
+			{{ annonce.text|markdown }}
+			<br/>
+		{% endfor %}						
+	</div>
 	
 {% endblock content %}

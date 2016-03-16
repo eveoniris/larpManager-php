@@ -1,0 +1,31 @@
+{% extends "layout.twig" %}
+
+{% block title %}Competences{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage')  }}">Accueil</a></li>
+		<li class="active">Les compétences</li>
+	</ol>
+		
+	<div class="row">
+		{% for competence in competences %}
+			<div class="col-sm-4 col-md-4">
+				<div class="panel panel-default fixed-height">
+					<div class="header">
+						<h5>{{ competence.competenceFamily.label }}</h5>
+					</div>
+					<div class="panel-body">
+		      			<blockquote>
+		      				<p>{{ competence.competenceFamily.description|markdown }}</p>
+		      			</blockquote>
+		      			<h6>{{competence.level.label }}</h6>
+		      			<p>{{ competence.description|markdown }}</p>
+		    		</div>
+		  		</div>
+		  	</div>
+		{% endfor %}
+	</div>
+
+{% endblock content %}

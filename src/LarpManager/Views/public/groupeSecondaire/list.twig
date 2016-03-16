@@ -29,7 +29,7 @@
 						<h4 class="list-group-item-heading">
 							{{ groupe.label }}
 							<div class="btn-group pull-right" role="group" aria-label="...">
-								<a href="{{ path('groupeSecondaire.postuler', {index: groupe.id}) }}" class="btn btn-primary" role="button">Postuler</a>
+								<a href="{{ path('groupeSecondaire.postuler', {groupe: groupe.id}) }}" class="btn btn-primary" role="button">Postuler</a>
 							</div>
 						</h4>
 						<p class="list-group-item-text">

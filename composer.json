@@ -25,7 +25,8 @@
 		"swiftmailer/swiftmailer" : "5.*@stable",
 		"monolog/monolog" : "1.15.0@stable",
 		"nicl/silex-markdown" : "1.1.0",
-		"jasongrimes/paginator" : "1.0"
+		"jasongrimes/paginator" : "1.0",
+		"neutron/silex-imagine-provider" : "~0.1"
 	},
 	"autoload" : {
 		"psr-0" : {
@@ -38,7 +39,8 @@
 		}
 	],
 	"require-dev" : {
-		"mysql-workbench-schema-exporter/mysql-workbench-schema-exporter" : "dev-master",
+		"mysql-workbench-schema-exporter/mysql-workbench-schema-exporter" : "3.0.0",
+		"mysql-workbench-schema-exporter/doctrine2-exporter" : "3.0.0",
 		"phpunit/phpunit" : "4.7.*",
 		"symfony/browser-kit" : "^2.7",
 		"symfony/css-selector" : "^2.7"

@@ -13,6 +13,7 @@ use Silex\Provider\DoctrineServiceProvider;
 use Silex\Provider\HttpCacheServiceProvider;
 use Silex\Provider\SwiftmailerServiceProvider;
 use Silex\Provider\HttpFragmentServiceProvider;
+use Neutron\Silex\Provider\ImagineServiceProvider;
 use Dflydev\Silex\Provider\DoctrineOrm\DoctrineOrmServiceProvider;
 use Saxulum\DoctrineOrmManagerRegistry\Silex\Provider\DoctrineOrmManagerRegistryProvider;
 use Nicl\Silex\MarkdownServiceProvider;
@@ -49,7 +50,7 @@ if ( $app['config']['env']['env'] == 'prod' )
 	
 	$app->register(new Silex\Provider\MonologServiceProvider(), array(
 			'monolog.logfile' => __DIR__.'/../logs/production.log',
-			'monolog.level' => \Monolog\Logger::ERROR
+			'monolog.level' => \Monolog\Logger::CRITICAL
 	));
 }
 else
@@ -66,7 +67,7 @@ else
  * Enregistrer les libs dans l'application 
  */
  
-// cache
+
 $app->register(new HttpCacheServiceProvider(), array(
 		'http_cache.cache_dir' => __DIR__.'/../cache/',
 		'http_cache.esi'       => null,
@@ -85,6 +86,9 @@ $app->register(new ValidatorServiceProvider());
 $app->register(new TranslationServiceProvider(), array(
 		'translator.domains' => array(),
 ));
+
+// imagine
+$app->register(new ImagineServiceProvider());
 
 // http fragment
 $app->register(new HttpFragmentServiceProvider());
@@ -213,6 +217,7 @@ else
 	$app->mount('/competenceFamily', new LarpManager\CompetenceFamilyControllerProvider());
 	$app->mount('/level', new LarpManager\LevelControllerProvider());
 	$app->mount('/classe', new LarpManager\ClasseControllerProvider());
+	$app->mount('/chronologie', new LarpManager\ChronologieControllerProvider());
 	$app->mount('/ressource', new LarpManager\RessourceControllerProvider());
 	$app->mount('/religion', new LarpManager\ReligionControllerProvider());
 	$app->mount('/personnage', new LarpManager\PersonnageControllerProvider());
@@ -225,6 +230,8 @@ else
 	$app->mount('/statistique', new LarpManager\StatistiqueControllerProvider());
 	$app->mount('/background', new LarpManager\BackgroundControllerProvider());
 	$app->mount('/pnj', new LarpManager\PnjControllerProvider());
+	$app->mount('/admin', new LarpManager\AdminControllerProvider());
+	$app->mount('/trombinoscope', new LarpManager\TrombinoscopeControllerProvider());
 		
 
 	/**
@@ -244,12 +251,15 @@ else
 	 * Gestion des droits d'accés
 	 */
 	$app['security.access_rules'] = array(
+		array('^/admin/.*$', 'ROLE_ADMIN'),
+		array('^/trombinoscope/.*$', 'ROLE_SCENARISTE'),
 		array('^/world/.*$', 'ROLE_USER'),
 		array('^/pnj/.*$', 'ROLE_USER'),
 		array('^/groupe/.*$', 'ROLE_USER'),
 		array('^/groupeSecondaire/.*$', 'ROLE_USER'),
 		array('^/competence/.*$', 'ROLE_USER'),
 		array('^/classe/.*$', 'ROLE_USER'),
+		array('^/chronologie/.*$', 'ROLE_USER'),
 		array('^/gn/.*$', 'ROLE_USER'),
 		array('^/personnage/.*$', 'ROLE_USER'),
 		array('^/personnageSecondaire/.*$', 'ROLE_USER'),
@@ -260,6 +270,7 @@ else
 		array('^/background/.*$', 'ROLE_SCENARISTE'),
 		array('^/annonce/.*$', 'ROLE_ADMIN'),
 		array('^/droit/.*$', 'ROLE_ADMIN'),
+		array('^/api/.*$', 'ROLE_SCENARISTE'),
 		array('^/age/.*$', 'ROLE_REGLE'),
 		array('^/genre/.*$', 'ROLE_REGLE'),
 		array('^/appelation/.*$', 'ROLE_SCENARISTE'),

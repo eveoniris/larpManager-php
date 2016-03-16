@@ -6,6 +6,7 @@ use Silex\Application;
 use LarpManager\Entities\Personnage;
 use LarpManager\Entities\CompetenceFamily;
 use LarpManager\Entities\Competence;
+use LarpManager\Entities\Religion;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
@@ -74,6 +75,26 @@ class PersonnageManager
 	}
 	
 	/**
+	 * Indique si un personnage connait une religion
+	 * 
+	 * @param Personnage $personnage
+	 * @param Religion $religion
+	 */
+	public function knownReligion(Personnage $personnage, Religion $religion)
+	{
+		$personnageReligions = $personnage->getPersonnagesReligions();
+		
+		foreach ( $personnageReligions as $personnageReligion )
+		{
+			if ( $personnageReligion->getReligion() == $religion)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
 	 * Fourni la liste des compétences inconnues d'un personnage
 	 * 
 	 * @param Personnage $personnage
@@ -130,9 +151,37 @@ class PersonnageManager
 			$availableCompetences->add($competence);		
 		}
 		
-		return $availableCompetences;
+		// trie des competences disponibles
+		$iterator = $availableCompetences->getIterator();
+		$iterator->uasort(function ($a, $b) {
+			return ($a->getLabel() < $b->getLabel()) ? -1 : 1;
+		});
+		
+		return  new ArrayCollection(iterator_to_array($iterator));
 	}
 	
+	/**
+	 * Récupére la liste de toutes les religions non connue du personnage
+	 * @param Personnage $personnage
+	 */
+	public function getAvailableReligions(Personnage $personnage)
+	{
+		$availableReligions = new ArrayCollection();
+		
+		$repo = $this->app['orm.em']->getRepository('\LarpManager\Entities\Religion');
+		$religions = $repo->findAll();
+		
+		foreach ( $religions as $religion)
+		{
+			if ( ! $this->knownReligion($personnage, $religion))
+			{
+				$availableReligions->add($religion);
+			}
+		}
+		
+		return $availableReligions;
+	}
+			
 	
 	/**
 	 * Fourni la dernière compétence acquise par un presonnage

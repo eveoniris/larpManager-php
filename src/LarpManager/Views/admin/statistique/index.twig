@@ -10,14 +10,82 @@
 	</ol>
 	
 	<div class="panel panel-default">
-		<div class="panel-heading">
-			Langues en fonction de leur utilisation comme langue principale par un territoire
-		</div>
 		<div class="panel-body">
-			<p>Plus une langue est utilisée comme langue principale, plus elle prendra d'espace dans ce graphique</p>
-			<p>Ceci est un test, les données présentées ne sont pas forcément intéressantes, mais par la suite on pourra sortir des graphs de ce type
-			pour tout un tas d'informations (notamment pour les ressources, les importations, les exportations, etc ...)</p>
-			<canvas id="myChart"></canvas>
+			<table class="table">
+				<thead>
+					<tr>
+						<th>Nombre de places ouverte</th>
+						<th>Nombre d'utilisateurs</th>
+						<th>Nombre d'utilisateurs ayant rempli leur état-civil</th>
+						<th>Nombre d'utilisateurs ayant créé leur personnage</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>{{ places }}</td>
+						<td>{{ userCount }}</td>
+						<td>{{ participantCount }}</td>
+						<td>{{ personnageCount }}</td>
+					</tr>
+				</tbody>
+			</table>
+			
+			{% set ratio = (personnageCount * 100) / places %}
+			<h4>Pourcentage de personnages créé (personages/places ouverte)</h4>
+			<div class="progress">
+		  		<div class="progress-bar" role="progressbar" aria-valuenow="{{ ratio }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ ratio }}%;">
+		    		{{ ratio }}%
+		  		</div>
+			</div>
+			
+			{% set ratio = (participantCount * 100) / userCount %}
+			<h4>Pourcentage d'état civil rempli (etat civil/utilisateurs)</h4>
+			<div class="progress">
+		  		<div class="progress-bar" role="progressbar" aria-valuenow="{{ ratio }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ ratio }}%;">
+		    		{{ ratio }}%
+		  		</div>
+			</div>
+			
+			{% set ratio = (personnageCount * 100) / userCount %}
+			<h4>Pourcentage de création de personnages par les utilisateurs (personnages/utilisateurs)</h4>
+			<div class="progress">
+		  		<div class="progress-bar" role="progressbar" aria-valuenow="{{ ratio }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ ratio }}%;">
+		    		{{ ratio }}%
+		  		</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="row">
+		<div class="col-sm-4">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					Répartition des territoires par langues
+				</div>
+				<div class="panel-body">
+					<canvas id="myChart"></canvas>
+				</div>
+			</div>
+		</div>
+		<div class="col-sm-4">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					Répartition des personnages par classe.
+				</div>
+				<div class="panel-body">
+					<canvas id="myChartClasses"></canvas>
+				</div>
+			</div>
+		</div>
+		<div class="col-sm-4">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					Répartition des personnages par genre.
+				</div>
+				<div class="panel-body">
+					<canvas id="myChartGenres"></canvas>
+				</div>
+			</div>
 		</div>
 	</div>
 	
@@ -32,6 +100,26 @@
 	
 		var data = {{ langues|raw }};
 		var ctx = document.getElementById("myChart").getContext("2d");
+		var myNewChart = new Chart(ctx).Pie(data, {
+			animation: true,
+			animationSteps: 60,
+			animationEasing: "easeOutQuart",
+			segmentShowStroke : true,
+			segmentStrokeColor : "#fff",
+			});
+
+		var data = {{ classes|raw }};
+		var ctx = document.getElementById("myChartClasses").getContext("2d");
+		var myNewChart = new Chart(ctx).Pie(data, {
+			animation: true,
+			animationSteps: 60,
+			animationEasing: "easeOutQuart",
+			segmentShowStroke : true,
+			segmentStrokeColor : "#fff",
+			});
+
+		var data = {{ genres|raw }};
+		var ctx = document.getElementById("myChartGenres").getContext("2d");
 		var myNewChart = new Chart(ctx).Pie(data, {
 			animation: true,
 			animationSteps: 60,

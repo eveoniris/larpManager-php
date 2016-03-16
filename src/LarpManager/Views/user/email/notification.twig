@@ -1,0 +1,40 @@
+{#
+Template for an email message sent to notifie about a new post.
+Variables passed to this template:
+    user: The SimpleUser\User instance.
+    postUrl : Url 
+#}
+
+{# The subject line. #}
+{%- block subject -%}{%- autoescape false -%}
+    {{ post.title }} -- Nouvelle réponse.
+{%- endautoescape -%}{%- endblock -%}
+
+{# The plain text message. #}
+{%- block body_text -%}{%- autoescape false -%}
+
+Une réponse sur un sujet que vous surveillez a été faite.
+
+{{ post.title }}
+
+{{ post.text }}
+
+Cliquez sur le lien ci-dessous pour accéder directement au forum :
+{{ postUrl }}
+
+{%- endautoescape -%}{%- endblock -%}
+
+{# The HTML message. Optional. #}
+{%- block body_html -%}
+
+    <h3>Une réponse sur un sujet que vous surveillez a été faite</h3>
+    
+    <h5>{{ post.title }} -- par {{ post.user.username }}</h5>
+
+	<p>{{ post.text|markdown }}</p>
+
+    <p>
+        <a href="{{ postUrl }}"> Suivez ce lien pour accéder directement au forum</a>.
+    </p>
+
+{%- endblock -%}

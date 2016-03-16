@@ -1,0 +1,822 @@
+{% extends "layout.twig" %}
+
+{% block title %}Le monde{% endblock title %}
+       
+{% block style %}
+
+		<meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>
+
+	    <link rel="stylesheet" href="{{ app.request.basepath }}/leaflet/leaflet.css" />
+        <link rel="stylesheet" href="{{ app.request.basepath }}/leaflet/L.Control.MousePosition.css" />
+        <link rel="stylesheet" href="{{ app.request.basepath }}/leaflet/leaflet.draw.css" />
+        
+		<style>		
+			html, body, #content {
+			    height: 100%;
+			    width: 100%;
+  				overflow: hidden;
+			}
+			body {
+				padding-top: 50px;
+			}
+			
+			#map {
+				width: auto;
+  				height: 100%;
+			}
+			.navbar {
+				margin-bottom:0px;
+				margin-top: -50px;
+			}
+			#content {
+				padding: 0 0 0 0;
+			}
+			
+			.info, .territoire, .fief, .itineraire, .route, .fortification {
+				padding: 6px 8px;
+				font: 14px/16px Arial, Helvetica, sans-serif;
+				background: white;
+				background: rgba(255,255,255,0.8);
+				box-shadow: 0 0 15px rgba(0,0,0,0.2);
+				border-radius: 5px;
+				width: 300px;
+			}
+			.info h4, .territoire h4, .fief h4, .itineraire h4, .route h4, .fortification h4 {
+				margin: 0 0 5px;
+				color: #777;
+			}
+			
+			.geom {
+				display: none;
+			}
+			
+			.leaflet-draw-toolbar .leaflet-draw-draw-territoire {
+				background-position: -31px -2px;
+			}
+			
+			.leaflet-draw-toolbar .leaflet-draw-draw-fief {
+				background-position: -31px -2px;
+			}
+			
+			.leaflet-draw-toolbar .leaflet-draw-draw-route {
+				background-position: 0 -1px;
+			}
+			
+			.leaflet-draw-toolbar .leaflet-draw-draw-itineraire {
+				background-position: 0 -1px;
+			}
+
+			.leaflet-draw-toolbar .leaflet-draw-draw-fortification {
+				background-position: -122px -2px;
+			}
+			
+			.leaflet-touch .leaflet-draw-toolbar .leaflet-draw-draw-fortification {
+				background-position: -120px -1px;
+			}
+
+		</style>
+{% endblock %}
+
+{% block content %}
+		<div id="map"></div>
+{% endblock %}
+
+{% block javascript %}
+
+
+
+<script src="{{ app.request.basepath }}/leaflet/leaflet.js"></script>
+<script src="{{ app.request.basepath }}/leaflet/L.Control.MousePosition.js"></script>
+<script src="{{ app.request.basepath }}/leaflet/leaflet.draw.js"></script>
+<script src="{{ app.request.basepath }}/js/randomColor.min.js"></script>
+
+
+<script>
+
+
+	var cartographie = {
+			// Url du tileset
+			mapUrl: 'img/map/{z}/{x}/{y}.png',
+			
+			// Zoom minimal
+			mapMinZoom: 0,
+				
+			// zoom maximal
+			mapMaxZoom : 6,
+
+			// zoom au chargement de la carte
+			mapNormalZoom: 2,
+			
+			// Liste des pays	
+			countriesList : Object(),
+
+			// Liste des fiefs  	
+			fiefsList : Object(),
+
+			// Collection des geometries des pays		
+			countriesGeom: null,
+
+			// Collection des geometries des fiefs
+			fiefsGeom: null,
+
+			// Tilelayer de base
+			baseTileLayer: null,
+
+			// Tilelayer de travail
+			workingTileLayer: null,
+
+			// carte
+			map: null,
+
+			// limites de la carte
+			mapBounds : null,	
+
+			// Panneau d'information
+			infoPanel : null,
+			infoPanelDiv: null,
+
+			// Panneau de sauvegarde d'une geometrie de territoire
+			saveTerritoirePanel : null,
+			saveTerritoirePanelDiv: null,
+
+			// Panneau de sauvegarde d'une geometrie de territoire
+			saveFiefPanel : null,
+			saveFiefPanelDiv: null,
+
+			// Panneau de sauvegarde d'une geometrie de territoire
+			saveRoutePanel : null,
+			saveRoutePanelDiv: null,
+
+			// Panneau de calcul de distance & itineraire
+			itinerairePanel: null,
+			itinerairePanelDiv: null,
+
+			// Panneau de sauvegarde d'une geometrie de territoire
+			saveFortificationPanel : null,
+			saveFortificationPanelDiv: null,						
+
+			// Geometrie courante
+			currentGeom : null,
+
+			// Collection des geometrie dessiné
+			drawnItems : null,
+
+
+			// Création de la carte
+			createMap: function() {
+				this.map = L.map('map', {
+					  maxZoom: this.mapMaxZoom,
+					  minZoom: this.mapMinZoom,
+					  crs: L.CRS.Simple,
+					  detectRetina: true
+					});
+			},
+			
+			// Création des limites de la carte
+			createMapBounds: function() {
+				this.mapBounds = new L.LatLngBounds(
+						this.map.unproject([0,11536], this.mapMaxZoom),
+						this.map.unproject([16384,0], this.mapMaxZoom)	    
+					);
+				this.map.setMaxBounds(this.mapBounds);
+
+				var _mapCenter = this.map.unproject([16384/2, 11536/2], this.mapMaxZoom);
+				this.map.setView(_mapCenter, this.mapNormalZoom);
+			},
+			
+			// Création du tileLayer de base
+			createBaseTileLayer : function() {
+				
+				this.baseTileLayer = L.tileLayer(this.mapUrl, {
+					minZoom: this.mapMinZoom, 
+			        maxZoom: this.mapMaxZoom,
+			        bounds: this.mapBounds,
+			        attribution: 'Rendered with <a href="http://www.gdal.org/gdal2tiles.html">Gdal2Tile</a> | Icons made by <a href="http://www.freepik.com" title="Freepik">Freepik</a> from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a>',
+			        tms: false,
+			        continuousWorld: true,
+			        noWrap: false,
+			        tilesize:255,
+			        crs: L.CRS.Simple,
+			        detectRetina: false
+				}).addTo(this.map);
+			},
+
+			// Applique les limites de la carte à la carte
+			fitMap: function() {
+				this.map.fitBounds(this.mapBounds);
+			},
+
+			// méthode déclenchée pour toute nouvelle geometrie
+			// Permet de lier des événements à une géométrie
+			onEachFeature: function(feature, layer) {
+			    if (feature.properties ) {
+				    var editLink = "{{ app.request.basepath }}/territoire/"+feature.properties.id+"/update";
+
+			        layer.bindPopup(
+					        '<strong>'+feature.properties.name+'</strong>' 
+					        {% if is_granted('ROLE_ORGA', app.user) %}
+					        	+'<br /><a href="'+editLink+'">Modifier</a>'
+					        {% endif %});
+			        layer.on({
+				        mouseover: cartographie.mouseOver,
+					    mouseout: cartographie.mouseOut
+				    });
+			    }
+			},
+			
+			// evenement mouseover sur une geometrie
+			mouseOver: function(e) {
+				var layer = e.target;
+				//console.log(layer);
+				cartographie.displayInfoPanel(layer.feature.properties);
+				$(cartographie.infoPanelDiv).show();
+			},
+			
+			// evenement mouseout sur une geometrie
+			mouseOut: function(e) {
+				$(cartographie.infoPanelDiv).hide();
+			},
+
+			// Creation des controles de dessins
+			createDrawControl: function() {
+
+				L.Draw.Territoire = L.Draw.Polygon.extend({
+					 initialize: function (map, options) {
+						 L.Draw.Polygon.prototype.initialize.call(this, map, options);
+				          this.type = 'territoire';
+				      }
+				});
+				
+				L.Draw.Fief = L.Draw.Polygon.extend({
+					 initialize: function (map, options) {
+						 L.Draw.Polygon.prototype.initialize.call(this, map, options);
+				          this.type = 'fief';
+				      }
+				});
+
+				L.Draw.Itineraire = L.Draw.Polyline.extend({
+					 initialize: function (map, options) {
+						 L.Draw.Polyline.prototype.initialize.call(this, map, options);
+				         this.type = 'itineraire';
+				      }
+				});
+				
+				L.Draw.Route = L.Draw.Polyline.extend({
+					 initialize: function (map, options) {
+						 L.Draw.Polyline.prototype.initialize.call(this, map, options);
+				          this.type = 'route';
+				      }
+				});
+				
+				L.Draw.Fortification = L.Draw.Marker.extend({
+					 initialize: function (map, options) {
+						 L.Draw.Marker.prototype.initialize.call(this, map, options);
+				          this.type = 'fortification';
+				      }
+				});
+			
+				var FortificationMarker = L.Icon.extend({
+				    options: {
+				        shadowUrl: null,
+				        iconAnchor: new L.Point(12, 12),
+				        iconSize: new L.Point(32, 32),
+				        iconUrl: 'img/buildings.svg'
+				    }
+				});
+
+				
+				L.DrawToolbar.include({
+				    getModeHandlers: function (map) {
+				        return [
+				            {
+				                enabled: true,
+				                handler: new L.Draw.Territoire(map),
+				                title: 'Tracer un territoire'
+				            },
+				            {
+				                enabled: true,
+				                handler: new L.Draw.Fief(map),
+				                title: 'Tracer un fief'
+				            },
+				            {
+				                enabled: true,
+				                handler: new L.Draw.Itineraire(map, {
+				                	shapeOptions: {
+				                		weight: 6,
+				                		color: '#3d86c2',	
+				                		opacity: 0.8,
+				                	},
+					                showLength: false}),
+				                title: 'Calculer un itineraire'
+				            },
+				            {
+				                enabled: true,
+				                handler: new L.Draw.Route(map),
+				                title: 'Tracer une route commerciale'
+				            },
+				            {
+				                enabled: true,
+				                handler: new L.Draw.Fortification(map, {icon: new FortificationMarker}),
+				                title: 'Placer une fortification'
+				            }
+				        ];
+				    }
+				});
+				
+				this.drawControl = new L.Control.Draw({
+				    edit: {
+				        featureGroup: this.drawnItems
+				    },
+				    draw: {
+					    polygon: {
+					    	shapeOptions: {
+				                color: '#bada55'
+				            }
+						}
+				    }
+				});
+			},			
+			
+			// Création des collections de geometries
+			createGeomCollection: function() {
+				this.countriesGeom = new L.geoJson(false, {style: this.territoireStyle, onEachFeature: this.onEachFeature});
+				this.fiefsGeom = new L.geoJson(false, {style: this.fiefStyle, onEachFeature: this.onEachFeature});
+				this.routesGeom = new L.geoJson(false, {onEachFeature: this.onEachFeature});
+				this.fortificationsGeom = new L.geoJson(false, {onEachFeature: this.onEachFeature});
+				this.drawnItems = new L.FeatureGroup();
+			},
+
+			// style des territoires
+			territoireStyle: function(feature) {
+				if ( feature.properties.color == null) {
+					feature.properties.color = randomColor({luminosity:'dark'});
+				}
+				return {
+	                weight: 5,
+	                opacity: 1,
+	                color: feature.properties.color,
+	                dashArray: '10',
+	                fillOpacity: 0.2,
+	                fillColor: feature.properties.color
+	            };
+			},
+			
+			// style des fiefs
+			fiefStyle: function(feature){
+				if ( feature.properties.color == null) {
+					feature.properties.color = randomColor({luminosity:'dark'});
+				}
+				return {
+	                weight: 2,
+	                opacity: 1,
+	                color: feature.properties.color,
+	                dashArray: '3',
+	                fillOpacity: 0,
+	                fillColor: '#666666'
+	            };
+			},
+
+			// Création du panneau d'information
+			createInfoPanel: function() {
+				this.infoPanel = L.control();
+				this.infoPanel.onAdd = function(map) {
+					cartographie.infoPanelDiv = L.DomUtil.create('div', 'info');
+					cartographie.infoPanelDiv.innerHTML = '';
+					$(cartographie.infoPanelDiv).hide();
+					return cartographie.infoPanelDiv;
+				};
+			},
+
+			displayInfoPanel: function(props)
+			{
+				if ( props && ! props.description ) props.description = 'Aucune description';
+				cartographie.infoPanelDiv.innerHTML = ('<h4>' + props.name + '</h4>'
+						+ '<p>' + props.description + '</p>');
+			},
+
+			// Création du pannel de sauvegarde d'une geometrie territoire
+			createSaveTerritoirePanel: function() {
+				this.saveTerritoirePanel = L.control();
+				this.saveTerritoirePanel.onAdd = function(map) {
+					cartographie.saveTerritoirePanelDiv = L.DomUtil.create('div', 'territoire');
+					cartographie.saveTerritoirePanelDiv.innerHTML = '';
+					$(cartographie.saveTerritoirePanelDiv).hide();
+					this.currentGeom = null;
+					return cartographie.saveTerritoirePanelDiv;
+				};
+			},
+
+			// Création du pannel de sauvegarde d'une geometrie fief
+			createSaveFiefPanel: function() {
+				this.saveFiefPanel = L.control();
+				this.saveFiefPanel.onAdd = function(map) {
+					cartographie.saveFiefPanelDiv = L.DomUtil.create('div', 'fief');
+					cartographie.saveFiefPanelDiv.innerHTML = '';
+					$(cartographie.saveFiefPanelDiv).hide();
+					this.currentGeom = null;
+					return cartographie.saveFiefPanelDiv;
+				};
+			},
+
+			// Création du panneau itineraire et distance
+			createItinerairePanel: function() {
+				this.itinerairePanel = L.control({'position':'bottomleft'});
+				this.itinerairePanel.onAdd = function(map) {
+					cartographie.itinerairePanelDiv = L.DomUtil.create('div','itineraire');
+					cartographie.itinerairePanelDiv.innerHTML = '';
+					$(cartographie.itinerairePanelDiv).hide();
+					this.currentGeom = null;
+					return cartographie.itinerairePanelDiv;
+				};
+			},
+
+			// Création du pannel de sauvegarde d'une geometrie route
+			createSaveRoutePanel: function() {
+				this.saveRoutePanel = L.control();
+				this.saveRoutePanel.onAdd = function(map) {
+					cartographie.saveRoutePanelDiv = L.DomUtil.create('div', 'route');
+					cartographie.saveRoutePanelDiv.innerHTML = '';
+					$(cartographie.saveRoutePanelDiv).hide();
+					this.currentGeom = null;
+					return cartographie.saveRoutePanelDiv;
+				};
+			},
+
+			// Création du pannel de sauvegarde d'une geometrie fortification
+			createSaveFortificationPanel: function() {
+				this.saveFortificationPanel = L.control();
+				this.saveFortificationPanel.onAdd = function(map) {
+					cartographie.saveFortificationPanelDiv = L.DomUtil.create('div', 'fortification');
+					cartographie.saveFortificationPanelDiv.innerHTML = '';
+					$(cartographie.saveFortificationPanelDiv).hide();
+					this.currentGeom = null;
+					return cartographie.saveFortificationPanelDiv;
+				};
+			},
+			
+			// Affiche le panneau de sauvegarde d'une geometrie territorie
+			displaySaveTerritoirePanel: function(geom) {
+					this.currentGeom = geom;
+					var select = '<label>Choisissez le territoire : </label>';
+					select = select + '<select id="selectedCountry">';
+					for(var key in this.countriesList)
+					{
+						select = select + '<option value="'+this.countriesList[key].id+'">'+this.countriesList[key].name+'</option>'
+					}
+					select = select +  '</select>';
+					select = select + '<input type="submit" value="Sauver" onclick="cartographie.saveTerritoire()"/>'
+					
+					cartographie.saveTerritoirePanelDiv.innerHTML = select;			
+					
+					$(cartographie.saveTerritoirePanelDiv).show();
+			},
+
+			// Affiche le panneau de sauvegarde d'une geometrie territorie
+			displaySaveFiefPanel: function(geom) {
+					this.currentGeom = geom;
+					var select = '<label>Choisissez le fief : </label>';
+					select = select + '<select id="selectedFief">';
+					for(var key in this.fiefsList)
+					{
+						select = select + '<option value="'+this.fiefsList[key].id+'">'+this.fiefsList[key].name+'</option>'
+					}
+					select = select +  '</select>';
+					select = select + '<input type="submit" value="Sauver" onclick="cartographie.saveFief()"/>'
+					
+					cartographie.saveFiefPanelDiv.innerHTML = select;			
+					
+					$(cartographie.saveFiefPanelDiv).show();
+			},
+
+			// calcul de la distance entre deux points
+			distance: function(latlngs) {
+				if ( latlngs.length <= 1) return 0;
+				var refPoint = latlngs[0];
+				var distanceTotal = 0;
+				
+				for (i=1; i< latlngs.length; i++) 
+				{
+					var Ay = (refPoint.lat *  -11536) / 180;
+					var Ax = (refPoint.lng * 16384) / 255;
+
+					var By = (latlngs[i].lat *  -11536) / 180;
+					var Bx = (latlngs[i].lng * 16384) / 255;
+					
+					var distance = Math.sqrt(Math.pow(Bx - Ax,2) + Math.pow(By - Ay,2));
+					
+					distanceTotal += distance;
+					refPoint = latlngs[i];
+				}
+				distanceTotal *= 1386.47; 
+				return distanceTotal;
+			},
+
+			// calcul le temps necessaire pour parcourir une distance en fonction du type de moyen de transport
+			calculTemps: function(distance, transport, heureParJour)
+			{
+				var heure = 0, jour = 0;
+				switch(transport) {
+					case "0": // pied 5km/heure
+						heure = Math.round(distance / 5);
+						break;
+					case "1": // cheval 15km/heure
+						heure = Math.round(distance / 15);
+						break;
+					case "2": // cavalerie normal 6.25Km/heure
+						heure = Math.round(distance / 6.25);
+						break;
+					case "3": // cavalerie forcée 9.4Km/heure
+						heure = Math.round(distance / 9.4);
+						break;
+					case "4": // cavalerie bagage 3km/heure
+						heure = Math.round(distance / 3);
+						break;
+					case "5": // infanterie normale 2.5km/heure
+						heure = Math.round(distance / 2.5);
+						break;
+					case "6": // infanterie forcée 5km/h
+						heure = Math.round(distance / 5);
+						break;
+				}
+
+				if ( heure > heureParJour ) {
+					jour = Math.round(heure / heureParJour);
+					heure = heure % heureParJour;
+				}
+
+				var text = '';
+				if ( jour > 0 ) text = jour+" jour(s) et ";
+				if ( heure == 0 ) text += "moins d'une heure";
+				else text += heure + " heures";
+				
+				$('#tempsVoyage').text(text);
+			},
+			
+			// Affiche le panneau de calcul du temps de voyage
+			displayItinerairePanel: function(layer)
+			{
+				var distance = this.distance(layer._latlngs);
+				distance = Math.round((distance / 1000)*100)/100;
+				var select = '<h4>Détail de votre itineraire</h4>';
+				select += '<strong>Distance :</strong><br /><span style="color:green">' + distance + ' Km'+'</span><br />';
+				select += '<label>Moyen de transport</label>'
+					+ '<select id="selectTempsVoyage">'
+					+ '<option value="0">Pied</option>'
+					+ '<option value="1">Cheval</option>'
+					+ '<option value="2">Cavalerie (Marche normale)</option>'
+					+ '<option value="3">Cavalerie (Marche forcée)</option>'
+					+ '<option value="4">Cavalerie (Bagages)</option>'
+					+ '<option value="5">Infanterie (Marche normale)</option>'
+					+ '<option value="6">Infanterie (Marche forcée)</option>'
+					+ '</select>'
+					+ '<label>Durée de la journée</label>'
+					+ '<input type="number" id="heureParJour" value="8" size="2"></input><br />'
+					+ '<strong>Durée du voyage</strong><br />'
+					+ '<div id="tempsVoyage" style="color:green;"></div>'
+					+ '<a href="#" onclick="cartographie.closeItinerairePanel()" style="float: right;">Fermer</a>';
+					
+				cartographie.itinerairePanelDiv.innerHTML = select;
+				$(cartographie.itinerairePanelDiv).show();
+
+				cartographie.calculTemps(distance, $("#selectTempsVoyage").val(), 8);
+
+				$('#heureParJour').change(function() {
+					var heureParJour = $(this).val();
+					cartographie.calculTemps(distance, $('#selectTempsVoyage').val(), heureParJour);
+				});
+				
+				$('#selectTempsVoyage').change(function() {
+					var heureParJour = $("#heureParJour").val();
+					cartographie.calculTemps(distance, $(this).val(), heureParJour);
+				});
+			},
+
+			// Ferme le panneau itineraire
+			closeItinerairePanel: function()
+			{
+				cartographie.itinerairePanelDiv.innerHtml = "";
+				$(cartographie.itinerairePanelDiv).hide();
+			},
+			
+			// Affiche le panneau de sauvegarde d'une geometrie territorie
+			displaySaveRoutePanel: function(geom) {
+					this.currentGeom = geom;
+					var select = '<p>Non disponible</p>';
+					cartographie.saveRoutePanelDiv.innerHTML = select;			
+					
+					$(cartographie.saveRoutePanelDiv).show();
+			},
+
+			// Affiche le panneau de sauvegarde d'une geometrie territorie
+			displaySaveFortificationPanel: function(geom) {
+				this.currentGeom = geom;
+				var select = '<p>Non disponible</p>';
+				cartographie.saveFortificationPanelDiv.innerHTML = select;			
+				
+				$(cartographie.saveFortificationPanelDiv).show();
+			},
+
+			// Chargement des pays
+			// Les geometries sont stocké dans les collections correspondates
+			// La liste des pays est mise à jour
+			loadCountries: function() {
+				$.ajax({
+					dataType: "json",
+					url: "world/countries.json",
+					success: function(data) {
+					    $(data).each(function(key, country) {
+						    if ( country.geom != null )
+						    {
+						    	var geom = JSON.parse(country.geom);
+						    	geom.properties.name = country.name;  	
+						    	geom.properties.description = country.description;
+						    	geom.properties.color = country.color;
+						    	geom.properties.id = country.id;
+						    	cartographie.countriesGeom.addData(geom);
+						    }
+						    
+						    cartographie.countriesList[country.id] = country;
+					    });
+					}
+					}).error(function() {});
+			},
+
+			// Chargement des fiefs
+			// Les geometries sont stocké dans les collections correspondates
+			// La liste des fiefs est mise à jour
+			loadFiefs: function() {
+			
+				$.ajax({
+					dataType: "json",
+					url: "world/fiefs.json",
+					success: function(data) {
+					    $(data).each(function(key, country) {
+						    if ( country.geom != null )
+						    {
+						    	var geom = JSON.parse(country.geom);
+						    	geom.properties.name = country.name;  	
+						    	geom.properties.description = country.description;
+						    	geom.properties.color = country.color;
+						    	cartographie.fiefsGeom.addData(geom);
+						    }
+	
+						    cartographie.fiefsList[country.id] = country;
+					    });
+					}
+					}).error(function() {});
+			},
+
+			// sauvegarde une geometrie de territoire en base de donnee
+			saveTerritoire: function() {
+				var country = document.getElementById("selectedCountry");
+				var territoireId = country.options[country.selectedIndex].value;
+					
+				$.ajax({
+					type: "POST",
+					dataType: 'json',
+					url: "world/countries/"+territoireId+"/update",
+					data: {geom: this.currentGeom, color: randomColor({luminosity: 'dark'}) },
+					success: function(data) {
+					    alert("la geographie a été enregistrée");
+					    var geom = JSON.parse(country.geom);
+				    	geom.properties.name = country.name;  	
+				    	geom.properties.description = country.description;
+					    this.countriesGeom.addData(geom);
+					}
+					}).error(function() {
+						alert("désolé, une erreur est survenue");
+					});
+				
+				cartographie.saveTerritoirePanelDiv.innerHTML = '';
+				$(cartographie.saveTerritoirePanelDiv).hide();
+				this.currentGeom = null;
+			},
+
+			// sauvegarde une geometrie de fief en base de donnée
+			saveFief: function() {
+				var country = document.getElementById("selectedFief");
+				var territoireId = country.options[country.selectedIndex].value;
+					
+				$.ajax({
+					type: "POST",
+					dataType: 'json',
+					url: "world/countries/"+territoireId+"/update",
+					data: {geom: this.currentGeom, color: randomColor({luminosity: 'light'})},
+					success: function(data) {
+					    alert("la geographie a été enregistrée");
+					    var geom = JSON.parse(country.geom);
+				    	geom.properties.name = country.name;  	
+				    	geom.properties.description = country.description;
+					    this.fiefsGeom.addData(geom);
+					}
+					}).error(function() {
+						alert("désolé, une erreur est survenue");
+					});
+				
+				cartographie.saveFiefPanelDiv.innerHTML = '';
+				$(cartographie.saveFiefPanelDiv).hide();
+				this.currentGeom = null;
+			},
+
+			// Evenement création geometrie
+			drawCreated: function(e) {
+			    var type = e.layerType,
+		        layer = e.layer;
+
+			    if (type === 'territoire') {
+					cartographie.displaySaveTerritoirePanel(JSON.stringify(layer.toGeoJSON()));
+			    }
+			    else if (type === 'fief') {
+			    	cartographie.displaySaveFiefPanel(JSON.stringify(layer.toGeoJSON()));
+			    }
+			    else if (type === 'itineraire') {
+				    cartographie.displayItinerairePanel(layer);
+			    }
+			    else if (type === 'route') {
+			    	//cartographie.displaySaveRoutePanel(JSON.stringify(layer.toGeoJSON()));
+			    }
+			    else if (type === 'fortification') {
+			    	//cartographie.displaySaveFortificationPanel(JSON.stringify(layer.toGeoJSON()));
+			    }
+				
+			    layer.addTo(cartographie.drawnItems);
+			    cartographie.map.addLayer(layer);
+			},
+
+			// Evenement édition geometrie
+			drawEdited: function(e) {
+			    var layers = e.layers;
+			    layers.eachLayer(function (layer) {
+			        //do whatever you want, most likely save back to db
+			        //cartographie.displaySaveTerritoirePanel(JSON.stringify(layer.toGeoJSON()));
+			    });
+			},
+
+			// Applique les geometries et les layers sur la carte
+			applyOnMap: function() {
+				this.countriesGeom.addTo(this.map);
+				
+
+				// Options disponibles dans le controlLayer
+				var baseMaps = {
+					"Base" : this.baseTileLayer
+					//"Working": this.workingTileLayer
+				};
+
+				// Options disponibles dans le controlLayer
+				var overlayMaps = {
+					"Pays" : this.countriesGeom,
+					"Fiefs" : this.fiefsGeom
+				};
+
+				
+				L.control.layers(
+					baseMaps, 
+					overlayMaps).addTo(this.map);
+				
+				L.control.mousePosition().addTo(this.map);
+
+				this.map.keyboard.enable();	
+
+				this.map.addLayer(this.drawnItems);
+
+				
+				{% if is_granted('ROLE_ORGA', app.user) %}
+					this.map.addControl(this.drawControl);
+				{% endif %}
+				
+				this.infoPanel.addTo(this.map);
+				this.saveTerritoirePanel.addTo(this.map);
+				this.saveFiefPanel.addTo(this.map);
+				this.itinerairePanel.addTo(this.map);
+				this.saveRoutePanel.addTo(this.map);
+				this.saveFortificationPanel.addTo(this.map);
+
+				this.map.on('draw:created', this.drawCreated);
+				this.map.on('draw:edited', this.drawEdited);
+			}
+			
+	};
+
+	cartographie.createMap();
+	cartographie.createMapBounds();
+	cartographie.createBaseTileLayer();
+	
+	cartographie.fitMap();
+	
+	cartographie.createGeomCollection();
+	cartographie.createInfoPanel();
+	cartographie.createDrawControl();
+	cartographie.createSaveTerritoirePanel();
+	cartographie.createSaveFiefPanel();
+	cartographie.createItinerairePanel();
+	cartographie.createSaveRoutePanel();
+	cartographie.createSaveFortificationPanel();
+	cartographie.loadCountries();
+	cartographie.loadFiefs();
+	
+	cartographie.applyOnMap();
+
+</script>
+
+{% endblock %}

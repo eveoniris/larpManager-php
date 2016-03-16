@@ -2,6 +2,8 @@
 namespace LarpManager\Controllers;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Doctrine\ORM\Query;
 use Silex\Application;
 use LarpManager\Form\RessourceForm;
 
@@ -13,6 +15,26 @@ use LarpManager\Form\RessourceForm;
  */
 class RessourceController
 {
+	
+	/**
+	 * API: fourni la liste des ressources
+	 * GET /api/ressource
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function apiListAction(Request $request, Application $app)
+	{
+		$qb = $app['orm.em']->createQueryBuilder();
+		$qb->select('Ressource')
+			->from('\LarpManager\Entities\Ressource','Ressource');
+	
+		$query = $qb->getQuery();
+	
+		$ressources = $query->getResult(Query::HYDRATE_ARRAY);
+		return new JsonResponse($ressources);
+	}
+	
 	/**
 	 * Liste des ressources
 	 * 

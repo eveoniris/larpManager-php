@@ -2,6 +2,7 @@
 
 namespace LarpManager;
 
+use Symfony\Component\HttpFoundation\Request;
 use Silex\Application;
 use Silex\ControllerProviderInterface;
 
@@ -16,10 +17,10 @@ class ChronologieControllerProvider implements ControllerProviderInterface
 	/**
 	 * Initialise les routes pour les territoires
 	 * Routes :
-	 * 	- chrono_list
-	 * 	- chrono_add
-	 *  - chrono_modify
-	 *  - chrono_remove
+	 * 	- chrononologie
+	 * 	- chrononologie.admin.add
+	 * 	- chrononologie.admin.update
+	 * 	- chrononologie.admin.remove
 	 *
 	 * @param Application $app
 	 * @return Controllers $controllers
@@ -29,15 +30,34 @@ class ChronologieControllerProvider implements ControllerProviderInterface
 		// creates a new controller based on the default route
 		$controllers = $app['controllers_factory'];
 
-		$controllers->get('/','LarpManager\Controllers\ChronologieController::indexAction')->bind("chrono_list");
-		$controllers->get('/add','LarpManager\Controllers\ChronologieController::addAction')->bind("chrono_add");
-		$controllers->post('/add','LarpManager\Controllers\ChronologieController::addAction');
-		$controllers->post('/{index}/modify','LarpManager\Controllers\ChronologieController::modifyAction');
-		$controllers->get('/{index}/modify','LarpManager\Controllers\ChronologieController::modifyAction')->bind("chrono_modify");
-		$controllers->get('/{index}/remove','LarpManager\Controllers\ChronologieController::removeAction')->bind("chrono_remove");
-		$controllers->post('/{index}/remove','LarpManager\Controllers\ChronologieController::removeAction');
-		$controllers->get('/{index}','LarpManager\Controllers\ChronologieController::detailAction');
-
+		/**
+		 * Vérifie que l'utilisateur dispose du role ORGA
+		 */
+		$mustBeOrga = function(Request $request) use ($app) {
+			if (!$app['security.authorization_checker']->isGranted('ROLE_ORGA')) {
+				throw new AccessDeniedException();
+			}
+		};
+		
+		$controllers->match('/','LarpManager\Controllers\ChronologieController::indexAction')
+					->bind("chronologie")
+					->method('GET');
+		
+		$controllers->match('/admin/add','LarpManager\Controllers\ChronologieController::addAction')
+					->bind("chronologie.admin.add")
+					->method('GET|POST')
+					->before($mustBeOrga);
+		
+		$controllers->match('/admin/{index}/update','LarpManager\Controllers\ChronologieController::updateAction')
+					->bind("chronologie.admin.update")
+					->method('GET|POST')
+					->before($mustBeOrga);
+		
+		$controllers->match('/admin/{index}/remove','LarpManager\Controllers\ChronologieController::removeAction')
+					->bind("chronologie.admin.remove")
+					->method('GET|POST')
+					->before($mustBeOrga);
+		
 		return $controllers;
 	}
 }

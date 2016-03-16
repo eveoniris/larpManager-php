@@ -6,10 +6,9 @@ use Silex\Application;
 use JasonGrimes\Paginator;
 use LarpManager\Form\GroupeSecondaireForm;
 use LarpManager\Form\GroupeSecondairePostulerForm;
-use LarpManager\Form\PostulantReponseForm;
 use LarpManager\Form\SecondaryGroupFindForm;
-
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use LarpManager\Entities\Message;
+use LarpManager\Form\MessageForm;
 
 /**
  * LarpManager\Controllers\GroupeSecondaireController
@@ -19,6 +18,16 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
  */
 class GroupeSecondaireController
 {
+	/**
+	 * Page d'accueil de gestion des groupes secondaires
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function accueilAction(Request $request, Application $app)
+	{
+		return $app['twig']->render('public/groupeSecondaire/accueil.twig', array());
+	}
+	
 	/**
 	 * Liste des groupes secondaires (pour les orgas)
 	 *
@@ -101,15 +110,13 @@ class GroupeSecondaireController
 	 * @param Application $app
 	 */
 	public function postulerAction(Request $request, Application $app)
-	{
-		$id = $request->get('index');
-		
-		$groupeSecondaire = $app['orm.em']->find('\LarpManager\Entities\SecondaryGroup',$id);
-		
+	{	
+		$groupeSecondaire = $request->get('groupe');
+
 		/**
-		 * Si le joueur est déjà postulant dans ce groupe, refuser d'office la demande
+		 * L'utilisateur doit avoir un personnage
+		 * @var Personnage $personnage
 		 */
-		$repoPostulant = $app['orm.em']->getRepository('\LarpManager\Entities\Postulant');
 		$personnage = $app['user']->getPersonnage();
 		
 		if ( ! $personnage )
@@ -117,16 +124,29 @@ class GroupeSecondaireController
 			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créer un personnage avant de postuler à un groupe !');
 			return $app->redirect($app['url_generator']->generate('homepage'));
 		}
-		
-		foreach (  $personnage->getPostulants() as $postulant )
+
+		/**
+		 * Si le joueur est déjà postulant dans ce groupe, refuser la demande
+		 */
+		if ( $groupeSecondaire->isPostulant($personnage) )
 		{
-			if ( $postulant->getSecondaryGroup() == $groupeSecondaire )
-			{
-				$app['session']->getFlashBag()->add('error', 'Votre avez déjà postulé dans ce groupe. Inutile d\'en refaire la demande.');
-				return $app->redirect($app['url_generator']->generate('homepage'));
-			}
+			$app['session']->getFlashBag()->add('error', 'Votre avez déjà postulé dans ce groupe. Inutile d\'en refaire la demande.');
+			return $app->redirect($app['url_generator']->generate('homepage'));
 		}
 		
+		/**
+		 * Si le joueur est déjà membre de ce groupe, refuser la demande
+		 */
+		if ( $groupeSecondaire->isMembre($personnage) )
+		{
+			$app['session']->getFlashBag()->add('error', 'Votre êtes déjà membre de ce groupe. Inutile d\'en refaire la demande.');
+			return $app->redirect($app['url_generator']->generate('homepage'));
+		}
+		
+		/**
+		 * Création du formulaire
+		 * @var unknown $form
+		 */		
 		$form = $app['form.factory']->createBuilder(new GroupeSecondairePostulerForm())
 			->add('postuler','submit', array('label' => "Postuler"))
 			->getForm();
@@ -136,10 +156,12 @@ class GroupeSecondaireController
 		if ( $form->isValid() )
 		{
 			$data = $form->getData();
+			
 			$postulant = new \LarpManager\Entities\Postulant();
 			$postulant->setPersonnage($app['user']->getPersonnage());
 			$postulant->setSecondaryGroup($groupeSecondaire);
 			$postulant->setExplanation($data['explanation']);
+			$postulant->setWaiting(false);
 		
 			$app['orm.em']->persist($postulant);
 			$app['orm.em']->flush();
@@ -199,7 +221,8 @@ class GroupeSecondaireController
 			$topic->setTitle($groupeSecondaire->getLabel());
 			$topic->setDescription($groupeSecondaire->getDescription());
 			$topic->setUser($app['user']);
-
+			$topic->setTopic($app['larp.manager']->findTopic('TOPIC_GROUPE_SECONDAIRE'));
+			$app['orm.em']->persist($topic);
 			$app['orm.em']->persist($groupeSecondaire);
 			$app['orm.em']->flush();
 			
@@ -213,9 +236,17 @@ class GroupeSecondaireController
 			 * Ajoute le responsable du groupe dans le groupe si il n'y est pas déjà
 			 */
 			$personnage = $groupeSecondaire->getResponsable();
-			if ( $personnage )
+			if ( ! $groupeSecondaire->isMembre($personnage) )
 			{
-				$groupeSecondaire->addPersonnage($personnage);
+				$membre = new \LarpManager\Entities\Membre();
+				$membre->setPersonnage($personnage);
+				$membre->setSecondaryGroup($groupeSecondaire);
+				$membre->setSecret(false);
+				
+				$app['orm.em']->persist($membre);
+				$app['orm.em']->flush();
+				
+				$groupeSecondaire->addMembre($membre);
 			}
 			
 			$app['orm.em']->persist($topic);
@@ -247,9 +278,7 @@ class GroupeSecondaireController
 	 */
 	public function adminUpdateAction(Request $request, Application $app)
 	{
-		$id = $request->get('index');
-	
-		$groupeSecondaire = $app['orm.em']->find('\LarpManager\Entities\SecondaryGroup',$id);
+		$groupeSecondaire = $request->get('groupe');
 	
 		$form = $app['form.factory']->createBuilder(new GroupeSecondaireForm(), $groupeSecondaire)
 			->add('update','submit', array('label' => "Sauvegarder"))
@@ -268,9 +297,28 @@ class GroupeSecondaireController
 				 * Ajoute le responsable du groupe dans le groupe si il n'y est pas déjà
 				 */
 				$personnage = $groupeSecondaire->getResponsable();
-				if ( ! $groupeSecondaire->getPersonnages()->contains($personnage))
+				if ( ! $groupeSecondaire->isMembre($personnage) )
 				{
-					$groupeSecondaire->addPersonnage($personnage);
+					$membre = new \LarpManager\Entities\Membre();
+					$membre->setPersonnage($personnage);
+					$membre->setSecondaryGroup($groupeSecondaire);
+					$membre->setSecret(false);
+					
+					$app['orm.em']->persist($membre);
+					$app['orm.em']->flush();
+					
+					$groupeSecondaire->addMembre($membre);
+				}
+				
+				/**
+				 * Retire la candidature du responsable si elle existe
+				 */
+				foreach ( $groupeSecondaire->getPostulants() as $postulant)
+				{
+					if ( $postulant->getPersonnage() == $personnage )
+					{
+						$app['orm.em']->remove($postulant);
+					}
 				}
 				
 				$app['orm.em']->persist($groupeSecondaire);
@@ -301,114 +349,87 @@ class GroupeSecondaireController
 	 */
 	public function adminDetailAction(Request $request, Application $app)
 	{
-		$id = $request->get('index');
-		$groupeSecondaire = $app['orm.em']->find('\LarpManager\Entities\SecondaryGroup',$id);
-		if ( $groupeSecondaire )
-		{
-			return $app['twig']->render('admin/groupeSecondaire/detail.twig', array('groupeSecondaire' => $groupeSecondaire));
-		}
-		else
-		{
-			$app['session']->getFlashBag()->add('error', 'Le groupe secondaire n\'a pas été trouvé.');
-			return $app->redirect($app['url_generator']->generate('groupeSecondaire'));
-		}
+		$groupeSecondaire = $request->get('groupe');
+
+		return $app['twig']->render('admin/groupeSecondaire/detail.twig', array(
+				'groupeSecondaire' => $groupeSecondaire));
 	}
 	
 	/**
-	 * Detail d'un type de groupe secondaire
-	 *
+	 * Retire un postulant du groupe
+	 * 
 	 * @param Request $request
 	 * @param Application $app
 	 */
-	public function detailAction(Request $request, Application $app)
+	public function adminRemovePostulantAction(Request $request, Application $app)
 	{
-		$id = $request->get('index');
-		$groupeSecondaire = $app['orm.em']->find('\LarpManager\Entities\SecondaryGroup',$id);
-	
-		if ( $groupeSecondaire )
-		{
-			if ( $app['security.authorization_checker']->isGranted('GROUPE_SECONDAIRE_RESPONSABLE',$groupeSecondaire->getId()) )
-			{
-				return $app['twig']->render('groupeSecondaire/detail_responsable.twig', array('groupeSecondaire' => $groupeSecondaire));
-			}
-			if ( $app['security.authorization_checker']->isGranted('GROUPE_SECONDAIRE_MEMBER',$groupeSecondaire->getId()) )
-			{
-				return $app['twig']->render('groupeSecondaire/detail_member.twig', array('groupeSecondaire' => $groupeSecondaire));
-			}
-			else
-			{
-				throw new AccessDeniedException();
-			}
-		}
-		else
-		{
-			$app['session']->getFlashBag()->add('error', 'Le groupe secondaire n\'a pas été trouvé.');
-			return $app->redirect($app['url_generator']->generate('homepage'),301);
-		}
+		$groupeSecondaire = $request->get('groupe');
+		$postulant = $request->get('postulant');
+		
+		$app['orm.em']->remove($postulant);
+		$app['orm.em']->flush();
+				
+		$app['session']->getFlashBag()->add('success', 'la candidature a été supprimée.');
+		
+		return $app['twig']->render('admin/groupeSecondaire/detail.twig', array(
+				'groupeSecondaire' => $groupeSecondaire));
 	}
 	
-
 	/**
-	 * Accepter une candidature à un groupe secondaire (orgas)
+	 * Retirer le droit de lire les secrets à un utilisateur
+	 * 
+	 * @param Request $request
+	 * @param Applicetion $app
+	 */
+	public function adminSecretOffAction(Request $request, Application $app)
+	{
+		$groupeSecondaire = $request->get('groupe');
+		$membre = $request->get('membre');
+		
+		$membre->setSecret(false);
+		$app['orm.em']->persist($membre);
+		$app['orm.em']->flush();
+		
+		return $app['twig']->render('admin/groupeSecondaire/detail.twig', array(
+				'groupeSecondaire' => $groupeSecondaire));
+	}
+	
+	/**
+	 * Active le droit de lire les secrets à un utilisateur
 	 *
+	 * @param Request $request
+	 * @param Applicetion $app
+	 */
+	public function adminSecretOnAction(Request $request, Application $app)
+	{
+		$groupeSecondaire = $request->get('groupe');
+		$membre = $request->get('membre');
+	
+		$membre->setSecret(true);
+		$app['orm.em']->persist($membre);
+		$app['orm.em']->flush();
+	
+		return $app['twig']->render('admin/groupeSecondaire/detail.twig', array(
+				'groupeSecondaire' => $groupeSecondaire));
+	}
+		
+	/**
+	 * Affichage à destination d'un membre du groupe secondaire
 	 * @param Request $request
 	 * @param Application $app
 	 */
-	public function adminReponseAction(Request $request, Application $app)
+	public function joueurAction(Request $request, Application $app)
 	{
-		$id = $request->get('index');
-		$postulantId = $request->get('postulantId');
-	
-		$groupeSecondaire = $app['orm.em']->find('\LarpManager\Entities\SecondaryGroup',$id);
-		$postulant = $app['orm.em']->find('\LarpManager\Entities\Postulant',$postulantId);
-	
-		// le candidat doit effectivement candidater à ce groupe
-		if ( $postulant->getSecondaryGroup() != $groupeSecondaire )
-		{
-			$app['session']->getFlashBag()->add('error', 'Le postulant ne demande pas à participer à ce groupe! .');
-			return $app->redirect($app['url_generator']->generate('homepage'),301);
-		}
+		$groupeSecondaire = $request->get('groupe');
 		
-		$form = $app['form.factory']->createBuilder(new PostulantReponseForm())
-			->add('accepter','submit', array('label' => "Accepter"))
-			->add('refuser','submit', array('label' => "Refuser"))
-			->getForm();
-
-		$form->handleRequest($request);
-			
-		if ( $form->isValid() )
-		{
-			$data = $form->getData();
-			
-			if ($form->get('accepter')->isClicked())
-			{	
-				$personnage = $postulant->getPersonnage();
-				$personnage->addSecondaryGroup($groupeSecondaire);
-				
-				$app['orm.em']->persist($personnage);
-				$app['orm.em']->remove($postulant);
-				$app['orm.em']->flush();
-				
-				$app['session']->getFlashBag()->add('success', 'La candidature a été acceptée.');
-				return $app->redirect($app['url_generator']->generate('groupeSecondaire.admin.detail', array('index' => $groupeSecondaire->getId())),301);
-			}
-			else if ( $form->get('refuser')->isClicked())
-			{
-				$app['orm.em']->remove($postulant);
-				$app['orm.em']->flush();
-				$app['session']->getFlashBag()->add('success', 'La candidature a été refusée.');
-				return $app->redirect($app['url_generator']->generate('groupeSecondaire.admin.detail', array('index' => $groupeSecondaire->getId())),301);
-			}
-			
-		}
+		$personnage = $app['user']->getPersonnage();
+		$membre = $personnage->getMembre($groupeSecondaire);
 		
-		return $app['twig']->render('admin/groupeSecondaire/reponse.twig', array(
-			'groupeSecondaire' => $groupeSecondaire,
-			'postulant' => $postulant,
-			'form' => $form->createView(),
-		));
-	}
-	
+		return $app['twig']->render('public/groupeSecondaire/detail.twig', array(
+				'groupeSecondaire' => $groupeSecondaire,
+				'membre' => $membre,
+		));		
+	}	
 	
 	/**
 	 * Accepter une candidature à un groupe secondaire
@@ -416,20 +437,159 @@ class GroupeSecondaireController
 	 * @param Request $request
 	 * @param Application $app
 	 */
-	public function reponseAction(Request $request, Application $app)
+	public function gestionAcceptAction(Request $request, Application $app)
 	{
-		$id = $request->get('index');
-		$postulantId = $request->get('postulantId');
+		$groupeSecondaire = $request->get('groupe');
+		$postulant = $request->get('postulant');
 		
-		$groupeSecondaire = $app['orm.em']->find('\LarpManager\Entities\SecondaryGroup',$id);
-		$postulant = $app['orm.em']->find('\LarpManager\Entities\Postulant',$postulantId);
+		$form = $app['form.factory']->createBuilder()
+			->add('envoyer','submit', array('label' => "Accepter le postulant"))
+			->getForm();
 		
-		// le candidat doit effectivement candidater à ce groupe
-		return $app['twig']->render('public/groupeSecondaire/reponse.twig', array(
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$personnage = $postulant->getPersonnage();
+			
+			$membre = new \LarpManager\Entities\Membre();
+			$membre->setPersonnage($personnage);
+			$membre->setSecondaryGroup($groupeSecondaire);
+			$membre->setSecret(false);
+				
+			$app['orm.em']->persist($membre);
+			$app['orm.em']->remove($postulant);
+			$app['orm.em']->flush();
+			
+			$app['user.mailer']->sendGroupeSecondaireAcceptMessage($personnage->getParticipant()->getUser(), $groupeSecondaire);
+			
+			$app['session']->getFlashBag()->add('success', 'Vous avez accepté la candidature. Un message a été envoyé au joueur concerné.');
+			return $app->redirect($app['url_generator']->generate('groupeSecondaire.joueur', array('groupe' => $groupeSecondaire->getId())),301);
+		}
+		
+		return $app['twig']->render('public/groupeSecondaire/gestion_accept.twig', array(
 			'groupeSecondaire' => $groupeSecondaire,
 			'postulant' => $postulant,
 			'form' => $form->createView(),
 		));
 	}
-
+	
+	/**
+	 * Accepter une candidature à un groupe secondaire
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function gestionRejectAction(Request $request, Application $app)
+	{
+		$groupeSecondaire = $request->get('groupe');
+		$postulant = $request->get('postulant');
+		
+		$form = $app['form.factory']->createBuilder()
+			->add('envoyer','submit', array('label' => "Refuser le postulant"))
+			->getForm();
+		
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$personnage = $postulant->getPersonnage();
+			$app['orm.em']->remove($postulant);
+			$app['orm.em']->flush();
+				
+			$app['user.mailer']->sendGroupeSecondaireRejectMessage($personnage()->getParticipant()->getUser(), $groupeSecondaire);
+				
+			$app['session']->getFlashBag()->add('success', 'Vous avez refusé la candidature. Un message a été envoyé au joueur concerné.');
+			return $app->redirect($app['url_generator']->generate('groupeSecondaire.joueur', array('groupe' => $groupeSecondaire->getId())),301);
+		}
+		
+		
+		return $app['twig']->render('public/groupeSecondaire/gestion_reject.twig', array(
+				'groupeSecondaire' => $groupeSecondaire,
+				'postulant' => $postulant,
+				'form' => $form->createView(),
+		));
+	}
+	
+	/**
+	 * Laisser la candidature dans les postulant
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function gestionWaitAction(Request $request, Application $app)
+	{
+		$groupeSecondaire = $request->get('groupe');
+		$postulant = $request->get('postulant');
+		
+		$form = $app['form.factory']->createBuilder()
+			->add('envoyer','submit', array('label' => "Laisser en attente"))
+			->getForm();
+	
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$postulant->setWaiting(true);
+			$app['orm.em']->persist($postulant);
+			$app['orm.em']->flush($postulant);
+			
+			$app['user.mailer']->sendGroupeSecondaireWaitMessage($postulant->getPersonnage()->getParticipant()->getUser(), $groupeSecondaire);
+	
+			$app['session']->getFlashBag()->add('success', 'La candidature reste en attente. Un message a été envoyé au joueur concerné.');
+			return $app->redirect($app['url_generator']->generate('groupeSecondaire.joueur', array('groupe' => $groupeSecondaire->getId())),301);
+		}
+	
+	
+		return $app['twig']->render('public/groupeSecondaire/gestion_wait.twig', array(
+				'groupeSecondaire' => $groupeSecondaire,
+				'postulant' => $postulant,
+				'form' => $form->createView(),
+		));
+	}
+	
+	/**
+	 * Répondre à un postulant
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function gestionResponseAction(Request $request, Application $app)
+	{
+		$groupeSecondaire = $request->get('groupe');
+		$postulant = $request->get('postulant');
+	
+		$message = new Message();
+		
+		$message->setUserRelatedByAuteur($app['user']);
+		$message->setUserRelatedByDestinataire($postulant->getPersonnage()->getParticipant()->getUser());
+		$message->setCreationDate(new \Datetime('NOW'));
+		$message->setUpdateDate(new \Datetime('NOW'));
+	
+		$form = $app['form.factory']->createBuilder(new MessageForm(), $message)
+			->add('envoyer','submit', array('label' => "Envoyer votre réponse"))
+			->getForm();
+	
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$message = $form->getData();
+			
+			$app['orm.em']->persist($message);
+			$app['orm.em']->flush();
+			
+			$app['user.mailer']->sendNewMessage($message);
+	
+			$app['session']->getFlashBag()->add('success', 'Votre message a été envoyé au joueur concerné.');
+			return $app->redirect($app['url_generator']->generate('groupeSecondaire.joueur', array('groupe' => $groupeSecondaire->getId())),301);
+		}
+	
+	
+		return $app['twig']->render('public/groupeSecondaire/gestion_response.twig', array(
+				'groupeSecondaire' => $groupeSecondaire,
+				'postulant' => $postulant,
+				'form' => $form->createView(),
+		));
+	}
 }

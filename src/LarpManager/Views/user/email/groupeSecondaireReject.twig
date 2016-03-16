@@ -1,0 +1,23 @@
+{#
+Template for an email message sent to confirm an email address.
+Variables passed to this template:
+    user: The SimpleUser\User instance.
+    confirmationUrl: The link to click to complete the confirmation process.
+#}
+
+{# The subject line. #}
+{%- block subject -%}{%- autoescape false -%}
+    {{ groupeSecondaire.label }} -- Candidature refusée
+{%- endautoescape -%}{%- endblock -%}
+
+{# The plain text message. #}
+{%- block body_text -%}{%- autoescape false -%}
+
+Nous sommes désolés mais le groupe est au complet ou bien nous n'avons pas confiance en vous, nous ne retenons pas votre candidature, mais si vous êtes très motivé, vous pourrez chercher à nous rencontrer en jeu pour en discuter de vive voix.
+
+{%- endautoescape -%}{%- endblock -%}
+
+{# The HTML message. Optional. #}
+{%- block body_html -%}
+    <p>Nous sommes désolés mais le groupe est au complet ou bien nous n'avons pas confiance en vous, nous ne retenons pas votre candidature, mais si vous êtes très motivé, vous pourrez chercher à nous rencontrer en jeu pour en discuter de vive voix</p>
+{%- endblock -%}

@@ -1,0 +1,37 @@
+{% extends "layout.twig" %}
+
+{% block title %}Discuter{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Page d'accueil</a></li>
+		<li class="active">Trombine</li>
+	</ol>
+	
+	<div class="well bs-component">
+	
+		<blockquote>Téléversez une photo de vous pour le trombinoscope. Ce trombinoscope sera visible par les orgas, et les membres de vos groupes.</blockquote>
+								
+		<div class="header"><h5>Votre trombine</h5></div>
+
+		{% if app.user.trombineUrl %}		
+			<img src="{{ path('trombine.get', {'trombine' : app.user.trombineUrl }) }}" />
+		{% else %}
+			Aucune photo.
+		{% endif %}
+		
+		<div class="header"><h5>Modifier votre trombine</h5></div>
+		
+		<form action="{{ path('trombine') }}" method="POST" {{ form_enctype(form) }}>
+			
+				
+				{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+				{{ form(form) }}
+			
+		</form>
+		
+			
+	</div>
+	
+{% endblock content %}

@@ -2,9 +2,11 @@
 namespace LarpManager\Controllers;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Silex\Application;
 use LarpManager\Form\ReligionForm;
 use LarpManager\Form\ReligionLevelForm;
+use Doctrine\ORM\Query;
 
 /**
  * LarpManager\Controllers\ReligionController
@@ -14,6 +16,25 @@ use LarpManager\Form\ReligionLevelForm;
  */
 class ReligionController
 {
+	/**
+	 * API: fourni la liste des religions
+	 * GET /api/religion
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function apiListAction(Request $request, Application $app)
+	{
+		$qb = $app['orm.em']->createQueryBuilder();
+		$qb->select('Religion')
+			->from('\LarpManager\Entities\Religion','Religion');
+
+		$query = $qb->getQuery();
+	
+		$religions = $query->getResult(Query::HYDRATE_ARRAY);
+		return new JsonResponse($religions);
+	}
+	
 	/**
 	 * affiche la liste des religions
 	 * 
@@ -91,15 +112,15 @@ class ReligionController
 			$topic->setUser($app['user']);
 			$topic->setTopic($app['larp.manager']->findTopic('TOPIC_CULTE'));
 			$topic->setRight('CULTE');
+				
+			$app['orm.em']->persist($topic);
+			$app['orm.em']->flush();
 			
+			$religion->setTopic($topic);
 			$app['orm.em']->persist($religion);
 			$app['orm.em']->flush();
 			
 			$topic->setObjectId($religion->getId());
-			$religion->setTopic($topic);
-				
-			$app['orm.em']->persist($topic);
-			$app['orm.em']->persist($religion);
 			$app['orm.em']->flush();
 			
 			$app['session']->getFlashBag()->add('success', 'La religion a été ajoutée.');

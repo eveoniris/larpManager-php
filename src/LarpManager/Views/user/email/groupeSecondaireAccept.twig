@@ -1,0 +1,26 @@
+{#
+Template for an email message sent to confirm an email address.
+Variables passed to this template:
+    user: The SimpleUser\User instance.
+    confirmationUrl: The link to click to complete the confirmation process.
+#}
+
+{# The subject line. #}
+{%- block subject -%}{%- autoescape false -%}
+    {{ groupeSecondaire.label }} -- Candidature acceptée
+{%- endautoescape -%}{%- endblock -%}
+
+{# The plain text message. #}
+{%- block body_text -%}{%- autoescape false -%}
+
+Vous faites désormais partie du groupe {{ groupeSecondaire.label }} ! Vous avez accès au forum du groupe.
+
+{%- endautoescape -%}{%- endblock -%}
+
+{# The HTML message. Optional. #}
+{%- block body_html -%}
+
+    <h1>Vous faites désormais partie du groupe {{ groupeSecondaire.label }} !</h1>
+    <p>Vous avez accès au forum du groupe</p>
+
+{%- endblock -%}

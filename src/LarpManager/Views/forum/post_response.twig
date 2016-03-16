@@ -24,12 +24,12 @@
 						</div>
 						{% for post in postToResponse.posts|reverse %}
 						<div class="list-group-item">
-							<p class="list-group-item-text">{{ post.text|markdown }}</p>
+							<p class="list-group-item-text"><strong>{{ post.user.username }}</strong>{{ post.text|markdown }}</p>
 						</div>	
 						{% endfor %}
 						
 						<div class="list-group-item">
-							<p class="list-group-item-text">{{ postToResponse.text|markdown }}</p>
+							<p class="list-group-item-text"><strong>{{ postToResponse.user.username }}</strong>{{ postToResponse.text|markdown }}</p>
 						</div>	
 					</div>
 				</div>
@@ -50,7 +50,11 @@
 		tinyMCE.init({
 				mode: "textareas",
 				theme: "modern",
-				plugins : "spellchecker,insertdatetime,preview", 
+				plugins : "spellchecker,insertdatetime,preview,link,autolink",
+				browser_spellcheck: true,
+				menubar: "edit, insert, view, format, tools",
+				toolbar:  "undo, redo, formatselect, bold, italic, alignright, aligncenter, alignright, alignjustify, bullist, numlist  link",
+				link_assume_external_targets: true
 		});
 		
 	</script>

@@ -9,6 +9,7 @@
 
 namespace LarpManager\Entities;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use LarpManager\Entities\BaseGroupe;
 
 /**
@@ -43,6 +44,207 @@ class Groupe extends BaseGroupe
 		return $this->getNom();	
 	}
 	
+	/**
+	 * Determine si un groupe est allié avec ce groupe
+	 * @param Groupe $groupe
+	 */
+	public function isAllyTo(Groupe $groupe)
+	{
+		foreach ( $this->getAlliances() as $alliance)
+		{
+			if ($alliance->getGroupe() == $groupe
+				|| $alliance->getRequestedGroupe() == $groupe )
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Determine si un groupe est ennemi avec ce groupe
+	 * @param Groupe $groupe
+	 */
+	public function isEnemyTo(Groupe $groupe)
+	{
+		foreach ( $this->getEnnemies() as $war)
+		{
+			if ($war->getGroupe() == $groupe
+				|| $war->getRequestedGroupe() == $groupe )
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Fourni la liste des toutes les alliances de ce groupe
+	 */
+	public function getAlliances()
+	{
+		$alliances = new ArrayCollection();
+		
+		foreach ( $this->groupeAllieRelatedByGroupeIds as $alliance)
+		{
+			if ( $alliance->getGroupeAccepted() && $alliance->getGroupeAllieAccepted() )
+			{
+				$alliances[] = $alliance;
+			}
+		}
+		
+		foreach ( $this->groupeAllieRelatedByGroupeAllieIds as $alliance)
+		{
+			if ( $alliance->getGroupeAccepted() && $alliance->getGroupeAllieAccepted() )
+			{
+				$alliances[] = $alliance;
+			}
+		}
+		
+		return $alliances;
+	}
+	
+	/**
+	 * Fourni la liste de toutes les alliances en cours de négotiation 
+	 */
+	public function getWaitingAlliances()
+	{
+		$alliances = new ArrayCollection();
+		
+		foreach ( $this->groupeAllieRelatedByGroupeIds as $alliance)
+		{
+			if ( ! $alliance->getGroupeAccepted() || ! $alliance->getGroupeAllieAccepted() )
+			{
+				$alliances[] = $alliance;
+			}
+		}
+		
+		foreach ( $this->groupeAllieRelatedByGroupeAllieIds as $alliance)
+		{
+			if ( ! $alliance->getGroupeAccepted() || ! $alliance->getGroupeAllieAccepted() )
+			{
+				$alliances[] = $alliance;
+			}
+		}
+		
+		return $alliances;
+	}
+	
+	/**
+	 * Fourni la liste de toutes les demandes d'alliances
+	 */
+	public function getRequestedAlliances()
+	{
+		$alliances = new ArrayCollection();
+		
+		foreach ( $this->groupeAllieRelatedByGroupeAllieIds as $alliance)
+		{
+			if ( ! $alliance->getGroupeAllieAccepted() )
+			{
+				$alliances[] = $alliance;
+			}
+				
+		}
+		return $alliances;
+	}
+	
+	/**
+	 * Fourni la liste de toutes les alliances demandés
+	 */
+	public function getSelfRequestedAlliances()
+	{
+		$alliances = new ArrayCollection();
+		
+		foreach ( $this->groupeAllieRelatedByGroupeIds as $alliance)
+		{
+			if ( ! $alliance->getGroupeAllieAccepted() )
+			{
+				$alliances[] = $alliance;
+			}
+		
+		}
+		return $alliances;		
+	}
+	
+	/**
+	 * Fourni tous les ennemis du groupe
+	 */
+	public function getEnnemies()
+	{
+		$enemies = new ArrayCollection();
+		
+		foreach ( $this->groupeEnemyRelatedByGroupeIds as $enemy)
+		{
+			if ( $enemy->getGroupePeace() == false || $enemy->getGroupeEnemyPeace() == false )
+			{
+				$enemies[] = $enemy;
+			}			
+		}
+		
+		foreach ( $this->groupeEnemyRelatedByGroupeEnemyIds as $enemy)
+		{
+			if ( $enemy->getGroupePeace() == false || $enemy->getGroupeEnemyPeace() == false )
+			{
+				$enemies[] = $enemy;
+			}
+		}
+		
+		return $enemies;
+	}
+	
+	/**
+	 * Fourni la liste des anciens ennemis
+	 */
+	public function getOldEnemies()
+	{
+		$enemies = new ArrayCollection();
+		
+		foreach ( $this->groupeEnemyRelatedByGroupeIds as $enemy)
+		{
+			if ( $enemy->getGroupePeace() == true && $enemy->getGroupeEnemyPeace() == true )
+			{
+				$enemies[] = $enemy;
+			}
+		}
+		
+		foreach ( $this->groupeEnemyRelatedByGroupeEnemyIds as $enemy)
+		{
+			if ( $enemy->getGroupePeace() == true && $enemy->getGroupeEnemyPeace() == true )
+			{
+				$enemies[] = $enemy;
+			}
+		}
+		
+		return $enemies;
+	}
+	
+	/**
+	 * Fournie toutes les negociation de paix en cours
+	 */
+	public function getWaitingPeace()
+	{
+		$enemies = new ArrayCollection();
+		
+		foreach ( $this->groupeEnemyRelatedByGroupeIds as $enemy)
+		{
+			if ( ( $enemy->getGroupePeace() == true || $enemy->getGroupeEnemyPeace() == true)
+				&& (! ( $enemy->getGroupePeace() == true && $enemy->getGroupeEnemyPeace() == true)) )
+			{
+				$enemies[] = $enemy;
+			}
+		}
+		
+		foreach ( $this->groupeEnemyRelatedByGroupeEnemyIds as $enemy)
+		{
+			if ( ( $enemy->getGroupePeace() == true || $enemy->getGroupeEnemyPeace() == true)
+				&& (! ( $enemy->getGroupePeace() == true && $enemy->getGroupeEnemyPeace() == true)) )
+			{
+				$enemies[] = $enemy;
+			}
+		}
+		
+		return $enemies;
+	}
 	
 	/**
 	 * Trouve le personnage de l'utilisateur dans ce groupe
@@ -190,4 +392,5 @@ class Groupe extends BaseGroupe
 	{
 		return $this->removeGroupeClasse($groupeClasse);
 	}
+	
 }

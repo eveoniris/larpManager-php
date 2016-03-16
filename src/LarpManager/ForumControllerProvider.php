@@ -25,6 +25,8 @@ class ForumControllerProvider implements ControllerProviderInterface
 	 * 	- forum.topic.post : affichage des posts d'un topic
 	 * 	- forum.topic.post.add : ajout d'un post dans un topic
 	 * 	- forum.post.update : modification d'un post
+	 *  - forum.post.notification.on : active les notifications
+	 *  - forum.post.notification.off : desactive les notifications
 	 *   
 	 * @param Application $app
 	 * @return Controllers $controllers
@@ -118,6 +120,32 @@ class ForumControllerProvider implements ControllerProviderInterface
 					throw new AccessDeniedException();
 				}
 			});
+			
+		/** active les notifications */
+		$controllers->match('/post/{index}/notification/on','LarpManager\Controllers\ForumController::postNotificationOnAction')
+			->assert('index', '\d+')
+			->bind("forum.post.notification.on")
+			->method('GET')
+			->before(function(Request $request) use ($app) {
+				$postId = $request->get('index');
+				$post = $app['orm.em']->find('\LarpManager\Entities\Post',$postId);
+				if (!$app['security.authorization_checker']->isGranted('TOPIC_RIGHT',$post->getTopic()) ) {
+					throw new AccessDeniedException();
+				}
+		});
+			
+		/** active les notifications */
+		$controllers->match('/post/{index}/notification/off','LarpManager\Controllers\ForumController::postNotificationOffAction')
+			->assert('index', '\d+')
+			->bind("forum.post.notification.off")
+			->method('GET')
+			->before(function(Request $request) use ($app) {
+				$postId = $request->get('index');
+				$post = $app['orm.em']->find('\LarpManager\Entities\Post',$postId);
+				if (!$app['security.authorization_checker']->isGranted('TOPIC_RIGHT',$post->getTopic()) ) {
+					throw new AccessDeniedException();
+				}
+		});
 		
 		/** Voir un post */
 		$controllers->match('/post/{index}','LarpManager\Controllers\ForumController::postAction')
@@ -132,7 +160,7 @@ class ForumControllerProvider implements ControllerProviderInterface
 				}
 			});
 
-		/** Ajouter un sous-forum */
+		/** Supprimer un post */
 		$controllers->match('/post/{index}/delete','LarpManager\Controllers\ForumController::postDeleteAction')
 			->assert('index', '\d+')
 			->bind("forum.post.delete")

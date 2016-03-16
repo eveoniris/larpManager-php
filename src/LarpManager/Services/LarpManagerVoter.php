@@ -167,9 +167,9 @@ class LarpManagerVoter implements VoterInterface
 		{
 			if ( $participant->getPersonnage() )
 			{
-				if ( $participant->getPersonnage()->getPersonnageReligion() )
+				foreach ( $participant->getPersonnage()->getPersonnagesReligions() as $personnageReligion )
 				{
-					if ( $participant->getPersonnage()->getPersonnageReligion()->getReligion()->getId() == $culteId )
+					if ( $personnageReligion->getReligion()->getId() == $culteId )
 					{
 						return true;
 					}
@@ -234,7 +234,7 @@ class LarpManagerVoter implements VoterInterface
 		{
 			foreach ( $user->getGroupes() as $groupe)
 			{
-				$territoire = $groupe()->getTerritoire();
+				$territoire = $groupe->getTerritoire();
 				if ( $territoire && $territoire->getId() == $territoireId) return true;
 			}
 		}
@@ -255,8 +255,9 @@ class LarpManagerVoter implements VoterInterface
 		$personnage = $user->getPersonnage();
 		if ( $personnage )
 		{
-			foreach ( $personnage->getSecondaryGroups() as $groupe )
+			foreach ( $personnage->getMembres() as $groupeMember )
 			{
+				$groupe = $groupeMember->getSecondaryGroup();
 				if ( $groupe instanceof \LarpManager\Entities\SecondaryGroup
 						&& $groupe->getId() == $groupeSecondaireId)
 					return true;
@@ -273,7 +274,7 @@ class LarpManagerVoter implements VoterInterface
 	 */
 	protected function isHisPost($user, $postId)
 	{
-		foreach( $user->getPosts() as $post)
+		foreach( $user->getPostRelatedByUserIds() as $post)
 		{
 			if ( $post instanceOf \LarpManager\Entities\Post
 				&& $post->getId() == $postId)
@@ -352,8 +353,10 @@ class LarpManagerVoter implements VoterInterface
 		$personnage = $user->getPersonnage();
 		if ( $personnage )
 		{
-			foreach ( $personnage->getSecondaryGroups() as $groupe )
+			foreach ( $personnage->getMembres() as $membre )
 			{
+				$groupe = $membre->getSecondaryGroup();
+				
 				if ( $groupe instanceof \LarpManager\Entities\SecondaryGroup
 						&& $groupe->getId() == $groupeSecondaireId)
 					return true;

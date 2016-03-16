@@ -61,7 +61,17 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 			return new PersonnageConverter($app['orm.em']);
 		});
 		
-		// personnage converter
+		// territoire converter
+		$app['converter.territoire'] = $app->share(function($app) {
+			return new TerritoireConverter($app['orm.em']);
+		});
+		
+		// event converter
+		$app['converter.event'] = $app->share(function($app) {
+			return new EventConverter($app['orm.em']);
+		});
+		
+		// personnage secondaire converter
 		$app['converter.personnageSecondaire'] = $app->share(function($app) {
 			return new PersonnageSecondaireConverter($app['orm.em']);
 		});
@@ -74,6 +84,41 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 		// background converter
 		$app['converter.background'] = $app->share(function($app) {
 			return new BackgroundConverter($app['orm.em']);
+		});
+		
+		// groupe converter
+		$app['converter.groupe'] = $app->share(function($app) {
+			return new GroupeConverter($app['orm.em']);
+		});
+		
+		// secondaryGroup converter
+		$app['converter.secondaryGroup'] = $app->share(function($app) {
+			return new SecondaryGroupConverter($app['orm.em']);
+		});
+		
+		// postulant converter
+		$app['converter.postulant'] = $app->share(function($app) {
+			return new PostulantConverter($app['orm.em']);
+		});
+		
+		// membre converter
+		$app['converter.membre'] = $app->share(function($app) {
+			return new MembreConverter($app['orm.em']);
+		});
+		
+		// alliance converter
+		$app['converter.alliance'] = $app->share(function($app) {
+			return new AllianceConverter($app['orm.em']);
+		});
+			
+		// enemy converter
+		$app['converter.enemy'] = $app->share(function($app) {
+			return new EnemyConverter($app['orm.em']);
+		});
+		
+		// competence converter
+		$app['converter.competence'] = $app->share(function($app) {
+			return new CompetenceConverter($app['orm.em']);
 		});
 	}
 

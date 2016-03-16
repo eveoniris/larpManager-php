@@ -1,0 +1,30 @@
+{# The subject line. #}
+{%- block subject -%}{%- autoescape false -%}
+    Votre proposition d'alliance a été accepté.
+{%- endautoescape -%}{%- endblock -%}
+
+{# The plain text message. #}
+{%- block body_text -%}{%- autoescape false -%}
+
+Le groupe {{ alliance.requestedGroupe.nom }} a accepté votre proposition d'alliance.
+
+{{ alliance.messageAllie }}
+
+Cliquez sur le lien ci-dessous pour accéder directement a la page de gestion de votre groupe :
+
+{{ path('groupe') }}
+
+{%- endautoescape -%}{%- endblock -%}
+
+{# The HTML message. Optional. #}
+{%- block body_html -%}
+
+    <h3>Le groupe {{ alliance.requestedGroupe.nom }} a accepté votre proposition d'alliance</h3>
+    
+    <p>{{ alliance.messageAllie|markdown }}</p>
+
+    <p>
+        <a href="{{ path('groupe') }}"> Suivez ce lien pour accéder directement a la page de gestion de votre groupe</a>.
+    </p>
+
+{%- endblock -%}

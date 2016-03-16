@@ -1,4 +1,4 @@
-<ul class="list-group">
+<ul class="list-group forum">
 
 	{%  for post in posts %}
 	<li class="list-group-item">
@@ -35,7 +35,7 @@
 			<div class="col-xs-3 col-md-3">
 				{% set lastPost = post.posts|last %}
 				{% if lastPost %}
-					<a href="{{ path('forum.post',{'index':post.id}) ~ '#post_' ~ lastPost.id }}">Dernier message</a> par {{ lastPost.user.username }}<br />
+					<a href="{{ path('forum.post',{'index':post.ancestor.id}) ~ '#post_' ~ lastPost.ancestor.id }}">Dernier message</a> par {{ lastPost.user.username }}<br />
 					{{ lastPost.creationDate|time_diff }}
 				{% endif %} 
 			</div>

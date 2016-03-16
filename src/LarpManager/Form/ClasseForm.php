@@ -23,11 +23,19 @@ class ClasseForm extends AbstractType
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
 		$builder->add('label_masculin','text', array(
-					'required' => true,	)
-				)
+					'required' => true,	
+				))
+				->add('image_m','text', array(
+					'label' => 'Adresse de l\'image utilisé pour représenté cette classe',
+					'required' => true,
+				))
 				->add('label_feminin','text', array(
-						'required' => true,	)
-				)
+					'required' => true,	
+				))
+				->add('image_f','text', array(
+					'label' => 'Adresse de l\'image utilisé pour représenté cette classe',
+					'required' => true,
+				))
 				->add('description','textarea', array(
 					'required' => false,)
 				)

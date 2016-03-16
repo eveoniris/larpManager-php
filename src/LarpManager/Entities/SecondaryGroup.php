@@ -23,7 +23,7 @@ class SecondaryGroup extends BaseSecondaryGroup
 	 */
 	public function getResponsable()
 	{
-		return $this->getPersonnageRelatedByPersonnageId();
+		return $this->getPersonnage();
 	}
 	
 	/**
@@ -32,8 +32,36 @@ class SecondaryGroup extends BaseSecondaryGroup
 	 */
 	public function setResponsable(Personnage $personnage)
 	{
-		$this->setPersonnageRelatedByPersonnageId($personnage);
+		$this->setPersonnage($personnage);
 		return $this;
+	}
+	
+	/**
+	 * Vérifie si un personnage est membre du groupe
+	 * 
+	 * @param Personnage $personnage
+	 */
+	public function isMembre(Personnage $personnage)
+	{
+		foreach ( $this->getMembres() as $membre)
+		{
+			if ( $membre->getPersonnage() == $personnage) return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Vérifie si un personnage est postulant à ce groupe
+	 * 
+	 * @param Personnage $personnage
+	 */
+	public function isPostulant(Personnage $personnage)
+	{
+		foreach ( $this->getPostulants() as $postulant)
+		{
+			if ( $postulant->getPersonnage() == $personnage) return true;
+		}
+		return false;
 	}
 		
 }

@@ -5,8 +5,10 @@ namespace LarpManager\Controllers;
 use Symfony\Component\HttpFoundation\Request;
 use Silex\Application;
 use LarpManager\Form\GroupeInscriptionForm;
-use LarpManager\Form\PersonnageSecondaireChoiceForm;
 use LarpManager\Form\GnInscriptionForm;
+use LarpManager\Form\TrombineForm;
+use Imagine\Image\Box;
+
 
 
 /**
@@ -36,6 +38,65 @@ class HomepageController
 		}
 		
 		return $this->joueurIndexAction($request, $app);
+	}
+	
+	/**
+	 * Modification de la photo
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function trombineAction(Request $request, Application $app)
+	{
+		$form = $app['form.factory']->createBuilder(new TrombineForm(), array())
+			->add('envoyer','submit', array('label' => 'Envoyer'))
+			->getForm();
+		
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$files = $request->files->get($form->getName());
+
+			$path = __DIR__.'/../../../private/img/';
+			$filename = $files['trombine']->getClientOriginalName();
+			$extension = $files['trombine']->guessExtension();
+			
+			if (!$extension || ! in_array($extension, array('png', 'jpg', 'jpeg','bmp'))) {
+				$app['session']->getFlashBag()->add('error','Désolé, votre image ne semble pas valide (vérifiez le format de votre image)');
+				return $app->redirect($app['url_generator']->generate('trombine'),301);
+			}
+						
+			$trombineFilename = hash('md5',$app['user']->getUsername().$filename . time()).'.'.$extension; 
+			
+			$image = $app['imagine']->open($files['trombine']->getPathname());
+			$image->resize($image->getSize()->widen( 160 ));
+			$image->save($path. $trombineFilename);
+
+			$app['user']->setTrombineUrl($trombineFilename);
+			$app['orm.em']->persist($app['user']);
+			$app['orm.em']->flush();
+			
+			$app['session']->getFlashBag()->add('success','Votre photo a été enregistrée');
+			return $app->redirect($app['url_generator']->generate('trombine'),301);
+		}
+		
+		return $app['twig']->render('public/trombine.twig', array(
+				'form' => $form->createView()
+		));
+	}
+	
+	/**
+	 * Obtenir une image protégée
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function getTrombineAction(Request $request, Application $app)
+	{
+		$trombine = $request->get('trombine');
+		$filename = __DIR__.'/../../../private/img/'.$trombine;
+		return $app->sendFile($filename);
 	}
 	
 	/**
@@ -105,7 +166,102 @@ class HomepageController
 	 */
 	public function worldAction(Request $request, Application $app)
 	{	
-		return $app['twig']->render('homepage/world.twig');		
+		return $app['twig']->render('public/world.twig');		
+	}
+	
+	/**
+	 * Fourni la liste des pays, leur geographie et leur description
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function countriesAction(Request $request, Application $app)
+	{
+		$repoTerritoire = $app['orm.em']->getRepository('LarpManager\Entities\Territoire');
+		$territoires = $repoTerritoire->findRoot();
+		
+		$countries = array();
+		foreach ( $territoires as $territoire)
+		{
+			$countries[] = array(
+					'id' => $territoire->getId(),
+					'geom' => $territoire->getGeojson(),
+					'name' => $territoire->getNom(),
+					'color' => $territoire->getColor(),
+					'description' => strip_tags($territoire->getDescription())
+				);
+		}
+		
+		return $app->json($countries);
+	}
+	
+	public function fiefsAction(Request $request, Application $app)
+	{
+		$repoTerritoire = $app['orm.em']->getRepository('LarpManager\Entities\Territoire');
+		$territoires = $repoTerritoire->findFiefs();
+		
+		$fiefs = array();
+		foreach ( $territoires as $territoire)
+		{
+			$fiefs[] = array(
+					'id' => $territoire->getId(),
+					'geom' => $territoire->getGeojson(),
+					'name' => $territoire->getNom(),
+					'color' => $territoire->getColor(),
+					'description' => strip_tags($territoire->getDescription())
+			);
+		}
+		
+		return $app->json($fiefs);
+	}
+
+	/**
+	 * Met à jour la geographie d'un pays
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function updateCountryGeomAction(Request $request, Application $app)
+	{
+		$territoire = $request->get('territoire');
+		$geom = $request->get('geom');
+		$color = $request->get('color');
+		
+		$territoire->setGeojson($geom);
+		$territoire->setColor($color);
+		
+		$app['orm.em']->persist($territoire);
+		$app['orm.em']->flush();
+		
+		$country = array(
+					'id' => $territoire->getId(),
+					'geom' => $territoire->getGeojson(),
+					'name' => $territoire->getNom(),
+					'description' => strip_tags($territoire->getDescription())
+				);
+		return $app->json($country);
+	}
+	
+	/**
+	 * Affiche une page récapitulatif des liens pour discuter
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function discuterAction(Request $request, Application $app)
+	{
+		return $app['twig']->render('public/discuter.twig');
+	}
+	
+	/**
+	 * Affiche une page récapitulatif des événements
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function evenementAction(Request $request, Application $app)
+	{
+		return $app['twig']->render('public/evenement.twig');
 	}
 	
 	/**

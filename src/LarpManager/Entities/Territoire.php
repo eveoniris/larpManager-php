@@ -21,7 +21,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  *
  * @Entity(repositoryClass="LarpManager\Repository\TerritoireRepository")
  */
-class Territoire extends BaseTerritoire
+class Territoire extends BaseTerritoire implements \JsonSerializable
 {
 	/**
 	 * @ManyToMany(targetEntity="Ressource", inversedBy="importateurs")
@@ -72,13 +72,70 @@ class Territoire extends BaseTerritoire
 	}
 	
 	/**
+	 * Serializer
+	 */
+	public function jsonSerialize() {
+		return array(
+				'id' => $this->getId(),
+				'nom' => $this->getNom(),
+				'description' => $this->getDescription(),
+				'capitale' => $this->getCapitale(),
+				'politique' => $this->getPolitique(),
+				'dirigeant' => $this->getDirigeant(),
+				'population' => $this->getPopulation(),
+				'symbole' => $this->getSymbole(),
+				'tech_level' => $this->getTechLevel(),
+				'type_racial' => $this->getTypeRacial(),
+				'inspiration' => $this->getInspiration(),
+				'armes_predilection' => $this->getArmesPredilection(),
+				'vetements' => $this->getVetements(),
+				'noms_masculin' => $this->getNomsMasculin(),
+				'noms_feminin' => $this->getNomsFeminin(),
+				'frontieres' => $this->getFrontieres(),
+				'religion_id' => ( $this->getReligion() ) ? $this->getReligion()->getId() : '',
+				/*'chronologies'
+				'groupes'
+				'langue_principale'
+				'religion_principale'
+				'langues'
+				'religions'
+				'importations'
+				'exporations'*/
+				
+		);
+	}
+	
+	/**
+	 * Unserializer
+	 * 
+	 * @param unknown $payload
+	 */
+	public function jsonUnserialize($payload) {
+		$this->setNom($payload->nom);
+		$this->setDescription($payload->description);
+		$this->setCapitale($payload->capitale);
+		$this->setPolitique($payload->politique);
+		$this->setDirigeant($payload->dirigeant);
+		$this->setPopulation($payload->population);
+		$this->setSymbole($payload->symbole);
+		$this->setTechLevel($payload->tech_level);
+		$this->setTypeRacial($payload->type_racial);
+		$this->setInspiration($payload->inspiration);
+		$this->setArmesPredilection($payload->armes_predilection);
+		$this->setVetements($payload->vetements);
+		$this->setNomsMasculin($payload->noms_masculin);
+		$this->setNomsFeminin($payload->noms_feminin);
+		$this->setFrontieres($payload->frontieres);
+	}
+	
+	/**
 	 * Affichage
 	 */
 	public function __toString()
 	{
 		return $this->getNomTree();
 	}
-	
+		
 	/**
 	 * Calcule le nombre d'étape necessaire pour revenir au parent le plus ancien
 	 */
@@ -149,8 +206,8 @@ class Territoire extends BaseTerritoire
 	 */
 	public function addExportation(Ressource $ressource)
 	{
-		$ressource->addExporteur($this);
-		$this->exporations[] = $ressource;
+		$ressource->addExportateur($this);
+		$this->exportations[] = $ressource;
 	
 		return $this;
 	}
@@ -164,7 +221,7 @@ class Territoire extends BaseTerritoire
 	public function removeExportation(Ressource $ressource)
 	{
 		$ressource->removeExportateur($this);
-		$this->$exporations->removeElement($ressource);
+		$this->exportations->removeElement($ressource);
 	
 		return $this;
 	}
@@ -187,7 +244,7 @@ class Territoire extends BaseTerritoire
 	 */
 	public function addImportation(Ressource $ressource)
 	{
-		$ressource->addImporteur($this);
+		$ressource->addImportateur($this);
 		$this->importations[] = $ressource;
 	
 		return $this;
@@ -201,8 +258,8 @@ class Territoire extends BaseTerritoire
 	 */
 	public function removeImportation(Ressource $ressource)
 	{
-		$ressource->removeImporteur($this);
-		$this->$importations->removeElement($ressource);
+		$ressource->removeImportateur($this);
+		$this->importations->removeElement($ressource);
 	
 		return $this;
 	}
@@ -225,7 +282,7 @@ class Territoire extends BaseTerritoire
 	 */
 	public function addLangue(Langue $langue)
 	{
-		$ressource->addTerritoireSecondaire($this);
+		$langue->addTerritoireSecondaire($this);
 		$this->langues[] = $langue;
 	
 		return $this;
@@ -278,7 +335,7 @@ class Territoire extends BaseTerritoire
 	public function removeReligion(Religion $religion)
 	{
 		$religion->removeTerritoireSecondaire($this);
-		$this->$religions->removeElement($religion);
+		$this->religions->removeElement($religion);
 	
 		return $this;
 	}

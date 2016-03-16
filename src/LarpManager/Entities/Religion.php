@@ -74,4 +74,5 @@ class Religion extends BaseReligion
 	{
 		return $this->getTerritoires();
 	}
+	
 }

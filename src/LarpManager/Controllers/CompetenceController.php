@@ -25,7 +25,7 @@ class CompetenceController
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Competence');
 		$competences = $repo->findAllOrderedByLabel();
 			
-		return $app['twig']->render('competence/index.twig', array('competences' => $competences));
+		return $app['twig']->render('admin/competence/index.twig', array('competences' => $competences));
 	}
 
 	/**
@@ -37,7 +37,7 @@ class CompetenceController
 	public function listAction(Request $request, Application $app)
 	{
 		$competences = $app['larp.manager']->getRootCompetences();
-		return $app['twig']->render('competence/list_joueur.twig', array('competences' => $competences));
+		return $app['twig']->render('public/competence/index.twig', array('competences' => $competences));
 	}
 	
 	/**
@@ -87,6 +87,26 @@ class CompetenceController
 		if ( $form->isValid() )
 		{
 			$competence = $form->getData();
+			
+			// Si un document est fourni, l'enregistrer
+			if ( $files['document'] != null )
+			{
+				$path = __DIR__.'/../../../private/doc/';
+				$filename = $files['document']->getClientOriginalName();
+				$extension = $files['document']->guessExtension();
+			
+				if (!$extension || ! in_array($extension, array('pdf'))) {
+					$app['session']->getFlashBag()->add('error','Désolé, votre document ne semble pas valide (vérifiez le format de votre document)');
+					return $app->redirect($app['url_generator']->generate('competence.family'),301);
+				}
+			
+				$documentFilename = hash('md5',$competence->getLabel().$filename . time()).'.'.$extension;
+					
+				$files['document']->move($path,$documentFilename);
+					
+				$competence->setDocumentUrl($documentFilename);
+			}
+			
 				
 			$app['orm.em']->persist($competence);
 			$app['orm.em']->flush();
@@ -95,7 +115,7 @@ class CompetenceController
 				
 			if ( $form->get('save')->isClicked())
 			{
-				return $app->redirect($app['url_generator']->generate('competence.family'),301);
+				return $app->redirect($app['url_generator']->generate('competence.detail', array('competence'=> $competence->getId())));
 			}
 			else if ( $form->get('save_continue')->isClicked())
 			{
@@ -103,7 +123,7 @@ class CompetenceController
 			}
 		}
 		
-		return $app['twig']->render('competence/add.twig', array(
+		return $app['twig']->render('admin/competence/add.twig', array(
 				'form' => $form->createView(),
 		));	
 	}
@@ -116,20 +136,9 @@ class CompetenceController
 	 */
 	public function detailAction(Request $request, Application $app)
 	{
-		$id = $request->get('index');
+		$competence = $request->get('competence');
 		
-		$competence = $app['orm.em']->find('\LarpManager\Entities\Competence',$id);
-		
-		if ( $competence )
-		{
-			return $app['twig']->render('competence/detail.twig', array('competence.family' => $competence));
-		}
-		else
-		{
-			$app['session']->getFlashBag()->add('error', 'La compétence n\'a pas été trouvée.');
-			return $app->redirect($app['url_generator']->generate('competence'));
-		}
-		
+		return $app['twig']->render('admin/competence/detail.twig', array('competence' => $competence));
 	}
 	
 	/**
@@ -140,10 +149,8 @@ class CompetenceController
 	 */
 	public function updateAction(Request $request, Application $app)
 	{
-		$id = $request->get('index');
-		
-		$competence = $app['orm.em']->find('\LarpManager\Entities\Competence',$id);
-		
+		$competence = $request->get('competence');
+				
 		$form = $app['form.factory']->createBuilder(new CompetenceForm(), $competence)
 			->add('update','submit', array('label' => "Sauvegarder"))
 			->add('delete','submit', array('label' => "Supprimer"))
@@ -154,12 +161,36 @@ class CompetenceController
 		if ( $form->isValid() )
 		{
 			$competence = $form->getData();
+			
+			$files = $request->files->get($form->getName());
+			
+			// si un document est fourni, l'enregistré
+			if ( $files['document'] != null )
+			{
+				$path = __DIR__.'/../../../private/doc/';
+				$filename = $files['document']->getClientOriginalName();
+				$extension = $files['document']->guessExtension();
+				
+				if (!$extension || ! in_array($extension, array('pdf'))) {
+					$app['session']->getFlashBag()->add('error','Désolé, votre document ne semble pas valide (vérifiez le format de votre document)');
+					return $app->redirect($app['url_generator']->generate('competence.family'),301);
+				}
+				
+				$documentFilename = hash('md5',$competence->getLabel().$filename . time()).'.'.$extension;
+					
+				$files['document']->move($path,$documentFilename);
+					
+				$competence->setDocumentUrl($documentFilename);
+			}
+			
 				
 			if ($form->get('update')->isClicked())
 			{	
 				$app['orm.em']->persist($competence);
 				$app['orm.em']->flush();
 				$app['session']->getFlashBag()->add('success', 'La compétence a été mise à jour.');
+				
+				return $app->redirect($app['url_generator']->generate('competence.detail', array('competence'=> $competence->getId())));
 			}
 			else if ($form->get('delete')->isClicked())
 			{
@@ -167,14 +198,52 @@ class CompetenceController
 				$app['orm.em']->flush();
 					
 				$app['session']->getFlashBag()->add('success', 'La compétence a été supprimée.');
+				
+				return $app->redirect($app['url_generator']->generate('competence'));
 			}
 		
-			return $app->redirect($app['url_generator']->generate('competence.family'));
+			
 		}
 		
-		return $app['twig']->render('competence/update.twig', array(
+		return $app['twig']->render('admin/competence/update.twig', array(
 				'competence' => $competence,
 				'form' => $form->createView(),
 		));
+	}
+	
+	/**
+	 * Téléchargement du document lié à une compétence
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function getDocumentAction(Request $request, Application $app)
+	{
+		$document = $request->get('document');
+		$competence = $request->get('competence');
+		
+		// on ne peux télécharger que les documents des compétences que l'on connait
+		if  ( ! $app['security.authorization_checker']->isGranted('ROLE_REGLE') )
+		{
+			if ( $app['user']->getPersonnage() )
+			{
+				if ( ! $app['user']->getPersonnage()->getCompetences()->contains($competence) )
+				{
+					$app['session']->getFlashBag()->add('error', 'Vous n\'avez pas les droits necessaires');
+				}
+			}
+		}
+		
+		$file = __DIR__.'/../../../private/doc/'.$document;
+		
+		$stream = function () use ($file) {
+			readfile($file);
+		};
+		
+		return $app->stream($stream, 200, array(
+	        'Content-Type' => 'text/pdf',
+	        'Content-length' => filesize($file),
+	        'Content-Disposition' => 'attachment; filename="'.$competence->getLabel().'.pdf"' 
+        ));
 	}
 }

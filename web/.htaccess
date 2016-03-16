@@ -2,7 +2,7 @@
     Options -MultiViews
 
     RewriteEngine On
-	RewriteBase /larp-manager-php/
+	#RewriteBase /larp-manager-php/
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [QSA,L]
 </IfModule>

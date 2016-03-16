@@ -15,7 +15,7 @@
 	</ol>
 	
     <div class="well well-sm">
-	    <form class="form-horizontal" method="POST">
+	    <form class="form-horizontal" method="POST" action="{{ path("user.edit", {'id': user.id}) }}">
 	
 	        <div class="form-group">
 	            <label class="col-sm-2 control-label" for="input-name">
