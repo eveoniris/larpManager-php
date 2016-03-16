@@ -133,6 +133,26 @@ class Personnage extends BasePersonnage
 	}
 	
 	/**
+	 * Ajoute des points de renomme à un personnage
+	 * @param unknown $renomme
+	 */
+	public function addRenomme($renomme)
+	{
+		$this->setRenomme($this->getRenomme() + $renomme);
+		return $this;
+	}
+	
+	/**
+	 * Retire des points de renomme à un personnage
+	 * @param unknown $renomme
+	 */
+	public function removeRenomme($renomme)
+	{
+		$this->setRenomme($this->getRenomme() - $renomme);
+		return $this;
+	}
+	
+	/**
 	 * Recupère le nom de classe genrifié du personnage 
 	 * @todo : Evoluer vers un modèle de données ou les libélés de ressource sont variable en fonction du genre
 	 */

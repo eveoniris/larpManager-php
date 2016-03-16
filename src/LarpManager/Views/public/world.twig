@@ -32,7 +32,7 @@
 				padding: 0 0 0 0;
 			}
 			
-			.info, .territoire, .fief, .route, .fortification {
+			.info, .territoire, .fief, .itineraire, .route, .fortification {
 				padding: 6px 8px;
 				font: 14px/16px Arial, Helvetica, sans-serif;
 				background: white;
@@ -41,7 +41,7 @@
 				border-radius: 5px;
 				width: 300px;
 			}
-			.info h4 {
+			.info h4, .territoire h4, .fief h4, .itineraire h4, .route h4, .fortification h4 {
 				margin: 0 0 5px;
 				color: #777;
 			}
@@ -59,6 +59,10 @@
 			}
 			
 			.leaflet-draw-toolbar .leaflet-draw-draw-route {
+				background-position: 0 -1px;
+			}
+			
+			.leaflet-draw-toolbar .leaflet-draw-draw-itineraire {
 				background-position: 0 -1px;
 			}
 
@@ -86,6 +90,7 @@
 <script src="{{ app.request.basepath }}/leaflet/leaflet.draw.js"></script>
 <script src="{{ app.request.basepath }}/js/randomColor.min.js"></script>
 
+
 <script>
 
 
@@ -109,7 +114,7 @@
 			fiefsList : Object(),
 
 			// Collection des geometries des pays		
-			countriesGeom: null, 
+			countriesGeom: null,
 
 			// Collection des geometries des fiefs
 			fiefsGeom: null,
@@ -141,6 +146,10 @@
 			// Panneau de sauvegarde d'une geometrie de territoire
 			saveRoutePanel : null,
 			saveRoutePanelDiv: null,
+
+			// Panneau de calcul de distance & itineraire
+			itinerairePanel: null,
+			itinerairePanelDiv: null,
 
 			// Panneau de sauvegarde d'une geometrie de territoire
 			saveFortificationPanel : null,
@@ -174,12 +183,6 @@
 				var _mapCenter = this.map.unproject([16384/2, 11536/2], this.mapMaxZoom);
 				this.map.setView(_mapCenter, this.mapNormalZoom);
 			},
-
-			distanceTo: function() {
-				var w = 16384 / 255;
-				var h = 11536 / 180;
-				
-			},
 			
 			// Création du tileLayer de base
 			createBaseTileLayer : function() {
@@ -207,7 +210,13 @@
 			// Permet de lier des événements à une géométrie
 			onEachFeature: function(feature, layer) {
 			    if (feature.properties ) {
-			        layer.bindPopup(feature.properties.name);
+				    var editLink = "{{ app.request.basepath }}/territoire/"+feature.properties.id+"/update";
+
+			        layer.bindPopup(
+					        '<strong>'+feature.properties.name+'</strong>' 
+					        {% if is_granted('ROLE_ORGA', app.user) %}
+					        	+'<br /><a href="'+editLink+'">Modifier</a>'
+					        {% endif %});
 			        layer.on({
 				        mouseover: cartographie.mouseOver,
 					    mouseout: cartographie.mouseOut
@@ -242,6 +251,13 @@
 					 initialize: function (map, options) {
 						 L.Draw.Polygon.prototype.initialize.call(this, map, options);
 				          this.type = 'fief';
+				      }
+				});
+
+				L.Draw.Itineraire = L.Draw.Polyline.extend({
+					 initialize: function (map, options) {
+						 L.Draw.Polyline.prototype.initialize.call(this, map, options);
+				         this.type = 'itineraire';
 				      }
 				});
 				
@@ -281,6 +297,17 @@
 				                enabled: true,
 				                handler: new L.Draw.Fief(map),
 				                title: 'Tracer un fief'
+				            },
+				            {
+				                enabled: true,
+				                handler: new L.Draw.Itineraire(map, {
+				                	shapeOptions: {
+				                		weight: 6,
+				                		color: '#3d86c2',	
+				                		opacity: 0.8,
+				                	},
+					                showLength: false}),
+				                title: 'Calculer un itineraire'
 				            },
 				            {
 				                enabled: true,
@@ -329,8 +356,8 @@
 	                opacity: 1,
 	                color: feature.properties.color,
 	                dashArray: '10',
-	                fillOpacity: 0,
-	                fillColor: '#666666'
+	                fillOpacity: 0.2,
+	                fillColor: feature.properties.color
 	            };
 			},
 			
@@ -391,6 +418,18 @@
 				};
 			},
 
+			// Création du panneau itineraire et distance
+			createItinerairePanel: function() {
+				this.itinerairePanel = L.control({'position':'bottomleft'});
+				this.itinerairePanel.onAdd = function(map) {
+					cartographie.itinerairePanelDiv = L.DomUtil.create('div','itineraire');
+					cartographie.itinerairePanelDiv.innerHTML = '';
+					$(cartographie.itinerairePanelDiv).hide();
+					this.currentGeom = null;
+					return cartographie.itinerairePanelDiv;
+				};
+			},
+
 			// Création du pannel de sauvegarde d'une geometrie route
 			createSaveRoutePanel: function() {
 				this.saveRoutePanel = L.control();
@@ -402,7 +441,6 @@
 					return cartographie.saveRoutePanelDiv;
 				};
 			},
-
 
 			// Création du pannel de sauvegarde d'une geometrie fortification
 			createSaveFortificationPanel: function() {
@@ -450,6 +488,116 @@
 					$(cartographie.saveFiefPanelDiv).show();
 			},
 
+			// calcul de la distance entre deux points
+			distance: function(latlngs) {
+				if ( latlngs.length <= 1) return 0;
+				var refPoint = latlngs[0];
+				var distanceTotal = 0;
+				
+				for (i=1; i< latlngs.length; i++) 
+				{
+					var Ay = (refPoint.lat *  -11536) / 180;
+					var Ax = (refPoint.lng * 16384) / 255;
+
+					var By = (latlngs[i].lat *  -11536) / 180;
+					var Bx = (latlngs[i].lng * 16384) / 255;
+					
+					var distance = Math.sqrt(Math.pow(Bx - Ax,2) + Math.pow(By - Ay,2));
+					
+					distanceTotal += distance;
+					refPoint = latlngs[i];
+				}
+				distanceTotal *= 1386.47; 
+				return distanceTotal;
+			},
+
+			// calcul le temps necessaire pour parcourir une distance en fonction du type de moyen de transport
+			calculTemps: function(distance, transport, heureParJour)
+			{
+				var heure = 0, jour = 0;
+				switch(transport) {
+					case "0": // pied 5km/heure
+						heure = Math.round(distance / 5);
+						break;
+					case "1": // cheval 15km/heure
+						heure = Math.round(distance / 15);
+						break;
+					case "2": // cavalerie normal 6.25Km/heure
+						heure = Math.round(distance / 6.25);
+						break;
+					case "3": // cavalerie forcée 9.4Km/heure
+						heure = Math.round(distance / 9.4);
+						break;
+					case "4": // cavalerie bagage 3km/heure
+						heure = Math.round(distance / 3);
+						break;
+					case "5": // infanterie normale 2.5km/heure
+						heure = Math.round(distance / 2.5);
+						break;
+					case "6": // infanterie forcée 5km/h
+						heure = Math.round(distance / 5);
+						break;
+				}
+
+				if ( heure > heureParJour ) {
+					jour = Math.round(heure / heureParJour);
+					heure = heure % heureParJour;
+				}
+
+				var text = '';
+				if ( jour > 0 ) text = jour+" jour(s) et ";
+				if ( heure == 0 ) text += "moins d'une heure";
+				else text += heure + " heures";
+				
+				$('#tempsVoyage').text(text);
+			},
+			
+			// Affiche le panneau de calcul du temps de voyage
+			displayItinerairePanel: function(layer)
+			{
+				var distance = this.distance(layer._latlngs);
+				distance = Math.round((distance / 1000)*100)/100;
+				var select = '<h4>Détail de votre itineraire</h4>';
+				select += '<strong>Distance :</strong><br /><span style="color:green">' + distance + ' Km'+'</span><br />';
+				select += '<label>Moyen de transport</label>'
+					+ '<select id="selectTempsVoyage">'
+					+ '<option value="0">Pied</option>'
+					+ '<option value="1">Cheval</option>'
+					+ '<option value="2">Cavalerie (Marche normale)</option>'
+					+ '<option value="3">Cavalerie (Marche forcée)</option>'
+					+ '<option value="4">Cavalerie (Bagages)</option>'
+					+ '<option value="5">Infanterie (Marche normale)</option>'
+					+ '<option value="6">Infanterie (Marche forcée)</option>'
+					+ '</select>'
+					+ '<label>Durée de la journée</label>'
+					+ '<input type="number" id="heureParJour" value="8" size="2"></input><br />'
+					+ '<strong>Durée du voyage</strong><br />'
+					+ '<div id="tempsVoyage" style="color:green;"></div>'
+					+ '<a href="#" onclick="cartographie.closeItinerairePanel()" style="float: right;">Fermer</a>';
+					
+				cartographie.itinerairePanelDiv.innerHTML = select;
+				$(cartographie.itinerairePanelDiv).show();
+
+				cartographie.calculTemps(distance, $("#selectTempsVoyage").val(), 8);
+
+				$('#heureParJour').change(function() {
+					var heureParJour = $(this).val();
+					cartographie.calculTemps(distance, $('#selectTempsVoyage').val(), heureParJour);
+				});
+				
+				$('#selectTempsVoyage').change(function() {
+					var heureParJour = $("#heureParJour").val();
+					cartographie.calculTemps(distance, $(this).val(), heureParJour);
+				});
+			},
+
+			// Ferme le panneau itineraire
+			closeItinerairePanel: function()
+			{
+				cartographie.itinerairePanelDiv.innerHtml = "";
+				$(cartographie.itinerairePanelDiv).hide();
+			},
+			
 			// Affiche le panneau de sauvegarde d'une geometrie territorie
 			displaySaveRoutePanel: function(geom) {
 					this.currentGeom = geom;
@@ -483,9 +631,10 @@
 						    	geom.properties.name = country.name;  	
 						    	geom.properties.description = country.description;
 						    	geom.properties.color = country.color;
+						    	geom.properties.id = country.id;
 						    	cartographie.countriesGeom.addData(geom);
 						    }
-
+						    
 						    cartographie.countriesList[country.id] = country;
 					    });
 					}
@@ -580,6 +729,9 @@
 			    else if (type === 'fief') {
 			    	cartographie.displaySaveFiefPanel(JSON.stringify(layer.toGeoJSON()));
 			    }
+			    else if (type === 'itineraire') {
+				    cartographie.displayItinerairePanel(layer);
+			    }
 			    else if (type === 'route') {
 			    	//cartographie.displaySaveRoutePanel(JSON.stringify(layer.toGeoJSON()));
 			    }
@@ -627,6 +779,7 @@
 				this.map.keyboard.enable();	
 
 				this.map.addLayer(this.drawnItems);
+
 				
 				{% if is_granted('ROLE_ORGA', app.user) %}
 					this.map.addControl(this.drawControl);
@@ -635,6 +788,7 @@
 				this.infoPanel.addTo(this.map);
 				this.saveTerritoirePanel.addTo(this.map);
 				this.saveFiefPanel.addTo(this.map);
+				this.itinerairePanel.addTo(this.map);
 				this.saveRoutePanel.addTo(this.map);
 				this.saveFortificationPanel.addTo(this.map);
 
@@ -655,6 +809,7 @@
 	cartographie.createDrawControl();
 	cartographie.createSaveTerritoirePanel();
 	cartographie.createSaveFiefPanel();
+	cartographie.createItinerairePanel();
 	cartographie.createSaveRoutePanel();
 	cartographie.createSaveFortificationPanel();
 	cartographie.loadCountries();

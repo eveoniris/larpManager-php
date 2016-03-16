@@ -166,7 +166,7 @@ class HomepageController
 	 */
 	public function worldAction(Request $request, Application $app)
 	{	
-		return $app['twig']->render('homepage/world.twig');		
+		return $app['twig']->render('public/world.twig');		
 	}
 	
 	/**

@@ -462,6 +462,27 @@ class PersonnageController
 			$personnage->removeCompetence($lastCompetence);
 			$lastCompetence->removePersonnage($personnage);
 			
+			// cas special noblesse
+			// noblesse apprentit +2 renomme
+			// noblesse initie  +3 renomme
+			// noblesse expert +2 renomme
+			// TODO : trouver un moyen pour ne pas implémenter les règles spéciales de ce type dans le code.
+			if ( $lastCompetence->getCompetenceFamily()->getLabel() == "Noblesse")
+			{
+				switch ($lastCompetence->getLevel()->getId())
+				{
+					case 1:
+						$personnage->removeRenomme(2);
+						break;
+					case 2:
+						$personnage->removeRenomme(3);
+						break;
+					case 3:
+						$personnage->removeRenomme(2);
+						break;
+				}
+			}
+			
 			// historique
 			$historique = new \LarpManager\Entities\ExperienceGain();
 			$historique->setOperationDate(new \Datetime('NOW'));
@@ -539,6 +560,27 @@ class PersonnageController
 			$personnage->setXp($xp - $cout);
 			$personnage->addCompetence($competence);
 			$competence->addPersonnage($personnage);
+			
+			// cas special noblesse
+			// noblesse apprentit +2 renomme
+			// noblesse initie  +3 renomme
+			// noblesse expert +2 renomme
+			// TODO : trouver un moyen pour ne pas implémenter les règles spéciales de ce type dans le code.
+			if ( $competence->getCompetenceFamily()->getLabel() == "Noblesse")
+			{
+				switch ($competence->getLevel()->getId())
+				{
+					case 1:
+						$personnage->addRenomme(2);
+						break;
+					case 2:
+						$personnage->addRenomme(3);
+						break;
+					case 3:
+						$personnage->addRenomme(2);
+						break;
+				}
+			}
 			
 			// historique
 			$historique = new \LarpManager\Entities\ExperienceUsage();

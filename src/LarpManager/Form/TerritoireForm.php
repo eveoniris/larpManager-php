@@ -122,7 +122,7 @@ class TerritoireForm extends AbstractType
 					'property' => 'label',
 				))
 				->add('languePrincipale','entity', array(
-					'required' => true,
+					'required' => false,
 					'label' => 'Langue principale',
 					'class' => 'LarpManager\Entities\Langue',
 					'multiple' => false,
@@ -139,7 +139,7 @@ class TerritoireForm extends AbstractType
 					'property' => 'label',
 				))
 				->add('religionPrincipale','entity', array(
-					'required' => true,
+					'required' => false,
 					'label' => 'Religion dominante',
 					'class' => 'LarpManager\Entities\Religion',
 					'multiple' => false,
