@@ -331,9 +331,9 @@ class Groupe extends BaseGroupe
 	 * @param \LarpManager\Entities\User $user
 	 * @return \LarpManager\Entities\Groupe
 	 */
-	public function setResponsable(User $user)
+	public function setResponsable($user)
 	{
-		$user->addGroupeRelatedByResponsableId($this);
+		if ( $user) $user->addGroupeRelatedByResponsableId($this);
 		return $this->setUserRelatedByResponsableId($user);
 	}
 	
@@ -353,7 +353,7 @@ class Groupe extends BaseGroupe
 	 * @param \LarpManager\Entities\User $user
 	 * @return \LarpManager\Entities\Groupe
 	 */
-	public function setScenariste(User $user)
+	public function setScenariste($user)
 	{
 		return $this->setUserRelatedByScenaristeId($user);
 	}
