@@ -54,8 +54,11 @@
 					<h6 class="list-group-item-heading">Religion</h6>
 					<p class="list-group-item-text">
 					{% for personnageReligion in personnage.personnagesReligions %}
-						{{ personnageReligion.religion.label }} - {{ personnageReligion.religionLevel.label }}<br />
+						<ul>
+							<li>{{ personnageReligion.religion.label }} - {{ personnageReligion.religionLevel.label }} - <a href="{{ path('personnage.admin.religion.delete', {'personnage': personnage.id, 'personnageReligion': personnageReligion.id }) }}">Supprimer</a></li>
+						</ul>
 					{% endfor %}
+					<a href="">Ajouter une religion</a>
 					</p>
 				</div>
 				<div class="list-group-item">

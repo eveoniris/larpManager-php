@@ -23,6 +23,8 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 	 *  - personnage.admin.detail
 	 *  - personnage.admin.add
 	 *  - personnage.admin.update
+	 *  - personnage.admin.religion.delete
+	 *  - personnage.admin.religion.add
 	 *  - personnage.detail
 	 *  - personnage.update
 	 *  - personnage.delete
@@ -117,6 +119,28 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 		$controllers->match('/admin/{personnage}/update/renomme','LarpManager\Controllers\PersonnageController::adminUpdateRenommeAction')
 			->assert('personnage', '\d+')
 			->bind("personnage.admin.update.renomme")
+			->method('GET|POST')
+			->convert('personnage', 'converter.personnage:convert')
+			->before($mustBeOrga);
+		
+		/**
+		 * Suppression d'une religion d'un personnage (orga)
+		 */
+		$controllers->match('/admin/{personnage}/update/religion/{personnageReligion}/delete','LarpManager\Controllers\PersonnageController::adminRemoveReligionAction')
+			->assert('personnage', '\d+')
+			->assert('personnageReligion', '\d+')
+			->bind("personnage.admin.religion.delete")
+			->method('GET|POST')
+			->convert('personnage', 'converter.personnage:convert')
+			->convert('personnageReligion', 'converter.personnageReligion:convert')
+			->before($mustBeOrga);
+		
+		/**
+		 * Ajout d'une religion à un personnage (orga)
+		 */
+		$controllers->match('/admin/{personnage}/update/religion/add','LarpManager\Controllers\PersonnageController::adminAddReligionAction')
+			->assert('personnage', '\d+')
+			->bind("personnage.admin.religion.add")
 			->method('GET|POST')
 			->convert('personnage', 'converter.personnage:convert')
 			->before($mustBeOrga);			

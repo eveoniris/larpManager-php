@@ -305,6 +305,41 @@ class PersonnageController
 	}
 	
 	/**
+	 * Ajoute une religion à un personnage
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function adminAddReligionAction(Request $request, Application $app)
+	{
+		$personnage = $request->get('personnage');
+		
+		return $app['twig']->render('admin/personnage/addReligion.twig', array(
+				'form' => $form->createView(),
+				'personnage' => $personnage));
+		
+	}
+	
+	/**
+	 * Retire une religion d'un personnage
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function adminRemoveReligionAction(Request $request, Application $app)
+	{
+		$personnage = $request->get('personnage');
+		$personnageReligion = $request->get('personnageReligion');
+		
+		return $app['twig']->render('admin/personnage/removeReligion.twig', array(
+				'form' => $form->createView(),
+				'personnage' => $personnage,
+				'personnageReligion'=> $personnageReligion,
+		));
+		
+	}
+	
+	/**
 	 * Ajoute une religion au personnage
 	 * 
 	 * @param Request $request
