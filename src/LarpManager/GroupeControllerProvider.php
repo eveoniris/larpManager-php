@@ -219,7 +219,7 @@ class GroupeControllerProvider implements ControllerProviderInterface
 		 */
 		$controllers->match('/admin/list','LarpManager\Controllers\GroupeController::adminListAction')
 			->bind("groupe.admin.list")
-			->method('GET')
+			->method('GET|POST')
 			->before($mustBeScenariste);
 			
 		/**
