@@ -26,6 +26,11 @@ class DeclareWarForm extends AbstractType
 				'required' => true,
 				'label' => 'Groupe que vous choisissez comme ennemi',
 				'class' => 'LarpManager\Entities\Groupe',
+				'query_builder' => function (\LarpManager\Repository\GroupeRepository $er) {
+					return $er->createQueryBuilder('g')
+							->where('g.pj = true')
+							->orderBy('g.nom', 'ASC');
+				},
 				'property' => 'nom',
 			))
 			->add('message','textarea', array(
