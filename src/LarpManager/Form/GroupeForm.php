@@ -41,9 +41,11 @@ class GroupeForm extends AbstractType
 				->add('description','textarea', array(
 						'required' => false,
 				))
-				->add('territoire','entity', array(
+				->add('territoires','entity', array(
 						'label' => 'Territoire',
 						'required' => false,
+						'multiple' => true,
+						'expanded' => false,
 						'class' => 'LarpManager\Entities\Territoire',
 						'property' => 'nom',
 				))

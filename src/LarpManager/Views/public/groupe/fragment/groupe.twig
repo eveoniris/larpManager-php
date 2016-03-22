@@ -75,15 +75,13 @@ Vous êtes responsable de ce groupe.
 <br />
 
 <div class="header">
-	<h5>Territoire</h5>
+	<h5>Territoire(s)</h5>
 </div>
-	
-{% if groupe.territoire %}
-	<h6>{{ groupe.territoire.nom }}</h6>
-	{{ groupe.territoire.description|markdown }}
-{% else %}
-	Votre groupe n'est pas lié à un territoire.
-{% endif %}
+
+{% for territoire in groupe.territoires %}
+	<h6>{{ territoire.nom }}</h6>
+	{{ territoire.description|markdown }}
+{% endfor %}
 				
 <div class="header">
 	<h5>Vos alliés</h5>

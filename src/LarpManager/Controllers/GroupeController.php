@@ -999,6 +999,7 @@ class GroupeController
 		
 		$originalGroupeClasses = new ArrayCollection();
 		$originalGns = new ArrayCollection();
+		$originalTerritoires = new ArrayCollection();
 
 		/**
 		 *  Crée un tableau contenant les objets GroupeClasse courants de la base de données
@@ -1014,6 +1015,14 @@ class GroupeController
 		foreach ( $groupe->getGns() as $gn)
 		{
 			$originalGns->add($gn);
+		}
+		
+		/**
+		 * Crée un tableau contenant les territoires que ce groupe posséde
+		 */
+		foreach ( $groupe->getTerritoires() as $territoire)
+		{
+			$originalTerritoires->add($territoire);
 		}
 		
 		/**
@@ -1075,6 +1084,20 @@ class GroupeController
 			{
 				if ( $groupe->getGns()->contains($gn) == false)
 					$gn->removeGroupe($groupe);
+			}
+			
+			/**
+			 * Pour tous les territoire du groupe
+			 */
+			foreach ( $groupe->getTerritoires() as $territoire )
+			{
+				$territoire->setGroupe($groupe);
+			}
+				
+			foreach ($originalTerritoires as $territoire)
+			{
+				if ( $groupe->getTerritoires()->contains($territoire) == false)
+					$territoire->setGroupe(null);
 			}
 			
 			
