@@ -9,6 +9,7 @@
 	    <link rel="stylesheet" href="{{ app.request.basepath }}/leaflet/leaflet.css" />
         <link rel="stylesheet" href="{{ app.request.basepath }}/leaflet/L.Control.MousePosition.css" />
         <link rel="stylesheet" href="{{ app.request.basepath }}/leaflet/leaflet.draw.css" />
+        <link rel="stylesheet" href="{{ app.request.basepath }}/leaflet/Control.MiniMap.min.css" />
         
 		<style>		
 			html, body, #content {
@@ -16,6 +17,7 @@
 			    width: 100%;
   				overflow: hidden;
 			}
+			
 			body {
 				padding-top: 50px;
 			}
@@ -24,10 +26,12 @@
 				width: auto;
   				height: 100%;
 			}
+			
 			.navbar {
 				margin-bottom:0px;
 				margin-top: -50px;
 			}
+			
 			#content {
 				padding: 0 0 0 0;
 			}
@@ -41,9 +45,14 @@
 				border-radius: 5px;
 				width: 300px;
 			}
+			
 			.info h4, .territoire h4, .fief h4, .itineraire h4, .route h4, .fortification h4 {
 				margin: 0 0 5px;
 				color: #777;
+			}
+			
+			.info {
+				width :500px;
 			}
 			
 			.geom {
@@ -88,6 +97,7 @@
 <script src="{{ app.request.basepath }}/leaflet/leaflet.js"></script>
 <script src="{{ app.request.basepath }}/leaflet/L.Control.MousePosition.js"></script>
 <script src="{{ app.request.basepath }}/leaflet/leaflet.draw.js"></script>
+<script src="{{ app.request.basepath }}/leaflet/Control.MiniMap.min.js"></script>
 <script src="{{ app.request.basepath }}/js/randomColor.min.js"></script>
 
 
@@ -97,6 +107,8 @@
 	var cartographie = {
 			// Url du tileset
 			mapUrl: 'img/map/{z}/{x}/{y}.png',
+
+			mapCleanUrl: 'img/map_clean/{z}/{x}/{y}.png',
 			
 			// Zoom minimal
 			mapMinZoom: 0,
@@ -124,6 +136,8 @@
 
 			// Tilelayer de travail
 			workingTileLayer: null,
+
+			minimapLayer: null,
 
 			// carte
 			map: null,
@@ -199,6 +213,39 @@
 			        crs: L.CRS.Simple,
 			        detectRetina: false
 				}).addTo(this.map);
+			},
+
+			// Création du tileLayer de base
+			createWorkingTileLayer : function() {
+				
+				this.workingTileLayer = L.tileLayer(this.mapCleanUrl, {
+					minZoom: this.mapMinZoom, 
+			        maxZoom: this.mapMaxZoom,
+			        bounds: this.mapBounds,
+			        attribution: 'Rendered with <a href="http://www.gdal.org/gdal2tiles.html">Gdal2Tile</a> | Icons made by <a href="http://www.freepik.com" title="Freepik">Freepik</a> from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a>',
+			        tms: false,
+			        continuousWorld: true,
+			        noWrap: false,
+			        tilesize:255,
+			        crs: L.CRS.Simple,
+			        detectRetina: false
+				}).addTo(this.map);
+			},
+
+			createMinimapLayer : function() {
+				
+				this.minimapLayer = L.tileLayer(this.mapCleanUrl, {
+					minZoom: this.mapMinZoom, 
+			        maxZoom: this.mapMaxZoom,
+			        bounds: this.mapBounds,
+			        attribution: 'Rendered with <a href="http://www.gdal.org/gdal2tiles.html">Gdal2Tile</a> | Icons made by <a href="http://www.freepik.com" title="Freepik">Freepik</a> from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a>',
+			        tms: false,
+			        continuousWorld: true,
+			        noWrap: false,
+			        tilesize:255,
+			        crs: L.CRS.Simple,
+			        detectRetina: false
+				});
 			},
 
 			// Applique les limites de la carte à la carte
@@ -381,7 +428,7 @@
 				this.infoPanel = L.control();
 				this.infoPanel.onAdd = function(map) {
 					cartographie.infoPanelDiv = L.DomUtil.create('div', 'info');
-					cartographie.infoPanelDiv.innerHTML = '';
+					//cartographie.infoPanelDiv.innerHTML = '';
 					$(cartographie.infoPanelDiv).hide();
 					return cartographie.infoPanelDiv;
 				};
@@ -759,8 +806,8 @@
 
 				// Options disponibles dans le controlLayer
 				var baseMaps = {
+					"Vide": this.workingTileLayer,
 					"Base" : this.baseTileLayer
-					//"Working": this.workingTileLayer
 				};
 
 				// Options disponibles dans le controlLayer
@@ -775,6 +822,8 @@
 					overlayMaps).addTo(this.map);
 				
 				L.control.mousePosition().addTo(this.map);
+
+				L.control.minimap(this.minimapLayer).addTo(this.map);
 
 				this.map.keyboard.enable();	
 
@@ -800,8 +849,10 @@
 
 	cartographie.createMap();
 	cartographie.createMapBounds();
+	cartographie.createWorkingTileLayer();
+	cartographie.createMinimapLayer();
 	cartographie.createBaseTileLayer();
-	
+
 	cartographie.fitMap();
 	
 	cartographie.createGeomCollection();

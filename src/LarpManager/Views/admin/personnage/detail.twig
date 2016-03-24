@@ -58,9 +58,18 @@
 							<li>{{ personnageReligion.religion.label }} - {{ personnageReligion.religionLevel.label }} - <a href="{{ path('personnage.admin.religion.delete', {'personnage': personnage.id, 'personnageReligion': personnageReligion.id }) }}">Supprimer</a></li>
 						</ul>
 					{% endfor %}
-					<a href="">Ajouter une religion</a>
+					<a href="{{ path('personnage.admin.religion.add', {'personnage': personnage.id}) }}">Ajouter une religion</a>
 					</p>
 				</div>
+				
+				<div class="list-group-item">
+					<h6 class="list-group-item-heading">Origine</h6>
+					<p class="list-group-item-text">
+						{{ personnage.territoire|default("non définie") }}
+					</p>
+					<a href="{{ path('personnage.admin.origine.update', {'personnage': personnage.id}) }}">Modifier l'origine</a>
+				</div>
+				
 				<div class="list-group-item">
 					<h6 class="list-group-item-heading">Compétences <small>({{ personnage.xp|default(0) }} xp)</small></h6>
 					<p><a href="{{ path('personnage.admin.xp', {'personnage':personnage.id}) }}">Ajouter des points d'expérience</a></p>

@@ -25,6 +25,7 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 	 *  - personnage.admin.update
 	 *  - personnage.admin.religion.delete
 	 *  - personnage.admin.religion.add
+	 *  - personnage.admin.origine.update
 	 *  - personnage.detail
 	 *  - personnage.update
 	 *  - personnage.delete
@@ -198,6 +199,17 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 			->method('GET|POST')
 			->convert('personnage', 'converter.personnage:convert')
 			->before($mustBeOrga);
+		
+		/**
+		 * Modifie l'origine d'un personnage
+		 * Accessible uniquement aux orgas
+		 */
+		$controllers->match('/admin/{personnage}/origine/update','LarpManager\Controllers\PersonnageController::adminUpdateOriginAction')
+			->assert('personnage', '\d+')
+			->bind("personnage.admin.origine.update")
+			->method('GET|POST')
+			->convert('personnage', 'converter.personnage:convert')
+			->before($mustBeOrga);			
 			
 		/**
 		 * Choix d'une religion
