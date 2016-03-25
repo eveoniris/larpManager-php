@@ -31,19 +31,20 @@
 							</a>
 						</li>
 					{% endif %}
+					{% for territoire in  groupe.territoires %}
+						{% if territoire.topic %}
+							<li class="list-group-item">
+								<a href="{{ path('forum.topic', {'index': territoire.topic.id}) }}">
+									<i class="fa fa-comment"></i>
+									Forum du territoire "{{ territoire.nom }}"
+								</a>
+							</li>
+						{% endif %}
+					{% endfor %}
 				{% endfor %}
 			{% endif %}
 			{% if app.user.personnage %}
-				{% if app.user.personnage.territoire %}
-					{% if app.user.personnage.territoire.topic %}
-						<li class="list-group-item">
-							<a href="{{ path('forum.topic', {'index': app.user.personnage.territoire.topic.id}) }}">
-								<i class="fa fa-comment"></i>
-								Forum du territoire "{{ app.user.personnage.territoire.nom }}"
-							</a>
-						</li>
-					{% endif %}
-				{% endif %}
+				
 				{% for personnageReligion in app.user.personnage.personnagesReligions %}
 					<li class="list-group-item">
 						<a href="{{ path('forum.topic',{'index': personnageReligion.religion.topic.id }) }}">

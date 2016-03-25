@@ -44,6 +44,13 @@ class CompetenceForm extends AbstractType
 					'label' => 'Téléversez un document',
 					'required' => true,
 					'mapped' => false
+				))
+				->add('materiel','textarea', array(
+					'label' => 'Matériel necessaire',
+					'required' => false,
+					'attr' => array(
+							'class' => 'tinymce'
+					),
 				));
 	}
 	

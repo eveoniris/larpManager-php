@@ -38,6 +38,15 @@
 								<p class="text-warning">Attention, ce territoire n'a pas description</p>
 							{%  endif %}
 						</p>
+						<p class="list-group-item-text">
+							{% if territoire.topic %}
+								<a href="{{ path('forum.topic', {'index': territoire.topic.id}) }}">
+									<i class="fa fa-comment"></i>
+									Forum du territoire "{{ territoire.nom }}"
+								</a><br />
+							{% endif %}
+							<a href="{{ path('territoire.admin.topic.add', {'territoire': territoire.id}) }}">Créer un forum pour ce territoire</a>
+						</p>
 						{%  if territoire.territoires|length > 0 %}
 							<p class="list-group-item-text">
 								Contient les territoires suivants : {{ territoire.territoires|join(', ') }}

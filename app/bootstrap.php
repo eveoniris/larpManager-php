@@ -253,7 +253,6 @@ else
 	$app['security.access_rules'] = array(
 		array('^/admin/.*$', 'ROLE_ADMIN'),
 		array('^/trombinoscope/.*$', 'ROLE_SCENARISTE'),
-		array('^/world/.*$', 'ROLE_USER'),
 		array('^/pnj/.*$', 'ROLE_USER'),
 		array('^/groupe/.*$', 'ROLE_USER'),
 		array('^/groupeSecondaire/.*$', 'ROLE_USER'),
