@@ -563,7 +563,7 @@ class PersonnageController
 			->add('save','submit', array('label' => 'Valider votre origine'))
 			->getForm();
 		
-			$form->handleRequest($request);
+		$form->handleRequest($request);
 			
 		if ( $form->isValid() )
 		{

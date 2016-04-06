@@ -33,6 +33,7 @@ class GroupeController
 {
 	/**
 	 * Page d'accueil de gestion des groupes
+	 * 
 	 * @param Request $request
 	 * @param Application $app
 	 */
@@ -607,11 +608,10 @@ class GroupeController
 				{
 					$personnage->removeGroupe($groupe);
 				}
+				$app['orm.em']->persist($personnage);
 			}
 
 			$participant->removeGroupe($groupe);
-			
-			$app['orm.em']->persist($personnage);
 			$app['orm.em']->persist($participant);
 			$app['orm.em']->persist($groupe);
 			$app['orm.em']->flush();
@@ -1114,6 +1114,32 @@ class GroupeController
 			}
 			else if ($form->get('delete')->isClicked())
 			{
+				// supprime le lien entre les personnages et le groupe
+				foreach ( $groupe->getPersonnages() as $personnage)
+				{
+					$personnage->setGroupe(null);
+					$app['orm.em']->persist($personnage);
+				}
+				
+				// supprime le lien entre les participants et le groupe
+				foreach ( $groupe->getParticipants() as $participant)
+				{
+					$participant->setGroupe(null);
+					$app['orm.em']->persist($participant);
+				}
+				
+				// supprime la relation entre le groupeClasse et le groupe
+				foreach ($groupe->getGroupeClasses() as $groupeClasse) {
+					$app['orm.em']->remove($groupeClasse);
+				}
+				
+				// supprime la relation entre les territoires et le groupe
+				foreach ( $groupe->getTerritoires() as $territoire)
+				{
+					$territoire->setGroupe(null);
+					$app['orm.em']->persist($territoire);
+				}
+				
 				$app['orm.em']->remove($groupe);
 				$app['orm.em']->flush();
 					

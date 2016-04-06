@@ -7,45 +7,48 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * LarpManager\Form\PersonnageOriginForm
+ * LarpManager\Form\ClasseForm
  *
  * @author kevin
  *
  */
-class PersonnageOriginForm extends AbstractType
+class ConstructionForm extends AbstractType
 {
 	/**
 	 * Construction du formulaire
-	 *
+	 * 
 	 * @param FormBuilderInterface $builder
 	 * @param array $options
 	 */
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
-		$builder->add('territoire','entity', array(
+		$builder->add('label','text', array(
+					'label' => 'Le nom de la construction',
 					'required' => true,
-					'label' => 'Votre origine',
-					'class' => 'LarpManager\Entities\Territoire',
-					'property' => 'nom',
-					'query_builder' => function(\LarpManager\Repository\TerritoireRepository $er) {
-						$qb = $er->createQueryBuilder('t');
-						$qb->andWhere('t.territoire IS NULL');
-						$qb->orderBy('t.nom', 'ASC');
-						return $qb;
-					}
+				))
+				->add('description', 'textarea', array(
+					'label' => 'La description de la construction',
+					'required' => true,
+					'attr' => array(
+							'class' => 'tinymce',
+							'rows' => 9,
+					)
+				))
+				->add('defense', 'integer', array(
+					'label' => 'La valeur de défense de la construction',
+					'required' => true,
 				));
 	}
 	
-
 	/**
-	 * Définition de l'entité concerné
+	 * Définition de l'entité concernée
 	 *
 	 * @param OptionsResolver $resolver
 	 */
 	public function configureOptions(OptionsResolver $resolver)
-	{
+	{	
 		$resolver->setDefaults(array(
-				'data_class' => 'LarpManager\Entities\Personnage',
+				'data_class' => 'LarpManager\Entities\Construction',
 		));
 	}
 	
@@ -54,6 +57,7 @@ class PersonnageOriginForm extends AbstractType
 	 */
 	public function getName()
 	{
-		return 'personnageOrigin';
+		return 'construction';
 	}
+	
 }

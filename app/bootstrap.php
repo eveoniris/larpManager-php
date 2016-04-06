@@ -220,6 +220,7 @@ else
 	$app->mount('/chronologie', new LarpManager\ChronologieControllerProvider());
 	$app->mount('/ressource', new LarpManager\RessourceControllerProvider());
 	$app->mount('/religion', new LarpManager\ReligionControllerProvider());
+	$app->mount('/construction', new LarpManager\ConstructionControllerProvider());	
 	$app->mount('/personnage', new LarpManager\PersonnageControllerProvider());
 	$app->mount('/personnageSecondaire', new LarpManager\PersonnageSecondaireControllerProvider());
 	$app->mount('/age', new LarpManager\AgeControllerProvider());
@@ -272,6 +273,7 @@ else
 		array('^/api/.*$', 'ROLE_SCENARISTE'),
 		array('^/age/.*$', 'ROLE_REGLE'),
 		array('^/genre/.*$', 'ROLE_REGLE'),
+		array('^/construction/.*$', 'ROLE_REGLE'),
 		array('^/appelation/.*$', 'ROLE_SCENARISTE'),
 		array('^/langue/.*$', 'ROLE_SCENARISTE'),
 		array('^/ressource/.*$', 'ROLE_SCENARISTE'),

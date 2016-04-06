@@ -1,0 +1,24 @@
+{% extends "layout.twig" %}
+
+{% block title %}Construction{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path('construction') }}">Liste des constructions</a></li>
+		<li class="active">Ajouter une construction</li>
+	</ol>
+	
+	
+	<div class="well bs-component">
+		<form action="{{ path('construction.add') }}" method="POST" {{ form_enctype(form) }} novalidate>
+			<fieldset>
+				<legend>Ajout d'une construction</legend>
+					{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+					{{ form(form) }}
+			</fieldset>
+		</form>
+	</div>
+				
+{% endblock content %}

@@ -125,6 +125,11 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 		$app['converter.competence'] = $app->share(function($app) {
 			return new CompetenceConverter($app['orm.em']);
 		});
+		
+		// construction converter
+		$app['converter.construction'] = $app->share(function($app) {
+			return new ConstructionConverter($app['orm.em']);
+		});		
 	}
 
 	/**

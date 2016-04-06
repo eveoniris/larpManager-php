@@ -12,15 +12,15 @@ namespace LarpManager\Entities;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * LarpManager\Entities\Religion
+ * LarpManager\Entities\Construction
  *
  * @Entity()
- * @Table(name="religion", indexes={@Index(name="fk_religion_topic1_idx", columns={"topic_id"})})
+ * @Table(name="construction")
  * @InheritanceType("SINGLE_TABLE")
  * @DiscriminatorColumn(name="discr", type="string")
- * @DiscriminatorMap({"base":"BaseReligion", "extended":"Religion"})
+ * @DiscriminatorMap({"base":"BaseConstruction", "extended":"Construction"})
  */
-class BaseReligion
+class BaseConstruction
 {
     /**
      * @Id
@@ -40,26 +40,17 @@ class BaseReligion
     protected $description;
 
     /**
-     * @OneToMany(targetEntity="PersonnagesReligions", mappedBy="religion")
-     * @JoinColumn(name="id", referencedColumnName="religion_id", nullable=false)
+     * @Column(type="integer")
      */
-    protected $personnagesReligions;
+    protected $defense;
 
     /**
-     * @OneToMany(targetEntity="Territoire", mappedBy="religion")
-     * @JoinColumn(name="id", referencedColumnName="religion_id", nullable=false)
+     * @ManyToMany(targetEntity="Territoire", mappedBy="constructions")
      */
     protected $territoires;
 
-    /**
-     * @ManyToOne(targetEntity="Topic", inversedBy="religions")
-     * @JoinColumn(name="topic_id", referencedColumnName="id", nullable=false)
-     */
-    protected $topic;
-
     public function __construct()
     {
-        $this->personnagesReligions = new ArrayCollection();
         $this->territoires = new ArrayCollection();
     }
 
@@ -67,7 +58,7 @@ class BaseReligion
      * Set the value of id.
      *
      * @param integer $id
-     * @return \LarpManager\Entities\Religion
+     * @return \LarpManager\Entities\Construction
      */
     public function setId($id)
     {
@@ -90,7 +81,7 @@ class BaseReligion
      * Set the value of label.
      *
      * @param string $label
-     * @return \LarpManager\Entities\Religion
+     * @return \LarpManager\Entities\Construction
      */
     public function setLabel($label)
     {
@@ -113,7 +104,7 @@ class BaseReligion
      * Set the value of description.
      *
      * @param string $description
-     * @return \LarpManager\Entities\Religion
+     * @return \LarpManager\Entities\Construction
      */
     public function setDescription($description)
     {
@@ -133,46 +124,33 @@ class BaseReligion
     }
 
     /**
-     * Add PersonnagesReligions entity to collection (one to many).
+     * Set the value of defense.
      *
-     * @param \LarpManager\Entities\PersonnagesReligions $personnagesReligions
-     * @return \LarpManager\Entities\Religion
+     * @param integer $defense
+     * @return \LarpManager\Entities\Construction
      */
-    public function addPersonnagesReligions(PersonnagesReligions $personnagesReligions)
+    public function setDefense($defense)
     {
-        $this->personnagesReligions[] = $personnagesReligions;
+        $this->defense = $defense;
 
         return $this;
     }
 
     /**
-     * Remove PersonnagesReligions entity from collection (one to many).
+     * Get the value of defense.
      *
-     * @param \LarpManager\Entities\PersonnagesReligions $personnagesReligions
-     * @return \LarpManager\Entities\Religion
+     * @return integer
      */
-    public function removePersonnagesReligions(PersonnagesReligions $personnagesReligions)
+    public function getDefense()
     {
-        $this->personnagesReligions->removeElement($personnagesReligions);
-
-        return $this;
+        return $this->defense;
     }
 
     /**
-     * Get PersonnagesReligions entity collection (one to many).
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getPersonnagesReligions()
-    {
-        return $this->personnagesReligions;
-    }
-
-    /**
-     * Add Territoire entity to collection (one to many).
+     * Add Territoire entity to collection.
      *
      * @param \LarpManager\Entities\Territoire $territoire
-     * @return \LarpManager\Entities\Religion
+     * @return \LarpManager\Entities\Construction
      */
     public function addTerritoire(Territoire $territoire)
     {
@@ -182,10 +160,10 @@ class BaseReligion
     }
 
     /**
-     * Remove Territoire entity from collection (one to many).
+     * Remove Territoire entity from collection.
      *
      * @param \LarpManager\Entities\Territoire $territoire
-     * @return \LarpManager\Entities\Religion
+     * @return \LarpManager\Entities\Construction
      */
     public function removeTerritoire(Territoire $territoire)
     {
@@ -195,7 +173,7 @@ class BaseReligion
     }
 
     /**
-     * Get Territoire entity collection (one to many).
+     * Get Territoire entity collection.
      *
      * @return \Doctrine\Common\Collections\Collection
      */
@@ -204,31 +182,8 @@ class BaseReligion
         return $this->territoires;
     }
 
-    /**
-     * Set Topic entity (many to one).
-     *
-     * @param \LarpManager\Entities\Topic $topic
-     * @return \LarpManager\Entities\Religion
-     */
-    public function setTopic(Topic $topic = null)
-    {
-        $this->topic = $topic;
-
-        return $this;
-    }
-
-    /**
-     * Get Topic entity (many to one).
-     *
-     * @return \LarpManager\Entities\Topic
-     */
-    public function getTopic()
-    {
-        return $this->topic;
-    }
-
     public function __sleep()
     {
-        return array('id', 'label', 'description', 'topic_id');
+        return array('id', 'label', 'description', 'defense');
     }
 }
