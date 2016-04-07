@@ -5,6 +5,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Silex\Application;
 use LarpManager\Form\TerritoireForm;
 use LarpManager\Form\TerritoireDeleteForm;
+use LarpManager\Form\TerritoireStrategieForm;
 
 /**
  * LarpManager\Controllers\TerritoireController
@@ -130,6 +131,39 @@ class TerritoireController
 				'form' => $form->createView(),
 		));
 	}
+	
+	/**
+	 * Modifie le jeu strategique d'un territoire
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function updateStrategieAction(Request $request, Application $app)
+	{
+		$territoire = $request->get('territoire');
+	
+		$form = $app['form.factory']->createBuilder(new TerritoireStrategieForm(), $territoire)
+			->add('update','submit', array('label' => "Sauvegarder"))
+			->getForm();
+	
+		$form->handleRequest($request);
+	
+		if ( $form->isValid() )
+		{
+			$territoire = $form->getData();
+				
+			$app['orm.em']->persist($territoire);
+			$app['orm.em']->flush();
+			$app['session']->getFlashBag()->add('success', 'Le territoire a été mis à jour.');
+	
+			return $app->redirect($app['url_generator']->generate('territoire.admin.detail',array('territoire' => $territoire->getId())),301);
+		}
+	
+		return $app['twig']->render('admin/territoire/updateStrategie.twig', array(
+				'territoire' => $territoire,
+				'form' => $form->createView(),
+		));
+	}	
 	
 	/**
 	 * Supression d'un territoire

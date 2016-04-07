@@ -36,7 +36,7 @@
 				padding: 0 0 0 0;
 			}
 			
-			.info, .territoire, .fief, .itineraire, .route, .fortification {
+			.info, .territoire, .fief, .region, .itineraire, .route, .fortification {
 				padding: 6px 8px;
 				font: 14px/16px Arial, Helvetica, sans-serif;
 				background: white;
@@ -46,7 +46,7 @@
 				width: 300px;
 			}
 			
-			.info h4, .territoire h4, .fief h4, .itineraire h4, .route h4, .fortification h4 {
+			.info h4, .territoire h4, .region h4, .fief h4, .itineraire h4, .route h4, .fortification h4 {
 				margin: 0 0 5px;
 				color: #777;
 			}
@@ -122,11 +122,17 @@
 			// Liste des pays	
 			countriesList : Object(),
 
+			// Liste des régions	
+			regionsList : Object(),
+
 			// Liste des fiefs  	
 			fiefsList : Object(),
 
 			// Collection des geometries des pays		
 			countriesGeom: null,
+
+			// Collection des geometries des régions		
+			regionsGeom: null,
 
 			// Collection des geometries des fiefs
 			fiefsGeom: null,
@@ -137,6 +143,7 @@
 			// Tilelayer de travail
 			workingTileLayer: null,
 
+			// Tilelayer de la minimap
 			minimapLayer: null,
 
 			// carte
@@ -153,6 +160,10 @@
 			saveTerritoirePanel : null,
 			saveTerritoirePanelDiv: null,
 
+			// Panneau de sauvegarde d'une geometrie de territoire
+			saveRegionPanel : null,
+			saveRegionPanelDiv: null,
+			
 			// Panneau de sauvegarde d'une geometrie de territoire
 			saveFiefPanel : null,
 			saveFiefPanelDiv: null,
@@ -258,11 +269,13 @@
 			onEachFeature: function(feature, layer) {
 			    if (feature.properties ) {
 				    var editLink = "{{ app.request.basepath }}/territoire/"+feature.properties.id+"/update";
+				    var editStrategieLink = "{{ app.request.basepath }}/territoire/"+feature.properties.id+"/updateStrategie";
 
 			        layer.bindPopup(
 					        '<strong>'+feature.properties.name+'</strong>' 
 					        {% if is_granted('ROLE_ORGA', app.user) %}
 					        	+'<br /><a href="'+editLink+'">Modifier</a>'
+					        	+'<br /><a href="'+editStrategieLink+'">Jeu stratégique</a>'
 					        {% endif %});
 			        layer.on({
 				        mouseover: cartographie.mouseOver,
@@ -291,6 +304,13 @@
 					 initialize: function (map, options) {
 						 L.Draw.Polygon.prototype.initialize.call(this, map, options);
 				          this.type = 'territoire';
+				      }
+				});
+				
+				L.Draw.Region = L.Draw.Polygon.extend({
+					 initialize: function (map, options) {
+						 L.Draw.Polygon.prototype.initialize.call(this, map, options);
+				          this.type = 'region';
 				      }
 				});
 				
@@ -342,6 +362,11 @@
 				            },
 				            {
 				                enabled: true,
+				                handler: new L.Draw.Region(map),
+				                title: 'Tracer une région'
+				            },
+				            {
+				                enabled: true,
 				                handler: new L.Draw.Fief(map),
 				                title: 'Tracer un fief'
 				            },
@@ -387,6 +412,7 @@
 			// Création des collections de geometries
 			createGeomCollection: function() {
 				this.countriesGeom = new L.geoJson(false, {style: this.territoireStyle, onEachFeature: this.onEachFeature});
+				this.regionsGeom = new L.geoJson(false, {style: this.regionStyle, onEachFeature: this.onEachFeature});
 				this.fiefsGeom = new L.geoJson(false, {style: this.fiefStyle, onEachFeature: this.onEachFeature});
 				this.routesGeom = new L.geoJson(false, {onEachFeature: this.onEachFeature});
 				this.fortificationsGeom = new L.geoJson(false, {onEachFeature: this.onEachFeature});
@@ -407,6 +433,21 @@
 	                fillColor: feature.properties.color
 	            };
 			},
+
+			// style des territoires
+			regionStyle: function(feature) {
+				if ( feature.properties.color == null) {
+					feature.properties.color = randomColor({luminosity:'dark'});
+				}
+				return {
+	                weight: 3,
+	                opacity: 1,
+	                color: feature.properties.color,
+	                dashArray: '7',
+	                fillOpacity: 0.2,
+	                fillColor: feature.properties.color
+	            };
+			},
 			
 			// style des fiefs
 			fiefStyle: function(feature){
@@ -418,8 +459,8 @@
 	                opacity: 1,
 	                color: feature.properties.color,
 	                dashArray: '3',
-	                fillOpacity: 0,
-	                fillColor: '#666666'
+	                fillOpacity: 0.2,
+	                fillColor: feature.properties.color
 	            };
 			},
 
@@ -450,6 +491,18 @@
 					$(cartographie.saveTerritoirePanelDiv).hide();
 					this.currentGeom = null;
 					return cartographie.saveTerritoirePanelDiv;
+				};
+			},
+
+			// Création du pannel de sauvegarde d'une geometrie region
+			createSaveRegionPanel: function() {
+				this.saveRegionPanel = L.control();
+				this.saveRegionPanel.onAdd = function(map) {
+					cartographie.saveRegionPanelDiv = L.DomUtil.create('div', 'region');
+					cartographie.saveRegionPanelDiv.innerHTML = '';
+					$(cartographie.saveRegionPanelDiv).hide();
+					this.currentGeom = null;
+					return cartographie.saveRegionPanelDiv;
 				};
 			},
 
@@ -518,6 +571,23 @@
 					$(cartographie.saveTerritoirePanelDiv).show();
 			},
 
+			// Affiche le panneau de sauvegarde d'une geometrie territorie
+			displaySaveRegionPanel: function(geom) {
+					this.currentGeom = geom;
+					var select = '<label>Choisissez la region : </label>';
+					select = select + '<select id="selectedRegion">';
+					for(var key in this.regionsList)
+					{
+						select = select + '<option value="'+this.regionsList[key].id+'">'+this.regionsList[key].name+'</option>'
+					}
+					select = select +  '</select>';
+					select = select + '<input type="submit" value="Sauver" onclick="cartographie.saveRegion()"/>'
+					
+					cartographie.saveRegionPanelDiv.innerHTML = select;			
+					
+					$(cartographie.saveRegionPanelDiv).show();
+			},
+			
 			// Affiche le panneau de sauvegarde d'une geometrie territorie
 			displaySaveFiefPanel: function(geom) {
 					this.currentGeom = geom;
@@ -688,6 +758,31 @@
 					}).error(function() {});
 			},
 
+			// Chargement des pays
+			// Les geometries sont stocké dans les collections correspondates
+			// La liste des pays est mise à jour
+			loadRegions: function() {
+				$.ajax({
+					dataType: "json",
+					url: "world/regions.json",
+					success: function(data) {
+					    $(data).each(function(key, country) {
+						    if ( country.geom != null )
+						    {
+						    	var geom = JSON.parse(country.geom);
+						    	geom.properties.name = country.name;  	
+						    	geom.properties.description = country.description;
+						    	geom.properties.color = country.color;
+						    	geom.properties.id = country.id;
+						    	cartographie.regionsGeom.addData(geom);
+						    }
+						    
+						    cartographie.regionsList[country.id] = country;
+					    });
+					}
+					}).error(function() {});
+			},
+
 			// Chargement des fiefs
 			// Les geometries sont stocké dans les collections correspondates
 			// La liste des fiefs est mise à jour
@@ -704,6 +799,7 @@
 						    	geom.properties.name = country.name;  	
 						    	geom.properties.description = country.description;
 						    	geom.properties.color = country.color;
+						    	geom.properties.id = country.id;
 						    	cartographie.fiefsGeom.addData(geom);
 						    }
 	
@@ -740,6 +836,32 @@
 			},
 
 			// sauvegarde une geometrie de fief en base de donnée
+			saveRegion: function() {
+				var country = document.getElementById("selectedRegion");
+				var territoireId = country.options[country.selectedIndex].value;
+					
+				$.ajax({
+					type: "POST",
+					dataType: 'json',
+					url: "world/countries/"+territoireId+"/update",
+					data: {geom: this.currentGeom, color: randomColor({luminosity: 'light'})},
+					success: function(data) {
+					    alert("la geographie a été enregistrée");
+					    var geom = JSON.parse(country.geom);
+				    	geom.properties.name = country.name;  	
+				    	geom.properties.description = country.description;
+					    this.regionsGeom.addData(geom);
+					}
+					}).error(function() {
+						alert("désolé, une erreur est survenue");
+					});
+				
+				cartographie.saveRegionPanelDiv.innerHTML = '';
+				$(cartographie.saveRegionPanelDiv).hide();
+				this.currentGeom = null;
+			},
+			
+			// sauvegarde une geometrie de fief en base de donnée
 			saveFief: function() {
 				var country = document.getElementById("selectedFief");
 				var territoireId = country.options[country.selectedIndex].value;
@@ -772,6 +894,9 @@
 
 			    if (type === 'territoire') {
 					cartographie.displaySaveTerritoirePanel(JSON.stringify(layer.toGeoJSON()));
+			    }
+			    else if (type === 'region') {
+			    	cartographie.displaySaveRegionPanel(JSON.stringify(layer.toGeoJSON()));
 			    }
 			    else if (type === 'fief') {
 			    	cartographie.displaySaveFiefPanel(JSON.stringify(layer.toGeoJSON()));
@@ -813,6 +938,7 @@
 				// Options disponibles dans le controlLayer
 				var overlayMaps = {
 					"Pays" : this.countriesGeom,
+					"Regions" : this.regionsGeom,
 					"Fiefs" : this.fiefsGeom
 				};
 
@@ -836,6 +962,7 @@
 				
 				this.infoPanel.addTo(this.map);
 				this.saveTerritoirePanel.addTo(this.map);
+				this.saveRegionPanel.addTo(this.map);
 				this.saveFiefPanel.addTo(this.map);
 				this.itinerairePanel.addTo(this.map);
 				this.saveRoutePanel.addTo(this.map);
@@ -859,11 +986,13 @@
 	cartographie.createInfoPanel();
 	cartographie.createDrawControl();
 	cartographie.createSaveTerritoirePanel();
+	cartographie.createSaveRegionPanel();
 	cartographie.createSaveFiefPanel();
 	cartographie.createItinerairePanel();
 	cartographie.createSaveRoutePanel();
 	cartographie.createSaveFortificationPanel();
 	cartographie.loadCountries();
+	cartographie.loadRegions();
 	cartographie.loadFiefs();
 	
 	cartographie.applyOnMap();

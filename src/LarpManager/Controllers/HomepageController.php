@@ -195,6 +195,38 @@ class HomepageController
 		return $app->json($countries);
 	}
 	
+	/**
+	 * Fourni la liste des régions
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function regionsAction(Request $request, Application $app)
+	{
+		$repoTerritoire = $app['orm.em']->getRepository('LarpManager\Entities\Territoire');
+		$territoires = $repoTerritoire->findRegions();
+		
+		$regions = array();
+		foreach ( $territoires as $territoire)
+		{
+			$regions[] = array(
+					'id' => $territoire->getId(),
+					'geom' => $territoire->getGeojson(),
+					'name' => $territoire->getNom(),
+					'color' => $territoire->getColor(),
+					'description' => strip_tags($territoire->getDescription())
+			);
+		}
+		
+		return $app->json($regions);
+	}
+	
+	/**
+	 * Fourni la liste des fiefs
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
 	public function fiefsAction(Request $request, Application $app)
 	{
 		$repoTerritoire = $app['orm.em']->getRepository('LarpManager\Entities\Territoire');

@@ -15,7 +15,17 @@
 				</h4>
 			</div>
 		
+				    			
   			<div class="list-group">
+  			
+  				<div class="list-group-item">
+			    	<h4 class="list-group-item-heading">Jeu stratégique</h4>
+			    	<ul>
+	    			<li>Resistance {{ territoire.resistance|default("non définie") }}</li>
+	    			<li>Richesse {{ territoire.tresor|default("non définie") }}</li>
+	    			</ul>
+	    			<a href="{{ path('territoire.admin.updateStrategie', {'territoire': territoire.id}) }}">Modifier</a>
+	    		</div>
 		    		
 		    	<div class="list-group-item">
 			    	<h4 class="list-group-item-heading">Description</h4>

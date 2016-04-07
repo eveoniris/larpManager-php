@@ -24,13 +24,38 @@ class TerritoireRepository extends EntityRepository
 	}
 	
 	/**
-	 * Fourni la liste des territoires étant dépendant d'un autre territoire
+	 * Fourni la liste des territoires étant dépendant d'un autre territoire et possédant des territoires
+	 */
+	public function findRegions()
+	{
+		$query = $this->getEntityManager()->createQuery('SELECT t FROM LarpManager\Entities\Territoire t  WHERE t.territoire IS NOT NULL ORDER BY t.nom ASC');
+		$territoires = $query->getResult();
+		
+		$result = array();
+		foreach ($territoires as $territoire )
+		{
+			if ($territoire->getTerritoires()->count() > 0 )
+				$result[] = $territoire;
+		}
+	
+		return $result;
+	}
+	
+	/**
+	 * Fourni la liste des territoires étant dépendant d'un autre territoire et ne possédant pas de territoires
 	 */
 	public function findFiefs()
 	{
-		$query = $this->getEntityManager()->createQuery('SELECT t FROM LarpManager\Entities\Territoire t WHERE t.territoire IS NOT NULL ORDER BY t.nom ASC');
+		$query = $this->getEntityManager()->createQuery('SELECT t FROM LarpManager\Entities\Territoire t  WHERE t.territoire IS NOT NULL ORDER BY t.nom ASC');
 		$territoires = $query->getResult();
 		
-		return $territoires;
+		$result = array();
+		foreach ($territoires as $territoire )
+		{
+			if ($territoire->getTerritoires()->count() == 0 )
+				$result[] = $territoire;
+		}
+	
+		return $result;
 	}
 }

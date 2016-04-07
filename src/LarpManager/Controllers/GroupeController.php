@@ -1140,6 +1140,12 @@ class GroupeController
 					$app['orm.em']->persist($territoire);
 				}
 				
+				// supprime la relation entre un background et le groupe
+				foreach ( $groupe->getBackgrounds() as $background)
+				{
+					$app['orm.em']->remove($background);
+				}
+				
 				$app['orm.em']->remove($groupe);
 				$app['orm.em']->flush();
 					
