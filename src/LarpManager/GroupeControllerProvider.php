@@ -18,6 +18,7 @@ class GroupeControllerProvider implements ControllerProviderInterface
 	/**
 	 * Initialise les routes pour les groupes
 	 * Routes :
+	 *  - groupe.diplomatie
 	 * 	- groupe
 	 * 	- groupe.add
 	 *  - groupe.update
@@ -119,6 +120,7 @@ class GroupeControllerProvider implements ControllerProviderInterface
 			->convert('groupe', 'converter.groupe:convert')
 			->convert('alliance', 'converter.alliance:convert')
 			->before($mustBeResponsable);
+		
 		/**
 		 * Accepter une alliance
 		 */
@@ -213,7 +215,15 @@ class GroupeControllerProvider implements ControllerProviderInterface
 			->convert('groupe', 'converter.groupe:convert')
 			->convert('enemy', 'converter.enemy:convert')
 			->before($mustBeResponsable);			
-			
+
+		/**
+		 * Surveiller la diplomatie entre groupe
+		 */
+		$controllers->match('/diplomatie', 'LarpManager\Controllers\GroupeController::diplomatieAction')
+			->bind("groupe.diplomatie")
+			->method('GET')
+			->before($mustBeResponsable);
+		
 		/**
 		 * Liste des groupes
 		 */

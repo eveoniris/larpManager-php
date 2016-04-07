@@ -1,0 +1,81 @@
+{% extends "layout.twig" %}
+
+{% block title %}Diplomatie{% endblock title %}
+
+{% block style %}
+<style>
+	table.diplo {
+		border-collapse: collapse;
+		background-color: #fff;
+	}
+	table.diplo, table.diplo th, table.diplo td {
+    	border: 1px solid black;
+	}
+	
+	table.diplo tr:hover {background-color: #f5f5f5}
+	table.diplo tr:nth-child(even) {background-color: #f2f2f2}
+	
+	table.diplo th {
+		background-color: #4CAF50;
+    	color: white;
+    }
+	
+	th.rotate {
+	  /* Something you can count on */
+	  height: 140px;
+	  white-space: nowrap;
+	}
+	th.rotate > div {
+	  transform: 
+	    /* Magic Numbers */
+	    translate(0px, 51px)
+	    /* 45 is really 360 - 45 */
+	    rotate(270deg);
+	  width: 30px;
+	}
+	th.rotate > div > span {
+	  padding: 5px 10px;
+	}
+</style>
+{% endblock style %}
+
+{% block content %}
+
+<table class="diplo">
+	<thead>
+		<tr>
+			<th class="rotate"></th>
+			{% for groupe in groupes %}
+				<th class="rotate"><div><span>{{ groupe.nom }}</span></div></th>
+			{% endfor %}
+		</tr>
+	</thead>
+	<tbody>
+		
+			{% for groupe in groupes %}
+				<tr>
+					<th>{{ groupe.nom }}</th>
+					{% for groupeTmp in groupes %}
+						<td
+						{% if groupeTmp == groupe %}
+							style="background-color:#000;"
+						{% elseif groupe.isAllyTo(groupeTmp) %}
+							style="background-color: green;"
+						{% elseif groupe.isWaitingAlliance(groupeTmp) %}
+							style="background-color: lightgreen;"
+						{% elseif groupe.isEnemyTo(groupeTmp) %}
+							style="background-color: red;"
+						{% elseif groupe.isWaitingPeace(groupeTmp) %}
+							style="background-color: orange;"
+						{% else %}
+							
+						{% endif %}
+						></td>
+					{% endfor %}
+				</tr>
+			{% endfor %}
+		
+	</tbody>
+</table>
+
+{% endblock content %}

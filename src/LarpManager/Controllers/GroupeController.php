@@ -49,6 +49,21 @@ class GroupeController
 	}
 	
 	/**
+	 * Visualisation des liens entre groupes
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function diplomatieAction(Request $request, Application $app)
+	{
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Groupe');
+		$groupes = $repo->findAll();
+		
+		return $app['twig']->render('admin/diplomatie.twig', array(
+				'groupes' => $groupes
+		));
+	}
+	
+	/**
 	 * Demander une nouvelle alliance
 	 * 
 	 * @param Request $request

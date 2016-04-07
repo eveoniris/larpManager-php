@@ -13,6 +13,11 @@ use LarpManager\Entities\Groupe;
 class GroupeRepository extends EntityRepository
 {
 	
+	public function findAll()
+	{
+		return $this->findBy(array(), array('nom' => 'ASC'));
+	}
+	
 	/**
 	 * Trouve les annonces correspondant aux critères de recherche
 	 *
