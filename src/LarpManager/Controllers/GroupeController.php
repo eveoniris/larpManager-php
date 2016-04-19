@@ -56,7 +56,7 @@ class GroupeController
 	public function diplomatieAction(Request $request, Application $app)
 	{
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Groupe');
-		$groupes = $repo->findAll();
+		$groupes = $repo->findBy(array('pj' => true), array('nom' => 'ASC'));
 		
 		return $app['twig']->render('admin/diplomatie.twig', array(
 				'groupes' => $groupes

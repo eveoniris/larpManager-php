@@ -56,10 +56,35 @@ class HomepageControllerProvider implements ControllerProviderInterface
 					->method('GET|POST')
 					->bind('trombine')
 					->before($mustBeUser);
-					
+			
+		/** Récupére une trombine */
 		$controllers->match('/trombine/{trombine}','LarpManager\Controllers\HomepageController::getTrombineAction')
 					->method('GET')
 					->bind('trombine.get')
+					->before($mustBeUser);
+		
+		/** Page de gestion des règles */
+		$controllers->match('/rules/admin','LarpManager\Controllers\HomepageController::rulesAdminAction')
+					->method('GET|POST')
+					->bind('rules.admin')
+					->before($mustBeScenariste);
+		
+		/** Page de gestion des règles */
+		$controllers->match('/rules/admin/{rule}/delete','LarpManager\Controllers\HomepageController::rulesAdminDeleteAction')
+					->method('GET')
+					->bind('rules.admin.delete')
+					->before($mustBeScenariste);		
+		
+		/** Page de téléchargement des règles */
+		$controllers->match('/rules','LarpManager\Controllers\HomepageController::rulesAction')
+					->method('GET')
+					->bind('rules')
+					->before($mustBeUser);
+		
+		/** Récupére un fichier de règle */
+		$controllers->match('/rules/{rule}','LarpManager\Controllers\HomepageController::getRuleAction')
+					->method('GET')
+					->bind('rules.get')
 					->before($mustBeUser);
 		
 		/** Affichage de la cartographie du monde de conan */

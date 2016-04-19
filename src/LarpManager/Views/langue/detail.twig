@@ -35,7 +35,7 @@
     				<p class="list-group-item-text">
     					<ul>
 						{% for territoire in langue.territoirePrincipaux %}
-							<li><a href="{{ path('territoire.detail',{'index': territoire.id}) }}">{{ territoire.nomTree }}</a></li>
+							<li><a href="{{ path('territoire.admin.detail',{'territoire': territoire.id}) }}">{{ territoire.nomTree }}</a></li>
 						{% endfor %}
 						</ul>
     				</p>
@@ -47,7 +47,7 @@
     				<p class="list-group-item-text">
 						<ul>
 						{% for territoire in langue.territoireSecondaires %}
-							<li><a href="{{ path('territoire.detail',{'index': territoire.id}) }}">{{ territoire.nomTree }}</a></li>
+							<li><a href="{{ path('territoire.admin.detail',{'territoire': territoire.id}) }}">{{ territoire.nomTree }}</a></li>
 						{% endfor %}
 						</ul>
 					</p>
