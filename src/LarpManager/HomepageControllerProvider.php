@@ -87,6 +87,12 @@ class HomepageControllerProvider implements ControllerProviderInterface
 					->bind('rules.get')
 					->before($mustBeUser);
 		
+		/** Récupére un blason */
+		$controllers->match('/blasons/{blason}','LarpManager\Controllers\HomepageController::getBlasonAction')
+					->method('GET')
+					->bind('blason.get')
+					->before($mustBeUser);					
+		
 		/** Affichage de la cartographie du monde de conan */
 		$controllers->match('/world','LarpManager\Controllers\HomepageController::worldAction')
 					->method('GET')

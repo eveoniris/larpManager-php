@@ -10,15 +10,15 @@
 namespace LarpManager\Entities;
 
 /**
- * LarpManager\Entities\Ressource
+ * LarpManager\Entities\Rule
  *
  * @Entity()
- * @Table(name="ressource", indexes={@Index(name="fk_ressource_rarete1_idx", columns={"rarete_id"})})
+ * @Table(name="`rule`")
  * @InheritanceType("SINGLE_TABLE")
  * @DiscriminatorColumn(name="discr", type="string")
- * @DiscriminatorMap({"base":"BaseRessource", "extended":"Ressource"})
+ * @DiscriminatorMap({"base":"BaseRule", "extended":"Rule"})
  */
-class BaseRessource
+class BaseRule
 {
     /**
      * @Id
@@ -28,15 +28,19 @@ class BaseRessource
     protected $id;
 
     /**
-     * @Column(type="string", length=100)
+     * @Column(type="string", length=45)
      */
     protected $label;
 
     /**
-     * @ManyToOne(targetEntity="Rarete", inversedBy="ressources")
-     * @JoinColumn(name="rarete_id", referencedColumnName="id", nullable=false)
+     * @Column(type="string", length=45)
      */
-    protected $rarete;
+    protected $url;
+
+    /**
+     * @Column(type="text", nullable=true)
+     */
+    protected $description;
 
     public function __construct()
     {
@@ -46,7 +50,7 @@ class BaseRessource
      * Set the value of id.
      *
      * @param integer $id
-     * @return \LarpManager\Entities\Ressource
+     * @return \LarpManager\Entities\Rule
      */
     public function setId($id)
     {
@@ -69,7 +73,7 @@ class BaseRessource
      * Set the value of label.
      *
      * @param string $label
-     * @return \LarpManager\Entities\Ressource
+     * @return \LarpManager\Entities\Rule
      */
     public function setLabel($label)
     {
@@ -89,30 +93,53 @@ class BaseRessource
     }
 
     /**
-     * Set Rarete entity (many to one).
+     * Set the value of url.
      *
-     * @param \LarpManager\Entities\Rarete $rarete
-     * @return \LarpManager\Entities\Ressource
+     * @param string $url
+     * @return \LarpManager\Entities\Rule
      */
-    public function setRarete(Rarete $rarete = null)
+    public function setUrl($url)
     {
-        $this->rarete = $rarete;
+        $this->url = $url;
 
         return $this;
     }
 
     /**
-     * Get Rarete entity (many to one).
+     * Get the value of url.
      *
-     * @return \LarpManager\Entities\Rarete
+     * @return string
      */
-    public function getRarete()
+    public function getUrl()
     {
-        return $this->rarete;
+        return $this->url;
+    }
+
+    /**
+     * Set the value of description.
+     *
+     * @param string $description
+     * @return \LarpManager\Entities\Rule
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of description.
+     *
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
     }
 
     public function __sleep()
     {
-        return array('id', 'label', 'rarete_id');
+        return array('id', 'label', 'url', 'description');
     }
 }

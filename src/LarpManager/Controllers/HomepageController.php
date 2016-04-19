@@ -211,6 +211,19 @@ class HomepageController
 	}
 	
 	/**
+	 * Fourni le blason pour affichage
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function getBlasonAction(Request $request, Application $app)
+	{
+		$blason = $request->get('blason');
+		$filename = __DIR__.'/../../../private/img/blasons/'.$blason;
+		return $app->sendFile($filename);
+	}
+	
+	/**
 	 * Page d'acceuil pour les utilisateurs non connecté
 	 * 
 	 * @param Request $request

@@ -10,12 +10,22 @@
 		
 			<div class="well well-sm bs-component">
 			<a href="{{ path('territoire.admin.list') }}">Retour à la liste des territoires</a>
-				<h4>
-					{{ territoire.nom }}
-				</h4>
+				<div class="row">
+					<div class="col-md-8">
+						<h4>
+							{{ territoire.nom }}
+						</h4>
+					</div>
+				
+					<div class="col-md-4">
+						{% if territoire.blason %}
+							<img width="160" height="200" src="{{ path('blason.get', {'blason' : territoire.blason }) }}" /><br />
+						{% endif %}
+						<a href="{{ path('territoire.admin.update.blason', {'territoire': territoire.id}) }}">Ajouter ou modifier le blason</a>
+					</div>
+				</div>
 			</div>
-		
-				    			
+							    			
   			<div class="list-group">
   			
   				<div class="list-group-item">
