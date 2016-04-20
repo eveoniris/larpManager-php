@@ -238,16 +238,25 @@ class LarpManagerVoter implements VoterInterface
 		{
 			foreach ( $user->getGroupes() as $groupe)
 			{
-				foreach ($groupe->getTerritoires() as $territoire)
+				if ( $groupe->getTerritoires() )
 				{
-				
-					if ( $territoire && $territoire->getId() == $territoireId) 
+					foreach ($groupe->getTerritoires() as $territoire)
 					{
-						return true;
-					}
-					else if ( $territoire->getTerritoire() )
-					{
-						return $this->userTerritoireRight($territoire->getTerritoire()->getId(), $user, $token);
+					
+						if ( $territoire->getId() == $territoireId) 
+						{
+							return true;
+						}
+						else if ( $territoire->getTerritoire() )
+						{
+							foreach ( $territoire->getAncestors() as $ancestor )
+							{
+								if ( $ancestor->getId() == $territoireId )
+								{
+									return true;
+								}
+							}
+						}
 					}
 				}
 			}
