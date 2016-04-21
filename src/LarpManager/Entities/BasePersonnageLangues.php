@@ -10,15 +10,15 @@
 namespace LarpManager\Entities;
 
 /**
- * LarpManager\Entities\Membre
+ * LarpManager\Entities\PersonnageLangues
  *
  * @Entity()
- * @Table(name="membre", indexes={@Index(name="fk_personnage_groupe_secondaire_personnage1_idx", columns={"personnage_id"}), @Index(name="fk_personnage_groupe_secondaire_secondary_group1_idx", columns={"secondary_group_id"})})
+ * @Table(name="personnage_langues", indexes={@Index(name="fk_personnage_langues_personnage1_idx", columns={"personnage_id"}), @Index(name="fk_personnage_langues_langue1_idx", columns={"langue_id"})})
  * @InheritanceType("SINGLE_TABLE")
  * @DiscriminatorColumn(name="discr", type="string")
- * @DiscriminatorMap({"base":"BaseMembre", "extended":"Membre"})
+ * @DiscriminatorMap({"base":"BasePersonnageLangues", "extended":"PersonnageLangues"})
  */
-class BaseMembre
+class BasePersonnageLangues
 {
     /**
      * @Id
@@ -28,21 +28,21 @@ class BaseMembre
     protected $id;
 
     /**
-     * @Column(type="boolean", nullable=true)
+     * @Column(name="`source`", type="string", length=45)
      */
-    protected $secret;
+    protected $source;
 
     /**
-     * @ManyToOne(targetEntity="Personnage", inversedBy="membres")
+     * @ManyToOne(targetEntity="Personnage", inversedBy="personnageLangues")
      * @JoinColumn(name="personnage_id", referencedColumnName="id", nullable=false)
      */
     protected $personnage;
 
     /**
-     * @ManyToOne(targetEntity="SecondaryGroup", inversedBy="membres")
-     * @JoinColumn(name="secondary_group_id", referencedColumnName="id", nullable=false)
+     * @ManyToOne(targetEntity="Langue", inversedBy="personnageLangues")
+     * @JoinColumn(name="langue_id", referencedColumnName="id", nullable=false)
      */
-    protected $secondaryGroup;
+    protected $langue;
 
     public function __construct()
     {
@@ -52,7 +52,7 @@ class BaseMembre
      * Set the value of id.
      *
      * @param integer $id
-     * @return \LarpManager\Entities\Membre
+     * @return \LarpManager\Entities\PersonnageLangues
      */
     public function setId($id)
     {
@@ -72,33 +72,33 @@ class BaseMembre
     }
 
     /**
-     * Set the value of secret.
+     * Set the value of source.
      *
-     * @param boolean $secret
-     * @return \LarpManager\Entities\Membre
+     * @param string $source
+     * @return \LarpManager\Entities\PersonnageLangues
      */
-    public function setSecret($secret)
+    public function setSource($source)
     {
-        $this->secret = $secret;
+        $this->source = $source;
 
         return $this;
     }
 
     /**
-     * Get the value of secret.
+     * Get the value of source.
      *
-     * @return boolean
+     * @return string
      */
-    public function getSecret()
+    public function getSource()
     {
-        return $this->secret;
+        return $this->source;
     }
 
     /**
      * Set Personnage entity (many to one).
      *
      * @param \LarpManager\Entities\Personnage $personnage
-     * @return \LarpManager\Entities\Membre
+     * @return \LarpManager\Entities\PersonnageLangues
      */
     public function setPersonnage(Personnage $personnage = null)
     {
@@ -118,30 +118,30 @@ class BaseMembre
     }
 
     /**
-     * Set SecondaryGroup entity (many to one).
+     * Set Langue entity (many to one).
      *
-     * @param \LarpManager\Entities\SecondaryGroup $secondaryGroup
-     * @return \LarpManager\Entities\Membre
+     * @param \LarpManager\Entities\Langue $langue
+     * @return \LarpManager\Entities\PersonnageLangues
      */
-    public function setSecondaryGroup(SecondaryGroup $secondaryGroup = null)
+    public function setLangue(Langue $langue = null)
     {
-        $this->secondaryGroup = $secondaryGroup;
+        $this->langue = $langue;
 
         return $this;
     }
 
     /**
-     * Get SecondaryGroup entity (many to one).
+     * Get Langue entity (many to one).
      *
-     * @return \LarpManager\Entities\SecondaryGroup
+     * @return \LarpManager\Entities\Langue
      */
-    public function getSecondaryGroup()
+    public function getLangue()
     {
-        return $this->secondaryGroup;
+        return $this->langue;
     }
 
     public function __sleep()
     {
-        return array('id', 'personnage_id', 'secondary_group_id', 'secret');
+        return array('id', 'personnage_id', 'langue_id', 'source');
     }
 }

@@ -29,6 +29,19 @@
     				</p>
 	    		</div>
 	    		
+	    		<div class="list-group-item">
+			    	<h4 class="list-group-item-heading">Degré de diffusion</h4>
+			    	<p class="list-group-item-text">
+			    		{% if langue.diffusion == 0 %}
+			    			Ancien
+			    		{% elseif langue.diffusion == 1 %}
+			    			Courant
+			    		{% else %}
+			    			Très répandu
+			    		{% endif %}
+			    	</p>
+			    </div>
+	    		
 	    		{% if langue.territoirePrincipaux|length > 0 %}	
 	    		<div class="list-group-item">
 		    		<h4 class="list-group-item-heading">Cette langue est la langue principale des territoires suivants</h4>

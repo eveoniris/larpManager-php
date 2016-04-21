@@ -44,7 +44,15 @@
     				<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
     				Attention, ce territoire n'a pas de description.
     				{% else %}
-    					{{ territoire.description }}
+    					{{ territoire.description|markdown }}
+    				{% endif %}
+    				</p>
+    				<p class="list-group-item-text">
+	    			{% if not territoire.descriptionSecrete %}
+    				<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+    				Attention, ce territoire n'a pas de description connue des seuls habitants.
+    				{% else %}
+    					{{ territoire.descriptionSecrete|markdown }}
     				{% endif %}
     				</p>
 	    		</div>

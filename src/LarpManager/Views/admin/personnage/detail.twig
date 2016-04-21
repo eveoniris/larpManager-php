@@ -71,6 +71,17 @@
 				</div>
 				
 				<div class="list-group-item">
+					<h6 class="list-group-item-heading">Languages connus</h6>
+					<p class="list-group-item-text">
+						<ul>
+						{% for personnageLangue in personnage.personnageLangues %}
+							<li><strong>{{ personnageLangue.langue}}</strong> ({{ personnageLangue.source }})  - <a href="{{ path('personnage.admin.langue.delete', {'personnage': personnage.id, 'personnageLangue' : personnageLangue.id }) }}">Supprimer</a></li>
+						{% endfor %}
+						</ul>
+					</p>
+				</div>
+				
+				<div class="list-group-item">
 					<h6 class="list-group-item-heading">Compétences <small>({{ personnage.xp|default(0) }} xp)</small></h6>
 					<p><a href="{{ path('personnage.admin.xp', {'personnage':personnage.id}) }}">Ajouter des points d'expérience</a></p>
 					{% for competence in personnage.competences %}

@@ -30,6 +30,10 @@ class LangueForm extends AbstractType
 					'label' => 'Description',
 					'required' => false,
 					'attr' => array('rows' => 10),
+				))
+				->add('diffusion','integer', array(
+						'label' => 'Degrés de diffusion (de 0 à 2 : ancien, courant, très répandu)',
+						'required' => false,
 				));
 	}
 	

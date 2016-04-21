@@ -144,8 +144,20 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 			->bind("personnage.admin.religion.add")
 			->method('GET|POST')
 			->convert('personnage', 'converter.personnage:convert')
-			->before($mustBeOrga);			
+			->before($mustBeOrga);
 		
+		/**
+		 * Suppression d'une langue d'un personnage (orga)
+		 */
+		$controllers->match('/admin/{personnage}/update/langue/{personnageLangue}/delete','LarpManager\Controllers\PersonnageController::adminRemoveLangueAction')
+			->assert('personnage', '\d+')
+			->assert('personnageLangue', '\d+')
+			->bind("personnage.admin.langue.delete")
+			->method('GET|POST')
+			->convert('personnage', 'converter.personnage:convert')
+			->convert('personnageLangue', 'converter.personnageLangue:convert')
+			->before($mustBeOrga);		
+			
 		/**
 		 * Suppression d'un personnage (orga)
 		 */
@@ -189,6 +201,28 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 			->convert('personnage', 'converter.personnage:convert')
 			->before($mustOwn);
 		
+		/**
+		 * Formulaire d'ajout des langues gagnés grace à litterature initie
+		 * Accessible uniquement au proprietaire du personnage
+		 */
+		$controllers->match('/{personnage}/litterature/initie','LarpManager\Controllers\PersonnageController::litteratureInitieAction')
+			->assert('personnage', '\d+')
+			->bind("personnage.litterature.initie")
+			->method('GET|POST')
+			->convert('personnage', 'converter.personnage:convert')
+			->before($mustOwn);
+		
+		/**
+		 * Formulaire d'ajout des langues gagné grace à litterature expert
+		 * Accessible uniquement au proprietaire du personnage
+		 */
+		$controllers->match('/{personnage}/litterature/expert','LarpManager\Controllers\PersonnageController::litteratureExpertAction')
+			->assert('personnage', '\d+')
+			->bind("personnage.litterature.expert")
+			->method('GET|POST')
+			->convert('personnage', 'converter.personnage:convert')
+			->before($mustOwn);
+			
 		/**
 		 * Retire la dernière compétence acquise par un personnage
 		 * Accessible uniquement aux orgas

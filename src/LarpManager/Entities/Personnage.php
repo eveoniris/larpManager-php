@@ -31,6 +31,51 @@ class Personnage extends BasePersonnage
 	{
 		return $this->getPublicName();
 	}
+		
+	/**
+	 * Vérifie si le personnage connait cette langue
+	 * @param unknown $langue
+	 */
+	public function isKnownLanguage($langue)
+	{
+		foreach ( $this->getPersonnageLangues() as $personnageLangue)
+		{
+			if ( $personnageLangue->getLangue() == $langue ) return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Vérifie si le personnage dispose d'un trigger
+	 * @param unknown $tag
+	 */
+	public function hasTrigger($tag)
+	{
+		foreach ( $this->getPersonnageTriggers() as $personnageTrigger)
+		{
+			if ( $personnageTrigger->getTag() == $tag)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Fourni le trigger correspondant au tag
+	 * @param unknown $tag
+	 */
+	public function getTrigger($tag)
+	{
+		foreach ( $this->getPersonnageTriggers() as $personnageTrigger)
+		{
+			if ( $personnageTrigger->getTag() == $tag)
+			{
+				return $personnageTrigger;
+			}
+		}
+		return null;
+	}
 	
 	/**
 	 * Fourni le surnom si celui-ci a été précisé

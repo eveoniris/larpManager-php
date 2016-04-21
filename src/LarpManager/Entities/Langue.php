@@ -36,6 +36,11 @@ class Langue extends BaseLangue
 		return $this->getLabel();
 	}
 	
+	public function getFullDescription()
+	{
+		return $this->getLabel() . ' : '.$this->getDescription();
+	}
+	
 	public function getTerritoireSecondaires()
 	{
 		return $this->territoireSecondaires;

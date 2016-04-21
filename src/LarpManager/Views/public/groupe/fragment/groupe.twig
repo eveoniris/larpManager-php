@@ -81,6 +81,11 @@ Vous êtes responsable de ce groupe.
 {% for territoire in groupe.territoires %}
 	<h6>{{ territoire.nom }}</h6>
 	{{ territoire.description|markdown }}
+	
+	<div class="text-muted">
+		<strong>Secret</strong>
+		{{ territoire.descriptionSecrete|markdown }}
+	</div>
 {% endfor %}
 				
 <div class="header">

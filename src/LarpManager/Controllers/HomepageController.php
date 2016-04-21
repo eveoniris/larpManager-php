@@ -540,6 +540,38 @@ class HomepageController
 			{
 				$participant = $app['user']->getParticipantByGn($app['larp.manager']->getGnActif());
 				$participant->setGroupe($groupe);
+				
+				if ( $participant->getPersonnage() )
+				{
+					$personnage = $participant->getPersonnage();
+					$personnage->setGroupe($groupe);
+					
+					// le personnage doit perdre les langues liées à son ancien groupe
+					// et récupérer les langues correspondant à son nouveau groupe.
+					foreach( $personnage->getPersonnageLangues() as $personnageLangue )
+					{
+						if ($personnageLangue->getSource() == 'GROUPE')
+						{
+							$personnage->removePersonnageLangues($personnageLangue);
+							$app['orm.em']->remove($personnageLangue);
+						}
+					}
+					
+					foreach ( $groupe->getTerritoires() as $territoire )
+					{
+						if ( $territoire->getLangue() )
+						{
+							$personnageLangue = new \LarpManager\Entities\PersonnageLangues();
+							$personnageLangue->setPersonnage($personnage);
+							$personnageLangue->setSource('GROUPE');
+							$personnageLangue->setLangue($territoire->getLangue());
+							
+							$app['orm.em']->persist($personnageLangue);
+							$personnage->addPersonnageLangues($personnageLangue);
+						}
+					}
+					$app['orm.em']->persist($personnage);
+				}
 												
 				$app['orm.em']->persist($participant);
 				$app['orm.em']->flush();

@@ -37,7 +37,16 @@ class TerritoireForm extends AbstractType
 				->add('description','textarea', array(
 					'label' => 'Description',
 					'required' => false,
-					'attr' => array('rows' => 10),
+					'attr' => array(
+							'class' => 'tinymce',
+							'rows' => 10),
+				))
+				->add('description_secrete','textarea', array(
+					'label' => 'Description connue des habitants',
+					'required' => false,
+					'attr' => array(
+							'class' => 'tinymce',
+							'rows' => 10),
 				))
 				->add('geojson', 'textarea', array(
 					'label' => 'GeoJSON',

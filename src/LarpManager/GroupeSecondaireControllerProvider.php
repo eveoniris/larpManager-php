@@ -96,6 +96,18 @@ class GroupeSecondaireControllerProvider implements ControllerProviderInterface
 			->before($mustBeOrga);
 		
 		/**
+		 * Retire l'accés aux secrets à un membre du groupe
+		 */
+		$controllers->match('/admin/{groupe}/membre/{membre}/remove','LarpManager\Controllers\GroupeSecondaireController::adminRemoveMembreAction')
+			->assert('groupe', '\d+')
+			->assert('membre', '\d+')
+			->bind("groupeSecondaire.admin.member.remove")
+			->method('GET')
+			->convert('groupe', 'converter.secondaryGroup:convert')
+			->convert('membre', 'converter.membre:convert')
+			->before($mustBeOrga);			
+		
+		/**
 		 * Supprime une candidature
 		 */
 		$controllers->match('/admin/{groupe}/postulant/{postulant}/remove','LarpManager\Controllers\GroupeSecondaireController::adminRemovePostulantAction')
