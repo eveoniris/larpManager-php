@@ -9,18 +9,16 @@
 
 namespace LarpManager\Entities;
 
-use Doctrine\Common\Collections\ArrayCollection;
-
 /**
- * LarpManager\Entities\CompetenceFamily
+ * LarpManager\Entities\Sort
  *
  * @Entity()
- * @Table(name="competence_family")
+ * @Table(name="sort", indexes={@Index(name="fk_sorts_domaine1_idx", columns={"domaine_id"})})
  * @InheritanceType("SINGLE_TABLE")
  * @DiscriminatorColumn(name="discr", type="string")
- * @DiscriminatorMap({"base":"BaseCompetenceFamily", "extended":"CompetenceFamily"})
+ * @DiscriminatorMap({"base":"BaseSort", "extended":"Sort"})
  */
-class BaseCompetenceFamily
+class BaseSort
 {
     /**
      * @Id
@@ -35,26 +33,35 @@ class BaseCompetenceFamily
     protected $label;
 
     /**
-     * @Column(type="string", length=450, nullable=true)
+     * @Column(type="text", nullable=true)
      */
     protected $description;
 
     /**
-     * @OneToMany(targetEntity="Competence", mappedBy="competenceFamily", cascade={"persist"})
-     * @JoinColumn(name="id", referencedColumnName="competence_family_id", nullable=false)
+     * @Column(type="string", length=45, nullable=true)
      */
-    protected $competences;
+    protected $documentUrl;
+
+    /**
+     * @Column(type="integer")
+     */
+    protected $niveau;
+
+    /**
+     * @ManyToOne(targetEntity="Domaine", inversedBy="sorts")
+     * @JoinColumn(name="domaine_id", referencedColumnName="id", nullable=false)
+     */
+    protected $domaine;
 
     public function __construct()
     {
-        $this->competences = new ArrayCollection();
     }
 
     /**
      * Set the value of id.
      *
      * @param integer $id
-     * @return \LarpManager\Entities\CompetenceFamily
+     * @return \LarpManager\Entities\Sort
      */
     public function setId($id)
     {
@@ -77,7 +84,7 @@ class BaseCompetenceFamily
      * Set the value of label.
      *
      * @param string $label
-     * @return \LarpManager\Entities\CompetenceFamily
+     * @return \LarpManager\Entities\Sort
      */
     public function setLabel($label)
     {
@@ -100,7 +107,7 @@ class BaseCompetenceFamily
      * Set the value of description.
      *
      * @param string $description
-     * @return \LarpManager\Entities\CompetenceFamily
+     * @return \LarpManager\Entities\Sort
      */
     public function setDescription($description)
     {
@@ -120,43 +127,76 @@ class BaseCompetenceFamily
     }
 
     /**
-     * Add Competence entity to collection (one to many).
+     * Set the value of documentUrl.
      *
-     * @param \LarpManager\Entities\Competence $competence
-     * @return \LarpManager\Entities\CompetenceFamily
+     * @param string $documentUrl
+     * @return \LarpManager\Entities\Sort
      */
-    public function addCompetence(Competence $competence)
+    public function setDocumentUrl($documentUrl)
     {
-        $this->competences[] = $competence;
+        $this->documentUrl = $documentUrl;
 
         return $this;
     }
 
     /**
-     * Remove Competence entity from collection (one to many).
+     * Get the value of documentUrl.
      *
-     * @param \LarpManager\Entities\Competence $competence
-     * @return \LarpManager\Entities\CompetenceFamily
+     * @return string
      */
-    public function removeCompetence(Competence $competence)
+    public function getDocumentUrl()
     {
-        $this->competences->removeElement($competence);
+        return $this->documentUrl;
+    }
+
+    /**
+     * Set the value of niveau.
+     *
+     * @param integer $niveau
+     * @return \LarpManager\Entities\Sort
+     */
+    public function setNiveau($niveau)
+    {
+        $this->niveau = $niveau;
 
         return $this;
     }
 
     /**
-     * Get Competence entity collection (one to many).
+     * Get the value of niveau.
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return integer
      */
-    public function getCompetences()
+    public function getNiveau()
     {
-        return $this->competences;
+        return $this->niveau;
+    }
+
+    /**
+     * Set Domaine entity (many to one).
+     *
+     * @param \LarpManager\Entities\Domaine $domaine
+     * @return \LarpManager\Entities\Sort
+     */
+    public function setDomaine(Domaine $domaine = null)
+    {
+        $this->domaine = $domaine;
+
+        return $this;
+    }
+
+    /**
+     * Get Domaine entity (many to one).
+     *
+     * @return \LarpManager\Entities\Domaine
+     */
+    public function getDomaine()
+    {
+        return $this->domaine;
     }
 
     public function __sleep()
     {
-        return array('id', 'label', 'description');
+        return array('id', 'label', 'description', 'domaine_id', 'documentUrl', 'niveau');
     }
 }
