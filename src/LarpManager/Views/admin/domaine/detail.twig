@@ -24,4 +24,20 @@
 		</div>
 	</div>
 	
+	<div class="panel panel-default">
+		<div class="panel-heading"><h4>Liste des sortilèges</h4></div>
+		<div class="panel-body">
+			<a href="{{ path('magie.sort.add') }}"><i class="fa fa-plus"></i> Ajouter un sortilège</a>
+			<div class="list-group">
+			{% for sort in domaine.sorts %}
+				<div class="list-group-item">
+					<div class="list-group-item-heading"><h6>Label</h6></div>
+					<div class="list-group-item-text">{{ sort.label }}</div>
+					<div class="list-group-item-text">{{ sort.description|markdown }}</div>
+				</div>	
+			{% endfor %}
+			</div>
+		</div>
+	</div>
+	
 {% endblock content %}

@@ -48,6 +48,40 @@ class MagieControllerProvider implements ControllerProviderInterface
 			->convert('domaine', 'converter.domaine:convert')
 			->method('GET|POST');
 		
+		$controllers->match('/sort','LarpManager\Controllers\MagieController::sortListAction')
+			->bind("magie.sort.list")
+			->method('GET');
+		
+		$controllers->match('/sort/{sort}','LarpManager\Controllers\MagieController::sortDetailAction')
+			->assert('sort', '\d+')
+			->bind("magie.sort.detail")
+			->convert('sort', 'converter.sort:convert')
+			->method('GET');
+		
+		$controllers->match('/sort/add','LarpManager\Controllers\MagieController::sortAddAction')
+			->bind("magie.sort.add")
+			->method('GET|POST');
+		
+		$controllers->match('/sort/{sort}/update','LarpManager\Controllers\MagieController::sortUpdateAction')
+			->assert('sort', '\d+')
+			->bind("magie.sort.update")
+			->convert('sort', 'converter.sort:convert')
+			->method('GET|POST');
+		
+		$controllers->match('/sort/{sort}/delete','LarpManager\Controllers\MagieController::sortDeleteAction')
+			->assert('sort', '\d+')
+			->bind("magie.sort.delete")
+			->convert('sort', 'converter.sort:convert')
+			->method('GET|POST');			
+		
+		/**
+		 * Obtenir un document lié à un sortilège
+		 */
+		$controllers->match('/sort/{sort}/document/{document}','LarpManager\Controllers\MagieController::getSortDocumentAction')
+			->bind("magie.sort.document")
+			->convert('sort', 'converter.sort:convert')
+			->method('GET');
+		
 		return $controllers;
 	}
 }

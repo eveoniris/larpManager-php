@@ -88,12 +88,14 @@ class CompetenceController
 		{
 			$competence = $form->getData();
 			
+			$files = $request->files->get($form->getName());
+			
 			// Si un document est fourni, l'enregistrer
 			if ( $files['document'] != null )
 			{
 				$path = __DIR__.'/../../../private/doc/';
 				$filename = $files['document']->getClientOriginalName();
-				$extension = $files['document']->guessExtension();
+				$extension = 'pdf';
 			
 				if (!$extension || ! in_array($extension, array('pdf'))) {
 					$app['session']->getFlashBag()->add('error','Désolé, votre document ne semble pas valide (vérifiez le format de votre document)');
@@ -169,7 +171,7 @@ class CompetenceController
 			{
 				$path = __DIR__.'/../../../private/doc/';
 				$filename = $files['document']->getClientOriginalName();
-				$extension = $files['document']->guessExtension();
+				$extension = 'pdf';
 				
 				if (!$extension || ! in_array($extension, array('pdf'))) {
 					$app['session']->getFlashBag()->add('error','Désolé, votre document ne semble pas valide (vérifiez le format de votre document)');

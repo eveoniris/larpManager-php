@@ -145,6 +145,11 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 		$app['converter.domaine'] = $app->share(function($app) {
 			return new DomaineConverter($app['orm.em']);
 		});
+		
+		// sortilège converter
+		$app['converter.sort'] = $app->share(function($app) {
+			return new SortConverter($app['orm.em']);
+		});
 	}
 
 	/**
