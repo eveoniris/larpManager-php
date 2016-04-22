@@ -10,9 +10,20 @@
 		
 			<div class="well well-sm bs-component">
 			<a href="{{ path('religion') }}">Retour à la liste des religions</a>
-				<h4>
-					{{ religion.label }}
-				</h4>
+				<div class="row">
+					<div class="col-md-8">
+						<h4>
+							{{ religion.label }}
+						</h4>
+					</div>
+				
+					<div class="col-md-4">
+						{% if religion.blason %}
+							<img width="160" height="200" src="{{ path('blason.get', {'blason' : religion.blason }) }}" /><br />
+						{% endif %}
+						<a href="{{ path('religion.update.blason', {'religion': religion.id}) }}">Ajouter ou modifier le blason</a>
+					</div>
+				</div>
 			</div>
 		
   			<div class="list-group">

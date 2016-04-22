@@ -5,6 +5,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Silex\Application;
 use LarpManager\Form\TerritoireForm;
 use LarpManager\Form\TerritoireDeleteForm;
+use LarpManager\Form\TerritoireStrategieForm;
+use LarpManager\Form\TerritoireBlasonForm;
 
 /**
  * LarpManager\Controllers\TerritoireController
@@ -130,6 +132,88 @@ class TerritoireController
 				'form' => $form->createView(),
 		));
 	}
+	
+	/**
+	 * Met à jour le blason d'un territoire
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function updateBlasonAction(Request $request, Application $app)
+	{
+		$territoire = $request->get('territoire');
+		
+		$form = $app['form.factory']->createBuilder(new TerritoireBlasonForm(), $territoire)
+			->add('update','submit', array('label' => "Sauvegarder"))
+			->getForm();
+		
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
+		{
+			$files = $request->files->get($form->getName());
+			
+			$path = __DIR__.'/../../../private/img/blasons/';
+			$filename = $files['blason']->getClientOriginalName();
+			$extension = $files['blason']->guessExtension();
+				
+			if (!$extension || ! in_array($extension, array('png', 'jpg', 'jpeg','bmp'))) {
+				$app['session']->getFlashBag()->add('error','Désolé, votre image ne semble pas valide (vérifiez le format de votre image)');
+				return $app->redirect($app['url_generator']->generate('territoire.admin.detail', array('territoire' => $territoire->getId())),301);
+			}
+			
+			$blasonFilename = hash('md5',$app['user']->getUsername().$filename . time()).'.'.$extension;
+			
+			$image = $app['imagine']->open($files['blason']->getPathname());
+			$image->resize($image->getSize()->widen(160));
+			$image->save($path. $blasonFilename);
+			
+			$territoire->setBlason($blasonFilename);
+			$app['orm.em']->persist($territoire);
+			$app['orm.em']->flush();
+			
+			$app['session']->getFlashBag()->add('success','Le blason a été enregistré');
+			return $app->redirect($app['url_generator']->generate('territoire.admin.detail', array('territoire' => $territoire->getId())),301);
+		}
+		
+		return $app['twig']->render('admin/territoire/blason.twig', array(
+				'territoire' => $territoire,
+				'form' => $form->createView(),
+		));
+	}
+		
+	/**
+	 * Modifie le jeu strategique d'un territoire
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function updateStrategieAction(Request $request, Application $app)
+	{
+		$territoire = $request->get('territoire');
+	
+		$form = $app['form.factory']->createBuilder(new TerritoireStrategieForm(), $territoire)
+			->add('update','submit', array('label' => "Sauvegarder"))
+			->getForm();
+	
+		$form->handleRequest($request);
+	
+		if ( $form->isValid() )
+		{
+			$territoire = $form->getData();
+				
+			$app['orm.em']->persist($territoire);
+			$app['orm.em']->flush();
+			$app['session']->getFlashBag()->add('success', 'Le territoire a été mis à jour.');
+	
+			return $app->redirect($app['url_generator']->generate('territoire.admin.detail',array('territoire' => $territoire->getId())),301);
+		}
+	
+		return $app['twig']->render('admin/territoire/updateStrategie.twig', array(
+				'territoire' => $territoire,
+				'form' => $form->createView(),
+		));
+	}	
 	
 	/**
 	 * Supression d'un territoire

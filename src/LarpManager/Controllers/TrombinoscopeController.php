@@ -23,7 +23,7 @@ class TrombinoscopeController
 	{				
 		$order_by = $request->get('order_by') ?: 'username';
 		$order_dir = $request->get('order_dir') == 'DESC' ? 'DESC' : 'ASC';
-		$limit = (int)($request->get('limit') ?: 1);
+		$limit = (int)($request->get('limit') ?: 16);
 		$page = (int)($request->get('page') ?: 1);
 		$offset = ($page - 1) * $limit;
 		$criteria = array();

@@ -1,0 +1,26 @@
+{% extends "layout.twig" %}
+
+{% block title %}Sortilèges{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path('magie.domaine.list') }}">Liste des sortilèges</a></li>
+		<li class="active">Supprimer un sortilège</li>
+	</ol>
+	
+	
+	<div class="well bs-component">
+		<form action="{{ path('magie.sort.delete', {'sort': sort.id}) }}" method="POST" {{ form_enctype(form) }} novalidate>
+			<fieldset>
+				<legend>Supression d'un sortilège</legend>
+					{{ sort.label }} -- {{ sort.niveau }}
+					{{ sort.description|markdown }}
+					{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+					{{ form(form) }}
+			</fieldset>
+		</form>
+	</div>
+				
+{% endblock content %}

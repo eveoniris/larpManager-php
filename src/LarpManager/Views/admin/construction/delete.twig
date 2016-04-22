@@ -1,0 +1,26 @@
+{% extends "layout.twig" %}
+
+{% block title %}Construction{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path('construction') }}">Liste des constructions</a></li>
+		<li class="active">Supprimer une construction</li>
+	</ol>
+	
+	
+	<div class="well bs-component">
+		<form action="{{ path('construction.delete', {'construction': construction.id}) }}" method="POST" {{ form_enctype(form) }} novalidate>
+			<fieldset>
+				<legend>Supression d'une construction</legend>
+					{{ construction.label }} -- {{ construction.defense }}
+					{{ construction.description|markdown }}
+					{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+					{{ form(form) }}
+			</fieldset>
+		</form>
+	</div>
+				
+{% endblock content %}

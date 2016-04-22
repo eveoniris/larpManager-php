@@ -1,0 +1,47 @@
+{% extends "layout.twig" %}
+
+{% block title %}Sortilèges{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path('magie.sort.list') }}">Liste des sortilèges</a></li>
+		<li class="active">Détail d'un sortilège</li>
+	</ol>
+
+	<div class="list-group">
+		<div class="list-group-item">
+			<div class="list-group-item-heading"><h6>Label</h6></div>
+			<div class="list-group-item-text">{{ sort.label }}</div>
+		</div>
+		<div class="list-group-item">
+			<div class="list-group-item-heading"><h6>Niveau</h6></div>
+			<div class="list-group-item-text">{{ sort.niveau }}</div>
+		</div>
+		<div class="list-group-item">
+			<div class="list-group-item-heading"><h6>Domaine</h6></div>
+			<div class="list-group-item-text">{{ sort.domaine.label }}</div>
+		</div>
+		<div class="list-group-item">
+			<h4 class="list-group-item-heading">Document</h4>
+			<p class="list-group-item-text">
+				{% if not sort.documentUrl %}
+					Aucun document n'est disponible
+				{% else %}
+					<a href="{{ path('magie.sort.document',{'sort' : sort.id, 'document':sort.documentUrl}) }}">Téléchargez le document</a>
+				{% endif %}
+	    	</p>
+    	</div>
+	</div>
+	
+	
+	
+	<div class="panel panel-default">
+		<div class="panel-heading"><h4>Description</h4></div>
+		<div class="panel-body">
+			<p>{{ sort.description|markdown }}</p>
+		</div>
+	</div>
+		
+{% endblock content %}

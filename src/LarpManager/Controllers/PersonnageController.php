@@ -283,8 +283,8 @@ class PersonnageController
 		$personnage = $request->get('personnage');
 		
 		$form = $app['form.factory']->createBuilder(new PersonnageUpdateRenommeForm(), $personnage)
-		->add('save','submit', array('label' => 'Valider les modifications'))
-		->getForm();
+			->add('save','submit', array('label' => 'Valider les modifications'))
+			->getForm();
 		
 		$form->handleRequest($request);
 			
@@ -302,6 +302,218 @@ class PersonnageController
 		return $app['twig']->render('admin/personnage/updateRenomme.twig', array(
 				'form' => $form->createView(),
 				'personnage' => $personnage));
+	}
+	
+	/**
+	 * Ajoute une religion à un personnage
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function adminAddReligionAction(Request $request, Application $app)
+	{
+		$personnage = $request->get('personnage');
+		
+		// refuser la demande si le personnage est Fanatique
+		if ( $personnage->isFanatique() )
+		{
+			$app['session']->getFlashBag()->add('error','Désolé, le personnage êtes un Fanatique, il vous est impossible de choisir une nouvelle religion. (supprimer la religion fanatique qu\'il possède avant)' );
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
+		}
+		
+		$personnageReligion = new \LarpManager\Entities\PersonnagesReligions();
+		$personnageReligion->setPersonnage($personnage);
+		
+		// ne proposer que les religions que le personnage ne pratique pas déjà ...
+		$availableReligions = $app['personnage.manager']->getAvailableReligions($personnage);
+		
+		if ( $availableReligions->count() == 0 )
+		{
+			$app['session']->getFlashBag()->add('error','Désolé, il n\'y a plus de religion disponibles');
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
+		}
+		
+		// construit le tableau de choix
+		$choices = array();
+		foreach ( $availableReligions as $religion)
+		{
+			$choices[] = $religion;
+		}
+		
+		$form = $app['form.factory']->createBuilder(new PersonnageReligionForm(), $personnageReligion)
+			->add('religion','entity', array(
+					'required' => true,
+					'label' => 'Votre religion',
+					'class' => 'LarpManager\Entities\Religion',
+					'choices' => $availableReligions,
+					'property' => 'label',
+			))
+			->add('save','submit', array('label' => 'Valider votre religion'))
+			->getForm();
+		
+		$form->handleRequest($request);
+				
+		if ( $form->isValid() )
+		{
+			$personnageReligion = $form->getData();
+			
+			// supprimer toutes les autres religions si l'utilisateur à choisi fanatique
+			// n'autoriser que un Fervent que si l'utilisateur n'a pas encore Fervent.
+			if ( $personnageReligion->getReligionLevel()->getIndex() == 3 )
+			{
+				$personnagesReligions = $personnage->getPersonnagesReligions();
+				foreach ( $personnagesReligions as $oldReligion)
+				{
+					$app['orm.em']->remove($oldReligion);
+				}
+			}
+			else if ( $personnageReligion->getReligionLevel()->getIndex() == 2 )
+			{
+				if ( $personnage->isFervent() )
+				{
+					$app['session']->getFlashBag()->add('error','Désolé, vous êtes déjà Fervent d\'une autre religion, il vous est impossible de choisir une nouvelle religion en tant que Fervent. Veuillez contacter votre orga en cas de problème.');
+					return $app->redirect($app['url_generator']->generate('homepage'),301);
+				}
+			}
+						
+			$app['orm.em']->persist($personnageReligion);
+			$app['orm.em']->flush();
+		
+			$app['session']->getFlashBag()->add('success','Le personnage a été sauvegardé.');
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
+		}
+		
+		return $app['twig']->render('admin/personnage/addReligion.twig', array(
+				'form' => $form->createView(),
+				'personnage' => $personnage));
+		
+	}
+	
+	/**
+	 * Retire une religion d'un personnage
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function adminRemoveReligionAction(Request $request, Application $app)
+	{
+		$personnage = $request->get('personnage');
+		$personnageReligion = $request->get('personnageReligion');
+		
+		$form = $app['form.factory']->createBuilder()
+			->add('save','submit', array('label' => 'Retirer la religion'))
+			->getForm();
+		
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
+		{
+			$data = $form->getData();
+			
+			$app['orm.em']->remove($personnageReligion);
+			$app['orm.em']->flush();
+			
+			$app['session']->getFlashBag()->add('success','Le personnage a été sauvegardé.');
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
+		}
+		
+		return $app['twig']->render('admin/personnage/removeReligion.twig', array(
+				'form' => $form->createView(),
+				'personnage' => $personnage,
+				'personnageReligion'=> $personnageReligion,
+		));
+	}
+	
+	/**
+	 * Retire une langue d'un personnage
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function adminRemoveLangueAction(Request $request, Application $app)
+	{
+		$personnage = $request->get('personnage');
+		$personnageLangue = $request->get('personnageLangue');
+		
+		$form = $app['form.factory']->createBuilder()
+			->add('save','submit', array('label' => 'Retirer la langue'))
+			->getForm();
+		
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
+		{
+			$data = $form->getData();
+				
+			$app['orm.em']->remove($personnageLangue);
+			$app['orm.em']->flush();
+				
+			$app['session']->getFlashBag()->add('success','Le personnage a été sauvegardé.');
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
+		}
+		
+		return $app['twig']->render('admin/personnage/removeLangue.twig', array(
+				'form' => $form->createView(),
+				'personnage' => $personnage,
+				'personnageLangue'=> $personnageLangue,
+		));
+	}
+	
+	/**
+	 * Modifie l'origine d'un personnage
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function adminUpdateOriginAction(Request $request, Application $app)
+	{
+		$personnage = $request->get('personnage');
+		
+		$oldOrigine = $personnage->getTerritoire();
+		
+		$form = $app['form.factory']->createBuilder(new PersonnageOriginForm(), $personnage)
+			->add('save','submit', array('label' => 'Valider l\'origine du personnage'))
+			->getForm();
+		
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$personnage = $form->getData();
+			
+			// le personnage doit perdre les langues de son ancienne origine
+			// et récupérer les langue de sa nouvelle origine
+			foreach( $personnage->getPersonnageLangues() as $personnageLangue )
+			{
+				if ($personnageLangue->getSource() == 'ORIGINE')
+				{
+					$personnage->removePersonnageLangues($personnageLangue);
+					$app['orm.em']->remove($personnageLangue);
+				}
+			}			
+			$newOrigine = $personnage->getTerritoire();
+			foreach ( $newOrigine->getLangues() as $langue )
+			{
+				$personnageLangue = new \LarpManager\Entities\PersonnageLangues();
+				$personnageLangue->setPersonnage($personnage);
+				$personnageLangue->setSource('ORIGINE');
+				$personnageLangue->setLangue($langue);
+				
+				$app['orm.em']->persist($personnageLangue);
+				$personnage->addPersonnageLangues($personnageLangue);
+			}
+						
+			$app['orm.em']->persist($personnage);
+			$app['orm.em']->flush();
+		
+			$app['session']->getFlashBag()->add('success','Le personnage a été sauvegardé.');
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
+		}
+		
+		return $app['twig']->render('admin/personnage/updateOrigine.twig', array(
+				'form' => $form->createView(),
+				'personnage' => $personnage,
+		));
 	}
 	
 	/**
@@ -383,7 +595,7 @@ class PersonnageController
 			return $app->redirect($app['url_generator']->generate('personnage'),301);
 		}
 		
-		return $app['twig']->render('personnage/religion_add.twig', array(
+		return $app['twig']->render('public/personnage/religion_add.twig', array(
 				'form' => $form->createView(),
 				'personnage' => $personnage,
 		));
@@ -410,7 +622,7 @@ class PersonnageController
 			->add('save','submit', array('label' => 'Valider votre origine'))
 			->getForm();
 		
-			$form->handleRequest($request);
+		$form->handleRequest($request);
 			
 		if ( $form->isValid() )
 		{
@@ -422,7 +634,7 @@ class PersonnageController
 			return $app->redirect($app['url_generator']->generate('personnage'),301);
 		}
 		
-		return $app['twig']->render('personnage/origin_add.twig', array(
+		return $app['twig']->render('public/personnage/origin_add.twig', array(
 				'form' => $form->createView(),
 				'personnage' => $personnage,
 		));
@@ -546,7 +758,7 @@ class PersonnageController
 		{
 			$data = $form->getData();
 			
-			$competenceId = $data['competenceId']; 
+			$competenceId = $data['competenceId'];
 			$competence = $app['orm.em']->find('\LarpManager\Entities\Competence', $competenceId);
 						
 			$cout = $app['personnage.manager']->getCompetenceCout($personnage, $competence);
@@ -582,6 +794,68 @@ class PersonnageController
 				}
 			}
 			
+			// cas special littérature
+			if ( $competence->getCompetenceFamily()->getLabel() == "Littérature")
+			{
+				switch ($competence->getLevel()->getId())
+				{
+					case 1: // le personnage obtient toutes les langues "très répandus"
+						$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Langue');
+						$langues = $repo->findAll();
+						
+						foreach ( $langues as $langue)
+						{
+							if ( $langue->getDiffusion() == 2 )
+							{
+								if ( ! $personnage->isKnownLanguage($langue) )
+								{
+									$personnageLangue = new \LarpManager\Entities\PersonnageLangues();
+									$personnageLangue->setPersonnage($personnage);
+									$personnageLangue->setLangue($langue);
+									$personnageLangue->setSource('LITTERATURE APPRENTI');
+									
+									$app['orm.em']->persist($personnageLangue);
+								}
+							}
+						}
+						break;
+					case 2: // le personnage peux choisir trois languages supplémentaire (sauf parmi les anciens)
+						$trigger = new \LarpManager\Entities\PersonnageTrigger();
+						$trigger->setPersonnage($personnage);
+						$trigger->setTag('LITTERATURE INITIE');
+						$trigger->setDone(false);
+						$app['orm.em']->persist($trigger);
+						break;
+					case 3: // le personnage peux choisir trois languages supplémentaire (dont un ancien)
+						$trigger = new \LarpManager\Entities\PersonnageTrigger();
+						$trigger->setPersonnage($personnage);
+						$trigger->setTag('LITTERATURE EXPERT');
+						$trigger->setDone(false);
+						$app['orm.em']->persist($trigger);
+						break;
+					case 4: // le personnage obtient tous les languages courants
+						$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Langue');
+						$langues = $repo->findAll();
+						
+						foreach ( $langues as $langue)
+						{
+							if ( $langue->getDiffusion() > 0 )
+							{
+								if ( ! $personnage->isKnownLanguage($langue) )
+								{
+									$personnageLangue = new \LarpManager\Entities\PersonnageLangues();
+									$personnageLangue->setPersonnage($personnage);
+									$personnageLangue->setLangue($langue);
+									$personnageLangue->setSource('LITTERATURE MAITRE');
+										
+									$app['orm.em']->persist($personnageLangue);
+								}
+							}
+						}
+						break;
+				}
+			}
+			
 			// historique
 			$historique = new \LarpManager\Entities\ExperienceUsage();
 			$historique->setOperationDate(new \Datetime('NOW'));
@@ -602,6 +876,122 @@ class PersonnageController
 				'form' => $form->createView(),
 				'personnage' => $personnage,
 				'competences' =>  $availableCompetences,
+		));
+	}
+	
+	public function litteratureInitieAction(Request $request, Application $app)
+	{
+		$personnage = $request->get('personnage');
+		
+		$availableLangues = $app['personnage.manager']->getAvailableLangues($personnage, 1);
+		
+		$form = $app['form.factory']->createBuilder()
+			->add('langues','entity', array(
+				'required' => true,
+				'label' => 'Choisissez vos nouvelles langues',
+				'multiple' => true,
+				'expanded' => true,
+				'class' => 'LarpManager\Entities\Langue',
+				'choices' => $availableLangues,
+				'choice_label' => 'fullDescription'
+			))
+			->add('save','submit', array('label' => 'Valider vos nouvelles langues'))
+			->getForm();
+		
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
+		{
+			$data = $form->getData();
+			$langues = $data['langues'];
+
+			// si le personnage a plus de trois langues, refuser
+			if ( count($langues) > 3 )
+			{
+				$app['session']->getFlashBag()->add('error','Vous ne pouvez choisir que 3 langues au maximum.');
+				return $app->redirect($app['url_generator']->generate('personnage'),301);
+			}
+			foreach ( $langues as $langueId)
+			{
+				$langue = $app['orm.em']->find('\LarpManager\Entities\Langue', $langueId);
+				$personnageLangue = new \LarpManager\Entities\PersonnageLangues();
+				$personnageLangue->setPersonnage($personnage);
+				$personnageLangue->setLangue($langue);
+				$personnageLangue->setSource('LITTERATURE INITIE');
+				$app['orm.em']->persist($personnageLangue);
+			}
+			
+			// suppression du trigger
+			$trigger = $personnage->getTrigger('LITTERATURE INITIE');
+			$app['orm.em']->remove($trigger);
+			
+			$app['orm.em']->flush();
+
+			$app['session']->getFlashBag()->add('success','Vos modifications ont été enregistrées.');
+			return $app->redirect($app['url_generator']->generate('personnage'),301);
+		}
+		
+		return $app['twig']->render('personnage/litteratureInitie.twig', array(
+				'form' => $form->createView(),
+				'personnage' => $personnage,
+		));
+	}
+	
+	public function litteratureExpertAction(Request $request, Application $app)
+	{
+		$personnage = $request->get('personnage');
+		
+		$availableLangues = $app['personnage.manager']->getAvailableLangues($personnage, 0);
+		
+		$form = $app['form.factory']->createBuilder()
+			->add('langues','entity', array(
+				'required' => true,
+				'label' => 'Choisissez vos nouvelles langues',
+				'multiple' => true,
+				'expanded' => true,
+				'class' => 'LarpManager\Entities\Langue',
+				'choices' => $availableLangues,
+				'choice_label' => 'fullDescription'
+			))
+			->add('save','submit', array('label' => 'Valider vos nouvelles langues'))
+			->getForm();
+		
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
+		{
+			$data = $form->getData();
+			$langues = $data['langues'];
+
+			// si le personnage a plus de trois langues, refuser
+			if ( count($langues) > 3 )
+			{
+				$app['session']->getFlashBag()->add('error','Vous ne pouvez choisir que 3 langues au maximum.');
+				return $app->redirect($app['url_generator']->generate('personnage'),301);
+			}
+			foreach ( $langues as $langueId)
+			{
+				$langue = $app['orm.em']->find('\LarpManager\Entities\Langue', $langueId);
+				$personnageLangue = new \LarpManager\Entities\PersonnageLangues();
+				$personnageLangue->setPersonnage($personnage);
+				$personnageLangue->setLangue($langue);
+				$personnageLangue->setSource('LITTERATURE EXPERT');
+				$app['orm.em']->persist($personnageLangue);
+			}
+			
+			// suppression du trigger
+			$trigger = $personnage->getTrigger('LITTERATURE EXPERT');
+			$app['orm.em']->remove($trigger);
+			
+			$app['orm.em']->flush();
+
+			$app['session']->getFlashBag()->add('success','Vos modifications ont été enregistrées.');
+			return $app->redirect($app['url_generator']->generate('personnage'),301);
+		}
+		
+		return $app['twig']->render('personnage/litteratureExpert.twig', array(
+				'form' => $form->createView(),
+				'personnage' => $personnage,
 		));
 	}
 	

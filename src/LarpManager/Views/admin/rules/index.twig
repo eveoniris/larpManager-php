@@ -1,0 +1,38 @@
+{% extends "layout.twig" %}
+
+{% block title %}Règles{% endblock title %}
+
+{% block content %}
+
+<div class="well bs-component">
+	
+	
+	<div class="header"><h5>Ajouter un fichier de règle</h5></div>
+	
+	<blockquote>Choisissez votre fichier pdf et téléversez le dans larpManager. Vous devez spécifier son label ainsi qu'une petite description.</blockquote>
+	
+	<form action="{{ path('rules.admin') }}" method="POST" {{ form_enctype(form) }} no-validate>			
+			{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+			{{ form(form) }}
+	</form>
+	
+	<div class="header"><h5>Liste des règles</h5></div>
+	
+	<blockquote>Les fichiers suivants sont disponibles pour tous les joueurs</blockquote>
+	
+	<div class="list-group">
+		{% for regle in regles %}
+				<div class="list-group-item">
+					<h5 class="list-group-item-heading">{{ regle.label }}
+						<div class="pull-right">
+							<small><a target="_blank" href="{{ path('rules.get',{'rule': regle.url}) }}"><i class="fa fa-download"></i> Téléchargez le fichier</a></small>
+						</div>
+					</h5>
+					<p class="list-group-item-text">{{ regle.description|markdown }}</p>
+					<p class="list-group-item-text"><a href="{{ path('rules.admin.delete',{'rule': regle.id}) }}"><i class="fa fa-remove"></i> Supprimer le fichier</a></p>
+				</div>
+		{% endfor %}
+	</div>
+</div>
+
+{% endblock content %}

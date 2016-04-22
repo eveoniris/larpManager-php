@@ -376,6 +376,27 @@ class GroupeSecondaireController
 	}
 	
 	/**
+	 * Retire un membre du groupe
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function adminRemoveMembreAction(Request $request, Application $app)
+	{
+		$groupeSecondaire = $request->get('groupe');
+		$membre = $request->get('membre');
+		
+	
+		$app['orm.em']->remove($membre);
+		$app['orm.em']->flush();
+	
+		$app['session']->getFlashBag()->add('success', 'le membre a été retiré.');
+	
+		return $app['twig']->render('admin/groupeSecondaire/detail.twig', array(
+				'groupeSecondaire' => $groupeSecondaire));
+	}
+	
+	/**
 	 * Retirer le droit de lire les secrets à un utilisateur
 	 * 
 	 * @param Request $request

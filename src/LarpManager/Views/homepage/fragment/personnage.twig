@@ -102,6 +102,28 @@
 		</div>
 		
 		
+		<div class="header">
+			<h5>Languages connus</h5>
+		</div>
+		
+		{% if personnage.hasTrigger('LITTERATURE INITIE') %}
+			<blockquote>
+				<p>Votre compétence Littérature au niveau initié vous permet de choisir trois langues supplémentaires</p>
+				<a href="{{ path('personnage.litterature.initie', {'personnage': personnage.id}) }}">Choisir les langues supplémentaires</a>
+			</blockquote>
+		{% endif %}
+		{% if personnage.hasTrigger('LITTERATURE EXPERT') %}
+			<blockquote>
+				<p>Votre compétence Littérature au niveau expert vous permet de choisir trois langues supplémentaires</p>
+				<a href="{{ path('personnage.litterature.expert', {'personnage': personnage.id}) }}">Choisir les langues supplémentaires</a>
+			</blockquote>
+		{% endif %}
+		<ul class="list-group">
+			{% for personnageLangue in personnage.personnageLangues %}
+				<li class="list-group-item"><strong>{{ personnageLangue.langue }}</strong>&nbsp;<small>(obtenu grace à votre {{ personnageLangue.source }})</small>{{ personnageLangue.langue.description|markdown }}</li>
+			{% endfor %}
+		</ul>
+		
 		{# Compétences #}
 		<div class="header">
 			<h5>Compétences</h5>

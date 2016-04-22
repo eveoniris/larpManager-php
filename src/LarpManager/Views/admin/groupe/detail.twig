@@ -34,16 +34,13 @@
    	    		</div>
 						
 	    		<div class="list-group-item">
-	    			<h4 class="list-group-item-heading">Territoire</h4>
+	    			<h4 class="list-group-item-heading">Territoire(s)</h4>
 	    			
-	    			<p class="list-group-item-text">
-	    				{% if not groupe.territoire %}
-    					<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
-    					Attention, ce groupe n'a pas de territoire.
-    				{% else %}
-    					{{ groupe.territoire.nom }}
-    				{% endif %}
-	    			</p>
+	    			{% for territoire in groupe.territoires %}
+		    			<p class="list-group-item-text">
+	    					{{ territoire.nom }}
+						</p>
+    				{% endfor %}
 	    		</div>
 	    			
 	    		<div class="list-group-item">

@@ -1,0 +1,24 @@
+{% extends "layout.twig" %}
+
+{% block title %}Domaine de magie{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path('magie.domaine.list') }}">Liste des domaines de magie</a></li>
+		<li class="active">Modifier un domaine de magie</li>
+	</ol>
+	
+	
+	<div class="well bs-component">
+		<form action="{{ path('magie.domaine.update', {'domaine': domaine.id}) }}" method="POST" {{ form_enctype(form) }} novalidate>
+			<fieldset>
+				<legend>Modification d'un domaine de magie</legend>
+					{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+					{{ form(form) }}
+			</fieldset>
+		</form>
+	</div>
+				
+{% endblock content %}

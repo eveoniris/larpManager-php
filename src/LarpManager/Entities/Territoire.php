@@ -135,6 +135,20 @@ class Territoire extends BaseTerritoire implements \JsonSerializable
 	{
 		return $this->getNomTree();
 	}
+	
+	/**
+	 * Fourni tous les ancêtres d'un territoire
+	 */
+	public function getAncestors()
+	{
+		$ancestors = new ArrayCollection();
+		if ( $this->getTerritoire() )
+		{
+			$ancestors[] = $this->getTerritoire();
+			$ancestors = new ArrayCollection(array_merge($ancestors->toArray(),$this->getTerritoire()->getAncestors()->toArray()));
+		}
+		return $ancestors;
+	}
 		
 	/**
 	 * Calcule le nombre d'étape necessaire pour revenir au parent le plus ancien

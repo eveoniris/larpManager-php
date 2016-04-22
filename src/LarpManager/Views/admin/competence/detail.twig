@@ -37,6 +37,15 @@
 	    					<a href="{{ path('competence.document',{'competence' : competence.id, 'document':competence.documentUrl}) }}">Téléchargez le document</a>
 	    				{% endif %}
     				</p>
+    				
+    				<h4 class="list-group-item-heading">Matériel</h4>
+    				<p class="list-group-item-text">
+    					{% if not competence.materiel %}
+    						non défini.
+    					{% else %}
+    						{{ competence.materiel|markdown }}
+    					{% endif %}
+    				</p>
 	    		</div>
 	    		
   				<div class="list-group-item">

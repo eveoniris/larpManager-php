@@ -7,7 +7,6 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\RoleHierarchyVoter;
 
 use LarpManager\Entities\User;
-use LarpManager\Entities\Personnage;
 
 /**
  * LarpManager\LarpManagerVoter
@@ -42,6 +41,7 @@ class LarpManagerVoter implements VoterInterface
 				'POST_OWNER',
 				'MODERATOR',
 				'GROUPE_MEMBER',
+				'TERRITOIRE_MEMBER',
 				'GROUPE_RESPONSABLE',
 				'GROUPE_SECONDAIRE_MEMBER',
 				'GROUPE_SECONDAIRE_RESPONSABLE',
@@ -84,6 +84,10 @@ class LarpManagerVoter implements VoterInterface
 			if ($attribute == 'GROUPE_MEMBER') {
 				$groupeId = $object;
 				return $this->isMemberOf($user, $groupeId) ? VoterInterface::ACCESS_GRANTED : VoterInterface::ACCESS_DENIED;
+			}
+			if ($attribute == 'TERRITOIRE_MEMBER') {
+				$territoireId = $object;
+				return $this->isInsideOf($user, $territoireId) ? VoterInterface::ACCESS_GRANTED : VoterInterface::ACCESS_DENIED;
 			}
 			if ($attribute == 'GROUPE_SECONDAIRE_RESPONSABLE') {
 				$groupeSecondaireId = $object;
@@ -234,8 +238,27 @@ class LarpManagerVoter implements VoterInterface
 		{
 			foreach ( $user->getGroupes() as $groupe)
 			{
-				$territoire = $groupe->getTerritoire();
-				if ( $territoire && $territoire->getId() == $territoireId) return true;
+				if ( $groupe->getTerritoires() )
+				{
+					foreach ($groupe->getTerritoires() as $territoire)
+					{
+					
+						if ( $territoire->getId() == $territoireId) 
+						{
+							return true;
+						}
+						else if ( $territoire->getTerritoire() )
+						{
+							foreach ( $territoire->getAncestors() as $ancestor )
+							{
+								if ( $ancestor->getId() == $territoireId )
+								{
+									return true;
+								}
+							}
+						}
+					}
+				}
 			}
 		}
 		return false;
@@ -261,6 +284,33 @@ class LarpManagerVoter implements VoterInterface
 				if ( $groupe instanceof \LarpManager\Entities\SecondaryGroup
 						&& $groupe->getId() == $groupeSecondaireId)
 					return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Test si un utilisateur dispose des droits pour acceder au forum du territoire
+	 * @param unknown $user
+	 * @param unknown $territoireId
+	 */
+	protected function isInsideOf($user, $territoireId)
+	{
+		if ( $user->getGroupes() )
+		{
+			foreach ( $user->getGroupes() as $groupe )
+			{
+				foreach ( $groupe->getTerritoire() as $territoire )
+				{
+					if ( $territoire && $territoire->getId() == $territoireId)
+					{
+						return true;
+					}
+					else if ( $territoire->getTerritoire() )
+					{
+						return $this->userTerritoireRight($territoire->getTerritoire()->getId(), $user, $token);
+					}
+				}
 			}
 		}
 		return false;

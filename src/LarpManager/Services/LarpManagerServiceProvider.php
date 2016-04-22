@@ -61,6 +61,11 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 			return new PersonnageConverter($app['orm.em']);
 		});
 		
+		// personnage converter
+		$app['converter.personnageReligion'] = $app->share(function($app) {
+			return new PersonnageReligionConverter($app['orm.em']);
+		});		
+		
 		// territoire converter
 		$app['converter.territoire'] = $app->share(function($app) {
 			return new TerritoireConverter($app['orm.em']);
@@ -119,6 +124,31 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 		// competence converter
 		$app['converter.competence'] = $app->share(function($app) {
 			return new CompetenceConverter($app['orm.em']);
+		});
+		
+		// construction converter
+		$app['converter.construction'] = $app->share(function($app) {
+			return new ConstructionConverter($app['orm.em']);
+		});
+		
+		// religion converter
+		$app['converter.religion'] = $app->share(function($app) {
+			return new ReligionConverter($app['orm.em']);
+		});
+		
+		// personnageLangue converter
+		$app['converter.personnageLangue'] = $app->share(function($app) {
+			return new PersonnageLangueConverter($app['orm.em']);
+		});
+		
+		// domaine converter
+		$app['converter.domaine'] = $app->share(function($app) {
+			return new DomaineConverter($app['orm.em']);
+		});
+		
+		// sortilège converter
+		$app['converter.sort'] = $app->share(function($app) {
+			return new SortConverter($app['orm.em']);
 		});
 	}
 

@@ -33,6 +33,7 @@ class GroupeController
 {
 	/**
 	 * Page d'accueil de gestion des groupes
+	 * 
 	 * @param Request $request
 	 * @param Application $app
 	 */
@@ -44,6 +45,21 @@ class GroupeController
 		
 		return $app['twig']->render('public/groupe/accueil.twig', array(
 				'form' => $form->createView()
+		));
+	}
+	
+	/**
+	 * Visualisation des liens entre groupes
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function diplomatieAction(Request $request, Application $app)
+	{
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Groupe');
+		$groupes = $repo->findBy(array('pj' => true), array('nom' => 'ASC'));
+		
+		return $app['twig']->render('admin/diplomatie.twig', array(
+				'groupes' => $groupes
 		));
 	}
 	
@@ -607,11 +623,10 @@ class GroupeController
 				{
 					$personnage->removeGroupe($groupe);
 				}
+				$app['orm.em']->persist($personnage);
 			}
 
 			$participant->removeGroupe($groupe);
-			
-			$app['orm.em']->persist($personnage);
 			$app['orm.em']->persist($participant);
 			$app['orm.em']->persist($groupe);
 			$app['orm.em']->flush();
@@ -999,6 +1014,7 @@ class GroupeController
 		
 		$originalGroupeClasses = new ArrayCollection();
 		$originalGns = new ArrayCollection();
+		$originalTerritoires = new ArrayCollection();
 
 		/**
 		 *  Crée un tableau contenant les objets GroupeClasse courants de la base de données
@@ -1014,6 +1030,14 @@ class GroupeController
 		foreach ( $groupe->getGns() as $gn)
 		{
 			$originalGns->add($gn);
+		}
+		
+		/**
+		 * Crée un tableau contenant les territoires que ce groupe posséde
+		 */
+		foreach ( $groupe->getTerritoires() as $territoire)
+		{
+			$originalTerritoires->add($territoire);
 		}
 		
 		/**
@@ -1077,6 +1101,20 @@ class GroupeController
 					$gn->removeGroupe($groupe);
 			}
 			
+			/**
+			 * Pour tous les territoire du groupe
+			 */
+			foreach ( $groupe->getTerritoires() as $territoire )
+			{
+				$territoire->setGroupe($groupe);
+			}
+				
+			foreach ($originalTerritoires as $territoire)
+			{
+				if ( $groupe->getTerritoires()->contains($territoire) == false)
+					$territoire->setGroupe(null);
+			}
+			
 			
 			/**
 			 * Si l'utilisateur a cliquer sur "update", on met à jour le groupe
@@ -1091,6 +1129,38 @@ class GroupeController
 			}
 			else if ($form->get('delete')->isClicked())
 			{
+				// supprime le lien entre les personnages et le groupe
+				foreach ( $groupe->getPersonnages() as $personnage)
+				{
+					$personnage->setGroupe(null);
+					$app['orm.em']->persist($personnage);
+				}
+				
+				// supprime le lien entre les participants et le groupe
+				foreach ( $groupe->getParticipants() as $participant)
+				{
+					$participant->setGroupe(null);
+					$app['orm.em']->persist($participant);
+				}
+				
+				// supprime la relation entre le groupeClasse et le groupe
+				foreach ($groupe->getGroupeClasses() as $groupeClasse) {
+					$app['orm.em']->remove($groupeClasse);
+				}
+				
+				// supprime la relation entre les territoires et le groupe
+				foreach ( $groupe->getTerritoires() as $territoire)
+				{
+					$territoire->setGroupe(null);
+					$app['orm.em']->persist($territoire);
+				}
+				
+				// supprime la relation entre un background et le groupe
+				foreach ( $groupe->getBackgrounds() as $background)
+				{
+					$app['orm.em']->remove($background);
+				}
+				
 				$app['orm.em']->remove($groupe);
 				$app['orm.em']->flush();
 					

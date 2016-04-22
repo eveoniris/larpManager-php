@@ -29,14 +29,25 @@
 							<div class="btn-group pull-right" role="group" aria-label="...">
 								<a href="{{ path('territoire.admin.detail', {'territoire': territoire.id}) }}" class="btn btn-primary" role="button">Détail</a>
 							    <a href="{{ path('territoire.admin.update', {'territoire': territoire.id}) }}" class="btn btn-default" role="button">Modifier</a>
+							    <a href="{{ path('territoire.admin.updateStrategie', {'territoire': territoire.id}) }}" class="btn btn-default" role="button">Stratégie</a>
 							</div>
 						</h4>
 						<p class="list-group-item-text">		
 							{% if territoire.description %}
-								<p class="text-default">{{ territoire.description|slice(0,500) }} ...</p>
+								<p class="text-default">{{ territoire.description|slice(0,500)|markdown }} ...</p>
 							{% else %}
 								<p class="text-warning">Attention, ce territoire n'a pas description</p>
 							{%  endif %}
+						</p>
+						<p class="list-group-item-text">
+							{% if territoire.topic and territoire.topic.id != 0 %}
+								<a href="{{ path('forum.topic', {'index': territoire.topic.id}) }}">
+									<i class="fa fa-comment"></i>
+									Forum du territoire "{{ territoire.nom }}"
+								</a><br />
+							{% else %}
+								<a href="{{ path('territoire.admin.topic.add', {'territoire': territoire.id}) }}">Créer un forum pour ce territoire</a>
+							{% endif %}
 						</p>
 						{%  if territoire.territoires|length > 0 %}
 							<p class="list-group-item-text">
@@ -52,6 +63,7 @@
 								<div class="btn-group pull-right" role="group" aria-label="...">
 									<a href="{{ path('territoire.admin.detail', {'territoire': region.id}) }}" class="btn btn-primary" role="button">Détail</a>
 								    <a href="{{ path('territoire.admin.update', {'territoire': region.id}) }}" class="btn btn-default" role="button">Modifier</a>
+								    <a href="{{ path('territoire.admin.updateStrategie', {'territoire': region.id}) }}" class="btn btn-default" role="button">Stratégie</a>
 								</div>
 							</h4>
 							<p class="list-group-item-text">		
@@ -60,6 +72,16 @@
 								{% else %}
 									<p class="text-warning">Attention, ce territoire n'a pas description</p>
 								{%  endif %}
+							</p>
+							<p class="list-group-item-text">
+								{% if region.topic and region.topic.id != 0 %}
+									<a href="{{ path('forum.topic', {'index': region.topic.id}) }}">
+										<i class="fa fa-comment"></i>
+										Forum du territoire "{{ region.nom }}"
+									</a><br />
+								{% else %}
+									<a href="{{ path('territoire.admin.topic.add', {'territoire': region.id}) }}">Créer un forum pour ce territoire</a>
+								{% endif %}
 							</p>
 							{%  if region.territoires|length > 0 %}
 								<p class="list-group-item-text">
@@ -75,6 +97,7 @@
 									<div class="btn-group pull-right" role="group" aria-label="...">
 										<a href="{{ path('territoire.admin.detail', {'territoire': fief.id}) }}" class="btn btn-primary" role="button">Détail</a>
 									    <a href="{{ path('territoire.admin.update', {'territoire': fief.id}) }}" class="btn btn-default" role="button">Modifier</a>
+									    <a href="{{ path('territoire.admin.updateStrategie', {'territoire': fief.id}) }}" class="btn btn-default" role="button">Stratégie</a>
 									</div>
 								</h4>
 								<p class="list-group-item-text">		
@@ -83,6 +106,16 @@
 									{% else %}
 										<p class="text-warning">Attention, ce territoire n'a pas description</p>
 									{%  endif %}
+								</p>
+								<p class="list-group-item-text">
+									{% if fief.topic and fief.topic.id != 0 %}
+										<a href="{{ path('forum.topic', {'index': fief.topic.id}) }}">
+											<i class="fa fa-comment"></i>
+											Forum du territoire "{{ fief.nom }}"
+										</a><br />
+									{% else %}
+										<a href="{{ path('territoire.admin.topic.add', {'territoire': fief.id}) }}">Créer un forum pour ce territoire</a>
+									{% endif %}
 								</p>
 								{%  if fief.territoires|length > 0 %}
 									<p class="list-group-item-text">

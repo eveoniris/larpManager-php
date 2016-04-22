@@ -54,10 +54,33 @@
 					<h6 class="list-group-item-heading">Religion</h6>
 					<p class="list-group-item-text">
 					{% for personnageReligion in personnage.personnagesReligions %}
-						{{ personnageReligion.religion.label }} - {{ personnageReligion.religionLevel.label }}<br />
+						<ul>
+							<li>{{ personnageReligion.religion.label }} - {{ personnageReligion.religionLevel.label }} - <a href="{{ path('personnage.admin.religion.delete', {'personnage': personnage.id, 'personnageReligion': personnageReligion.id }) }}">Supprimer</a></li>
+						</ul>
 					{% endfor %}
+					<a href="{{ path('personnage.admin.religion.add', {'personnage': personnage.id}) }}">Ajouter une religion</a>
 					</p>
 				</div>
+				
+				<div class="list-group-item">
+					<h6 class="list-group-item-heading">Origine</h6>
+					<p class="list-group-item-text">
+						{{ personnage.territoire|default("non définie") }}
+					</p>
+					<a href="{{ path('personnage.admin.origine.update', {'personnage': personnage.id}) }}">Modifier l'origine</a>
+				</div>
+				
+				<div class="list-group-item">
+					<h6 class="list-group-item-heading">Languages connus</h6>
+					<p class="list-group-item-text">
+						<ul>
+						{% for personnageLangue in personnage.personnageLangues %}
+							<li><strong>{{ personnageLangue.langue}}</strong> ({{ personnageLangue.source }})  - <a href="{{ path('personnage.admin.langue.delete', {'personnage': personnage.id, 'personnageLangue' : personnageLangue.id }) }}">Supprimer</a></li>
+						{% endfor %}
+						</ul>
+					</p>
+				</div>
+				
 				<div class="list-group-item">
 					<h6 class="list-group-item-heading">Compétences <small>({{ personnage.xp|default(0) }} xp)</small></h6>
 					<p><a href="{{ path('personnage.admin.xp', {'personnage':personnage.id}) }}">Ajouter des points d'expérience</a></p>

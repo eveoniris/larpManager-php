@@ -24,10 +24,15 @@ class RequestAllianceForm extends AbstractType
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
 		$builder->add('requestedGroupe', 'entity', array(
-				'required' => true,
-				'label' => 'Groupe avec lequel vous voulez vous allier',
-				'class' => 'LarpManager\Entities\Groupe',
-				'property' => 'nom',
+					'required' => true,
+					'label' => 'Groupe avec lequel vous voulez vous allier',
+					'class' => 'LarpManager\Entities\Groupe',
+					'query_builder' => function (\LarpManager\Repository\GroupeRepository $er) {
+						return $er->createQueryBuilder('g')
+								->where('g.pj = true')
+								->orderBy('g.nom', 'ASC');
+					},
+					'property' => 'nom',
 				))
 				->add('message','textarea', array(
 						'label' => 'Un petit mot pour expliquer votre démarche',

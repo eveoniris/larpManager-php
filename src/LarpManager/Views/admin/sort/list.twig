@@ -1,0 +1,38 @@
+{% extends "layout.twig" %}
+
+{% block title %}Sortilèges{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li class="active">Liste des sortilèges</li>
+	</ol>
+	
+	<div class="well well-sm">
+	
+		<a href="{{ path('magie.sort.add') }}"><i class="fa fa-plus"></i> Ajouter un sortilège</a>
+		
+		<ul class="list-group">
+		{% for sort in sorts %}
+		
+			<li class="list-group-item">
+				<div class="row">
+					<div class="col-md-8">
+						{{ sort.label }} -- {{ sort.niveau }}
+						{{ sort.description|markdown }}
+						
+					</div>
+					<div class="col-md-4">
+						<a href="{{ path('magie.sort.update',{'sort':sort.id}) }}"><i class="fa fa-pencil"></i> Modifier</a>&nbsp;|&nbsp;
+						<a href="{{ path('magie.sort.detail',{'sort':sort.id}) }}"><i class="fa fa-eye"></i> Detail</a>&nbsp;|&nbsp;
+						<a href="{{ path('magie.sort.delete',{'sort':sort.id}) }}"><i class="fa fa-eraser"></i> Supprimer</a>
+					</div>
+				</div>
+		    </li>
+
+		{% endfor %}
+	 	</ul>
+	</div>
+	
+{% endblock %}

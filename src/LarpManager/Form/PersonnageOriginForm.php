@@ -30,6 +30,7 @@ class PersonnageOriginForm extends AbstractType
 					'query_builder' => function(\LarpManager\Repository\TerritoireRepository $er) {
 						$qb = $er->createQueryBuilder('t');
 						$qb->andWhere('t.territoire IS NULL');
+						$qb->orderBy('t.nom', 'ASC');
 						return $qb;
 					}
 				));

@@ -1,0 +1,38 @@
+{% extends "layout.twig" %}
+
+{% block title %}Construction{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li class="active">Liste des constructions</li>
+	</ol>
+
+	<div class="well well-sm">
+	
+		<a href="{{ path('construction.add') }}"><i class="fa fa-plus"></i> Ajouter une construction</a>
+		
+		<ul class="list-group">
+		{% for construction in constructions %}
+		
+			<li class="list-group-item">
+				<div class="row">
+					<div class="col-md-8">
+						{{ construction.label }} -- {{ construction.defense }}
+						{{ construction.description|markdown }}
+						
+					</div>
+					<div class="col-md-4">
+						<a href="{{ path('construction.update',{'construction':construction.id}) }}"><i class="fa fa-pencil"></i> Modifier</a>&nbsp;|&nbsp;
+						<a href="{{ path('construction.detail',{'construction':construction.id}) }}"><i class="fa fa-eye"></i> Detail</a>&nbsp;|&nbsp;
+						<a href="{{ path('construction.delete',{'construction':construction.id}) }}"><i class="fa fa-eraser"></i> Supprimer</a>
+					</div>
+				</div>
+		    </li>
+
+		{% endfor %}
+	 	</ul>
+	</div>
+	
+{% endblock %}

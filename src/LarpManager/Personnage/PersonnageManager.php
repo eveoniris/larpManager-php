@@ -161,6 +161,29 @@ class PersonnageManager
 	}
 	
 	/**
+	 * Trouve toutes les langues non connus d'un personnages en fonction du niveau de diffusion voulu
+	 * @param Personnage $langue
+	 * @param unknown $diffusion
+	 */
+	public function getAvailableLangues(Personnage $personnage, $diffusion)
+	{
+		$availableLangues = new ArrayCollection();
+		
+		$repo = $this->app['orm.em']->getRepository('\LarpManager\Entities\Langue');
+		$langues = $repo->findAll();
+		
+		foreach ( $langues as $langue)
+		{
+			if ( $langue->getDiffusion() >= $diffusion 
+			&& ! $personnage->isKnownLanguage($langue) )
+			{
+				$availableLangues[] = $langue;
+			}
+		}
+		return $availableLangues;
+	}
+	
+	/**
 	 * Récupére la liste de toutes les religions non connue du personnage
 	 * @param Personnage $personnage
 	 */

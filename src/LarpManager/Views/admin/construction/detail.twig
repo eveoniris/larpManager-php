@@ -1,0 +1,31 @@
+{% extends "layout.twig" %}
+
+{% block title %}Construction{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path('construction') }}">Liste des constructions</a></li>
+		<li class="active">Détail d'une construction</li>
+	</ol>
+
+	<div class="list-group">
+		<div class="list-group-item">
+			<div class="list-group-item-heading"><h6>Label</h6></div>
+			<div class="list-group-item-text">{{ construction.label }}</div>
+		</div>
+		<div class="list-group-item">
+			<div class="list-group-item-heading"><h6>Défense</h6></div>
+			<div class="list-group-item-text">{{ construction.defense }}</div>
+		</div>
+	</div>
+	
+	<div class="panel panel-default">
+		<div class="panel-heading"><h4>Description</h4></div>
+		<div class="panel-body">
+			<p>{{ construction.description|markdown }}</p>
+		</div>
+	</div>
+	
+{% endblock content %}

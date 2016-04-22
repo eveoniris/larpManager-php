@@ -22,6 +22,8 @@ class TerritoireControllerProvider implements ControllerProviderInterface
 	 * 	- territoire.admin.detail
 	 *  - territoire.admin.add
 	 *  - territoire.admin.update
+	 *  - territoire.admin.update.blason
+	 *  - territoire.admin.updateStrategie
 	 *  - territoire.admin.delete
 	 *  - territoire.admin.topic.add
 	 *  - territoire.admin.topic.delete
@@ -61,6 +63,20 @@ class TerritoireControllerProvider implements ControllerProviderInterface
 			->method('GET|POST')
 			->convert('territoire', 'converter.territoire:convert')
 			->before($mustBeScenariste);
+		
+		$controllers->match('/{territoire}/blason/update','LarpManager\Controllers\TerritoireController::updateBlasonAction')
+			->assert('territoire', '\d+')
+			->bind("territoire.admin.update.blason")
+			->method('GET|POST')
+			->convert('territoire', 'converter.territoire:convert')
+			->before($mustBeScenariste);
+		
+		$controllers->match('/{territoire}/updateStrategie','LarpManager\Controllers\TerritoireController::updateStrategieAction')
+			->assert('territoire', '\d+')
+			->bind("territoire.admin.updateStrategie")
+			->method('GET|POST')
+			->convert('territoire', 'converter.territoire:convert')
+			->before($mustBeScenariste);		
 		
 		$controllers->match('/{territoire}/delete','LarpManager\Controllers\TerritoireController::deleteAction')
 			->assert('territoire', '\d+')

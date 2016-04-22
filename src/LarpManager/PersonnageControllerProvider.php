@@ -23,6 +23,9 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 	 *  - personnage.admin.detail
 	 *  - personnage.admin.add
 	 *  - personnage.admin.update
+	 *  - personnage.admin.religion.delete
+	 *  - personnage.admin.religion.add
+	 *  - personnage.admin.origine.update
 	 *  - personnage.detail
 	 *  - personnage.update
 	 *  - personnage.delete
@@ -119,8 +122,42 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 			->bind("personnage.admin.update.renomme")
 			->method('GET|POST')
 			->convert('personnage', 'converter.personnage:convert')
-			->before($mustBeOrga);			
+			->before($mustBeOrga);
 		
+		/**
+		 * Suppression d'une religion d'un personnage (orga)
+		 */
+		$controllers->match('/admin/{personnage}/update/religion/{personnageReligion}/delete','LarpManager\Controllers\PersonnageController::adminRemoveReligionAction')
+			->assert('personnage', '\d+')
+			->assert('personnageReligion', '\d+')
+			->bind("personnage.admin.religion.delete")
+			->method('GET|POST')
+			->convert('personnage', 'converter.personnage:convert')
+			->convert('personnageReligion', 'converter.personnageReligion:convert')
+			->before($mustBeOrga);
+		
+		/**
+		 * Ajout d'une religion à un personnage (orga)
+		 */
+		$controllers->match('/admin/{personnage}/update/religion/add','LarpManager\Controllers\PersonnageController::adminAddReligionAction')
+			->assert('personnage', '\d+')
+			->bind("personnage.admin.religion.add")
+			->method('GET|POST')
+			->convert('personnage', 'converter.personnage:convert')
+			->before($mustBeOrga);
+		
+		/**
+		 * Suppression d'une langue d'un personnage (orga)
+		 */
+		$controllers->match('/admin/{personnage}/update/langue/{personnageLangue}/delete','LarpManager\Controllers\PersonnageController::adminRemoveLangueAction')
+			->assert('personnage', '\d+')
+			->assert('personnageLangue', '\d+')
+			->bind("personnage.admin.langue.delete")
+			->method('GET|POST')
+			->convert('personnage', 'converter.personnage:convert')
+			->convert('personnageLangue', 'converter.personnageLangue:convert')
+			->before($mustBeOrga);		
+			
 		/**
 		 * Suppression d'un personnage (orga)
 		 */
@@ -165,6 +202,28 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 			->before($mustOwn);
 		
 		/**
+		 * Formulaire d'ajout des langues gagnés grace à litterature initie
+		 * Accessible uniquement au proprietaire du personnage
+		 */
+		$controllers->match('/{personnage}/litterature/initie','LarpManager\Controllers\PersonnageController::litteratureInitieAction')
+			->assert('personnage', '\d+')
+			->bind("personnage.litterature.initie")
+			->method('GET|POST')
+			->convert('personnage', 'converter.personnage:convert')
+			->before($mustOwn);
+		
+		/**
+		 * Formulaire d'ajout des langues gagné grace à litterature expert
+		 * Accessible uniquement au proprietaire du personnage
+		 */
+		$controllers->match('/{personnage}/litterature/expert','LarpManager\Controllers\PersonnageController::litteratureExpertAction')
+			->assert('personnage', '\d+')
+			->bind("personnage.litterature.expert")
+			->method('GET|POST')
+			->convert('personnage', 'converter.personnage:convert')
+			->before($mustOwn);
+			
+		/**
 		 * Retire la dernière compétence acquise par un personnage
 		 * Accessible uniquement aux orgas
 		 */
@@ -174,6 +233,17 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 			->method('GET|POST')
 			->convert('personnage', 'converter.personnage:convert')
 			->before($mustBeOrga);
+		
+		/**
+		 * Modifie l'origine d'un personnage
+		 * Accessible uniquement aux orgas
+		 */
+		$controllers->match('/admin/{personnage}/origine/update','LarpManager\Controllers\PersonnageController::adminUpdateOriginAction')
+			->assert('personnage', '\d+')
+			->bind("personnage.admin.origine.update")
+			->method('GET|POST')
+			->convert('personnage', 'converter.personnage:convert')
+			->before($mustBeOrga);			
 			
 		/**
 		 * Choix d'une religion

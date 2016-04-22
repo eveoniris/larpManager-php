@@ -7,7 +7,7 @@ use Silex\Application;
 use LarpManager\Form\GroupeInscriptionForm;
 use LarpManager\Form\GnInscriptionForm;
 use LarpManager\Form\TrombineForm;
-use Imagine\Image\Box;
+use LarpManager\Form\RuleForm;
 
 
 
@@ -38,6 +38,117 @@ class HomepageController
 		}
 		
 		return $this->joueurIndexAction($request, $app);
+	}
+	
+	
+	/**
+	 * Page listant les règles à télécharger
+	 * 
+	 * @param unknown $request
+	 * @param unknown $app
+	 */
+	public function rulesAction(Request $request, Application $app)
+	{
+		$regles = $app['orm.em']->getRepository('LarpManager\Entities\Rule')->findAll();
+		
+		return $app['twig']->render('public/rules.twig', array(
+				'regles' => $regles,
+		));
+	}
+	
+	/**
+	 * Page de gestion des règles
+	 * 
+	 */
+	public function rulesAdminAction(Request $request, Application $app)
+	{
+		$form = $app['form.factory']->createBuilder(new RuleForm(), array())
+			->add('envoyer','submit', array('label' => 'Envoyer'))
+			->getForm();
+		
+		$form->handleRequest($request);
+				
+		if ( $form->isValid() )
+		{
+			$data = $form->getData();
+			$files = $request->files->get($form->getName());
+			
+			$path = __DIR__.'/../../../private/rules/';
+			$filename = $files['rule']->getClientOriginalName();
+			$extension = $files['rule']->guessExtension();
+			
+			if (!$extension || ! in_array($extension, array('pdf'))) {
+				$app['session']->getFlashBag()->add('error','Désolé, votre fichier ne semble pas valide (vérifiez le format de votre fichier)');
+				return $app->redirect($app['url_generator']->generate('rules.admin'),301);
+			}
+			
+			$ruleFilename = hash('md5',$app['user']->getUsername().$filename . time()).'.'.$extension;
+				
+			
+			$files['rule']->move($path, $filename);
+			
+			$rule = new \LarpManager\Entities\Rule();
+			$rule->setLabel($data['label']);
+			$rule->setDescription($data['description']);
+			$rule->setUrl($filename);
+			
+			$app['orm.em']->persist($rule);
+			$app['orm.em']->flush();
+				
+			$app['session']->getFlashBag()->add('success','Votre fichier a été enregistrée');				
+		}
+		
+		$regles = $app['orm.em']->getRepository('LarpManager\Entities\Rule')->findAll();
+		
+		return $app['twig']->render('admin/rules/index.twig', array(
+				'form' => $form->createView(),
+				'regles' => $regles,
+		));
+		
+	}
+	
+	/**
+	 * Supression d'un fichier de règle
+	 */
+	public function rulesAdminDeleteAction(Request $request, Application $app)
+	{
+		$ruleId = $request->get('rule');
+		$rule = $app['orm.em']->getRepository('LarpManager\Entities\Rule')->find($ruleId);
+		
+		if ( ! $rule )
+		{
+			$app['session']->getFlashBag()->add('error','impossible de supprimer le fichier ' . $filename);
+		}
+		else 
+		{
+			$app['orm.em']->remove($rule);
+			$app['orm.em']->flush();
+		}
+		
+		$filename = __DIR__.'/../../../private/rules/'.$rule->getUrl();
+		
+		if ( file_exists($filename)) 
+		{
+			unlink($filename);
+		}
+		else
+		{
+			$app['session']->getFlashBag()->add('error','impossible de supprimer le fichier ' . $filename);
+		}
+
+		return $app->redirect($app['url_generator']->generate('rules.admin'),301);
+	}		
+	/**
+	 * Télécharger une règle
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function getRuleAction(Request $request, Application $app)
+	{
+		$rule = $request->get('rule');
+		$filename = __DIR__.'/../../../private/rules/'.$rule;
+		return $app->sendFile($filename);
 	}
 	
 	/**
@@ -96,6 +207,19 @@ class HomepageController
 	{
 		$trombine = $request->get('trombine');
 		$filename = __DIR__.'/../../../private/img/'.$trombine;
+		return $app->sendFile($filename);
+	}
+	
+	/**
+	 * Fourni le blason pour affichage
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function getBlasonAction(Request $request, Application $app)
+	{
+		$blason = $request->get('blason');
+		$filename = __DIR__.'/../../../private/img/blasons/'.$blason;
 		return $app->sendFile($filename);
 	}
 	
@@ -195,6 +319,38 @@ class HomepageController
 		return $app->json($countries);
 	}
 	
+	/**
+	 * Fourni la liste des régions
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function regionsAction(Request $request, Application $app)
+	{
+		$repoTerritoire = $app['orm.em']->getRepository('LarpManager\Entities\Territoire');
+		$territoires = $repoTerritoire->findRegions();
+		
+		$regions = array();
+		foreach ( $territoires as $territoire)
+		{
+			$regions[] = array(
+					'id' => $territoire->getId(),
+					'geom' => $territoire->getGeojson(),
+					'name' => $territoire->getNom(),
+					'color' => $territoire->getColor(),
+					'description' => strip_tags($territoire->getDescription())
+			);
+		}
+		
+		return $app->json($regions);
+	}
+	
+	/**
+	 * Fourni la liste des fiefs
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
 	public function fiefsAction(Request $request, Application $app)
 	{
 		$repoTerritoire = $app['orm.em']->getRepository('LarpManager\Entities\Territoire');
@@ -384,6 +540,38 @@ class HomepageController
 			{
 				$participant = $app['user']->getParticipantByGn($app['larp.manager']->getGnActif());
 				$participant->setGroupe($groupe);
+				
+				if ( $participant->getPersonnage() )
+				{
+					$personnage = $participant->getPersonnage();
+					$personnage->setGroupe($groupe);
+					
+					// le personnage doit perdre les langues liées à son ancien groupe
+					// et récupérer les langues correspondant à son nouveau groupe.
+					foreach( $personnage->getPersonnageLangues() as $personnageLangue )
+					{
+						if ($personnageLangue->getSource() == 'GROUPE')
+						{
+							$personnage->removePersonnageLangues($personnageLangue);
+							$app['orm.em']->remove($personnageLangue);
+						}
+					}
+					
+					foreach ( $groupe->getTerritoires() as $territoire )
+					{
+						if ( $territoire->getLangue() )
+						{
+							$personnageLangue = new \LarpManager\Entities\PersonnageLangues();
+							$personnageLangue->setPersonnage($personnage);
+							$personnageLangue->setSource('GROUPE');
+							$personnageLangue->setLangue($territoire->getLangue());
+							
+							$app['orm.em']->persist($personnageLangue);
+							$personnage->addPersonnageLangues($personnageLangue);
+						}
+					}
+					$app['orm.em']->persist($personnage);
+				}
 												
 				$app['orm.em']->persist($participant);
 				$app['orm.em']->flush();

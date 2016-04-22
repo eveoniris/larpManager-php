@@ -5,6 +5,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Silex\Application;
 use LarpManager\Form\ReligionForm;
+use LarpManager\Form\ReligionBlasonForm;
 use LarpManager\Form\ReligionLevelForm;
 use Doctrine\ORM\Query;
 
@@ -186,6 +187,55 @@ class ReligionController
 		}		
 
 		return $app['twig']->render('religion/update.twig', array(
+				'religion' => $religion,
+				'form' => $form->createView(),
+		));
+	}
+	
+	/**
+	 * Met à jour le blason d'une religion
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function updateBlasonAction(Request $request, Application $app)
+	{
+		$religion = $request->get('religion');
+	
+		$form = $app['form.factory']->createBuilder(new ReligionBlasonForm(), $religion)
+			->add('update','submit', array('label' => "Sauvegarder"))
+			->getForm();
+	
+		$form->handleRequest($request);
+	
+		if ( $form->isValid() )
+		{
+			$files = $request->files->get($form->getName());
+				
+			$path = __DIR__.'/../../../private/img/blasons/';
+			$filename = $files['blason']->getClientOriginalName();
+			$extension = $files['blason']->guessExtension();
+	
+			if (!$extension || ! in_array($extension, array('png', 'jpg', 'jpeg','bmp'))) {
+				$app['session']->getFlashBag()->add('error','Désolé, votre image ne semble pas valide (vérifiez le format de votre image)');
+				return $app->redirect($app['url_generator']->generate('religion.detail',array('index' => $religion->getId())),301);
+			}
+				
+			$blasonFilename = hash('md5',$app['user']->getUsername().$filename . time()).'.'.$extension;
+				
+			$image = $app['imagine']->open($files['blason']->getPathname());
+			$image->resize($image->getSize()->widen(160));
+			$image->save($path. $blasonFilename);
+				
+			$religion->setBlason($blasonFilename);
+			$app['orm.em']->persist($religion);
+			$app['orm.em']->flush();
+				
+			$app['session']->getFlashBag()->add('success','Le blason a été enregistré');
+			return $app->redirect($app['url_generator']->generate('religion.detail',array('index' => $religion->getId())),301);
+		}
+	
+		return $app['twig']->render('admin/religion/blason.twig', array(
 				'religion' => $religion,
 				'form' => $form->createView(),
 		));

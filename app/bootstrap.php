@@ -220,9 +220,11 @@ else
 	$app->mount('/chronologie', new LarpManager\ChronologieControllerProvider());
 	$app->mount('/ressource', new LarpManager\RessourceControllerProvider());
 	$app->mount('/religion', new LarpManager\ReligionControllerProvider());
+	$app->mount('/construction', new LarpManager\ConstructionControllerProvider());	
 	$app->mount('/personnage', new LarpManager\PersonnageControllerProvider());
 	$app->mount('/personnageSecondaire', new LarpManager\PersonnageSecondaireControllerProvider());
 	$app->mount('/age', new LarpManager\AgeControllerProvider());
+	$app->mount('/magie', new LarpManager\MagieControllerProvider());
 	$app->mount('/genre', new LarpManager\GenreControllerProvider());
 	$app->mount('/gn', new LarpManager\GnControllerProvider());
 	$app->mount('/participant', new LarpManager\ParticipantControllerProvider());
@@ -253,7 +255,6 @@ else
 	$app['security.access_rules'] = array(
 		array('^/admin/.*$', 'ROLE_ADMIN'),
 		array('^/trombinoscope/.*$', 'ROLE_SCENARISTE'),
-		array('^/world/.*$', 'ROLE_USER'),
 		array('^/pnj/.*$', 'ROLE_USER'),
 		array('^/groupe/.*$', 'ROLE_USER'),
 		array('^/groupeSecondaire/.*$', 'ROLE_USER'),
@@ -272,7 +273,9 @@ else
 		array('^/droit/.*$', 'ROLE_ADMIN'),
 		array('^/api/.*$', 'ROLE_SCENARISTE'),
 		array('^/age/.*$', 'ROLE_REGLE'),
+		array('^/magie/.*$', 'ROLE_REGLE'),
 		array('^/genre/.*$', 'ROLE_REGLE'),
+		array('^/construction/.*$', 'ROLE_REGLE'),
 		array('^/appelation/.*$', 'ROLE_SCENARISTE'),
 		array('^/langue/.*$', 'ROLE_SCENARISTE'),
 		array('^/ressource/.*$', 'ROLE_SCENARISTE'),

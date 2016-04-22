@@ -62,6 +62,24 @@ class Groupe extends BaseGroupe
 	}
 	
 	/**
+	 * Determine si un groupe est en attente d'alliance avec ce groupe
+	 * @param Groupe $groupe
+	 * @return boolean
+	 */
+	public function isWaitingAlliance(Groupe $groupe)
+	{
+		foreach ( $this->getWaitingAlliances() as $alliance)
+		{
+			if ($alliance->getGroupe() == $groupe
+					|| $alliance->getRequestedGroupe() == $groupe )
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
 	 * Determine si un groupe est ennemi avec ce groupe
 	 * @param Groupe $groupe
 	 */
@@ -71,6 +89,23 @@ class Groupe extends BaseGroupe
 		{
 			if ($war->getGroupe() == $groupe
 				|| $war->getRequestedGroupe() == $groupe )
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Determine si un groupe est ennemi avec ce groupe
+	 * @param Groupe $groupe
+	 */
+	public function isWaitingPeaceTo(Groupe $groupe)
+	{
+		foreach ( $this->getWaitingPeace() as $war)
+		{
+			if ($war->getGroupe() == $groupe
+					|| $war->getRequestedGroupe() == $groupe )
 			{
 				return true;
 			}
@@ -331,9 +366,9 @@ class Groupe extends BaseGroupe
 	 * @param \LarpManager\Entities\User $user
 	 * @return \LarpManager\Entities\Groupe
 	 */
-	public function setResponsable(User $user)
+	public function setResponsable($user)
 	{
-		$user->addGroupeRelatedByResponsableId($this);
+		if ( $user) $user->addGroupeRelatedByResponsableId($this);
 		return $this->setUserRelatedByResponsableId($user);
 	}
 	
@@ -353,7 +388,7 @@ class Groupe extends BaseGroupe
 	 * @param \LarpManager\Entities\User $user
 	 * @return \LarpManager\Entities\Groupe
 	 */
-	public function setScenariste(User $user)
+	public function setScenariste($user)
 	{
 		return $this->setUserRelatedByScenaristeId($user);
 	}
