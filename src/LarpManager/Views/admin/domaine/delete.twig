@@ -1,0 +1,26 @@
+{% extends "layout.twig" %}
+
+{% block title %}Domaine de magie{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path('magie.domaine.list') }}">Liste des domaines de magie</a></li>
+		<li class="active">Supprimer un domaine de magie</li>
+	</ol>
+	
+	
+	<div class="well bs-component">
+		<form action="{{ path('magie.domaine.delete', {'domaine': domaine.id}) }}" method="POST" {{ form_enctype(form) }} novalidate>
+			<fieldset>
+				<legend>Supression d'un domaine de magie</legend>
+					{{ domaine.label }}
+					{{ domaine.description|markdown }}
+					{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+					{{ form(form) }}
+			</fieldset>
+		</form>
+	</div>
+				
+{% endblock content %}

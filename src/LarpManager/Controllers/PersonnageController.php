@@ -6,8 +6,6 @@ use Silex\Application;
 use JasonGrimes\Paginator;
 use LarpManager\Form\PersonnageReligionForm;
 use LarpManager\Form\PersonnageOriginForm;
-use LarpManager\Form\PersonnageLitteratureInitieForm;
-use LarpManager\Form\PersonnageLitteratureExpertForm;
 use LarpManager\Form\PersonnageFindForm;
 use LarpManager\Form\PersonnageForm;
 use LarpManager\Form\PersonnageUpdateForm;

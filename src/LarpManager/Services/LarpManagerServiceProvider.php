@@ -131,14 +131,19 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 			return new ConstructionConverter($app['orm.em']);
 		});
 		
-		// construction converter
+		// religion converter
 		$app['converter.religion'] = $app->share(function($app) {
 			return new ReligionConverter($app['orm.em']);
 		});
 		
-		// construction converter
+		// personnageLangue converter
 		$app['converter.personnageLangue'] = $app->share(function($app) {
 			return new PersonnageLangueConverter($app['orm.em']);
+		});
+		
+		// domaine converter
+		$app['converter.domaine'] = $app->share(function($app) {
+			return new DomaineConverter($app['orm.em']);
 		});
 	}
 

@@ -40,6 +40,16 @@
 								</a>
 							</li>
 						{% endif %}
+						{% for ancestor in territoire.getAncestors %}
+							{% if ancestor.topic %}
+								<li class="list-group-item">
+									<a href="{{ path('forum.topic', {'index': ancestor.topic.id}) }}">
+										<i class="fa fa-comment"></i>
+										Forum du territoire "{{ ancestor.nom }}"
+									</a>
+								</li>
+							{% endif %}
+						{% endfor %}
 					{% endfor %}
 				{% endfor %}
 			{% endif %}
