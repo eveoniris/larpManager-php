@@ -7,7 +7,6 @@ use Silex\Application;
 use LarpManager\Form\PostForm;
 use LarpManager\Form\PostDeleteForm;
 use LarpManager\Form\TopicForm;
-use LarpManager\ForumRightManager;
 
 /**
  * LarpManager\Controllers\ForumController

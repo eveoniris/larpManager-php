@@ -10,6 +10,7 @@
 namespace LarpManager\Entities;
 
 use LarpManager\Entities\BaseTopic;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * LarpManager\Entities\Topic
@@ -37,9 +38,54 @@ class Topic extends BaseTopic
 	}
 	
 	/**
-	 * Fourni le dernier post d'un topic
+	 * Retourne la liste des topics classé par la date de publication de leurs posts
 	 */
-	public function getLastPost($app)
+	public function getTopicsOrderByLastPost($app = null)
+	{
+		$topics = $this->getTopics();
+		$iterator = $topics->getIterator();
+		
+		
+		$iterator->uasort(function ($first, $second) use ($app) {
+			if ($first === $second) {
+				return 0;
+			}
+			$firstLastPost = $first->getLastPost($app);
+			$secondLastPost = $second->getLastPost($app);
+			if ($firstLastPost && $secondLastPost )
+			{
+				return (float) $firstLastPost->getCreationDate()->format("U.u") > (float) $secondLastPost->getCreationDate()->format("U.u") ? -1 : 1;
+			}
+			else if ( $firstLastPost) return -1;
+			else return 1;
+		});
+		
+		return new ArrayCollection(iterator_to_array($iterator));
+	}
+	
+	/**
+	 * Fourni la liste des posts d'un topic classé par date de publication (en prennant en compte les réponses)
+	 */
+	public function getPostsOrderByDate()
+	{
+		$posts = $this->getPosts();
+		$iterator = $posts->getIterator();
+		$iterator->uasort(function ($first, $second) {
+			if ($first === $second) {
+				return 0;
+			}
+			$first = $first->getLastPost();
+			$second = $second->getLastPost();
+			return (float) $first->getCreationDate()->format("U.u") > (float) $second->getCreationDate()->format("U.u") ? -1 : 1;
+		});
+		
+		return new ArrayCollection(iterator_to_array($iterator));
+	}
+	
+	/**
+	 * Fourni le dernier post d'un topic (en recherchant dans les sous-topics)
+	 */
+	public function getLastPost($app = null)
 	{
 		$lastPost = null;
 		
@@ -62,7 +108,7 @@ class Topic extends BaseTopic
 		
 		foreach ( $this->getTopics() as $topic)
 		{
-			if ( ! $app['security']->isGranted('TOPIC_RIGHT', $topic) )
+			if ( $app != null && ! $app['security']->isGranted('TOPIC_RIGHT', $topic) )
 				continue;
 			
 			$topicLastPost = $topic->getLastPost($app);

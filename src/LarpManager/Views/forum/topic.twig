@@ -37,7 +37,7 @@
 	</div>
 			
 	{# liste des topics #}
-	{{ include("forum/fragment/topic_list.twig", {'topics' : topic.topics}) }}
+	{{ include("forum/fragment/topic_list.twig", {'topics' : topic.topicsOrderByLastPost(app)}) }}
 	
 </div>
 			
@@ -58,7 +58,7 @@
 	</div>
 		
 	{# liste des posts #}
-	{{ include("forum/fragment/post_list.twig", {'posts' : topic.posts}) }}
+	{{ include("forum/fragment/post_list.twig", {'posts' : topic.postsOrderByDate}) }}
 	
 </div>
 	

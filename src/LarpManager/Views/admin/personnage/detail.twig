@@ -41,6 +41,17 @@
 				</div>
 				
 				<div class="list-group-item">
+					<h6 class="list-group-item-heading">Groupe</h6>
+					<p class="list-group-item-text">
+						{% if personnage.groupe %}
+							<a href="{{ path('groupe.detail', {'index':personnage.groupe.id}) }}">{{ personnage.groupe.nom }}</a>
+						{% else %}
+							Ce personnage ne fait pas parti d'un groupe.
+						{% endif %}
+					</p>
+				</div>
+				
+				<div class="list-group-item">
 					<h6 class="list-group-item-heading">Renommée</h6>
 					<p class="list-group-item-text">
 						{{ personnage.renomme|default(0) }}

@@ -39,6 +39,17 @@
 			</div>
 		{% endif %}
 		
+		{% if not app.user.trombineUrl %}
+			<div class="panel panel-success">
+				<div class="panel-heading">Avez-vous pensez à poster une photo de vous ?</div>
+				<div class="panel-body">
+					<p>Votre photo est utilisé pour les trombinoscopes, afin que les autres joueurs en intéraction avec vous puissent vous reconnaitre</p>
+					<a class="btn btn-default" href="{{ path('trombine') }}">Ma trombine</a>
+				</div>
+			</div>
+		{% endif %}
+		
+		
 		<div class="row">
 			{% include "link.twig" with {
 				'title' : "Votre groupe",
