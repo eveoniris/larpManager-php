@@ -214,6 +214,12 @@ class PersonnageController
 				$personnage->removePostulant($postulant);
 				$app['orm.em']->remove($postulant);
 			}
+			
+			foreach ($personnage->getPersonnageLangues() as $personnageLangue)
+			{
+				$personnage->removePersonnageLangues($personnageLangue);
+				$app['orm.em']->remove($personnageLangue);
+			}
 						
 			$app['orm.em']->remove($personnage);
 			$app['orm.em']->flush();
