@@ -273,7 +273,7 @@ else
 		array('^/droit/.*$', 'ROLE_ADMIN'),
 		array('^/api/.*$', 'ROLE_SCENARISTE'),
 		array('^/age/.*$', 'ROLE_REGLE'),
-		array('^/magie/.*$', 'ROLE_REGLE'),
+		array('^/magie/.*$', 'ROLE_USER'),
 		array('^/genre/.*$', 'ROLE_REGLE'),
 		array('^/construction/.*$', 'ROLE_REGLE'),
 		array('^/appelation/.*$', 'ROLE_SCENARISTE'),

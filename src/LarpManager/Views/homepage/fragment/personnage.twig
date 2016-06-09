@@ -101,16 +101,42 @@
 			</div>
 		</div>
 		
-		<div class="header">
-			<h5>Magie</h5>
-		</div>
-		
-		{% if personnage.hasTrigger('MAGIE APPRENTI') %}
-			<blockquote>
-				<p>Votre compétence Magie au niveau apprenti vous permet de choisir un domaine de magie</p>
-				<p>Les sorts que vous lancez dans ce domaine coûteront moins cher que les autres en mana</p>
-				<a href="{{ path('personnage.magie.domaine', {'personnage': personnage.id}) }}">Choisir un domaine de magie</a>
-			</blockquote>
+		{% if personnage.hasCompetence('Magie') %}
+			<div class="header">
+				<h5>Magie</h5>
+			</div>
+			
+			<h5><a href="{{ path('magie') }}">Découvrir les domaines de magie et les sortilèges associés</a></h5>
+			
+			{% if personnage.hasTrigger('MAGIE APPRENTI') %}
+				<blockquote>
+					<p>Votre compétence Magie au niveau apprenti vous permet de choisir un domaine de magie.</p>
+					<p>Les sorts que vous lancez dans ce domaine coûteront moins cher que les autres en mana.</p>
+					<a href="{{ path('personnage.magie.domaine', {'personnage': personnage.id}) }}">Choisir un domaine de magie</a>
+				</blockquote>
+			{% endif %}
+			
+			
+			<h6>Liste de vos domaines de Magie</h6>
+			<div class="list-group">
+			{% for domaine in personnage.domaines %}
+				<div class="list-group-item">
+					{{ domaine.label|markdown }}
+					{{ domaine.description|markdown }}
+				</div>
+			{% endfor %}
+			</div>
+			
+			<h6>Liste de vos sortilèges</h6>
+			<div class="list-group">
+			{% for sort in personnage.sorts %}
+				<div class="list-group-item">
+					{{ sort.label|markdown }} - Niveau {{ sort.niveau }}
+					{{ sort.description|markdown }}
+				</div>
+			{% endfor %}
+			</div>
+			
 		{% endif %}
 		
 		

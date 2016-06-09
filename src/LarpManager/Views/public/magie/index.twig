@@ -1,30 +1,18 @@
 {% extends "layout.twig" %}
 
-{% block title %}{{ personnage.publicName }}{% endblock title %}
+{% block title %}Magie{% endblock title %}
 
 {% block content %}
 
-<div class="container-fluid">
-
-	<ol class="breadcrumb">
-		<li><a href="{{ path('homepage')  }}">Accueil</a></li>
-		<li><a href="{{ path('personnage')  }}">Votre personnage</a></li>
-		<li class="active">Choix du domaine de magie</li>
-	</ol>
+		<ol class="breadcrumb">
+			<li><a href="{{ path('homepage')  }}">Accueil</a></li>
+			<li><a href="{{ path('personnage')  }}">Votre personnage</a></li>
+			<li class="active">La magie</li>
+		</ol>
 	
-	<div class="well bs-component">
-	<form action="{{ path('personnage.magie.domaine',{'personnage':personnage.id}) }}" method="POST" {{ form_enctype(form) }}>
-		<fieldset>
-			<blockquote>Votre compétence vous permet de choisir un domaine de magie.</blockquote>
-			{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
-			
-			{{ form_row(form.domaines) }}
-			{{ form_rest(form) }}
-		</fieldset>
-	</form>
-	</div>
-	
-				<div class="well well-sm">
+		<div class="row">
+		<div class="col-sm-12">
+			<div class="well well-sm">
 				<div class="header">
 					<h5>Coût de lancement des sort</h5>
 				</div>
@@ -58,8 +46,8 @@
 				
 				<p>Example : Un sortilège de niveau 2 coutera 2 point de Mana au mage connaissant le domaine de magie du sortilège, et 4 points de mana au mage ne connaissant pas le domaine de magie.</p> 
 			</div>
-	
-	{% for domaine in domaines %}
+			
+			{% for domaine in domaines %}
 			
 				<div class="well well-sm">
 					<div class="header">
@@ -77,6 +65,9 @@
 				</div>
 
 			{% endfor %}
-</div>
+			</div>
+		</div> <!-- end row -->
+		
+	
 
 {% endblock content %}

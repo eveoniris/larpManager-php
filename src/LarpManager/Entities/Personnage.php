@@ -62,6 +62,22 @@ class Personnage extends BasePersonnage
 	}
 	
 	/**
+	 * Vérifie si le personnage dispose d'une compétence (quelque soit son niveau)
+	 * @param unknown $label
+	 */
+	public function hasCompetence($label)
+	{
+		foreach ( $this->getCompetences() as $competence)
+		{
+			if ( $competence->getCompetenceFamily()->getLabel() == $label)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
 	 * Fourni le trigger correspondant au tag
 	 * @param unknown $tag
 	 */

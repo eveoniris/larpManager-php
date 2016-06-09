@@ -16,6 +16,22 @@ use LarpManager\Form\SortDeleteForm;
  */
 class MagieController
 {
+	
+	/**
+	 * Découverte de la magie, des domaines et sortilèges
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function indexAction(Request $request, Application $app)
+	{
+		$domaines = $app['orm.em']->getRepository('\LarpManager\Entities\Domaine')->findAll();
+		
+		return $app['twig']->render('public/magie/index.twig', array(
+				'domaines' => $domaines,
+		));
+	}
+	
 	/**
 	 * Liste des domaines de magie
 	 * 

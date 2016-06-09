@@ -915,7 +915,7 @@ class PersonnageController
 				'expanded' => true,
 				'class' => 'LarpManager\Entities\Domaine',
 				'choices' => $domaines,
-				'choice_label' => 'fullDescription'
+				'choice_label' => 'label'
 			))
 			->add('save','submit', array('label' => 'Valider votre domaine de magie'))
 			->getForm();
@@ -927,9 +927,12 @@ class PersonnageController
 			
 		}
 
+		$domaines = $app['orm.em']->getRepository('\LarpManager\Entities\Domaine')->findAll();
+		
 		return $app['twig']->render('personnage/domaineMagie.twig', array(
 				'form' => $form->createView(),
 				'personnage' => $personnage,
+				'domaines' => $domaines,
 		));
 	}
 	
