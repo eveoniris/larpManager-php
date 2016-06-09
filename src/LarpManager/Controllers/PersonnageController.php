@@ -800,6 +800,21 @@ class PersonnageController
 				}
 			}
 			
+			// cas special magie
+			if ( $competence->getCompetenceFamily()->getLabel() == "Magie")
+			{
+				switch ($competence->getLevel()->getId())
+				{
+					case 1: // le personnage doit choisir un domaine de magie
+						$trigger = new \LarpManager\Entities\PersonnageTrigger();
+						$trigger->setPersonnage($personnage);
+						$trigger->setTag('MAGIE APPRENTI');
+						$trigger->setDone(false);
+						$app['orm.em']->persist($trigger);
+						break;
+				}
+			}
+			
 			// cas special littérature
 			if ( $competence->getCompetenceFamily()->getLabel() == "Littérature")
 			{
@@ -882,6 +897,39 @@ class PersonnageController
 				'form' => $form->createView(),
 				'personnage' => $personnage,
 				'competences' =>  $availableCompetences,
+		));
+	}
+	
+	public function domaineMagieAction(Request $request, Application $app)
+	{
+		$personnage = $request->get('personnage');
+		
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Domaine');
+		$domaines = $repo->findAll();
+		
+		$form = $app['form.factory']->createBuilder()
+			->add('domaines','entity', array(
+				'required' => true,
+				'label' => 'Choisissez votre domaine de magie',
+				'multiple' => false,
+				'expanded' => true,
+				'class' => 'LarpManager\Entities\Domaine',
+				'choices' => $domaines,
+				'choice_label' => 'fullDescription'
+			))
+			->add('save','submit', array('label' => 'Valider votre domaine de magie'))
+			->getForm();
+		
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
+		{
+			
+		}
+
+		return $app['twig']->render('personnage/domaineMagie.twig', array(
+				'form' => $form->createView(),
+				'personnage' => $personnage,
 		));
 	}
 	

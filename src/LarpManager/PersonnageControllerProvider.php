@@ -202,6 +202,17 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 			->before($mustOwn);
 		
 		/**
+		 * Formulaire de choix du domaine de magie
+		 * Accessible uniquement au proprietaire du personnage
+		 */
+		$controllers->match('/{personnage}/magie/domaine','LarpManager\Controllers\PersonnageController::domaineMagieAction')
+			->assert('personnage', '\d+')
+			->bind("personnage.magie.domaine")
+			->method('GET|POST')
+			->convert('personnage', 'converter.personnage:convert')
+			->before($mustOwn);
+			
+		/**
 		 * Formulaire d'ajout des langues gagnés grace à litterature initie
 		 * Accessible uniquement au proprietaire du personnage
 		 */

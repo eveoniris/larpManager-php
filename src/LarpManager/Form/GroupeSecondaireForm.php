@@ -5,6 +5,7 @@ namespace LarpManager\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Doctrine\ORM\EntityRepository;
 
 /**
  * LarpManager\Form\GroupeSecondaireForm
@@ -42,6 +43,12 @@ class GroupeSecondaireForm extends AbstractType
 						'required' => false,
 						'label' => 'Chef du groupe',
 						'class' => 'LarpManager\Entities\Personnage',
+						'query_builder' => function(EntityRepository $er) {
+							$qb = $er->createQueryBuilder('u');
+							$qb->orderBy('u.nom', 'ASC');
+							$qb->orderBy('u.surnom', 'ASC');
+							return $qb;
+						},
 						'property' => 'identity',
 				))
 				->add('secondaryGroupType','entity', array(

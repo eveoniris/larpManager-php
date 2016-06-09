@@ -15,26 +15,7 @@ use LarpManager\Form\LangueForm;
  */
 class LangueController
 {
-	
-	/**
-	 * API: fourni la liste des langues
-	 * GET /api/langue
-	 *
-	 * @param Request $request
-	 * @param Application $app
-	 */
-	public function apiListAction(Request $request, Application $app)
-	{
-		$qb = $app['orm.em']->createQueryBuilder();
-		$qb->select('Langue')
-			->from('\LarpManager\Entities\Langue','Langue');
-	
-		$query = $qb->getQuery();
-	
-		$langues = $query->getResult(Query::HYDRATE_ARRAY);
-		return new JsonResponse($langues);
-	}
-	
+		
 	/**
 	 * affiche la liste des langues
 	 * 

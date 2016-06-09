@@ -95,7 +95,7 @@ class Personnage extends BasePersonnage
 		$groupe = $this->getGroupe();
 		$participant = $this->getParticipant();
 		
-		$identity = $this->getPublicName().' (';
+		$identity = $this->getNom().' '.$this->getSurnom().' (';
 		if ( $groupe ) $identity .= $groupe->getNom();
 		if ( $participant ) $identity .= " - ". $participant->getUser()->getUsername();
 		$identity .= ')';

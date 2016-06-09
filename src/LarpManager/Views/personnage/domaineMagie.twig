@@ -1,0 +1,28 @@
+{% extends "layout.twig" %}
+
+{% block title %}{{ personnage.publicName }}{% endblock title %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage')  }}">Accueil</a></li>
+		<li><a href="{{ path('personnage')  }}">Votre personnage</a></li>
+		<li class="active">Choix du domaine de magie</li>
+	</ol>
+	
+	<div class="well bs-component">
+	<form action="{{ path('personnage.magie.domaine',{'personnage':personnage.id}) }}" method="POST" {{ form_enctype(form) }}>
+		<fieldset>
+			<blockquote>Votre compétence vous permet de choisir un domaine de magie.</blockquote>
+			{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+			
+			{{ form_row(form.domaines) }}
+			{{ form_rest(form) }}
+		</fieldset>
+	</form>
+	</div>
+</div>
+
+{% endblock content %}
