@@ -811,6 +811,51 @@ class PersonnageController
 						$trigger->setTag('MAGIE APPRENTI');
 						$trigger->setDone(false);
 						$app['orm.em']->persist($trigger);
+						
+						// il obtient aussi tous les sort de niveau 1
+						$sortRepo = $app['orm.em']->getRepository('\LarpManager\Entities\Sort');
+						$sorts = $sortRepo->findByNiveau(1);
+						foreach ($sorts as $sort)
+						{
+							$personnage->addSort($sort);
+						}
+						$app['orm.em']->persist($personnage);
+						break;
+					case 2:
+						// il obtient aussi tous les sort de niveau 2
+						$sortRepo = $app['orm.em']->getRepository('\LarpManager\Entities\Sort');
+						$sorts = $sortRepo->findByNiveau(2);
+						foreach ($sorts as $sort)
+						{
+							$personnage->addSort($sort);
+						}
+						$app['orm.em']->persist($personnage);
+						break;
+					case 3: // le personnage peut choisir un nouveau domaine de magie
+						$trigger = new \LarpManager\Entities\PersonnageTrigger();
+						$trigger->setPersonnage($personnage);
+						$trigger->setTag('MAGIE EXPERT');
+						$trigger->setDone(false);
+						$app['orm.em']->persist($trigger);
+						
+						// il obtient aussi tous les sort de niveau 3
+						$sortRepo = $app['orm.em']->getRepository('\LarpManager\Entities\Sort');
+						$sorts = $sortRepo->findByNiveau(3);
+						foreach ($sorts as $sort)
+						{
+							$personnage->addSort($sort);
+						}
+						$app['orm.em']->persist($personnage);
+					case 4:
+						break;
+						// il obtient aussi tous les sort de niveau 4
+						$sortRepo = $app['orm.em']->getRepository('\LarpManager\Entities\Sort');
+						$sorts = $sortRepo->findByNiveau(4);
+						foreach ($sorts as $sort)
+						{
+							$personnage->addSort($sort);
+						}
+						$app['orm.em']->persist($personnage);
 						break;
 				}
 			}
@@ -904,6 +949,13 @@ class PersonnageController
 	{
 		$personnage = $request->get('personnage');
 		
+		if ( ! $personnage->hasTrigger('MAGIE APPRENTI') 
+			&& ! $personnage->hasTrigger('MAGIE EXPERT') )
+		{
+			$app['session']->getFlashBag()->add('error','Désolé, vous ne pouvez pas choisir de domaine de magie supplémentaire.');
+			return $app->redirect($app['url_generator']->generate('homepage'),301);
+		}
+		
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Domaine');
 		$domaines = $repo->findAll();
 		
@@ -924,6 +976,29 @@ class PersonnageController
 		
 		if ( $form->isValid() )
 		{
+			$data = $form->getData();
+			$domaine = $data['domaines'];
+			
+			// Ajout du domaine de magie au personnage
+			$personnage->addDomaine($domaine);
+			$app['orm.em']->persist($personnage);
+			
+			// suppression du trigger
+			if ( $personnage->hasTrigger('MAGIE APPRENTI') )
+			{
+				$trigger = $personnage->getTrigger('MAGIE APPRENTI');
+				$app['orm.em']->remove($trigger);
+			}
+			if ( $personnage->hasTrigger('MAGIE EXPERT') )
+			{
+				$trigger = $personnage->getTrigger('MAGIE EXPERT');
+				$app['orm.em']->remove($trigger);
+			}
+				
+			$app['orm.em']->flush();
+			
+			$app['session']->getFlashBag()->add('success','Vos modifications ont été enregistrées.');
+			return $app->redirect($app['url_generator']->generate('personnage'),301);
 			
 		}
 

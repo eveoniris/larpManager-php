@@ -78,6 +78,25 @@ class Personnage extends BasePersonnage
 	}
 	
 	/**
+	 * Fourni le niveau d'une compétence d'un personnage
+	 * @param unknown $label
+	 */
+	public function getCompetenceNiveau($label)
+	{
+		$niveau = 0;
+		foreach ( $this->getCompetences() as $competence)
+		{
+			if ( $competence->getCompetenceFamily()->getLabel() == $label)
+			{
+				if ( $niveau < $competence->getLevel()->getIndex() )
+					$niveau = $competence->getLevel()->getIndex();
+			}
+		}
+		return $niveau;
+	}
+	
+	
+	/**
 	 * Fourni le trigger correspondant au tag
 	 * @param unknown $tag
 	 */

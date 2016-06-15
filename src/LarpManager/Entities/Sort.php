@@ -14,7 +14,7 @@ use LarpManager\Entities\BaseSort;
 /**
  * LarpManager\Entities\Sort
  *
- * @Entity()
+ * @Entity(repositoryClass="LarpManager\Repository\SortRepository")
  */
 class Sort extends BaseSort
 {

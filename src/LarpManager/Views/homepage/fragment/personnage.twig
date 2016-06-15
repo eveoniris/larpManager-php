@@ -116,6 +116,14 @@
 				</blockquote>
 			{% endif %}
 			
+			{% if personnage.hasTrigger('MAGIE EXPERT') %}
+				<blockquote>
+					<p>Votre compétence Magie au niveau expert vous permet de choisir un domaine de magie.</p>
+					<p>Les sorts que vous lancez dans ce domaine coûteront moins cher que les autres en mana.</p>
+					<a href="{{ path('personnage.magie.domaine', {'personnage': personnage.id}) }}">Choisir un domaine de magie</a>
+				</blockquote>
+			{% endif %}
+			
 			
 			<h6>Liste de vos domaines de Magie</h6>
 			<div class="list-group">
@@ -131,8 +139,15 @@
 			<div class="list-group">
 			{% for sort in personnage.sorts %}
 				<div class="list-group-item">
-					{{ sort.label|markdown }} - Niveau {{ sort.niveau }}
-					{{ sort.description|markdown }}
+					<div class="list-group-item-heading">{{ sort.label }} - {{ sort.domaine.label }} Niveau {{ sort.niveau }} </div>
+					<div class="list-group-item-text">{{ sort.description|markdown }}</div>
+					<div class="list-group-item-text">
+						Cout en mana
+						{% if sort.domaine in personnage.domaines %} {{ sort.niveau }}
+						{% else %} {{ sort.niveau * 2 }}
+						{% endif %}
+						
+					</div>
 				</div>
 			{% endfor %}
 			</div>

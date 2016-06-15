@@ -68,10 +68,12 @@
 					<p>{{ domaine.description|markdown }}</p>
 					<div class="list-group">
 						{% for sort in domaine.sorts %}
-							<div class="list-group-item">
-								<div class="list-group-item-heading">{{ sort.label }} - Niveau {{ sort.niveau }}</div>
-								<div class="list-group-item-text">{{ sort.description|markdown }}</div>
-							</div>
+							{% if sort.niveau <= personnage.competenceNiveau('Magie') %}
+								<div class="list-group-item">
+									<div class="list-group-item-heading">{{ sort.label }} - Niveau {{ sort.niveau }}</div>
+									<div class="list-group-item-text">{{ sort.description|markdown }}</div>
+								</div>
+							{% endif %}
 						{% endfor %}
 					</div>
 				</div>

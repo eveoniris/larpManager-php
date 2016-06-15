@@ -26,9 +26,11 @@ class MagieController
 	public function indexAction(Request $request, Application $app)
 	{
 		$domaines = $app['orm.em']->getRepository('\LarpManager\Entities\Domaine')->findAll();
+		$personnage = $app['user']->getPersonnage();
 		
 		return $app['twig']->render('public/magie/index.twig', array(
 				'domaines' => $domaines,
+				'personnage' => $personnage,
 		));
 	}
 	

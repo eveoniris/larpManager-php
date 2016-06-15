@@ -4,6 +4,8 @@ namespace LarpManager;
 
 use Silex\Application;
 use Silex\ControllerProviderInterface;
+use Symfony\Component\HttpFoundation\Request;
+
 
 /**
  * LarpManager\AgeControllerProvider
