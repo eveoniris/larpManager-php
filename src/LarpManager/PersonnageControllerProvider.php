@@ -213,6 +213,18 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 			->before($mustOwn);
 			
 		/**
+		 * Formulaire de choix d'un nouveau sort
+		 * Accessible uniquement au proprietaire du personnage
+		 */
+		$controllers->match('/{personnage}/magie/sort/{niveau}','LarpManager\Controllers\PersonnageController::sortAction')
+			->assert('personnage', '\d+')
+			->assert('niveau', '\d+')
+			->bind("personnage.magie.sort")
+			->method('GET|POST')
+			->convert('personnage', 'converter.personnage:convert')
+			->before($mustOwn);			
+			
+		/**
 		 * Formulaire d'ajout des langues gagnés grace à litterature initie
 		 * Accessible uniquement au proprietaire du personnage
 		 */

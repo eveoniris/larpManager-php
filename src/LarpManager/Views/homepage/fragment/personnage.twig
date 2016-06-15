@@ -124,6 +124,34 @@
 				</blockquote>
 			{% endif %}
 			
+			{% if personnage.hasTrigger('MAGIE APPRENTI SORT') %}
+				<blockquote>
+					<p>Votre compétence Magie au niveau apprenti vous permet de choisir un nouveau sortilège.</p>
+					<a href="{{ path('personnage.magie.sort', {'personnage': personnage.id, 'niveau' : 1}) }}">Choisir un sortilège</a>
+				</blockquote>
+			{% endif %}
+			
+			{% if personnage.hasTrigger('MAGIE INITIE SORT') %}
+				<blockquote>
+					<p>Votre compétence Magie au niveau initié vous permet de choisir un nouveau sortilège.</p>
+					<a href="{{ path('personnage.magie.sort', {'personnage': personnage.id,'niveau': 2}) }}">Choisir un sortilège</a>
+				</blockquote>
+			{% endif %}
+			
+			{% if personnage.hasTrigger('MAGIE EXPERT SORT') %}
+				<blockquote>
+					<p>Votre compétence Magie au niveau expert vous permet de choisir un nouveau sortilège.</p>
+					<a href="{{ path('personnage.magie.sort', {'personnage': personnage.id, 'niveau' : 3}) }}">Choisir un sortilège</a>
+				</blockquote>
+			{% endif %}
+			
+			{% if personnage.hasTrigger('MAGIE MAITRE SORT') %}
+				<blockquote>
+					<p>Votre compétence Magie au niveau maître vous permet de choisir un nouveau sortilège.</p>
+					<a href="{{ path('personnage.magie.sort', {'personnage': personnage.id, 'niveau' : 4}) }}">Choisir un sortilège</a>
+				</blockquote>
+			{% endif %}
+			
 			
 			<h6>Liste de vos domaines de Magie</h6>
 			<div class="list-group">
@@ -146,8 +174,10 @@
 						{% if sort.domaine in personnage.domaines %} {{ sort.niveau }}
 						{% else %} {{ sort.niveau * 2 }}
 						{% endif %}
-						
 					</div>
+					{% if sort.documentUrl %}
+					<div class="list-group-item-text"><a href="{{ path('magie.sort.document', {'sort': sort.id, 'document': sort.documentUrl}) }}">Télécharger le pdf associé</a></div>
+					{% endif %}
 				</div>
 			{% endfor %}
 			</div>

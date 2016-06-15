@@ -99,7 +99,6 @@ class MagieControllerProvider implements ControllerProviderInterface
 		$controllers->match('/sort/{sort}/document/{document}','LarpManager\Controllers\MagieController::getSortDocumentAction')
 			->bind("magie.sort.document")
 			->convert('sort', 'converter.sort:convert')
-			->before($mustBeScenariste)
 			->method('GET');
 		
 		/**

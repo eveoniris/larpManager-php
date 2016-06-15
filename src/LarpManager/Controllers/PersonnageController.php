@@ -812,24 +812,20 @@ class PersonnageController
 						$trigger->setDone(false);
 						$app['orm.em']->persist($trigger);
 						
-						// il obtient aussi tous les sort de niveau 1
-						$sortRepo = $app['orm.em']->getRepository('\LarpManager\Entities\Sort');
-						$sorts = $sortRepo->findByNiveau(1);
-						foreach ($sorts as $sort)
-						{
-							$personnage->addSort($sort);
-						}
-						$app['orm.em']->persist($personnage);
+						// il obtient aussi la possibilité de choisir un sort de niveau 1
+						$trigger = new \LarpManager\Entities\PersonnageTrigger();
+						$trigger->setPersonnage($personnage);
+						$trigger->setTag('MAGIE APPRENTI SORT');
+						$trigger->setDone(false);
+						$app['orm.em']->persist($trigger);
 						break;
 					case 2:
-						// il obtient aussi tous les sort de niveau 2
-						$sortRepo = $app['orm.em']->getRepository('\LarpManager\Entities\Sort');
-						$sorts = $sortRepo->findByNiveau(2);
-						foreach ($sorts as $sort)
-						{
-							$personnage->addSort($sort);
-						}
-						$app['orm.em']->persist($personnage);
+						// il obtient aussi la possibilité de choisir un sort de niveau 2
+						$trigger = new \LarpManager\Entities\PersonnageTrigger();
+						$trigger->setPersonnage($personnage);
+						$trigger->setTag('MAGIE INITIE SORT');
+						$trigger->setDone(false);
+						$app['orm.em']->persist($trigger);
 						break;
 					case 3: // le personnage peut choisir un nouveau domaine de magie
 						$trigger = new \LarpManager\Entities\PersonnageTrigger();
@@ -838,25 +834,20 @@ class PersonnageController
 						$trigger->setDone(false);
 						$app['orm.em']->persist($trigger);
 						
-						// il obtient aussi tous les sort de niveau 3
-						$sortRepo = $app['orm.em']->getRepository('\LarpManager\Entities\Sort');
-						$sorts = $sortRepo->findByNiveau(3);
-						foreach ($sorts as $sort)
-						{
-							$personnage->addSort($sort);
-						}
-						$app['orm.em']->persist($personnage);
+						// il obtient aussi la possibilité de choisir un sort de niveau 3
+						$trigger = new \LarpManager\Entities\PersonnageTrigger();
+						$trigger->setPersonnage($personnage);
+						$trigger->setTag('MAGIE EXPERT SORT');
+						$trigger->setDone(false);
+						$app['orm.em']->persist($trigger);
 					case 4:
 						break;
-						// il obtient aussi tous les sort de niveau 4
-						$sortRepo = $app['orm.em']->getRepository('\LarpManager\Entities\Sort');
-						$sorts = $sortRepo->findByNiveau(4);
-						foreach ($sorts as $sort)
-						{
-							$personnage->addSort($sort);
-						}
-						$app['orm.em']->persist($personnage);
-						break;
+						// il obtient aussi la possibilité de choisir un sort de niveau 4
+						$trigger = new \LarpManager\Entities\PersonnageTrigger();
+						$trigger->setPersonnage($personnage);
+						$trigger->setTag('MAGIE MAITRE SORT');
+						$trigger->setDone(false);
+						$app['orm.em']->persist($trigger);
 				}
 			}
 			
@@ -942,6 +933,82 @@ class PersonnageController
 				'form' => $form->createView(),
 				'personnage' => $personnage,
 				'competences' =>  $availableCompetences,
+		));
+	}
+	
+	public function sortAction(Request $request, Application $app)
+	{
+		$personnage = $request->get('personnage');
+		$niveau = $request->get('niveau');
+		
+		if ( ! $personnage->hasTrigger('MAGIE APPRENTI SORT')
+			&& ! $personnage->hasTrigger('MAGIE INITIE SORT') 
+			&& ! $personnage->hasTrigger('MAGIE EXPERT SORT') 
+			&& ! $personnage->hasTrigger('MAGIE MAITRE SORT') )
+		{
+			$app['session']->getFlashBag()->add('error','Désolé, vous ne pouvez pas choisir de sortilèges supplémentaires.');
+			return $app->redirect($app['url_generator']->generate('homepage'),301);
+		}
+		
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Sort');
+		$sorts = $repo->findByNiveau($niveau);
+		
+		$form = $app['form.factory']->createBuilder()
+			->add('sorts','entity', array(
+				'required' => true,
+				'label' => 'Choisissez votre sortilège',
+				'multiple' => false,
+				'expanded' => true,
+				'class' => 'LarpManager\Entities\Sort',
+				'choices' => $sorts,
+				'choice_label' => 'label'
+			))
+			->add('save','submit', array('label' => 'Valider votre sortilège'))
+			->getForm();
+		
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
+		{
+			$data = $form->getData();
+			$sort = $data['sorts'];
+				
+			// Ajout du domaine de magie au personnage
+			$personnage->addSort($sort);
+			$app['orm.em']->persist($personnage);
+				
+			// suppression du trigger
+			switch( $niveau)
+			{
+				case 1:
+					$trigger = $personnage->getTrigger('MAGIE APPRENTI SORT');
+					$app['orm.em']->remove($trigger);
+					break;
+				case 2:
+					$trigger = $personnage->getTrigger('MAGIE INITIE SORT');
+					$app['orm.em']->remove($trigger);
+					break;
+				case  3:
+					$trigger = $personnage->getTrigger('MAGIE EXPERT SORT');
+					$app['orm.em']->remove($trigger);
+					break;
+				case  4:
+					$trigger = $personnage->getTrigger('MAGIE MAITRE SORT');
+					$app['orm.em']->remove($trigger);
+					break;
+			}
+						
+			$app['orm.em']->flush();
+				
+			$app['session']->getFlashBag()->add('success','Vos modifications ont été enregistrées.');
+			return $app->redirect($app['url_generator']->generate('personnage'),301);
+		}
+		
+		return $app['twig']->render('personnage/sort.twig', array(
+				'form' => $form->createView(),
+				'personnage' => $personnage,
+				'sorts' => $sorts,
+				'niveau' => $niveau,
 		));
 	}
 	
