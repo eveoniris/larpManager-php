@@ -18,4 +18,8 @@ use LarpManager\Entities\BaseSort;
  */
 class Sort extends BaseSort
 {
+	public function getFullLabel()
+	{
+		return $this->getLabel() .' - '. $this->getDomaine()->getLabel() .' Niveau '. $this->getNiveau();
+	}
 }

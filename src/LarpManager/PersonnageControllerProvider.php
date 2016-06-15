@@ -123,6 +123,16 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 			->method('GET|POST')
 			->convert('personnage', 'converter.personnage:convert')
 			->before($mustBeOrga);
+			
+		/**
+		 * Ajout d'un sortilège (orga)
+		 */
+		$controllers->match('/admin/{personnage}/update/sort','LarpManager\Controllers\PersonnageController::adminUpdateSortAction')
+			->assert('personnage', '\d+')
+			->bind("personnage.admin.update.sort")
+			->method('GET|POST')
+			->convert('personnage', 'converter.personnage:convert')
+			->before($mustBeOrga);			
 		
 		/**
 		 * Suppression d'une religion d'un personnage (orga)

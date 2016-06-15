@@ -10,6 +10,7 @@ use LarpManager\Form\PersonnageFindForm;
 use LarpManager\Form\PersonnageForm;
 use LarpManager\Form\PersonnageUpdateForm;
 use LarpManager\Form\PersonnageUpdateRenommeForm;
+use LarpManager\Form\PersonnageUpdateSortForm;
 use LarpManager\Form\PersonnageDeleteForm;
 use LarpManager\Form\PersonnageXpForm;
 
@@ -164,7 +165,7 @@ class PersonnageController
 				'form' => $form->createView(),
 		));
 	}
-		
+			
 	/**
 	 * Supression d'un personnage (orga seulement)
 	 * 
@@ -308,6 +309,38 @@ class PersonnageController
 		return $app['twig']->render('admin/personnage/updateRenomme.twig', array(
 				'form' => $form->createView(),
 				'personnage' => $personnage));
+	}
+	
+	/**
+	 * Modifie la liste des sorts
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function adminUpdateSortAction(Request $request, Application $app)
+	{
+		$personnage = $request->get('personnage');
+			
+		$form = $app['form.factory']->createBuilder(new PersonnageUpdateSortForm(), $personnage)
+			->add('save','submit', array('label' => 'Valider les modifications'))
+			->getForm();
+		
+		$form->handleRequest($request);
+				
+		if ( $form->isValid() )
+		{
+			$personnage = $form->getData();
+			
+			$app['orm.em']->persist($personnage);
+			$app['orm.em']->flush();
+			
+			$app['session']->getFlashBag()->add('success','Le personnage a été sauvegardé.');
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
+		}
+		
+		return $app['twig']->render('admin/personnage/updateSort.twig', array(
+				'form' => $form->createView(),
+				'personnage' => $personnage,
+		));
 	}
 	
 	/**

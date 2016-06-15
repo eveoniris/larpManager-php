@@ -16,6 +16,7 @@
 	<form action="{{ path('personnage.magie.sort',{'personnage':personnage.id, 'niveau': niveau}) }}" method="POST" {{ form_enctype(form) }}>
 		<fieldset>
 			<blockquote>Votre compétence vous permet de choisir un nouveau sortilège.</blockquote>
+			<blockquote>Attention ! Un sortilège dans un domaine que vous ne maitrisez pas necessitera plus mana pour le lancer (la description complète des sortilèges est disponible en bas de cette page)</blockquote>
 			{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
 			
 			{{ form_row(form.sorts) }}
@@ -66,6 +67,12 @@
 						<h5>{{ sort.label }} - {{ sort.domaine.label }} Niveau {{ sort.niveau }}</h5>
 					</div>
 					<p>{{ sort.description|markdown }}</p>
+					<p>
+						Cout en mana
+						{% if sort.domaine in personnage.domaines %} {{ sort.niveau }}
+						{% else %} {{ sort.niveau * 2 }}
+						{% endif %}
+					</p>
 				</div>
 	{% endfor %}
 </div>
