@@ -12,15 +12,15 @@ namespace LarpManager\Entities;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * LarpManager\Entities\Construction
+ * LarpManager\Entities\Potion
  *
  * @Entity()
- * @Table(name="construction")
+ * @Table(name="potion")
  * @InheritanceType("SINGLE_TABLE")
  * @DiscriminatorColumn(name="discr", type="string")
- * @DiscriminatorMap({"base":"BaseConstruction", "extended":"Construction"})
+ * @DiscriminatorMap({"base":"BasePotion", "extended":"Potion"})
  */
-class BaseConstruction
+class BasePotion
 {
     /**
      * @Id
@@ -40,25 +40,30 @@ class BaseConstruction
     protected $description;
 
     /**
-     * @Column(type="integer")
+     * @Column(type="string", length=45, nullable=true)
      */
-    protected $defense;
+    protected $documentUrl;
 
     /**
-     * @ManyToMany(targetEntity="Territoire", mappedBy="constructions")
+     * @Column(type="integer")
      */
-    protected $territoires;
+    protected $niveau;
+
+    /**
+     * @ManyToMany(targetEntity="Personnage", mappedBy="potions")
+     */
+    protected $personnages;
 
     public function __construct()
     {
-        $this->territoires = new ArrayCollection();
+        $this->personnages = new ArrayCollection();
     }
 
     /**
      * Set the value of id.
      *
      * @param integer $id
-     * @return \LarpManager\Entities\Construction
+     * @return \LarpManager\Entities\Potion
      */
     public function setId($id)
     {
@@ -81,7 +86,7 @@ class BaseConstruction
      * Set the value of label.
      *
      * @param string $label
-     * @return \LarpManager\Entities\Construction
+     * @return \LarpManager\Entities\Potion
      */
     public function setLabel($label)
     {
@@ -104,7 +109,7 @@ class BaseConstruction
      * Set the value of description.
      *
      * @param string $description
-     * @return \LarpManager\Entities\Construction
+     * @return \LarpManager\Entities\Potion
      */
     public function setDescription($description)
     {
@@ -124,66 +129,89 @@ class BaseConstruction
     }
 
     /**
-     * Set the value of defense.
+     * Set the value of documentUrl.
      *
-     * @param integer $defense
-     * @return \LarpManager\Entities\Construction
+     * @param string $documentUrl
+     * @return \LarpManager\Entities\Potion
      */
-    public function setDefense($defense)
+    public function setDocumentUrl($documentUrl)
     {
-        $this->defense = $defense;
+        $this->documentUrl = $documentUrl;
 
         return $this;
     }
 
     /**
-     * Get the value of defense.
+     * Get the value of documentUrl.
+     *
+     * @return string
+     */
+    public function getDocumentUrl()
+    {
+        return $this->documentUrl;
+    }
+
+    /**
+     * Set the value of niveau.
+     *
+     * @param integer $niveau
+     * @return \LarpManager\Entities\Potion
+     */
+    public function setNiveau($niveau)
+    {
+        $this->niveau = $niveau;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of niveau.
      *
      * @return integer
      */
-    public function getDefense()
+    public function getNiveau()
     {
-        return $this->defense;
+        return $this->niveau;
     }
 
     /**
-     * Add Territoire entity to collection.
+     * Add Personnage entity to collection.
      *
-     * @param \LarpManager\Entities\Territoire $territoire
-     * @return \LarpManager\Entities\Construction
+     * @param \LarpManager\Entities\Personnage $personnage
+     * @return \LarpManager\Entities\Potion
      */
-    public function addTerritoire(Territoire $territoire)
+    public function addPersonnage(Personnage $personnage)
     {
-        $this->territoires[] = $territoire;
+        $this->personnages[] = $personnage;
 
         return $this;
     }
 
     /**
-     * Remove Territoire entity from collection.
+     * Remove Personnage entity from collection.
      *
-     * @param \LarpManager\Entities\Territoire $territoire
-     * @return \LarpManager\Entities\Construction
+     * @param \LarpManager\Entities\Personnage $personnage
+     * @return \LarpManager\Entities\Potion
      */
-    public function removeTerritoire(Territoire $territoire)
+    public function removePersonnage(Personnage $personnage)
     {
-        $this->territoires->removeElement($territoire);
+        $this->personnages->removeElement($personnage);
 
         return $this;
     }
 
     /**
-     * Get Territoire entity collection.
+     * Get Personnage entity collection.
      *
      * @return \Doctrine\Common\Collections\Collection
      */
-    public function getTerritoires()
+    public function getPersonnages()
     {
-        return $this->territoires;
+        return $this->personnages;
     }
 
     public function __sleep()
     {
-        return array('id', 'label', 'description', 'defense');
+        return array('id', 'label', 'description', 'documentUrl', 'niveau');
     }
 }
