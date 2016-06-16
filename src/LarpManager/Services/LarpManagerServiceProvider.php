@@ -150,6 +150,11 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 		$app['converter.sort'] = $app->share(function($app) {
 			return new SortConverter($app['orm.em']);
 		});
+		
+		// potion converter
+		$app['converter.potion'] = $app->share(function($app) {
+			return new PotionConverter($app['orm.em']);
+		});
 	}
 
 	/**

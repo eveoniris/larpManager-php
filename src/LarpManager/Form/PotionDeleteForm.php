@@ -7,12 +7,12 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
- * LarpManager\Form\SortDeleteForm
+ * LarpManager\Form\PotionDeleteForm
  * 
  * @author kevin
  *
  */
-class SortDeleteForm extends AbstractType
+class PotionDeleteForm extends AbstractType
 {
 	/**
 	 * Construction du formulaire
@@ -32,7 +32,7 @@ class SortDeleteForm extends AbstractType
 	public function setDefaultOptions(OptionsResolverInterface $resolver)
 	{
 		$resolver->setDefaults(array(
-				'class' => 'LarpManager\Entities\Sort',
+				'class' => 'LarpManager\Entities\Potion',
 		));
 	}
 	
@@ -41,6 +41,6 @@ class SortDeleteForm extends AbstractType
 	 */
 	public function getName()
 	{
-		return 'sortDelete';
+		return 'potionDelete';
 	}
 }

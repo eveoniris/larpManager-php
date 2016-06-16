@@ -55,6 +55,9 @@ class MagieControllerProvider implements ControllerProviderInterface
 			->before($mustBeScenariste)
 			->method('GET|POST');
 		
+		/**
+		 * Supprimer un domaine de magie
+		 */
 		$controllers->match('/domaine/{domaine}/delete','LarpManager\Controllers\MagieController::domaineDeleteAction')
 			->assert('domaine', '\d+')
 			->bind("magie.domaine.delete")
@@ -62,11 +65,17 @@ class MagieControllerProvider implements ControllerProviderInterface
 			->before($mustBeScenariste)
 			->method('GET|POST');
 		
+		/**
+		 * Liste des sortilèges
+		 */
 		$controllers->match('/sort','LarpManager\Controllers\MagieController::sortListAction')
 			->bind("magie.sort.list")
 			->before($mustBeScenariste)
 			->method('GET');
 		
+		/**
+		 * Détail d'un sortilège
+		 */
 		$controllers->match('/sort/{sort}','LarpManager\Controllers\MagieController::sortDetailAction')
 			->assert('sort', '\d+')
 			->bind("magie.sort.detail")
@@ -74,11 +83,17 @@ class MagieControllerProvider implements ControllerProviderInterface
 			->before($mustBeScenariste)
 			->method('GET');
 		
+		/**
+		 * Ajouter un sortilège
+		 */
 		$controllers->match('/sort/add','LarpManager\Controllers\MagieController::sortAddAction')
 			->bind("magie.sort.add")
 			->before($mustBeScenariste)
 			->method('GET|POST');
 		
+		/**
+		 * Modifier un sortilège
+		 */
 		$controllers->match('/sort/{sort}/update','LarpManager\Controllers\MagieController::sortUpdateAction')
 			->assert('sort', '\d+')
 			->bind("magie.sort.update")
@@ -86,6 +101,9 @@ class MagieControllerProvider implements ControllerProviderInterface
 			->before($mustBeScenariste)
 			->method('GET|POST');
 		
+		/**
+		 * Supprimer un sortilège
+		 */
 		$controllers->match('/sort/{sort}/delete','LarpManager\Controllers\MagieController::sortDeleteAction')
 			->assert('sort', '\d+')
 			->bind("magie.sort.delete")
@@ -106,6 +124,60 @@ class MagieControllerProvider implements ControllerProviderInterface
 		 */
 		$controllers->match('/','LarpManager\Controllers\MagieController::indexAction')
 			->bind('magie')
+			->method('GET');
+			
+		/**
+		 * Lister les potions
+		 */
+		$controllers->match('/potion','LarpManager\Controllers\MagieController::potionListAction')
+			->bind("magie.potion.list")
+			->before($mustBeScenariste)
+			->method('GET');
+			
+		/**
+		 * Obtenir le détail d'une potion
+		 */
+		$controllers->match('/potion/{potion}','LarpManager\Controllers\MagieController::potionDetailAction')
+			->assert('potion', '\d+')
+			->bind("magie.potion.detail")
+			->convert('potion', 'converter.potion:convert')
+			->before($mustBeScenariste)
+			->method('GET');
+			
+		/**
+		 * Ajouter une potion
+		 */
+		$controllers->match('/potion/add','LarpManager\Controllers\MagieController::potionAddAction')
+			->bind("magie.potion.add")
+			->before($mustBeScenariste)
+			->method('GET|POST');
+			
+		/**
+		 * Modifier une potion
+		 */
+		$controllers->match('/potion/{potion}/update','LarpManager\Controllers\MagieController::potionUpdateAction')
+			->assert('potion', '\d+')
+			->bind("magie.potion.update")
+			->convert('potion', 'converter.potion:convert')
+			->before($mustBeScenariste)
+			->method('GET|POST');
+			
+		/**
+		 * Supprimer une potion
+		 */
+		$controllers->match('/potion/{potion}/delete','LarpManager\Controllers\MagieController::potionDeleteAction')
+			->assert('potion', '\d+')
+			->bind("magie.potion.delete")
+			->convert('potion', 'converter.potion:convert')
+			->before($mustBeScenariste)
+			->method('GET|POST');
+			
+		/**
+		 * Obtenir un document lié à une potion
+		 */
+		$controllers->match('/potion/{potion}/document/{document}','LarpManager\Controllers\MagieController::getPotionDocumentAction')
+			->bind("magie.potion.document")
+			->convert('potion', 'converter.potion:convert')
 			->method('GET');
 			
 		return $controllers;
