@@ -65,6 +65,14 @@
 				</div>
 				
 				<div class="list-group-item">
+					<h6 class="list-group-item-heading">Pugilat</h6>
+					<p class="list-group-item-text">
+						{{ app['personnage.manager'].pugilat(personnage)|default(0) }}
+					</p>
+				</div>
+				
+				
+				<div class="list-group-item">
 					<h6 class="list-group-item-heading">Liste des domaines de magie</h6>
 					{% for domaine in personnage.domaines %}
 						<p class="list-group-item-text">

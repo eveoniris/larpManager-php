@@ -1,0 +1,25 @@
+{% extends "layout.twig" %}
+
+{% block title %}Ingredient{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path('ingredient.admin.list') }}">Liste des titres</a></li>
+		<li class="active">Supprimer un ingredient</li>
+	</ol>
+	
+	
+	<div class="well bs-component">
+		<form action="{{ path('ingredient.admin.delete', {'ingredient': ingredient.id}) }}" method="POST" {{ form_enctype(form) }} novalidate>
+			<fieldset>
+				<legend>Supression d'un ingredient</legend>
+					{{ ingredient.label }} -- Niveau {{ ingredient.niveau }}
+					{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+					{{ form(form) }}
+			</fieldset>
+		</form>
+	</div>
+				
+{% endblock content %}

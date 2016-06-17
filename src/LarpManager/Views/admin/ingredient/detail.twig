@@ -1,0 +1,32 @@
+{% extends "layout.twig" %}
+
+{% block title %}Ingredients{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path('ingredient.admin.list') }}">Liste des ingredients</a></li>
+		<li class="active">Détail d'un ingredient</li>
+	</ol>
+
+	<div class="list-group">
+		<div class="list-group-item">
+			<div class="list-group-item-heading"><h6>Label</h6></div>
+			<div class="list-group-item-text">{{ ingredient.label }}</div>
+		</div>
+		<div class="list-group-item">
+			<div class="list-group-item-heading"><h6>Niveau</h6></div>
+			<div class="list-group-item-text">{{ ingredient.niveau }}</div>
+		</div>
+		<div class="list-group-item">
+			<div class="list-group-item-heading"><h6>Dose</h6></div>
+			<div class="list-group-item-text">{{ ingredient.dose }}</div>
+		</div>
+		<div class="list-group-item">
+			<div class="list-group-item-heading"><h6>Description</h6></div>
+			<div class="list-group-item-text">{{ ingredient.description|markdown }}</div>
+		</div>
+	</div>
+			
+{% endblock content %}

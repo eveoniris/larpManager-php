@@ -76,6 +76,30 @@ class PersonnageManager
 	}
 	
 	/**
+	 * Fourni le score de pugilat du personnage
+	 * 
+	 * @param Personnage $personnage
+	 */
+	public function pugilat(Personnage $personnage)
+	{		
+		$pugilat = $personnage->getCompetenceNiveau('Agilité') 
+			+ $personnage->getCompetenceNiveau('Armes à distance')
+			+ $personnage->getCompetenceNiveau('Armes à 1 main')
+			+ $personnage->getCompetenceNiveau('Armes à 2 mains')
+			+ $personnage->getCompetenceNiveau('Armes d\'hast')
+			+ $personnage->getCompetenceNiveau('Armure')
+			+ $personnage->getCompetenceNiveau('Attaque sournoise')
+			+ $personnage->getCompetenceNiveau('Protection')
+			+ $personnage->getCompetenceNiveau('Résistance')
+			+ $personnage->getCompetenceNiveau('Sauvagerie')
+			+ $personnage->getCompetenceNiveau('Stratégie')
+			+ $personnage->getCompetenceNiveau('Survie');
+		
+		return $pugilat;
+		
+	}
+	
+	/**
 	 * Indique si un personnage connait une famille de competence
 	 * 
 	 * @param Personnage $personnage

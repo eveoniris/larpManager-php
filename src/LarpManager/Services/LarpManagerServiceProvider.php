@@ -160,6 +160,11 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 		$app['converter.titre'] = $app->share(function($app) {
 			return new TitreConverter($app['orm.em']);
 		});
+		
+		// ingredient converter
+		$app['converter.ingredient'] = $app->share(function($app) {
+			return new IngredientConverter($app['orm.em']);
+		});
 	}
 
 	/**
