@@ -133,7 +133,17 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 			->method('GET|POST')
 			->convert('personnage', 'converter.personnage:convert')
 			->before($mustBeOrga);			
-		
+
+		/**
+		 * Ajout d'une potion (orga)
+		 */
+		$controllers->match('/admin/{personnage}/update/potion','LarpManager\Controllers\PersonnageController::adminUpdatePotionAction')
+			->assert('personnage', '\d+')
+			->bind("personnage.admin.update.potion")
+			->method('GET|POST')
+			->convert('personnage', 'converter.personnage:convert')
+			->before($mustBeOrga);
+			
 		/**
 		 * Suppression d'une religion d'un personnage (orga)
 		 */
@@ -233,6 +243,18 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 			->method('GET|POST')
 			->convert('personnage', 'converter.personnage:convert')
 			->before($mustOwn);			
+			
+		/**
+		 * Formulaire de choix d'une nouvelle potion
+		 * Accessible uniquement au proprietaire du personnage
+		 */
+		$controllers->match('/{personnage}/magie/potion/{niveau}','LarpManager\Controllers\PersonnageController::potionAction')
+			->assert('personnage', '\d+')
+			->assert('niveau', '\d+')
+			->bind("personnage.magie.potion")
+			->method('GET|POST')
+			->convert('personnage', 'converter.personnage:convert')
+			->before($mustOwn);
 			
 		/**
 		 * Formulaire d'ajout des langues gagnés grace à litterature initie

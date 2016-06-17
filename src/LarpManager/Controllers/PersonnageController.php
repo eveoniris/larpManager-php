@@ -11,6 +11,7 @@ use LarpManager\Form\PersonnageForm;
 use LarpManager\Form\PersonnageUpdateForm;
 use LarpManager\Form\PersonnageUpdateRenommeForm;
 use LarpManager\Form\PersonnageUpdateSortForm;
+use LarpManager\Form\PersonnageUpdatePotionForm;
 use LarpManager\Form\PersonnageDeleteForm;
 use LarpManager\Form\PersonnageXpForm;
 
@@ -338,6 +339,39 @@ class PersonnageController
 		}
 		
 		return $app['twig']->render('admin/personnage/updateSort.twig', array(
+				'form' => $form->createView(),
+				'personnage' => $personnage,
+		));
+	}
+	
+	/**
+	 * Modifie la liste des potions
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function adminUpdatePotionAction(Request $request, Application $app)
+	{
+		$personnage = $request->get('personnage');
+			
+		$form = $app['form.factory']->createBuilder(new PersonnageUpdatePotionForm(), $personnage)
+			->add('save','submit', array('label' => 'Valider les modifications'))
+			->getForm();
+	
+		$form->handleRequest($request);
+	
+		if ( $form->isValid() )
+		{
+			$personnage = $form->getData();
+				
+			$app['orm.em']->persist($personnage);
+			$app['orm.em']->flush();
+				
+			$app['session']->getFlashBag()->add('success','Le personnage a été sauvegardé.');
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
+		}
+	
+		return $app['twig']->render('admin/personnage/updatePotion.twig', array(
 				'form' => $form->createView(),
 				'personnage' => $personnage,
 		));
@@ -833,6 +867,54 @@ class PersonnageController
 				}
 			}
 			
+			// cas special alchimie
+			if ( $competence->getCompetenceFamily()->getLabel() == "Alchimie")
+			{
+				switch ($competence->getLevel()->getId())
+				{
+					case 1: // le personnage doit choisir 2 potions de niveau apprenti 
+						$trigger = new \LarpManager\Entities\PersonnageTrigger();
+						$trigger->setPersonnage($personnage);
+						$trigger->setTag('ALCHIMIE APPRENTI');
+						$trigger->setDone(false);
+						$app['orm.em']->persist($trigger);
+						
+						$trigger = new \LarpManager\Entities\PersonnageTrigger();
+						$trigger->setPersonnage($personnage);
+						$trigger->setTag('ALCHIMIE APPRENTI');
+						$trigger->setDone(false);
+						$app['orm.em']->persist($trigger);
+						break;
+					case 2: // le personnage doit choisir 1 potion de niveau initie et 1 potion de niveau apprenti
+						$trigger = new \LarpManager\Entities\PersonnageTrigger();
+						$trigger->setPersonnage($personnage);
+						$trigger->setTag('ALCHIMIE INITIE');
+						$trigger->setDone(false);
+						$app['orm.em']->persist($trigger);
+						
+						$trigger = new \LarpManager\Entities\PersonnageTrigger();
+						$trigger->setPersonnage($personnage);
+						$trigger->setTag('ALCHIMIE APPRENTI');
+						$trigger->setDone(false);
+						$app['orm.em']->persist($trigger);
+						break;
+					case 3: // le personnage doit choisir 1 potion de niveau expert
+						$trigger = new \LarpManager\Entities\PersonnageTrigger();
+						$trigger->setPersonnage($personnage);
+						$trigger->setTag('ALCHIMIE EXPERT');
+						$trigger->setDone(false);
+						$app['orm.em']->persist($trigger);
+						break;
+					case 4: // le personnage doit choisir 1 potion de niveau maitre
+						$trigger = new \LarpManager\Entities\PersonnageTrigger();
+						$trigger->setPersonnage($personnage);
+						$trigger->setTag('ALCHIMIE MAITRE');
+						$trigger->setDone(false);
+						$app['orm.em']->persist($trigger);
+						break;
+				}
+			}
+			
 			// cas special magie
 			if ( $competence->getCompetenceFamily()->getLabel() == "Magie")
 			{
@@ -969,6 +1051,94 @@ class PersonnageController
 		));
 	}
 	
+	/**
+	 * Choix d'une nouvelle potion
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function potionAction(Request $request, Application $app)
+	{
+		$personnage = $request->get('personnage');
+		$niveau = $request->get('niveau');
+	
+		if ( ! $personnage->hasTrigger('ALCHIMIE APPRENTI')
+				&& ! $personnage->hasTrigger('ALCHIMIE INITIE')
+				&& ! $personnage->hasTrigger('ALCHIMIE EXPERT')
+				&& ! $personnage->hasTrigger('ALCHIMIE MAITRE') )
+		{
+			$app['session']->getFlashBag()->add('error','Désolé, vous ne pouvez pas choisir de potions supplémentaires.');
+			return $app->redirect($app['url_generator']->generate('homepage'),301);
+		}
+		
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Potion');
+		$potions = $repo->findByNiveau($niveau);
+		
+		$form = $app['form.factory']->createBuilder()
+			->add('potions','entity', array(
+					'required' => true,
+					'label' => 'Choisissez votre potion',
+					'multiple' => false,
+					'expanded' => true,
+					'class' => 'LarpManager\Entities\Potion',
+					'choices' => $potions,
+					'choice_label' => 'fullLabel'
+			))
+			->add('save','submit', array('label' => 'Valider votre potion'))
+			->getForm();
+		
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
+		{
+			$data = $form->getData();
+			$potion = $data['potions'];
+		
+			// Ajout de la potion au personnage
+			$personnage->addPotion($potion);
+			$app['orm.em']->persist($personnage);
+		
+			// suppression du trigger
+			switch( $niveau)
+			{
+				case 1:
+					$trigger = $personnage->getTrigger('ALCHIMIE APPRENTI');
+					$app['orm.em']->remove($trigger);
+					break;
+				case 2:
+					$trigger = $personnage->getTrigger('ALCHIMIE INITIE');
+					$app['orm.em']->remove($trigger);
+					break;
+				case  3:
+					$trigger = $personnage->getTrigger('ALCHIMIE EXPERT');
+					$app['orm.em']->remove($trigger);
+					break;
+				case  4:
+					$trigger = $personnage->getTrigger('ALCHIMIE MAITRE');
+					$app['orm.em']->remove($trigger);
+					break;
+			}
+		
+			$app['orm.em']->flush();
+		
+			$app['session']->getFlashBag()->add('success','Vos modifications ont été enregistrées.');
+			return $app->redirect($app['url_generator']->generate('personnage'),301);
+		}
+		
+		return $app['twig']->render('personnage/potion.twig', array(
+				'form' => $form->createView(),
+				'personnage' => $personnage,
+				'potions' => $potions,
+				'niveau' => $niveau,
+		));
+	}
+	
+	/**
+	 * Choix d'un nouveau sortilège
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
 	public function sortAction(Request $request, Application $app)
 	{
 		$personnage = $request->get('personnage');
@@ -1045,6 +1215,12 @@ class PersonnageController
 		));
 	}
 	
+	/**
+	 * Choix d'un domaine de magie
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
 	public function domaineMagieAction(Request $request, Application $app)
 	{
 		$personnage = $request->get('personnage');

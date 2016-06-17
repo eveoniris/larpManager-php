@@ -6,7 +6,7 @@ use Doctrine\ORM\EntityManager;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
- * LarpManager\Services\Domaine
+ * LarpManager\Services\Sort
  */
 class SortConverter
 {

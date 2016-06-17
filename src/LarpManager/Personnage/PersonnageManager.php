@@ -52,6 +52,28 @@ class PersonnageManager
 		return $competence->getLevel()->getCoutMeconu();
 
 	}
+
+	/**
+	 * Fourni le titre du personnage en fonction de sa renommée
+	 * 
+	 * @param Personnage $personnage
+	 */
+	public function titre(Personnage $personnage)
+	{
+
+		$result = null;
+		$repo = $this->app['orm.em']->getRepository('\LarpManager\Entities\Titre');
+		$titres = $repo->findByRenomme();
+		foreach ($titres as $titre )
+		{
+			if ( $personnage->getRenomme() >= $titre->getRenomme() )
+			{
+				$result = $titre;
+			}
+		}
+		
+		return $result;
+	}
 	
 	/**
 	 * Indique si un personnage connait une famille de competence

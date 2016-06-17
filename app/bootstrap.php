@@ -233,6 +233,7 @@ else
 	$app->mount('/background', new LarpManager\BackgroundControllerProvider());
 	$app->mount('/pnj', new LarpManager\PnjControllerProvider());
 	$app->mount('/admin', new LarpManager\AdminControllerProvider());
+	$app->mount('/titre', new LarpManager\TitreControllerProvider());
 	$app->mount('/trombinoscope', new LarpManager\TrombinoscopeControllerProvider());
 		
 
@@ -277,6 +278,7 @@ else
 		array('^/genre/.*$', 'ROLE_REGLE'),
 		array('^/construction/.*$', 'ROLE_REGLE'),
 		array('^/appelation/.*$', 'ROLE_SCENARISTE'),
+		array('^/titre/.*$', 'ROLE_SCENARISTE'),
 		array('^/langue/.*$', 'ROLE_SCENARISTE'),
 		array('^/ressource/.*$', 'ROLE_SCENARISTE'),
 		array('^/statistique/.*$', 'ROLE_SCENARISTE'),

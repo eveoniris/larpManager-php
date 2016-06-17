@@ -14,8 +14,12 @@ use LarpManager\Entities\BasePotion;
 /**
  * LarpManager\Entities\Potion
  *
- * @Entity()
+ * @Entity(repositoryClass="LarpManager\Repository\PotionRepository")
  */
 class Potion extends BasePotion
 {
+	public function getFullLabel()
+	{
+		return $this->getLabel() .' - Niveau '. $this->getNiveau();
+	}
 }

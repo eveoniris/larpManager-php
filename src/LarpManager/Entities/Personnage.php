@@ -31,7 +31,8 @@ class Personnage extends BasePersonnage
 	{
 		return $this->getPublicName();
 	}
-		
+	
+	
 	/**
 	 * Vérifie si le personnage connait cette langue
 	 * @param unknown $langue

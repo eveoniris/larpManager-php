@@ -101,6 +101,54 @@
 			</div>
 		</div>
 		
+		{% if personnage.hasCompetence('Alchimie') %}
+			<div class="header">
+				<h5>Alchimie</h5>
+			</div>
+			
+			{% if personnage.hasTrigger('ALCHIMIE APPRENTI') %}
+				<blockquote>
+					<p>Votre compétence Alchimie vous permet de choisir une potion de niveau apprenti.</p>
+					<a href="{{ path('personnage.magie.potion', {'personnage': personnage.id, 'niveau' : 1}) }}">Choisir une nouvelle potion</a>
+				</blockquote>
+			{% endif %}
+			
+			{% if personnage.hasTrigger('ALCHIMIE INITIE') %}
+				<blockquote>
+					<p>Votre compétence Alchimie vous permet de choisir une potion de niveau initié.</p>
+					<a href="{{ path('personnage.magie.potion', {'personnage': personnage.id, 'niveau' : 2}) }}">Choisir une nouvelle potion</a>
+				</blockquote>
+			{% endif %}
+			
+			{% if personnage.hasTrigger('ALCHIMIE EXPERT') %}
+				<blockquote>
+					<p>Votre compétence Alchimie vous permet de choisir une potion de niveau expert.</p>
+					<a href="{{ path('personnage.magie.potion', {'personnage': personnage.id, 'niveau' : 3}) }}">Choisir une nouvelle potion</a>
+				</blockquote>
+			{% endif %}
+			
+			{% if personnage.hasTrigger('ALCHIMIE MAITRE') %}
+				<blockquote>
+					<p>Votre compétence Alchimie vous permet de choisir une potion de niveau maitre.</p>
+					<a href="{{ path('personnage.magie.potion', {'personnage': personnage.id, 'niveau' : 4}) }}">Choisir une nouvelle potion</a>
+				</blockquote>
+			{% endif %}
+			
+			<h6>Liste de vos potions</h6>
+			<div class="list-group">
+			{% for potion in personnage.potions %}
+				<div class="list-group-item">
+					<div class="list-group-item-heading">{{ potion.label }} - Niveau {{ potion.niveau }} </div>
+					<div class="list-group-item-text">{{ potion.description|markdown }}</div>
+					{% if potion.documentUrl %}
+					<div class="list-group-item-text"><a href="{{ path('magie.potion.document', {'potion': potion.id, 'document': potion.documentUrl}) }}">Télécharger le pdf associé</a></div>
+					{% endif %}
+				</div>
+			{% endfor %}
+			</div>
+			
+		{% endif %}
+		
 		{% if personnage.hasCompetence('Magie') %}
 			<div class="header">
 				<h5>Magie</h5>

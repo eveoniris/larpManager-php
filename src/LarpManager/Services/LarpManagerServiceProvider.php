@@ -36,7 +36,7 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 			$voters[] = new LarpManagerVoter($roleHierarchyVoter);
 			return $voters;
 		});
-		
+				
 		// manager
 		$app['larp.manager'] = $app->share(function($app) {
 			$larpManagerManager = new LarpManagerManager($app);
@@ -154,6 +154,11 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 		// potion converter
 		$app['converter.potion'] = $app->share(function($app) {
 			return new PotionConverter($app['orm.em']);
+		});
+		
+		// titre converter
+		$app['converter.titre'] = $app->share(function($app) {
+			return new TitreConverter($app['orm.em']);
 		});
 	}
 
