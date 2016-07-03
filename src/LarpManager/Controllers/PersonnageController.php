@@ -484,7 +484,13 @@ class PersonnageController
 			{
 				foreach( $personnage->getLanguages() as $langue)
 				{
-					if ( ! $langues->contains($langue))
+					$found = false;
+					foreach ( $langues as $l)
+					{
+						if ($l == $langue) $found = true;
+					}
+					
+					if ( ! $found )
 					{
 						$personnageLangue = $personnage->getPersonnageLangue($langue);
 						$app['orm.em']->remove($personnageLangue);
