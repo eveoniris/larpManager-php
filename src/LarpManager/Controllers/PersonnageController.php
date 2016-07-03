@@ -2,6 +2,8 @@
 namespace LarpManager\Controllers;
 
 use Symfony\Component\HttpFoundation\Request;
+use Doctrine\Common\Collections\ArrayCollection;
+
 use Silex\Application;
 use JasonGrimes\Paginator;
 use LarpManager\Form\PersonnageReligionForm;
@@ -10,6 +12,11 @@ use LarpManager\Form\PersonnageFindForm;
 use LarpManager\Form\PersonnageForm;
 use LarpManager\Form\PersonnageUpdateForm;
 use LarpManager\Form\PersonnageUpdateRenommeForm;
+use LarpManager\Form\PersonnageUpdateSortForm;
+use LarpManager\Form\PersonnageBackgroundForm;
+use LarpManager\Form\PersonnageUpdatePotionForm;
+use LarpManager\Form\PersonnageUpdateLangueForm;
+use LarpManager\Form\PersonnageUpdatePriereForm;
 use LarpManager\Form\PersonnageDeleteForm;
 use LarpManager\Form\PersonnageXpForm;
 
@@ -30,6 +37,22 @@ class PersonnageController
 	public function accueilAction(Request $request, Application $app)
 	{
 		return $app['twig']->render('public/personnage/accueil.twig', array());
+	}
+	
+	/**
+	 * Page d'accueil de gestion des fiches personnages
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function adminFicheAction(Request $request, Application $app)
+	{
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Groupe');
+		$groupes = $repo->findBy(array(),array('nom' => 'asc'));
+		
+		return $app['twig']->render('admin/personnage/fiches.twig', array(
+				'groupes' => $groupes,
+				
+		));
 	}
 	
 	/**
@@ -164,7 +187,7 @@ class PersonnageController
 				'form' => $form->createView(),
 		));
 	}
-		
+			
 	/**
 	 * Supression d'un personnage (orga seulement)
 	 * 
@@ -213,6 +236,18 @@ class PersonnageController
 			{
 				$personnage->removePostulant($postulant);
 				$app['orm.em']->remove($postulant);
+			}
+			
+			foreach ($personnage->getPersonnageLangues() as $personnageLangue)
+			{
+				$personnage->removePersonnageLangues($personnageLangue);
+				$app['orm.em']->remove($personnageLangue);
+			}
+			
+			foreach ($personnage->getPersonnageTriggers() as $trigger)
+			{
+				$personnage->removePersonnageTrigger($trigger);
+				$app['orm.em']->remove($trigger);
 			}
 						
 			$app['orm.em']->remove($personnage);
@@ -272,7 +307,89 @@ class PersonnageController
 				'personnage' => $personnage));
 	}
 	
+	/**
+	 * Ajoute un background au personnage
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function adminAddBackgroundAction(Request $request, Application $app)
+	{
+		$personnage = $request->get('personnage');
+		$background = new \LarpManager\Entities\PersonnageBackground();
+		
+		$background->setPersonnage($personnage);
+		$background->setUser($app['user']);
+		
+		$form = $app['form.factory']->createBuilder(new PersonnageBackgroundForm(), $background)
+			->add('visibility','choice', array(
+					'required' => true,
+					'label' =>  'Visibilité',
+					'choices' => $app['larp.manager']->getPersonnageBackgroundVisibility(),
+			))
+			->add('save','submit', array('label' => 'Valider les modifications'))
+			->getForm();
 
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
+		{
+			$background = $form->getData();
+		
+			$app['orm.em']->persist($background);
+			$app['orm.em']->flush();
+		
+			$app['session']->getFlashBag()->add('success','Le background a été sauvegardé.');
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
+		}
+		
+		return $app['twig']->render('admin/personnage/addBackground.twig', array(
+				'form' => $form->createView(),
+				'personnage' => $personnage,
+				'background' => $background,
+		));
+	}
+		
+	/**
+	 * Modifie le background d'un personnage
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function adminUpdateBackgroundAction(Request $request, Application $app)
+	{
+		$personnage = $request->get('personnage');
+		$background = $request->get('background');
+
+		$form = $app['form.factory']->createBuilder(new PersonnageBackgroundForm(), $background)
+			->add('visibility','choice', array(
+					'required' => true,
+					'label' =>  'Visibilité',
+					'choices' => $app['larp.manager']->getPersonnageBackgroundVisibility(),
+			))
+			->add('save','submit', array('label' => 'Valider les modifications'))
+			->getForm();
+		
+		$form->handleRequest($request);
+				
+		if ( $form->isValid() )
+		{
+			$background = $form->getData();
+		
+			$app['orm.em']->persist($background);
+			$app['orm.em']->flush();
+		
+			$app['session']->getFlashBag()->add('success','Le background a été sauvegardé.');
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
+		}
+		
+		return $app['twig']->render('admin/personnage/updateBackground.twig', array(
+				'form' => $form->createView(),
+				'personnage' => $personnage,
+				'background' => $background,
+		));
+	}
+	
 	/**
 	 * Modification de la renommee du personnage
 	 * @param Request $request
@@ -302,6 +419,212 @@ class PersonnageController
 		return $app['twig']->render('admin/personnage/updateRenomme.twig', array(
 				'form' => $form->createView(),
 				'personnage' => $personnage));
+	}
+	
+	/**
+	 * Modifie la liste des langues
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function adminUpdateLangueAction(Request $request, Application $app)
+	{
+		$personnage = $request->get('personnage');
+				
+		$langues = $app['orm.em']->getRepository('LarpManager\Entities\Langue')->findAll();
+			
+		$originalLanguages = array();
+		foreach ( $personnage->getLanguages() as $languages)
+		{
+			$originalLanguages[] = $languages;
+		}
+		
+		$form = $app['form.factory']->createBuilder()
+			->add('langues','entity', array(
+					'required' => true,
+					'label' => 'Choisissez les languages',
+					'multiple' => true,
+					'expanded' => true,
+					'class' => 'LarpManager\Entities\Langue',
+					'choices' => $langues,
+					'choice_label' => 'label',
+					'data' => $originalLanguages,
+			))
+			->add('save','submit', array('label' => 'Valider vos modifications'))
+			->getForm();
+
+		$form->handleRequest($request);
+	
+		if ( $form->isValid() )
+		{
+			$data = $form->getData();
+			$langues = $data['langues'];
+
+			// pour toutes les nouvelles langues
+			foreach( $langues as $langue)
+			{
+				if ( ! $personnage->isKnownLanguage($langue))
+				{
+					$personnageLangue = new \LarpManager\Entities\PersonnageLangues();
+					$personnageLangue->setPersonnage($personnage);
+					$personnageLangue->setLangue($langue);
+					$personnageLangue->setSource('ADMIN');
+					$app['orm.em']->persist($personnageLangue);
+				}
+			}
+			
+			if ( count($langues) == 0 )
+			{
+				foreach( $personnage->getLanguages() as $langue)
+				{
+					$personnageLangue = $personnage->getPersonnageLangue($langue);
+					$app['orm.em']->remove($personnageLangue);
+				}
+			}
+			else 
+			{
+				foreach( $personnage->getLanguages() as $langue)
+				{
+					if ( ! $langues->contains($langue))
+					{
+						$personnageLangue = $personnage->getPersonnageLangue($langue);
+						$app['orm.em']->remove($personnageLangue);
+					}
+				}
+			}
+			
+				
+			$app['orm.em']->persist($personnage);
+			$app['orm.em']->flush();
+				
+			$app['session']->getFlashBag()->add('success','Le personnage a été sauvegardé.');
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
+		}
+	
+		return $app['twig']->render('admin/personnage/updateLangue.twig', array(
+				'form' => $form->createView(),
+				'personnage' => $personnage,
+		));
+	}
+	
+	/**
+	 * Modifie la liste des prières
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function adminUpdatePriereAction(Request $request, Application $app)
+	{
+		$personnage = $request->get('personnage');
+			
+		$originalPrieres = new ArrayCollection();
+		foreach ( $personnage->getPrieres() as $priere)
+		{
+			$originalPrieres[] = $priere;
+		}
+		
+		$form = $app['form.factory']->createBuilder(new PersonnageUpdatePriereForm(), $personnage)
+			->add('save','submit', array('label' => 'Valider les modifications'))
+			->getForm();
+	
+		$form->handleRequest($request);
+	
+		if ( $form->isValid() )
+		{
+			$personnage = $form->getData();
+			
+			foreach($personnage->getPrieres() as $priere)
+			{
+				if ( ! $originalPrieres->contains($priere))
+				{
+					$priere->addPersonnage($personnage);
+				}
+			}
+			
+			foreach ( $originalPrieres as $priere)
+			{
+				if ( ! $personnage->getPrieres()->contains($priere))
+				{
+					$priere->removePersonnage($personnage);
+				}
+			}
+	
+			$app['orm.em']->persist($personnage);
+			$app['orm.em']->flush();
+	
+			$app['session']->getFlashBag()->add('success','Le personnage a été sauvegardé.');
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
+		}
+	
+		return $app['twig']->render('admin/personnage/updatePriere.twig', array(
+				'form' => $form->createView(),
+				'personnage' => $personnage,
+		));
+	}
+	
+	
+	
+	/**
+	 * Modifie la liste des sorts
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function adminUpdateSortAction(Request $request, Application $app)
+	{
+		$personnage = $request->get('personnage');
+			
+		$form = $app['form.factory']->createBuilder(new PersonnageUpdateSortForm(), $personnage)
+			->add('save','submit', array('label' => 'Valider les modifications'))
+			->getForm();
+		
+		$form->handleRequest($request);
+				
+		if ( $form->isValid() )
+		{
+			$personnage = $form->getData();
+			
+			$app['orm.em']->persist($personnage);
+			$app['orm.em']->flush();
+			
+			$app['session']->getFlashBag()->add('success','Le personnage a été sauvegardé.');
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
+		}
+		
+		return $app['twig']->render('admin/personnage/updateSort.twig', array(
+				'form' => $form->createView(),
+				'personnage' => $personnage,
+		));
+	}
+	
+	/**
+	 * Modifie la liste des potions
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function adminUpdatePotionAction(Request $request, Application $app)
+	{
+		$personnage = $request->get('personnage');
+			
+		$form = $app['form.factory']->createBuilder(new PersonnageUpdatePotionForm(), $personnage)
+			->add('save','submit', array('label' => 'Valider les modifications'))
+			->getForm();
+	
+		$form->handleRequest($request);
+	
+		if ( $form->isValid() )
+		{
+			$personnage = $form->getData();
+				
+			$app['orm.em']->persist($personnage);
+			$app['orm.em']->flush();
+				
+			$app['session']->getFlashBag()->add('success','Le personnage a été sauvegardé.');
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
+		}
+	
+		return $app['twig']->render('admin/personnage/updatePotion.twig', array(
+				'form' => $form->createView(),
+				'personnage' => $personnage,
+		));
 	}
 	
 	/**
@@ -794,6 +1117,105 @@ class PersonnageController
 				}
 			}
 			
+			// cas special alchimie
+			if ( $competence->getCompetenceFamily()->getLabel() == "Alchimie")
+			{
+				switch ($competence->getLevel()->getId())
+				{
+					case 1: // le personnage doit choisir 2 potions de niveau apprenti 
+						$trigger = new \LarpManager\Entities\PersonnageTrigger();
+						$trigger->setPersonnage($personnage);
+						$trigger->setTag('ALCHIMIE APPRENTI');
+						$trigger->setDone(false);
+						$app['orm.em']->persist($trigger);
+						
+						$trigger = new \LarpManager\Entities\PersonnageTrigger();
+						$trigger->setPersonnage($personnage);
+						$trigger->setTag('ALCHIMIE APPRENTI');
+						$trigger->setDone(false);
+						$app['orm.em']->persist($trigger);
+						break;
+					case 2: // le personnage doit choisir 1 potion de niveau initie et 1 potion de niveau apprenti
+						$trigger = new \LarpManager\Entities\PersonnageTrigger();
+						$trigger->setPersonnage($personnage);
+						$trigger->setTag('ALCHIMIE INITIE');
+						$trigger->setDone(false);
+						$app['orm.em']->persist($trigger);
+						
+						$trigger = new \LarpManager\Entities\PersonnageTrigger();
+						$trigger->setPersonnage($personnage);
+						$trigger->setTag('ALCHIMIE APPRENTI');
+						$trigger->setDone(false);
+						$app['orm.em']->persist($trigger);
+						break;
+					case 3: // le personnage doit choisir 1 potion de niveau expert
+						$trigger = new \LarpManager\Entities\PersonnageTrigger();
+						$trigger->setPersonnage($personnage);
+						$trigger->setTag('ALCHIMIE EXPERT');
+						$trigger->setDone(false);
+						$app['orm.em']->persist($trigger);
+						break;
+					case 4: // le personnage doit choisir 1 potion de niveau maitre
+						$trigger = new \LarpManager\Entities\PersonnageTrigger();
+						$trigger->setPersonnage($personnage);
+						$trigger->setTag('ALCHIMIE MAITRE');
+						$trigger->setDone(false);
+						$app['orm.em']->persist($trigger);
+						break;
+				}
+			}
+			
+			// cas special magie
+			if ( $competence->getCompetenceFamily()->getLabel() == "Magie")
+			{
+				switch ($competence->getLevel()->getId())
+				{
+					case 1: // le personnage doit choisir un domaine de magie
+						$trigger = new \LarpManager\Entities\PersonnageTrigger();
+						$trigger->setPersonnage($personnage);
+						$trigger->setTag('MAGIE APPRENTI');
+						$trigger->setDone(false);
+						$app['orm.em']->persist($trigger);
+						
+						// il obtient aussi la possibilité de choisir un sort de niveau 1
+						$trigger = new \LarpManager\Entities\PersonnageTrigger();
+						$trigger->setPersonnage($personnage);
+						$trigger->setTag('MAGIE APPRENTI SORT');
+						$trigger->setDone(false);
+						$app['orm.em']->persist($trigger);
+						break;
+					case 2:
+						// il obtient aussi la possibilité de choisir un sort de niveau 2
+						$trigger = new \LarpManager\Entities\PersonnageTrigger();
+						$trigger->setPersonnage($personnage);
+						$trigger->setTag('MAGIE INITIE SORT');
+						$trigger->setDone(false);
+						$app['orm.em']->persist($trigger);
+						break;
+					case 3: // le personnage peut choisir un nouveau domaine de magie
+						$trigger = new \LarpManager\Entities\PersonnageTrigger();
+						$trigger->setPersonnage($personnage);
+						$trigger->setTag('MAGIE EXPERT');
+						$trigger->setDone(false);
+						$app['orm.em']->persist($trigger);
+						
+						// il obtient aussi la possibilité de choisir un sort de niveau 3
+						$trigger = new \LarpManager\Entities\PersonnageTrigger();
+						$trigger->setPersonnage($personnage);
+						$trigger->setTag('MAGIE EXPERT SORT');
+						$trigger->setDone(false);
+						$app['orm.em']->persist($trigger);
+					case 4:
+						break;
+						// il obtient aussi la possibilité de choisir un sort de niveau 4
+						$trigger = new \LarpManager\Entities\PersonnageTrigger();
+						$trigger->setPersonnage($personnage);
+						$trigger->setTag('MAGIE MAITRE SORT');
+						$trigger->setDone(false);
+						$app['orm.em']->persist($trigger);
+				}
+			}
+			
 			// cas special littérature
 			if ( $competence->getCompetenceFamily()->getLabel() == "Littérature")
 			{
@@ -876,6 +1298,242 @@ class PersonnageController
 				'form' => $form->createView(),
 				'personnage' => $personnage,
 				'competences' =>  $availableCompetences,
+		));
+	}
+	
+	/**
+	 * Choix d'une nouvelle potion
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function potionAction(Request $request, Application $app)
+	{
+		$personnage = $request->get('personnage');
+		$niveau = $request->get('niveau');
+	
+		if ( ! $personnage->hasTrigger('ALCHIMIE APPRENTI')
+				&& ! $personnage->hasTrigger('ALCHIMIE INITIE')
+				&& ! $personnage->hasTrigger('ALCHIMIE EXPERT')
+				&& ! $personnage->hasTrigger('ALCHIMIE MAITRE') )
+		{
+			$app['session']->getFlashBag()->add('error','Désolé, vous ne pouvez pas choisir de potions supplémentaires.');
+			return $app->redirect($app['url_generator']->generate('homepage'),301);
+		}
+		
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Potion');
+		$potions = $repo->findByNiveau($niveau);
+		
+		$form = $app['form.factory']->createBuilder()
+			->add('potions','entity', array(
+					'required' => true,
+					'label' => 'Choisissez votre potion',
+					'multiple' => false,
+					'expanded' => true,
+					'class' => 'LarpManager\Entities\Potion',
+					'choices' => $potions,
+					'choice_label' => 'fullLabel'
+			))
+			->add('save','submit', array('label' => 'Valider votre potion'))
+			->getForm();
+		
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
+		{
+			$data = $form->getData();
+			$potion = $data['potions'];
+		
+			// Ajout de la potion au personnage
+			$personnage->addPotion($potion);
+			$app['orm.em']->persist($personnage);
+		
+			// suppression du trigger
+			switch( $niveau)
+			{
+				case 1:
+					$trigger = $personnage->getTrigger('ALCHIMIE APPRENTI');
+					$app['orm.em']->remove($trigger);
+					break;
+				case 2:
+					$trigger = $personnage->getTrigger('ALCHIMIE INITIE');
+					$app['orm.em']->remove($trigger);
+					break;
+				case  3:
+					$trigger = $personnage->getTrigger('ALCHIMIE EXPERT');
+					$app['orm.em']->remove($trigger);
+					break;
+				case  4:
+					$trigger = $personnage->getTrigger('ALCHIMIE MAITRE');
+					$app['orm.em']->remove($trigger);
+					break;
+			}
+		
+			$app['orm.em']->flush();
+		
+			$app['session']->getFlashBag()->add('success','Vos modifications ont été enregistrées.');
+			return $app->redirect($app['url_generator']->generate('personnage'),301);
+		}
+		
+		return $app['twig']->render('personnage/potion.twig', array(
+				'form' => $form->createView(),
+				'personnage' => $personnage,
+				'potions' => $potions,
+				'niveau' => $niveau,
+		));
+	}
+	
+	/**
+	 * Choix d'un nouveau sortilège
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function sortAction(Request $request, Application $app)
+	{
+		$personnage = $request->get('personnage');
+		$niveau = $request->get('niveau');
+		
+		if ( ! $personnage->hasTrigger('MAGIE APPRENTI SORT')
+			&& ! $personnage->hasTrigger('MAGIE INITIE SORT') 
+			&& ! $personnage->hasTrigger('MAGIE EXPERT SORT') 
+			&& ! $personnage->hasTrigger('MAGIE MAITRE SORT') )
+		{
+			$app['session']->getFlashBag()->add('error','Désolé, vous ne pouvez pas choisir de sortilèges supplémentaires.');
+			return $app->redirect($app['url_generator']->generate('homepage'),301);
+		}
+		
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Sort');
+		$sorts = $repo->findByNiveau($niveau);
+		
+		$form = $app['form.factory']->createBuilder()
+			->add('sorts','entity', array(
+				'required' => true,
+				'label' => 'Choisissez votre sortilège',
+				'multiple' => false,
+				'expanded' => true,
+				'class' => 'LarpManager\Entities\Sort',
+				'choices' => $sorts,
+				'choice_label' => 'label'
+			))
+			->add('save','submit', array('label' => 'Valider votre sortilège'))
+			->getForm();
+		
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
+		{
+			$data = $form->getData();
+			$sort = $data['sorts'];
+				
+			// Ajout du domaine de magie au personnage
+			$personnage->addSort($sort);
+			$app['orm.em']->persist($personnage);
+				
+			// suppression du trigger
+			switch( $niveau)
+			{
+				case 1:
+					$trigger = $personnage->getTrigger('MAGIE APPRENTI SORT');
+					$app['orm.em']->remove($trigger);
+					break;
+				case 2:
+					$trigger = $personnage->getTrigger('MAGIE INITIE SORT');
+					$app['orm.em']->remove($trigger);
+					break;
+				case  3:
+					$trigger = $personnage->getTrigger('MAGIE EXPERT SORT');
+					$app['orm.em']->remove($trigger);
+					break;
+				case  4:
+					$trigger = $personnage->getTrigger('MAGIE MAITRE SORT');
+					$app['orm.em']->remove($trigger);
+					break;
+			}
+						
+			$app['orm.em']->flush();
+				
+			$app['session']->getFlashBag()->add('success','Vos modifications ont été enregistrées.');
+			return $app->redirect($app['url_generator']->generate('personnage'),301);
+		}
+		
+		return $app['twig']->render('personnage/sort.twig', array(
+				'form' => $form->createView(),
+				'personnage' => $personnage,
+				'sorts' => $sorts,
+				'niveau' => $niveau,
+		));
+	}
+	
+	/**
+	 * Choix d'un domaine de magie
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function domaineMagieAction(Request $request, Application $app)
+	{
+		$personnage = $request->get('personnage');
+		
+		if ( ! $personnage->hasTrigger('MAGIE APPRENTI') 
+			&& ! $personnage->hasTrigger('MAGIE EXPERT') )
+		{
+			$app['session']->getFlashBag()->add('error','Désolé, vous ne pouvez pas choisir de domaine de magie supplémentaire.');
+			return $app->redirect($app['url_generator']->generate('homepage'),301);
+		}
+		
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Domaine');
+		$domaines = $repo->findAll();
+		
+		$form = $app['form.factory']->createBuilder()
+			->add('domaines','entity', array(
+				'required' => true,
+				'label' => 'Choisissez votre domaine de magie',
+				'multiple' => false,
+				'expanded' => true,
+				'class' => 'LarpManager\Entities\Domaine',
+				'choices' => $domaines,
+				'choice_label' => 'label'
+			))
+			->add('save','submit', array('label' => 'Valider votre domaine de magie'))
+			->getForm();
+		
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
+		{
+			$data = $form->getData();
+			$domaine = $data['domaines'];
+			
+			// Ajout du domaine de magie au personnage
+			$personnage->addDomaine($domaine);
+			$app['orm.em']->persist($personnage);
+			
+			// suppression du trigger
+			if ( $personnage->hasTrigger('MAGIE APPRENTI') )
+			{
+				$trigger = $personnage->getTrigger('MAGIE APPRENTI');
+				$app['orm.em']->remove($trigger);
+			}
+			if ( $personnage->hasTrigger('MAGIE EXPERT') )
+			{
+				$trigger = $personnage->getTrigger('MAGIE EXPERT');
+				$app['orm.em']->remove($trigger);
+			}
+				
+			$app['orm.em']->flush();
+			
+			$app['session']->getFlashBag()->add('success','Vos modifications ont été enregistrées.');
+			return $app->redirect($app['url_generator']->generate('personnage'),301);
+			
+		}
+
+		$domaines = $app['orm.em']->getRepository('\LarpManager\Entities\Domaine')->findAll();
+		
+		return $app['twig']->render('personnage/domaineMagie.twig', array(
+				'form' => $form->createView(),
+				'personnage' => $personnage,
+				'domaines' => $domaines,
 		));
 	}
 	

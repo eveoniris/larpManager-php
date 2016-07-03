@@ -1,0 +1,27 @@
+{% extends "layout.twig" %}
+
+{% block title %}{{ personnage.publicName }}{% endblock title %}
+
+{% block content %}
+<div class="container-fluid">
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path('personnage.admin.list') }}">Liste des personnages</a></li>
+		<li><a href="{{ path('personnage.admin.detail', {'personnage': personnage.id}) }}">Détail de {{ personnage.publicName }}</a></li>
+		<li class="active">Choix des langues</li>
+	</ol>
+	
+	<div class="well bs-component">
+		<form action="{{ path('personnage.admin.update.langue',{'personnage':personnage.id}) }}" method="POST" {{ form_enctype(form) }}>
+			<fieldset>
+				<legend>{{ personnage.publicName }} - <small>Choix des langues</small></legend>
+				<p>Choisissez les langues du personnage</p>
+				{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+	
+				{{ form_row(form.langues) }}
+				{{ form_rest(form) }}
+			</fieldset>
+		</form>
+	</div>
+{% endblock content %}

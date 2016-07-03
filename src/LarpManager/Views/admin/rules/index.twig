@@ -11,9 +11,10 @@
 	
 	<blockquote>Choisissez votre fichier pdf et téléversez le dans larpManager. Vous devez spécifier son label ainsi qu'une petite description.</blockquote>
 	
-	<form action="{{ path('rules.admin') }}" method="POST" {{ form_enctype(form) }} no-validate>			
+	<form action="{{ path('rules.admin') }}" method="POST" {{ form_enctype(form) }} novalidate>			
 			{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
 			{{ form(form) }}
+			{{ form_rest(form) }}
 	</form>
 	
 	<div class="header"><h5>Liste des règles</h5></div>

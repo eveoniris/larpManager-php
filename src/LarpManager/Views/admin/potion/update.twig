@@ -1,0 +1,24 @@
+{% extends "layout.twig" %}
+
+{% block title %}Potion{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path('magie.potion.list') }}">Liste des potions</a></li>
+		<li class="active">Modifier une potion</li>
+	</ol>
+	
+	
+	<div class="well bs-component">
+		<form action="{{ path('magie.potion.update', {'potion': potion.id}) }}" method="POST" {{ form_enctype(form) }} novalidate>
+			<fieldset>
+				<legend>Modification d'une potion</legend>
+					{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+					{{ form(form) }}
+			</fieldset>
+		</form>
+	</div>
+				
+{% endblock content %}

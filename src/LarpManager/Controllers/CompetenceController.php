@@ -27,6 +27,20 @@ class CompetenceController
 			
 		return $app['twig']->render('admin/competence/index.twig', array('competences' => $competences));
 	}
+	
+	/**
+	 * Liste du matériel necessaire par compétence
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function materielAction(Request $request, Application $app)
+	{
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Competence');
+		$competences = $repo->findAllOrderedByLabel();
+			
+		return $app['twig']->render('admin/competence/materiel.twig', array('competences' => $competences));
+	}
 
 	/**
 	 * Liste des compétences pour les joueurs

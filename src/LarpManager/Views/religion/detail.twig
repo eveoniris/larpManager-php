@@ -39,6 +39,22 @@
     				{% endif %}
     				</p>
 	    		</div>
+	    		
+	    		<div class="list-group-item">
+			    	<h4 class="list-group-item-heading">Sphères</h4>
+	    			<p class="list-group-item-text">
+	    			{% if not religion.spheres %}
+    				<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+    				Attention, cette religion n'a pas de sphère.
+    				{% else %}
+    					<ul>
+    					{% for sphere in religion.spheres %}
+    						<li><a href="{{ path('magie.sphere.detail', {'sphere': sphere.id}) }}">{{ sphere.label }}</a></li>
+    					{% endfor %}
+    					</ul>
+    				{% endif %}
+    				</p>
+	    		</div>
 
 				
 				<div class="list-group-item">

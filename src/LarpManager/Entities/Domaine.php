@@ -18,4 +18,8 @@ use LarpManager\Entities\BaseDomaine;
  */
 class Domaine extends BaseDomaine
 {
+	public function getFullDescription()
+	{
+		return $this->getLabel(). ' - ' . $this->getDescription();
+	}
 }

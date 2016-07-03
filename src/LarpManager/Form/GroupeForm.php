@@ -41,6 +41,9 @@ class GroupeForm extends AbstractType
 				->add('description','textarea', array(
 						'required' => false,
 				))
+				->add('materiel','textarea', array(
+						'required' => false,
+				))
 				->add('territoires','entity', array(
 						'label' => 'Territoire',
 						'required' => false,

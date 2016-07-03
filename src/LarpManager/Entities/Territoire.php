@@ -133,7 +133,7 @@ class Territoire extends BaseTerritoire implements \JsonSerializable
 	 */
 	public function __toString()
 	{
-		return $this->getNomTree();
+		return $this->getNom();
 	}
 	
 	/**

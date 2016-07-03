@@ -1,0 +1,42 @@
+{% extends "layout.twig" %}
+
+{% block title %}Potions{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li class="active">Liste des potions</li>
+	</ol>
+	
+	<div class="well well-sm">
+	
+		<a href="{{ path('magie.potion.add') }}"><i class="fa fa-plus"></i> Ajouter une potion</a>
+		
+		<ul class="list-group">
+		{% for potion in potions %}
+		
+			<li class="list-group-item">
+				<div class="row">
+					<div class="col-md-8">
+						{{ potion.label }} - Niveau {{ potion.niveau }}
+						{{ potion.description|markdown }}
+						{% if potion.documentUrl %}
+							<a href="{{ path('magie.potion.document', {'potion': potion.id, 'document': potion.documentUrl}) }}">Télécharger le pdf associé</a>
+						{% else %}
+							Pas de document lié.
+						{% endif %}
+					</div>
+					<div class="col-md-4">
+						<a href="{{ path('magie.potion.update',{'potion':potion.id}) }}"><i class="fa fa-pencil"></i> Modifier</a>&nbsp;|&nbsp;
+						<a href="{{ path('magie.potion.detail',{'potion':potion.id}) }}"><i class="fa fa-eye"></i> Detail</a>&nbsp;|&nbsp;
+						<a href="{{ path('magie.potion.delete',{'potion':potion.id}) }}"><i class="fa fa-eraser"></i> Supprimer</a>
+					</div>
+				</div>
+		    </li>
+
+		{% endfor %}
+	 	</ul>
+	</div>
+	
+{% endblock %}

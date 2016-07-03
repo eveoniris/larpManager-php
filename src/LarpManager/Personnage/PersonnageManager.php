@@ -52,6 +52,53 @@ class PersonnageManager
 		return $competence->getLevel()->getCoutMeconu();
 
 	}
+
+	/**
+	 * Fourni le titre du personnage en fonction de sa renommée
+	 * 
+	 * @param Personnage $personnage
+	 */
+	public function titre(Personnage $personnage)
+	{
+
+		$result = null;
+		$repo = $this->app['orm.em']->getRepository('\LarpManager\Entities\Titre');
+		$titres = $repo->findByRenomme();
+		foreach ($titres as $titre )
+		{
+			if ( $personnage->getRenomme() >= $titre->getRenomme() )
+			{
+				$result = $titre;
+			}
+		}
+		
+		return $result;
+	}
+	
+	/**
+	 * Fourni le score de pugilat du personnage
+	 * 
+	 * @param Personnage $personnage
+	 */
+	public function pugilat(Personnage $personnage)
+	{		
+		$pugilat = $personnage->getCompetenceNiveau('Agilité') 
+			+ $personnage->getCompetenceNiveau('Armes à distance')
+			+ $personnage->getCompetenceNiveau('Armes à 1 main')
+			+ $personnage->getCompetenceNiveau('Armes à 2 mains')
+			+ $personnage->getCompetenceNiveau('Armes d\'hast')
+			+ $personnage->getCompetenceNiveau('Armure')
+			+ $personnage->getCompetenceNiveau('Armurie')
+			+ $personnage->getCompetenceNiveau('Attaque sournoise')
+			+ $personnage->getCompetenceNiveau('Protection')
+			+ $personnage->getCompetenceNiveau('Résistance')
+			+ $personnage->getCompetenceNiveau('Sauvagerie')
+			+ $personnage->getCompetenceNiveau('Stratégie')
+			+ $personnage->getCompetenceNiveau('Survie');
+		
+		return $pugilat;
+		
+	}
 	
 	/**
 	 * Indique si un personnage connait une famille de competence

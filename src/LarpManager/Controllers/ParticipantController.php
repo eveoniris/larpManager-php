@@ -7,6 +7,7 @@ use Silex\Application;
 
 use LarpManager\Form\JoueurForm;
 use LarpManager\Form\FindJoueurForm;
+use LarpManager\Form\RestaurationForm;
 use LarpManager\Form\JoueurXpForm;
 
 /**
@@ -28,6 +29,58 @@ class ParticipantController
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Joueur');
 		$joueurs = $repo->findAll();
 		return $app['twig']->render('joueur/index.twig', array('joueurs' => $joueurs));
+	}
+	
+	/**
+	 * Gestion des lieu de restauration
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function adminRestaurationAction(Request $request, Application $app)
+	{
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Participant');
+		$joueurs = $repo->findAllOrderedByUsername();
+		
+		$availableTaverns = $app['larp.manager']->getAvailableTaverns();
+		
+		$form = $app['form.factory']->createBuilder(new RestaurationForm());
+		foreach ($joueurs as $key => $joueur)
+		{
+			$form = $form->add($joueur->getId(),'choice', array(
+					'label' =>  $joueur->getUser()->getEtatCivil()->getNom() . ' ' . $joueur->getUser()->getEtatCivil()->getPrenom() . ' ' . $joueur->getUser()->getEmail(),
+					'choices' => $availableTaverns,
+					'multiple' => false,
+					'expanded' => false,
+
+			));
+		}
+			
+		$form = $form->add('save','submit', array('label' => "Sauvegarder"))
+			->getForm();
+		
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$result = $form->getData();
+			foreach ( $result as $joueur => $tavern)
+			{
+				$j = $app['orm.em']->getRepository('\LarpManager\Entities\Participant')->find($joueur);
+				if ( $j && $j->getTavernId() != $tavern )
+				{
+					
+					$j->setTavernId($tavern);
+					$app['orm.em']->persist($j);
+				}
+			}
+			$app['orm.em']->flush();
+		}
+		
+		return $app['twig']->render('admin/restauration.twig', array(
+				'form' => $form->createView(),
+				'joueurs' => $joueurs,
+				'taverns' => $availableTaverns
+		));
 	}
 	
 	/**

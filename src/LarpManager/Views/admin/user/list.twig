@@ -96,6 +96,7 @@
 					</th>
 					<th>Etat-civil</th>
 					<th>Droits</th>
+					<th>Jeu</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -114,6 +115,24 @@
 						{% endif %}
 					</td>
 					<td>{{ user.roles|join(', ') }}</td>
+					<td>
+						        {% if user.participant %}
+	        	<div>
+	        		Participe à {{ user.participant.gn.label }}
+	        	</div>
+		        	{% if user.participant.groupe %}
+		        		<div>
+		        			Membre du groupe <a href="{{ path('groupe.detail',{'index':user.participant.groupe.id})  }}">{{ user.participant.groupe.nom }}</a>
+		        		</div>
+		        	{% endif %}
+		        
+		        	{% if user.participant.personnage %}
+		        		<div>
+							Personnage : <a href="{{ path('personnage.admin.detail',{'personnage':user.participant.personnage.id}) }}">{{ user.participant.personnage.publicName }}</a>
+						</div>	        		
+		        	{% endif %}
+		        {% endif %}
+					</td>
 				</tr>
 			{% endfor %}
 	    	</tbody>

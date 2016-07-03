@@ -1,0 +1,36 @@
+{% extends "layout.twig" %}
+
+{% block title %}Ingredients{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li class="active">Liste des ingredients</li>
+	</ol>
+	
+	<div class="well well-sm">
+	
+		<a href="{{ path('ingredient.admin.add') }}"><i class="fa fa-plus"></i> Ajouter un ingrédient</a>
+		
+		<ul class="list-group">
+		{% for ingredient in ingredients %}
+			<li class="list-group-item">
+				<div class="row">
+					<div class="col-md-8">
+						<strong>{{ ingredient.label }} ( {{ ingredient.dose }}) -- Niveau {{ ingredient.niveau }}</strong>
+						{{ ingredient.description|markdown }}						
+					</div>
+					<div class="col-md-4">
+						<a href="{{ path('ingredient.admin.update',{'ingredient':ingredient.id}) }}"><i class="fa fa-pencil"></i> Modifier</a>&nbsp;|&nbsp;
+						<a href="{{ path('ingredient.admin.detail',{'ingredient':ingredient.id}) }}"><i class="fa fa-eye"></i> Detail</a>&nbsp;|&nbsp;
+						<a href="{{ path('ingredient.admin.delete',{'ingredient':ingredient.id}) }}"><i class="fa fa-eraser"></i> Supprimer</a>
+					</div>
+				</div>
+		    </li>
+
+		{% endfor %}
+	 	</ul>
+	</div>
+	
+{% endblock %}

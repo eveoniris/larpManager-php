@@ -34,6 +34,9 @@
 					<li class="list-group-item">
 						<strong>Renommée :</strong> {{ personnage.renomme|default(0) }}
 					</li>
+					{# <li class="list-group-item">
+						<strong>Titre :</strong> {{ app['personnage.manager'].titre(personnage)|default('Aucun') }}
+					</li> #}
 				</ul>
 			</div>
 			
@@ -47,6 +50,20 @@
 					{% endif %}
 				</div>
 			</div>
+		</div>
+		
+		<div class="header">
+			<h5>Pugilat</h5>
+		</div>
+		<div class="row">
+			<div class="col-sm-6">
+				{{ app['personnage.manager'].pugilat(personnage)|default(0) }}
+			</div>
+			<div class="col-sm-6">
+				Le score de pugilat est le nombre de niveaux cumulés (apprenti 1, initié 2, expert 3 etc…) dans les compétences martiales :
+				Agilité / Armes à distance / Armes à 1 main / Armes à 2 mains / Armes d’hast / Armure / Attaque sournoise / Protection / Résistance / Sauvagerie / Stratégie / Survie
+				Si quelqu'un essaie d'intervenir avec une arme dans votre combat, l'effet du pugilat s'applique immédiatement. (écourtez le combat)
+			</div>		
 		</div>
 		
 		{# Religion #}
@@ -100,6 +117,146 @@
 				{% endif %}
 			</div>
 		</div>
+		
+		{% if personnage.hasCompetence('Prêtrise') %}
+			<div class="header">
+				<h5>Prières</h5>
+			</div>
+			
+			{% if personnage.hasTrigger('MAGIE APPRENTI') %}
+			
+		{% endif %}
+		
+		{% if personnage.hasCompetence('Alchimie') %}
+			<div class="header">
+				<h5>Alchimie</h5>
+			</div>
+			
+			{% if personnage.hasTrigger('ALCHIMIE APPRENTI') %}
+				<blockquote>
+					<p>Votre compétence Alchimie vous permet de choisir une potion de niveau apprenti.</p>
+					<a href="{{ path('personnage.magie.potion', {'personnage': personnage.id, 'niveau' : 1}) }}">Choisir une nouvelle potion</a>
+				</blockquote>
+			{% endif %}
+			
+			{% if personnage.hasTrigger('ALCHIMIE INITIE') %}
+				<blockquote>
+					<p>Votre compétence Alchimie vous permet de choisir une potion de niveau initié.</p>
+					<a href="{{ path('personnage.magie.potion', {'personnage': personnage.id, 'niveau' : 2}) }}">Choisir une nouvelle potion</a>
+				</blockquote>
+			{% endif %}
+			
+			{% if personnage.hasTrigger('ALCHIMIE EXPERT') %}
+				<blockquote>
+					<p>Votre compétence Alchimie vous permet de choisir une potion de niveau expert.</p>
+					<a href="{{ path('personnage.magie.potion', {'personnage': personnage.id, 'niveau' : 3}) }}">Choisir une nouvelle potion</a>
+				</blockquote>
+			{% endif %}
+			
+			{% if personnage.hasTrigger('ALCHIMIE MAITRE') %}
+				<blockquote>
+					<p>Votre compétence Alchimie vous permet de choisir une potion de niveau maitre.</p>
+					<a href="{{ path('personnage.magie.potion', {'personnage': personnage.id, 'niveau' : 4}) }}">Choisir une nouvelle potion</a>
+				</blockquote>
+			{% endif %}
+			
+			<h6>Liste de vos potions</h6>
+			<div class="list-group">
+			{% for potion in personnage.potions %}
+				<div class="list-group-item">
+					<div class="list-group-item-heading">{{ potion.label }} - Niveau {{ potion.niveau }} </div>
+					<div class="list-group-item-text">{{ potion.description|markdown }}</div>
+					{% if potion.documentUrl %}
+					<div class="list-group-item-text"><a href="{{ path('magie.potion.document', {'potion': potion.id, 'document': potion.documentUrl}) }}">Télécharger le pdf associé</a></div>
+					{% endif %}
+				</div>
+			{% endfor %}
+			</div>
+			
+		{% endif %}
+		
+		{% if personnage.hasCompetence('Magie') %}
+			<div class="header">
+				<h5>Magie</h5>
+			</div>
+			
+			<h5><a href="{{ path('magie') }}">Découvrir les domaines de magie et les sortilèges associés</a></h5>
+			
+			{% if personnage.hasTrigger('MAGIE APPRENTI') %}
+				<blockquote>
+					<p>Votre compétence Magie au niveau apprenti vous permet de choisir un domaine de magie.</p>
+					<p>Les sorts que vous lancez dans ce domaine coûteront moins cher que les autres en mana.</p>
+					<a href="{{ path('personnage.magie.domaine', {'personnage': personnage.id}) }}">Choisir un domaine de magie</a>
+				</blockquote>
+			{% endif %}
+			
+			{% if personnage.hasTrigger('MAGIE EXPERT') %}
+				<blockquote>
+					<p>Votre compétence Magie au niveau expert vous permet de choisir un domaine de magie.</p>
+					<p>Les sorts que vous lancez dans ce domaine coûteront moins cher que les autres en mana.</p>
+					<a href="{{ path('personnage.magie.domaine', {'personnage': personnage.id}) }}">Choisir un domaine de magie</a>
+				</blockquote>
+			{% endif %}
+			
+			{% if personnage.hasTrigger('MAGIE APPRENTI SORT') %}
+				<blockquote>
+					<p>Votre compétence Magie au niveau apprenti vous permet de choisir un nouveau sortilège.</p>
+					<a href="{{ path('personnage.magie.sort', {'personnage': personnage.id, 'niveau' : 1}) }}">Choisir un sortilège</a>
+				</blockquote>
+			{% endif %}
+			
+			{% if personnage.hasTrigger('MAGIE INITIE SORT') %}
+				<blockquote>
+					<p>Votre compétence Magie au niveau initié vous permet de choisir un nouveau sortilège.</p>
+					<a href="{{ path('personnage.magie.sort', {'personnage': personnage.id,'niveau': 2}) }}">Choisir un sortilège</a>
+				</blockquote>
+			{% endif %}
+			
+			{% if personnage.hasTrigger('MAGIE EXPERT SORT') %}
+				<blockquote>
+					<p>Votre compétence Magie au niveau expert vous permet de choisir un nouveau sortilège.</p>
+					<a href="{{ path('personnage.magie.sort', {'personnage': personnage.id, 'niveau' : 3}) }}">Choisir un sortilège</a>
+				</blockquote>
+			{% endif %}
+			
+			{% if personnage.hasTrigger('MAGIE MAITRE SORT') %}
+				<blockquote>
+					<p>Votre compétence Magie au niveau maître vous permet de choisir un nouveau sortilège.</p>
+					<a href="{{ path('personnage.magie.sort', {'personnage': personnage.id, 'niveau' : 4}) }}">Choisir un sortilège</a>
+				</blockquote>
+			{% endif %}
+			
+			
+			<h6>Liste de vos domaines de Magie</h6>
+			<div class="list-group">
+			{% for domaine in personnage.domaines %}
+				<div class="list-group-item">
+					{{ domaine.label|markdown }}
+					{{ domaine.description|markdown }}
+				</div>
+			{% endfor %}
+			</div>
+			
+			<h6>Liste de vos sortilèges</h6>
+			<div class="list-group">
+			{% for sort in personnage.sorts %}
+				<div class="list-group-item">
+					<div class="list-group-item-heading">{{ sort.label }} - {{ sort.domaine.label }} Niveau {{ sort.niveau }} </div>
+					<div class="list-group-item-text">{{ sort.description|markdown }}</div>
+					<div class="list-group-item-text">
+						Cout en mana
+						{% if sort.domaine in personnage.domaines %} {{ sort.niveau }}
+						{% else %} {{ sort.niveau * 2 }}
+						{% endif %}
+					</div>
+					{% if sort.documentUrl %}
+					<div class="list-group-item-text"><a href="{{ path('magie.sort.document', {'sort': sort.id, 'document': sort.documentUrl}) }}">Télécharger le pdf associé</a></div>
+					{% endif %}
+				</div>
+			{% endfor %}
+			</div>
+			
+		{% endif %}
 		
 		
 		<div class="header">

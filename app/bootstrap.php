@@ -233,6 +233,8 @@ else
 	$app->mount('/background', new LarpManager\BackgroundControllerProvider());
 	$app->mount('/pnj', new LarpManager\PnjControllerProvider());
 	$app->mount('/admin', new LarpManager\AdminControllerProvider());
+	$app->mount('/titre', new LarpManager\TitreControllerProvider());
+	$app->mount('/ingredient', new LarpManager\IngredientControllerProvider());
 	$app->mount('/trombinoscope', new LarpManager\TrombinoscopeControllerProvider());
 		
 
@@ -273,10 +275,12 @@ else
 		array('^/droit/.*$', 'ROLE_ADMIN'),
 		array('^/api/.*$', 'ROLE_SCENARISTE'),
 		array('^/age/.*$', 'ROLE_REGLE'),
-		array('^/magie/.*$', 'ROLE_REGLE'),
+		array('^/magie/.*$', 'ROLE_USER'),
 		array('^/genre/.*$', 'ROLE_REGLE'),
 		array('^/construction/.*$', 'ROLE_REGLE'),
 		array('^/appelation/.*$', 'ROLE_SCENARISTE'),
+		array('^/titre/.*$', 'ROLE_SCENARISTE'),
+		array('^/ingredient/.*$', 'ROLE_SCENARISTE'),
 		array('^/langue/.*$', 'ROLE_SCENARISTE'),
 		array('^/ressource/.*$', 'ROLE_SCENARISTE'),
 		array('^/statistique/.*$', 'ROLE_SCENARISTE'),

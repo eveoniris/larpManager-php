@@ -7,7 +7,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
- * LarpManager\Form\DomaineDeleteForm
+ * LarpManager\Form\SortDeleteForm
  * 
  * @author kevin
  *

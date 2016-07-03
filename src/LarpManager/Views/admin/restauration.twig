@@ -1,0 +1,13 @@
+{% extends "layout.twig" %}
+
+{% block title %}Restauration{% endblock title %}
+
+{% block content %}
+	<form action="{{ path('admin.restauration') }}" method="POST" {{ form_enctype(form) }}>
+		<fieldset>
+			<legend>Gestion de la restauration</legend>
+			{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+			{{ form(form) }}
+		</fieldset>
+	</form>
+{% endblock content %}

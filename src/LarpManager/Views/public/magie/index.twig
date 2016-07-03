@@ -1,0 +1,76 @@
+{% extends "layout.twig" %}
+
+{% block title %}Magie{% endblock title %}
+
+{% block content %}
+
+		<ol class="breadcrumb">
+			<li><a href="{{ path('homepage')  }}">Accueil</a></li>
+			<li><a href="{{ path('personnage')  }}">Votre personnage</a></li>
+			<li class="active">La magie</li>
+		</ol>
+	
+		<div class="row">
+		<div class="col-sm-12">
+			<div class="well well-sm">
+				<div class="header">
+					<h5>Coût de lancement des sort</h5>
+				</div>
+				<table class="table table-condensed table-bordered">
+					<thead>
+						<tr>
+							<th>Niveau du sortilège</th>
+							<th>1</th>
+							<th>2</th>
+							<th>3</th>
+							<th>4</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<th>Coût en mana dans le domaine du mage</th>
+							<td>1</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+						</tr>
+						<tr>
+							<th>Coût en mana en dehors du domaine du mage</th>
+							<td>2</td>
+							<td>4</td>
+							<td>6</td>
+							<td>8</td>
+						</tr>
+					</tbody>
+				</table>
+				
+				<p>Example : Un sortilège de niveau 2 coutera 2 point de Mana au mage connaissant le domaine de magie du sortilège, et 4 points de mana au mage ne connaissant pas le domaine de magie.</p> 
+			</div>
+			
+			{% for domaine in domaines %}
+			
+				<div class="well well-sm">
+					<div class="header">
+						<h5>{{ domaine.label }}</h5>
+					</div>
+					<p>{{ domaine.description|markdown }}</p>
+					<div class="list-group">
+						{# il ne fait afficher que les sorts correspondant au niveau du mage #}
+						{% for sort in domaine.sorts %}
+							{% if sort.niveau <= personnage.competenceNiveau('Magie') %}
+								<div class="list-group-item">
+									<div class="list-group-item-heading">{{ sort.label }} - Niveau {{ sort.niveau }}</div>
+									<div class="list-group-item-text">{{ sort.description|markdown }}</div>
+								</div>
+							{% endif %}
+						{% endfor %}
+					</div>
+				</div>
+
+			{% endfor %}
+			</div>
+		</div> <!-- end row -->
+		
+	
+
+{% endblock content %}

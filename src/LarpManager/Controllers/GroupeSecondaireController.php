@@ -376,6 +376,36 @@ class GroupeSecondaireController
 	}
 	
 	/**
+	 * Accepte un postulant dans le groupe
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function adminAcceptPostulantAction(Request $request, Application $app)
+	{
+		$groupeSecondaire = $request->get('groupe');
+		$postulant = $request->get('postulant');
+	
+		$personnage = $postulant->getPersonnage();
+			
+		$membre = new \LarpManager\Entities\Membre();
+		$membre->setPersonnage($personnage);
+		$membre->setSecondaryGroup($groupeSecondaire);
+		$membre->setSecret(false);
+		
+		$app['orm.em']->persist($membre);
+		$app['orm.em']->remove($postulant);
+		$app['orm.em']->flush();
+			
+		$app['user.mailer']->sendGroupeSecondaireAcceptMessage($personnage->getParticipant()->getUser(), $groupeSecondaire);
+			
+		$app['session']->getFlashBag()->add('success', 'la candidature a été accepté.');
+	
+		return $app['twig']->render('admin/groupeSecondaire/detail.twig', array(
+				'groupeSecondaire' => $groupeSecondaire));
+	}	
+	
+	/**
 	 * Retire un membre du groupe
 	 *
 	 * @param Request $request

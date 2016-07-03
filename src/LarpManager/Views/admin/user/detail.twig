@@ -39,6 +39,26 @@
 	            Registered {{ user.creationDate|date('F j, Y') }}
 	        </div>
 
+	        
+	        
+	        {% if user.participant %}
+	        	<div>
+	        		Participe à {{ user.participant.gn.label }}
+	        	</div>
+	        	
+	        	{% if user.participant.groupe %}
+	        		<div>
+	        			Membre du groupe <a href="{{ path('groupe.detail',{'index':user.participant.groupe.id})  }}">{{ user.participant.groupe.nom }}</a>
+	        		</div>
+	        	{% endif %}
+	        
+	        	{% if user.participant.personnage %}
+	        		<div>
+						Personnage : <a href="{{ path('personnage.admin.detail',{'personnage':user.participant.personnage.id}) }}">{{ user.participant.personnage.publicName }}</a>
+					</div>	        		
+	        	{% endif %}
+	        {% endif %}
+	        
 	        {% if is_granted('EDIT_USER', user) %}
 	            <div>
 	                <a href="{{ path('user.edit', {'id': user.id}) }}"><span class="glyphicon glyphicon-edit" style="margin-right: 5px;"></span>Modifier</a>

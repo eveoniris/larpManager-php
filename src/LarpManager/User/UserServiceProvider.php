@@ -8,7 +8,6 @@ use Symfony\Component\Security\Core\Authorization\Voter\RoleHierarchyVoter;
 use Symfony\Component\Security\Core\SecurityContextInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-
 class UserServiceProvider implements ServiceProviderInterface
 {
 	public function register(Application $app)

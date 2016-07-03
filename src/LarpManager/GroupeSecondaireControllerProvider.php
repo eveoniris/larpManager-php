@@ -117,7 +117,19 @@ class GroupeSecondaireControllerProvider implements ControllerProviderInterface
 			->method('GET')
 			->convert('groupe', 'converter.secondaryGroup:convert')
 			->convert('postulant', 'converter.postulant:convert')
-			->before($mustBeOrga);			
+			->before($mustBeOrga);
+		
+		/**
+		 * Accepte une candidature
+		 */
+		$controllers->match('/admin/{groupe}/postulant/{postulant}/accept','LarpManager\Controllers\GroupeSecondaireController::adminAcceptPostulantAction')
+			->assert('groupe', '\d+')
+			->assert('postulant', '\d+')
+			->bind("groupeSecondaire.admin.postulant.accept")
+			->method('GET')
+			->convert('groupe', 'converter.secondaryGroup:convert')
+			->convert('postulant', 'converter.postulant:convert')
+			->before($mustBeOrga);
 
 		/**
 		 * Ajouter un groupe secondaire (pour les orgas)

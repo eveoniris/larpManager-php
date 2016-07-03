@@ -47,6 +47,14 @@ class CompetenceControllerProvider implements ControllerProviderInterface
 			->bind("competence")
 			->method('GET')
 			->before($mustBeOrga);
+			
+		/**
+		 * Liste des competence pour les orgas
+		 */
+		$controllers->match('/materiel','LarpManager\Controllers\CompetenceController::materielAction')
+			->bind("competence.materiel")
+			->method('GET')
+			->before($mustBeOrga);
 		
 		/**
 		 * Obtenir un document lié à une compétence

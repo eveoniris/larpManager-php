@@ -9,6 +9,7 @@
 
 namespace LarpManager\Entities;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use LarpManager\Entities\BasePersonnage;
 
 /**
@@ -31,7 +32,8 @@ class Personnage extends BasePersonnage
 	{
 		return $this->getPublicName();
 	}
-		
+	
+	
 	/**
 	 * Vérifie si le personnage connait cette langue
 	 * @param unknown $langue
@@ -44,6 +46,33 @@ class Personnage extends BasePersonnage
 		}
 		return false;
 	}
+	
+	/**
+	 * Fourni la liste des langues connues
+	 */
+	public function getLanguages()
+	{
+		$languages = new ArrayCollection();
+		foreach ( $this->getPersonnageLangues() as $personnageLangue)
+		{
+			$languages[] = $personnageLangue->getLangue();
+		}
+		return $languages;
+	}
+	
+	/**
+	 * Fourni le language
+	 * @param unknown $langue
+	 */
+	public function getPersonnageLangue($langue)
+	{
+		foreach ( $this->getPersonnageLangues() as $personnageLangue)
+		{
+			if ( $personnageLangue->getLangue() == $langue ) return $personnageLangue;
+		}
+		return null;
+	}
+	
 	
 	/**
 	 * Vérifie si le personnage dispose d'un trigger
@@ -60,6 +89,41 @@ class Personnage extends BasePersonnage
 		}
 		return false;
 	}
+	
+	/**
+	 * Vérifie si le personnage dispose d'une compétence (quelque soit son niveau)
+	 * @param unknown $label
+	 */
+	public function hasCompetence($label)
+	{
+		foreach ( $this->getCompetences() as $competence)
+		{
+			if ( $competence->getCompetenceFamily()->getLabel() == $label)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Fourni le niveau d'une compétence d'un personnage
+	 * @param unknown $label
+	 */
+	public function getCompetenceNiveau($label)
+	{
+		$niveau = 0;
+		foreach ( $this->getCompetences() as $competence)
+		{
+			if ( $competence->getCompetenceFamily()->getLabel() == $label)
+			{
+				if ( $niveau < $competence->getLevel()->getIndex() )
+					$niveau = $competence->getLevel()->getIndex();
+			}
+		}
+		return $niveau;
+	}
+	
 	
 	/**
 	 * Fourni le trigger correspondant au tag
@@ -95,7 +159,7 @@ class Personnage extends BasePersonnage
 		$groupe = $this->getGroupe();
 		$participant = $this->getParticipant();
 		
-		$identity = $this->getPublicName().' (';
+		$identity = $this->getNom().' '.$this->getSurnom().' (';
 		if ( $groupe ) $identity .= $groupe->getNom();
 		if ( $participant ) $identity .= " - ". $participant->getUser()->getUsername();
 		$identity .= ')';
@@ -175,6 +239,21 @@ class Personnage extends BasePersonnage
 	{
 		$this->setXp($this->getXp() - $xp);
 		return $this;
+	}
+	
+	public function getXpTotal()
+	{
+		$total = 0;
+		foreach ( $this->getExperienceGains() as $gain)
+		{
+			$pos = strpos($gain->getExplanation(),"Suppression de la compétence");
+			if (  $pos === FALSE )
+			{
+				$total = $total + $gain->getXpGain();
+			}
+		}
+		return $total;
+		
 	}
 	
 	/**

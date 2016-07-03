@@ -24,6 +24,7 @@
 						<li><a href="{{ path('annonce.list') }}">Liste des annonces</a></li>
 						<li><a href="{{ path('gn.list') }}">Liste des grandeurs natures</a></li>
 						<li><a href="{{ path('user.admin.list') }}">Liste des utilisateurs</a></li>
+						<li><a href="{{ path('admin.restauration') }}">Restauration</a></li>
 						<li><a href="{{ path('groupe.admin.list') }}">Liste des groupes</a></li>
 						<li><a href="{{ path('groupeSecondaire.admin.list') }}">Liste des groupes secondaires</a></li>
 						<li><a href="{{ path('personnage.admin.list') }}">Liste des personnages</a></li>
@@ -33,6 +34,7 @@
 						<li><a href="{{ path('trombinoscope') }}">Trombinoscope</a></li>
 						<li><a href="{{ path('admin.rappels') }}">rappels</a></li>
 						<li><a href="{{ path('rules.admin') }}">Règles</a></li>
+						<li><a href="{{ path('personnage.admin.fiche') }}">Fiches</a></li>
 					</ul>
 				</li>
 			{% endif %}
@@ -44,9 +46,11 @@
 					<ul class="dropdown-menu">
 						<li><a href="{{ path('appelation') }}">Appelations</a></li>
 						<li><a href="{{ path('territoire.admin.list') }}">Territoires</a></li>
+						<li><a href="{{ path('titre.admin.list') }}">Titres</a></li>
 						<li><a href="{{ path('world') }}">Cartographie</a></li>
 						<li><a href="{{ path('langue') }}">Langues</a></li>
 						<li><a href="{{ path('ressource') }}">Ressources</a></li>
+						<li><a href="{{ path('ingredient.admin.list') }}">Ingredients</a></li>
 						<li><a href="{{ path('construction') }}">Constructions</a></li>
 						<li><a href="{{ path('religion') }}">Religions</a></li>
 						<li><a href="{{ path('religion.level') }}">Fanatisme</a></li>
@@ -70,6 +74,9 @@
 						<li><a href="{{ path('genre') }}">Genres</a></li>
 						<li><a href="{{ path('magie.domaine.list') }}">Domaine de magie</a></li>
 						<li><a href="{{ path('magie.sort.list') }}">Sortilèges</a></li>
+						<li><a href="{{ path('magie.potion.list') }}">Potions</a></li>
+						<li><a href="{{ path('magie.sphere.list') }}">Sphères</a></li>
+						<li><a href="{{ path('magie.priere.list') }}">Prières</a></li>
 						<li><a href="{{ path('personnageSecondaire.admin.list') }}">Personnage secondaire</a></li>
 					</ul>
 				</li>

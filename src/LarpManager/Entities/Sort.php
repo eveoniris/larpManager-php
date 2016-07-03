@@ -14,8 +14,12 @@ use LarpManager\Entities\BaseSort;
 /**
  * LarpManager\Entities\Sort
  *
- * @Entity()
+ * @Entity(repositoryClass="LarpManager\Repository\SortRepository")
  */
 class Sort extends BaseSort
 {
+	public function getFullLabel()
+	{
+		return $this->getLabel() .' - '. $this->getDomaine()->getLabel() .' Niveau '. $this->getNiveau();
+	}
 }

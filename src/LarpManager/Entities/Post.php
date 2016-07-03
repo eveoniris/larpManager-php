@@ -14,7 +14,7 @@ use LarpManager\Entities\BasePost;
 /**
  * LarpManager\Entities\Post
  *
- * @Entity()
+ * @Entity(repositoryClass="LarpManager\Repository\PostRepository")
  */
 class Post extends BasePost
 {

@@ -14,7 +14,7 @@ use LarpManager\Entities\BaseParticipant;
 /**
  * LarpManager\Entities\Participant
  *
- * @Entity()
+ * @Entity(repositoryClass="LarpManager\Repository\ParticipantRepository")
  */
 class Participant extends BaseParticipant
 {

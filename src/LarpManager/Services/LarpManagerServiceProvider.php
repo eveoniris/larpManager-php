@@ -36,7 +36,7 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 			$voters[] = new LarpManagerVoter($roleHierarchyVoter);
 			return $voters;
 		});
-		
+				
 		// manager
 		$app['larp.manager'] = $app->share(function($app) {
 			$larpManagerManager = new LarpManagerManager($app);
@@ -89,6 +89,11 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 		// background converter
 		$app['converter.background'] = $app->share(function($app) {
 			return new BackgroundConverter($app['orm.em']);
+		});
+		
+		// personnageBackground converter
+		$app['converter.personnageBackground'] = $app->share(function($app) {
+			return new PersonnageBackgroundConverter($app['orm.em']);
 		});
 		
 		// groupe converter
@@ -149,6 +154,31 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 		// sortilège converter
 		$app['converter.sort'] = $app->share(function($app) {
 			return new SortConverter($app['orm.em']);
+		});
+		
+		// potion converter
+		$app['converter.potion'] = $app->share(function($app) {
+			return new PotionConverter($app['orm.em']);
+		});
+		
+		// sphere converter
+		$app['converter.sphere'] = $app->share(function($app) {
+			return new SphereConverter($app['orm.em']);
+		});
+			
+		// priere converter
+		$app['converter.priere'] = $app->share(function($app) {
+			return new PriereConverter($app['orm.em']);
+		});
+		
+		// titre converter
+		$app['converter.titre'] = $app->share(function($app) {
+			return new TitreConverter($app['orm.em']);
+		});
+		
+		// ingredient converter
+		$app['converter.ingredient'] = $app->share(function($app) {
+			return new IngredientConverter($app['orm.em']);
 		});
 	}
 

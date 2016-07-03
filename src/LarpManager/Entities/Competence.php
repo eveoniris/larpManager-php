@@ -35,6 +35,11 @@ class Competence extends BaseCompetence
 		return $label;
 	}
 	
+	public function getDescriptionRaw()
+	{
+		return html_entity_decode(strip_tags($this->getDescription()));
+	}
+	
 	/**
 	 * Fourni la compétence de niveau immédiatement supérieur appartenant à la même famille de compétence
 	 */
