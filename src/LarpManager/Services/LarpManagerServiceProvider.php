@@ -91,6 +91,11 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 			return new BackgroundConverter($app['orm.em']);
 		});
 		
+		// personnageBackground converter
+		$app['converter.personnageBackground'] = $app->share(function($app) {
+			return new PersonnageBackgroundConverter($app['orm.em']);
+		});
+		
 		// groupe converter
 		$app['converter.groupe'] = $app->share(function($app) {
 			return new GroupeConverter($app['orm.em']);
@@ -154,6 +159,16 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 		// potion converter
 		$app['converter.potion'] = $app->share(function($app) {
 			return new PotionConverter($app['orm.em']);
+		});
+		
+		// sphere converter
+		$app['converter.sphere'] = $app->share(function($app) {
+			return new SphereConverter($app['orm.em']);
+		});
+			
+		// priere converter
+		$app['converter.priere'] = $app->share(function($app) {
+			return new PriereConverter($app['orm.em']);
 		});
 		
 		// titre converter

@@ -65,6 +65,40 @@ class MagieControllerProvider implements ControllerProviderInterface
 			->before($mustBeScenariste)
 			->method('GET|POST');
 		
+		$controllers->match('/sphere','LarpManager\Controllers\MagieController::sphereListAction')
+			->bind("magie.sphere.list")
+			->before($mustBeScenariste)
+			->method('GET');
+			
+		$controllers->match('/sphere/{sphere}','LarpManager\Controllers\MagieController::sphereDetailAction')
+			->assert('sphere', '\d+')
+			->bind("magie.sphere.detail")
+			->convert('sphere', 'converter.sphere:convert')
+			->before($mustBeScenariste)
+			->method('GET');
+			
+		$controllers->match('/sphere/add','LarpManager\Controllers\MagieController::sphereAddAction')
+			->bind("magie.sphere.add")
+			->before($mustBeScenariste)
+			->method('GET|POST');
+			
+		$controllers->match('/sphere/{sphere}/update','LarpManager\Controllers\MagieController::sphereUpdateAction')
+			->assert('sphere', '\d+')
+			->bind("magie.sphere.update")
+			->convert('sphere', 'converter.sphere:convert')
+			->before($mustBeScenariste)
+			->method('GET|POST');
+			
+		/**
+		 * Supprimer une sphere
+		 */
+		$controllers->match('/sphere/{sphere}/delete','LarpManager\Controllers\MagieController::sphereDeleteAction')
+			->assert('sphere', '\d+')
+			->bind("magie.sphere.delete")
+			->convert('sphere', 'converter.sphere:convert')
+			->before($mustBeScenariste)
+			->method('GET|POST');
+			
 		/**
 		 * Liste des sortilèges
 		 */
@@ -178,6 +212,60 @@ class MagieControllerProvider implements ControllerProviderInterface
 		$controllers->match('/potion/{potion}/document/{document}','LarpManager\Controllers\MagieController::getPotionDocumentAction')
 			->bind("magie.potion.document")
 			->convert('potion', 'converter.potion:convert')
+			->method('GET');
+	
+		/**
+		 * Lister les prières
+		 */
+		$controllers->match('/priere','LarpManager\Controllers\MagieController::priereListAction')
+			->bind("magie.priere.list")
+			->before($mustBeScenariste)
+			->method('GET');
+				
+		/**
+		 * Obtenir le détail d'une priere
+		 */
+		$controllers->match('/priere/{priere}','LarpManager\Controllers\MagieController::priereDetailAction')
+			->assert('priere', '\d+')
+			->bind("magie.priere.detail")
+			->convert('priere', 'converter.priere:convert')
+			->before($mustBeScenariste)
+			->method('GET');
+			
+		/**
+		 * Ajouter une priere
+		 */
+		$controllers->match('/priere/add','LarpManager\Controllers\MagieController::priereAddAction')
+			->bind("magie.priere.add")
+			->before($mustBeScenariste)
+			->method('GET|POST');
+				
+		/**
+		 * Modifier une priere
+		 */
+		$controllers->match('/priere/{priere}/update','LarpManager\Controllers\MagieController::priereUpdateAction')
+			->assert('priere', '\d+')
+			->bind("magie.priere.update")
+			->convert('priere', 'converter.priere:convert')
+			->before($mustBeScenariste)
+			->method('GET|POST');
+			
+		/**
+		 * Supprimer une priere
+		 */
+		$controllers->match('/priere/{priere}/delete','LarpManager\Controllers\MagieController::priereDeleteAction')
+			->assert('priere', '\d+')
+			->bind("magie.priere.delete")
+			->convert('priere', 'converter.priere:convert')
+			->before($mustBeScenariste)
+			->method('GET|POST');
+				
+		/**
+		 * Obtenir un document lié à une priere
+		 */
+		$controllers->match('/priere/{priere}/document/{document}','LarpManager\Controllers\MagieController::getPriereDocumentAction')
+			->bind("magie.priere.document")
+			->convert('priere', 'converter.priere:convert')
 			->method('GET');
 			
 		return $controllers;

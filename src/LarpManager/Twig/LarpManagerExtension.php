@@ -59,6 +59,11 @@ class LarpManagerExtension extends \Twig_Extension
     	{
     		return $this->app['larp.manager']->getVisibility()[$visibility];
     	}
+    	
+    	if ( array_key_exists($visibility, $this->app['larp.manager']->getPersonnageBackgroundVisibility()) )
+    	{
+    		return $this->app['larp.manager']->getPersonnageBackgroundVisibility()[$visibility];
+    	}
     		
     	return false;
     }

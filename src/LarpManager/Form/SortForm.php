@@ -7,7 +7,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * LarpManager\Form\DomaineForm
+ * LarpManager\Form\SortForm
  *
  * @author kevin
  *

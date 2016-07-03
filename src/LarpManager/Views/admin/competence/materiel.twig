@@ -1,0 +1,37 @@
+{% extends "layout.twig" %}
+
+{% block title %}Compétences{% endblock title %}
+
+{% block content %}
+
+<a href="{{ path("competence") }}">Retour à la liste des compétences</a>
+
+<table>
+<thead>
+	<tr>
+		<th>Compétence</th>
+		<th>Niveau</th>
+		<th>Description</th>
+		<th>matériel</th>
+		<th>PDF</th>
+	</tr>
+</thead>
+<tbody>
+{%  for competence in competences %}
+	<tr>
+		<td>{{ competence.competenceFamily.label }}</td>
+		<td>{{ competence.level.label }}</td>
+		<td>{{ competence.description|markdown }}</td>
+		<td>{{ competence.materiel|markdown }}</td>
+		<td>
+			{% if competence.documentUrl %}
+				<a href="{{ path('competence.document',{'competence' : competence.id, 'document':competence.documentUrl}) }}">Téléchargez le document</a>
+			{% endif %}
+		</td>
+	</tr>
+
+{%  endfor %}
+</tbody>
+</table>
+	
+{% endblock content %}

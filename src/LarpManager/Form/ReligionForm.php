@@ -30,6 +30,13 @@ class ReligionForm extends AbstractType
 					'label' => 'Description',
 					'required' => false,
 					'attr' => array('rows' => 10),
+				))
+				->add('spheres', 'entity', array(
+					'label' => 'Sphères',
+					'multiple' => true,
+					'expanded' => true,
+					'class' => 'LarpManager\Entities\Sphere',
+					'choice_label' => 'label',
 				));
 	}
 	

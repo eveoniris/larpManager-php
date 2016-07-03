@@ -1,0 +1,36 @@
+{% extends "layout.twig" %}
+
+{% block title %}Sphères{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li class="active">Liste des sphères</li>
+	</ol>
+	
+	<div class="well well-sm">
+	
+		<a href="{{ path('magie.sphere.add') }}"><button class="btn btn-default"><i class="fa fa-plus"></i> Ajouter une sphere</button></a>
+		
+		<ul class="list-group">
+		{% for sphere in spheres %}
+		
+			<li class="list-group-item">
+				<div class="row">
+					<div class="col-md-8">
+						{{ sphere.label }}
+					</div>
+					<div class="col-md-4">
+						<a href="{{ path('magie.sphere.update',{'sphere':sphere.id}) }}"><i class="fa fa-pencil"></i> Modifier</a>&nbsp;|&nbsp;
+						<a href="{{ path('magie.sphere.detail',{'sphere':sphere.id}) }}"><i class="fa fa-eye"></i> Detail</a>&nbsp;|&nbsp;
+						<a href="{{ path('magie.sphere.delete',{'sphere':sphere.id}) }}"><i class="fa fa-eraser"></i> Supprimer</a>
+					</div>
+				</div>
+		    </li>
+
+		{% endfor %}
+	 	</ul>
+	</div>
+	
+{% endblock %}

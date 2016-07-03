@@ -1,0 +1,44 @@
+{% extends "layout.twig" %}
+
+{% block title %}Sphères{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path('magie.sphere.list') }}">Liste des sphères</a></li>
+		<li class="active">Détail d'une sphère</li>
+	</ol>
+	
+	<div class="list-group">
+		<div class="list-group-item">
+			<div class="list-group-item-heading"><h6>Label</h6></div>
+			<div class="list-group-item-text">{{ sphere.label }}</div>
+		</div>
+	</div>
+	
+	<div class="panel panel-default">
+		<div class="panel-heading"><h4>Liste des prières associés</h4></div>
+		<div class="panel-body">
+			<ul>
+			{% for priere in  sphere.prieres %}
+				<li>{{ priere.label }} - {{ priere.niveau }} :
+					{{ priere.description|markdown }}
+				</li>
+			{% endfor %}
+			</ul>
+		</div>
+	</div>
+
+	<div class="panel panel-default">
+		<div class="panel-heading"><h4>Liste des religions associés</h4></div>
+		<div class="panel-body">
+			<ul>
+			{% for religion in sphere.religions %}
+				<li><a href="{{ path('religion.detail', {'index': religion.id}) }}">{{ religion.label }}</a></li>
+			{% endfor %}
+			</ul>
+		</div>
+	</div>
+		
+{% endblock content %}

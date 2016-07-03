@@ -1,0 +1,43 @@
+{% extends "layout.twig" %}
+
+{% block title %}Prieres{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li class="active">Liste des prieres</li>
+	</ol>
+	
+	<div class="well well-sm">
+	
+		<a href="{{ path('magie.priere.add') }}"><i class="fa fa-plus"></i> Ajouter une priere</a>
+		
+		<ul class="list-group">
+		{% for priere in prieres %}
+		
+			<li class="list-group-item">
+				<div class="row">
+					<div class="col-md-8">
+						{{ priere.sphere.label }} - Niveau {{ priere.niveau }}<br />
+						{{ priere.label }}
+						{{ priere.description|markdown }}
+						{% if priere.documentUrl %}
+							<a href="{{ path('magie.priere.document', {'priere': priere.id, 'document': priere.documentUrl}) }}">Télécharger le pdf associé</a>
+						{% else %}
+							Pas de document lié.
+						{% endif %}
+					</div>
+					<div class="col-md-4">
+						<a href="{{ path('magie.priere.update',{'priere':priere.id}) }}"><i class="fa fa-pencil"></i> Modifier</a>&nbsp;|&nbsp;
+						<a href="{{ path('magie.priere.detail',{'priere':priere.id}) }}"><i class="fa fa-eye"></i> Detail</a>&nbsp;|&nbsp;
+						<a href="{{ path('magie.priere.delete',{'priere':priere.id}) }}"><i class="fa fa-eraser"></i> Supprimer</a>
+					</div>
+				</div>
+		    </li>
+
+		{% endfor %}
+	 	</ul>
+	</div>
+	
+{% endblock %}

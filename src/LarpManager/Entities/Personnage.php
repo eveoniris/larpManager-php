@@ -9,6 +9,7 @@
 
 namespace LarpManager\Entities;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use LarpManager\Entities\BasePersonnage;
 
 /**
@@ -45,6 +46,33 @@ class Personnage extends BasePersonnage
 		}
 		return false;
 	}
+	
+	/**
+	 * Fourni la liste des langues connues
+	 */
+	public function getLanguages()
+	{
+		$languages = new ArrayCollection();
+		foreach ( $this->getPersonnageLangues() as $personnageLangue)
+		{
+			$languages[] = $personnageLangue->getLangue();
+		}
+		return $languages;
+	}
+	
+	/**
+	 * Fourni le language
+	 * @param unknown $langue
+	 */
+	public function getPersonnageLangue($langue)
+	{
+		foreach ( $this->getPersonnageLangues() as $personnageLangue)
+		{
+			if ( $personnageLangue->getLangue() == $langue ) return $personnageLangue;
+		}
+		return null;
+	}
+	
 	
 	/**
 	 * Vérifie si le personnage dispose d'un trigger
@@ -211,6 +239,21 @@ class Personnage extends BasePersonnage
 	{
 		$this->setXp($this->getXp() - $xp);
 		return $this;
+	}
+	
+	public function getXpTotal()
+	{
+		$total = 0;
+		foreach ( $this->getExperienceGains() as $gain)
+		{
+			$pos = strpos($gain->getExplanation(),"Suppression de la compétence");
+			if (  $pos === FALSE )
+			{
+				$total = $total + $gain->getXpGain();
+			}
+		}
+		return $total;
+		
 	}
 	
 	/**

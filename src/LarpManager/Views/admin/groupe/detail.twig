@@ -72,6 +72,7 @@
 	    							<th>Nom prénom</th>
 	    							<th>Email</th>
 	    							<th>Personnage</th>
+	    							<th>Classe</th>
     								<th></th>
 	    						</tr>
 	    					</thead>
@@ -90,6 +91,11 @@
 											<a href="{{ path('personnage.admin.detail', {'personnage': participant.personnage.id}) }}">{{ participant.personnage.publicName }}</a>
 										{% else %}
 											Ne dispose pas encore de personnage
+										{% endif %}
+									</td>
+									<td>
+										{% if participant.personnage %}
+											{{ participant.personnage.classeName }}
 										{% endif %}
 									</td>
 									<td><a href="{{ path('groupe.admin.participant.remove', {'groupe': groupe.id, 'participant': participant.id}) }}">Retirer</a></td>
@@ -160,7 +166,9 @@
     					<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
 	    					Attention, ce groupe n'a pas de classes définies.
     					{% else %}
-    						{{ groupe.classes|join(', ') }}
+    						{% for classe in groupe.classes %}
+    							- {{ classe }}<br />
+    						{% endfor %}
     					{% endif %}
     				</p>
     			</div>

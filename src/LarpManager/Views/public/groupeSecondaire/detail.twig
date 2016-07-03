@@ -79,7 +79,11 @@
 		<div class="list-group">
 			<div class="list-group-item">
 				<div class="list-group-item-heading">
-					<strong>{{ groupeSecondaire.responsable.publicName }}</strong>
+					{% if groupeSecondaire.responsable %}
+						<strong>{{ groupeSecondaire.responsable.publicName }}</strong>
+					{% else %}
+						<strong>Ce groupe ne dispose pas encore de responsable</strong>
+					{% endif %}
 				</div>
 			</div>
 		</div>

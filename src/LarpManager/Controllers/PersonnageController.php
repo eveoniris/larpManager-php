@@ -2,6 +2,8 @@
 namespace LarpManager\Controllers;
 
 use Symfony\Component\HttpFoundation\Request;
+use Doctrine\Common\Collections\ArrayCollection;
+
 use Silex\Application;
 use JasonGrimes\Paginator;
 use LarpManager\Form\PersonnageReligionForm;
@@ -11,7 +13,10 @@ use LarpManager\Form\PersonnageForm;
 use LarpManager\Form\PersonnageUpdateForm;
 use LarpManager\Form\PersonnageUpdateRenommeForm;
 use LarpManager\Form\PersonnageUpdateSortForm;
+use LarpManager\Form\PersonnageBackgroundForm;
 use LarpManager\Form\PersonnageUpdatePotionForm;
+use LarpManager\Form\PersonnageUpdateLangueForm;
+use LarpManager\Form\PersonnageUpdatePriereForm;
 use LarpManager\Form\PersonnageDeleteForm;
 use LarpManager\Form\PersonnageXpForm;
 
@@ -32,6 +37,22 @@ class PersonnageController
 	public function accueilAction(Request $request, Application $app)
 	{
 		return $app['twig']->render('public/personnage/accueil.twig', array());
+	}
+	
+	/**
+	 * Page d'accueil de gestion des fiches personnages
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function adminFicheAction(Request $request, Application $app)
+	{
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Groupe');
+		$groupes = $repo->findBy(array(),array('nom' => 'asc'));
+		
+		return $app['twig']->render('admin/personnage/fiches.twig', array(
+				'groupes' => $groupes,
+				
+		));
 	}
 	
 	/**
@@ -222,6 +243,12 @@ class PersonnageController
 				$personnage->removePersonnageLangues($personnageLangue);
 				$app['orm.em']->remove($personnageLangue);
 			}
+			
+			foreach ($personnage->getPersonnageTriggers() as $trigger)
+			{
+				$personnage->removePersonnageTrigger($trigger);
+				$app['orm.em']->remove($trigger);
+			}
 						
 			$app['orm.em']->remove($personnage);
 			$app['orm.em']->flush();
@@ -280,7 +307,89 @@ class PersonnageController
 				'personnage' => $personnage));
 	}
 	
+	/**
+	 * Ajoute un background au personnage
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function adminAddBackgroundAction(Request $request, Application $app)
+	{
+		$personnage = $request->get('personnage');
+		$background = new \LarpManager\Entities\PersonnageBackground();
+		
+		$background->setPersonnage($personnage);
+		$background->setUser($app['user']);
+		
+		$form = $app['form.factory']->createBuilder(new PersonnageBackgroundForm(), $background)
+			->add('visibility','choice', array(
+					'required' => true,
+					'label' =>  'Visibilité',
+					'choices' => $app['larp.manager']->getPersonnageBackgroundVisibility(),
+			))
+			->add('save','submit', array('label' => 'Valider les modifications'))
+			->getForm();
 
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
+		{
+			$background = $form->getData();
+		
+			$app['orm.em']->persist($background);
+			$app['orm.em']->flush();
+		
+			$app['session']->getFlashBag()->add('success','Le background a été sauvegardé.');
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
+		}
+		
+		return $app['twig']->render('admin/personnage/addBackground.twig', array(
+				'form' => $form->createView(),
+				'personnage' => $personnage,
+				'background' => $background,
+		));
+	}
+		
+	/**
+	 * Modifie le background d'un personnage
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function adminUpdateBackgroundAction(Request $request, Application $app)
+	{
+		$personnage = $request->get('personnage');
+		$background = $request->get('background');
+
+		$form = $app['form.factory']->createBuilder(new PersonnageBackgroundForm(), $background)
+			->add('visibility','choice', array(
+					'required' => true,
+					'label' =>  'Visibilité',
+					'choices' => $app['larp.manager']->getPersonnageBackgroundVisibility(),
+			))
+			->add('save','submit', array('label' => 'Valider les modifications'))
+			->getForm();
+		
+		$form->handleRequest($request);
+				
+		if ( $form->isValid() )
+		{
+			$background = $form->getData();
+		
+			$app['orm.em']->persist($background);
+			$app['orm.em']->flush();
+		
+			$app['session']->getFlashBag()->add('success','Le background a été sauvegardé.');
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
+		}
+		
+		return $app['twig']->render('admin/personnage/updateBackground.twig', array(
+				'form' => $form->createView(),
+				'personnage' => $personnage,
+				'background' => $background,
+		));
+	}
+	
 	/**
 	 * Modification de la renommee du personnage
 	 * @param Request $request
@@ -311,6 +420,147 @@ class PersonnageController
 				'form' => $form->createView(),
 				'personnage' => $personnage));
 	}
+	
+	/**
+	 * Modifie la liste des langues
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function adminUpdateLangueAction(Request $request, Application $app)
+	{
+		$personnage = $request->get('personnage');
+				
+		$langues = $app['orm.em']->getRepository('LarpManager\Entities\Langue')->findAll();
+			
+		$originalLanguages = array();
+		foreach ( $personnage->getLanguages() as $languages)
+		{
+			$originalLanguages[] = $languages;
+		}
+		
+		$form = $app['form.factory']->createBuilder()
+			->add('langues','entity', array(
+					'required' => true,
+					'label' => 'Choisissez les languages',
+					'multiple' => true,
+					'expanded' => true,
+					'class' => 'LarpManager\Entities\Langue',
+					'choices' => $langues,
+					'choice_label' => 'label',
+					'data' => $originalLanguages,
+			))
+			->add('save','submit', array('label' => 'Valider vos modifications'))
+			->getForm();
+
+		$form->handleRequest($request);
+	
+		if ( $form->isValid() )
+		{
+			$data = $form->getData();
+			$langues = $data['langues'];
+
+			// pour toutes les nouvelles langues
+			foreach( $langues as $langue)
+			{
+				if ( ! $personnage->isKnownLanguage($langue))
+				{
+					$personnageLangue = new \LarpManager\Entities\PersonnageLangues();
+					$personnageLangue->setPersonnage($personnage);
+					$personnageLangue->setLangue($langue);
+					$personnageLangue->setSource('ADMIN');
+					$app['orm.em']->persist($personnageLangue);
+				}
+			}
+			
+			if ( count($langues) == 0 )
+			{
+				foreach( $personnage->getLanguages() as $langue)
+				{
+					$personnageLangue = $personnage->getPersonnageLangue($langue);
+					$app['orm.em']->remove($personnageLangue);
+				}
+			}
+			else 
+			{
+				foreach( $personnage->getLanguages() as $langue)
+				{
+					if ( ! $langues->contains($langue))
+					{
+						$personnageLangue = $personnage->getPersonnageLangue($langue);
+						$app['orm.em']->remove($personnageLangue);
+					}
+				}
+			}
+			
+				
+			$app['orm.em']->persist($personnage);
+			$app['orm.em']->flush();
+				
+			$app['session']->getFlashBag()->add('success','Le personnage a été sauvegardé.');
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
+		}
+	
+		return $app['twig']->render('admin/personnage/updateLangue.twig', array(
+				'form' => $form->createView(),
+				'personnage' => $personnage,
+		));
+	}
+	
+	/**
+	 * Modifie la liste des prières
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function adminUpdatePriereAction(Request $request, Application $app)
+	{
+		$personnage = $request->get('personnage');
+			
+		$originalPrieres = new ArrayCollection();
+		foreach ( $personnage->getPrieres() as $priere)
+		{
+			$originalPrieres[] = $priere;
+		}
+		
+		$form = $app['form.factory']->createBuilder(new PersonnageUpdatePriereForm(), $personnage)
+			->add('save','submit', array('label' => 'Valider les modifications'))
+			->getForm();
+	
+		$form->handleRequest($request);
+	
+		if ( $form->isValid() )
+		{
+			$personnage = $form->getData();
+			
+			foreach($personnage->getPrieres() as $priere)
+			{
+				if ( ! $originalPrieres->contains($priere))
+				{
+					$priere->addPersonnage($personnage);
+				}
+			}
+			
+			foreach ( $originalPrieres as $priere)
+			{
+				if ( ! $personnage->getPrieres()->contains($priere))
+				{
+					$priere->removePersonnage($personnage);
+				}
+			}
+	
+			$app['orm.em']->persist($personnage);
+			$app['orm.em']->flush();
+	
+			$app['session']->getFlashBag()->add('success','Le personnage a été sauvegardé.');
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
+		}
+	
+		return $app['twig']->render('admin/personnage/updatePriere.twig', array(
+				'form' => $form->createView(),
+				'personnage' => $personnage,
+		));
+	}
+	
+	
 	
 	/**
 	 * Modifie la liste des sorts

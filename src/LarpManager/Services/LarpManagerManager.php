@@ -31,6 +31,23 @@ class LarpManagerManager
 	}
 	
 	/**
+	 * Fourni la liste des lieux de restauration
+	 */
+	public function getAvailableTaverns()
+	{
+		$availableTaverns = array(
+				0 => 'Rien',
+				1 => 'Taverne du Flôt du Houblon',
+				2 => 'Taverne du Chacal d’Airain',
+				3 => 'Taverne orientale',
+				4 => 'Salle PNJ',
+				5 => 'La Fosse'
+		);
+		
+		return $availableTaverns;
+	}
+	
+	/**
 	 * Fourni la liste des ROLES utilisé dans LarpManager
 	 * @return Array $availablesRoles
 	 */
@@ -76,6 +93,19 @@ class LarpManagerManager
 			'PUBLIC' => 'Tous les joueurs peuvent voir ceci',
 			'GROUPE_MEMBER' => 'Seul les membres du groupe peuvent voir ceci',
 			'GROUPE_OWNER' => 'Seul le chef de groupe peux voir ceci',
+		);
+		return $visibility;
+	}
+	
+	/**
+	 * Fourni la liste des droits concernant la visibilité des backgrounds
+	 * @return string[]
+	 */
+	public function getPersonnageBackgroundVisibility()
+	{
+		$visibility = array(
+				'PRIVATE' => 'Seul les scénaristes peuvent voir ceci',
+				'OWNER' => 'Le proprietaire du personnage peut voir ceci',
 		);
 		return $visibility;
 	}

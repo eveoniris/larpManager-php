@@ -88,6 +88,7 @@ class PersonnageManager
 			+ $personnage->getCompetenceNiveau('Armes à 2 mains')
 			+ $personnage->getCompetenceNiveau('Armes d\'hast')
 			+ $personnage->getCompetenceNiveau('Armure')
+			+ $personnage->getCompetenceNiveau('Armurie')
 			+ $personnage->getCompetenceNiveau('Attaque sournoise')
 			+ $personnage->getCompetenceNiveau('Protection')
 			+ $personnage->getCompetenceNiveau('Résistance')

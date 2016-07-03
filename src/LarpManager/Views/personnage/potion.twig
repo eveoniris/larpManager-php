@@ -15,7 +15,7 @@
 	<div class="well bs-component">
 	<form action="{{ path('personnage.magie.potion',{'personnage':personnage.id, 'niveau': niveau}) }}" method="POST" {{ form_enctype(form) }}>
 		<fieldset>
-			<blockquote>Votre compétence vous permet de choisir une nouvelle potion.</blockquote>
+			<blockquote>Votre compétence vous permet de choisir une nouvelle potion. Le descriptif des potions disponibles est visible en bas de page.</blockquote>
 			{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
 			
 			{{ form_row(form.potions) }}

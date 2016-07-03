@@ -9,6 +9,10 @@ use LarpManager\Form\SortForm;
 use LarpManager\Form\SortDeleteForm;
 use LarpManager\Form\PotionForm;
 use LarpManager\Form\PotionDeleteForm;
+use LarpManager\Form\PriereForm;
+use LarpManager\Form\PriereDeleteForm;
+use LarpManager\Form\SphereForm;
+use LarpManager\Form\SphereDeleteForm;
 
 /**
  * LarpManager\Controllers\MagieController
@@ -33,6 +37,343 @@ class MagieController
 		return $app['twig']->render('public/magie/index.twig', array(
 				'domaines' => $domaines,
 				'personnage' => $personnage,
+		));
+	}
+	
+	/**
+	 * Liste des sphere
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function sphereListAction(Request $request, Application $app)
+	{
+		$spheres = $app['orm.em']->getRepository('\LarpManager\Entities\Sphere')->findAll();
+	
+		return $app['twig']->render('admin/sphere/list.twig', array(
+				'spheres' => $spheres,
+		));
+	}
+	
+	/**
+	 * Detail d'une sphere
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function sphereDetailAction(Request $request, Application $app)
+	{
+		$sphere = $request->get('sphere');
+	
+		return $app['twig']->render('admin/sphere/detail.twig', array(
+				'sphere' => $sphere,
+		));
+	}
+	
+	/**
+	 * Ajoute une sphere
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function sphereAddAction(Request $request, Application $app)
+	{
+		$sphere = new \LarpManager\Entities\Sphere();
+	
+		$form = $app['form.factory']->createBuilder(new SphereForm(), $sphere)
+			->add('save','submit', array('label' => 'Sauvegarder'))
+			->getForm();
+	
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$sphere = $form->getData();
+				
+			$app['orm.em']->persist($sphere);
+			$app['orm.em']->flush();
+				
+			$app['session']->getFlashBag()->add('success','La sphere a été ajouté');
+			return $app->redirect($app['url_generator']->generate('magie.sphere.detail',array('sphere'=>$sphere->getId())),301);
+		}
+	
+		return $app['twig']->render('admin/sphere/add.twig', array(
+				'sphere' => $sphere,
+				'form' => $form->createView(),
+		));
+	
+	}
+	
+	/**
+	 * Met à jour une sphere
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function sphereUpdateAction(Request $request, Application $app)
+	{
+		$sphere = $request->get('sphere');
+	
+		$form = $app['form.factory']->createBuilder(new SphereForm(), $sphere)
+			->add('save','submit', array('label' => 'Sauvegarder'))
+			->getForm();
+	
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$sphere = $form->getData();
+	
+			$app['orm.em']->persist($sphere);
+			$app['orm.em']->flush();
+				
+			$app['session']->getFlashBag()->add('success','La sphere a été sauvegardé');
+			return $app->redirect($app['url_generator']->generate('magie.sphere.detail',array('sphere'=>$sphere->getId())),301);
+		}
+	
+		return $app['twig']->render('admin/sphere/update.twig', array(
+				'sphere' => $sphere,
+				'form' => $form->createView(),
+		));
+	}
+	
+	/**
+	 * Supprime une sphère
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function sphereDeleteAction(Request $request, Application $app)
+	{
+		$sphere = $request->get('sphere');
+	
+		$form = $app['form.factory']->createBuilder(new SphereDeleteForm(), $sphere)
+			->add('save','submit', array('label' => 'Supprimer'))
+			->getForm();
+	
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$sphere = $form->getData();
+	
+			$app['orm.em']->remove($sphere);
+			$app['orm.em']->flush();
+				
+			$app['session']->getFlashBag()->add('success','La sphere a été suprimé');
+			return $app->redirect($app['url_generator']->generate('magie.sphere.list'),301);
+		}
+	
+		return $app['twig']->render('admin/sphere/delete.twig', array(
+				'sphere' => $sphere,
+				'form' => $form->createView(),
+		));
+	}
+	
+	/**
+	 * Liste des prieres
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function priereListAction(Request $request, Application $app)
+	{
+		$prieres = $app['orm.em']->getRepository('\LarpManager\Entities\Priere')->findAll();
+	
+		return $app['twig']->render('admin/priere/list.twig', array(
+				'prieres' => $prieres,
+		));
+	}
+	
+	/**
+	 * Detail d'une priere
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function priereDetailAction(Request $request, Application $app)
+	{
+		$priere = $request->get('priere');
+	
+		return $app['twig']->render('admin/priere/detail.twig', array(
+				'priere' => $priere,
+		));
+	}
+	
+	/**
+	 * Ajoute une priere
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function priereAddAction(Request $request, Application $app)
+	{
+		$priere = new \LarpManager\Entities\Priere();
+	
+		$form = $app['form.factory']->createBuilder(new PriereForm(), $priere)
+			->add('save','submit', array('label' => 'Sauvegarder'))
+			->getForm();
+	
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$priere = $form->getData();
+	
+			// Si un document est fourni, l'enregistrer
+			if ( $files['document'] != null )
+			{
+				$path = __DIR__.'/../../../private/doc/';
+				$filename = $files['document']->getClientOriginalName();
+				$extension = 'pdf';
+					
+				if (!$extension || ! in_array($extension, array('pdf'))) {
+					$app['session']->getFlashBag()->add('error','Désolé, votre document ne semble pas valide (vérifiez le format de votre document)');
+					return $app->redirect($app['url_generator']->generate('magie.priere.list'),301);
+				}
+					
+				$documentFilename = hash('md5',$priere->getLabel().$filename . time()).'.'.$extension;
+					
+				$files['document']->move($path,$documentFilename);
+					
+				$priere->setDocumentUrl($documentFilename);
+			}
+	
+			$app['orm.em']->persist($priere);
+			$app['orm.em']->flush();
+	
+			$app['session']->getFlashBag()->add('success','La priere a été ajouté');
+			return $app->redirect($app['url_generator']->generate('magie.priere.detail',array('priere'=>$priere->getId())),301);
+		}
+	
+		return $app['twig']->render('admin/priere/add.twig', array(
+				'priere' => $priere,
+				'form' => $form->createView(),
+		));
+	
+	}
+	
+	/**
+	 * Met à jour une priere
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function priereUpdateAction(Request $request, Application $app)
+	{
+		$priere = $request->get('priere');
+	
+		$form = $app['form.factory']->createBuilder(new PriereForm(), $priere)
+			->add('save','submit', array('label' => 'Sauvegarder'))
+			->getForm();
+	
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$priere = $form->getData();
+	
+			$files = $request->files->get($form->getName());
+	
+			// Si un document est fourni, l'enregistrer
+			if ( $files['document'] != null )
+			{
+	
+				$path = __DIR__.'/../../../private/doc/';
+				$filename = $files['document']->getClientOriginalName();
+				$extension = 'pdf';
+					
+				if (!$extension || ! in_array($extension, array('pdf'))) {
+					$app['session']->getFlashBag()->add('error','Désolé, votre document ne semble pas valide (vérifiez le format de votre document)');
+					return $app->redirect($app['url_generator']->generate('magie.priere.list'),301);
+				}
+					
+				$documentFilename = hash('md5',$priere->getLabel().$filename . time()).'.'.$extension;
+					
+				$files['document']->move($path,$documentFilename);
+					
+				$priere->setDocumentUrl($documentFilename);
+			}
+	
+			$app['orm.em']->persist($priere);
+			$app['orm.em']->flush();
+	
+			$app['session']->getFlashBag()->add('success','La priere a été sauvegardé');
+			return $app->redirect($app['url_generator']->generate('magie.priere.detail',array('priere'=>$priere->getId())),301);
+		}
+	
+		return $app['twig']->render('admin/priere/update.twig', array(
+				'priere' => $priere,
+				'form' => $form->createView(),
+		));
+	}
+	
+	/**
+	 * Supprime une priere
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function priereDeleteAction(Request $request, Application $app)
+	{
+		$priere = $request->get('priere');
+	
+		$form = $app['form.factory']->createBuilder(new PriereDeleteForm(), $priere)
+			->add('save','submit', array('label' => 'Supprimer'))
+			->getForm();
+	
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$priere = $form->getData();
+	
+			$app['orm.em']->remove($priere);
+			$app['orm.em']->flush();
+	
+			$app['session']->getFlashBag()->add('success','La priere a été suprimé');
+			return $app->redirect($app['url_generator']->generate('magie.priere.list'),301);
+		}
+	
+		return $app['twig']->render('admin/priere/delete.twig', array(
+				'priere' => $priere,
+				'form' => $form->createView(),
+		));
+	}
+	
+	/**
+	 * Obtenir le document lié a une priere
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function getPriereDocumentAction(Request $request, Application $app)
+	{
+		$document = $request->get('document');
+		$priere = $request->get('priere');
+	
+		// on ne peux télécharger que les documents des compétences que l'on connait
+		/*if  ( ! $app['security.authorization_checker']->isGranted('ROLE_REGLE') )
+		{
+		if ( $app['user']->getPersonnage() )
+		{
+		if ( ! $app['user']->getPersonnage()->getCompetences()->contains($competence) )
+		{
+		$app['session']->getFlashBag()->add('error', 'Vous n\'avez pas les droits necessaires');
+		}
+		}
+		}*/
+	
+		$file = __DIR__.'/../../../private/doc/'.$document;
+	
+		$stream = function () use ($file) {
+			readfile($file);
+		};
+	
+		return $app->stream($stream, 200, array(
+				'Content-Type' => 'text/pdf',
+				'Content-length' => filesize($file),
+				'Content-Disposition' => 'attachment; filename="'.$priere->getLabel().'.pdf"'
 		));
 	}
 	

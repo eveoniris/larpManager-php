@@ -3,6 +3,7 @@ namespace LarpManager\Controllers;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Doctrine\Common\Collections\ArrayCollection;
 use Silex\Application;
 use LarpManager\Form\ReligionForm;
 use LarpManager\Form\ReligionBlasonForm;
@@ -162,15 +163,35 @@ class ReligionController
 			->add('update','submit', array('label' => "Sauvegarder"))
 			->add('delete','submit', array('label' => "Supprimer"))
 			->getForm();
+
+		$originalSpheres = new ArrayCollection();
+		foreach ( $religion->getSpheres() as $sphere)
+		{
+			$originalSpheres->add($sphere);
+		}
 		
 		$form->handleRequest($request);
-		
 		if ( $form->isValid() )
 		{
 			$religion = $form->getData();
 		
 			if ( $form->get('update')->isClicked())
 			{
+				foreach ( $religion->getSpheres() as $sphere )
+				{ 
+					if ( $sphere->getReligions()->contains($religion) == false)
+					{
+						$sphere->addReligion($religion);
+					}
+				}				
+				
+				foreach ($originalSpheres as $sphere)
+				{
+					if ( $religion->getspheres()->contains($sphere) == false) {
+						$sphere->removeReligion($religion);
+					}
+				}
+				
 				$app['orm.em']->persist($religion);
 				$app['orm.em']->flush();
 				$app['session']->getFlashBag()->add('success', 'La religion a été mise à jour.');

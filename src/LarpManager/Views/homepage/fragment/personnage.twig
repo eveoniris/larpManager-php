@@ -118,6 +118,15 @@
 			</div>
 		</div>
 		
+		{% if personnage.hasCompetence('Prêtrise') %}
+			<div class="header">
+				<h5>Prières</h5>
+			</div>
+			
+			{% if personnage.hasTrigger('MAGIE APPRENTI') %}
+			
+		{% endif %}
+		
 		{% if personnage.hasCompetence('Alchimie') %}
 			<div class="header">
 				<h5>Alchimie</h5>
