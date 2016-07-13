@@ -134,6 +134,18 @@ class User extends BaseUser implements AdvancedUserInterface, \Serializable
 		return null;
 	}
 	
+	public function getPersonnagePublicName()
+	{
+		$personnage =  $this->getPersonnage();
+		if ( $personnage )
+		{
+			return $personnage->getPublicName();
+		}
+		
+		return $this->getUserName();
+		
+	}
+	
 	/**
 	 * Fourni le personnage secondaire du GN actif
 	 */

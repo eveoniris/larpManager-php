@@ -146,6 +146,20 @@ class UserControllerProvider implements ControllerProviderInterface
 			});			
 		
 		/**
+		 * nouveau message
+		 */
+		$controllers->match('/{id}/messagerie/new', 'LarpManager\Controllers\UserController::newMessageAction')
+			->bind('user.messagerie.message.new')
+			->assert('id', '\d+')
+			->assert('message', '\d+')
+			->method('GET|POST')
+			->before(function(Request $request) use ($app) {
+				if (!$app['security.authorization_checker']->isGranted('VIEW_USER_ID', $request->get('id'))) {
+					throw new AccessDeniedException();
+				}
+			});
+			
+		/**
 		 * Ajout d'un utilisateur
 		 */
 		$controllers->match('/add', 'LarpManager\Controllers\UserController::addAction')

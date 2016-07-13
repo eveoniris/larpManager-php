@@ -30,6 +30,12 @@
 				Messages archivés
 			</a>
 		</li>
+		<li role="new_message">
+			<a href="#new_message" aria-controls="new_message" role="tab" data-toggle="tab">
+				<i class="fa fa-pencil-square-o"></i>
+				Nouveau message
+			</a>
+		</li>
 	</ul>
 	
 	<div class="tab-content">
@@ -88,6 +94,20 @@
 				<blockquote><p>Vous n'avez aucun messages archivés.</p></blockquote>
 			{% endfor %}
 		</div>
+		
+		<div role="tabpanel" class="tab-pane fade" id="new_message">
+			<form action="{{ path('user.messagerie.message.new',{'id':user.id}) }}"
+				method="POST" {{ form_enctype(form) }}
+				novalidate >
+				<fieldset>
+				<legend>Nouveau message</legend>
+				
+					{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+					{{ form(form) }}
+				</fieldset>
+			</form>
+		</div>
+		
 	</div>
 </div>
 

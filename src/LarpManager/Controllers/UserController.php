@@ -12,6 +12,7 @@ use LarpManager\Form\UserForm;
 use LarpManager\Form\UserFindForm;
 use LarpManager\Form\EtatCivilForm;
 use LarpManager\Form\MessageForm;
+use LarpManager\Form\NewMessageForm;
 
 use JasonGrimes\Paginator;
 
@@ -219,8 +220,84 @@ class UserController
 			throw new NotFoundHttpException('That user is disabled (pending email confirmation).');
 		}
 		
+		$reponse = new \LarpManager\Entities\Message();
+		
+		$reponse->setUserRelatedByAuteur($app['user']);
+		$reponse->setCreationDate(new \Datetime('NOW'));
+		$reponse->setUpdateDate(new \Datetime('NOW'));
+		
+		$form = $app['form.factory']->createBuilder(new NewMessageForm(), $reponse)
+			->add('envoyer','submit', array('label' => "Envoyer votre message"))
+			->getForm();
+		
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$reponse = $form->getData();
+		
+			$app['orm.em']->persist($reponse);
+			$app['orm.em']->flush();
+		
+			$app['user.mailer']->sendNewMessage($reponse);
+		
+			$app['session']->getFlashBag()->add('success', 'Votre message a été envoyé au joueur concerné.');
+			return $app->redirect($app['url_generator']->generate('user.messagerie.view', array('id' => $user->getId())),301);
+		}
+		
 		return $app['twig']->render('public/user/messagerie.twig', array(
 				'user' => $user,
+				'form' => $form->createView(),
+		));
+	}
+	
+	/**
+	 * Envoi d'un nouveau message
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 * @throws NotFoundHttpException
+	 */
+	public function newMessageAction(Request $request, Application $app, $id)
+	{
+		$user = $app['user.manager']->getUser($id);
+		
+		if (!$user) {
+			throw new NotFoundHttpException('No user was found with that ID.');
+		}
+		
+		if (!$user->isEnabled() && !$app['security']->isGranted('ROLE_ADMIN')) {
+			throw new NotFoundHttpException('That user is disabled (pending email confirmation).');
+		}
+		
+		$reponse = new \LarpManager\Entities\Message();
+		
+		$reponse->setUserRelatedByAuteur($app['user']);
+		$reponse->setCreationDate(new \Datetime('NOW'));
+		$reponse->setUpdateDate(new \Datetime('NOW'));
+		
+		$form = $app['form.factory']->createBuilder(new NewMessageForm(), $reponse)
+			->add('envoyer','submit', array('label' => "Envoyer votre message"))
+			->getForm();
+		
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$reponse = $form->getData();
+		
+			$app['orm.em']->persist($reponse);
+			$app['orm.em']->flush();
+		
+			$app['user.mailer']->sendNewMessage($reponse);
+		
+			$app['session']->getFlashBag()->add('success', 'Votre message a été envoyé au joueur concerné.');
+			return $app->redirect($app['url_generator']->generate('user.messagerie.view', array('id' => $user->getId())),301);
+		}
+		
+		return $app['twig']->render('public/user/messagerie.twig', array(
+				'user' => $user,
+				'form' => $form->createView(),
 		));
 	}
 	
@@ -254,9 +331,8 @@ class UserController
 		$app['orm.em']->persist($message);
 		$app['orm.em']->flush();
 		
-		return $app['twig']->render('public/user/messagerie.twig', array(
-				'user' => $user,
-		));
+		
+		return $app->redirect($app['url_generator']->generate('user.messagerie.view', array('id' => $app['user']->getId())));
 	}
 	
 	/**
