@@ -180,6 +180,11 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 		$app['converter.ingredient'] = $app->share(function($app) {
 			return new IngredientConverter($app['orm.em']);
 		});
+		
+		// personnage trigger converter
+		$app['converter.personnageTrigger'] = $app->share(function($app) {
+			return new PersonnageTriggerConverter($app['orm.em']);
+		});
 	}
 
 	/**

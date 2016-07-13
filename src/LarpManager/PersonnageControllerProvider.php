@@ -133,6 +133,38 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 			->before($mustBeOrga);
 			
 		/**
+		 * Ajout d'un trigger (orga)
+		 */
+		$controllers->match('/admin/{personnage}/trigger/add','LarpManager\Controllers\PersonnageController::adminTriggerAddAction')
+			->assert('personnage', '\d+')
+			->bind("personnage.admin.trigger.add")
+			->method('GET|POST')
+			->convert('personnage', 'converter.personnage:convert')
+			->before($mustBeOrga);
+			
+		/**
+		 * Suppression d'un trigger (orga)
+		 */
+		$controllers->match('/admin/{personnage}/trigger/{trigger}/delete','LarpManager\Controllers\PersonnageController::adminTriggerDeleteAction')
+			->assert('personnage', '\d+')
+			->assert('trigger', '\d+')
+			->bind("personnage.admin.trigger.delete")
+			->method('GET|POST')
+			->convert('personnage', 'converter.personnage:convert')
+			->convert('trigger', 'converter.personnageTrigger:convert')
+			->before($mustBeOrga);
+			
+		/**
+		 * Ajout d'un domaine (orga)
+		 */
+		$controllers->match('/admin/{personnage}/update/domaine','LarpManager\Controllers\PersonnageController::adminUpdateDomaineAction')
+			->assert('personnage', '\d+')
+			->bind("personnage.admin.update.domaine")
+			->method('GET|POST')
+			->convert('personnage', 'converter.personnage:convert')
+			->before($mustBeOrga);
+			
+		/**
 		 * Ajout d'un sortilège (orga)
 		 */
 		$controllers->match('/admin/{personnage}/update/sort','LarpManager\Controllers\PersonnageController::adminUpdateSortAction')

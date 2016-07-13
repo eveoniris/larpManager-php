@@ -31,6 +31,12 @@ class PersonnageUpdateForm extends AbstractType
 						'required' => false,
 						'label' => ''
 				))
+				->add('age','entity', array(
+						'required' => true,
+						'label' => '',
+						'class' => 'LarpManager\Entities\Age',
+						'property' => 'label',
+				))
 				->add('genre','entity', array(
 						'required' => true,
 						'label' => '',

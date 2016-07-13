@@ -28,6 +28,9 @@ class Personnage extends BasePersonnage
 		$this->setXp(0);
 	}
 	
+	/**
+	 * 
+	 */
 	public function __toString()
 	{
 		return $this->getPublicName();
@@ -196,6 +199,35 @@ class Personnage extends BasePersonnage
 			}
 		}
 		return false;
+	}
+	
+	/**
+	 * Fourni la religion principale du personnage
+	 */
+	public function getMainReligion()
+	{
+		$religion = null;
+		$index = 0;
+		$personnagesReligions = $this->getPersonnagesReligions();
+		foreach ( $personnagesReligions as $personnageReligion )
+		{
+			if ( ! $religion )
+			{
+				$religion = $personnageReligion->getReligion();
+				$index = $personnageReligion->getReligionLevel()->getIndex();
+			}
+			else
+			{
+				if ( $index < $personnageReligion->getReligionLevel()->getIndex() )
+				{
+					$religion = $personnageReligion->getReligion();
+					$index = $personnageReligion->getReligionLevel()->getIndex();
+				}
+			}
+		}
+		
+		return $religion;
+		
 	}
 	
 	/**

@@ -10,11 +10,14 @@ use LarpManager\Form\PersonnageReligionForm;
 use LarpManager\Form\PersonnageOriginForm;
 use LarpManager\Form\PersonnageFindForm;
 use LarpManager\Form\PersonnageForm;
+use LarpManager\Form\TriggerForm;
+use LarpManager\Form\TriggerDeleteForm;
 use LarpManager\Form\PersonnageUpdateForm;
 use LarpManager\Form\PersonnageUpdateRenommeForm;
 use LarpManager\Form\PersonnageUpdateSortForm;
 use LarpManager\Form\PersonnageBackgroundForm;
 use LarpManager\Form\PersonnageUpdatePotionForm;
+use LarpManager\Form\PersonnageUpdateDomaineForm;
 use LarpManager\Form\PersonnageUpdateLangueForm;
 use LarpManager\Form\PersonnageUpdatePriereForm;
 use LarpManager\Form\PersonnageDeleteForm;
@@ -419,6 +422,129 @@ class PersonnageController
 		return $app['twig']->render('admin/personnage/updateRenomme.twig', array(
 				'form' => $form->createView(),
 				'personnage' => $personnage));
+	}
+	
+	/**
+	 * Ajoute un trigger 
+	 */
+	public function adminTriggerAddAction(Request $request, Application $app)
+	{
+		$personnage = $request->get('personnage');
+		
+		$trigger = new \LarpManager\Entities\PersonnageTrigger();
+		$trigger->setPersonnage($personnage);
+		$trigger->setDone(false);
+		
+		$form = $app['form.factory']->createBuilder(new TriggerForm(), $trigger)
+			->add('save','submit', array('label' => 'Valider les modifications'))
+			->getForm();
+		
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$trigger = $form->getData();
+		
+			$app['orm.em']->persist($trigger);
+			$app['orm.em']->flush();
+		
+			$app['session']->getFlashBag()->add('success','Le déclencheur a été ajouté.');
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
+		}
+		
+		return $app['twig']->render('admin/personnage/addTrigger.twig', array(
+				'form' => $form->createView(),
+				'personnage' => $personnage));
+	}
+		
+	/**
+	 * Supprime un trigger
+	 */
+	public function adminTriggerDeleteAction(Request $request, Application $app)
+	{
+		$personnage = $request->get('personnage');
+		$trigger = $request->get('trigger');
+		
+		$form = $app['form.factory']->createBuilder(new TriggerDeleteForm(), $trigger)
+			->add('save','submit', array('label' => 'Valider les modifications'))
+			->getForm();
+		
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
+		{
+			$trigger = $form->getData();
+		
+			$app['orm.em']->remove($trigger);
+			$app['orm.em']->flush();
+		
+			$app['session']->getFlashBag()->add('success','Le déclencheur a été supprimé.');
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
+		}
+		
+		return $app['twig']->render('admin/personnage/deleteTrigger.twig', array(
+				'form' => $form->createView(),
+				'personnage' => $personnage,
+				'trigger' => $trigger,
+		));
+	}		
+	
+	/**
+	 * Modifie la liste des domaines de magie
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function adminUpdateDomaineAction(Request $request, Application $app)
+	{
+		$personnage = $request->get('personnage');
+		
+		$domaines = $app['orm.em']->getRepository('LarpManager\Entities\Domaine')->findAll();
+		
+		$originalDomaines = new ArrayCollection();
+		foreach ( $personnage->getDomaines() as $domaine)
+		{
+			$originalDomaines[] = $domaine;
+		}
+		
+		$form = $app['form.factory']->createBuilder(new PersonnageUpdateDomaineForm(), $personnage)
+			->add('save','submit', array('label' => 'Valider les modifications'))
+			->getForm();
+			
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$personnage = $form->getData();
+			
+			foreach($personnage->getDomaines() as $domaine)
+			{
+				if ( ! $originalDomaines->contains($domaine))
+				{
+					$domaine->addPersonnage($personnage);
+				}
+			}
+			
+			foreach ( $originalDomaines as $domaine)
+			{
+				if ( ! $personnage->getDomaines()->contains($domaine))
+				{
+					$domaine->removePersonnage($personnage);
+				}
+			}
+	
+			$app['orm.em']->persist($personnage);
+			$app['orm.em']->flush();
+			
+			$app['session']->getFlashBag()->add('success','Le personnage a été sauvegardé.');
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
+		}
+		
+		return $app['twig']->render('admin/personnage/updateDomaine.twig', array(
+				'form' => $form->createView(),
+				'personnage' => $personnage,
+		));
+		
 	}
 	
 	/**
@@ -1122,6 +1248,34 @@ class PersonnageController
 						break;
 				}
 			}
+			
+			// cas special prêtrise
+			if ( $competence->getCompetenceFamily()->getLabel() == "Prêtrise")
+			{
+				// le personnage doit avoir une religion au niveau fervent ou fanatique
+				if ( $personnage->isFervent() || $personnage->isFanatique() )
+				{
+					// ajoute toutes les prières de niveau de sa compétence liés aux sphère de sa religion fervente ou fanatique
+					$religion = $personnage->getMainReligion();
+					foreach ( $religion->getSpheres() as $sphere)
+					{
+						foreach ( $sphere->getPrieres() as $priere)
+						{
+							if ( $priere->getNiveau() == $competence->getLevel()->getId() )
+							{
+								$priere->addPersonnage($personnage);
+								$personnage->addPriere($priere);
+							}
+						}
+					}
+				}
+				else
+				{
+					$app['session']->getFlashBag()->add('error','Pour obtenir la compétence Prêtrise, vous devez être FERVENT ou FANATIQUE');
+					return $app->redirect($app['url_generator']->generate('homepage'),301);
+				}
+			}
+			
 			
 			// cas special alchimie
 			if ( $competence->getCompetenceFamily()->getLabel() == "Alchimie")
