@@ -25,7 +25,6 @@ class MessageForm extends AbstractType
 		$builder->add('title','text', array(
 					'required' => true,	
 					'label' => 'Titre',
-					'data' => 'Réponse à votre candidature'
 				))
 				->add('text','textarea', array(
 					'required' => true,

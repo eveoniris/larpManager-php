@@ -27,6 +27,10 @@
 				<div>{{ perso.nom }}, {{ perso.surnom }}</div>
 				{% if perso.groupe %}<div>{{ perso.groupe.nom }}</div>{% endif %}
 			{% endif %}
+			
+			<div>
+				<a href="{{ path('user.message.new', {'from_id': app.user.id, 'to_id': post.user.id }) }}"><i class="fa fa-pencil-square-o"></i>Message privé</a>
+			</div>
 		</div>
 	</div>
 	<div class="col-xs-5 col-md-5">

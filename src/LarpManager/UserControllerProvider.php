@@ -151,10 +151,23 @@ class UserControllerProvider implements ControllerProviderInterface
 		$controllers->match('/{id}/messagerie/new', 'LarpManager\Controllers\UserController::newMessageAction')
 			->bind('user.messagerie.message.new')
 			->assert('id', '\d+')
-			->assert('message', '\d+')
 			->method('GET|POST')
 			->before(function(Request $request) use ($app) {
 				if (!$app['security.authorization_checker']->isGranted('VIEW_USER_ID', $request->get('id'))) {
+					throw new AccessDeniedException();
+				}
+			});
+			
+		/**
+		 * nouveau message
+		 */
+		$controllers->match('/{from_id}/messagerie/new/{to_id}', 'LarpManager\Controllers\UserController::newMessageViewAction')
+			->bind('user.message.new')
+			->assert('from_id', '\d+')
+			->assert('to_id', '\d+')
+			->method('GET|POST')
+			->before(function(Request $request) use ($app) {
+				if (!$app['security.authorization_checker']->isGranted('VIEW_USER_ID', $request->get('from_id'))) {
 					throw new AccessDeniedException();
 				}
 			});

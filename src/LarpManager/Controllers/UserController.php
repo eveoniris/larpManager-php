@@ -230,6 +230,44 @@ class UserController
 			->add('envoyer','submit', array('label' => "Envoyer votre message"))
 			->getForm();
 		
+		return $app['twig']->render('public/user/messagerie.twig', array(
+				'user' => $user,
+				'form' => $form->createView(),
+		));
+	}
+	
+	/**
+	 * Interface d'envoi d'un message
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 * @param unknown $from_id
+	 * @param unknown $to_id
+	 * @throws NotFoundHttpException
+	 */
+	public function newMessageViewAction(Request $request, Application $app, $from_id, $to_id)
+	{
+		$user = $app['user.manager']->getUser($from_id);
+		$destinataire = $app['user.manager']->getUser($to_id);
+		
+		if (!$user) {
+			throw new NotFoundHttpException('No user was found with that ID.');
+		}
+		
+		if (!$user->isEnabled() && !$app['security']->isGranted('ROLE_ADMIN')) {
+			throw new NotFoundHttpException('That user is disabled (pending email confirmation).');
+		}
+		$reponse = new \LarpManager\Entities\Message();
+		
+		$reponse->setUserRelatedByAuteur($app['user']);
+		$reponse->setUserRelatedByDestinataire($destinataire);
+		$reponse->setCreationDate(new \Datetime('NOW'));
+		$reponse->setUpdateDate(new \Datetime('NOW'));
+		
+		$form = $app['form.factory']->createBuilder(new messageForm(), $reponse)
+			->add('envoyer','submit', array('label' => "Envoyer votre message"))
+			->getForm();
+		
 		$form->handleRequest($request);
 			
 		if ( $form->isValid() )
@@ -245,8 +283,9 @@ class UserController
 			return $app->redirect($app['url_generator']->generate('user.messagerie.view', array('id' => $user->getId())),301);
 		}
 		
-		return $app['twig']->render('public/user/messagerie.twig', array(
+		return $app['twig']->render('public/user/newMessage.twig', array(
 				'user' => $user,
+				'destinataire' => $destinataire,
 				'form' => $form->createView(),
 		));
 	}
