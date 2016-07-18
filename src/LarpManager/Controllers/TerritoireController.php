@@ -6,6 +6,7 @@ use Silex\Application;
 use LarpManager\Form\TerritoireForm;
 use LarpManager\Form\TerritoireDeleteForm;
 use LarpManager\Form\TerritoireStrategieForm;
+use LarpManager\Form\TerritoireIngredientsForm;
 use LarpManager\Form\TerritoireBlasonForm;
 
 /**
@@ -96,6 +97,39 @@ class TerritoireController
 		}
 		
 		return $app['twig']->render('admin/territoire/add.twig', array(
+				'form' => $form->createView(),
+		));
+	}
+	
+	/**
+	 * Mise à jour de la liste des ingrédients fourni par un territoire
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function updateIngredientsAction(Request $request, Application $app)
+	{
+		$territoire = $request->get('territoire');
+		
+		$form = $app['form.factory']->createBuilder(new TerritoireIngredientsForm(), $territoire)
+			->add('update','submit', array('label' => "Sauvegarder"))
+			->getForm();
+		
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
+		{
+			$territoire = $form->getData();
+			
+			$app['orm.em']->persist($territoire);
+			$app['orm.em']->flush();
+			
+			$app['session']->getFlashBag()->add('success', 'Le territoire a été mis à jour.');
+			return $app->redirect($app['url_generator']->generate('territoire.admin.detail',array('territoire' => $territoire->getId())),301);
+		}
+		
+		return $app['twig']->render('admin/territoire/updateIngredients.twig', array(
+				'territoire' => $territoire,
 				'form' => $form->createView(),
 		));
 	}

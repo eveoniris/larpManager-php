@@ -20,6 +20,7 @@ use LarpManager\Form\PersonnageUpdatePotionForm;
 use LarpManager\Form\PersonnageUpdateDomaineForm;
 use LarpManager\Form\PersonnageUpdateLangueForm;
 use LarpManager\Form\PersonnageUpdatePriereForm;
+use LarpManager\Form\PersonnageBackgroundForm;
 use LarpManager\Form\PersonnageDeleteForm;
 use LarpManager\Form\PersonnageXpForm;
 
@@ -1540,12 +1541,14 @@ class PersonnageController
 						$trigger->setTag('ALCHIMIE APPRENTI');
 						$trigger->setDone(false);
 						$app['orm.em']->persist($trigger);
+						$app['orm.em']->flush();
 						
 						$trigger = new \LarpManager\Entities\PersonnageTrigger();
 						$trigger->setPersonnage($personnage);
 						$trigger->setTag('ALCHIMIE APPRENTI');
 						$trigger->setDone(false);
 						$app['orm.em']->persist($trigger);
+						$app['orm.em']->flush();
 						break;
 					case 2: // le personnage doit choisir 1 potion de niveau initie et 1 potion de niveau apprenti
 						$trigger = new \LarpManager\Entities\PersonnageTrigger();
@@ -1553,12 +1556,14 @@ class PersonnageController
 						$trigger->setTag('ALCHIMIE INITIE');
 						$trigger->setDone(false);
 						$app['orm.em']->persist($trigger);
+						$app['orm.em']->flush();
 						
 						$trigger = new \LarpManager\Entities\PersonnageTrigger();
 						$trigger->setPersonnage($personnage);
 						$trigger->setTag('ALCHIMIE APPRENTI');
 						$trigger->setDone(false);
 						$app['orm.em']->persist($trigger);
+						$app['orm.em']->flush();
 						break;
 					case 3: // le personnage doit choisir 1 potion de niveau expert
 						$trigger = new \LarpManager\Entities\PersonnageTrigger();
@@ -1566,6 +1571,7 @@ class PersonnageController
 						$trigger->setTag('ALCHIMIE EXPERT');
 						$trigger->setDone(false);
 						$app['orm.em']->persist($trigger);
+						$app['orm.em']->flush();
 						break;
 					case 4: // le personnage doit choisir 1 potion de niveau maitre
 						$trigger = new \LarpManager\Entities\PersonnageTrigger();
@@ -1573,6 +1579,7 @@ class PersonnageController
 						$trigger->setTag('ALCHIMIE MAITRE');
 						$trigger->setDone(false);
 						$app['orm.em']->persist($trigger);
+						$app['orm.em']->flush();
 						break;
 				}
 			}
@@ -1588,6 +1595,7 @@ class PersonnageController
 						$trigger->setTag('MAGIE APPRENTI');
 						$trigger->setDone(false);
 						$app['orm.em']->persist($trigger);
+						$app['orm.em']->flush();
 						
 						// il obtient aussi la possibilité de choisir un sort de niveau 1
 						$trigger = new \LarpManager\Entities\PersonnageTrigger();
@@ -1595,6 +1603,7 @@ class PersonnageController
 						$trigger->setTag('MAGIE APPRENTI SORT');
 						$trigger->setDone(false);
 						$app['orm.em']->persist($trigger);
+						$app['orm.em']->flush();
 						break;
 					case 2:
 						// il obtient aussi la possibilité de choisir un sort de niveau 2
@@ -1603,6 +1612,7 @@ class PersonnageController
 						$trigger->setTag('MAGIE INITIE SORT');
 						$trigger->setDone(false);
 						$app['orm.em']->persist($trigger);
+						$app['orm.em']->flush();
 						break;
 					case 3: // le personnage peut choisir un nouveau domaine de magie
 						$trigger = new \LarpManager\Entities\PersonnageTrigger();
@@ -1610,6 +1620,7 @@ class PersonnageController
 						$trigger->setTag('MAGIE EXPERT');
 						$trigger->setDone(false);
 						$app['orm.em']->persist($trigger);
+						$app['orm.em']->flush();
 						
 						// il obtient aussi la possibilité de choisir un sort de niveau 3
 						$trigger = new \LarpManager\Entities\PersonnageTrigger();
@@ -1617,6 +1628,7 @@ class PersonnageController
 						$trigger->setTag('MAGIE EXPERT SORT');
 						$trigger->setDone(false);
 						$app['orm.em']->persist($trigger);
+						$app['orm.em']->flush();
 					case 4:
 						break;
 						// il obtient aussi la possibilité de choisir un sort de niveau 4
@@ -1625,6 +1637,7 @@ class PersonnageController
 						$trigger->setTag('MAGIE MAITRE SORT');
 						$trigger->setDone(false);
 						$app['orm.em']->persist($trigger);
+						$app['orm.em']->flush();
 				}
 			}
 			
@@ -1649,6 +1662,7 @@ class PersonnageController
 									$personnageLangue->setSource('LITTERATURE APPRENTI');
 									
 									$app['orm.em']->persist($personnageLangue);
+									$app['orm.em']->flush();
 								}
 							}
 						}
@@ -1659,6 +1673,7 @@ class PersonnageController
 						$trigger->setTag('LITTERATURE INITIE');
 						$trigger->setDone(false);
 						$app['orm.em']->persist($trigger);
+						$app['orm.em']->flush();
 						break;
 					case 3: // le personnage peux choisir trois languages supplémentaire (dont un ancien)
 						$trigger = new \LarpManager\Entities\PersonnageTrigger();
@@ -1666,6 +1681,7 @@ class PersonnageController
 						$trigger->setTag('LITTERATURE EXPERT');
 						$trigger->setDone(false);
 						$app['orm.em']->persist($trigger);
+						$app['orm.em']->flush();
 						break;
 					case 4: // le personnage obtient tous les languages courants
 						$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Langue');

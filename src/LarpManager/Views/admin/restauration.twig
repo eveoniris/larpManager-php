@@ -3,11 +3,27 @@
 {% block title %}Restauration{% endblock title %}
 
 {% block content %}
-	<form action="{{ path('admin.restauration') }}" method="POST" {{ form_enctype(form) }}>
-		<fieldset>
-			<legend>Gestion de la restauration</legend>
-			{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
-			{{ form(form) }}
-		</fieldset>
-	</form>
+
+	<div class="well well-sm">
+		<div class="list-group">
+		{% for tavern in taverns %}
+			<div class="list-group-item">
+				<h4 class="list-group-item-heading">{{ tavern.label }}</h4>
+				<p class="list-group-item-text">{{ tavern.joueurs|length }} joueurs</p>
+			</div>			
+		{% endfor %}
+		</div>
+	</div>
+	
+	{% for tavern in taverns %}
+		<div class="well well-sm">
+			<h5 class="header">{{ tavern.label }} -- {{ tavern.joueurs|length }}</h5>
+	
+			<ul class="list-group">
+			{% for joueur in tavern.joueurs %}
+				<li class="list-group-item">{{ joueur.user.username }} {{ joueur.user.email }}</li>
+			{% endfor %}
+			</ul>
+		</div>
+	{% endfor %}
 {% endblock content %}

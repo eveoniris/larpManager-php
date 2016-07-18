@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    	<meta charset="utf-8">
+    	<title>LarpManager - Impression des fiches de personnage</title>
+    </head>
+    <body>
+    	
+<h2>Groupe {{groupe.numero }} - {{ groupe.nom }}</h2>
+<ul>
+{% for personnage in groupe.personnages %}
+		<li>#{{ personnage.id }} {{ personnage.nom }} {{ personnage.surnom }}</li>
+{% endfor %}
+</ul> 
+</body>
+</html>

@@ -22,6 +22,14 @@ class ParticipantRepository extends EntityRepository
 				->getResult();
 		
 		return $participants;
-
+	}
+	
+	public function findAllByTavern($tavernId)
+	{
+		$participants = $this->getEntityManager()
+			->createQuery('SELECT p FROM LarpManager\Entities\Participant p JOIN p.user u JOIN u.etatCivil ec WHERE p.tavern_id = '.$tavernId.' ORDER BY ec.nom ASC, ec.prenom ASC')
+			->getResult();
+		
+		return $participants;
 	}
 }

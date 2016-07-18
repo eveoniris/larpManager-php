@@ -68,7 +68,148 @@ class GroupeController
 	}
 	
 	/**
-	 * Impression matériel pour le groupe
+	 * Ajout d'un territoire sous le controle du groupe
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function territoireAddAction(Request $request, Application $app)
+	{
+		$groupe = $request->get('groupe');
+		
+		$form = $app['form.factory']->createBuilder()
+			->add('territoire', 'entity', array(
+					'required' => true,
+					'class' => 'LarpManager\Entities\Territoire',
+					'property' => 'nomComplet',
+					'label' => 'choisissez le territoire',
+					'expanded' => true,
+			))
+			->add('add','submit', array('label' => 'Ajouter le territoire'))->getForm();
+			
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$data = $form->getData();
+			$territoire = $data['territoire'];
+			
+			$territoire->setGroupe($groupe);
+				
+			$app['orm.em']->persist($territoire);
+			$app['orm.em']->flush();
+				
+			$app['session']->getFlashBag()->add('success', 'Le territoire est contrôlé par le groupe');
+			return $app->redirect($app['url_generator']->generate('groupe.detail', array('index' => $groupe->getId())));
+		}
+		
+		return $app['twig']->render('admin/groupe/addTerritoire.twig', array(
+				'groupe' => $groupe,
+				'form' => $form->createView(),
+		));
+	}
+	
+	/**
+	 * Retirer un territoire du controle du groupe
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function territoireRemoveAction(Request $request, Application $app)
+	{
+		$groupe = $request->get('groupe');
+		$territoire = $request->get('territoire');
+		
+		$form = $app['form.factory']->createBuilder()
+			->add('remove','submit', array('label' => 'Retirer le territoire'))->getForm();
+		
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
+		{
+			$territoire->setGroupeNull();
+			
+			$app['orm.em']->persist($territoire);
+			$app['orm.em']->flush();
+			
+			$app['session']->getFlashBag()->add('success', 'Le territoire n\'est plus controlé par le groupe');
+			return $app->redirect($app['url_generator']->generate('groupe.detail', array('index' => $groupe->getId())));
+		}
+		
+		return $app['twig']->render('admin/groupe/removeTerritoire.twig', array(
+				'groupe' => $groupe,
+				'territoire' => $territoire,
+				'form' => $form->createView(),
+		));
+	}
+	
+	/**
+	 * Gestion de la restauration d'un groupe
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function restaurationAction(Request $request, Application $app)
+	{
+		$groupe = $request->get('groupe');
+		$availableTaverns = $app['larp.manager']->getAvailableTaverns();
+		
+		$formBuilder = $app['form.factory']->createBuilder();
+			
+		$participants = $groupe->getParticipants();
+		
+		$iterator = $participants->getIterator();
+		$iterator->uasort(function ($first, $second) {
+			if ($first === $second) {
+				return 0;
+			}
+			return $first->getUser()->getEtatCivil()->getNom() < $second->getUser()->getEtatCivil()->getNom() ? -1 : 1;
+		});
+		$participants = new ArrayCollection(iterator_to_array($iterator));
+		
+		foreach ( $participants as $participant )
+		{
+			$formBuilder->add($participant->getId(),'choice', array(
+					'label' =>  $participant->getUser()->getEtatCivil()->getNom() . ' ' . $participant->getUser()->getEtatCivil()->getPrenom() . ' ' . $participant->getUser()->getEmail(),
+					'choices' => $availableTaverns,
+					'data' => $participant->getTavernId(),
+					'multiple' => false,
+					'expanded' => false,
+			));
+		}
+		
+		$form = $formBuilder->add('save','submit', array('label' => 'Enregistrer'))->getForm();
+		
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
+		{
+			$result = $form->getData();
+			foreach ( $result as $joueur => $tavern)
+			{
+				$j = $app['orm.em']->getRepository('\LarpManager\Entities\Participant')->find($joueur);
+				if ( $j && $j->getTavernId() != $tavern )
+				{
+						
+					$j->setTavernId($tavern);
+					$app['orm.em']->persist($j);
+				}
+			}
+			$app['orm.em']->flush();
+			
+			$app['session']->getFlashBag()->add('success', 'Les options de restauration sont enregistrés.');
+			return $app->redirect($app['url_generator']->generate('groupe.detail', array('index' => $groupe->getId())));
+			
+		}
+		
+		
+		return $app['twig']->render('admin/groupe/restauration.twig', array(
+				'groupe' => $groupe,
+				'form' => $form->createView(),
+		));
+	}
+	
+	/**
+	 * Impression matériel pour les personnages du groupe
 	 * 
 	 * @param Request $request
 	 * @param Application $app
@@ -78,6 +219,21 @@ class GroupeController
 		$groupe = $request->get('groupe');
 		
 		return $app['twig']->render('admin/groupe/printMateriel.twig', array(
+				'groupe' => $groupe
+		));
+	}
+	
+	/**
+	 * Impression matériel pour le groupe
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function printMaterielGroupeAction(Request $request, Application $app)
+	{
+		$groupe = $request->get('groupe');
+	
+		return $app['twig']->render('admin/groupe/printMaterielGroupe.twig', array(
 				'groupe' => $groupe
 		));
 	}

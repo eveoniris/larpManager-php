@@ -61,4 +61,19 @@ class PersonnageRepository extends EntityRepository
 		
 		return $qb->getQuery()->getResult();
 	}
+	
+	/**
+	 * Find multiple personnage
+	 * @param array $ids
+	 */
+	public function findByIds(array $ids)
+	{
+		$qb = $this->getEntityManager()->createQueryBuilder();
+		
+		$qb->select('p');
+		$qb->from('LarpManager\Entities\Personnage','p');
+		$qb->andWhere('p.id IN (:ids)')->setParameter('ids', $ids);
+		
+		return $qb->getQuery()->getResult();
+	}
 }

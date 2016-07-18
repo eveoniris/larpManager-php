@@ -46,4 +46,53 @@ class TrombinoscopeController
 				'paginator' => $paginator,
 		));
 	}
+	
+	/**
+	 * Permet de selectionner des personnages pour faire un trombinoscope
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function persoAction(Request $request, Application $app)
+	{
+		$personnages = null;
+		$titre = null;
+		
+		$form = $app['form.factory']->createBuilder()
+			->add('titre', 'text', array(
+					'label' => 'Le titre de votre sélection',
+			))
+			->add('ids', 'textarea', array(
+					'label' => 'Indiquez les numéros des personnages séparé d\'un espace',
+			))
+			->add('send','submit', array('label' => 'Envoyer'))
+			->add('print','submit', array('label' => 'Imprimer'))
+			->getForm();
+		
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
+		{
+			$data = $form->getData();
+			$titre = $data['titre'];
+			$ids = $data['ids'];
+			$ids = explode(' ',$ids);
+			$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Personnage');
+			$personnages = $repo->findByIds($ids);
+			
+			if ( $form->get('print')->isClicked())
+			{
+				return $app['twig']->render('admin/trombinoscopePersoPrint.twig', array(
+						'titre' => $titre,
+						'personnages' => $personnages,
+				));
+			}
+		}
+		
+		return $app['twig']->render('admin/trombinoscopePerso.twig', array(
+			'titre' => $titre,
+			'personnages' => $personnages,
+			'form' => $form->createView(),
+		));
+	}
 }

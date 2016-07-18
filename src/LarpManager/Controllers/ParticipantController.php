@@ -39,47 +39,20 @@ class ParticipantController
 	public function adminRestaurationAction(Request $request, Application $app)
 	{
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Participant');
-		$joueurs = $repo->findAllOrderedByUsername();
+		
 		
 		$availableTaverns = $app['larp.manager']->getAvailableTaverns();
-		
-		$form = $app['form.factory']->createBuilder(new RestaurationForm());
-		foreach ($joueurs as $key => $joueur)
+		$tavern = array();
+		foreach ($availableTaverns as $key => $tavern)
 		{
-			$form = $form->add($joueur->getId(),'choice', array(
-					'label' =>  $joueur->getUser()->getEtatCivil()->getNom() . ' ' . $joueur->getUser()->getEtatCivil()->getPrenom() . ' ' . $joueur->getUser()->getEmail(),
-					'choices' => $availableTaverns,
-					'multiple' => false,
-					'expanded' => false,
-
-			));
+			$taverns[$key] = array(
+				'label' => $tavern,
+				'joueurs' => $repo->findAllByTavern($key),
+			);
 		}
-			
-		$form = $form->add('save','submit', array('label' => "Sauvegarder"))
-			->getForm();
-		
-		$form->handleRequest($request);
-			
-		if ( $form->isValid() )
-		{
-			$result = $form->getData();
-			foreach ( $result as $joueur => $tavern)
-			{
-				$j = $app['orm.em']->getRepository('\LarpManager\Entities\Participant')->find($joueur);
-				if ( $j && $j->getTavernId() != $tavern )
-				{
-					
-					$j->setTavernId($tavern);
-					$app['orm.em']->persist($j);
-				}
-			}
-			$app['orm.em']->flush();
-		}
-		
+				
 		return $app['twig']->render('admin/restauration.twig', array(
-				'form' => $form->createView(),
-				'joueurs' => $joueurs,
-				'taverns' => $availableTaverns
+				'taverns' => $taverns,
 		));
 	}
 	

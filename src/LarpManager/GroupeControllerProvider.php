@@ -274,11 +274,31 @@ class GroupeControllerProvider implements ControllerProviderInterface
 			->before($mustBeAdmin);
 			
 		/**
+		 * Restauration des membres du groupe (Admin uniquement)
+		 */
+		$controllers->match('/{groupe}/restauration','LarpManager\Controllers\GroupeController::restaurationAction')
+			->assert('groupe', '\d+')
+			->bind("groupe.restauration")
+			->convert('groupe', 'converter.groupe:convert')
+			->method('GET|POST')
+			->before($mustBeAdmin);
+			
+		/**
 		 * Impression du matériel necessaire
 		 */
 		$controllers->match('/{groupe}/print/materiel','LarpManager\Controllers\GroupeController::printMaterielAction')
-			->assert('index', '\d+')
+			->assert('groupe', '\d+')
 			->bind("groupe.print.materiel")
+			->convert('groupe', 'converter.groupe:convert')
+			->method('GET')
+			->before($mustBeScenariste);
+			
+		/**
+		 * Impression du matériel necessaire
+		 */
+		$controllers->match('/{groupe}/print/materiel/groupe','LarpManager\Controllers\GroupeController::printMaterielGroupeAction')
+			->assert('groupe', '\d+')
+			->bind("groupe.print.materiel.groupe")
 			->convert('groupe', 'converter.groupe:convert')
 			->method('GET')
 			->before($mustBeScenariste);
@@ -297,7 +317,7 @@ class GroupeControllerProvider implements ControllerProviderInterface
 		 * lock
 		 */
 		$controllers->match('/{groupe}/lock','LarpManager\Controllers\GroupeController::lockAction')
-			->assert('index', '\d+')
+			->assert('groupe', '\d+')
 			->bind("groupe.lock")
 			->convert('groupe', 'converter.groupe:convert')
 			->method('GET')
@@ -307,10 +327,31 @@ class GroupeControllerProvider implements ControllerProviderInterface
 		 * unlock
 		 */
 		$controllers->match('/{groupe}/unlock','LarpManager\Controllers\GroupeController::unlockAction')
-			->assert('index', '\d+')
+			->assert('groupe', '\d+')
 			->bind("groupe.unlock")
 			->convert('groupe', 'converter.groupe:convert')
 			->method('GET')
+			->before($mustBeScenariste);
+			
+		/**
+		 * Ajouter un territoire
+		 */
+		$controllers->match('/{groupe}/territoire/add','LarpManager\Controllers\GroupeController::territoireAddAction')
+			->assert('groupe', '\d+')
+			->bind("groupe.territoire.add")
+			->convert('groupe', 'converter.groupe:convert')
+			->method('GET|POST')
+			->before($mustBeScenariste);
+			
+		/**
+		 * Retirer un territoire
+		 */
+		$controllers->match('/{groupe}/territoire/{territoire}/remove','LarpManager\Controllers\GroupeController::territoireRemoveAction')
+			->assert('groupe', '\d+')
+			->bind("groupe.territoire.remove")
+			->convert('groupe', 'converter.groupe:convert')
+			->convert('territoire', 'converter.territoire:convert')
+			->method('GET|POST')
 			->before($mustBeScenariste);
 			
 		/**

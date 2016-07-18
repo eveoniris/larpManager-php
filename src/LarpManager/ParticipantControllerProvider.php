@@ -102,7 +102,7 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 		 */
 		$controllers->match('/admin/restauration','LarpManager\Controllers\ParticipantController::adminRestaurationAction')
 			->bind("admin.restauration")
-			->method('GET|POST')
+			->method('GET')
 			->before(function(Request $request) use ($app) {
 				if (!$app['security.authorization_checker']->isGranted('ROLE_ORGA') ) {
 					throw new AccessDeniedException();

@@ -1,0 +1,66 @@
+{% extends "layout.twig" %}
+
+{% block title %}Trombinoscope{% endblock title %}
+
+{% block content %}
+
+<div class="well well-sm">
+
+<form action="{{ path('trombinoscope.perso') }}" method="POST" {{ form_enctype(form) }}>
+	<fieldset>
+		<legend>Indiquez la liste de personnage que vous voulez affichez</legend>
+		{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+		{{ form(form) }}
+	</fieldset>
+</form>
+
+<ul class="list-group">
+	<li class="list-group-item">
+		<strong>{{ personnages|length }}</strong> personnages trouvés.
+	</li>
+</ul>
+
+</div>
+
+<h4>{{ titre }}</h4>
+
+	{% for personnage in personnages %}
+
+			<div class="thumbnail clearfix">
+				<div class="rows">
+					<div class="col-sm-6">
+						<div style="width:160px;" class="center-block">
+							{% if personnage.user %}
+								{% if personnage.user.trombineUrl %}
+									<img width="160" src="{{ path('trombine.get', {'trombine' : personnage.user.trombineUrl }) }}" />
+								{% else %}
+									<img width="160" src="{{ app.request.basepath }}/img/no_trombine.png" />
+								{% endif %}
+							{% else %}
+								<img width="160" src="{{ app.request.basepath }}/img/no_trombine.png" />
+							{% endif %}
+						</div>
+					</div>
+					<div class="col-sm-6">
+						<div class="list-group">
+							<div class="list-group-item">
+							{{ personnage.nom }} {{ personnage.surnom }}
+							</div>
+							<div class="list-group-item">
+							{{ app['personnage.manager'].titre(personnage) }}
+							</div>
+							<div class="list-group-item">
+							{% if personnage.groupe %}
+								{{ personnage.groupe.nom }}
+							{% endif %}
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+
+	{% endfor %}
+
+
+{% endblock content %}
