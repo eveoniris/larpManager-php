@@ -31,6 +31,7 @@ class Groupe extends BaseGroupe
 	public function __construct()
 	{		
 		$this->setClasseOpen(0);
+		$this->setLock(false);
 		parent::__construct();
 	}
 	

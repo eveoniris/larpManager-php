@@ -209,7 +209,7 @@ class GroupeController
 	}
 	
 	/**
-	 * Impression matériel pour le groupe
+	 * Impression matériel pour les personnages du groupe
 	 * 
 	 * @param Request $request
 	 * @param Application $app
@@ -219,6 +219,21 @@ class GroupeController
 		$groupe = $request->get('groupe');
 		
 		return $app['twig']->render('admin/groupe/printMateriel.twig', array(
+				'groupe' => $groupe
+		));
+	}
+	
+	/**
+	 * Impression matériel pour le groupe
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function printMaterielGroupeAction(Request $request, Application $app)
+	{
+		$groupe = $request->get('groupe');
+	
+		return $app['twig']->render('admin/groupe/printMaterielGroupe.twig', array(
 				'groupe' => $groupe
 		));
 	}
