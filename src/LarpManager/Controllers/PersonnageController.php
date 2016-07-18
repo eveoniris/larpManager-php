@@ -103,8 +103,8 @@ class PersonnageController
 			->add('participant','entity', array(
 					'required' => true,
 					'label' => 'Nouveau propriétaire',
-					'class' => 'LarpManager\Entities\User',
-					'property' => 'identity',
+					'class' => 'LarpManager\Entities\Participant',
+					'property' => 'userIdentity',
 			))
 			->add('transfert','submit', array('label' => 'Transferer'))
 			->getForm();
@@ -114,16 +114,22 @@ class PersonnageController
 		if ( $form->isValid() )
 		{
 			$data = $form->getData();
-			$user = $data['participant'];
+			$participant = $data['participant'];
 			
-			$participant = new \LarpManager\Entities\Participant();
-			$participant->setUser($user);
+			$oldParticipant = $personnage->getParticipant();
+			
+			// gestion de l'ancien personnage
+			if ( $participant->getPersonnage() )
+			{
+				$oldPersonnage = $participant->getPersonnage();
+				$oldPersonnage->setParticipantNull();	
+			}
+			
 			$participant->setPersonnage($personnage);
-			$participant->setSubscriptionDate(new \Datetime());
-			$participant->setGn($app['larp.manager']->getGnActif());
-			
-			
+			$personnage->setParticipant($participant);
+						
 			$app['orm.em']->persist($participant);
+			$app['orm.em']->persist($personnage);
 			$app['orm.em']->flush();
 			
 			$app['session']->getFlashBag()->add('success','Le personnage a été transféré');

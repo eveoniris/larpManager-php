@@ -29,6 +29,18 @@ class Personnage extends BasePersonnage
 	}
 	
 	/**
+	 * Set Participant entity (one to one).
+	 *
+	 * @return \LarpManager\Entities\Personnage
+	 */
+	public function setParticipantNull()
+	{
+		$this->participant = null;
+	
+		return $this;
+	}
+	
+	/**
 	 * 
 	 */
 	public function __toString()

@@ -47,7 +47,7 @@
 	    			
 	    			{% for territoire in groupe.territoires %}
 		    			<p class="list-group-item-text">
-	    					{{ territoire.nom }}
+	    					<a href="{{ path('territoire.admin.detail', {'territoire': territoire.id}) }}">{{ territoire.nom }}</a>
 						</p>
     				{% endfor %}
 	    		</div>
