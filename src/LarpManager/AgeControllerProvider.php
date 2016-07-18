@@ -43,6 +43,12 @@ class AgeControllerProvider implements ControllerProviderInterface
 		$controllers->match('/add','LarpManager\Controllers\AgeController::addPostAction')
 			->bind("age.add.post")
 			->method('POST');
+			
+		// liste des perso par age
+		$controllers->match('/{age}/perso','LarpManager\Controllers\AgeController::persoAction')
+			->bind("age.perso")
+			->convert('age', 'converter.age:convert')
+			->method('GET');
 		
 		// formulaire de modification d'un age
 		$controllers->match('/{index}/update','LarpManager\Controllers\AgeController::updateViewAction')

@@ -83,6 +83,16 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 			->bind("personnage.admin.fiche")
 			->method('GET|POST')
 			->before($mustBeOrga);
+
+		/**
+		 * Materiel lié à un personnage (orga)
+		 */
+		$controllers->match('/admin/{personnage}/materiel','LarpManager\Controllers\PersonnageController::adminMaterielAction')
+			->assert('personnage', '\d+')
+			->bind("personnage.admin.materiel")
+			->method('GET|POST')
+			->convert('personnage', 'converter.personnage:convert')
+			->before($mustBeOrga);
 			
 		/**
 		 * Detail d'un personnage (orga)
@@ -118,6 +128,17 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 		$controllers->match('/admin/{personnage}/update','LarpManager\Controllers\PersonnageController::adminUpdateAction')
 			->assert('personnage', '\d+')
 			->bind("personnage.admin.update")
+			->method('GET|POST')
+			->convert('personnage', 'converter.personnage:convert')
+			->before($mustBeOrga);
+			
+
+		/**
+		 * Transfert d'un personnage (orga)
+		 */
+		$controllers->match('/admin/{personnage}/transfert','LarpManager\Controllers\PersonnageController::adminTransfertAction')
+			->assert('personnage', '\d+')
+			->bind("personnage.admin.transfert")
 			->method('GET|POST')
 			->convert('personnage', 'converter.personnage:convert')
 			->before($mustBeOrga);
@@ -244,6 +265,16 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 		$controllers->match('/admin/{personnage}/delete','LarpManager\Controllers\PersonnageController::adminDeleteAction')
 			->assert('personnage', '\d+')
 			->bind("personnage.admin.delete")
+			->method('GET|POST')
+			->convert('personnage', 'converter.personnage:convert')
+			->before($mustBeOrga);
+			
+		/**
+		 * Ajout d'une compétence au personnage (orga)
+		 */
+		$controllers->match('/admin/{personnage}/competence/add','LarpManager\Controllers\PersonnageController::adminAddCompetenceAction')
+			->assert('personnage', '\d+')
+			->bind("personnage.admin.competence.add")
 			->method('GET|POST')
 			->convert('personnage', 'converter.personnage:convert')
 			->before($mustBeOrga);

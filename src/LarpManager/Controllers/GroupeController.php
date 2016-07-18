@@ -32,6 +32,72 @@ use LarpManager\Form\GroupeInscriptionForm;
 class GroupeController
 {
 	/**
+	 * vérouillage d'un groupe
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function lockAction(Request $request, Application $app)
+	{
+		$groupe = $request->get('groupe');
+	
+		$groupe->setLock(true);
+		$app['orm.em']->persist($groupe);
+		$app['orm.em']->flush();
+		
+		$app['session']->getFlashBag()->add('success', 'Le groupe est verrouillé. Cela bloque la création et la modification des personnages membres de ce groupe');
+		return $app->redirect($app['url_generator']->generate('groupe.detail', array('index' => $groupe->getId())));
+	}
+	
+	/**
+	 * devérouillage d'un groupe
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function unlockAction(Request $request, Application $app)
+	{
+		$groupe = $request->get('groupe');
+	
+		$groupe->setLock(false);
+		$app['orm.em']->persist($groupe);
+		$app['orm.em']->flush();
+	
+		$app['session']->getFlashBag()->add('success', 'Le groupe est dévérouillé');
+		return $app->redirect($app['url_generator']->generate('groupe.detail', array('index' => $groupe->getId())));
+	}
+	
+	/**
+	 * Impression matériel pour le groupe
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function printMaterielAction(Request $request, Application $app)
+	{
+		$groupe = $request->get('groupe');
+		
+		return $app['twig']->render('admin/groupe/printMateriel.twig', array(
+				'groupe' => $groupe
+		));
+	}
+	
+	/**
+	 * Impression fiche de perso pour le groupe
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function printPersoAction(Request $request, Application $app)
+	{
+		$groupe = $request->get('groupe');
+	
+		return $app['twig']->render('admin/groupe/printPerso.twig', array(
+				'groupe' => $groupe
+		));
+	}
+	
+	/**
 	 * Page d'accueil de gestion des groupes
 	 * 
 	 * @param Request $request
@@ -713,6 +779,12 @@ class GroupeController
 		
 		$groupe = $app['orm.em']->find('\LarpManager\Entities\Groupe',$id);
 		$participant = $app['user']->getParticipantByGroupe($groupe);
+		
+		if ( $groupe->getLock() == true)
+		{
+			$app['session']->getFlashBag()->add('error','Désolé, ce groupe est fermé.');
+			return $app->redirect($app['url_generator']->generate('homepage',array('index'=>$id)),301);
+		}
 		
 		// si le joueur dispose déjà d'un personnage, refuser le personnage
 		if ( $participant->getPersonnage() )

@@ -37,6 +37,19 @@ class Personnage extends BasePersonnage
 	}
 	
 	
+	public function hasMateriel()
+	{
+		if ( $this->getRenomme() > 0 ) return true;
+		
+		foreach ( $this->getCompetences() as $competence)
+		{
+			if ( $competence->getMateriel() ) return true;
+		}		
+		return false;
+					
+	}
+		
+	
 	/**
 	 * Vérifie si le personnage connait cette langue
 	 * @param unknown $langue
@@ -346,4 +359,17 @@ class Personnage extends BasePersonnage
 		$this->setGroupe(null);
 	}
 				
+	/**
+	 * Fourni l'utilisateur possédant ce personnage
+	 */
+	public function getUser()
+	{
+		$user = null;
+		
+		if ( $participant = $this->getParticipant() )
+		{
+			$user = $participant->getUser();
+		}			
+		return $user;
+	}	
 }

@@ -30,6 +30,19 @@ class AgeController
 	}
 	
 	/**
+	 * Liste des perso ayant cet age
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function persoAction(Request $request, Application $app)
+	{
+		$age = $request->get('age');
+			
+		return $app['twig']->render('admin/age/perso.twig', array('age' => $age));
+	}
+	
+	/**
 	 * Detail d'un age
 	 *
 	 * @param Request $request

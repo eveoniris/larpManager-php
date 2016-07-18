@@ -70,6 +70,17 @@ class CompetenceControllerProvider implements ControllerProviderInterface
 		$controllers->match('/list','LarpManager\Controllers\CompetenceController::listAction')
 			->bind("competence.list")
 			->method('GET');
+
+		/**
+		 * Liste des personnages ayant cette compétence
+		 */
+		$controllers->match('/{competence}/perso','LarpManager\Controllers\CompetenceController::persoAction')
+			->assert('competence', '\d+')
+			->bind("competence.perso")
+			->method('GET')
+			->convert('competence', 'converter.competence:convert')
+			->before($mustBeOrga);
+			
 			
 		/**
 		 * Ajout d'une compétence
@@ -83,7 +94,7 @@ class CompetenceControllerProvider implements ControllerProviderInterface
 		 * Modification d'une compétence
 		 */
 		$controllers->match('/{competence}/update','LarpManager\Controllers\CompetenceController::updateAction')
-			->assert('index', '\d+')
+			->assert('competence', '\d+')
 			->bind("competence.update")
 			->method('GET|POST')
 			->convert('competence', 'converter.competence:convert')

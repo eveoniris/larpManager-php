@@ -114,6 +114,7 @@
 						{% endif %}
 						
 					</th>
+					<th>Statut</th>
 					<th>Scénariste</th>
 					<th>Chef de groupe</th>
 				</tr>
@@ -125,6 +126,7 @@
 					<td><a href="{{ path('groupe.update', {'index':groupe.id}) }}">{{ groupe.numero }}</a></td>
 					<td><a href="{{ path('groupe.detail', {'index':groupe.id}) }}">{{ groupe.nom }}</a></td>
 					<td>{{ groupe.classeOpen }}{% if is_granted('ROLE_ADMIN') %}&nbsp;(<a href=" {{ path('groupe.place', {'index':groupe.id}) }}">Modifier</a>){% endif %} </td>
+					<td>{% if groupe.lock %}<span class="text-danger">Verrouillé</span>{% else %}Ouvert{% endif %}</td>
 					<td>{% if groupe.scenariste %}{{ groupe.scenariste.username }} {% else %}pas de scénariste{% endif %}</td>
 					<td>{% if groupe.responsable %}{{ groupe.responsable.username }}{% else %}pas de scénariste{% endif %}</td>
 				</tr>

@@ -58,6 +58,12 @@ class ReligionControllerProvider implements ControllerProviderInterface
 			->method('GET|POST')
 			->before($mustBeOrga);
 		
+		$controllers->match('/{religion}/perso','LarpManager\Controllers\ReligionController::persoAction')
+			->bind("religion.perso")
+			->method('GET')
+			->convert('religion', 'converter.religion:convert')
+			->before($mustBeOrga);
+		
 		$controllers->match('/{index}/update','LarpManager\Controllers\ReligionController::updateAction')
 			->assert('index', '\d+')
 			->bind("religion.update")

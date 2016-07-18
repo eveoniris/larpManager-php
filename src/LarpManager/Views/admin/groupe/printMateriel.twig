@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    	<meta charset="utf-8">
+    	<title>LarpManager - Impression des fiches de personnage</title>
+    </head>
+    <body>
+    	
+{% for personnage in groupe.personnages %}
+		<div>
+	    	<h2>Groupe {{groupe.numero }} - {{ groupe.nom }}</h2>
+	    	<h3>#{{ personnage.id }} {{ personnage.nom }} {{ personnage.surnom }}</h3>
+	    	<h4>Matériel necessaire</h4>
+	    
+	    	<ul>	
+	    	{% for competence in personnage.competences %}
+	    		{% if competence.materiel %}
+				<li><strong>{{ competence.competenceFamily.label }}&nbsp({{ competence.level.label }}) : </strong>
+					{{ competence.materielRaw }}
+				</li>
+				{% endif %}
+			{% else %}
+				<li>Aucun matériel</li>
+			{% endfor %}
+			{% if personnage.renomme %}
+				<li><strong>Renommée : </strong> {{ personnage.renomme|default(0) }}
+			{% endif %}
+			{% if personnage.materiel %}
+				<li>{{ personnage.materiel }}</li>
+			{% endif %}
+			</ul>
+			<hr />				
+	    </div>
+{% endfor %}
+ 
+</body>
+</html>

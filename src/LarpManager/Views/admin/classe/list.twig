@@ -27,6 +27,7 @@
 				<li class="list-group-item">
 					<h4 class="list-group-item-heading">
 						{{ classe.label }}
+						<small>( <a href="{{ path('classe.perso', {'classe': classe.id}) }}">{{ classe.personnages|length }} personnages</a>)</small>
 					</h4>
 					<p class="list-group-item-text">
 						<div class="btn-group pull-right" role="group" aria-label="...">

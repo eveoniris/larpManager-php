@@ -13,9 +13,9 @@ use LarpManager\Form\PersonnageForm;
 use LarpManager\Form\TriggerForm;
 use LarpManager\Form\TriggerDeleteForm;
 use LarpManager\Form\PersonnageUpdateForm;
+use LarpManager\Form\PersonnageTransfertForm;
 use LarpManager\Form\PersonnageUpdateRenommeForm;
 use LarpManager\Form\PersonnageUpdateSortForm;
-use LarpManager\Form\PersonnageBackgroundForm;
 use LarpManager\Form\PersonnageUpdatePotionForm;
 use LarpManager\Form\PersonnageUpdateDomaineForm;
 use LarpManager\Form\PersonnageUpdateLangueForm;
@@ -55,6 +55,84 @@ class PersonnageController
 		return $app['twig']->render('admin/personnage/fiches.twig', array(
 				'groupes' => $groupes,
 				
+		));
+	}
+	
+	public function adminMaterielAction(Request $request, Application $app)
+	{
+		$personnage = $request->get('personnage');
+		
+		$form = $app['form.factory']->createBuilder()
+			->add('materiel','textarea', array(
+					'required' => false,
+					'data' => $personnage->getMateriel(),
+			))
+			->add('valider','submit', array('label' => 'Valider'))
+			->getForm();
+
+		$form->handleRequest($request);
+				
+		if ( $form->isValid() )
+		{
+			$data = $form->getData();
+			$personnage->setMateriel($data['materiel']);
+			$app['orm.em']->persist($personnage);
+			$app['orm.em']->flush();
+			
+			$app['session']->getFlashBag()->add('success','Le personnage a été sauvegardé');
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
+		}
+		
+		return $app['twig']->render('admin/personnage/materiel.twig', array(
+				'personnage' => $personnage,
+				'form' => $form->createView(),
+		));
+	}
+	
+	/**
+	 * Transfert d'un personnage à un autre utilisateur
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function adminTransfertAction(Request $request, Application $app)
+	{
+		$personnage = $request->get('personnage');
+		
+		$form = $app['form.factory']->createBuilder()
+			->add('participant','entity', array(
+					'required' => true,
+					'label' => 'Nouveau propriétaire',
+					'class' => 'LarpManager\Entities\User',
+					'property' => 'identity',
+			))
+			->add('transfert','submit', array('label' => 'Transferer'))
+			->getForm();
+		
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$data = $form->getData();
+			$user = $data['participant'];
+			
+			$participant = new \LarpManager\Entities\Participant();
+			$participant->setUser($user);
+			$participant->setPersonnage($personnage);
+			$participant->setSubscriptionDate(new \Datetime());
+			$participant->setGn($app['larp.manager']->getGnActif());
+			
+			
+			$app['orm.em']->persist($participant);
+			$app['orm.em']->flush();
+			
+			$app['session']->getFlashBag()->add('success','Le personnage a été transféré');
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
+		}
+		
+		return $app['twig']->render('admin/personnage/transfert.twig', array(
+				'personnage' => $personnage,
+				'form' => $form->createView(),
 		));
 	}
 	
@@ -167,7 +245,7 @@ class PersonnageController
 	}
 	
 	/**
-	 * Ajout d'un personage (orga seulement)
+	 * Ajout d'un personnage (orga seulement)
 	 * 
 	 * @param Request $request
 	 * @param Application $app
@@ -175,7 +253,16 @@ class PersonnageController
 	public function adminAddAction(Request $request, Application $app)
 	{
 		$personnage = new \LarpManager\Entities\Personnage();
-
+		
+		$participant = $request->get('participant');
+		if ( ! $participant ) {
+			$participant = $app['user']->getParticipant();
+		}
+		else {
+			$participant = $app['orm.em']->getRepository('\LarpManager\Entities\Participant')->find($participant);
+		}
+		
+		
 		$form = $app['form.factory']->createBuilder(new PersonnageForm(), $personnage)
 			->add('classe','entity', array(
 					'label' =>  'Classes disponibles',
@@ -183,11 +270,74 @@ class PersonnageController
 					'class' => 'LarpManager\Entities\Classe',
 			))
 			->add('save','submit', array('label' => 'Sauvegarder'))
-			->add('delete','submit', array('label' => 'Supprimer'))
 			->getForm();
+		
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$personnage = $form->getData();
+			$participant->setPersonnage($personnage);
+			
+			if ( $participant->getGroupe())
+			{
+				$personnage->setGroupe($participant->getGroupe());
+			}
+			
+			$personnage->setXp($app['larp.manager']->getGnActif()->getXpCreation());
+				
+			// historique
+			$historique = new \LarpManager\Entities\ExperienceGain();
+			$historique->setExplanation("Création de votre personnage");
+			$historique->setOperationDate(new \Datetime('NOW'));
+			$historique->setPersonnage($personnage);
+			$historique->setXpGain($app['larp.manager']->getGnActif()->getXpCreation());
+			$app['orm.em']->persist($historique);
+			
+			// ajout des compétences acquises à la création
+			foreach ($personnage->getClasse()->getCompetenceFamilyCreations() as $competenceFamily)
+			{
+				$firstCompetence = $competenceFamily->getFirstCompetence();
+				if ( $firstCompetence )
+				{
+					$personnage->addCompetence($firstCompetence);
+					$firstCompetence->addPersonnage($personnage);
+					$app['orm.em']->persist($firstCompetence);
+				}
+			}
+			
+			// Ajout des points d'expérience gagné grace à l'age
+			$xpAgeBonus = $personnage->getAge()->getBonus();
+			if ( $xpAgeBonus )
+			{
+				$personnage->addXp($xpAgeBonus);
+				$historique = new \LarpManager\Entities\ExperienceGain();
+				$historique->setExplanation("Bonus lié à l'age");
+				$historique->setOperationDate(new \Datetime('NOW'));
+				$historique->setPersonnage($personnage);
+				$historique->setXpGain($xpAgeBonus);
+				$app['orm.em']->persist($historique);
+			}
+			
+			
+			$app['orm.em']->persist($personnage);
+			$app['orm.em']->persist($participant);
+			$app['orm.em']->flush();
+			
+			$app['session']->getFlashBag()->add('success','Votre personnage a été sauvegardé.');
+			if ( $participant->getGroupe())
+			{
+				return $app->redirect($app['url_generator']->generate('groupe.detail', array('index' => $participant->getGroupe()->getId())),301);
+			}
+			else
+			{
+				return $app->redirect($app['url_generator']->generate('homepage'),301);
+			}
+		}
 		
 		return $app['twig']->render('admin/personnage/add.twig', array(
 				'form' => $form->createView(),
+				'participant' => $participant,
 		));
 	}
 			
@@ -251,6 +401,12 @@ class PersonnageController
 			{
 				$personnage->removePersonnageTrigger($trigger);
 				$app['orm.em']->remove($trigger);
+			}
+			
+			foreach ($personnage->getPersonnageBackgrounds() as $background)
+			{
+				$personnage->removePersonnageBackground($background);
+				$app['orm.em']->remove($background);
 			}
 						
 			$app['orm.em']->remove($personnage);
@@ -981,6 +1137,13 @@ class PersonnageController
 	{
 		$personnage = $request->get('personnage');
 		
+		if ( $personnage->getGroupe()->getLock() == true)
+		{
+			$app['session']->getFlashBag()->add('error','Désolé, il n\'est plus possible de modifier ce personnage. Le groupe est verouillé. Contacter votre scénariste si vous pensez que cela est une erreur');
+			return $app->redirect($app['url_generator']->generate('homepage',array('index'=>$id)),301);
+		}
+		
+		
 		// refuser la demande si le personnage est Fanatique
 		if ( $personnage->isFanatique() )
 		{
@@ -1066,6 +1229,12 @@ class PersonnageController
 	public function updateOriginAction(Request $request, Application $app)
 	{
 		$personnage = $request->get('personnage');
+		
+		if ( $personnage->getGroupe()->getLock() == true)
+		{
+			$app['session']->getFlashBag()->add('error','Désolé, il n\'est plus possible de modifier ce personnage. Le groupe est verouillé. Contacter votre scénariste si vous pensez que cela est une erreur');
+			return $app->redirect($app['url_generator']->generate('homepage',array('index'=>$id)),301);
+		}
 		
 		if ( $personnage->getTerritoire() )
 		{
@@ -1174,6 +1343,77 @@ class PersonnageController
 		
 	}
 	
+	public function adminAddCompetenceAction(Request $request, Application $app)
+	{
+		$personnage = $request->get('personnage');
+		
+		$availableCompetences = $app['personnage.manager']->getAvailableCompetences($personnage);
+		
+		if ( $availableCompetences->count() == 0 )
+		{
+			$app['session']->getFlashBag()->add('error','Désolé, il n\'y a plus de compétence disponible.');
+			return $app->redirect($app['url_generator']->generate('homepage'),301);
+		}
+		
+		// construit le tableau de choix
+		$choices = array();
+		foreach ( $availableCompetences as $competence)
+		{
+			$choices[$competence->getId()] = $competence->getLabel() . ' (cout : '.$app['personnage.manager']->getCompetenceCout($personnage, $competence).' xp)';
+		}
+		
+		$form = $app['form.factory']->createBuilder()
+			->add('competenceId','choice', array(
+					'label' =>  'Choisissez une nouvelle compétence',
+					'choices' => $choices,
+			))
+			->add('save','submit', array('label' => 'Valider la compétence'))
+			->getForm();
+		
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$data = $form->getData();
+				
+			$competenceId = $data['competenceId'];
+			$competence = $app['orm.em']->find('\LarpManager\Entities\Competence', $competenceId);
+			
+			$cout = $app['personnage.manager']->getCompetenceCout($personnage, $competence);
+			$xp = $personnage->getXp();
+				
+			if ( $xp - $cout < 0 )
+			{
+				$app['session']->getFlashBag()->add('error','Vos n\'avez pas suffisement de point d\'expérience pour acquérir cette compétence.');
+				return $app->redirect($app['url_generator']->generate('homepage'),301);
+			}
+			$personnage->setXp($xp - $cout);
+			$personnage->addCompetence($competence);
+			$competence->addPersonnage($personnage);
+			
+			// historique
+			$historique = new \LarpManager\Entities\ExperienceUsage();
+			$historique->setOperationDate(new \Datetime('NOW'));
+			$historique->setXpUse($cout);
+			$historique->setCompetence($competence);
+			$historique->setPersonnage($personnage);
+				
+			$app['orm.em']->persist($competence);
+			$app['orm.em']->persist($personnage);
+			$app['orm.em']->persist($historique);
+			$app['orm.em']->flush();
+				
+			$app['session']->getFlashBag()->add('success','Votre personnage a été sauvegardé.');
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail', array('personnage' => $personnage->getId())),301);
+		}
+			
+		return $app['twig']->render('admin/personnage/competence.twig', array(
+				'form' => $form->createView(),
+				'personnage' => $personnage,
+				'competences' =>  $availableCompetences,
+		));
+	}
+	
 	/**
 	 * Ajoute une compétence au personnage
 	 * 
@@ -1183,6 +1423,12 @@ class PersonnageController
 	public function addCompetenceAction(Request $request, Application $app)
 	{
 		$personnage = $request->get('personnage');
+		
+		if ( $personnage->getGroupe()->getLock() == true)
+		{
+			$app['session']->getFlashBag()->add('error','Désolé, il n\'est plus possible de modifier ce personnage. Le groupe est verouillé. Contacter votre scénariste si vous pensez que cela est une erreur');
+			return $app->redirect($app['url_generator']->generate('homepage',array('index'=>$id)),301);
+		}
 		
 		$availableCompetences = $app['personnage.manager']->getAvailableCompetences($personnage);
 		

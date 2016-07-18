@@ -38,6 +38,19 @@ class ReligionController
 	}
 	
 	/**
+	 * Liste des perso ayant cette religion
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function persoAction(Request $request, Application $app)
+	{
+		$religion = $request->get('religion');
+			
+		return $app['twig']->render('admin/religion/perso.twig', array('religion' => $religion));
+	}
+	
+	/**
 	 * affiche la liste des religions
 	 * 
 	 * @param Request $request

@@ -39,25 +39,29 @@
 	            Registered {{ user.creationDate|date('F j, Y') }}
 	        </div>
 
+	        <h4>Participations</h4>
 	        
-	        
-	        {% if user.participant %}
-	        	<div>
-	        		Participe à {{ user.participant.gn.label }}
-	        	</div>
-	        	
-	        	{% if user.participant.groupe %}
-	        		<div>
-	        			Membre du groupe <a href="{{ path('groupe.detail',{'index':user.participant.groupe.id})  }}">{{ user.participant.groupe.nom }}</a>
-	        		</div>
-	        	{% endif %}
-	        
-	        	{% if user.participant.personnage %}
-	        		<div>
-						Personnage : <a href="{{ path('personnage.admin.detail',{'personnage':user.participant.personnage.id}) }}">{{ user.participant.personnage.publicName }}</a>
-					</div>	        		
-	        	{% endif %}
-	        {% endif %}
+	        <div class="list-group">
+	        {% for participant in user.participants %}
+		        <div class="list-group-item">
+		        	<div>
+		        		Participe à {{ participant.gn.label }}
+		        	</div>
+		        	
+		        	{% if participant.groupe %}
+		        		<div>
+		        			Membre du groupe <a href="{{ path('groupe.detail',{'index':user.participant.groupe.id})  }}">{{ participant.groupe.nom }}</a>
+		        		</div>
+		        	{% endif %}
+		        
+		        	{% if participant.personnage %}
+		        		<div>
+							Personnage : <a href="{{ path('personnage.admin.detail',{'personnage':user.participant.personnage.id}) }}">{{ participant.personnage.publicName }}</a>
+						</div>	        		
+		        	{% endif %}
+		        </div>
+	        {% endfor %}
+	        </div>
 	        
 	        {% if is_granted('EDIT_USER', user) %}
 	            <div>
