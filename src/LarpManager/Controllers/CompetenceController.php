@@ -27,6 +27,19 @@ class CompetenceController
 			
 		return $app['twig']->render('admin/competence/index.twig', array('competences' => $competences));
 	}
+
+	/**
+	 * Liste des perso ayant cette compétence
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function persoAction(Request $request, Application $app)
+	{
+		$competence = $request->get('competence');
+			
+		return $app['twig']->render('admin/competence/perso.twig', array('competence' => $competence));
+	}
 	
 	/**
 	 * Liste du matériel necessaire par compétence

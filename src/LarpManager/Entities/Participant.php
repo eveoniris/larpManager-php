@@ -32,4 +32,10 @@ class Participant extends BaseParticipant
 		$groupe->removeParticipant($this);
 		$this->setGroupe(null);
 	}	
+	
+	public function getUserIdentity()
+	{
+		return $this->getUser()->getDisplayName() .' '. $this->getUser()->getEmail();
+		
+	}
 }

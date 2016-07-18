@@ -1,0 +1,35 @@
+{% extends "layout.twig" %}
+
+{% block title %}Age{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path('religion') }}">Liste des religions</a></li>
+		<li class="active">Personnages ayant cette religion</li>
+	</ol>
+	
+
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-xs-12 col-md-12">
+				<div class="well well-sm">
+				<h4>
+					{{ religion.label }}
+					<small>
+						( {{ religion.personnagesReligions|length }} personnages )
+					</small>
+				</h4>
+			</div>
+
+			<div class="list-group">
+				{% for personnageReligion in religion.personnagesReligions %}
+					<a class="list-group-item" href="{{ path('personnage.admin.detail',{'personnage':personnageReligion.personnage.id}) }}">#{{ personnageReligion.personnage.id }} - {{ personnageReligion.personnage.nom }}&nbsp;{{ personnageReligion.personnage.surnom }} - {{ personnageReligion.personnage.classeName }} - <strong>{{ personnageReligion.religionLevel.label }}</strong></a>
+				{% endfor %}
+			</div>
+		</div>
+	</div>
+</div>
+	
+{% endblock %}

@@ -17,6 +17,15 @@
 				<h4>
 					{{ groupe.numero|default('?') }} - {{ groupe.nom }}
 				</h4>
+				{% if groupe.lock %}
+					<p class="text-danger">
+					!! Groupe verouillé !! <a class="btn btn-primary" role="button" href="{{ path('groupe.unlock', {'groupe' : groupe.id}) }}"><i class="fa fa-unlock" aria-hidden="true"></i></a>
+					</p>
+				{% else %}
+					<p class="text-success">
+					Groupe déverouillé <a class="btn btn-danger" role="button" href="{{ path('groupe.lock', {'groupe' : groupe.id}) }}"><i class="fa fa-lock" aria-hidden="true"></i></a>
+					</p>
+				{% endif %}
 			</div>			
 		  						    		
 	    	<div class="list-group">
@@ -38,7 +47,7 @@
 	    			
 	    			{% for territoire in groupe.territoires %}
 		    			<p class="list-group-item-text">
-	    					{{ territoire.nom }}
+	    					<a href="{{ path('territoire.admin.detail', {'territoire': territoire.id}) }}">{{ territoire.nom }}</a>
 						</p>
     				{% endfor %}
 	    		</div>
@@ -88,9 +97,9 @@
 									<td>{{ participant.user.email }}</td>
 									<td>
 										{% if participant.personnage %}
-											<a href="{{ path('personnage.admin.detail', {'personnage': participant.personnage.id}) }}">{{ participant.personnage.publicName }}</a>
+											<a href="{{ path('personnage.admin.detail', {'personnage': participant.personnage.id}) }}">{{ participant.personnage.nom }} {{ participant.personnage.surnom }}</a>
 										{% else %}
-											Ne dispose pas encore de personnage
+											<a href="{{ path('personnage.admin.add', {'participant': participant.id}) }}">Creer le personnage</a>
 										{% endif %}
 									</td>
 									<td>
@@ -187,7 +196,7 @@
     				{% for alliance in groupe.waitingAlliances %}
 	    				<p class="list-group-item-text">
 	    					{% if alliance.groupe == groupe %}
-	    						A demandé une alliance avec <strong>{{ alliance.requestedGroupe }}</strong>.
+	    						Vous avez demandé une alliance avec <strong>{{ alliance.requestedGroupe }}</strong>.
 	    					{% else %}
 	    						Sollicité pour une alliance par <strong>{{ alliance.groupe }}</strong>.
 	    					{% endif %}
@@ -200,16 +209,16 @@
     				{% for ennemi in groupe.ennemies %}
     					<p class="list-group-item-text">
     						{% if ennemi.groupe == groupe %}
-								A avez déclaré la guerre à <strong>{{ ennemi.requestedGroupe }}</strong>.
+								Vous avez déclaré la guerre à <strong>{{ ennemi.requestedGroupe }}</strong>.
 							{% else %}
-								<strong>{{ ennemi.groupe }}</strong> leur a déclaré la guerre.
+								<strong>{{ ennemi.groupe }}</strong> vous a déclaré la guerre.
 							{% endif %}
     					</p>
     				{% endfor %}
     				{% for war in groupe.waitingPeace %}
     					<p class="list-group-item-text">
     						{% if war.groupe == groupe %}
-    							A avez demandé la paix avec <strong>{{ war.requestedGroupe }}</strong>.
+    							Vous avez demandé la paix avec <strong>{{ war.requestedGroupe }}</strong>.
     						{% else %}
     							<strong>{{ war.groupe }}</strong> propose la paix.
     						{% endif %}
@@ -236,6 +245,16 @@
 		
 		<div class="col-xs-12 col-md-6">
 		
+			<div class="panel panel-default">
+				<div class="panel-heading">Impression</div>
+				<div class="panel-body">
+					<div class="btn-group" role="group" aria-label="...">
+						<a class="btn btn-primary" role="button" href="{{ path('groupe.print.materiel', {'groupe' : groupe.id}) }}">Matériel necessaire</a>
+						<a class="btn btn-primary" role="button" href="{{ path('groupe.print.perso', {'groupe' : groupe.id}) }}">Fiche de perso</a>
+					</div>
+				</div>
+			</div>
+			
 			<div class="panel panel-default">
 				<div class="panel-heading">Matériel</div>
 				<div class="panel-body">

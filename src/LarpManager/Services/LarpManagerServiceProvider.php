@@ -56,12 +56,22 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 			return $fpdf;
 		});
 		
+		// age converter
+		$app['converter.age'] = $app->share(function($app) {
+			return new AgeConverter($app['orm.em']);
+		});
+		
+		// classe converter
+		$app['converter.classe'] = $app->share(function($app) {
+			return new ClasseConverter($app['orm.em']);
+		});
+			
 		// personnage converter
 		$app['converter.personnage'] = $app->share(function($app) {
 			return new PersonnageConverter($app['orm.em']);
 		});
 		
-		// personnage converter
+		// personnage religion converter
 		$app['converter.personnageReligion'] = $app->share(function($app) {
 			return new PersonnageReligionConverter($app['orm.em']);
 		});		
@@ -179,6 +189,11 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 		// ingredient converter
 		$app['converter.ingredient'] = $app->share(function($app) {
 			return new IngredientConverter($app['orm.em']);
+		});
+		
+		// personnage trigger converter
+		$app['converter.personnageTrigger'] = $app->share(function($app) {
+			return new PersonnageTriggerConverter($app['orm.em']);
 		});
 	}
 

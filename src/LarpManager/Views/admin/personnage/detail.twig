@@ -50,11 +50,33 @@
 							{% else %}
 								Ce personnage n'est pas lié à un joueur
 							{% endif %}
+							&nbsp;/&nbsp;<a href="{{ path('personnage.admin.transfert', {'personnage':personnage.id}) }}">Transferer</a> 
 					</p>
 					<p class="list-group-item-text">
 						<a href="{{ path('personnage.admin.update', {'personnage':personnage.id}) }}">Modifier</a>
 					</p>
 				</div>
+				
+				<div class="list-group-item">
+					<h6 class="list-group-item-heading">Matériel</h6>
+					{{ personnage.materiel }}
+					<br />
+					<a href="{{ path('personnage.admin.materiel', {'personnage': personnage.id}) }}">Modifier</a>
+				</div>
+					
+				<div class="list-group-item">
+					<h6 class="list-group-item-heading">Déclencheurs</h6>
+					{% for trigger in personnage.personnageTriggers %}
+						<p class="list-group-item-text">
+							{{ trigger.tag }}
+							-- <a href="{{ path('personnage.admin.trigger.delete', {'personnage': personnage.id, 'trigger': trigger.id}) }}">Supprimer</a>
+						</p>
+					{% else %}
+						<p class="list-group-item-text">La liste est vide</p>
+					{% endfor %}
+					<a href="{{ path('personnage.admin.trigger.add', {'personnage': personnage.id}) }}">Ajouter un déclencheur</a>
+				</div>
+				
 
 				{% if personnage.personnageBackgrounds|length > 0 %}
 					{% for background in personnage.personnageBackgrounds %}
@@ -120,6 +142,9 @@
 							{{ domaine.label }}
 						</p>
 					{% endfor %}
+					<p class="list-group-item-text">
+						<a href="{{ path('personnage.admin.update.domaine', {'personnage': personnage.id}) }}">Modifier la liste des domaines de magie</a>
+					</p>
 				</div>
 				<div class="list-group-item">
 					<h6 class="list-group-item-heading">Liste des sorts</h6>
@@ -199,6 +224,7 @@
 							{{ competence.competenceFamily.label }}&nbsp({{ competence.level.label }}) : {{ competence.description|markdown }}
 						</p>					
 					{% endfor %}
+					<p><a href="{{ path('personnage.admin.competence.add', {'personnage':personnage.id}) }}">Ajouter une compétence</a></p>
 					<p><a href="{{ path('personnage.competence.remove', {'personnage':personnage.id}) }}">Retirer la dernière compétence acquise</a></p>
 				</div>
 				<div class="list-group-item">

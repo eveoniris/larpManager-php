@@ -96,6 +96,26 @@
 			</div>
 		</div>
 		
+		{% if personnage.hasCompetence('Prêtrise') %}
+			<div class="header">
+				<h5>Vos prières</h5>
+			</div>
+			
+			<div class="row">
+				<div class="col-sm-12">
+					{% for priere in personnage.prieres %}
+						<p>
+							<strong>{{ priere.sphere.label }} - Niveau {{ priere.niveau }}</strong>
+							{{ priere.label }}&nbsp;/&nbsp;
+							{% if priere.documentUrl %}
+								<a href="{{ path('magie.priere.document',{'priere' :priere.id, 'document':priere.documentUrl}) }}">Téléchargez le document</a>
+							{% endif %}
+						</p>
+					{% endfor %}
+				</div>
+			</div>
+		{% endif %}
+		
 		{# Origine #}
 		<div class="header">
 			<h5>Origine</h5>
@@ -118,14 +138,6 @@
 			</div>
 		</div>
 		
-		{% if personnage.hasCompetence('Prêtrise') %}
-			<div class="header">
-				<h5>Prières</h5>
-			</div>
-			
-			{% if personnage.hasTrigger('MAGIE APPRENTI') %}
-			
-		{% endif %}
 		
 		{% if personnage.hasCompetence('Alchimie') %}
 			<div class="header">

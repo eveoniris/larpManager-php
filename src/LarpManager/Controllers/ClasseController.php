@@ -26,6 +26,20 @@ class ClasseController
 		return $app['twig']->render('admin/classe/list.twig', array('classes' => $classes));
 	}
 	
+
+	/**
+	 * Liste des perso ayant cette classe
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function persoAction(Request $request, Application $app)
+	{
+		$classe = $request->get('classe');
+			
+		return $app['twig']->render('admin/classe/perso.twig', array('classe' => $classe));
+	}
+	
 	/**
 	 * Liste des classes pour le joueur
 	 * 

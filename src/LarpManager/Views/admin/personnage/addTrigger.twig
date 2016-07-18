@@ -1,0 +1,38 @@
+{% extends "layout.twig" %}
+
+{% block title %}Personnages{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path('personnage.admin.list') }}">Liste des personnages</a></li>
+		<li><a href="{{ path('personnage.admin.detail', {'personnage': personnage.id}) }}">Détail de {{ personnage.publicName }}</a></li>
+		<li class="active">Ajout d'un déclencheur</li>
+	</ol>
+
+	<div class="well bs-component">	
+		<form action="{{ path('personnage.admin.trigger.add', {'personnage': personnage.id}) }}" method="POST" {{ form_enctype(form) }}>
+			<fieldset>
+				<legend>Ajout d'un déclencheur lié a {{ personnage.publicName }}</legend>
+				{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+				<ul>
+					<li><strong>ALCHIMIE APPRENTI</strong> : permet de choisir une nouvelle potion de niveau apprenti</li>
+					<li><strong>ALCHIMIE INITIE</strong> : permet de choisir une nouvelle potion de niveau initié</li>
+					<li><strong>ALCHIMIE EXPERT</strong> : permet de choisir une nouvelle potion de niveau expert</li>
+					<li><strong>ALCHIMIE MAITRE</strong> : permet de choisir une nouvelle potion de niveau maitre</li>
+					<li><strong>MAGIE APPRENTI</strong> : permet de choisir un domaine de magie</li>
+					<li><strong>MAGIE EXPERT</strong> : permet de choisir un domaine de magie</li>
+					<li><strong>MAGIE APPRENTI SORT</strong> : permet de choisir un sort de niveau 1</li>
+					<li><strong>MAGIE INITIE SORT</strong> : permet de choisir un sort de niveau 2</li>
+					<li><strong>MAGIE EXPERT SORT</strong> : permet de choisir un sort de niveau 3</li>
+					<li><strong>MAGIE MAITRE SORT</strong> : permet de choisir un sort de niveau 4</li>										
+					<li><strong>LITTERATURE INITIE</strong> : permet de choisir trois language supplémentaire sauf parmis les anciens</li>
+					<li><strong>LITTERATURE EXPERT</strong> : permet de choisir trois language supplémentaire dont 1 anciens</li>
+				</ul>
+				{{ form(form) }}
+			</fieldset>
+		</form>
+	</div>
+	
+{% endblock content %}

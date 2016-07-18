@@ -35,6 +35,11 @@ class Competence extends BaseCompetence
 		return $label;
 	}
 	
+	public function getMaterielRaw()
+	{
+		return html_entity_decode(strip_tags($this->getMateriel()));
+	}
+	
 	public function getDescriptionRaw()
 	{
 		return html_entity_decode(strip_tags($this->getDescription()));

@@ -28,11 +28,39 @@ class Personnage extends BasePersonnage
 		$this->setXp(0);
 	}
 	
+	/**
+	 * Set Participant entity (one to one).
+	 *
+	 * @return \LarpManager\Entities\Personnage
+	 */
+	public function setParticipantNull()
+	{
+		$this->participant = null;
+	
+		return $this;
+	}
+	
+	/**
+	 * 
+	 */
 	public function __toString()
 	{
 		return $this->getPublicName();
 	}
 	
+	
+	public function hasMateriel()
+	{
+		if ( $this->getRenomme() > 0 ) return true;
+		
+		foreach ( $this->getCompetences() as $competence)
+		{
+			if ( $competence->getMateriel() ) return true;
+		}		
+		return false;
+					
+	}
+		
 	
 	/**
 	 * Vérifie si le personnage connait cette langue
@@ -199,6 +227,35 @@ class Personnage extends BasePersonnage
 	}
 	
 	/**
+	 * Fourni la religion principale du personnage
+	 */
+	public function getMainReligion()
+	{
+		$religion = null;
+		$index = 0;
+		$personnagesReligions = $this->getPersonnagesReligions();
+		foreach ( $personnagesReligions as $personnageReligion )
+		{
+			if ( ! $religion )
+			{
+				$religion = $personnageReligion->getReligion();
+				$index = $personnageReligion->getReligionLevel()->getIndex();
+			}
+			else
+			{
+				if ( $index < $personnageReligion->getReligionLevel()->getIndex() )
+				{
+					$religion = $personnageReligion->getReligion();
+					$index = $personnageReligion->getReligionLevel()->getIndex();
+				}
+			}
+		}
+		
+		return $religion;
+		
+	}
+	
+	/**
 	 * Fourni la liste des groupes secondaires pour lesquel ce personnage est chef
 	 */
 	public function getSecondaryGroupsAsChief()
@@ -314,4 +371,17 @@ class Personnage extends BasePersonnage
 		$this->setGroupe(null);
 	}
 				
+	/**
+	 * Fourni l'utilisateur possédant ce personnage
+	 */
+	public function getUser()
+	{
+		$user = null;
+		
+		if ( $participant = $this->getParticipant() )
+		{
+			$user = $participant->getUser();
+		}			
+		return $user;
+	}	
 }

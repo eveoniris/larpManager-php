@@ -49,6 +49,12 @@ class ClasseControllerProvider implements ControllerProviderInterface
 			->bind("classe.list")
 			->method('GET');
 		
+		$controllers->match('/{classe}/perso','LarpManager\Controllers\ClasseController::persoAction')
+			->bind("classe.perso")
+			->convert('classe', 'converter.classe:convert')
+			->before($mustBeOrga)
+			->method('GET');
+		
 		$controllers->match('/add','LarpManager\Controllers\ClasseController::addAction')
 			->bind("classe.add")
 			->method('GET|POST')

@@ -274,6 +274,46 @@ class GroupeControllerProvider implements ControllerProviderInterface
 			->before($mustBeAdmin);
 			
 		/**
+		 * Impression du matériel necessaire
+		 */
+		$controllers->match('/{groupe}/print/materiel','LarpManager\Controllers\GroupeController::printMaterielAction')
+			->assert('index', '\d+')
+			->bind("groupe.print.materiel")
+			->convert('groupe', 'converter.groupe:convert')
+			->method('GET')
+			->before($mustBeScenariste);
+			
+		/**
+		 * Impression des fiches de perso
+		 */
+		$controllers->match('/{groupe}/print/perso','LarpManager\Controllers\GroupeController::printPersoAction')
+			->assert('index', '\d+')
+			->bind("groupe.print.perso")
+			->convert('groupe', 'converter.groupe:convert')
+			->method('GET')
+			->before($mustBeScenariste);
+			
+		/**
+		 * lock
+		 */
+		$controllers->match('/{groupe}/lock','LarpManager\Controllers\GroupeController::lockAction')
+			->assert('index', '\d+')
+			->bind("groupe.lock")
+			->convert('groupe', 'converter.groupe:convert')
+			->method('GET')
+			->before($mustBeScenariste);
+			
+		/**
+		 * unlock
+		 */
+		$controllers->match('/{groupe}/unlock','LarpManager\Controllers\GroupeController::unlockAction')
+			->assert('index', '\d+')
+			->bind("groupe.unlock")
+			->convert('groupe', 'converter.groupe:convert')
+			->method('GET')
+			->before($mustBeScenariste);
+			
+		/**
 		 *  Mise à jour d'un groupe (scénariste uniquement)
 		 */
 		$controllers->match('/{index}/update','LarpManager\Controllers\GroupeController::updateAction')

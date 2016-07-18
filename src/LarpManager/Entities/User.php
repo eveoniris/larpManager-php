@@ -46,6 +46,11 @@ class User extends BaseUser implements AdvancedUserInterface, \Serializable
 		return $this->getUsername();
 	}
 	
+	public function getIdentity()
+	{
+		return $this->getUsername() . ' ' . $this->getEmail();
+	}
+	
 	/**
 	 * Vérifie si un post est surveillé par l'utilisateur
 	 */
@@ -132,6 +137,18 @@ class User extends BaseUser implements AdvancedUserInterface, \Serializable
 			if ( $participant->getGn()->getActif() == true) return $participant->getPersonnage();
 		}
 		return null;
+	}
+	
+	public function getPersonnagePublicName()
+	{
+		$personnage =  $this->getPersonnage();
+		if ( $personnage )
+		{
+			return $personnage->getPublicName();
+		}
+		
+		return $this->getUserName();
+		
 	}
 	
 	/**

@@ -1,0 +1,35 @@
+{% extends "layout.twig" %}
+
+{% block title %}Compétences{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path('competence') }}">Liste des compétences</a></li>
+		<li class="active">Personnages ayant cette compétence</li>
+	</ol>
+	
+
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-xs-12 col-md-12">
+				<div class="well well-sm">
+				<h4>
+					{{ competence.competenceFamily.label }} - <small>Niveau {{ competence.level.label }}
+					<small>
+						( {{ competence.personnages|length }} personnages )
+					</small>
+				</h4>
+			</div>
+
+			<div class="list-group">
+				{% for personnage in competence.personnages %}
+					<a class="list-group-item" href="{{ path('personnage.admin.detail',{'personnage':personnage.id}) }}">#{{ personnage.id }} - {{ personnage.nom }}&nbsp;{{ personnage.surnom }} - {{ personnage.classeName }}</a>
+				{% endfor %}
+			</div>
+		</div>
+	</div>
+</div>
+	
+{% endblock %}
