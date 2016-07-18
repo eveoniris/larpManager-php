@@ -18,4 +18,10 @@ use LarpManager\Entities\BaseIngredient;
  */
 class Ingredient extends BaseIngredient
 {
+	public function __toString()
+	{
+		return $this->getLabel();
+	}
+			
+	
 }

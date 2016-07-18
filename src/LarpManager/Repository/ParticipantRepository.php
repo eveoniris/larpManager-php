@@ -22,6 +22,6 @@ class ParticipantRepository extends EntityRepository
 				->getResult();
 		
 		return $participants;
-
 	}
+	
 }

@@ -19,7 +19,7 @@
 				
 					<div class="col-md-4">
 						{% if religion.blason %}
-							<img width="160" height="200" src="{{ path('blason.get', {'blason' : religion.blason }) }}" /><br />
+							<img width="160" src="{{ path('blason.get', {'blason' : religion.blason }) }}" /><br />
 						{% endif %}
 						<a href="{{ path('religion.update.blason', {'religion': religion.id}) }}">Ajouter ou modifier le blason</a>
 					</div>

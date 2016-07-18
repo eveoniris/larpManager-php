@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    	<meta charset="utf-8">
+    	<title>LarpManager - Impression d'une selection de personnages</title>
+    </head>
+    <body>
+    	
+    <h4>{{ titre }}</h4>
+    <table>
+	{% for personnage in personnages %}
+		<tr>
+			<td>
+			{% if personnage.user %}
+				{% if personnage.user.trombineUrl %}
+					<img width="160" src="{{ path('trombine.get', {'trombine' : personnage.user.trombineUrl }) }}" />
+				{% else %}
+					<img width="160" src="{{ app.request.basepath }}/img/no_trombine.png" />
+				{% endif %}
+			{% else %}
+				<img width="160" src="{{ app.request.basepath }}/img/no_trombine.png" />
+			{% endif %}
+			</td>
+			<td>
+				<div class="list-group">
+					<div class="list-group-item">
+						{{ personnage.nom }} {{ personnage.surnom }}
+					</div>
+					<div class="list-group-item">
+						{{ app['personnage.manager'].titre(personnage) }}
+					</div>
+					<div class="list-group-item">
+					{% if personnage.groupe %}
+						{{ personnage.groupe.nom }}
+					{% endif %}
+					</div>
+				</div>
+			</td>
+		</tr>
+	{% endfor %}
+	</table>
+	
+</body>
+</html>

@@ -42,15 +42,48 @@
     				</p>
    	    		</div>
 						
+
 	    		<div class="list-group-item">
 	    			<h4 class="list-group-item-heading">Territoire(s)</h4>
 	    			
 	    			{% for territoire in groupe.territoires %}
 		    			<p class="list-group-item-text">
 	    					<a href="{{ path('territoire.admin.detail', {'territoire': territoire.id}) }}">{{ territoire.nom }}</a>
+	    					&nbsp;/&nbsp;&nbsp;<span class="glyphicon glyphicon-minus" aria-hidden="true"></span><a href="{{ path('groupe.territoire.remove', {'groupe': groupe.id, 'territoire': territoire.id}) }}">Retirer</a>
 						</p>
     				{% endfor %}
+    					<p class="list-group-item-text">
+    						<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+    						<a href="{{ path('groupe.territoire.add', {'groupe': groupe.id}) }}">Ajouter un territoire</a>
+    					</p>
 	    		</div>
+
+	    		<div class="list-group-item">
+	    			<h4 class="list-group-item-heading">Ressources fournies par les territoires</h4>
+	    			<h6 class="list-group-item-heading">Richesse</h6>
+	    			{% for territoire in groupe.territoires %}
+	    				<p class="list-group-item-text">
+	    					<strong>{{ territoire.tresor|default(0) }} PA</strong> fourni par <strong>{{ territoire.nom }}</strong>
+	    				</p>
+	    			{% endfor %}
+	    			<h6 class="list-group-item-heading">Ressources</h6>
+	    			{% for territoire in groupe.territoires %}
+	    				{% for ressource in territoire.exportations %}
+		    				<p class="list-group-item-text">
+		    					<strong>{{ ressource.label }}</strong> fourni par <strong>{{ territoire.nom }}</strong>
+		    				</p>
+	    				{% endfor %}
+	    			{% endfor %}
+	    			<h6 class="list-group-item-heading">Ingrédients</h6>
+	    			{% for territoire in groupe.territoires %}
+	    				{% for ingredient in territoire.ingredients %}
+	    					<p class="list-group-item-text">
+		    					<strong>{{ ingredient.label }}</strong> fourni par <strong>{{ territoire.nom }}</strong>
+		    				</p>
+		    			{% endfor %}
+	    			{% endfor %}
+	    		</div>
+
 	    			
 	    		<div class="list-group-item">
 		    		<h4 class="list-group-item-heading">Scénariste</h4>
@@ -82,6 +115,7 @@
 	    							<th>Email</th>
 	    							<th>Personnage</th>
 	    							<th>Classe</th>
+	    							<th>Restauration</th>
     								<th></th>
 	    						</tr>
 	    					</thead>
@@ -105,6 +139,13 @@
 									<td>
 										{% if participant.personnage %}
 											{{ participant.personnage.classeName }}
+										{% endif %}
+									</td>
+									<td>
+										{% if participant.getTavernId %}
+											{{ app['larp.manager'].getTavern(participant) }}
+										{% else %}
+											Rien
 										{% endif %}
 									</td>
 									<td><a href="{{ path('groupe.admin.participant.remove', {'groupe': groupe.id, 'participant': participant.id}) }}">Retirer</a></td>
@@ -244,6 +285,15 @@
 		</div>
 		
 		<div class="col-xs-12 col-md-6">
+		
+			<div class="panel panel-default">
+				<div class="panel-heading">Restauration</div>
+				<div class="panel-body">
+					<div class="btn-group" role="group" aria-label="...">
+						<a class="btn btn-primary" role="button" href="{{ path('groupe.restauration', {'groupe' : groupe.id}) }}">Restauration</a>
+					</div>
+				</div>
+			</div>
 		
 			<div class="panel panel-default">
 				<div class="panel-heading">Impression</div>

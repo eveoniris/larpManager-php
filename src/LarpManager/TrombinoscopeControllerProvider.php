@@ -22,6 +22,10 @@ class TrombinoscopeControllerProvider implements ControllerProviderInterface
 		$controllers->match('/','LarpManager\Controllers\TrombinoscopeController::indexAction')
 			->bind("trombinoscope")
 			->method('GET');
+			
+		$controllers->match('/perso','LarpManager\Controllers\TrombinoscopeController::persoAction')
+			->bind("trombinoscope.perso")
+			->method('GET|POST');
 		
 		return $controllers;
 	}

@@ -211,6 +211,21 @@ class Territoire extends BaseTerritoire implements \JsonSerializable
 	
 		return $string;
 	}
+		
+	/**
+	 * Fourni le nom complet d'un territoire
+	 */
+	public function getNomComplet()
+	{
+		$string = $this->getNom();
+		
+		if ( $this->getGroupe() )
+		{
+			$string .= ' ( Appartient à #'.$this->getGroupe()->getNumero(). ' ' .$this->getGroupe()->getNom() . ' )';			
+		}
+				
+		return $string;
+	}
 	
 	/**
 	 * Add Ressource entity to collection.
@@ -362,5 +377,11 @@ class Territoire extends BaseTerritoire implements \JsonSerializable
 	public function getReligions()
 	{
 		return $this->religions;
+	}
+	
+	public function setGroupeNull()
+	{
+		$this->groupe = null;
+		return $this;
 	}
 }

@@ -9,26 +9,21 @@
 		<li class="active">Les religions</li>
 	</ol>
 	
-	<div class="row">
+	<div class="list-group">
 		{% for religion in religions %}
-			<div class="col-sm-4 col-md-4">
-				<div class="well well-sm fixed-height">
-					<div class="media">
-			    		<div class="media-left media-top">
-			      			{# Dans le cas ou on associe une image aux classes
-			      			<a href="#">
-			        			<img class="media-object" src="..." alt="...">
-			      			</a> #}
-			    		</div>
-			    	</div>
-			    	<div class="media-body">
-			    		<div class="header">
-		      				<h5 class="media-heading">{{ religion.label }}</h5>
-		      			</div>
-		      			<p>{{ religion.description|markdown }}</p>
-		      		</div>
-		    	</div>
-		    </div>
+			<div class="list-group-item">
+				<h5 class="list-group-item-heading header">{{ religion.label }}</h5>
+				<div class="rows clearfix">
+					<div class="col-md-2">
+						{% if religion.blason %}
+		      				<img width="160" src="{{ path('blason.get', {'blason' : religion.blason }) }}" />
+		      			{% endif %}
+				    </div>
+				    <div class="col-md-10">
+						<p class="list-group-item-text">{{ religion.description|markdown }}</p>
+					</div>
+				</div>
+			</div>
 		{% endfor %}
 	</div>
 	
