@@ -59,6 +59,8 @@ class HomepageController
 	/**
 	 * Page de gestion des règles
 	 * 
+	 * @param Request $request
+	 * @param Application $app
 	 */
 	public function rulesAdminAction(Request $request, Application $app)
 	{
@@ -109,6 +111,9 @@ class HomepageController
 	
 	/**
 	 * Supression d'un fichier de règle
+	 * 
+	 * @param Request $request
+	 * @param Application $app
 	 */
 	public function rulesAdminDeleteAction(Request $request, Application $app)
 	{
@@ -429,6 +434,28 @@ class HomepageController
 	public function legalAction(Request $request, Application $app)
 	{
 		return $app['twig']->render('homepage/legal.twig');
+	}
+	
+	/**
+	 * Affiche les informations de dev
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function devAction(Request $request, Application $app)
+	{
+		return $app['twig']->render('homepage/dev.twig');
+	}
+	
+	/**
+	 * Statistiques du projet
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function metricsAction(Request $request, Application $app)
+	{
+		return $app['twig']->render('homepage/metrics/report.html');
 	}
 	
 	/**

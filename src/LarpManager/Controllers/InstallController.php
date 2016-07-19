@@ -117,6 +117,12 @@ class InstallController
 		return $app['twig']->render('install/installfirstuser.twig', array('form' => $form->createView()));
 	}
 	
+	/**
+	 * Mise à jour de la base de données
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
 	public function updateAction(Request $request, Application $app)
 	{
 		$default = array(
@@ -165,7 +171,6 @@ class InstallController
 			// on récupére les méta-data de toutes les tables
 			$classes = $app['orm.em']->getMetadataFactory()->getAllMetadata();
 			
-			var_dump('test');
 			// on met a jour la base de donnée
 			$tool->updateSchema($classes);
 			
@@ -175,7 +180,8 @@ class InstallController
 	}
 	
 	/**
-	 * @description Affiche la page d'installation de LarpManager
+	 * Affiche la page d'installation de LarpManager
+	 * 
 	 * @param Request $request
 	 * @param Application $app
 	 */

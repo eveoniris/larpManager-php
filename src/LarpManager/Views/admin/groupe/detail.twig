@@ -105,7 +105,8 @@
 	    			<h4 class="list-group-item-heading">Membres du groupe</h4>
 	    			<p class="list-group-item-text">
 	    				<ul>
-	    				{% if groupe.responsable %}<li><strong>{{ groupe.responsable.username }}</strong>&nbsp;(Responsable du groupe)</li>{% endif %}
+	    					{% if groupe.responsable %}<li><strong>{{ groupe.responsable.username }}</strong>&nbsp;(Responsable du groupe)</li>{% endif %}
+	    					<li><a href="{{ path('groupe.admin.participant.add', {'groupe': groupe.id}) }}">Ajouter un utilisateur dans ce groupe</a> ( places disponibles : {{ groupe.classeOpen - groupe.participants|length}})</li>
 	    				</ul>
 	    				<table class="table">
 	    					<thead>

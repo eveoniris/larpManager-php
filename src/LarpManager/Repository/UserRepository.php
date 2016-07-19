@@ -110,18 +110,30 @@ class UserRepository extends EntityRepository
 	 * @param unknown $limit
 	 * @param unknown $offset
 	 */
-	public function findList(array $criteria = array(), array $order = array(), $limit, $offset)
+	public function findList($type, $value, array $order = array(), $limit, $offset)
 	{
 		$qb = $this->getEntityManager()->createQueryBuilder();
 	
 		$qb->select('u');
 		$qb->from('LarpManager\Entities\User','u');
-	
-		foreach ( $criteria as $critere )
+		$qb->join('u.etatCivil','ec');
+		
+		if ( $type && $value)
 		{
-			$qb->andWhere($critere);
+			switch ($type){
+				case 'username':			
+					$qb->andWhere('u.username LIKE :value');
+					break;
+				case 'nom':
+					$qb->andWhere('ec.nom LIKE :value');
+					break;
+				case 'email':
+					$qb->andWhere('u.email LIKE :value');
+					break;
+			}
+			$qb->setParameter('value', '%'.$value.'%');
 		}
-	
+			
 		$qb->setFirstResult($offset);
 		$qb->setMaxResults($limit);
 		$qb->orderBy('u.'.$order['by'], $order['dir']);

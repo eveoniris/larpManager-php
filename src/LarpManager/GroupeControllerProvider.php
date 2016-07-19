@@ -237,6 +237,16 @@ class GroupeControllerProvider implements ControllerProviderInterface
 		 */
 		$controllers->match('/admin/{groupe}/participant/{participant}/remove','LarpManager\Controllers\GroupeController::adminParticipantRemoveAction')
 			->bind("groupe.admin.participant.remove")
+			->convert('groupe', 'converter.groupe:convert')
+			->method('GET|POST')
+			->before($mustBeScenariste);
+			
+		/**
+		 * Retirer un participant du groupe
+		 */
+		$controllers->match('/admin/{groupe}/participant/add','LarpManager\Controllers\GroupeController::adminParticipantAddAction')
+			->bind("groupe.admin.participant.add")
+			->convert('groupe', 'converter.groupe:convert')
 			->method('GET|POST')
 			->before($mustBeScenariste);
 			

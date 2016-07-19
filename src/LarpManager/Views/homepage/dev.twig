@@ -1,0 +1,59 @@
+{% extends "layout.twig" %}
+
+{% block title %}Accueil{% endblock title %}
+
+{% block content %}
+
+<div class="well">
+	<h5 class="header">Larpmanager - page d'information sur le projet</h5>
+	<ul>
+		<li><i class="fa fa-github" aria-hidden="true"></i>&nbsp;<a href="https://github.com/eveoniris/larpManager-php">Explorer le dépôt de code</a></li> 
+		<li><a href="{{ path('dev.metrics') }}">Statistiques du projet</a></li>
+	</ul>
+	<h6>Technologies utilisées</h6>
+	<ul>
+		<li>Framework
+			<ul>
+			<li><a href="http://silex.sensiolabs.org/">Silex 1.3</a></li>
+			</ul>
+		</li>
+		<li>Template
+			<ul>
+				<li><a href="http://twig.sensiolabs.org/">Twig 1.18</a></li>
+				<li><a href="https://github.com/nicl/Silex-Markdown">Markdown 1.1.0</a></li>
+				<li><a href="http://getbootstrap.com/">Bootstrap</a></li>
+				<li><a href="https://bootswatch.com/cyborg/">cyborg bootstrap</a></li>
+				<li><i class="fa fa-fort-awesome" aria-hidden="true"></i>&nbsp;<a href="http://fontawesome.io/">Font awesome</a></li>
+			</ul>
+		</li>
+		<li>ORM & DBAL
+			<ul>
+			<li><a href="http://www.doctrine-project.org/projects/orm.html">Doctrine ORM 2.5</a></li>
+			<li><a href="http://www.doctrine-project.org/projects/dbal.html">Doctrine DBAL 2.5</a></li>
+			</ul>
+		</li>
+		<li>Autre
+			<ul>
+				<li><a href="http://www.fpdf.org/">fpdf</a></li>
+				<li><a href="http://www.strangeplanet.fr/work/RandomColor.php/">RandomColor php</a></li>
+				<li><a href="https://jquery.com/">JQuery</a></li>
+				<li><a href="https://github.com/davidmerfield/randomColor">RandomColor js</a></li>
+				<li><a href="https://necolas.github.io/normalize.css/">Normalize</a></li>
+				<li><a href="http://momentjs.com/">Moment.js</a></li>
+				<li><a href="https://www.tinymce.com/">TinyMCE</a></li>
+				<li><a href="http://leafletjs.com/">leaflet</a></li>
+			</ul>
+		</li>
+		<li>Outils
+			<ul>
+				<li><a href="https://www.mysql.fr/products/workbench/">Mysql Workbench</a></li>
+				<li><a href="https://github.com/mysql-workbench-schema-exporter/mysql-workbench-schema-exporter">Mysql Workbench schema exporter</a></li>
+				<li><a href="https://eclipse.org/">Eclipse</a></li>
+				<li><a href="http://www.phpmetrics.org/">PHP metrics</a></li>
+			</ul>
+		
+	</ul>
+</div>
+
+
+{% endblock content %}
