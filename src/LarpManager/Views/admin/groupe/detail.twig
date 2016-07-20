@@ -92,7 +92,11 @@
     						<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
 	    					Attention, ce groupe n'a pas de scénariste.
     					{% else %}
-    						{{ groupe.scenariste.username }}
+    						{{ groupe.scenariste.username }} {{ groupe.scenariste.email }}
+    						{% if groupe.scenariste.etatCivil %}
+    							(&nbsp;{{ groupe.scenariste.etatCivil.nom }} {{ groupe.scenariste.etatCivil.prenom }}&nbsp;)
+    						{% endif %}
+    							
     					{% endif %}
     				</p>
     				<p class="list-group-item-text">

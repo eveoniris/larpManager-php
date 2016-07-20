@@ -860,6 +860,13 @@ class GroupeController
 			
 			$groupe->addParticipant($participant);
 			$participant->setGroupe($groupe);
+			// le personnage du joueur doit aussi changer de groupe
+			if ( $participant->getPersonnage())
+			{
+				$personnage = $participant->getPersonnage();
+				$personnage->setGroupe($groupe);
+				$app['orm.em']->persist($personnage);
+			}
 			$app['orm.em']->persist($groupe);
 			$app['orm.em']->persist($participant);
 			$app['orm.em']->flush();
