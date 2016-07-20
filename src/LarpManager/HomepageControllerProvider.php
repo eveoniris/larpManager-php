@@ -154,6 +154,16 @@ class HomepageControllerProvider implements ControllerProviderInterface
 		$controllers->match('/legal','LarpManager\Controllers\HomepageController::legalAction')
 					->method('GET')
 					->bind('legal');
+					
+		/** Page de présentation du dev de larpManager */
+		$controllers->match('/dev','LarpManager\Controllers\HomepageController::devAction')
+					->method('GET')
+					->bind('dev');
+					
+		/** Page de présentation du dev de larpManager */
+		$controllers->match('/dev/metrics','LarpManager\Controllers\HomepageController::metricsAction')
+					->method('GET')
+					->bind('dev.metrics');
 		
 		return $controllers;
 	}

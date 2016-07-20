@@ -29,7 +29,8 @@ class UserFindForm extends AbstractType
 				->add('type','choice', array(
 					'required' => true,
 					'choices' => array(
-						'username' => 'Nom',
+						'nom' => 'Nom',
+						'username' => 'Pseudo',
 						'email' => 'Email',
 					),
 					'label' => 'Type',

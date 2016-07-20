@@ -80,6 +80,13 @@
 				} %}
 				
 			{% include "link.twig" with {
+				'title' : "Background",
+				'link' :  path('background.joueur'),
+				'color' : "bg-success",
+				'icon': 'fa-book' 
+				} %}
+				
+			{% include "link.twig" with {
 				'title' : "Discuter",
 				'link' :  path('discuter'),
 				'color' : "bg-primary",
@@ -106,9 +113,18 @@
 				'color' : "bg-success",
 				'icon': 'fa-globe' 
 				} %}	
-		</div>
+		</div>	
 		
-		
+		{% if app.user.personnages|length != 0 %}
+			{% if app.user.personnage.personnageBackgrounds|length > 0 %}
+					<h5 class="header">Background de votre personnage</h5>
+					{% for background in app.user.personnage.personnageBackgrounds %}
+						{% if background.visibility == 'OWNER' %}
+							{{ background.text|markdown }}
+						{% endif %}
+					{% endfor %}
+			{% endif %}
+		{% endif %}
 		
 		{# affichage de l'annonce la plus récente et du lien vers les archives des annonces #}
 		{% for annonce in annonces %}

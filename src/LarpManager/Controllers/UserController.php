@@ -646,6 +646,8 @@ class UserController
 		$page = (int)($request->get('page') ?: 1);
 		$offset = ($page - 1) * $limit;
 		$criteria = array();
+		$type= null;
+		$value = null;
 
 		$form = $app['form.factory']->createBuilder(new UserFindForm())
 			->add('find','submit', array('label' => 'Rechercher'))
@@ -658,19 +660,12 @@ class UserController
 			$data = $form->getData();
 			$type = $data['type'];
 			$value = $data['value'];
-			switch ($type){
-				case 'username':
-					$criteria[] = "u.username LIKE '%$value%'";
-					break;
-				case 'email':
-					$criteria[] = "u.email LIKE '%$value%'";
-					break;
-			}
 		}
 		
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\User');
 		$users = $repo->findList(
-						$criteria,
+						$type,
+						$value,
 						array( 'by' =>  $order_by, 'dir' => $order_dir),
 						$limit,
 						$offset);

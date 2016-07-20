@@ -59,6 +59,12 @@ class PersonnageController
 		));
 	}
 	
+	/**
+	 * Modifie le matériel lié à un personnage
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
 	public function adminMaterielAction(Request $request, Application $app)
 	{
 		$personnage = $request->get('personnage');
@@ -123,9 +129,16 @@ class PersonnageController
 			if ( $participant->getPersonnage() )
 			{
 				$oldPersonnage = $participant->getPersonnage();
-				$oldPersonnage->setParticipantNull();	
+				$oldPersonnage->setParticipantNull();
+				$oldPersonnage->setGroupeNull();
 			}
 			
+			// le personnage doit rejoindre le groupe de l'utilisateur
+			if ( $participant->getGroupe())
+			{
+				$personnage->setGroupe($participant->getGroupe());
+			}
+				
 			$participant->setPersonnage($personnage);
 			$personnage->setParticipant($participant);
 						

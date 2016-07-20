@@ -24,19 +24,33 @@ class BackgroundControllerProvider implements ControllerProviderInterface
 	{
 		$controllers = $app['controllers_factory'];
 		
+		$mustBeScenariste = function(Request $request) use ($app) {
+			if (!$app['security.authorization_checker']->isGranted('ROLE_SCENARISTE')) {
+				throw new AccessDeniedException();
+			}
+		};
+		
+		$mustBeUser = function(Request $request) use ($app) {
+			if ( ! $app['user'] ) {
+				throw new AccessDeniedException();
+			}
+		};
+		
 		/**
 		 * Liste tous les background
 		 */
 		$controllers->match('/list','LarpManager\Controllers\BackgroundController::listAction')
 			->bind("background.list")
-			->method('GET|POST');
+			->method('GET|POST')
+			->before($mustBeScenariste);
 			
 		/**
 		 * Ajoute un background
 		 */
 		$controllers->match('/add','LarpManager\Controllers\BackgroundController::addAction')
 			->bind("background.add")
-			->method('GET|POST');
+			->method('GET|POST')
+			->before($mustBeScenariste);
 			
 		/**
 		 * Ajoute un background
@@ -44,7 +58,8 @@ class BackgroundControllerProvider implements ControllerProviderInterface
 		$controllers->match('/{background}/update','LarpManager\Controllers\BackgroundController::updateAction')
 			->bind("background.update")
 			->convert('background', 'converter.background:convert')
-			->method('GET|POST');
+			->method('GET|POST')
+			->before($mustBeScenariste);
 
 		/**
 		 * Détail d'un background
@@ -52,7 +67,16 @@ class BackgroundControllerProvider implements ControllerProviderInterface
 		$controllers->match('/{background}/detail','LarpManager\Controllers\BackgroundController::detailAction')
 			->bind("background")
 			->convert('background', 'converter.background:convert')
-			->method('GET');
+			->method('GET')
+			->before($mustBeScenariste);
+		
+		/**
+		 * Affiche les background d'un utilisateur
+		 */
+		$controllers->match('/joueur','LarpManager\Controllers\BackgroundController::joueurAction')
+			->bind("background.joueur")
+			->method('GET')
+			->before($mustBeUser);
 			
 		return $controllers;
 	}

@@ -46,6 +46,31 @@ class Groupe extends BaseGroupe
 	}
 	
 	/**
+	 * Fourni les backgrounds du groupe en fonction de la visibilitée
+	 * @param unknown $visibility
+	 */
+	public function getBacks($visibility = null)
+	{
+		$backgrounds = new ArrayCollection();
+		foreach ( $this->getBackgrounds() as $background)
+		{
+			if ( $visibility != null )
+			{
+				if ( $background->getVisibility() == $visibility )
+				{
+					$backgrounds[] = $background;
+				}
+			}
+			else
+			{
+				$backgrounds[] = $background;
+			}
+	
+		}
+		return $backgrounds;
+	}
+	
+	/**
 	 * Determine si un groupe est allié avec ce groupe
 	 * @param Groupe $groupe
 	 */

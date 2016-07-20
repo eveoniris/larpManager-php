@@ -41,14 +41,26 @@ class Personnage extends BasePersonnage
 	}
 	
 	/**
-	 * 
+	 * Retire le personnage de son groupe
+	 */
+	public function setGroupeNull()
+	{
+		$this->groupe = null;
+		
+		return $this;
+	}
+	
+	/**
+	 * Affichage
 	 */
 	public function __toString()
 	{
 		return $this->getPublicName();
 	}
 	
-	
+	/**
+	 * Détermine si du matériel est necessaire pour ce personnage
+	 */
 	public function hasMateriel()
 	{
 		if ( $this->getRenomme() > 0 ) return true;
@@ -59,6 +71,31 @@ class Personnage extends BasePersonnage
 		}		
 		return false;
 					
+	}
+	
+	/**
+	 * Fourni les backgrounds du personnage en fonction de la visibilitée
+	 * @param unknown $visibility
+	 */
+	public function getBackgrounds($visibility = null)
+	{
+		$backgrounds = new ArrayCollection();
+		foreach ( $this->getPersonnageBackgrounds() as $background)
+		{
+			if ( $visibility != null )
+			{
+				if ( $background->getVisibility() == $visibility )
+				{
+					$backgrounds[] = $background;
+				}
+			}
+			else
+			{
+				$backgrounds[] = $background;
+			}
+				
+		}
+		return $backgrounds;
 	}
 		
 	

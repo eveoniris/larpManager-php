@@ -270,7 +270,7 @@ else
 		array('^/territoire/.*$', 'ROLE_USER'),
 		array('^/religion/.*$', 'ROLE_USER'),
 		array('^/groupeSecondaireType/.*$', 'ROLE_SCENARISTE'),
-		array('^/background/.*$', 'ROLE_SCENARISTE'),
+		array('^/background/.*$', 'ROLE_USER'),
 		array('^/annonce/.*$', 'ROLE_ADMIN'),
 		array('^/droit/.*$', 'ROLE_ADMIN'),
 		array('^/api/.*$', 'ROLE_SCENARISTE'),

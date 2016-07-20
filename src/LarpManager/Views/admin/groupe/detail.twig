@@ -92,7 +92,11 @@
     						<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
 	    					Attention, ce groupe n'a pas de scénariste.
     					{% else %}
-    						{{ groupe.scenariste.username }}
+    						{{ groupe.scenariste.username }} {{ groupe.scenariste.email }}
+    						{% if groupe.scenariste.etatCivil %}
+    							(&nbsp;{{ groupe.scenariste.etatCivil.nom }} {{ groupe.scenariste.etatCivil.prenom }}&nbsp;)
+    						{% endif %}
+    							
     					{% endif %}
     				</p>
     				<p class="list-group-item-text">
@@ -105,7 +109,8 @@
 	    			<h4 class="list-group-item-heading">Membres du groupe</h4>
 	    			<p class="list-group-item-text">
 	    				<ul>
-	    				{% if groupe.responsable %}<li><strong>{{ groupe.responsable.username }}</strong>&nbsp;(Responsable du groupe)</li>{% endif %}
+	    					{% if groupe.responsable %}<li><strong>{{ groupe.responsable.username }}</strong>&nbsp;(Responsable du groupe)</li>{% endif %}
+	    					<li><a href="{{ path('groupe.admin.participant.add', {'groupe': groupe.id}) }}">Ajouter un utilisateur dans ce groupe</a> ( places disponibles : {{ groupe.classeOpen - groupe.participants|length}})</li>
 	    				</ul>
 	    				<table class="table">
 	    					<thead>

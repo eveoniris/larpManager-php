@@ -822,6 +822,67 @@ class GroupeController
 	}
 	
 	/**
+	 * Ajouter un participant dans un groupe
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function adminParticipantAddAction(Request $request, Application $app)
+	{
+		$groupe = $request->get('groupe');
+		
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Participant');
+		
+		// trouve tous les participants n'étant pas dans un groupe
+		$participants = $repo->findAllByGroupeNull();
+		
+		// creation du formulaire
+		$form = $app['form.factory']->createBuilder()
+			->add('participant', 'entity', array(
+				'label' => 'Choisissez le nouveau membre du groupe',
+				'required' => false,
+				'expanded' => true,
+				'multiple' => false,
+				'property' => 'userIdentity',
+				'class' => 'LarpManager\Entities\Participant',
+				'choices' => $participants,
+				
+			))
+			->add('submit','submit', array('label' => 'Ajouter'))
+			->getForm();
+		
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
+		{
+			$data = $form->getData();
+			$participant = $data['participant'];
+			
+			$groupe->addParticipant($participant);
+			$participant->setGroupe($groupe);
+			// le personnage du joueur doit aussi changer de groupe
+			if ( $participant->getPersonnage())
+			{
+				$personnage = $participant->getPersonnage();
+				$personnage->setGroupe($groupe);
+				$app['orm.em']->persist($personnage);
+			}
+			$app['orm.em']->persist($groupe);
+			$app['orm.em']->persist($participant);
+			$app['orm.em']->flush();
+			
+			$app['session']->getFlashBag()->add('success', 'Le participant a été ajouté au groupe.');
+			return $app->redirect($app['url_generator']->generate('groupe.detail', array('index'=> $groupe->getId())));			
+		}
+		
+		return $app['twig']->render('admin/groupe/addParticipant.twig', array(
+				'groupe' => $groupe,
+				'participants' => $participants,
+				'form' => $form->createView(),
+		));
+	}
+	
+	/**
 	 * Retirer un participant du groupe
 	 * 
 	 * @param Request $request
@@ -830,9 +891,8 @@ class GroupeController
 	public function adminParticipantRemoveAction(Request $request, Application $app)
 	{
 		$participantId = $request->get('participant');
-		$groupeId = $request->get('groupe');
+		$groupe = $request->get('groupe');
 		
-		$groupe = $app['orm.em']->find('\LarpManager\Entities\Groupe',$groupeId);
 		$participant = $app['orm.em']->find('\LarpManager\Entities\Participant',$participantId);
 
 		
