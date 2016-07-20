@@ -88,7 +88,6 @@ class PersonnageManager
 			+ $personnage->getCompetenceNiveau('Armes à 2 mains')
 			+ $personnage->getCompetenceNiveau('Armes d\'hast')
 			+ $personnage->getCompetenceNiveau('Armure')
-			+ $personnage->getCompetenceNiveau('Armurerie')
 			+ $personnage->getCompetenceNiveau('Attaque sournoise')
 			+ $personnage->getCompetenceNiveau('Protection')
 			+ $personnage->getCompetenceNiveau('Résistance')
@@ -97,7 +96,7 @@ class PersonnageManager
 			+ $personnage->getCompetenceNiveau('Survie');
 		
 		// armurerie au niveau initié double le score de pugilat
-		if ( $personnage->getCompetenceNiveau('Armurerie') == 2 )
+		if ( $personnage->getCompetenceNiveau('Armurerie') >= 2 )
 		{
 			$pugilat = $pugilat * 2;			
 		}

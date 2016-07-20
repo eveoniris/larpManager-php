@@ -64,6 +64,22 @@ class TerritoireControllerProvider implements ControllerProviderInterface
 			->convert('territoire', 'converter.territoire:convert')
 			->before($mustBeScenariste);
 		
+		$controllers->match('/{territoire}/construction/add','LarpManager\Controllers\TerritoireController::constructionAddAction')
+			->assert('territoire', '\d+')
+			->bind("territoire.construction.add")
+			->method('GET|POST')
+			->convert('territoire', 'converter.territoire:convert')
+			->before($mustBeScenariste);
+		
+		$controllers->match('/{territoire}/construction/{construction}/remove','LarpManager\Controllers\TerritoireController::constructionRemoveAction')
+			->assert('territoire', '\d+')
+			->assert('construction', '\d+')
+			->bind("territoire.construction.remove")
+			->method('GET|POST')
+			->convert('territoire', 'converter.territoire:convert')
+			->convert('construction', 'converter.construction:convert')
+			->before($mustBeScenariste);
+		
 		$controllers->match('/{territoire}/ingredients/update','LarpManager\Controllers\TerritoireController::updateIngredientsAction')
 			->assert('territoire', '\d+')
 			->bind("territoire.ingredients.update")

@@ -36,6 +36,17 @@
 	    			</ul>
 	    			<a href="{{ path('territoire.admin.updateStrategie', {'territoire': territoire.id}) }}">Modifier</a>
 	    		</div>
+	    		
+	    		<div class="list-group-item">
+			    	<h4 class="list-group-item-heading">Constructions</h4>
+			    	<ul>
+			    		{% for construction in territoire.constructions %}
+			    			<li>{{ construction.fullLabel }} / <a href="{{ path('territoire.construction.remove', {'territoire': territoire.id, 'construction': construction.id}) }}">Retirer</a></li>
+			    		{% endfor %}
+			    		<li>Defense du territoire : {{ territoire.defense }}</li>
+			    	</ul>
+			    	<a href="{{ path('territoire.construction.add', {'territoire': territoire.id}) }}">Ajouter une construction</a>
+			    </div>
 		    		
 		    	<div class="list-group-item">
 			    	<h4 class="list-group-item-heading">Description</h4>

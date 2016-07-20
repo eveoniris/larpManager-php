@@ -317,8 +317,18 @@ class GroupeControllerProvider implements ControllerProviderInterface
 		 * Impression des fiches de perso
 		 */
 		$controllers->match('/{groupe}/print/perso','LarpManager\Controllers\GroupeController::printPersoAction')
-			->assert('index', '\d+')
+			->assert('groupe', '\d+')
 			->bind("groupe.print.perso")
+			->convert('groupe', 'converter.groupe:convert')
+			->method('GET')
+			->before($mustBeScenariste);
+			
+		/**
+		 * Impression du background
+		 */
+		$controllers->match('/{groupe}/print/background','LarpManager\Controllers\GroupeController::printBackgroundAction')
+			->assert('groupe', '\d+')
+			->bind("groupe.print.background")
 			->convert('groupe', 'converter.groupe:convert')
 			->method('GET')
 			->before($mustBeScenariste);

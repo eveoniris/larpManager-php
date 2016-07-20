@@ -224,6 +224,21 @@ class GroupeController
 	}
 	
 	/**
+	 * Impression background pour les personnages du groupe
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function printBackgroundAction(Request $request, Application $app)
+	{
+		$groupe = $request->get('groupe');
+	
+		return $app['twig']->render('admin/groupe/printBackground.twig', array(
+				'groupe' => $groupe
+		));
+	}
+	
+	/**
 	 * Impression matériel pour le groupe
 	 *
 	 * @param Request $request

@@ -137,6 +137,19 @@ class Territoire extends BaseTerritoire implements \JsonSerializable
 	}
 	
 	/**
+	 * Fourni la defense d'un territoire
+	 */
+	public function getDefense()
+	{
+		$defense = 0;
+		foreach ( $this->getConstructions() as $construction)
+		{
+			$defense += $construction->getDefense();
+		}
+		return $defense;
+	}
+	
+	/**
 	 * Fourni tous les ancêtres d'un territoire
 	 */
 	public function getAncestors()
