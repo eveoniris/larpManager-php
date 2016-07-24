@@ -223,6 +223,14 @@ class GroupeControllerProvider implements ControllerProviderInterface
 			->bind("groupe.diplomatie")
 			->method('GET')
 			->before($mustBeResponsable);
+			
+		/**
+		 * Surveiller la diplomatie entre groupe
+		 */
+		$controllers->match('/diplomatie/print', 'LarpManager\Controllers\GroupeController::diplomatiePrintAction')
+			->bind("groupe.diplomatie.print")
+			->method('GET')
+			->before($mustBeResponsable);
 		
 		/**
 		 * Liste des groupes
@@ -351,6 +359,16 @@ class GroupeControllerProvider implements ControllerProviderInterface
 			->bind("groupe.unlock")
 			->convert('groupe', 'converter.groupe:convert')
 			->method('GET')
+			->before($mustBeScenariste);
+			
+		/**
+		 * Génération de quêtes commerciales
+		 */
+		$controllers->match('/{groupe}/quete/','LarpManager\Controllers\GroupeController::queteAction')
+			->assert('groupe', '\d+')
+			->bind("groupe.quete")
+			->convert('groupe', 'converter.groupe:convert')
+			->method('GET|POST')
 			->before($mustBeScenariste);
 			
 		/**

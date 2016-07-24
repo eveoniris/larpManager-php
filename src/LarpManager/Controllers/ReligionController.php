@@ -19,25 +19,6 @@ use Doctrine\ORM\Query;
 class ReligionController
 {
 	/**
-	 * API: fourni la liste des religions
-	 * GET /api/religion
-	 *
-	 * @param Request $request
-	 * @param Application $app
-	 */
-	public function apiListAction(Request $request, Application $app)
-	{
-		$qb = $app['orm.em']->createQueryBuilder();
-		$qb->select('Religion')
-			->from('\LarpManager\Entities\Religion','Religion');
-
-		$query = $qb->getQuery();
-	
-		$religions = $query->getResult(Query::HYDRATE_ARRAY);
-		return new JsonResponse($religions);
-	}
-	
-	/**
 	 * Liste des perso ayant cette religion
 	 *
 	 * @param Request $request
@@ -61,7 +42,21 @@ class ReligionController
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Religion');
 		$religions = $repo->findAllOrderedByLabel();
 		
-		return $app['twig']->render('religion/index.twig', array('religions' => $religions));
+		return $app['twig']->render('admin/religion/index.twig', array('religions' => $religions));
+	}
+	
+	/**
+	 * affiche la liste des religions
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function mailAction(Request $request, Application $app)
+	{
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Religion');
+		$religions = $repo->findAllOrderedByLabel();
+	
+		return $app['twig']->render('admin/religion/mail.twig', array('religions' => $religions));
 	}
 	
 	

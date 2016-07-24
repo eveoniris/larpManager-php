@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    	<meta charset="utf-8">
+    	<title>LarpManager - Impression des fiches de personnage</title>
+    	<style>
+    		body
+    		{
+    			font-size: 12px;
+    		}
+			hr { 
+			  border-top: 1px dashed #8c8b8b;
+			  border-left-width: 0px;
+			  border-right-width: 0px;
+			  border-bottom-width: 0px; 
+			} 
+			hr:after { 
+			  display: inline-block; 
+			  position: relative; 
+			  top: -12px; 
+			  left: 0px; 
+			  padding: 0 3px; 
+			  background: #fff; 
+			  color: #8c8b8b; 
+			  font-size: 18px; 
+			}
+			h4 {
+				margin-top : 0px;
+				margin-bottom : 0px;
+			}
+			ul {
+				padding : 0px;
+				list-style-type: none;
+				margin-top: 0px;
+				margin-bottom : 0px;
+			}
+			ul li {
+				margin : 0px;
+				paffing : 0px;
+			}
+			fieldset {
+				padding : 0px;
+				border: 1px dashed #8c8b8b;
+				margin-bottom : 10px;
+				padding : 5px;
+			}
+			fieldset legend {
+				font-weight: bold;
+				font-size : 1.2em;
+			}
+    	</style>
+    </head>
+    <body>    	
+    	
+{% for personnage in groupe.personnages %}
+		<div style="page-break-after:always;">
+			<table style="width: 100%;">
+				<tr>
+				<td>
+					<fieldset>
+					<ul>
+				    	<li><h4>Groupe {{groupe.numero }} - {{ groupe.nom }}</h4></li>
+				    	<li><strong>#{{ personnage.id }} {{ personnage.nom }} {{ personnage.surnom }}</strong>
+				    	<small>(&nbsp;
+							{% if personnage.participant %} 
+								{{ personnage.participant.user.etatCivil.nom }} {{ personnage.participant.user.etatCivil.prenom }}</a>
+							{% else %}
+								Ce personnage n'est pas lié à un joueur
+							{% endif %}
+						&nbsp;)</small>
+						</li>
+						<li><strong>Classe  : </strong>{{ personnage.classeName }}</li>
+						<li><strong>Restauration : </strong>
+						{% if personnage.participant.getTavernId %}
+							{{ app['larp.manager'].getTavern(personnage.participant) }}
+						{% else %}
+							Rien
+						{% endif %}
+						</li>
+					</ul>
+					</fieldset>
+				</td>
+				<td>
+				<fieldset>
+					<legend>Sécurité</legend>
+					{% if personnage.user.etatCivil %}
+					<ul>
+						<li><strong>Problèmes médicaux :</strong> {{ personnage.user.etatCivil.problemeMedicaux }}</li>
+						<li><strong>Personne à prévenir :</strong> {{ personnage.user.etatCivil.personneAPrevenir }}</li>
+						<li><strong>Numéro de téléphone :</strong> {{ personnage.user.etatCivil.telPap }}</li>
+					</ul>
+					{% else %}
+						<strong>Aucune information</strong>
+					{% endif %}
+				</fieldset>
+				</td>
+	    		<td>
+		    	<fieldset>
+		    		<legend></legend>
+		    		<ul>			
+						<li><strong>Renommée : </strong> {{ personnage.renomme|default(0) }}</li>
+						<li><strong>Pugilat : </strong> {{ app['personnage.manager'].pugilat(personnage)|default(0) }}</li>
+						<li><strong>Expérience : </strong> {{ personnage.xp|default(0) }} / {{ personnage.xpTotal }} xp</li>
+						<li><strong>Perso secondaire : </strong>
+						{% if personnage.user.personnageSecondaire %}
+							{{ personnage.user.personnageSecondaire.classe.label }}</strong>
+						{% else %}
+							Guerrier
+						{% endif %}
+						</li>
+					</ul>
+				</fieldset>
+				</td>
+			</tr>
+			</table>
+			
+	    	<fieldset>
+	    		<legend>Compétences</legend>
+		    	<ul>	
+		    	{% for competence in personnage.competences %}
+					<li><strong>{{ competence.competenceFamily.label }}&nbsp({{ competence.level.label }})</strong> : {{ competence.descriptionRaw }}</li>
+				{% endfor %}
+				</ul>
+			</fieldset>
+			
+			<table style="width: 100%;">
+				<tr>
+						<td style="width: 50%">
+							<fieldset>
+								<legend>Religion</legend>
+									<strong>Liste des religions</strong> :
+									
+									{% for personnageReligion in personnage.personnagesReligions %}
+										{{ personnageReligion.religion.label }} - {{ personnageReligion.religionLevel.label }},&nbsp;
+									{% else %}
+										Aucune
+									{% endfor %}
+																	
+								{% if personnage.prieres|length > 0 %}
+									<strong>Liste des prières</strong>
+									<ul>
+									{% for priere in personnage.prieres %}
+										<li>{{ priere.sphere.label }} - Niveau {{ priere.niveau }} : {{ priere.label }}</li>
+									{% endfor %}
+									</ul>
+								{% endif %}
+								
+							</fieldset>
+						</td>
+					{% if personnage.domaines|length > 0 or  personnage.sorts|length > 0 or personnage.potions|length > 0 %}
+					<td style="width: 50%">
+					
+						<fieldset>
+							<legend>Magie</legend>
+							<table style="width:100%;">
+								<tr>
+								<td>
+									<strong>Domaine de magie</strong>
+									<ul>
+									{% for domaine in personnage.domaines %}
+										<li>{{ domaine.label }}</li>
+									{% endfor %}
+									</ul>
+								</td>
+								<td>
+									<strong>Sorts</strong>
+									<ul>
+									{% for sort in personnage.sorts %}
+										<li>
+											{{ sort.label }} - {{ sort.domaine.label }} Niveau {{ sort.niveau }}
+										</li>
+									{% endfor %}
+									</ul>
+								</td>
+								<td>
+									<strong>Potions</strong>
+									<ul>
+									{% for potion in personnage.potions %}
+										<li>
+											{{ potion.label }} - Niveau {{ potion.niveau }}
+										</li>
+									{% endfor %}
+									</ul>
+								</td>
+							</tr>
+							</table>
+						</fieldset>
+					</td>
+					{% endif %}
+				</tr>
+			</table>
+			<fieldset>
+				<legend>Langage</legend>
+				<ul>
+				<li><strong>Origine :</strong> {{ personnage.territoire|default("non définie") }}</li>
+				<li><strong>Liste des langues connues :</strong>
+					{% for personnageLangue in personnage.personnageLangues %}
+						{{ personnageLangue.langue}},&nbsp;
+					{% endfor %}
+				</li>
+				</ul>
+			</fieldset>
+			<hr />
+			<table>
+				<tr>
+				<td>
+					<h4>Numéro de personnage à montrer à votre meurtrier :&nbsp;<strong style="font-size: 1.6em;">{{ personnage.id }}</strong></h4>
+				</td>
+				<td>
+					<img style="float: right;" height="50" src="/img/logo_eve.png" align="right">
+				</td>
+			</tr>
+			</table>
+							
+	    </div>
+{% endfor %}
+ 
+</body>
+</html>

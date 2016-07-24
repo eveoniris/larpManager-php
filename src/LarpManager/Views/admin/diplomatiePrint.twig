@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    	<meta charset="utf-8">
+    	<title>LarpManager - Impression diplomatie</title>
+    </head>
+    <body>
+
+<p>
+<strong>Alliances</strong><br />
+{% for alliance in alliances %}
+	#{{alliance.groupe.numero }} {{ alliance.groupe }} est allié à #{{alliance.requestedGroupe.numero}} {{ alliance.requestedGroupe }} //&nbsp;
+{% endfor %}
+</p>
+
+<p>
+<strong>Demande d'alliances</strong><br />
+{% for demande in demandeAlliances %}
+	#{{demande.groupe.numero}} {{ demande.groupe }} demande une alliance à #{{ demande.requestedGroupe.numero}}  {{ demande.requestedGroupe }} //&nbsp;
+{% endfor %}
+</p>
+
+<p>
+<strong>Guerres</strong><br />
+{% for guerre in guerres %}
+	#{{guerre.groupe.numero}} {{ guerre.groupe }} est en guerre contre #{{ guerre.requestedGroupe.numero }} {{ guerre.requestedGroupe }} //&nbsp;
+{% endfor %}
+</p>
+
+<p>
+<strong>Demande de paix</strong><br />
+{% for demande in demandePaix %}
+	#{{demande.groupe.numero}} {{ demande.groupe }} demande la paix à #{{ demande.requestedGroupe.numero }} {{ demande.requestedGroupe }} //&nbsp;
+{% endfor %}
+</p>
+
+</body>
+</html>

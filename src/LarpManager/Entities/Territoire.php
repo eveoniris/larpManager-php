@@ -311,8 +311,20 @@ class Territoire extends BaseTerritoire implements \JsonSerializable
 	 *
 	 * @return \Doctrine\Common\Collections\Collection
 	 */
-	public function getImportations()
+	public function getImportations($rarete = null)
 	{
+		if ( $rarete )
+		{
+			$importations = new ArrayCollection();
+			foreach ( $this->importations as $ressource )
+			{
+				if ( $ressource->getRarete()->getLabel() == $rarete )
+				{
+					$importations[] = $ressource;
+				}
+			}	
+			return $importations;
+		}
 		return $this->importations;
 	}
 	

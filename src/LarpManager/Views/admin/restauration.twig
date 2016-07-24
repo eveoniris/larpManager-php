@@ -21,7 +21,12 @@
 	
 			<ul class="list-group">
 			{% for joueur in tavern.joueurs %}
-				<li class="list-group-item">{{ joueur.user.username }} {{ joueur.user.email }}</li>
+				<li class="list-group-item">{{ joueur.user.username }} {{ joueur.user.email }} : 
+				{% if joueur.user.etatCivil %}
+					{{ joueur.user.etatCivil.problemeMedicaux }}
+				{% endif %}
+				
+				</li>
 			{% endfor %}
 			</ul>
 		</div>

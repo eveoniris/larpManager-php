@@ -1,0 +1,15 @@
+{% extends "layout.twig" %}
+
+{% block title %}Quetes commerciales{% endblock %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path("groupe.admin.list") }}">Liste des groupes</a></li>
+		<li class="active">Générateur de quête commerciale</li>
+	</ol>
+	
+	{{ groupe.ressourcesNeeded|join(',') }}
+	
+{% endblock content %}
