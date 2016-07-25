@@ -30,13 +30,13 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 	public function connect(Application $app)
 	{
 		$controllers = $app['controllers_factory'];
-
+		
 		/**
 		 * Liste des joueurs
 		 * Accessible uniquement aux admin
 		 */
-		$controllers->match('/admin','LarpManager\Controllers\ParticipantController::indexAction')
-			->bind("admin.joueur")
+		$controllers->match('/admin','LarpManager\Controllers\ParticipantController::listAction')
+			->bind("participant")
 			->method('GET')
 			->before(function(Request $request) use ($app) {
 				if (!$app['security.authorization_checker']->isGranted('ROLE_ADMIN')) {
@@ -44,6 +44,45 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 				}
 			});
 			
+
+		/**
+		 * Liste des joueurs
+		 * Accessible uniquement aux admin
+		 */
+		$controllers->match('/admin/non','LarpManager\Controllers\ParticipantController::listNonAction')
+			->bind("participant.non")
+			->method('GET')
+			->before(function(Request $request) use ($app) {
+				if (!$app['security.authorization_checker']->isGranted('ROLE_ADMIN')) {
+					throw new AccessDeniedException();
+				}
+		});
+			
+		/**
+		 * Liste des joueurs
+		 * Accessible uniquement aux admin
+		 */
+		$controllers->match('/admin/fedegn','LarpManager\Controllers\ParticipantController::listFedegnAction')
+			->bind("participant.fedegn")
+			->method('GET')
+			->before(function(Request $request) use ($app) {
+				if (!$app['security.authorization_checker']->isGranted('ROLE_ADMIN')) {
+					throw new AccessDeniedException();
+				}
+			});
+			
+		/**
+		 * Liste des joueurs
+		 * Accessible uniquement aux admin
+		 */
+		$controllers->match('/admin/fedegn/non','LarpManager\Controllers\ParticipantController::listFedegnNonAction')
+			->bind("participant.non.fedegn")
+			->method('GET')
+			->before(function(Request $request) use ($app) {
+				if (!$app['security.authorization_checker']->isGranted('ROLE_ADMIN')) {
+					throw new AccessDeniedException();
+				}
+			});
 
 		/**
 		 * Détail des informations joueurs (pour les orgas)

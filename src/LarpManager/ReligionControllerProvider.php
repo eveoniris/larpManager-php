@@ -49,6 +49,11 @@ class ReligionControllerProvider implements ControllerProviderInterface
 			->method('GET')
 			->before($mustBeOrga);
 		
+		$controllers->match('/mail','LarpManager\Controllers\ReligionController::mailAction')
+			->bind("religion.mail")
+			->method('GET')
+			->before($mustBeOrga);
+		
 		$controllers->match('/list','LarpManager\Controllers\ReligionController::listAction')
 			->bind("religion.list")
 			->method('GET');

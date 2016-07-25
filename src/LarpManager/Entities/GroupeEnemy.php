@@ -14,7 +14,7 @@ use LarpManager\Entities\BaseGroupeEnemy;
 /**
  * LarpManager\Entities\GroupeEnemy
  *
- * @Entity()
+ * @Entity(repositoryClass="LarpManager\Repository\GroupeEnemyRepository")
  */
 class GroupeEnemy extends BaseGroupeEnemy
 {

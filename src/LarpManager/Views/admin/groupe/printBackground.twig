@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    	<meta charset="utf-8">
+    	<title>LarpManager - Impression des fiches de personnage</title>
+    </head>
+    <body>
+<h2>{{ groupe.nom }}</h2>
+
+<h3>Background du chef de groupe</h3>
+{% for background in groupe.backs('GROUPE_OWNER') %}
+	<div style="page-break-after: always;">
+		{{ background.text|markdown }}
+	</div>
+{% endfor %}
+
+<h3>Background du groupe</h3>
+{% for background in groupe.backs('GROUPE_MEMBER') %}
+	<div style="page-break-after: always;">
+		{{ background.text|markdown }}
+	</div>
+{% endfor %}
+
+<div style="page-break-after: always;">
+
+<h3>Background des personnages</h3>
+{% for personnage in groupe.personnages %}
+	<h4>{{ personnage.nom }} {{ personnage.surnom }}</h4>
+	{% for background in personnage.backgrounds('OWNER') %}
+		{{ background.text|markdown }}
+	{% endfor %}
+	<hr />
+{% endfor %}
+</div>

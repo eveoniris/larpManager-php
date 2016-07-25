@@ -21,6 +21,7 @@ use Nicl\Silex\MarkdownServiceProvider;
 use LarpManager\User\UserServiceProvider;
 use LarpManager\Personnage\PersonnageServiceProvider;
 use LarpManager\Services\LarpManagerServiceProvider;
+use LarpManager\Services\Regexp;
 
 $loader = require_once __DIR__.'/../vendor/autoload.php';
 
@@ -126,6 +127,9 @@ $app->register(new DoctrineOrmServiceProvider(), array(
                 "path" => __DIR__."/../src/LarpManager/Entities",
             ),
         ),
+    ),
+    "orm.custom.functions.string" => array(
+    	"regexp" => "LarpManager\Services\Regexp",
     ),
 ));
 

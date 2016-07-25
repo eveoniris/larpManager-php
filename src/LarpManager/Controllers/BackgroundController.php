@@ -41,21 +41,21 @@ class BackgroundController
 		
 		// recherche les backgrounds liés au groupe (visibilité == PUBLIC)
 		$backsGroupe = new ArrayCollection(array_merge(
-			$personnage->getGroupe()->getBackgrounds('PUBLIC')->toArray(),
+			$personnage->getGroupe()->getBacks('PUBLIC')->toArray(),
 			$backsGroupe->toArray()
 		));
 		
 		// recherche les backgrounds liés au groupe (visibilité == GROUP_MEMBER)
 		$backsGroupe = new ArrayCollection(array_merge(
-			$personnage->getGroupe()->getBackgrounds('GROUP_MEMBER')->toArray(),
+			$personnage->getGroupe()->getBacks('GROUPE_MEMBER')->toArray(),
 			$backsGroupe->toArray()
 		));
 		
 		// recherche les backgrounds liés au groupe (visibilité == GROUP_OWNER)
 		if ( $app['user'] == $personnage->getGroupe()->getUserRelatedByResponsableId() )
 		{
-			$backgrounds = new ArrayCollection(array_merge(
-				$personnage->getGroupe()->getBacks('GROUP_OWNER')->toArray(),
+			$backsGroupe = new ArrayCollection(array_merge(
+				$personnage->getGroupe()->getBacks('GROUPE_OWNER')->toArray(),
 				$backsGroupe->toArray()
 			));
 		}
@@ -63,6 +63,7 @@ class BackgroundController
 		return $app['twig']->render('public/background.twig', array(
 				'backsJoueur' => $backsJoueur,
 				'backsGroupe' => $backsGroupe,
+				'personnage' => $personnage,
 		));	
 	}
 	

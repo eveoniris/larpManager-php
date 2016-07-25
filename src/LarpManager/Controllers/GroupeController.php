@@ -32,6 +32,21 @@ use LarpManager\Form\GroupeInscriptionForm;
 class GroupeController
 {
 	/**
+	 * Générateur de quêtes commerciales
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function queteAction(Request $request, Application $app)
+	{
+		$groupe = $request->get('groupe');
+		
+		return $app['twig']->render('admin/groupe/quete.twig', array(
+				'groupe' => $groupe,
+			));
+	}
+	
+	/**
 	 * vérouillage d'un groupe
 	 *
 	 * @param Request $request
@@ -65,6 +80,54 @@ class GroupeController
 	
 		$app['session']->getFlashBag()->add('success', 'Le groupe est dévérouillé');
 		return $app->redirect($app['url_generator']->generate('groupe.detail', array('index' => $groupe->getId())));
+	}
+	
+	/**
+	 * Lier un pays à un groupe
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function adminPaysAction(Request $request, Application $app)
+	{
+		$groupe = $request->get('groupe');
+		
+		$form = $app['form.factory']->createBuilder()
+			->add('territoire', 'entity', array(
+					'required' => true,
+					'class' => 'LarpManager\Entities\Territoire',
+					'property' => 'nomComplet',
+					'label' => 'choisissez le territoire',
+					'expanded' => true,
+					'query_builder' => function (\LarpManager\Repository\TerritoireRepository $er) {
+						$qb = $er->createQueryBuilder('t');
+						$qb->andWhere($qb->expr()->isNull('t.territoire'));
+						$qb->orderBy('t.nom', 'ASC');
+						return $qb;
+					},
+			))
+			->add('add','submit', array('label' => 'Ajouter le territoire'))->getForm();
+			
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$data = $form->getData();
+			$territoire = $data['territoire'];
+				
+			$groupe->setTerritoire($territoire);
+		
+			$app['orm.em']->persist($groupe);
+			$app['orm.em']->flush();
+		
+			$app['session']->getFlashBag()->add('success', 'Le groupe est lié au pays');
+			return $app->redirect($app['url_generator']->generate('groupe.detail', array('index' => $groupe->getId())));
+		}
+		
+		return $app['twig']->render('admin/groupe/pays.twig', array(
+				'groupe' => $groupe,
+				'form' => $form->createView(),
+		));
 	}
 	
 	/**
@@ -224,6 +287,21 @@ class GroupeController
 	}
 	
 	/**
+	 * Impression background pour les personnages du groupe
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function printBackgroundAction(Request $request, Application $app)
+	{
+		$groupe = $request->get('groupe');
+	
+		return $app['twig']->render('admin/groupe/printBackground.twig', array(
+				'groupe' => $groupe
+		));
+	}
+	
+	/**
 	 * Impression matériel pour le groupe
 	 *
 	 * @param Request $request
@@ -286,6 +364,29 @@ class GroupeController
 	}
 	
 	/**
+	 * Impression des liens entre groupes
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function diplomatiePrintAction(Request $request, Application $app)
+	{
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\GroupeAllie');
+		$alliances = $repo->findByAlliances();
+		$demandeAlliances = $repo->findByDemandeAlliances();
+		
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\GroupeEnemy');
+		$guerres = $repo->findByWar();
+		$demandePaix = $repo->findByRequestPeace();
+		
+		return $app['twig']->render('admin/diplomatiePrint.twig', array(
+				'alliances' => $alliances,
+				'demandeAlliances' => $demandeAlliances,
+				'guerres' => $guerres,
+				'demandePaix' => $demandePaix,
+		));
+	}
+	
+	/**
 	 * Demander une nouvelle alliance
 	 * 
 	 * @param Request $request
@@ -294,6 +395,12 @@ class GroupeController
 	public function requestAllianceAction(Request $request, Application $app)
 	{
 		$groupe = $request->get('groupe');
+	
+		if ( $groupe->getLock() == true)
+		{
+			$app['session']->getFlashBag()->add('error','Les relations diplomatiques entre pays sont actuellement gelées jusqu’au GN (pour que nous puissions avoir un état de la situation). Vous pourrez les modifier en jeu désormais (voir le jeu diplomatique)');
+			return $app->redirect($app['url_generator']->generate('homepage',array('index'=>$id)),301);
+		}			
 		
 		// un groupe ne peux pas avoir plus de 3 alliances
 		if ( $groupe->getAlliances()->count() >= 3 )
@@ -381,6 +488,12 @@ class GroupeController
 		$groupe = $request->get('groupe');
 		$alliance = $request->get('alliance');
 		
+		if ( $groupe->getLock() == true)
+		{
+			$app['session']->getFlashBag()->add('error','Les relations diplomatiques entre pays sont actuellement gelées jusqu’au GN (pour que nous puissions avoir un état de la situation). Vous pourrez les modifier en jeu désormais (voir le jeu diplomatique)');
+			return $app->redirect($app['url_generator']->generate('homepage',array('index'=>$id)),301);
+		}
+		
 		$form = $app['form.factory']->createBuilder(new CancelRequestedAllianceForm(), $alliance)
 			->add('send','submit', array('label' => 'Oui, j\'annule ma demande'))
 			->getForm();
@@ -417,6 +530,12 @@ class GroupeController
 	{
 		$groupe = $request->get('groupe');
 		$alliance = $request->get('alliance');
+		
+		if ( $groupe->getLock() == true)
+		{
+			$app['session']->getFlashBag()->add('error','Les relations diplomatiques entre pays sont actuellement gelées jusqu’au GN (pour que nous puissions avoir un état de la situation). Vous pourrez les modifier en jeu désormais (voir le jeu diplomatique)');
+			return $app->redirect($app['url_generator']->generate('homepage',array('index'=>$id)),301);
+		}
 		
 		$form = $app['form.factory']->createBuilder(new AcceptAllianceForm(), $alliance)
 			->add('send','submit', array('label' => 'Envoyer'))
@@ -456,6 +575,12 @@ class GroupeController
 		$groupe = $request->get('groupe');
 		$alliance = $request->get('alliance');
 		
+		if ( $groupe->getLock() == true)
+		{
+			$app['session']->getFlashBag()->add('error','Les relations diplomatiques entre pays sont actuellement gelées jusqu’au GN (pour que nous puissions avoir un état de la situation). Vous pourrez les modifier en jeu désormais (voir le jeu diplomatique)');
+			return $app->redirect($app['url_generator']->generate('homepage',array('index'=>$id)),301);
+		}
+		
 		$form = $app['form.factory']->createBuilder(new RefuseAllianceForm(), $alliance)
 			->add('send','submit', array('label' => 'Envoyer'))
 			->getForm();
@@ -492,6 +617,12 @@ class GroupeController
 	{
 		$groupe = $request->get('groupe');
 		$alliance = $request->get('alliance');
+		
+		if ( $groupe->getLock() == true)
+		{
+			$app['session']->getFlashBag()->add('error','Les relations diplomatiques entre pays sont actuellement gelées jusqu’au GN (pour que nous puissions avoir un état de la situation). Vous pourrez les modifier en jeu désormais (voir le jeu diplomatique)');
+			return $app->redirect($app['url_generator']->generate('homepage',array('index'=>$id)),301);
+		}
 		
 		$form = $app['form.factory']->createBuilder(new BreakAllianceForm(), $alliance)
 			->add('send','submit', array('label' => 'Envoyer'))
@@ -537,6 +668,12 @@ class GroupeController
 	public function declareWarAction(Request $request, Application $app)
 	{
 		$groupe = $request->get('groupe');
+		
+		if ( $groupe->getLock() == true)
+		{
+			$app['session']->getFlashBag()->add('error','Les relations diplomatiques entre pays sont actuellement gelées jusqu’au GN (pour que nous puissions avoir un état de la situation). Vous pourrez les modifier en jeu désormais (voir le jeu diplomatique)');
+			return $app->redirect($app['url_generator']->generate('homepage',array('index'=>$id)),301);
+		}
 		
 		// un groupe ne peux pas faire de déclaration de guerre si il a 3 ou plus ennemis
 		if ( $groupe->getEnnemies()->count() >= 3 )
@@ -615,6 +752,12 @@ class GroupeController
 		$groupe = $request->get('groupe');
 		$war = $request->get('enemy');
 		
+		if ( $groupe->getLock() == true)
+		{
+			$app['session']->getFlashBag()->add('error','Les relations diplomatiques entre pays sont actuellement gelées jusqu’au GN (pour que nous puissions avoir un état de la situation). Vous pourrez les modifier en jeu désormais (voir le jeu diplomatique)');
+			return $app->redirect($app['url_generator']->generate('homepage',array('index'=>$id)),301);
+		}
+		
 		$form = $app['form.factory']->createBuilder(new RequestPeaceForm(), $war)
 			->add('send','submit', array('label' => 'Envoyer'))
 			->getForm();
@@ -661,6 +804,12 @@ class GroupeController
 		$war = $request->get('enemy');
 		
 	
+		if ( $groupe->getLock() == true)
+		{
+			$app['session']->getFlashBag()->add('error','Les relations diplomatiques entre pays sont actuellement gelées jusqu’au GN (pour que nous puissions avoir un état de la situation). Vous pourrez les modifier en jeu désormais (voir le jeu diplomatique)');
+			return $app->redirect($app['url_generator']->generate('homepage',array('index'=>$id)),301);
+		}
+		
 		$form = $app['form.factory']->createBuilder(new AcceptPeaceForm(), $war)
 			->add('send','submit', array('label' => 'Envoyer'))
 			->getForm();
@@ -706,6 +855,12 @@ class GroupeController
 		$groupe = $request->get('groupe');
 		$war = $request->get('enemy');
 		
+		if ( $groupe->getLock() == true)
+		{
+			$app['session']->getFlashBag()->add('error','Les relations diplomatiques entre pays sont actuellement gelées jusqu’au GN (pour que nous puissions avoir un état de la situation). Vous pourrez les modifier en jeu désormais (voir le jeu diplomatique)');
+			return $app->redirect($app['url_generator']->generate('homepage',array('index'=>$id)),301);
+		}
+		
 		$form = $app['form.factory']->createBuilder(new RefusePeaceForm(), $war)
 			->add('send','submit', array('label' => 'Envoyer'))
 			->getForm();
@@ -745,6 +900,12 @@ class GroupeController
 		$groupe = $request->get('groupe');
 		$war = $request->get('enemy');
 	
+		if ( $groupe->getLock() == true)
+		{
+			$app['session']->getFlashBag()->add('error','Les relations diplomatiques entre pays sont actuellement gelées jusqu’au GN (pour que nous puissions avoir un état de la situation). Vous pourrez les modifier en jeu désormais (voir le jeu diplomatique)');
+			return $app->redirect($app['url_generator']->generate('homepage',array('index'=>$id)),301);
+		}
+		
 		$form = $app['form.factory']->createBuilder(new CancelRequestedPeaceForm(), $war)
 			->add('send','submit', array('label' => 'Envoyer'))
 			->getForm();

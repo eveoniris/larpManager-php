@@ -80,6 +80,23 @@
 					Classe
 				</th>
 				<th>
+					{% if app.request.get('order_dir') == 'ASC' and app.request.get('order_by') == 'renomme' %}
+						<a href="{{ path('personnage.admin.list', {'order_by': 'renomme', 'order_dir': 'DESC'}) }}">
+					{%  else %}
+						<a href="{{ path('personnage.admin.list', {'order_by': 'renomme', 'order_dir': 'ASC'}) }}">
+					{% endif %}
+					Renomme
+					{% if app.request.get('order_by') == 'renomme'  %}
+						{% if app.request.get('order_dir') == 'ASC' %}
+							<span class="caret"></span>
+						{%else%}
+							<span class="dropup">
+ 									<span class="caret"></span>
+							</span>
+						{% endif %}
+					{% endif %}
+				</th>
+				<th>
 					Groupe
 				</th>
 				<th>
@@ -94,8 +111,9 @@
 			{% for personnage in personnages %}
 				<tr>
 					<td>{{ personnage.id }}</td>
-					<td><a href="{{ path('personnage.admin.detail', {'personnage':personnage.id}) }}">{{ personnage.publicName }}</a></td>
+					<td><a href="{{ path('personnage.admin.detail', {'personnage':personnage.id}) }}">{{ personnage.nom }} {{ personnage.surnom }}</a></td>
 					<td>{{ personnage.classe }}</td>
+					<td>{{ personnage.renomme }}</td>
 					<td>{{ personnage.groupe }}</td>
 					<td>{{ personnage.participant }}</td>
 					<td>

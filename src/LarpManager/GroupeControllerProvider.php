@@ -223,12 +223,29 @@ class GroupeControllerProvider implements ControllerProviderInterface
 			->bind("groupe.diplomatie")
 			->method('GET')
 			->before($mustBeResponsable);
+			
+		/**
+		 * Surveiller la diplomatie entre groupe
+		 */
+		$controllers->match('/diplomatie/print', 'LarpManager\Controllers\GroupeController::diplomatiePrintAction')
+			->bind("groupe.diplomatie.print")
+			->method('GET')
+			->before($mustBeResponsable);
 		
 		/**
 		 * Liste des groupes
 		 */
 		$controllers->match('/admin/list','LarpManager\Controllers\GroupeController::adminListAction')
 			->bind("groupe.admin.list")
+			->method('GET|POST')
+			->before($mustBeScenariste);
+			
+		/**
+		 * Ratacher un groupe à un pays
+		 */
+		$controllers->match('/admin/{groupe}/pays','LarpManager\Controllers\GroupeController::adminPaysAction')
+			->bind("groupe.admin.pays.update")
+			->convert('groupe', 'converter.groupe:convert')
 			->method('GET|POST')
 			->before($mustBeScenariste);
 			
@@ -317,8 +334,18 @@ class GroupeControllerProvider implements ControllerProviderInterface
 		 * Impression des fiches de perso
 		 */
 		$controllers->match('/{groupe}/print/perso','LarpManager\Controllers\GroupeController::printPersoAction')
-			->assert('index', '\d+')
+			->assert('groupe', '\d+')
 			->bind("groupe.print.perso")
+			->convert('groupe', 'converter.groupe:convert')
+			->method('GET')
+			->before($mustBeScenariste);
+			
+		/**
+		 * Impression du background
+		 */
+		$controllers->match('/{groupe}/print/background','LarpManager\Controllers\GroupeController::printBackgroundAction')
+			->assert('groupe', '\d+')
+			->bind("groupe.print.background")
 			->convert('groupe', 'converter.groupe:convert')
 			->method('GET')
 			->before($mustBeScenariste);
@@ -341,6 +368,16 @@ class GroupeControllerProvider implements ControllerProviderInterface
 			->bind("groupe.unlock")
 			->convert('groupe', 'converter.groupe:convert')
 			->method('GET')
+			->before($mustBeScenariste);
+			
+		/**
+		 * Génération de quêtes commerciales
+		 */
+		$controllers->match('/{groupe}/quete/','LarpManager\Controllers\GroupeController::queteAction')
+			->assert('groupe', '\d+')
+			->bind("groupe.quete")
+			->convert('groupe', 'converter.groupe:convert')
+			->method('GET|POST')
 			->before($mustBeScenariste);
 			
 		/**

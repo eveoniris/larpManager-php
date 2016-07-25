@@ -43,8 +43,22 @@
    	    		</div>
 						
 
+				<div class="list-group-item">
+	    			<h4 class="list-group-item-heading">Pays</h4>
+	    			<p class="list-group-item-text">
+	    				{% if groupe.territoire %}
+	    					<a href="{{ path('territoire.admin.detail', {'territoire': groupe.territoire.id}) }}">{{ groupe.territoire.nom }}</a>
+	    				{% else %}
+	    					Ce groupe n'est pas rataché à un pays.
+	    				{% endif %}
+	    			</p>
+	    			<p class="list-group-item-text">
+	    				<a href="{{ path('groupe.admin.pays.update', {'groupe': groupe.id}) }}">Modifier le pays</a>
+	    			</p>
+	    		</div>
+	    			
 	    		<div class="list-group-item">
-	    			<h4 class="list-group-item-heading">Territoire(s)</h4>
+	    			<h4 class="list-group-item-heading">Territoire(s) contrôlé(s)</h4>
 	    			
 	    			{% for territoire in groupe.territoires %}
 		    			<p class="list-group-item-text">
@@ -82,6 +96,11 @@
 		    				</p>
 		    			{% endfor %}
 	    			{% endfor %}
+	    			
+	    			<h6 class="list-group-item-heading">Quête commerciale</h6>
+	    			<p class="list-group-item-text">
+		    			<a href="{{ path('groupe.quete',{'groupe': groupe.id}) }}">Générer une quête commerciale</a>
+		    		</p>
 	    		</div>
 
 	    			
@@ -307,6 +326,7 @@
 						<a class="btn btn-primary" role="button" href="{{ path('groupe.print.materiel.groupe', {'groupe' : groupe.id}) }}">Matériel necessaire (groupe)</a>
 						<a class="btn btn-primary" role="button" href="{{ path('groupe.print.materiel', {'groupe' : groupe.id}) }}">Matériel necessaire (personnages)</a>
 						<a class="btn btn-primary" role="button" href="{{ path('groupe.print.perso', {'groupe' : groupe.id}) }}">Fiche de perso</a>
+						<a class="btn btn-primary" role="button" href="{{ path('groupe.print.background', {'groupe' : groupe.id}) }}">Background</a>
 					</div>
 				</div>
 			</div>

@@ -31,11 +31,22 @@
   				<div class="list-group-item">
 			    	<h4 class="list-group-item-heading">Jeu stratégique</h4>
 			    	<ul>
-	    			<li>Resistance {{ territoire.resistance|default("non définie") }}</li>
+	    			<li>Resistance de base : {{ territoire.resistance|default("non définie") }}</li>
+	    			<li>Defense du territoire : {{ territoire.defense }} (prend en compte les constructions)</li>
 	    			<li>Richesse {{ territoire.tresor|default("non définie") }}</li>
 	    			</ul>
 	    			<a href="{{ path('territoire.admin.updateStrategie', {'territoire': territoire.id}) }}">Modifier</a>
 	    		</div>
+	    		
+	    		<div class="list-group-item">
+			    	<h4 class="list-group-item-heading">Constructions</h4>
+			    	<ul>
+			    		{% for construction in territoire.constructions %}
+			    			<li>{{ construction.fullLabel }} / <a href="{{ path('territoire.construction.remove', {'territoire': territoire.id, 'construction': construction.id}) }}">Retirer</a></li>
+			    		{% endfor %}
+			    	</ul>
+			    	<a href="{{ path('territoire.construction.add', {'territoire': territoire.id}) }}">Ajouter une construction</a>
+			    </div>
 		    		
 		    	<div class="list-group-item">
 			    	<h4 class="list-group-item-heading">Description</h4>

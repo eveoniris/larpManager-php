@@ -30,6 +30,19 @@ class TerritoireController
 	}
 	
 	/**
+	 * Detail d'un territoire pour les joueurs
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function detailJoueurAction(Request $request, Application $app)
+	{
+		$territoire = $request->get('territoire');
+	
+		return $app['twig']->render('public/territoire/detail.twig', array('territoire' => $territoire));
+	}
+	
+	/**
 	 * Detail d'un territoire
 	 * 
 	 * @param Request $request
@@ -42,6 +55,82 @@ class TerritoireController
 		return $app['twig']->render('admin/territoire/detail.twig', array('territoire' => $territoire));
 	}
 	
+	/**
+	 * Ajoute une construction dans un territoire
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function constructionAddAction(Request $request, Application $app)
+	{
+		$territoire = $request->get('territoire');
+				
+		$form = $app['form.factory']->createBuilder()
+			->add('construction','entity', array(
+					'label' => 'Choisissez la construction',
+					'required' => true,
+					'class' => 'LarpManager\Entities\Construction',
+					'property' => 'fullLabel',
+					'expanded' => true,
+			))
+			->add('save','submit', array('label' => "Sauvegarder"))
+			->getForm();
+		
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
+		{
+			$data = $form->getData();
+			
+			$territoire->addConstruction($data['construction']);
+			$app['orm.em']->persist($territoire);
+			$app['orm.em']->flush();
+			
+			$app['session']->getFlashBag()->add('success', 'La construction a été ajoutée.');
+			return $app->redirect($app['url_generator']->generate('territoire.admin.detail',array('territoire' => $territoire->getId())),301);
+		}
+		
+		return $app['twig']->render('admin/territoire/addConstruction.twig', array(
+				'territoire' => $territoire,
+				'form' => $form->createView(),
+		));
+	}
+	
+	/**
+	 * Retire une construction d'un territoire
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function constructionRemoveAction(Request $request, Application $app)
+	{
+		$territoire = $request->get('territoire');
+		$construction = $request->get('construction');
+		
+		$form = $app['form.factory']->createBuilder()
+			->add('save','submit', array('label' => "Retirer la construction"))
+			->getForm();
+		
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$data = $form->getData();
+				
+			$territoire->removeConstruction($construction);
+			$app['orm.em']->persist($territoire);
+			$app['orm.em']->flush();
+					
+			$app['session']->getFlashBag()->add('success', 'La construction a été retiré.');
+			return $app->redirect($app['url_generator']->generate('territoire.admin.detail',array('territoire' => $territoire->getId())),301);
+		}
+			
+		return $app['twig']->render('admin/territoire/removeConstruction.twig', array(
+				'territoire' => $territoire,
+				'construction' => $construction,
+				'form' => $form->createView(),
+		));	
+	}
 	
 	/**
 	 * Ajoute un territoire

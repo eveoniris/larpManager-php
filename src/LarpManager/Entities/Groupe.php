@@ -46,6 +46,66 @@ class Groupe extends BaseGroupe
 	}
 	
 	/**
+	 * Fourni une version imprimable du matériel
+	 */
+	public function getMaterielRaw()
+	{
+		return html_entity_decode(strip_tags($this->getMateriel()));
+	}
+	
+	public function getRessourcesNeeded($rarete = null)
+	{
+		$ressources = new ArrayCollection();
+		
+		foreach ($this->getTerritoires() as $territoire )
+		{
+			$ressources = new ArrayCollection(
+					array_unique(
+							array_merge($ressources->toArray(), $territoire->getImportations($rarete)->toArray())
+					)
+			);
+		}
+		
+		return $ressources;
+	}
+	
+	/**
+	 * Vérifie si un groupe dispose de ressources
+	 */
+	public function hasRessource()
+	{
+		foreach ($this->getTerritoires() as $territoire )
+		{
+			if ( $territoire->getExportations()->count() > 0 ) return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Vérifie si un groupe dispose de richesses
+	 */
+	public function hasRichesse()
+	{
+		foreach ($this->getTerritoires() as $territoire )
+		{
+			if ( $territoire->getTresor() > 0 ) return true;
+		}
+		return false;		
+	}
+	
+	/**
+	 * Vérifie si un groupe dispose d'ingrédients
+	 */
+	public function hasIngredient()
+	{
+		foreach ($this->getTerritoires() as $territoire )
+		{
+			if ( $territoire->getIngredients()->count() > 0 ) return true;
+		}
+		return false;
+	}
+	
+	/**
 	 * Fourni les backgrounds du groupe en fonction de la visibilitée
 	 * @param unknown $visibility
 	 */

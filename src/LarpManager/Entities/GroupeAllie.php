@@ -14,7 +14,7 @@ use LarpManager\Entities\BaseGroupeAllie;
 /**
  * LarpManager\Entities\GroupeAllie
  *
- * @Entity()
+ * @Entity(repositoryClass="LarpManager\Repository\GroupeAllieRepository")
  */
 class GroupeAllie extends BaseGroupeAllie
 {

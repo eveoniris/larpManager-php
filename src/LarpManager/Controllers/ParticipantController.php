@@ -18,17 +18,57 @@ use LarpManager\Form\JoueurXpForm;
  */
 class ParticipantController
 {
+	
 	/**
-	 * Affiche la vue index.twig
-	 * 
+	 * liste des participants
+	 *
 	 * @param Request $request
 	 * @param Application $app
 	 */
-	public function indexAction(Request $request, Application $app) 
+	public function listAction(Request $request, Application $app)
 	{
-		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Joueur');
-		$joueurs = $repo->findAll();
-		return $app['twig']->render('joueur/index.twig', array('joueurs' => $joueurs));
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Participant');
+		$participants = $repo->findAllOrderedByUsernameGroupe();
+		return $app['twig']->render('admin/participant.twig', array('participants' => $participants));
+	}
+	
+	/**
+	 * liste des non participants
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function listNonAction(Request $request, Application $app)
+	{
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Participant');
+		$participants = $repo->findAllOrderedByUsernameNonGroupe();
+		return $app['twig']->render('admin/participantNon.twig', array('participants' => $participants));
+	}
+	
+	/**
+	 * liste des participants fédégn
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function listFedegnAction(Request $request, Application $app)
+	{
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Participant');
+		$participants = $repo->findAllOrderedByUsernameGroupeFedegn();
+		return $app['twig']->render('admin/participantFedegn.twig', array('participants' => $participants));
+	}
+
+	/**
+	 * liste des participants non fédégn
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function listFedegnNonAction(Request $request, Application $app)
+	{
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Participant');
+		$participants = $repo->findAllOrderedByUsernameGroupeNonFedegn();
+		return $app['twig']->render('admin/participantFedegnNon.twig', array('participants' => $participants));
 	}
 	
 	/**

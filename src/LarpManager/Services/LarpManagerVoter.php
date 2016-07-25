@@ -48,6 +48,7 @@ class LarpManagerVoter implements VoterInterface
 				'JOUEUR_OWNER',
 				'JOUEUR_NOT_REGISTERED',
 				'OWN_PERSONNAGE',
+				'TERRITOIRE_MEMBER',
 				'TOPIC_RIGHT',
 		));
 	}
@@ -298,17 +299,27 @@ class LarpManagerVoter implements VoterInterface
 	{
 		if ( $user->getGroupes() )
 		{
-			foreach ( $user->getGroupes() as $groupe )
+			foreach ( $user->getGroupes() as $groupe)
 			{
-				foreach ( $groupe->getTerritoire() as $territoire )
+				if ( $groupe->getTerritoires() )
 				{
-					if ( $territoire && $territoire->getId() == $territoireId)
+					foreach ($groupe->getTerritoires() as $territoire)
 					{
-						return true;
-					}
-					else if ( $territoire->getTerritoire() )
-					{
-						return $this->userTerritoireRight($territoire->getTerritoire()->getId(), $user, $token);
+					
+						if ( $territoire->getId() == $territoireId) 
+						{
+							return true;
+						}
+						else if ( $territoire->getTerritoire() )
+						{
+							foreach ( $territoire->getAncestors() as $ancestor )
+							{
+								if ( $ancestor->getId() == $territoireId )
+								{
+									return true;
+								}
+							}
+						}
 					}
 				}
 			}
@@ -426,6 +437,29 @@ class LarpManagerVoter implements VoterInterface
 		if ( $user->getPersonnage() )
 		{
 			if ( $user->getPersonnage()->getId() == $personnageId ) return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Test si un utilisateur est membre d'un territoire
+	 *
+	 * @param User $user
+	 * @param $personnageId
+	 */
+	protected function isMemberOfTerritoire(User $user, $territoireId)
+	{
+		if ( $user->getPersonnage() )
+		{
+			$groupe = $user->getPersonnage()->getGroupe();
+			if ( $user->getPersonnage()->getGroupe() )
+			{
+				foreach ( $groupe->getTerritoire() as $territoire )
+				{
+					if ( $territoire->getId() == $territoireId ) return true;
+				}
+			}
+			
 		}
 		return false;
 	}

@@ -47,6 +47,26 @@ class TerritoireControllerProvider implements ControllerProviderInterface
 			}
 		};
 		
+		/**
+		 * Vérifie que l'utilisateur est membre du groupe controllant le territoire
+		 */
+		$mustBeOnGroupe = function(Request $request) use ($app) {
+			if (!$app['security.authorization_checker']->isGranted('TERRITOIRE_MEMBER',  $request->get('territoire'))) {
+				throw new AccessDeniedException();
+			}
+		};
+		
+		/**
+		 * Vérifie que l'utilisateur fait partie du groupe controlant ce territoire
+		 */
+		
+		$controllers->match('/{territoire}/joueur','LarpManager\Controllers\TerritoireController::detailJoueurAction')
+			->assert('territoire', '\d+')
+			->bind("territoire.detail")
+			->method('GET')
+			->convert('territoire', 'converter.territoire:convert')
+			->before($mustBeOnGroupe);
+		
 		$controllers->match('/list','LarpManager\Controllers\TerritoireController::listAction')
 			->bind("territoire.admin.list")
 			->method('GET')
@@ -62,6 +82,22 @@ class TerritoireControllerProvider implements ControllerProviderInterface
 			->bind("territoire.admin.update")
 			->method('GET|POST')
 			->convert('territoire', 'converter.territoire:convert')
+			->before($mustBeScenariste);
+		
+		$controllers->match('/{territoire}/construction/add','LarpManager\Controllers\TerritoireController::constructionAddAction')
+			->assert('territoire', '\d+')
+			->bind("territoire.construction.add")
+			->method('GET|POST')
+			->convert('territoire', 'converter.territoire:convert')
+			->before($mustBeScenariste);
+		
+		$controllers->match('/{territoire}/construction/{construction}/remove','LarpManager\Controllers\TerritoireController::constructionRemoveAction')
+			->assert('territoire', '\d+')
+			->assert('construction', '\d+')
+			->bind("territoire.construction.remove")
+			->method('GET|POST')
+			->convert('territoire', 'converter.territoire:convert')
+			->convert('construction', 'converter.construction:convert')
 			->before($mustBeScenariste);
 		
 		$controllers->match('/{territoire}/ingredients/update','LarpManager\Controllers\TerritoireController::updateIngredientsAction')

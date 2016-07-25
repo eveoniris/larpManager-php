@@ -1,0 +1,30 @@
+{% extends "layout.twig" %}
+
+{% block title %}Religion{% endblock title %}
+
+{% block content %}
+
+<a href="{{ path("religion") }}">Retour à la liste des religions</a>
+
+<table>
+<thead>
+	<tr>
+		<th>Religion</th>
+		<th>Mails</th>
+	</tr>
+</thead>
+<tbody>
+{%  for religion in religions %}
+	<tr>
+		<td>{{ religion.label }}</td>
+		<td>
+	{% for personnageReligion in religion.personnagesReligions %}
+		{{ personnageReligion.personnage.user.email }},&nbsp;
+	{% endfor %}
+		</td>
+	</tr>
+{%  endfor %}
+</tbody>
+</table>
+	
+{% endblock content %}

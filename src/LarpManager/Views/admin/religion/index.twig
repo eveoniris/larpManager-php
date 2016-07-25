@@ -14,6 +14,9 @@
 				</h4>
 			</div>
 			
+			<div>
+				<a href="{{ path('religion.mail') }}"><button  type="button" class="btn btn-default">Liste mail</button></a>
+			</div>
 			{{ include("religion/fragment/list.twig", {'religions' : religions, 'add' : true}) }}
 		</div>
 	</div>

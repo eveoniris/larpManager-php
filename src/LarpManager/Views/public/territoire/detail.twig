@@ -1,0 +1,172 @@
+{% extends "layout.twig" %}
+
+{% block title %}{{ territoire.nom }}{% endblock title %}
+
+{% block content %}
+
+
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-xs-12 col-md-8">
+		
+			<div class="well well-sm bs-component">
+			
+				<div class="row">
+					<div class="col-md-8">
+						<h4>
+							{{ territoire.nom }}
+						</h4>
+					</div>
+				
+					<div class="col-md-4">
+						{% if territoire.blason %}
+							<img width="160" height="200" src="{{ path('blason.get', {'blason' : territoire.blason }) }}" /><br />
+						{% endif %}
+					</div>
+				</div>
+			</div>
+			
+			<div class="list-group">
+  			
+  				<div class="list-group-item">
+  					<div class="header">
+			    		<h5>Jeu stratégique</h5>
+			    	</div>
+			    	<ul>
+	    			<li>Resistance de base {{ territoire.resistance|default("non définie") }}</li>
+	    			<li>Defense du territoire : {{ territoire.defense }} (prend en compte les constructions)</li>
+	    			<li>Richesse {{ territoire.tresor|default("non définie") }}</li>
+	    			</ul>
+	    		</div>
+	    		
+	    		<div class="list-group-item">
+	    			<div class="header">
+			    		<h5>Constructions</h5>
+			    	</div>
+			    	<ul>
+			    		{% for construction in territoire.constructions %}
+			    			<li>{{ construction.fullLabel }}</li>
+			    		{% endfor %}
+			    	</ul>
+			    </div>
+			    
+			    
+				<div class="list-group-item">
+					<div class="header">
+			    		<h5>Description</h5>
+			    	</div>
+	    			<p class="list-group-item-text">
+	    			{% if territoire.description %}
+    					{{ territoire.description|markdown }}
+    				{% endif %}
+    				</p>
+    				<p class="list-group-item-text">
+	    			{% if territoire.descriptionSecrete %}
+    					{{ territoire.descriptionSecrete|markdown }}
+    				{% endif %}
+    				</p>
+	    		</div>
+	    		
+	    		<div class="list-group-item">
+	    			<div class="header">
+	    				<h5>Informations politiques</h5>
+	    			</div>
+	    			<p class="list-group-item-text">
+	    				<ul>
+	    					<li><strong>Capitale : </strong>{{ territoire.capitale|default('Aucune') }}</li>
+	    					<li><strong>Système politique : </strong>{{ territoire.politique|default('Inconnu') }}</li>
+	    					<li><strong>Dirigeant : </strong>{{ territoire.dirigeant|default('Aucun') }}</li>
+	    				</ul>
+	    			</p>
+	    		</div>
+	    		
+	    		<div class="list-group-item">
+	    			<div class="header">
+	    				<h5>Information d'interprétation</h5>
+	    			</div>
+	    			<p class="list-group-item-text">
+	    				<ul>
+	    					<li><strong>Type racial : </strong>{{ territoire.typeRacial|default('Non défini') }}</li>
+	    					<li><strong>Inspiration : </strong>{{ territoire.inspiration|default('Non défini') }}</li>
+	    					<li><strong>Armes de prédilection : </strong>{{ territoire.armesPredilection|default('Non défini') }}</li>
+	    					<li><strong>Vétements : </strong>{{ territoire.vetements|default('Non défini') }}</li>
+	    					<li><strong>Nom masculin : </strong>{{ territoire.nomsMasculin|default('Non défini') }}</li> 
+	    					<li><strong>Nom féminin : </strong>{{ territoire.nomsFeminin|default('Non défini') }}</li>
+	    					<li><strong>Fontières : </strong>{{ territoire.frontieres|default('Non défini') }}</li>
+	    				</ul>
+	    			</p>
+	    		</div>
+	    		
+	    		<div class="list-group-item">
+	    			<div class="header">
+	    				<h5>Autres informations</h5>
+	    			</div>
+	    			<p class="list-group-item-text">
+	    				<ul>
+	    					<li><strong>Population : </strong>{{ territoire.population|default('Inconnue') }}</li>
+	    					<li><strong>Symbole : </strong>{{ territoire.symbole|default('Aucun') }}</li>
+	    					<li><strong>Niveau technologique : </strong>{{ territoire.techLevel|default('Aucun') }}</li>
+	    					<li><strong>Langues parlée : </strong>{{ territoire.langues|join(', ') }}</li>
+	    					<li><strong>Langue principale : </strong>{{ territoire.langue }}</li> 
+	    				</ul>
+	    			</p>
+	    		</div>
+	    			    		
+	     		<div class="list-group-item">
+	     			<div class="header">
+	    				<h5>Cultes</h5>
+	    			</div>
+    				<p class="list-group-item-text">
+    					<ul>
+    						<li><strong>Religion dominante : </strong>{{ territoire.religion }}</li>
+    						<li><strong>Religion secondaires : </strong>{{territoire.religions|join(', ') }}</li>
+    					</ul>
+    				</p>
+    			</div>
+	    		
+	    		<div class="list-group-item">
+	    			<div class="header">
+	    				<h5>Economie</h5>
+	    			</div>	
+    				<p class="list-group-item-text">
+    					<ul>
+    						<li><strong>Importations : </strong>{% if territoire.importations|length > 0 %}{{ territoire.importations|join(', ') }}{% else %}Rien{% endif %}</li>
+    						<li><strong>Exportations : </strong>{% if territoire.exportations|length > 0 %}{{ territoire.exportations|join(', ') }}{% else %}Rien{% endif %}</li>
+    						<li><strong>Ingrédients : </strong>{% if territoire.ingredients|length > 0 %}{{ territoire.ingredients|join(', ') }}{% else %}Rien{% endif %}</li>
+    					</ul>
+    				</p>
+    			</div>
+    			
+    			
+	    		
+	    		{% if territoire.territoire %}	
+	    		<div class="list-group-item">
+	    			<div class="header">
+		    			<h5>Ce territoire dépend de</h5>
+		    		</div>
+    				<p class="list-group-item-text">
+    					<a href="{{ path('territoire.detail',{'territoire': territoire.territoire.id}) }}">{{ territoire.territoire.nom }}</a>
+    				</p>
+    			</div>
+    			{% endif %}
+    			
+	    		<div class="list-group-item">
+	    			<div class="header">
+		    			<h5>Liste des territoires rattachés à ce territoire ({{ territoire.territoires|length }} territoires)</h5>
+		    		</div>
+    				<p class="list-group-item-text">
+						<ul>
+						{% for territoire in territoire.territoires %}
+							<li><a href="{{ path('territoire.detail',{'territoire': territoire.id}) }}">{{ territoire.nomTree }}</a></li>
+						{% endfor %}
+						</ul>
+					</p>
+				</div>
+	    		
+			</div>
+		</div>
+	</div>
+</div>
+
+
+{% endblock content %}
