@@ -47,6 +47,26 @@ class TerritoireControllerProvider implements ControllerProviderInterface
 			}
 		};
 		
+		/**
+		 * Vérifie que l'utilisateur est membre du groupe controllant le territoire
+		 */
+		$mustBeOnGroupe = function(Request $request) use ($app) {
+			if (!$app['security.authorization_checker']->isGranted('TERRITOIRE_MEMBER',  $request->get('territoire'))) {
+				throw new AccessDeniedException();
+			}
+		};
+		
+		/**
+		 * Vérifie que l'utilisateur fait partie du groupe controlant ce territoire
+		 */
+		
+		$controllers->match('/{territoire}/joueur','LarpManager\Controllers\TerritoireController::detailJoueurAction')
+			->assert('territoire', '\d+')
+			->bind("territoire.detail")
+			->method('GET')
+			->convert('territoire', 'converter.territoire:convert')
+			->before($mustBeOnGroupe);
+		
 		$controllers->match('/list','LarpManager\Controllers\TerritoireController::listAction')
 			->bind("territoire.admin.list")
 			->method('GET')

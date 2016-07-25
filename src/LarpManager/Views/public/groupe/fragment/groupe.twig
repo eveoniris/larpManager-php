@@ -75,11 +75,19 @@ Vous êtes responsable de ce groupe.
 <br />
 
 <div class="header">
-	<h5>Territoire(s)</h5>
+	<h5>Pays</h5>
+	{% if groupe.territoire %}
+		<h6>{{ groupe.territoire.nom }}&nbsp;<a href="{{ path('territoire.detail', {'territoire': groupe.territoire.id}) }}">Plus d'informations</a></h6>
+		{{ groupe.territoire.description|markdown }}
+	{% endif %}
+</div>
+
+<div class="header">
+	<h5>Territoire(s) contrôlé(s)</h5>
 </div>
 
 {% for territoire in groupe.territoires %}
-	<h6>{{ territoire.nom }}</h6>
+	<h6>{{ territoire.nom }}&nbsp;<a href="{{ path('territoire.detail', {'territoire': territoire.id}) }}">Plus d'informations</a></h6>
 	{{ territoire.description|markdown }}
 	
 	<div class="text-muted">

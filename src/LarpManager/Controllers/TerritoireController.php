@@ -30,6 +30,19 @@ class TerritoireController
 	}
 	
 	/**
+	 * Detail d'un territoire pour les joueurs
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function detailJoueurAction(Request $request, Application $app)
+	{
+		$territoire = $request->get('territoire');
+	
+		return $app['twig']->render('public/territoire/detail.twig', array('territoire' => $territoire));
+	}
+	
+	/**
 	 * Detail d'un territoire
 	 * 
 	 * @param Request $request

@@ -241,6 +241,15 @@ class GroupeControllerProvider implements ControllerProviderInterface
 			->before($mustBeScenariste);
 			
 		/**
+		 * Ratacher un groupe à un pays
+		 */
+		$controllers->match('/admin/{groupe}/pays','LarpManager\Controllers\GroupeController::adminPaysAction')
+			->bind("groupe.admin.pays.update")
+			->convert('groupe', 'converter.groupe:convert')
+			->method('GET|POST')
+			->before($mustBeScenariste);
+			
+		/**
 		 * Retirer un participant du groupe
 		 */
 		$controllers->match('/admin/{groupe}/participant/{participant}/remove','LarpManager\Controllers\GroupeController::adminParticipantRemoveAction')

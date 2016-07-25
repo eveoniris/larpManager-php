@@ -142,6 +142,11 @@ class Territoire extends BaseTerritoire implements \JsonSerializable
 	public function getDefense()
 	{
 		$defense = 0;
+		if ( $this->getResistance() )
+		{
+			$defense += $this->getResistance();
+		}
+		
 		foreach ( $this->getConstructions() as $construction)
 		{
 			$defense += $construction->getDefense();

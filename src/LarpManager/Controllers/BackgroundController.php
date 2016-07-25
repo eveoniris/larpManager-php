@@ -54,7 +54,7 @@ class BackgroundController
 		// recherche les backgrounds liés au groupe (visibilité == GROUP_OWNER)
 		if ( $app['user'] == $personnage->getGroupe()->getUserRelatedByResponsableId() )
 		{
-			$backgrounds = new ArrayCollection(array_merge(
+			$backsGroupe = new ArrayCollection(array_merge(
 				$personnage->getGroupe()->getBacks('GROUPE_OWNER')->toArray(),
 				$backsGroupe->toArray()
 			));
