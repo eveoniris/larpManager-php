@@ -30,6 +30,44 @@ class TerritoireController
 	}
 	
 	/**
+	 * Impression des territoires
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public  function printAction(Request $request, Application $app)
+	{
+		$territoires = $app['orm.em']->getRepository('\LarpManager\Entities\Territoire')->findFiefs();
+		
+		return $app['twig']->render('admin/territoire/print.twig', array('territoires' => $territoires));
+	}
+	
+	
+	/**
+	 * Liste des fiefs pour les quêtes
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public  function queteAction(Request $request, Application $app)
+	{
+		$territoires = $app['orm.em']->getRepository('\LarpManager\Entities\Territoire')->findFiefs();
+	
+		return $app['twig']->render('admin/territoire/quete.twig', array('territoires' => $territoires));
+	}
+	
+
+	/**
+	 * Liste des pays avec le nombre de noble
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public  function nobleAction(Request $request, Application $app)
+	{
+		$territoires = $app['orm.em']->getRepository('\LarpManager\Entities\Territoire')->findRoot();
+	
+		return $app['twig']->render('admin/territoire/noble.twig', array('territoires' => $territoires));
+	}
+	
+	/**
 	 * Detail d'un territoire pour les joueurs
 	 *
 	 * @param Request $request

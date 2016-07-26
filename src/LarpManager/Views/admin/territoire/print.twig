@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    	<meta charset="utf-8">
+    	<title>LarpManager - Impression des fiefs</title>
+    </head>
+    <body>
+<h2>Liste des fiefs</h2>
+
+<table border="1" style="width:100%; border-collapse:collapse">
+<thead>
+	<tr>
+		<td><strong>Nom</strong></td>
+		<td><strong>Groupe</strong></td>
+		<td><strong>Résistance</strong></td>
+		<td><strong>Batiments</strong></td>
+		<td><strong>Défense (avec les bonus de batiments)</strong></td>
+	</tr>
+</thead>
+<tbody>
+{% for territoire in territoires %}
+	<tr>
+		<td>{{ territoire.nom }}</td>
+		<td>{% if territoire.groupe %}
+				#{{ territoire.groupe.numero }} {{ territoire.groupe.nom }}
+			{% else %}
+				Libre
+			{% endif %}
+		</td>
+		<td>{{ territoire.resistance|default(0) }}</td>
+		<td>{{ territoire.constructions|join(',') }}</td>
+		<td>{{ territoire.defense }}
+	</tr>
+{% endfor %}
+</tbody>
+</table>

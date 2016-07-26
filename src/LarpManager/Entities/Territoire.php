@@ -24,7 +24,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 class Territoire extends BaseTerritoire implements \JsonSerializable
 {
 	/**
-	 * @ManyToMany(targetEntity="Ressource", inversedBy="importateurs")
+	 * @ManyToMany(targetEntity="Ressource", inversedBy="importateurs" )
 	 * @JoinTable(name="territoire_importation",
 	 *     joinColumns={@JoinColumn(name="territoire_id", referencedColumnName="id")},
 	 *     inverseJoinColumns={@JoinColumn(name="ressource_id", referencedColumnName="id")}
@@ -134,6 +134,27 @@ class Territoire extends BaseTerritoire implements \JsonSerializable
 	public function __toString()
 	{
 		return $this->getNom();
+	}
+	
+	/**
+	 * Fourni le nombre de personnage noble rataché à ce territoire
+	 */
+	public function getNbrNoble()
+	{
+		$total = 0;
+		foreach ( $this->getGroupes() as $groupe)
+		{
+			foreach ( $groupe->getPersonnages() as $personnage )
+			{
+				if ( $personnage->hasCompetence('Noblesse')) $total++;
+			}
+		}
+		foreach ($this->getTerritoires() as $territoire)
+		{
+			$total = $total + $territoire->getNbrNoble();			
+		}
+		
+		return $total;
 	}
 	
 	/**

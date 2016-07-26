@@ -369,6 +369,14 @@ class GroupeControllerProvider implements ControllerProviderInterface
 			->convert('groupe', 'converter.groupe:convert')
 			->method('GET')
 			->before($mustBeScenariste);
+
+		/**
+		 * Génération de quêtes commerciales
+		 */
+		$controllers->match('/quetes/','LarpManager\Controllers\GroupeController::quetesAction')
+			->bind("groupe.quetes")
+			->method('GET|POST')
+			->before($mustBeScenariste);
 			
 		/**
 		 * Génération de quêtes commerciales

@@ -1,0 +1,46 @@
+{% extends "layout.twig" %}
+
+{% block title %}Territoire{% endblock title %}
+
+{% block content %}
+
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-xs-12 col-md-8">
+		</div>
+	</div>
+</div>
+
+
+<table class="table table-striped table-bordered table-condensed">
+<thead>
+	<tr>
+		<td><strong>Nom</strong></td>
+		<td><strong>Groupe</strong></td>
+		<td><strong>Richesse</strong></td>
+		<td><strong>Exportations</strong></td>
+		<td><strong>Importations</strong></td>
+		<td></td>
+	</tr>
+</thead>
+<tbody>
+{% for territoire in territoires %}
+	{% if territoire.groupe %}
+		<tr>
+			<td>{{ territoire.nom }}</td>
+			<td>{% if territoire.groupe %}
+					#{{ territoire.groupe.numero }} {{ territoire.groupe.nom }}
+				{% else %}
+					Libre
+				{% endif %} 
+			</td>
+			<td>{{ territoire.tresor }}</td>
+			<td>{{ territoire.exportations|join(',') }}</td>
+			<td>{{ territoire.importations|join(',') }}</td>
+			<td><a href="{{ path('groupe.quete',{'groupe': territoire.groupe.id}) }}">Générer une quête commerciale</a></td>
+		</tr>
+	{% endif %}
+{% endfor %}
+</tbody>
+</table>
+{% endblock content %}

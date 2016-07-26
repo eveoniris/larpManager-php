@@ -19,7 +19,7 @@
 				<div class="list-group-item">
 			    	<h4 class="list-group-item-heading">Description</h4>
 			    	<p class="list-group-item-text">
-			 			{{ ressource.label }} ({{ ressource.rarete.label }})
+			 			{{ ressource.label }} ({{ ressource.rarete.value }} - {{ ressource.rarete.label }})
   					</p>
   				</div>
   				
@@ -28,7 +28,7 @@
 			    	<p class="list-group-item-text">
 			    		<ul>
 			    		{% for territoire in ressource.importateurs %}
-			    			<li><a href="{{ path('territoire.detail',{'index':territoire.id}) }}">{{ territoire.nom }}</a></li>
+			    			<li><a href="{{ path('territoire.detail',{'territoire':territoire.id}) }}">{{ territoire.nom }}</a></li>
 			    		{% endfor %}
 			    		</ul>
   					</p>
@@ -39,7 +39,7 @@
 			    	<p class="list-group-item-text">
 			 			<ul>
 			    		{% for territoire in ressource.exportateurs %}
-			    			<li><a href="{{ path('territoire.detail',{'index':territoire.id}) }}">{{ territoire.nom }}</a></li>
+			    			<li><a href="{{ path('territoire.detail',{'territoire':territoire.id}) }}">{{ territoire.nom }}</a></li>
 			    		{% endfor %}
 			    		</ul>
   					</p>
@@ -47,7 +47,7 @@
 
   				<div class="list-group-item">
   					<div class="btn-group" role="group" aria-label="...">
-  						<a  class="btn btn-primary" role="button" href="{{ path('ressource.update', {index : ressource.id}) }}">Modifier</a>
+  						<a  class="btn btn-primary" role="button" href="{{ path('ressource.update', {'index' : ressource.id}) }}">Modifier</a>
 					</div>
   				</div>
 			</div>	

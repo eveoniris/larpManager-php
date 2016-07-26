@@ -46,6 +46,32 @@ class Groupe extends BaseGroupe
 	}
 	
 	/**
+	 * Toutes les importations du groupe
+	 */
+	public function getImportations()
+	{
+		$ressources = new ArrayCollection();
+		foreach ( $this->getTerritoires() as $territoire)
+		{
+			$ressources = new ArrayCollection(array_merge($ressources->toArray(), $territoire->getImportations()->toArray()));
+		}
+		return $ressources;
+	}
+	
+	/**
+	 * Toutes les exporations du groupe
+	 */
+	public function getExportations()
+	{
+		$ressources = new ArrayCollection();
+		foreach ( $this->getTerritoires() as $territoire)
+		{
+			$ressources = new ArrayCollection(array_merge($ressources->toArray(), $territoire->getExportations()->toArray()));
+		}
+		return $ressources;
+	}
+	
+	/**
 	 * Fourni une version imprimable du matériel
 	 */
 	public function getMaterielRaw()

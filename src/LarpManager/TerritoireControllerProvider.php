@@ -72,6 +72,21 @@ class TerritoireControllerProvider implements ControllerProviderInterface
 			->method('GET')
 			->before($mustBeScenariste);
 		
+		$controllers->match('/print','LarpManager\Controllers\TerritoireController::printAction')
+			->bind("territoire.admin.print")
+			->method('GET')
+			->before($mustBeScenariste);
+
+		$controllers->match('/quete','LarpManager\Controllers\TerritoireController::queteAction')
+			->bind("territoire.admin.quete")
+			->method('GET')
+			->before($mustBeScenariste);
+		
+		$controllers->match('/noble','LarpManager\Controllers\TerritoireController::nobleAction')
+			->bind("territoire.admin.noble")
+			->method('GET')
+			->before($mustBeScenariste);
+		
 		$controllers->match('/add','LarpManager\Controllers\TerritoireController::addAction')
 			->bind("territoire.admin.add")
 			->method('GET|POST')
