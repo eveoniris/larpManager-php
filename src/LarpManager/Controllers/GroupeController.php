@@ -93,6 +93,8 @@ class GroupeController
 			'recompense 1',
 			'recompense 2',
 			'recompense 3',
+			'recompense 4',
+			'recompense 5',
 			'description'), ';');
 			
 			foreach ($quetes as $quete)

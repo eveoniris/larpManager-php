@@ -29,7 +29,6 @@ class LarpManagerManager
 	public function generateQuete(\LarpManager\Entities\Groupe $groupe, $ressourceCommunes, $ressourceRares)
 	{
 		$tab_recompenses = array(
-				"1 point d'expérience",
 				"1 pièce d'or (10 pièces d'argent)",
 				"1 point de renommée",
 				"1 point d'héroïsme",
@@ -70,15 +69,15 @@ class LarpManagerManager
 		$ressourceCommunes = new ArrayCollection(array_diff($ressourceCommunes->toArray(), $exportations->toArray()));
 
 		// calcul du nombre d'importation necessaire
-		if ( $importations->count() > 3 ) $importations_needed = 3; 
-		else if ( $importations->count() > 0 ) $importation_needed = rand(1,$importations->count());
+		/*if ( $importations->count() > 3 ) $importations_needed = 3; 
+		else if ( $importations->count() > 0 ) $importation_needed = rand(1,$importations->count());*/
 			
 		// calcul du nombre de ressources communes
-		$common_ressources_needed = rand(3,4) - $importation_needed;
+		$common_ressources_needed = 3;
 		if ($common_ressources_needed < 0) $common_ressources_needed = 0;
 			
 		// calcul du nombre de ressources rares
-		$uncommon_ressources_needed = 7 - $common_ressources_needed - $importation_needed;
+		$uncommon_ressources_needed = 4;
 		if ($uncommon_ressources_needed < 0) $uncommon_ressources_needed = 0;
 		
 		// allocation des importations
@@ -122,7 +121,8 @@ class LarpManagerManager
 		
 			
 		shuffle($tab_recompenses );
-		$recompenses = array_slice($tab_recompenses,0,3);
+		$recompenses = array_slice($tab_recompenses,0,4);
+		$recompenses[] = "1 point d'expérience";
 
 		return array(
 				'needs' => $needs,
