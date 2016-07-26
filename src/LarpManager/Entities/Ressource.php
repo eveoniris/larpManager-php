@@ -15,7 +15,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 /**
  * LarpManager\Entities\Ressource
  *
- * @Entity()
+* @Entity(repositoryClass="LarpManager\Repository\RessourceRepository")
  */
 class Ressource extends BaseRessource
 {

@@ -101,6 +101,21 @@
 	</div>
 	
 	<div class="panel panel-default">
+		<div class="panel-heading">Email</div>
+		<div class="panel-body">
+			<div class="list-group">
+				{% for membre in groupeSecondaire.membres %}
+					<div class="list-group-item">
+						<div class="list-group-item-text">
+							{{ membre.personnage.user.email }}
+						</div>
+					</div>
+				{% endfor %}
+			</div>
+		</div>
+	</div>
+	
+	<div class="panel panel-default">
 		<div class="panel-heading">Forum associé</div>
 		<div class="panel-body">
 			<a href="{{ path('forum.topic',{'index': groupeSecondaire.topic.id}) }}">

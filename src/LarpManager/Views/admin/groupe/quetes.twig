@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    	<meta charset="utf-8">
+    	<title>LarpManager - Impression des quetes</title>
+    </head>
+    <body>
+<h2>Liste des quetes</h2>
+
+<h4>Statistiques :</h4>
+{% for key, quantite in stats %}
+	{{ key }} : {{ quantite }}<br />
+{% endfor %}
+<table border="1" style="width:100%; border-collapse:collapse">
+<thead>
+	<tr>
+		<td><strong>Groupe</strong></td>
+		<td><strong>Pays</strong></td>
+		<td><strong>Demandes</strong></td>
+		<td><strong>Valeur</strong></td>
+		<td><strong>Récompense</strong></td>
+	</tr>
+</thead>
+<tbody>
+	{% for quete in quetes %}
+		<tr>
+			<td>#{{ quete.groupe.numero}} {{ quete.groupe.nom }}</td>
+			<td>{% if quete.groupe.territoire %} {{ quete.groupe.territoire.nom}}{% endif %}</td>
+			<td>
+				{% for ressource in quete.quete.needs %}	
+					{{ ressource.label }},&nbsp;
+				{% endfor %}
+			</td>
+			<td>{{ quete.quete.valeur }}</td>
+			<td>{{ quete.quete.recompenses|join(', ') }}</td>
+		</tr>
+	{% endfor %}
+</tbody>
+</table>
+</body>
+</html>

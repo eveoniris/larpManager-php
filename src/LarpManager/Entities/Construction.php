@@ -18,6 +18,11 @@ use LarpManager\Entities\BaseConstruction;
  */
 class Construction extends BaseConstruction
 {
+	public function __toString()
+	{
+		return $this->getLabel();
+	}
+	
 	public function getFullLabel()
 	{
 		return $this->getLabel() . ' ( protection : ' . $this->getDefense().' )';

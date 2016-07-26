@@ -27,10 +27,113 @@ use LarpManager\Form\GroupeInscriptionForm;
  * LarpManager\Controllers\GroupeController
  *
  * @author kevin
- *
+ * liste des pays, + nbr de noble qu'il dispose
  */
 class GroupeController
 {
+	
+	/**
+	 * fourni le tableau de quête pour tous les groupes
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public  function quetesAction(Request $request, Application $app)
+	{
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Groupe');
+		$groupes = $repo->findAllOrderByNumero();
+		$ressourceRares = new ArrayCollection($app['orm.em']->getRepository('\LarpManager\Entities\Ressource')->findRare());
+		$ressourceCommunes = new ArrayCollection($app['orm.em']->getRepository('\LarpManager\Entities\Ressource')->findCommun());
+		
+		$quetes = new ArrayCollection();
+		$stats = array();
+		
+		foreach ( $groupes as $groupe )
+		{
+			$quete = $app['larp.manager']->generateQuete($groupe, $ressourceCommunes, $ressourceRares);
+			$quetes[] = array(
+				'quete' => $quete,
+				'groupe' => $groupe,
+			);
+			foreach ( $quete['needs'] as $ressources)
+			{
+				if ( isset($stats[$ressources->getLabel()]))
+				{
+					$stats[$ressources->getLabel()] += 1;
+				}
+				else
+				{
+					$stats[$ressources->getLabel()] = 1;
+				}
+			}		
+		}
+		
+		if ( $request->get('csv'))
+		{
+			header("Content-Type: text/csv");
+			header("Content-Disposition: attachment; filename=eveoniris_quetes_".date("Ymd").".csv");
+			header("Pragma: no-cache");
+			header("Expires: 0");
+			
+			$output = fopen("php://output", "w");
+			
+			// header
+			fputcsv($output,
+			array(
+			'nom',
+			'pays',
+			'res 1',
+			'res 2',
+			'res 3',
+			'res 4',
+			'res 5',
+			'res 6',
+			'res 7',
+			'Départ',
+			'Arrivée',
+			'recompense 1',
+			'recompense 2',
+			'recompense 3',
+			'recompense 4',
+			'recompense 5',
+			'description'), ';');
+			
+			foreach ($quetes as $quete)
+			{
+				$line = array();
+				$line[] = utf8_decode('#'.$quete['groupe']->getNumero().' '. $quete['groupe']->getNom());
+				if ( $quete['groupe']->getTerritoire())
+				{
+					$line[] = utf8_decode($quete['groupe']->getTerritoire()->getNom());
+				}
+				else 
+				{
+					$line[] = '';
+				}
+				
+				foreach ( $quete['quete']['needs'] as $ressources)
+				{
+					$line[] = utf8_decode($ressources->getLabel());
+				}
+				$line[] = '';
+				$line[] = '';
+				foreach ( $quete['quete']['recompenses'] as $recompense)
+				{
+					$line[] =  utf8_decode($recompense);
+				}	
+				$line[] = '';
+				fputcsv($output, $line, ';');
+			}
+			
+			fclose($output);
+			exit();
+		}
+			
+		return $app['twig']->render('admin/groupe/quetes.twig', array(
+				'quetes' => $quetes,
+				'stats' => $stats
+		));
+	}
+	
 	/**
 	 * Générateur de quêtes commerciales
 	 * 
@@ -40,9 +143,16 @@ class GroupeController
 	public function queteAction(Request $request, Application $app)
 	{
 		$groupe = $request->get('groupe');
-		
+		$ressourceRares = new ArrayCollection($app['orm.em']->getRepository('\LarpManager\Entities\Ressource')->findRare());
+		$ressourceCommunes = new ArrayCollection($app['orm.em']->getRepository('\LarpManager\Entities\Ressource')->findCommun());
+		$quete = $app['larp.manager']->generateQuete($groupe,$ressourceCommunes, $ressourceRares);
+			
 		return $app['twig']->render('admin/groupe/quete.twig', array(
 				'groupe' => $groupe,
+				'needs' => $quete['needs'],
+				'valeur' => $quete['valeur'],
+				'px' => $quete['px'],
+				'recompenses' => $quete['recompenses'],
 			));
 	}
 	

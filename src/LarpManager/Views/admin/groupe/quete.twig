@@ -10,6 +10,24 @@
 		<li class="active">Générateur de quête commerciale</li>
 	</ol>
 	
-	{{ groupe.ressourcesNeeded|join(',') }}
+	<div class="well well-sm">
+		<h4>{{ groupe.nom }}</h4>
+		<strong>Importations : </strong> {{ groupe.importations|join(', ') }}<br />
+		<strong>Exportations : </strong> {{ groupe.exportations|join(', ') }}<br />
+	</div>
+	
+	<div class="well well-sm">
+		<strong>Ressources demandées : </strong>
+			{% for ressource in needs %}	
+				{{ ressource.label }} ({{ ressource.rarete.label }}),&nbsp;
+			{% endfor %}
+		<br />
+		<strong>Valeur des ressources demandées : </strong>{{ valeur }}
+		<br />
+		
+		<strong>Récompense : </strong>{{ px }} px ainsi que {{ recompenses|join(', ') }}
+		
+	</div>
+		
 	
 {% endblock content %}
