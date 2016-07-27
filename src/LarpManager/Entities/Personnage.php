@@ -189,6 +189,37 @@ class Personnage extends BasePersonnage
 		return $niveau;
 	}
 	
+	/**
+	 * Fourni le niveau d'une compétence pour le score de pugilat
+	 * @param unknown $label
+	 */
+	public function getCompetencePugilat($label)
+	{
+		$niveau = 0;
+		foreach ( $this->getCompetences() as $competence)
+		{
+			if ( $competence->getCompetenceFamily()->getLabel() == $label)
+			{
+					$niveau += $competence->getLevel()->getIndex();
+			}
+		}
+		return $niveau;
+	}
+	
+	/**
+	 * Determine si le score du personnage été en erreur
+	 */
+	public function hasPugilatErreur()
+	{
+		foreach ( $this->getCompetences() as $competence)
+		{
+			if ( in_array($competence->getCompetenceFamily()->getId(),array(1,6,7,9,10,13,16,18,19,24,27,31)))
+			{
+				if ( $competence->getLevel()->getIndex() > 1 ) return true;
+			}
+		}
+		return false;
+	}
 	
 	/**
 	 * Fourni le trigger correspondant au tag

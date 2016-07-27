@@ -77,6 +77,14 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 			->before($mustBeOrga);
 			
 		/**
+		 * Correction pugilat
+		 */
+		$controllers->match('/admin/pugilat','LarpManager\Controllers\PersonnageController::adminPugilatAction')
+			->bind("personnage.pugilat")
+			->method('GET')
+			->before($mustBeOrga);
+			
+		/**
 		 * Fiches de perso (orga)
 		 */
 		$controllers->match('/admin/fiches','LarpManager\Controllers\PersonnageController::adminFicheAction')
