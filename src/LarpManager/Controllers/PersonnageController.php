@@ -59,6 +59,16 @@ class PersonnageController
 		));
 	}
 	
+	public function adminPugilatAction(Request $request, Application $app)
+	{
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Groupe');
+		$groupes = $repo->findBy(array(),array('numero' => 'asc'));
+		
+		return $app['twig']->render('admin/personnage/pugilat.twig', array(
+				'groupes' => $groupes,
+		));
+	}
+	
 	/**
 	 * Modifie le matériel lié à un personnage
 	 * 

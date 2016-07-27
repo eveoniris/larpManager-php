@@ -82,18 +82,18 @@ class PersonnageManager
 	 */
 	public function pugilat(Personnage $personnage)
 	{		
-		$pugilat = $personnage->getCompetenceNiveau('Agilité') 
-			+ $personnage->getCompetenceNiveau('Armes à distance')
-			+ $personnage->getCompetenceNiveau('Armes à 1 main')
-			+ $personnage->getCompetenceNiveau('Armes à 2 mains')
-			+ $personnage->getCompetenceNiveau('Armes d\'hast')
-			+ $personnage->getCompetenceNiveau('Armure')
-			+ $personnage->getCompetenceNiveau('Attaque sournoise')
-			+ $personnage->getCompetenceNiveau('Protection')
-			+ $personnage->getCompetenceNiveau('Résistance')
-			+ $personnage->getCompetenceNiveau('Sauvagerie')
-			+ $personnage->getCompetenceNiveau('Stratégie')
-			+ $personnage->getCompetenceNiveau('Survie');
+		$pugilat = $personnage->getCompetencePugilat('Agilité') 
+			+ $personnage->getCompetencePugilat('Armes à distance')
+			+ $personnage->getCompetencePugilat('Armes à 1 main')
+			+ $personnage->getCompetencePugilat('Armes à 2 mains')
+			+ $personnage->getCompetencePugilat('Armes d\'hast')
+			+ $personnage->getCompetencePugilat('Armure')
+			+ $personnage->getCompetencePugilat('Attaque sournoise')
+			+ $personnage->getCompetencePugilat('Protection')
+			+ $personnage->getCompetencePugilat('Résistance')
+			+ $personnage->getCompetencePugilat('Sauvagerie')
+			+ $personnage->getCompetencePugilat('Stratégie')
+			+ $personnage->getCompetencePugilat('Survie');
 		
 		// armurerie au niveau initié double le score de pugilat
 		if ( $personnage->getCompetenceNiveau('Armurerie') >= 2 )
