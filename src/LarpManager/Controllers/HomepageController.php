@@ -212,7 +212,15 @@ class HomepageController
 	{
 		$trombine = $request->get('trombine');
 		$filename = __DIR__.'/../../../private/img/'.$trombine;
-		return $app->sendFile($filename);
+		//return $app->sendFile($filename);
+		
+		$stream = function () use ($filename) {
+			readfile($filename);
+		};
+		return $app->stream($stream, 200, array(
+				'Content-Type' => 'image/jpeg',
+				'cache-control' => 'private'
+		));
 	}
 	
 	/**

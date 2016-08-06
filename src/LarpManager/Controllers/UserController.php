@@ -147,6 +147,20 @@ class UserController
 		return $app->redirect($app['url_generator']->generate('user.messagerie.view', array('id' => $app['user']->getId())));
 	}
 	
+	
+	/**
+	 * Affiche la billetterie
+	 *
+	 * @param Application $app
+	 */
+	public function viewSelfBilletterieAction(Application $app) {
+		if (!$app['user']) {
+			return $app->redirect($app['url_generator']->generate('user.login'));
+		}
+	
+		return $app->redirect($app['url_generator']->generate('user.billetterie.view', array('id' => $app['user']->getId())));
+	}
+	
 	/**
 	 * View user action.
 	 *
@@ -233,6 +247,31 @@ class UserController
 		return $app['twig']->render('public/user/messagerie.twig', array(
 				'user' => $user,
 				'form' => $form->createView(),
+		));
+	}
+
+	/**
+	 * Affiche la messagerie de l'utilisateur
+	 *
+	 * @param Application $app
+	 * @param Request $request
+	 * @param unknown $id
+	 * @throws NotFoundHttpException
+	 */
+	public function viewBilletterieAction(Application $app, Request $request, $id)
+	{
+		$user = $app['user.manager']->getUser($id);
+	
+		if (!$user) {
+			throw new NotFoundHttpException('No user was found with that ID.');
+		}
+	
+		if (!$user->isEnabled() && !$app['security']->isGranted('ROLE_ADMIN')) {
+			throw new NotFoundHttpException('That user is disabled (pending email confirmation).');
+		}
+		
+		return $app['twig']->render('public/user/billetterie.twig', array(
+				'user' => $user,
 		));
 	}
 	

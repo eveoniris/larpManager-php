@@ -62,7 +62,7 @@ body {
 {
 	padding: 7px;
 	margin-bottom: 10px;
-	background: url('/img/header.png') repeat scroll 0% 0% / 100% 100% transparent;
+	background: url('../img/header.png') repeat scroll 0% 0% / 100% 100% transparent;
 }
 
 .link a
@@ -76,7 +76,7 @@ body {
 
 .header
 {
-  background: url('/img/header.png') repeat scroll 0% 0% / 100% 100% transparent;
+  background: url('../img/header.png') repeat scroll 0% 0% / 100% 100% transparent;
   padding: 0px 10px;
   margin: 2px 0px 10px;
   text-align: center;

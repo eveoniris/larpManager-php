@@ -77,19 +77,37 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 			->before($mustBeOrga);
 			
 		/**
-		 * Correction pugilat
+		 * Liste des personnages pour impression (orga)
 		 */
-		$controllers->match('/admin/pugilat','LarpManager\Controllers\PersonnageController::adminPugilatAction')
-			->bind("personnage.pugilat")
+		$controllers->match('/admin/print','LarpManager\Controllers\PersonnageController::adminPrintAction')
+			->bind("personnage.admin.print")
 			->method('GET')
 			->before($mustBeOrga);
 			
 		/**
-		 * Fiches de perso (orga)
+		 * Liste des personnages pour téléchargement (orga)
 		 */
-		$controllers->match('/admin/fiches','LarpManager\Controllers\PersonnageController::adminFicheAction')
-			->bind("personnage.admin.fiche")
+		$controllers->match('/admin/download','LarpManager\Controllers\PersonnageController::adminDownloadAction')
+			->bind("personnage.admin.download")
+			->method('GET')
+			->before($mustBeOrga);
+			
+		/**
+		 * Ajoute un jeton à tous les personnages
+		 */
+		$controllers->match('/vieillir','LarpManager\Controllers\PersonnageController::vieillirAction')
+			->bind("personnage.vieillir")
 			->method('GET|POST')
+			->before($mustBeOrga);
+						
+		/**
+		 * Modification du statut d'un personnage (vivant / mort)
+		 */
+		$controllers->match('/admin/{personnage}/statut','LarpManager\Controllers\PersonnageController::adminStatutAction')
+			->bind("personnage.admin.statut")
+			->assert('personnage', '\d+')
+			->method('GET|POST')
+			->convert('personnage', 'converter.personnage:convert')
 			->before($mustBeOrga);
 
 		/**
@@ -162,6 +180,28 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 			->before($mustBeOrga);
 			
 		/**
+		 * Ajout d'un jeton (orga)
+		 */
+		$controllers->match('/admin/{personnage}/token/add/{token}','LarpManager\Controllers\PersonnageController::adminTokenAddAction')
+			->assert('personnage', '\d+')
+			->bind("personnage.admin.token.add")
+			->method('GET')
+			->convert('personnage', 'converter.personnage:convert')
+			->before($mustBeOrga);
+
+		/**
+		 * Suppression d'un jeton (orga)
+		 */
+		$controllers->match('/admin/{personnage}/token/delete/{personnageToken}','LarpManager\Controllers\PersonnageController::adminTokenDeleteAction')
+			->assert('personnage', '\d+')
+			->bind("personnage.admin.token.delete")
+			->method('GET')
+			->convert('personnage', 'converter.personnage:convert')
+			->convert('personnageToken', 'converter.personnageToken:convert')
+			->before($mustBeOrga);
+			
+			
+		/**
 		 * Ajout d'un trigger (orga)
 		 */
 		$controllers->match('/admin/{personnage}/trigger/add','LarpManager\Controllers\PersonnageController::adminTriggerAddAction')
@@ -229,6 +269,16 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 		$controllers->match('/admin/{personnage}/update/priere','LarpManager\Controllers\PersonnageController::adminUpdatePriereAction')
 			->assert('personnage', '\d+')
 			->bind("personnage.admin.update.priere")
+			->method('GET|POST')
+			->convert('personnage', 'converter.personnage:convert')
+			->before($mustBeOrga);
+			
+		/**
+		 * Mise à jours des prieres
+		 */
+		$controllers->match('/admin/{personnage}/update/age','LarpManager\Controllers\PersonnageController::adminUpdateAgeAction')
+			->assert('personnage', '\d+')
+			->bind("personnage.admin.update.age")
 			->method('GET|POST')
 			->convert('personnage', 'converter.personnage:convert')
 			->before($mustBeOrga);

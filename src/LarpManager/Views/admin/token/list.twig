@@ -1,0 +1,54 @@
+{% extends "layout.twig" %}
+
+{% block title %}Jetons{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li class="active">Liste des jetons</li>
+	</ol>
+	
+	<div class="panel panel-info">
+		<div class="panel-heading">
+			<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+			Qu'est-ce qu'un jeton ?
+		</div>
+		<div class="panel-body">Un jeton correspond à des éléments de jeu qu'un personnage peux posséder. Par exemple, après chaque GN tous les personnages collectent un jeton de vieillesse. Cela permet de déterminer l'age des personnages. D'autres usages peuvent être envisagés.</div>
+	</div>
+	
+	<div class="well well-sm">
+		
+		<div class="btn-toolbar" role="toolbar" aria-label="...">
+			<div class="btn-group" role="group" aria-label="...">
+				<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Ajouter un jeton" href="{{ path('token.add') }}"><i class="fa fa-plus"></i></a>
+				<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Imprimer la liste" href="{{ path('token.print') }}"><i class="fa fa-print"></i></a>
+				<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Télécharger la liste (CSV)" href="{{ path('token.download') }}"><i class="fa fa-download"></i></a>
+			</div>
+			<div class="btn-group" role="group" aria-label="...">
+				<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Faire vieillir les personnages" href="{{ path('personnage.vieillir') }}"><i class="fa fa-users"></i></a>
+			</div>
+		</div>
+		
+		<div class="list-group">
+		{% for token in tokens %}
+		
+			<div class="list-group-item">
+				<div class="list-group-item-heading">
+					<div class="btn-toolbar pull-right" role="toolbar" aria-label="...">
+						<div class="btn-group" role="group" aria-label="...">
+							<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Modifier" href="{{ path('token.update',{'token':token.id}) }}"><i class="fa fa-pencil"></i></a>
+							<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Détail" href="{{ path('token.detail',{'token':token.id}) }}"><i class="fa fa-eye"></i></a>
+							<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Supprimer" href="{{ path('token.delete',{'token':token.id}) }}"><i class="fa fa-eraser"></i></a>
+						</div>
+					</div>
+					<h5>#{{ token.id }} {{ token.label }} -- {{ token.tag }}</h5>
+				</div>
+				<div class="list-group-item-text">{{ token.description|markdown }}</div>					
+		    </div>
+
+		{% endfor %}
+	 	</udiv>
+	</div>
+	
+{% endblock content %}

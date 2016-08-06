@@ -23,10 +23,13 @@
 						<strong>Surnom :</strong> {{ personnage.surnom }}
 					</p>
 					<p class="list-group-item-text">
-						<strong>Age :</strong> {{ personnage.age }}
+						<strong>Age : </strong>{{ personnage.ageReel|default('non défini') }} ({{ personnage.age }}) <a data-toggle="tooltip" data-placement="right" title="Modifier" href="{{ path('personnage.admin.update.age',{'personnage': personnage.id}) }}"><i class="fa fa-edit"></i></a>
 					</p>
 					<p class="list-group-item-text">
 						<strong>Genre :</strong> {{ personnage.genre }}
+					</p>
+					<p class="list-group-item-text">
+						<strong>Statut :</strong> {% if personnage.vivant %} Vivant{% else %} Mort{% endif %} <a data-toggle="tooltip" data-placement="right" title="Modifier" href="{{ path('personnage.admin.statut', {'personnage':personnage.id}) }}"><i class="fa fa-edit"></i></a>
 					</p>
 					<p class="list-group-item-text">
 						{% if personnage.intrigue %}
@@ -62,6 +65,19 @@
 					{{ personnage.materiel }}
 					<br />
 					<a href="{{ path('personnage.admin.materiel', {'personnage': personnage.id}) }}">Modifier</a>
+				</div>
+				
+				<div class="list-group-item">
+					<h6 class="list-group-item-heading">Jetons</h6>
+						{% for personnageToken in personnage.personnageHasTokens %}
+							<p class="list-group-item-text">
+								{{ personnageToken.token.label }}
+								-- <a href="{{ path('personnage.admin.token.delete', {'personnage': personnage.id, 'personnageToken': personnageToken.id}) }}">Supprimer</a>
+							</p>
+						{% else %}
+							<p class="list-group-item-text">La liste est vide</p>
+						{% endfor %}
+						<a href="{{ path('personnage.admin.token.add', {'personnage': personnage.id, 'token': 'VIEILLESSE'}) }}">Ajouter un jeton vieillesse</a>
 				</div>
 					
 				<div class="list-group-item">

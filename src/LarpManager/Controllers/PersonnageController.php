@@ -6,6 +6,9 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 use Silex\Application;
 use JasonGrimes\Paginator;
+use LarpManager\Entities\Personnage;
+use LarpManager\Entities\PersonnageToken;
+
 use LarpManager\Form\PersonnageReligionForm;
 use LarpManager\Form\PersonnageOriginForm;
 use LarpManager\Form\PersonnageFindForm;
@@ -20,7 +23,9 @@ use LarpManager\Form\PersonnageUpdatePotionForm;
 use LarpManager\Form\PersonnageUpdateDomaineForm;
 use LarpManager\Form\PersonnageUpdateLangueForm;
 use LarpManager\Form\PersonnageUpdatePriereForm;
+use LarpManager\Form\PersonnageUpdateAgeForm;
 use LarpManager\Form\PersonnageBackgroundForm;
+use LarpManager\Form\PersonnageStatutForm;
 use LarpManager\Form\PersonnageDeleteForm;
 use LarpManager\Form\PersonnageXpForm;
 
@@ -44,28 +49,97 @@ class PersonnageController
 	}
 	
 	/**
-	 * Page d'accueil de gestion des fiches personnages
+	 * Permet de faire vieillir les personnages
+	 * Cela va donner un Jeton Vieillesse à tous les personnages et changer la catégorie d'age des personnages cumulants deux jetons vieillesse
+	 * 
 	 * @param Request $request
 	 * @param Application $app
 	 */
-	public function adminFicheAction(Request $request, Application $app)
+	public function vieillirAction(Request $request, Application $app)
 	{
-		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Groupe');
-		$groupes = $repo->findBy(array(),array('nom' => 'asc'));
+		$form = $app['form.factory']->createBuilder()
+			->add('valider','submit', array('label' => 'Faire vieillir tous les personnages', 'attr' => array('class' => 'btn-danger')))
+			->getForm();
 		
-		return $app['twig']->render('admin/personnage/fiches.twig', array(
-				'groupes' => $groupes,
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
+		{
+			$personnages = $app['orm.em']->getRepository('\LarpManager\Entities\Personnage')->findAll();
+			$token = $app['orm.em']->getRepository('\LarpManager\Entities\Token')->findOneByTag('VIEILLESSE');
+			$ages = $app['orm.em']->getRepository('\LarpManager\Entities\Age')->findAll();
+			
+			if ( ! $token )
+			{
+				$app['session']->getFlashBag()->add('error', 'Le jeton VIEILLESSE n\'existe pas !');
+				return $app->redirect($app['url_generator']->generate('homepage'),301);
+			}
+			
+			foreach ( $personnages as $personnage)
+			{
+				// donne un jeton vieillesse
+				$personnageHasToken = new \LarpManager\Entities\PersonnageHasToken();
+				$personnageHasToken->setToken($token);
+				$personnageHasToken->setPersonnage($personnage);
+				$personnage->addPersonnageHasToken($personnageHasToken);
+				$app['orm.em']->persist($personnageHasToken);
 				
+				$personnage->setAgeReel($personnage->getAgeReel() + 5); // ajoute 5 ans à l'age réél
+				
+				if ( $personnage->getPersonnageHasTokens()->count() % 2 == 0 )
+				{
+					if ( $personnage->getAge()->getId() != 5 )
+					{
+						$personnage->setAge($ages[$personnage->getAge()->getId() +1]);
+					}
+					else
+					{
+						$personnage->setVivant(false);
+					}
+				}
+				
+				$app['orm.em']->persist($personnage);
+			}
+			$app['orm.em']->flush();
+			
+			$app['session']->getFlashBag()->add('success', 'tous les personnages ont reçut un jeton vieillesse.');
+			return $app->redirect($app['url_generator']->generate('homepage'),301);
+		}
+		
+		return $app['twig']->render('admin/personnage/vieillir.twig', array(
+				'form' => $form->createView(),
 		));
 	}
 	
-	public function adminPugilatAction(Request $request, Application $app)
+	/**
+	 * Modifier l'age d'un personnage
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Personnage $personnage
+	 */
+	public function adminUpdateAgeAction(Request $request, Application $app, Personnage $personnage)
 	{
-		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Groupe');
-		$groupes = $repo->findBy(array(),array('numero' => 'asc'));
+		$form = $app['form.factory']->createBuilder(new PersonnageUpdateAgeForm(), $personnage)
+			->add('valider','submit', array('label' => 'Valider'))
+			->getForm();
 		
-		return $app['twig']->render('admin/personnage/pugilat.twig', array(
-				'groupes' => $groupes,
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
+		{
+			$personnage = $form->getData();
+			
+			$app['orm.em']->persist($personnage);
+			$app['orm.em']->flush();
+			
+			$app['session']->getFlashBag()->add('success','Le personnage a été sauvegardé');
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
+		}
+		
+		return $app['twig']->render('admin/personnage/age.twig', array(
+				'personnage' => $personnage,
+				'form' => $form->createView(),
 		));
 	}
 	
@@ -75,10 +149,8 @@ class PersonnageController
 	 * @param Request $request
 	 * @param Application $app
 	 */
-	public function adminMaterielAction(Request $request, Application $app)
+	public function adminMaterielAction(Request $request, Application $app, Personnage $personnage)
 	{
-		$personnage = $request->get('personnage');
-		
 		$form = $app['form.factory']->createBuilder()
 			->add('materiel','textarea', array(
 					'required' => false,
@@ -101,6 +173,38 @@ class PersonnageController
 		}
 		
 		return $app['twig']->render('admin/personnage/materiel.twig', array(
+				'personnage' => $personnage,
+				'form' => $form->createView(),
+		));
+	}
+	
+	/**
+	 * Modification du statut d'un personnage
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function adminStatutAction(Request $request, Application $app)
+	{
+		$personnage = $request->get('personnage');
+		
+		$form = $app['form.factory']->createBuilder(new PersonnageStatutForm(), $personnage)
+			->add('submit','submit', array('label' => 'Valider'))
+			->getForm();
+		
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$personnage = $form->getData();
+			$app['orm.em']->persist($personnage);
+			$app['orm.em']->flush();
+			
+			$app['session']->getFlashBag()->add('success','Le statut du personnage a été modifié');
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
+		}
+		
+		return $app['twig']->render('admin/personnage/statut.twig', array(
 				'personnage' => $personnage,
 				'form' => $form->createView(),
 		));
@@ -182,7 +286,6 @@ class PersonnageController
 		$criteria = array();
 		
 		$form = $app['form.factory']->createBuilder(new PersonnageFindForm())
-			->add('find','submit', array('label' => 'Rechercher'))
 			->getForm();
 		
 		$form->handleRequest($request);
@@ -196,6 +299,8 @@ class PersonnageController
 				case 'nom':
 					$criteria[] = "p.nom LIKE '%$value%'";
 					break;
+				case 'id':
+					$criteria[] = "p.id = $value";
 			}
 		}
 		
@@ -218,6 +323,30 @@ class PersonnageController
 				'form' => $form->createView(),
 		));
 	}
+	
+	/**
+	 * Imprimmer la liste des personnages
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function adminPrintAction(Request $request, Application $app)
+	{
+		
+	}
+	
+	/**
+	 * Télécharger la liste des personnages au format CSV
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function adminDownloadAction(Request $request, Application $app)
+	{
+		
+	}
+	
+	
 	
 	/**
 	 * Affiche le détail d'un personnage (pour les orgas)
@@ -611,12 +740,64 @@ class PersonnageController
 	}
 	
 	/**
+	 * Ajoute un jeton vieillesse au personnage
+	 */
+	public function adminTokenAddAction(Request $request, Application $app, Personnage $personnage)
+	{
+		$token = $request->get('token');
+		$token = $app['orm.em']->getRepository('\LarpManager\Entities\Token')->findOneByTag($token);
+
+		// donne un jeton vieillesse
+		$personnageHasToken = new \LarpManager\Entities\PersonnageHasToken();
+		$personnageHasToken->setToken($token);
+		$personnageHasToken->setPersonnage($personnage);
+		$personnage->addPersonnageHasToken($personnageHasToken);
+		$app['orm.em']->persist($personnageHasToken);
+		
+		$personnage->setAgeReel($personnage->getAgeReel() + 5); // ajoute 5 ans à l'age réél
+		
+		if ( $personnage->getPersonnageHasTokens()->count() % 2 == 0 )
+		{
+			if ( $personnage->getAge()->getId() != 5 )
+			{
+				$age = $app['orm.em']->getRepository('\LarpManager\Entities\Age')->findOneById($personnage->getAge()->getId() + 1);
+				$personnage->setAge($age);
+			}
+		}
+		
+		$app['orm.em']->persist($personnage);
+		$app['orm.em']->flush();
+	
+		$app['session']->getFlashBag()->add('success','Le jeton '.$token->getTag().' a été ajouté.');
+		return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
+	}
+	
+	/**
+	 * Retire un jeton d'un personnage
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Personnage $personnage
+	 * @param PersonnageToken $personnageToken
+	 */
+	public function adminTokenDeleteAction(Request $request, Application $app, Personnage $personnage, PersonnageToken $personnageToken)
+	{
+		$personnage->removePersonnageHasToken($personnageHasToken);
+		$app['orm.em']->persist($personnage);
+		$app['orm.em']->remove($personnageToken);
+		
+		$app['orm.em']->persist($personnage);
+		$app['orm.em']->flush();
+		
+		$app['session']->getFlashBag()->add('success','Le jeton a été retiré.');
+		return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
+	}
+	
+	/**
 	 * Ajoute un trigger 
 	 */
 	public function adminTriggerAddAction(Request $request, Application $app)
-	{
-		$personnage = $request->get('personnage');
-		
+	{		
 		$trigger = new \LarpManager\Entities\PersonnageTrigger();
 		$trigger->setPersonnage($personnage);
 		$trigger->setDone(false);

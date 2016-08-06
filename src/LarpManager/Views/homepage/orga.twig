@@ -12,6 +12,25 @@
 				<h4>
 					Bienvenue {{ app.user.name }}
 				</h4>
+				{# si l'utilisateur est scénariste, lui afficher les liens vers les groupes dont
+				   il a la responsabilité #}
+	
+				{% if is_granted('ROLE_SCENARISTE', app.user) %}
+					{% if app.user.groupeScenariste|length > 0 %}				
+						<div class="dropdown">
+						  <a class="btn btn-default" id="dLabel" data-target="#" href="http://example.com" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+						    Scénariste : Groupes dont vous avez la charge
+						    <span class="caret"></span>
+						  </a>
+						
+						  <ul class="dropdown-menu" aria-labelledby="dLabel">
+						    {% for groupe in app.user.groupeScenariste %}
+								<a class="list-group-item" href="{{ path('groupe.detail', {'index': groupe.id}) }}">{{ groupe.nom }}</a>
+							{% endfor %}
+						  </ul>
+						</div>
+					{%  endif %}
+				{% endif %}
 			</div>
 						
 			{% if is_granted('ROLE_MODERATOR', app.user) %}
@@ -35,25 +54,7 @@
 				</div>
 			</div>
 			
-			{# si l'utilisateur est scénariste, lui afficher les liens vers les groupes dont
-			   il a la responsabilité #}
-	
-			{% if is_granted('ROLE_SCENARISTE', app.user) %}
-				{% if app.user.groupeScenariste|length > 0 %}
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						Scénariste : groupes dont vous avez la charge
-					</div>
-					<div class="panel-body">
-						<div class="list-group">
-							{% for groupe in app.user.groupeScenariste %}
-								<a class="list-group-item" href="{{ path('groupe.detail', {'index': groupe.id}) }}">{{ groupe.nom }}</a>
-							{% endfor %}
-						</div>	
-					</div>
-				</div>
-				{%  endif %}
-			{% endif %}
+			
 		</div>
 		
 		<div class="col-xs-12 col-md-6">

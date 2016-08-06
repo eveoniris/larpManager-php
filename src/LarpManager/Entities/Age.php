@@ -25,4 +25,9 @@ class Age extends BaseAge
 	{
 		return $this->getLabel();
 	}
+	
+	public function getFullLabel()
+	{
+		return $this->getLabel() . ' ' . $this->getDescription();
+	}
 }

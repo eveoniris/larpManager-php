@@ -11,8 +11,7 @@
 	
 	<div class="well well-sm">
 
-	<ul class="list-group">
-		<li class="list-group-item">
+
 			{% if paginator.totalItems == 1 %}
 	        	<strong>1</strong> personnage trouvé.
 	    	{% else %}
@@ -20,23 +19,39 @@
 	    	{% endif %}
 	
 	    	Montre <strong>{{ paginator.currentPageFirstItem }} - {{ paginator.currentPageLastItem }}</strong>.
-	   	</li>
-	   	<li class="list-group-item">
-	   		<a href="{{ path('personnage.admin.add') }}">Ajouter un personnage</a>
-	   	</li>
-	   	<li class="list-group-item">
-	   		<div class="list-group-item"><h6>Rechercher</h6></div>
-	   		
-	   		<form class="form" action="{{ path('personnage.admin.list') }}" method="POST" {{ form_enctype(form) }}>
-				{% form_theme form 'Form/bootstrap_3_horizontal_layout.html.twig' %}
-				{{ form(form) }}
-	   		</form>
-	   		<a href="{{ path('personnage.admin.list') }}">Reset</a>
-	   	</li>
-	</ul>
+
+	   		<div class="btn-toolbar" role="toolbar" aria-label="...">
+				<div class="btn-group" role="group" aria-label="...">
+					<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Ajouter un personnage" href="{{ path('personnage.admin.add') }}"><i class="fa fa-plus"></i></a>
+					<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Faire vieillir les personnages" href="{{ path('personnage.vieillir') }}"><i class="fa fa-users"></i></a>
+					<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Imprimer la liste" href="{{ path('personnage.admin.print') }}"><i class="fa fa-print"></i></a>
+					<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Télécharger la liste (CSV)" href="{{ path('personnage.admin.download') }}"><i class="fa fa-download"></i></a>
+				</div>
+				
+				<form class="form-inline" action="{{ path('personnage.admin.list') }}" method="POST" {{ form_enctype(form) }}>
+					{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+
+					<div class="form-group">
+						<div class="input-group">
+							{{ form_widget(form.value) }}
+						</div>
+						<div class="input-group">					
+							{{ form_widget(form.type) }}
+							<div class="input-group-btn">
+								<button type="submit" class="btn btn-default" data-toggle="tooltup" data-placement="top" title="Lancer la recherche"><i class="fa fa-search"></i></button>
+								<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Reset" href="{{ path('personnage.admin.list') }}"><i class="fa fa-refresh"></i></a>
+							</div>
+						</div>
+					</div>						
+					
+					{{ form_rest(form) }}
+		   		</form>
+		   		
+	   			
+			</div>
+			{{ paginator|raw }}	
 	
-	
-	{{ paginator|raw }}
+		
 	<table class="table table-striped table-bordered table-condensed table-hover">
 		<thead>
 			<tr>
@@ -113,7 +128,7 @@
 					<td>{{ personnage.id }}</td>
 					<td><a href="{{ path('personnage.admin.detail', {'personnage':personnage.id}) }}">{{ personnage.nom }} {{ personnage.surnom }}</a></td>
 					<td>{{ personnage.classe }}</td>
-					<td>{{ personnage.renomme }}</td>
+					<td>{{ personnage.renomme|default(0) }}</td>
 					<td>{{ personnage.groupe }}</td>
 					<td>{{ personnage.participant }}</td>
 					<td>

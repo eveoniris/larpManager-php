@@ -13,16 +13,33 @@
 	<div class="list-group">
 		<div class="list-group-item">
 			<div class="list-group-item-heading"><h6>Groupe</h6></div>
-			<div class="list-group-item-text">{{ background.groupe.nom }}</div>
+			<div class="list-group-item-text"><a href="{{ path('groupe.detail', {'index': background.groupe.id}) }}">{{ background.groupe.nom }}</a></div>
 		</div>
 		<div class="list-group-item">
-			<div class="list-group-item-heading"><h6>Visibilité</h6></div>
-			<div class="list-group-item-text">{{ background.visibility|explainVisibility }}</div>
+			<div class="list-group-item-heading"><h6>Informations</h6></div>
+			<p class="list-group-item-text text-warning">
+				Visibilité : {{ background.visibility|explainVisibility }}
+			</p>
+			<p class="list-group-item-text">
+	    		Création  : {{ background.creationDate|date('Y-m-d H:i:s') }}
+	    	</p>
+	    	<p class="list-group-item-text">
+	    		Dernière modification  : {{ background.updateDate|date('Y-m-d H:i:s') }}
+	    	</p>
 		</div>
 	</div>
 	
 	<div class="panel panel-default">
-		<div class="panel-heading"><h4>Texte</h4></div>
+		<div class="panel-heading">
+			<h4>{{ background.titre|default('Pas de titre') }}
+				<div class="btn-toolbar pull-right" role="toolbar" aria-label="...">
+					<div class="btn-group" role="group" aria-label="...">
+						<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Modifier" href="{{ path('background.update', {'background': background.id}) }}"><i class="fa fa-pencil"></i></a>
+						<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Supprimer" href="{{ path('background.delete', {'background': background.id}) }}"><i class="fa fa-eraser"></i></a>
+					</div>
+				</div>
+			</h4>
+		</div>
 		<div class="panel-body">
 			<p>{{ background.text|markdown }}</p>
 		</div>

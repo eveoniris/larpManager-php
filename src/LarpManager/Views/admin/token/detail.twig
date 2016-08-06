@@ -1,0 +1,28 @@
+{% extends "layout.twig" %}
+
+{% block title %}Jetons{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path('token.list') }}">Liste des jetons</a></li>
+		<li class="active">Détail du jeton {{ token.label }}</li>
+	</ol>
+	
+	<div class="well bs-component">
+		<div class="header">
+			<h5>{{ token.label }} -- {{ token.tag }}</h5>
+		</div>
+		<p>
+			{{ token.description|markdown }}
+		</p>
+		<div class="btn-toolbar" role="toolbar" aria-label="...">
+			<div class="btn-group" role="group" aria-label="...">
+				<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Modifier" href="{{ path('token.update',{'token':token.id}) }}"><i class="fa fa-pencil"></i></a>
+				<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Supprimer" href="{{ path('token.delete',{'token':token.id}) }}"><i class="fa fa-eraser"></i></a>
+			</div>
+		</div>
+	</div>
+
+{% endblock content %}

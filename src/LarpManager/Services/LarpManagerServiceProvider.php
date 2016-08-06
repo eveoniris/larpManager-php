@@ -195,6 +195,26 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 		$app['converter.personnageTrigger'] = $app->share(function($app) {
 			return new PersonnageTriggerConverter($app['orm.em']);
 		});
+		
+		// document converter
+		$app['converter.document'] = $app->share(function($app) {
+			return new DocumentConverter($app['orm.em']);
+		});
+			
+		// lieu converter
+		$app['converter.lieu'] = $app->share(function($app) {
+			return new LieuConverter($app['orm.em']);
+		});
+		
+		// token converter
+		$app['converter.token'] = $app->share(function($app) {
+			return new TokenConverter($app['orm.em']);
+		});
+		
+		// debriefing converter
+		$app['converter.debriefing'] = $app->share(function($app) {
+			return new DebriefingConverter($app['orm.em']);
+		});
 	}
 
 	/**

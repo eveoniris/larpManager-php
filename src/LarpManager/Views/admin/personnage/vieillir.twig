@@ -1,0 +1,31 @@
+{% extends "layout.twig" %}
+
+{% block title %}Personnages{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path('personnage.admin.list') }}">Liste des personnages</a></li>
+		<li class="active">Vieillir les personnages</li>
+	</ol>
+	
+	<div class="panel panel-danger">
+		<div class="panel-heading">
+			<span class="glyphicon glyphicon-danger-sign" aria-hidden="true"></span>
+			Attention
+		</div>
+		<div class="panel-body">Tous les personnages vont vieillir de 5 ans. Les personnages ayant déjà vieilli vont changer de classe d'age. Etes-vous certain de ce que vous faites ?</div>
+	</div>
+	
+	<div class="well bs-component">	
+		<form action="{{ path('personnage.vieillir') }}" method="POST" {{ form_enctype(form) }}>
+			<fieldset>
+				<legend>Vieillissement de tous les personnages</legend>
+				{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+				{{ form(form) }}
+			</fieldset>
+		</form>
+	</div>	
+	
+{% endblock content %}
