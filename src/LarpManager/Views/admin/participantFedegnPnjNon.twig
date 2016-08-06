@@ -1,0 +1,13 @@
+{% extends "layout.twig" %}
+
+{% block title %}Fedegn{% endblock title %}
+
+{% block content %}
+
+<h2>Liste des PNJ NON fédégn (utilisateur dans un groupe)  - {{ participants|length }} participants</h2>
+<ul class="list-group">
+{% for participant in participants %}
+	<li class="list-group-item">{{ participant.user.etatCivil.nom }} {{ participant.user.etatCivil.prenom }} {{ participant.user.email }} - {{ participant.user.etatCivil.dateNaissance|date("Y-m-d") }}</li>
+{% endfor %}
+</ul>
+{% endblock content %}

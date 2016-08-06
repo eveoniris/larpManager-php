@@ -4,8 +4,11 @@ namespace LarpManager\Controllers;
 use Symfony\Component\HttpFoundation\Request;
 use Silex\Application;
 use JasonGrimes\Paginator;
+
+use LarpManager\Entities\Background;
 use LarpManager\Form\BackgroundForm;
 use LarpManager\Form\BackgroundFindForm;
+use LarpManager\Form\BackgroundDeleteForm;
 use Doctrine\Common\Collections\ArrayCollection;
 
 
@@ -83,7 +86,6 @@ class BackgroundController
 		$criteria = array();
 		
 		$form = $app['form.factory']->createBuilder(new BackgroundFindForm())
-			->add('find','submit', array('label' => 'Rechercher'))
 			->getForm();
 		
 		$form->handleRequest($request);
@@ -170,22 +172,44 @@ class BackgroundController
 	}
 	
 	/**
+	 * Suppression d'un background
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Background $background
+	 */
+	public function deleteAction(Request $request, Application $app, Background $background)
+	{
+		$form = $app['form.factory']->createBuilder(new BackgroundDeleteForm(), $background)
+			->add('save','submit', array('label' => 'Supprimer'))
+			->getForm();
+			
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$background = $form->getData();
+			$app['orm.em']->remove($background);
+			$app['orm.em']->flush();
+			
+			$app['session']->getFlashBag()->add('success', 'Le background a été supprimé.');
+			return $app->redirect($app['url_generator']->generate('groupe.detail', array('index' => $background->getGroupe()->getId())),301);
+		}
+		
+		return $app['twig']->render('admin/background/delete.twig', array(
+				'form' => $form->createView(),
+				'background' => $background
+		));
+	}
+	
+	/**
 	 * Mise à jour d'un background
 	 * 
 	 * @param Request $request
 	 * @param Application $app
 	 */
-	public function updateAction(Request $request, Application $app)
-	{
-		$background = $request->get('background');
-		$groupeId = $request->get('groupe');
-		
-		if ( $groupeId )
-		{
-			$groupe = $app['orm.em']->find('\LarpManager\Entities\Groupe', $groupeId);
-			if ( $groupe ) $background->setGroupe($groupe);
-		}
-		
+	public function updateAction(Request $request, Application $app, Background $background)
+	{				
 		$form = $app['form.factory']->createBuilder(new BackgroundForm(), $background)
 			->add('visibility','choice', array(
 				'required' => true,
@@ -221,10 +245,8 @@ class BackgroundController
 	 * @param Request $request
 	 * @param Application $app
 	 */
-	public function detailAction(Request $request, Application $app)
-	{
-		$background = $request->get('background');
-		
+	public function detailAction(Request $request, Application $app, Background $background)
+	{		
 		return $app['twig']->render('admin/background/detail.twig', array(
 				'background' => $background
 		));

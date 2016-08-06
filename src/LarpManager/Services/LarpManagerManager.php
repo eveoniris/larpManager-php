@@ -184,6 +184,7 @@ class LarpManagerManager
 				array('label' => 'ROLE_ADMIN', 'descr' => 'Droit de modification sur tout'),
 				array('label' => 'ROLE_STOCK', 'descr' => 'Droit de modification sur le stock'),
 				array('label' => 'ROLE_REGLE', 'descr' => 'Droit de modification sur les règles'),
+				array('label' => 'ROLE_CARTOGRAPHE', 'descr' => 'Droit de modification sur l\'univers'),
 				array('label' => 'ROLE_SCENARISTE', 'descr' => 'Droit de modification sur le scénario, les groupes et le background'),
 				array('label' => 'ROLE_MODERATOR', 'descr' => 'Modération du forum'),
 		);
@@ -202,6 +203,7 @@ class LarpManagerManager
 			'GROUPE_SECONDAIRE_MEMBER' => 'Le personnage de l\'utilisateur doit être membre du groupe secondaire',
 			'CULTE' => 'Le personnage de l\'utilisateur doit suivre cette religion',
 			'ORGA' => 'L\'utilisateur doit disposer du role ORGA',
+			'CARTOGRAPHE' => 'L\'utilisateur doit disposer du role CARTOGRAPHE',
 			'SCENARISTE' => 'L\'utilisateur doit disposer du role SCENARISTE',
 		);
 		return $availableTopicRight;

@@ -65,9 +65,18 @@ class BackgroundControllerProvider implements ControllerProviderInterface
 		 * Détail d'un background
 		 */
 		$controllers->match('/{background}/detail','LarpManager\Controllers\BackgroundController::detailAction')
-			->bind("background")
+			->bind("background.detail")
 			->convert('background', 'converter.background:convert')
 			->method('GET')
+			->before($mustBeScenariste);
+			
+		/**
+		 * Suppression d'un background
+		 */
+		$controllers->match('/{background}/delete','LarpManager\Controllers\BackgroundController::deleteAction')
+			->bind("background.delete")
+			->convert('background', 'converter.background:convert')
+			->method('GET|POST')
 			->before($mustBeScenariste);
 		
 		/**

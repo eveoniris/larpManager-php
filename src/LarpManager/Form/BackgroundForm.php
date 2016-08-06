@@ -23,16 +23,30 @@ class BackgroundForm extends AbstractType
 	 */
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
-		$builder->add('text','textarea', array(
+		$builder->add('titre','text', array(
+					'required' => true,
+					'label' => 'Titre',
+				))
+				->add('text','textarea', array(
 					'required' => true,
 					'label' => 'Contenu',
-					'attr' => array('rows' => 9),
+					'attr' => array(
+						'class' => 'tinymce',
+						'rows' => 15),
 				))
 				->add('groupe','entity', array(
 						'required' => true,
 						'label' => 'Groupe',
 						'class' => 'LarpManager\Entities\Groupe',
 						'property' => 'nom',
+				))
+				->add('gn', 'entity', array(
+						'required' => true,
+						'label' => 'GN',
+						'class' => 'LarpManager\Entities\Gn',
+						'property' => 'label',
+						'placeholder' => 'Choisissez le GN auquel est lié ce background',
+						'empty_data'  => null
 				));
 	}
 	

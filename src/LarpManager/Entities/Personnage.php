@@ -50,6 +50,7 @@ class Personnage extends BasePersonnage
 		return $this;
 	}
 	
+	
 	/**
 	 * Affichage
 	 */

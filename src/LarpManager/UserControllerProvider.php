@@ -77,6 +77,18 @@ class UserControllerProvider implements ControllerProviderInterface
 					throw new AccessDeniedException();
 				}
 		});
+			
+		/**
+		 * Billetterie
+		 */
+		$controllers->get('/billetterie', 'LarpManager\Controllers\UserController::viewSelfBilletterieAction')
+			->bind('user.billetterie')
+			->before($mustBeAdmin)
+			->before(function(Request $request) use ($app) {
+				if ( !$app['user']) {
+					throw new AccessDeniedException();
+				}
+			});				
 		
 		/**
 		 * Vue d'un utilisateur
@@ -118,6 +130,20 @@ class UserControllerProvider implements ControllerProviderInterface
 			});
 			
 		/**
+		 * Vue de la billetterie
+		 */
+		$controllers->match('/{id}/billetterie', 'LarpManager\Controllers\UserController::viewBilletterieAction')
+			->bind('user.billetterie.view')
+			->assert('id', '\d+')
+			->method('GET')
+			->before($mustBeAdmin)
+			->before(function(Request $request) use ($app) {
+				if (!$app['security.authorization_checker']->isGranted('VIEW_USER_ID', $request->get('id'))) {
+					throw new AccessDeniedException();
+				}
+			});
+			
+		/**
 		 * Archiver un message
 		 */
 		$controllers->match('/{id}/messagerie/{message}/archive', 'LarpManager\Controllers\UserController::messageArchiveAction')
@@ -129,7 +155,7 @@ class UserControllerProvider implements ControllerProviderInterface
 				if (!$app['security.authorization_checker']->isGranted('VIEW_USER_ID', $request->get('id'))) {
 					throw new AccessDeniedException();
 				}
-			});			
+			});
 			
 		/**
 		 * Répondre à un message

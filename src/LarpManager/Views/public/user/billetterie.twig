@@ -1,0 +1,18 @@
+{% extends "layout.twig" %}
+
+{% block title %}Billetterie{% endblock title %}
+
+{% block content %}
+
+<div class="container-fluid">
+	
+		<ol class="breadcrumb">
+			<li>Navigation :</li>
+			<li><a href="{{ path('homepage')  }}">Accueil</a></li>
+			<li class="active">Billetterie</li>
+		</ol>
+		
+		<h2>Votre ID LarpManager est : {{ user.id }}</h2>
+</div>
+
+{% endblock content %}

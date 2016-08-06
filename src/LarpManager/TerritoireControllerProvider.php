@@ -39,6 +39,15 @@ class TerritoireControllerProvider implements ControllerProviderInterface
 		$controllers = $app['controllers_factory'];
 		
 		/**
+		 * Vérifie que l'utilisateur dispose du role CARTOGRAPHE
+		 */
+		$mustBeCartographe = function(Request $request) use ($app) {
+			if (!$app['security.authorization_checker']->isGranted('ROLE_CARTOGRAPHE')) {
+				throw new AccessDeniedException();
+			}
+		};
+		
+		/**
 		 * Vérifie que l'utilisateur dispose du role SCENARISTE
 		 */
 		$mustBeScenariste = function(Request $request) use ($app) {
@@ -57,9 +66,8 @@ class TerritoireControllerProvider implements ControllerProviderInterface
 		};
 		
 		/**
-		 * Vérifie que l'utilisateur fait partie du groupe controlant ce territoire
+		 * Détail d'un territoire (pour les joueurs)
 		 */
-		
 		$controllers->match('/{territoire}/joueur','LarpManager\Controllers\TerritoireController::detailJoueurAction')
 			->assert('territoire', '\d+')
 			->bind("territoire.detail")
@@ -67,38 +75,124 @@ class TerritoireControllerProvider implements ControllerProviderInterface
 			->convert('territoire', 'converter.territoire:convert')
 			->before($mustBeOnGroupe);
 		
+		/**
+		 * Liste des territoires
+		 */
 		$controllers->match('/list','LarpManager\Controllers\TerritoireController::listAction')
 			->bind("territoire.admin.list")
 			->method('GET')
-			->before($mustBeScenariste);
-		
-		$controllers->match('/print','LarpManager\Controllers\TerritoireController::printAction')
-			->bind("territoire.admin.print")
-			->method('GET')
-			->before($mustBeScenariste);
-
-		$controllers->match('/quete','LarpManager\Controllers\TerritoireController::queteAction')
-			->bind("territoire.admin.quete")
-			->method('GET')
-			->before($mustBeScenariste);
-		
-		$controllers->match('/noble','LarpManager\Controllers\TerritoireController::nobleAction')
-			->bind("territoire.admin.noble")
-			->method('GET')
-			->before($mustBeScenariste);
-		
+			->before($mustBeCartographe);
+			
+		/**
+		 * Ajout d'un territoire
+		 */
 		$controllers->match('/add','LarpManager\Controllers\TerritoireController::addAction')
 			->bind("territoire.admin.add")
 			->method('GET|POST')
 			->before($mustBeScenariste);
 		
+		/**
+		 * Mise à jour d'un territoire
+		 */
 		$controllers->match('/{territoire}/update','LarpManager\Controllers\TerritoireController::updateAction')
 			->assert('territoire', '\d+')
 			->bind("territoire.admin.update")
 			->method('GET|POST')
 			->convert('territoire', 'converter.territoire:convert')
+			->before($mustBeCartographe);
+
+		/**
+		 * Mise à jour du blason
+		 */
+		$controllers->match('/{territoire}/blason/update','LarpManager\Controllers\TerritoireController::updateBlasonAction')
+			->assert('territoire', '\d+')
+			->bind("territoire.admin.update.blason")
+			->method('GET|POST')
+			->convert('territoire', 'converter.territoire:convert')
+			->before($mustBeCartographe);
+				
+		/**
+		 * Détail d'un territoire
+		 */
+		$controllers->match('/{territoire}','LarpManager\Controllers\TerritoireController::detailAction')
+			->assert('territoire', '\d+')
+			->bind("territoire.admin.detail")
+			->convert('territoire', 'converter.territoire:convert')
+			->method('GET')
+			->before($mustBeCartographe);
+			
+		/**
+		 * Ajout d'un événement
+		 */
+		$controllers->match('/{territoire}/event/add','LarpManager\Controllers\TerritoireController::addEventAction')
+			->assert('territoire', '\d+')
+			->bind("territoire.admin.event.add")
+			->method('GET|POST')
+			->convert('territoire', 'converter.territoire:convert')
+			->convert('event', 'converter.event:convert')
+			->before($mustBeCartographe);
+				
+		/**
+		 * Suppression d'un événement
+		 */
+		$controllers->match('/{territoire}/event/{event}/delete','LarpManager\Controllers\TerritoireController::deleteEventAction')
+			->assert('territoire', '\d+')
+			->assert('event', '\d+')
+			->bind("territoire.admin.event.delete")
+			->method('GET|POST')
+			->convert('territoire', 'converter.territoire:convert')
+			->convert('event', 'converter.event:convert')
+			->before($mustBeCartographe);
+				
+		/**
+		 * Mise à jour d'un événement
+		 */
+		$controllers->match('/{territoire}/event/{event}/update','LarpManager\Controllers\TerritoireController::updateEventAction')
+			->assert('territoire', '\d+')
+			->assert('event', '\d+')
+			->bind("territoire.admin.event.update")
+			->method('GET|POST')
+			->convert('territoire', 'converter.territoire:convert')
+			->convert('event', 'converter.event:convert')
+			->before($mustBeCartographe);
+			
+		/**
+		 * Impression des territoires
+		 */
+		$controllers->match('/print','LarpManager\Controllers\TerritoireController::printAction')
+			->bind("territoire.admin.print")
+			->method('GET')
 			->before($mustBeScenariste);
 		
+		/**
+		 * Suppression d'un territoire
+		 */
+		$controllers->match('/{territoire}/delete','LarpManager\Controllers\TerritoireController::deleteAction')
+			->assert('territoire', '\d+')
+			->bind("territoire.admin.delete")
+			->method('GET|POST')
+			->convert('territoire', 'converter.territoire:convert')
+			->before($mustBeScenariste);
+
+		/**
+		 * Gestiond des quêtes commerciales
+		 */
+		$controllers->match('/quete','LarpManager\Controllers\TerritoireController::queteAction')
+			->bind("territoire.admin.quete")
+			->method('GET')
+			->before($mustBeScenariste);
+		
+		/**
+		 * Liste des nobles
+		 */
+		$controllers->match('/noble','LarpManager\Controllers\TerritoireController::nobleAction')
+			->bind("territoire.admin.noble")
+			->method('GET')
+			->before($mustBeScenariste);
+		
+		/**
+		 * Ajout d'une construction
+		 */
 		$controllers->match('/{territoire}/construction/add','LarpManager\Controllers\TerritoireController::constructionAddAction')
 			->assert('territoire', '\d+')
 			->bind("territoire.construction.add")
@@ -106,6 +200,9 @@ class TerritoireControllerProvider implements ControllerProviderInterface
 			->convert('territoire', 'converter.territoire:convert')
 			->before($mustBeScenariste);
 		
+		/**
+		 * Retrait d'une construction
+		 */
 		$controllers->match('/{territoire}/construction/{construction}/remove','LarpManager\Controllers\TerritoireController::constructionRemoveAction')
 			->assert('territoire', '\d+')
 			->assert('construction', '\d+')
@@ -115,6 +212,9 @@ class TerritoireControllerProvider implements ControllerProviderInterface
 			->convert('construction', 'converter.construction:convert')
 			->before($mustBeScenariste);
 		
+		/**
+		 * Mise à jour des ingrédients
+		 */
 		$controllers->match('/{territoire}/ingredients/update','LarpManager\Controllers\TerritoireController::updateIngredientsAction')
 			->assert('territoire', '\d+')
 			->bind("territoire.ingredients.update")
@@ -122,27 +222,19 @@ class TerritoireControllerProvider implements ControllerProviderInterface
 			->convert('territoire', 'converter.territoire:convert')
 			->before($mustBeScenariste);
 		
-		$controllers->match('/{territoire}/blason/update','LarpManager\Controllers\TerritoireController::updateBlasonAction')
-			->assert('territoire', '\d+')
-			->bind("territoire.admin.update.blason")
-			->method('GET|POST')
-			->convert('territoire', 'converter.territoire:convert')
-			->before($mustBeScenariste);
-		
+		/**
+		 * Mise à jour jeu stratégique
+		 */
 		$controllers->match('/{territoire}/updateStrategie','LarpManager\Controllers\TerritoireController::updateStrategieAction')
 			->assert('territoire', '\d+')
 			->bind("territoire.admin.updateStrategie")
 			->method('GET|POST')
 			->convert('territoire', 'converter.territoire:convert')
-			->before($mustBeScenariste);		
-		
-		$controllers->match('/{territoire}/delete','LarpManager\Controllers\TerritoireController::deleteAction')
-			->assert('territoire', '\d+')
-			->bind("territoire.admin.delete")
-			->method('GET|POST')
-			->convert('territoire', 'converter.territoire:convert')
-			->before($mustBeScenariste);			
+			->before($mustBeScenariste);					
 
+		/**
+		 * Ajout d'un forum
+		 */
 		$controllers->match('/{territoire}/topic/add','LarpManager\Controllers\TerritoireController::addTopicAction')
 			->assert('territoire', '\d+')
 			->bind("territoire.admin.topic.add")
@@ -150,45 +242,16 @@ class TerritoireControllerProvider implements ControllerProviderInterface
 			->convert('territoire', 'converter.territoire:convert')
 			->before($mustBeScenariste);			
 		
+		/**
+		 * Suppression du forum
+		 */
 		$controllers->match('/{territoire}/topic/delete','LarpManager\Controllers\TerritoireController::deleteTopicAction')
 			->assert('territoire', '\d+')
 			->bind("territoire.admin.topic.delete")
 			->method('GET')
 			->convert('territoire', 'converter.territoire:convert')
 			->before($mustBeScenariste);	
-			
-		$controllers->match('/{territoire}','LarpManager\Controllers\TerritoireController::detailAction')
-			->assert('territoire', '\d+')
-			->bind("territoire.admin.detail")
-			->convert('territoire', 'converter.territoire:convert')
-			->method('GET')
-			->before($mustBeScenariste);
-			
-		$controllers->match('/{territoire}/event/add','LarpManager\Controllers\TerritoireController::addEventAction')
-			->assert('territoire', '\d+')
-			->bind("territoire.admin.event.add")
-			->method('GET|POST')
-			->convert('territoire', 'converter.territoire:convert')
-			->convert('event', 'converter.event:convert')
-			->before($mustBeScenariste);
-		
-		$controllers->match('/{territoire}/event/{event}/delete','LarpManager\Controllers\TerritoireController::deleteEventAction')
-			->assert('territoire', '\d+')
-			->assert('event', '\d+')
-			->bind("territoire.admin.event.delete")
-			->method('GET|POST')
-			->convert('territoire', 'converter.territoire:convert')
-			->convert('event', 'converter.event:convert')
-			->before($mustBeScenariste);
-		
-		$controllers->match('/{territoire}/event/{event}/update','LarpManager\Controllers\TerritoireController::updateEventAction')
-			->assert('territoire', '\d+')
-			->assert('event', '\d+')
-			->bind("territoire.admin.event.update")
-			->method('GET|POST')
-			->convert('territoire', 'converter.territoire:convert')
-			->convert('event', 'converter.event:convert')
-			->before($mustBeScenariste);			
+					
 		
 		return $controllers;
 	}

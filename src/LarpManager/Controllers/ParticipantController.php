@@ -72,6 +72,19 @@ class ParticipantController
 	}
 	
 	/**
+	 * liste des participants non fédégn
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function listFedegnPnjNonAction(Request $request, Application $app)
+	{
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Participant');
+		$participants = $repo->findAllOrderedByUsernameGroupePNJNonFedegn();
+		return $app['twig']->render('admin/participantFedegnPnjNon.twig', array('participants' => $participants));
+	}
+	
+	/**
 	 * Gestion des lieu de restauration
 	 * @param Request $request
 	 * @param Application $app

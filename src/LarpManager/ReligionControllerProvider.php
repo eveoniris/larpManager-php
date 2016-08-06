@@ -34,6 +34,15 @@ class ReligionControllerProvider implements ControllerProviderInterface
 	public function connect(Application $app)
 	{
 		$controllers = $app['controllers_factory'];
+
+		/**
+		 * Vérifie que l'utilisateur dispose du role CARTOGRAPHE
+		 */
+		$mustBeCartographe = function(Request $request) use ($app) {
+			if (!$app['security.authorization_checker']->isGranted('ROLE_CARTOGRAPHE')) {
+				throw new AccessDeniedException();
+			}
+		};
 		
 		/**
 		 * Vérifie que l'utilisateur dispose du role SCENARISTE
@@ -44,66 +53,102 @@ class ReligionControllerProvider implements ControllerProviderInterface
 			}
 		};
 		
+		/**
+		 * Liste des religions
+		 */
 		$controllers->match('/','LarpManager\Controllers\ReligionController::indexAction')
 			->bind("religion")
 			->method('GET')
-			->before($mustBeOrga);
+			->before($mustBeCartographe);
 		
+		/**
+		 * Ajout d'une religion
+		 */
+		$controllers->match('/add','LarpManager\Controllers\ReligionController::addAction')
+			->bind("religion.add")
+			->method('GET|POST')
+			->before($mustBeOrga);
+			
+		/**
+		 * Liste des adresse mail des joueurs ayant cette religion
+		 */
 		$controllers->match('/mail','LarpManager\Controllers\ReligionController::mailAction')
 			->bind("religion.mail")
 			->method('GET')
 			->before($mustBeOrga);
 		
+		/**
+		 * Liste des religions (joueur)
+		 */
 		$controllers->match('/list','LarpManager\Controllers\ReligionController::listAction')
 			->bind("religion.list")
 			->method('GET');
 		
-		$controllers->match('/add','LarpManager\Controllers\ReligionController::addAction')
-			->bind("religion.add")
-			->method('GET|POST')
-			->before($mustBeOrga);
-		
+		/**
+		 * Liste des personnages ayant cette religion
+		 */			
 		$controllers->match('/{religion}/perso','LarpManager\Controllers\ReligionController::persoAction')
 			->bind("religion.perso")
 			->method('GET')
 			->convert('religion', 'converter.religion:convert')
 			->before($mustBeOrga);
 		
+		/**
+		 * Mise à jour d'une religion
+		 */
 		$controllers->match('/{index}/update','LarpManager\Controllers\ReligionController::updateAction')
 			->assert('index', '\d+')
 			->bind("religion.update")
 			->method('GET|POST')
-			->before($mustBeOrga);
+			->before($mustBeCartographe);
 		
+		/**
+		 * Mise à jour du blason d'une religion
+		 */
 		$controllers->match('/{religion}/update/blason','LarpManager\Controllers\ReligionController::updateBlasonAction')
 			->assert('religion', '\d+')
 			->bind("religion.update.blason")
 			->convert('religion', 'converter.religion:convert')
 			->method('GET|POST')
-			->before($mustBeOrga);			
+			->before($mustBeCartographe);			
 		
+		/**
+		 * Detail d'une religion
+		 */
 		$controllers->match('/{index}','LarpManager\Controllers\ReligionController::detailAction')
 			->assert('index', '\d+')
 			->bind("religion.detail")
 			->method('GET')
-			->before($mustBeOrga);
+			->before($mustBeCartographe);
 		
+		/**
+		 * Niveaux de ferveurs
+		 */
 		$controllers->match('/level','LarpManager\Controllers\ReligionController::levelIndexAction')
 			->bind("religion.level")
 			->method('GET')
 			->before($mustBeOrga);
 		
+		/**
+		 * Ajouter un niveau de ferveur
+		 */
 		$controllers->match('/level/add','LarpManager\Controllers\ReligionController::levelAddAction')
 			->bind("religion.level.add")
 			->method('GET|POST')
 			->before($mustBeOrga);
 
+		/**
+		 * Mettre à jour un niveau de ferveur
+		 */
 		$controllers->match('/level/{index}/update','LarpManager\Controllers\ReligionController::levelUpdateAction')
 			->assert('index', '\d+')
 			->bind("religion.level.update")
 			->method('GET|POST')
 			->before($mustBeOrga);
 		
+		/**
+		 * Détail d'un niveau de ferveur
+		 */
 		$controllers->match('/level/{index}','LarpManager\Controllers\ReligionController::levelDetailAction')
 			->assert('index', '\d+')
 			->bind("religion.level.detail")

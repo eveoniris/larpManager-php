@@ -1,0 +1,60 @@
+{% extends "layout.twig" %}
+
+{% block title %}Documents{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li class="active">Liste des documents</li>
+	</ol>
+
+	<div class="well well-sm">
+	
+		<div class="btn-toolbar" role="toolbar" aria-label="...">
+			<div class="btn-group" role="group" aria-label="...">
+				<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Ajouter un document" href="{{ path('document.add') }}"><i class="fa fa-plus"></i></a>
+				<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Imprimer la liste" href="{{ path('document.print') }}"><i class="fa fa-print"></i></a>
+				<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Télécharger la liste (CSV)" href="{{ path('document.download') }}"><i class="fa fa-download"></i></a>
+			</div>
+		</div>
+	</div>	
+	
+		<table class="table table-condensed table-striped table-bordered">
+			<thead>
+				<tr>
+					<th>Titre</th>
+					<th>Description</th>
+					<th>Langues</th>
+					<th>Lieux</th>
+					<th>Groupes</th>
+					<th>Personnages</th>
+					<th />
+				</tr>
+			</thead>
+			<tbody>
+				{% for document in documents %}
+				<tr>
+					<td>#{{ document.code }} -- {{ document.titre }}</td>
+					<td>{{ document.description|markdown }}</td>
+					<td>{% if document.langues|length > 0 %}Langue(s) : {{ document.langues|join(', ') }}{% else %}Aucune langue définie{% endif %}</td>
+					<td>{% if document.lieus|length > 0 %}Entreposé dans : {{ document.lieus|join(', ') }}{% else %}Non défini{% endif %}</td>
+					<td>{% if document.groupes|length > 0 %}Possédé par les groupes : {{ document.groupes|join(', ') }}{% else %}Non défini{% endif %}</td>
+					<td>{% if document.personnages|length > 0 %}Possédé par les personnages : {{ document.personnages|join(', ') }}{% else %}Non défini{% endif %}</td>
+					<td>
+						<div class="btn-toolbar pull-right" role="toolbar" aria-label="...">
+							<div class="btn-group" role="group" aria-label="...">
+								<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Télécharger" target="_blank" href="{{ path('document.get',{'document': document.documentUrl}) }}"><i class="fa fa-download"></i></a>
+								<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Modifier" href="{{ path('document.update',{'document':document.id}) }}"><i class="fa fa-pencil"></i></a>
+								<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Détail" href="{{ path('document.detail',{'document':document.id}) }}"><i class="fa fa-eye"></i></a>
+								<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Supprimer" href="{{ path('document.delete',{'document':document.id}) }}"><i class="fa fa-eraser"></i></a>
+							</div>
+						</div>
+					</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+
+	
+{% endblock %}

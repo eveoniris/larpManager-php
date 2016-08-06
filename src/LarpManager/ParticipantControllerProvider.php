@@ -83,6 +83,19 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 					throw new AccessDeniedException();
 				}
 			});
+			
+		/**
+		 * Liste des joueurs
+		 * Accessible uniquement aux admin
+		 */
+		$controllers->match('/admin/fedegn/non/pnj','LarpManager\Controllers\ParticipantController::listFedegnPnjNonAction')
+			->bind("participant.pnj.non.fedegn")
+			->method('GET')
+			->before(function(Request $request) use ($app) {
+				if (!$app['security.authorization_checker']->isGranted('ROLE_ADMIN')) {
+					throw new AccessDeniedException();
+				}
+			});
 
 		/**
 		 * Détail des informations joueurs (pour les orgas)
