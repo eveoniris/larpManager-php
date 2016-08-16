@@ -1,5 +1,6 @@
 {% extends "layout.twig" %}
 
+{% block title %}{{ groupe.nom}}{% endblock title %}
 {% block content %}
 
 	<ol class="breadcrumb">
@@ -323,7 +324,6 @@
 				<div class="panel-heading">Impression</div>
 				<div class="panel-body">
 					<div class="btn-group" role="group" aria-label="...">
-						<a class="btn btn-primary" role="button" href="{{ path('groupe.print.materiel.groupe', {'groupe' : groupe.id}) }}">Matériel necessaire (groupe)</a>
 						<a class="btn btn-primary" role="button" href="{{ path('groupe.print.materiel', {'groupe' : groupe.id}) }}">Matériel necessaire (personnages)</a>
 						<a class="btn btn-primary" role="button" href="{{ path('groupe.print.perso', {'groupe' : groupe.id}) }}">Fiche de perso</a>
 						<a class="btn btn-primary" role="button" href="{{ path('groupe.print.background', {'groupe' : groupe.id}) }}">Background</a>
@@ -334,7 +334,14 @@
 			<div class="panel panel-default">
 				<div class="panel-heading">Matériel</div>
 				<div class="panel-body">
+					<a href=" {{ path('groupe.admin.documents', {'groupe': groupe.id}) }}">Modifier la liste de documents</a>
+					<ul>
+					{% for document in groupe.documents %}
+						<li><a href="{{ path('document.detail', {'document':document.id}) }}"><strong>{{ document.code }}</strong>&nbsp;{{ document.titre }}</a></li>
+					{% endfor %}
+					</ul>
 					{{ groupe.materiel|markdown }}
+					<a class="btn btn-primary" role="button" href="{{ path('groupe.print.materiel.groupe', {'groupe' : groupe.id}) }}">Imprimer</a>
 				</div>
 			</div>
 				

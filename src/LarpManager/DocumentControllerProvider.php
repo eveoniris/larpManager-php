@@ -39,14 +39,14 @@ class DocumentControllerProvider implements ControllerProviderInterface
 		/**
 		 * Imprimer la liste des documents
 		 */
-		$controllers->match('/','LarpManager\Controllers\DocumentController::printAction')
+		$controllers->match('/print','LarpManager\Controllers\DocumentController::printAction')
 			->bind("document.print")
 			->method('GET');
 			
 		/**
 		 * Télécharger la liste des documents
 		 */
-		$controllers->match('/','LarpManager\Controllers\DocumentController::downloadAction')
+		$controllers->match('/download','LarpManager\Controllers\DocumentController::downloadAction')
 			->bind("document.download")
 			->method('GET');
 		

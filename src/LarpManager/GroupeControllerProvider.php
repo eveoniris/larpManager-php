@@ -266,6 +266,15 @@ class GroupeControllerProvider implements ControllerProviderInterface
 			->convert('groupe', 'converter.groupe:convert')
 			->method('GET|POST')
 			->before($mustBeScenariste);
+		
+		/**
+		 * Gestion des documents lié au groupe
+		 */
+		$controllers->match('/admin/{groupe}/documents','LarpManager\Controllers\GroupeController::adminDocumentAction')
+			->bind("groupe.admin.documents")
+			->convert('groupe', 'converter.groupe:convert')
+			->method('GET|POST')
+			->before($mustBeScenariste);
 			
 		/**
 		 * Rechercher un groupe

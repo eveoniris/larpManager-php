@@ -235,11 +235,15 @@ else
 	$app->mount('/forum', new LarpManager\ForumControllerProvider());
 	$app->mount('/statistique', new LarpManager\StatistiqueControllerProvider());
 	$app->mount('/background', new LarpManager\BackgroundControllerProvider());
+	$app->mount('/debriefing', new LarpManager\DebriefingControllerProvider());
 	$app->mount('/pnj', new LarpManager\PnjControllerProvider());
 	$app->mount('/admin', new LarpManager\AdminControllerProvider());
 	$app->mount('/titre', new LarpManager\TitreControllerProvider());
 	$app->mount('/ingredient', new LarpManager\IngredientControllerProvider());
 	$app->mount('/trombinoscope', new LarpManager\TrombinoscopeControllerProvider());
+	$app->mount('/document', new LarpManager\DocumentControllerProvider());
+	$app->mount('/token', new LarpManager\TokenControllerProvider());
+	$app->mount('/lieu', new LarpManager\LieuControllerProvider());
 		
 
 	/**
@@ -248,11 +252,12 @@ else
 	$app['security.role_hierarchy'] = array(
 		'ROLE_USER' => array('ROLE_USER'),
 		'ROLE_ORGA' => array('ROLE_ORGA'),
+		'ROLE_CARTOGRAPHE' => array('ROLE_USER', 'ROLE_CARTOGRAPHE'),
 		'ROLE_STOCK' => array('ROLE_USER', 'ROLE_ORGA', 'ROLE_STOCK'),
-		'ROLE_SCENARISTE' => array('ROLE_USER', 'ROLE_ORGA', 'ROLE_SCENARISTE'),
+		'ROLE_SCENARISTE' => array('ROLE_USER', 'ROLE_ORGA', 'ROLE_SCENARISTE', 'ROLE_CARTOGRAPHE'),
 		'ROLE_REGLE' => array('ROLE_USER', 'ROLE_ORGA', 'ROLE_REGLE'),
 		'ROLE_MODERATOR' => array('ROLE_USER', 'ROLE_ORGA', 'ROLE_MODERATOR'), 
-		'ROLE_ADMIN' => array('ROLE_USER', 'ROLE_ORGA', 'ROLE_STOCK','ROLE_SCENARISTE','ROLE_REGLE','ROLE_MODERATOR'),
+		'ROLE_ADMIN' => array('ROLE_USER', 'ROLE_ORGA', 'ROLE_STOCK','ROLE_SCENARISTE','ROLE_REGLE','ROLE_MODERATOR','ROLE_CARTOGRAPHE'),
 	);
 	
 	/**
@@ -275,6 +280,7 @@ else
 		array('^/religion/.*$', 'ROLE_USER'),
 		array('^/groupeSecondaireType/.*$', 'ROLE_SCENARISTE'),
 		array('^/background/.*$', 'ROLE_USER'),
+		array('^/debriefing/.*$', 'ROLE_SCENARISTE'),
 		array('^/annonce/.*$', 'ROLE_ADMIN'),
 		array('^/droit/.*$', 'ROLE_ADMIN'),
 		array('^/api/.*$', 'ROLE_SCENARISTE'),
@@ -288,8 +294,11 @@ else
 		array('^/langue/.*$', 'ROLE_SCENARISTE'),
 		array('^/ressource/.*$', 'ROLE_SCENARISTE'),
 		array('^/statistique/.*$', 'ROLE_SCENARISTE'),
+		array('^/document/.*$', 'ROLE_SCENARISTE'),
+		array('^/lieu/.*$', 'ROLE_SCENARISTE'),
 		array('^/competenceFamily/.*$', 'ROLE_REGLE'),
 		array('^/level/.*$', 'ROLE_REGLE'),
+		array('^/token/.*$', 'ROLE_REGLE'),
 		array('^/stock/.*$', 'ROLE_STOCK'),
 
 	);

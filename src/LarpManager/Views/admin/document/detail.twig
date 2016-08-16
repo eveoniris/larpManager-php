@@ -1,0 +1,38 @@
+{% extends "layout.twig" %}
+
+{% block title %}Documents{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path('document') }}">Liste des documents</a></li>
+		<li class="active">{{ document.code }}</li>
+	</ol>
+	
+	<div class="well bs-component">
+		<h4>{{ document.code }} -- {{ document.titre }}</h4>
+		<h5>{% if document.impression %}Imprimé{% else %}Non imprimé</h5>
+		<div class="list-group">
+			<div class="list-group-item">
+				Auteur : {{ document.auteur }}
+			</div>
+			<div class="list-group-item">
+				Description : {{ document.description|markdown }}
+			</div>
+			<div class="list-group-item">
+				Groupes : {{ document.groupes|join(', ') }}
+			</div>
+			<div class="list-group-item">
+				Personnages : {{ document.personnages|join(', ') }}
+			</div>
+			<div class="list-group-item">
+				Lieux : {{ document.lieus|join(', ') }}
+			</div>
+			<div class="list-group-item">
+				Créé par {{ document.user.userName }} le {{ document.creationDate|date('Y-m-d') }}. Modifié le {{ document.updateDate|date('Y-m-d') }}
+			</div>
+		</div>
+	</div>
+	
+{% endblock %}

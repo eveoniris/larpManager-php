@@ -21,6 +21,10 @@ use LarpManager\Form\AcceptPeaceForm;
 use LarpManager\Form\RefusePeaceForm;
 use LarpManager\Form\CancelRequestedPeaceForm;
 use LarpManager\Form\GroupeInscriptionForm;
+use LarpManager\Form\GroupeDocumentForm;
+
+use LarpManager\Entities\Groupe;
+use LarpManager\Entities\Document;
 
 
 /**
@@ -154,6 +158,36 @@ class GroupeController
 				'px' => $quete['px'],
 				'recompenses' => $quete['recompenses'],
 			));
+	}
+	
+	/**
+	 * Ajoute un document dans le matériel du groupe
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function adminDocumentAction(Request $request, Application $app, Groupe $groupe)
+	{
+		$form = $app['form.factory']->createBuilder(new GroupeDocumentForm(), $groupe)
+			->add('submit','submit', array('label' => 'Enregistrer'))
+			->getForm();
+		
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$groupe = $form->getData();
+			$app['orm.em']->persist($groupe);
+			$app['orm.em']->flush();
+			
+			$app['session']->getFlashBag()->add('success', 'Le document a été ajouté au groupe.');
+			return $app->redirect($app['url_generator']->generate('groupe.detail', array('index' => $groupe->getId())));
+		}
+		
+		return $app['twig']->render('admin/groupe/documents.twig', array(
+				'groupe' => $groupe,
+				'form' => $form->createView(),
+		)); 
 	}
 	
 	/**

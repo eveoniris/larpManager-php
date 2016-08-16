@@ -26,4 +26,20 @@ class Document extends BaseDocument
 		$this->setCreationDate(new \Datetime('now'));
 		$this->setUpdateDate(new \Datetime('now'));
 	}
+	
+	/**
+	 * Fourni la description du document au bon format pour impression
+	 */
+	public function getDescriptionRaw()
+	{
+		return html_entity_decode(strip_tags($this->getDescription()));
+	}
+	
+	/**
+	 * Fourni l'identité d'un document (code + titre)
+	 */
+	public function getIdentity()
+	{
+		return $this->getCode(). ' ' .$this->getTitre();
+	}
 }
