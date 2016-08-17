@@ -213,9 +213,7 @@ class DocumentController
 	 * @param Application $app
 	 */
 	public function updateAction(Request $request, Application $app, Document $document)
-	{
-		$document = $request->get('document');
-		
+	{		
 		$form = $app['form.factory']->createBuilder(new DocumentForm(), $document)
 			->add('save','submit', array('label' => "Sauvegarder"))
 			->getForm();
@@ -228,22 +226,25 @@ class DocumentController
 			$document->setUpdateDate(new \Datetime('NOW'));
 			
 			$files = $request->files->get($form->getName());
+			if ( $files['document'] )
+			{
 			
-			$path = __DIR__.'/../../../private/documents/';
-			$filename = $files['document']->getClientOriginalName();
-			$extension = $files['document']->guessExtension();
-			
-			if (!$extension || ! in_array($extension, array('pdf'))) {
-				$app['session']->getFlashBag()->add('error','Désolé, votre fichier ne semble pas valide (vérifiez le format de votre fichier)');
-				return $app->redirect($app['url_generator']->generate('document.add'),301);
+				$path = __DIR__.'/../../../private/documents/';
+				$filename = $files['document']->getClientOriginalName();
+				$extension = $files['document']->guessExtension();
+				
+				if (!$extension || ! in_array($extension, array('pdf'))) {
+					$app['session']->getFlashBag()->add('error','Désolé, votre fichier ne semble pas valide (vérifiez le format de votre fichier)');
+					return $app->redirect($app['url_generator']->generate('document.add'),301);
+				}
+				
+				$documentFilename = hash('md5',$app['user']->getUsername().$filename . time()).'.'.$extension;
+					
+				
+				$files['document']->move($path, $documentFilename);
+					
+				$document->setDocumentUrl($documentFilename);
 			}
-			
-			$documentFilename = hash('md5',$app['user']->getUsername().$filename . time()).'.'.$extension;
-				
-			
-			$files['document']->move($path, $documentFilename);
-				
-			$document->setDocumentUrl($documentFilename);
 				
 			$app['orm.em']->persist($document);
 			$app['orm.em']->flush();
@@ -265,9 +266,7 @@ class DocumentController
 	 * @param Application $app
 	 */
 	public function deleteAction(Request $request, Application $app, Document $document)
-	{
-		$document = $request->get('document');
-		
+	{		
 		$form = $app['form.factory']->createBuilder(new DocumentDeleteForm(), $document)
 			->add('save','submit', array('label' => "Supprimer"))
 			->getForm();

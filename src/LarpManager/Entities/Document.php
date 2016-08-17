@@ -18,6 +18,11 @@ use LarpManager\Entities\BaseDocument;
  */
 class Document extends BaseDocument
 {
+	public function __toString()
+	{
+		return $this->getIdentity();
+	}
+	
 	/**
 	 * Constructeur
 	 */

@@ -18,4 +18,16 @@ use LarpManager\Entities\BaseLieu;
  */
 class Lieu extends BaseLieu
 {
+	public function __toString()
+	{
+		return $this->getNom();
+	}
+	
+	/**
+	 * Fourni la description du document au bon format pour impression
+	 */
+	public function getDescriptionRaw()
+	{
+		return html_entity_decode(strip_tags($this->getDescription()));
+	}
 }

@@ -39,14 +39,14 @@ class LieuControllerProvider implements ControllerProviderInterface
 		/**
 		 * Imprimer la liste des lieux
 		 */
-		$controllers->match('/','LarpManager\Controllers\LieuController::printAction')
+		$controllers->match('/print','LarpManager\Controllers\LieuController::printAction')
 			->bind("lieu.print")
 			->method('GET');
 				
 		/**
 		 * Télécharger la liste des lieux
 		 */
-		$controllers->match('/','LarpManager\Controllers\LieuController::downloadAction')
+		$controllers->match('/download','LarpManager\Controllers\LieuController::downloadAction')
 			->bind("lieu.download")
 			->method('GET');
 		
@@ -84,6 +84,14 @@ class LieuControllerProvider implements ControllerProviderInterface
 			->bind("lieu.delete")
 			->method('GET|POST');
 
+		/**
+		 * Gestion des documents lié au lieu
+		 */
+		$controllers->match('/{lieu}/documents','LarpManager\Controllers\LieuController::documentAction')
+			->bind("lieu.documents")
+			->convert('lieu', 'converter.lieu:convert')
+			->method('GET|POST');
+			
 		return $controllers;
 	}
 }

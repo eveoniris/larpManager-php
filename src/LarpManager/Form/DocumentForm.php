@@ -53,18 +53,6 @@ class DocumentForm extends AbstractType
 								'help' => 'Vous pouvez choisir une ou plusieurs langues',
 						)
 				))
-				->add('lieus','entity', array(
-						'required' => true,
-						'multiple' => true,
-						'expanded' => true,
-						'label' => 'Lieu ou se trouve le document',
-						'class' => 'LarpManager\Entities\Lieu',
-						'property' => 'label',
-						'attr' => array(
-							'help' => 'Indiquez si le document doit être présent dans un ou plusieurs lieux particulier du jeu'
-						)
-				
-				))
 				->add('cryptage','choice', array(
 						'required' => true,
 						'choices' => array(false => 'Non crypté', true => 'Crypté'),

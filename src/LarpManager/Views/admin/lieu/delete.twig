@@ -1,0 +1,24 @@
+{% extends "layout.twig" %}
+
+{% block title %}Lieux{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path('lieu') }}">Liste des lieux</a></li>
+		<li class="active">Suppression d'un lieu</li>
+	</ol>
+	
+	<div class="well bs-component">
+		<form action="{{ path('lieu.delete', {'lieu':lieu.id}) }}" method="POST" {{ form_enctype(form) }}>
+			<fieldset>
+				<legend>Suppression d'un lieu</legend>
+				{{ lieu.nom }}
+				{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+				{{ form(form) }}
+			</fieldset>
+		</form>
+	</div>
+	
+{% endblock %}

@@ -18,14 +18,14 @@
 				{% if is_granted('ROLE_SCENARISTE', app.user) %}
 					{% if app.user.groupeScenariste|length > 0 %}				
 						<div class="dropdown">
-						  <a class="btn btn-default" id="dLabel" data-target="#" href="http://example.com" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+						  <button class="btn btn-default dropdown-toggle"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 						    Scénariste : Groupes dont vous avez la charge
 						    <span class="caret"></span>
-						  </a>
+						  </button>
 						
-						  <ul class="dropdown-menu" aria-labelledby="dLabel">
+						  <ul class="dropdown-menu">
 						    {% for groupe in app.user.groupeScenariste %}
-								<a class="list-group-item" href="{{ path('groupe.detail', {'index': groupe.id}) }}">{{ groupe.nom }}</a>
+								<li><a href="{{ path('groupe.detail', {'index': groupe.id}) }}">{{ groupe.nom }}</a></li>
 							{% endfor %}
 						  </ul>
 						</div>

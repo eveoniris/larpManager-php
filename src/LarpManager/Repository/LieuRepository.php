@@ -11,4 +11,16 @@ use Doctrine\ORM\EntityRepository;
  */
 class LieuRepository extends EntityRepository
 {
+	/**
+	 * Trouve tous les lieux classé par ordre alphabétique
+	 * @return ArrayCollection $classes
+	 */
+	public function findAllOrderedByNom()
+	{
+		$lieux = $this->getEntityManager()
+			->createQuery('SELECT l FROM LarpManager\Entities\Lieu l ORDER BY l.nom ASC')
+			->getResult();
+	
+		return $lieux;
+	}
 }
