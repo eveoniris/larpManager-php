@@ -1,0 +1,22 @@
+{% extends "layout.twig" %}
+
+{% block title %}Restrictions alimentaires{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li class="active">Mes restrictions alimentaires</li>
+	</ol>
+	
+	<div class="well bs-component">
+		<form action="{{ path('user.restriction') }}" method="POST" {{ form_enctype(form) }}>
+			<fieldset>
+				<legend>Choisissez une ou plusieurs restrictions alimentaires dans la liste ci-dessous</legend>
+					{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+					{{ form(form) }}
+			</fieldset>
+		</form>
+	</div>
+	
+{% endblock content%}

@@ -7,9 +7,48 @@ use Silex\ServiceProviderInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\RoleHierarchyVoter;
 
 use LarpManager\Twig\LarpManagerExtension;
-use LarpManager\Services\ForumRightManager;
 use LarpManager\Services\LarpManagerVoter;
 use LarpManager\Services\fpdf\FPDF;
+
+use LarpManager\Services\Manager\ForumRightManager;
+use LarpManager\Services\Manager\LarpManagerManager;
+use LarpManager\Services\Manager\PersonnageManager;
+use LarpManager\Services\Manager\FedegnManager;
+
+use LarpManager\Services\Converter\AgeConverter;
+use LarpManager\Services\Converter\AllianceConverter;
+use LarpManager\Services\Converter\BackgroundConverter;
+use LarpManager\Services\Converter\BilletConverter;
+use LarpManager\Services\Converter\ClasseConverter;
+use LarpManager\Services\Converter\CompetenceConverter;
+use LarpManager\Services\Converter\ConstructionConverter;
+use LarpManager\Services\Converter\DocumentConverter;
+use LarpManager\Services\Converter\DomaineConverter;
+use LarpManager\Services\Converter\EnemyConverter;
+use LarpManager\Services\Converter\EventConverter;
+use LarpManager\Services\Converter\GroupeConverter;
+use LarpManager\Services\Converter\IngredientConverter;
+use LarpManager\Services\Converter\LieuConverter;
+use LarpManager\Services\Converter\MembreConverter;
+use LarpManager\Services\Converter\PersonnageBackgroundConverter;
+use LarpManager\Services\Converter\PersonnageConverter;
+use LarpManager\Services\Converter\PersonnageLangueConverter;
+use LarpManager\Services\Converter\PersonnageReligionConverter;
+use LarpManager\Services\Converter\PersonnageSecondaireConverter;
+use LarpManager\Services\Converter\PersonnageTokenConverter;
+use LarpManager\Services\Converter\PersonnageTriggerConverter;
+use LarpManager\Services\Converter\PostulantConverter;
+use LarpManager\Services\Converter\PotionConverter;
+use LarpManager\Services\Converter\PriereConverter;
+use LarpManager\Services\Converter\ReligionConverter;
+use LarpManager\Services\Converter\SecondaryGroupConverter;
+use LarpManager\Services\Converter\SortConverter;
+use LarpManager\Services\Converter\SphereConverter;
+use LarpManager\Services\Converter\TerritoireConverter;
+use LarpManager\Services\Converter\TitreConverter;
+use LarpManager\Services\Converter\TokenConverter;
+use LarpManager\Services\Converter\TriggerConverter;
+use LarpManager\Services\Converter\UserConverter;
 
 /**
  * LarpManager\LarpManagerServiceProvider
@@ -47,6 +86,18 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 		$app['forum.manager'] = $app->share(function($app) {
 			$forumRightManager = new ForumRightManager($app);
 			return $forumRightManager;
+		});
+		
+		// Fedegn manager
+		$app['fedegn.manager'] = $app->share(function($app) {
+			$fedegnManager = new FedegnManager($app);
+			return $fedegnManager;
+		});
+		
+		// Personnage manager
+		$app['personnage.manager'] = $app->share(function($app) {
+			$personnageManager = new PersonnageManager($app);
+			return $personnageManager;
 		});
 		
 		// fpdf
@@ -211,9 +262,9 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 			return new TokenConverter($app['orm.em']);
 		});
 		
-		// debriefing converter
-		$app['converter.debriefing'] = $app->share(function($app) {
-			return new DebriefingConverter($app['orm.em']);
+		// Billet converter
+		$app['converter.billet'] = $app->share(function($app) {
+			return new BilletConverter($app['orm.em']);
 		});
 	}
 

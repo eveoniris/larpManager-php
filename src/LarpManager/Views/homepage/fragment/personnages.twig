@@ -1,0 +1,16 @@
+<div class="header">
+	<h5>Vos personnages</h5>
+</div>
+
+<ul class="list-group">
+	{% for personnage in personnages %}
+		<li class="list-group-item">
+    		<a href="{{ path('personnage.detail', {'personnage':personnage.id}) }}">
+    			{{ personnage.nom }} {{ personnage.surnom }}&nbsp;--&nbsp;{{ personnage.classeName }}
+    		</a>
+    	</li>   				
+	{% endfor %}
+	<li class="list-group-item">
+		<a href="{{ path('personnage.new') }}"><i class="fa fa-plus"></i>&nbsp;Créer un nouveau personnage</a>
+	</li>
+</ul>

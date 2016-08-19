@@ -1,0 +1,42 @@
+{% extends "layout.twig" %}
+
+{% block title %}Personnages secondaires{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Page d'accueil</a></li>
+		<li class="active">Carte GN</li>
+	</ol>
+	
+	<div class="well well-sm">
+		<div class="header">
+			<h5>Assurance FédéGN</h5>
+		</div>
+		<blockquote>
+			Prendre une assurance n'est pas obligatoire, néanmoins nous vous conseillons d'opter pour la carte GN ou la carte GN+ de la fédéGN afin d'être couvert en cas de soucis.
+			Cette page utilise l'API de la fédéGN afin de vous indiquer la validité de votre carte GN.
+			En l'absence de carte GN, l'association Eve-oniris prendra en charge votre assurance, mais cela a un coût que nous aimerions éviter dans la mesure du possible.
+			L'association Eve-oniris c'est engagé auprès de la fédéGN à ne pas divulguer vos informations personnelles. Ces données ne sont pas stocké et ne font pas l'objet d'un traitement informatique.  
+		</blockquote>
+		{% if etatCivil %}
+			<div class="text-center">
+				{% if app['fedegn.manager'].test(etatCivil) %}
+					<h5 class="text-success">Vous disposez d'une carte GN valide.</h5>
+				{% else %}
+					<h5 class="text-danger">Vous n'avez pas de carte GN valide.</h5>
+					<blockquote>
+						Nous vous proposons de vous rapprocher de la fédéGN afin de prendre une carte GN. <a href="http://www.fedegn.org/la-fedegn/carte-gn">Présentation de la carte GN</a>
+					</blockquote>
+				{% endif %}
+										
+				{% if etatCivil.fedegn %}
+					<img src="http://www.fedegn.org/cartegn.php?annee={{ "now"|date("Y") }}&carte={{ etatCivil.fedegn }}&user_cleanname={{ app['fedegn.manager'].cleanname(etatCivil.prenom, etatCivil.nom) }}" />
+				{% endif %}
+			</div>
+		{% else %}
+		Vous n'avez pas rempli vos informations administrative.
+		{% endif %}
+	</div>
+
+{% endblock content %}

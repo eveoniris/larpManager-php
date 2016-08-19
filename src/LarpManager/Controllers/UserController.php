@@ -1,5 +1,23 @@
 <?php
 
+/**
+ * LarpManager - A Live Action Role Playing Manager
+ * Copyright (C) 2016 Kevin Polez
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 namespace LarpManager\Controllers;
 
 use Silex\Application;
@@ -9,10 +27,15 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Exception\DisabledException;
 use InvalidArgumentException;
 use LarpManager\Form\UserForm;
+use LarpManager\Form\UserPersonnageSecondaireForm;
 use LarpManager\Form\UserFindForm;
 use LarpManager\Form\EtatCivilForm;
 use LarpManager\Form\MessageForm;
 use LarpManager\Form\NewMessageForm;
+use LarpManager\Form\RestrictionForm;
+use LarpManager\Form\UserRestrictionForm;
+
+use LarpManager\Entities\Restriction;
 
 use JasonGrimes\Paginator;
 
@@ -39,18 +62,133 @@ class UserController
 	private $isPasswordResetEnabled = true;
 	
 	/**
-	 * Fourni l'url de gravatar pour l'utilisateur
-	 * 
-	 * @param string $email
-	 * @param int $size
-	 * @return string
+	 * Restriction alimentaires
 	 */
-	protected function getGravatarUrl($email, $size = 80)
-	{
-		// See https://en.gravatar.com/site/implement/images/ for available options.
-		return '//www.gravatar.com/avatar/' . md5(strtolower(trim($email))) . '?s=' . $size . '&d=identicon';
+	public function restrictionAction(Application $app, Request $request)
+	{	
+		$form = $app['form.factory']->createBuilder(new UserRestrictionForm(), $app['user'])
+			->add('save','submit', array('label' => "Sauvegarder"))
+			->getForm();
+		
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$user = $form->getData();
+			$newRestriction = $form->get("new_restriction")->getData();
+			if ( $newRestriction )
+			{
+				$restriction = new Restriction();
+				$restriction->setUserRelatedByAuteurId($app['user']);
+				$restriction->setLabel($newRestriction);
+				
+				$app['orm.em']->persist($restriction);
+				$user->addRestriction($restriction);
+			}	
+			
+			$app['orm.em']->persist($user);
+			$app['orm.em']->flush();
+			
+			$app['session']->getFlashBag()->add('success', 'Vos informations ont été enregistrées.');
+			return $app->redirect($app['url_generator']->generate('homepage'),301);
+		}
+		
+		
+		return $app['twig']->render('public/user/restriction.twig', array(
+				'form' => $form->createView(),
+		));
 	}
 	
+	/**
+	 * Affiche les informations de la fédéGN
+	 * 
+	 * @param Application $app
+	 * @param Request $request
+	 */
+	public function fedegnAction(Application $app, Request $request)
+	{
+		return $app['twig']->render('public/user/fedegn.twig', array(
+				'etatCivil' => $app['user']->getEtatCivil(),
+		));
+	}
+	
+	/**
+	 * Enregistrement de l'état-civil
+	 *
+	 * @param Application $app
+	 * @param Request $request
+	 * @param unknown $id
+	 */
+	public function etatCivilAction(Application $app, Request $request)
+	{
+		$etatCivil = $app['user']->getEtatCivil();
+		
+		if ( ! $etatCivil )
+		{
+			$etatCivil = new \LarpManager\Entities\EtatCivil();
+		}
+		
+		$form = $app['form.factory']->createBuilder(new EtatCivilForm(), $etatCivil)
+			->add('save','submit', array('label' => "Sauvegarder"))
+			->getForm();
+	
+		$form->handleRequest($request);
+	
+		if ( $form->isValid() )
+		{
+			$etatCivil = $form->getData();
+			$app['user']->setEtatCivil($etatCivil);
+	
+			$app['orm.em']->persist($app['user']);
+			$app['orm.em']->persist($etatCivil);
+			$app['orm.em']->flush();
+				
+			$app['session']->getFlashBag()->add('success', 'Vos informations ont été enregistrées.');
+			return $app->redirect($app['url_generator']->generate('homepage'),301);
+		}
+	
+		return $app['twig']->render('public/user/etatCivil.twig', array(
+				'form' => $form->createView(),
+		));
+	}
+	
+	/**
+	 * Choix du personnage secondaire par un utilisateur
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function personnageSecondaireAction(Request $request, Application $app)
+	{
+		$user = $app['user'];
+		
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\PersonnageSecondaire');
+		$personnageSecondaires = $repo->findAll();
+	
+		$form = $app['form.factory']->createBuilder(new UserPersonnageSecondaireForm(), $user)
+			->add('choice','submit', array('label' => 'Enregistrer'))
+			->getForm();
+			
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$user = $form->getData();
+			$app['orm.em']->persist($user);
+			$app['orm.em']->flush();
+				
+			$app['session']->getFlashBag()->add('success','Le personnage secondaire a été enregistré.');
+			return $app->redirect($app['url_generator']->generate('homepage'),301);
+		}
+	
+		return $app['twig']->render('public/user/personnageSecondaire.twig', array(
+				'user' => $user,
+				'personnageSecondaires' => $personnageSecondaires,
+				'form' => $form->createView(),
+		));
+			
+	}
+
 	/**
 	 * Création d'un utilisateur
 	 * 
@@ -147,20 +285,6 @@ class UserController
 		return $app->redirect($app['url_generator']->generate('user.messagerie.view', array('id' => $app['user']->getId())));
 	}
 	
-	
-	/**
-	 * Affiche la billetterie
-	 *
-	 * @param Application $app
-	 */
-	public function viewSelfBilletterieAction(Application $app) {
-		if (!$app['user']) {
-			return $app->redirect($app['url_generator']->generate('user.login'));
-		}
-	
-		return $app->redirect($app['url_generator']->generate('user.billetterie.view', array('id' => $app['user']->getId())));
-	}
-	
 	/**
 	 * View user action.
 	 *
@@ -183,37 +307,10 @@ class UserController
 		}
 	
 		return $app['twig']->render('admin/user/detail.twig', array(
-				'user' => $user,
-				'imageUrl' => $this->getGravatarUrl($user->getEmail()),
+				'user' => $user
 		));
 	}
-	
-	/**
-	 * View etatCivil user action.
-	 *
-	 * @param Application $app
-	 * @param Request $request
-	 * @param int $id
-	 * @return Response
-	 * @throws NotFoundHttpException if no user is found with that ID.
-	 */
-	public function viewEtatCivilAction(Application $app, Request $request, $id)
-	{
-		$user = $app['user.manager']->getUser($id);
-	
-		if (!$user) {
-			throw new NotFoundHttpException('No user was found with that ID.');
-		}
-	
-		if (!$user->isEnabled() && !$app['security']->isGranted('ROLE_ADMIN')) {
-			throw new NotFoundHttpException('That user is disabled (pending email confirmation).');
-		}
-	
-		return $app['twig']->render('public/user/etatCivil.twig', array(
-				'user' => $user,
-		));
-	}
-	
+		
 	/**
 	 * Affiche la messagerie de l'utilisateur
 	 * 
@@ -258,20 +355,21 @@ class UserController
 	 * @param unknown $id
 	 * @throws NotFoundHttpException
 	 */
-	public function viewBilletterieAction(Application $app, Request $request, $id)
-	{
-		$user = $app['user.manager']->getUser($id);
-	
-		if (!$user) {
-			throw new NotFoundHttpException('No user was found with that ID.');
-		}
-	
-		if (!$user->isEnabled() && !$app['security']->isGranted('ROLE_ADMIN')) {
-			throw new NotFoundHttpException('That user is disabled (pending email confirmation).');
-		}
+	public function billetterieAction(Application $app, Request $request)
+	{		
+		$repo = $app['orm.em']->getRepository('LarpManager\Entities\Groupe');
+		 
+		$query = $repo->createQueryBuilder('g')
+			->where('g.pj = true')
+			->orderBy('g.numero','ASC')
+			->getQuery();
+			
+		$groupes = $query->getResult();
+		
 		
 		return $app['twig']->render('public/user/billetterie.twig', array(
-				'user' => $user,
+				'groupes' => $groupes,
+				'user' => $app['user'],
 		));
 	}
 	
@@ -508,81 +606,7 @@ class UserController
 				'form' => $form->createView(),
 		));
 	}
-	
-	/**
-	 * Enregistrement de l'état-civil
-	 * 
-	 * @param Application $app
-	 * @param Request $request
-	 * @param unknown $id
-	 */
-	public function addInformationAction(Application $app, Request $request, $id)
-	{
-		$etatCivil = new \LarpManager\Entities\EtatCivil();
 		
-		$form = $app['form.factory']->createBuilder(new EtatCivilForm(), $etatCivil)
-			->add('save','submit', array('label' => "Sauvegarder"))
-			->getForm();
-		
-		$form->handleRequest($request);
-		
-		if ( $form->isValid() )
-		{
-			$etatCivil = $form->getData();
-			$app['user']->setEtatCivil($etatCivil);
-				
-			$app['orm.em']->persist($app['user']);
-			$app['orm.em']->persist($etatCivil);
-			
-			// enregistrer l'utilisateur dans le GN actif
-			$participant = new \LarpManager\Entities\Participant();
-			$participant->setGn($app['larp.manager']->getGnActif());
-			$participant->setSubscriptionDate(new \Datetime('NOW'));
-			$participant->setUser($app['user']);
-						
-			$app['orm.em']->persist($participant);
-			$app['orm.em']->flush();
-			$app['session']->getFlashBag()->add('success', 'Vos informations ont été enregistrées.');
-			return $app->redirect($app['url_generator']->generate('homepage'),301);
-		}
-		
-		return $app['twig']->render('etatCivil/add.twig', array(
-				'form' => $form->createView(),
-		));
-	}
-	
-	
-	/**
-	 * Modification de l'état-civil
-	 * 
-	 * @param Application $app
-	 * @param Request $request
-	 * @param unknown $id
-	 */
-	public function updateInformationAction(Application $app, Request $request, $id)
-	{
-		$etatCivil = $app['user']->getEtatCivil();
-		
-		$form = $app['form.factory']->createBuilder(new EtatCivilForm(), $etatCivil)
-			->add('save','submit', array('label' => "Sauvegarder"))
-			->getForm();
-		
-		$form->handleRequest($request);
-		
-		if ( $form->isValid() )
-		{
-			$etatCivil = $form->getData();
-			$app['orm.em']->persist($etatCivil);
-				
-			$app['session']->getFlashBag()->add('success', 'Vos informations ont été enregistrées.');
-			return $app->redirect($app['url_generator']->generate('homepage'),301);
-		}
-		
-		return $app['twig']->render('etatCivil/update.twig', array(
-				'form' => $form->createView(),
-		));
-	}
-	
 	/**
 	 * Edit user action.
 	 *
@@ -635,8 +659,7 @@ class UserController
 		return $app['twig']->render('admin/user/update.twig', array(
 				'error' => implode("\n", $errors),
 				'user' => $user,
-				'available_roles' => $app['larp.manager']->getAvailableRoles(),
-				'image_url' => $this->getGravatarUrl($user->getEmail()),
+				'available_roles' => $app['larp.manager']->getAvailableRoles()
 		));
 	}
 	

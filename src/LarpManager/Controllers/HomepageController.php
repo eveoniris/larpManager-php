@@ -1,5 +1,23 @@
 <?php
 
+/**
+ * LarpManager - A Live Action Role Playing Manager
+ * Copyright (C) 2016 Kevin Polez
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 namespace LarpManager\Controllers;
 
 use Symfony\Component\HttpFoundation\Request;
@@ -31,10 +49,6 @@ class HomepageController
 		if ( ! $app['user'] )
 		{
 			return $this->notConnectedIndexAction($request, $app);
-		}
-		else if ( $app['security.authorization_checker']->isGranted('ROLE_ORGA') )
-		{
-			return $this->orgaIndexAction($request, $app);
 		}
 		
 		return $this->joueurIndexAction($request, $app);
@@ -157,73 +171,6 @@ class HomepageController
 	}
 	
 	/**
-	 * Modification de la photo
-	 * 
-	 * @param Request $request
-	 * @param Application $app
-	 */
-	public function trombineAction(Request $request, Application $app)
-	{
-		$form = $app['form.factory']->createBuilder(new TrombineForm(), array())
-			->add('envoyer','submit', array('label' => 'Envoyer'))
-			->getForm();
-		
-		$form->handleRequest($request);
-			
-		if ( $form->isValid() )
-		{
-			$files = $request->files->get($form->getName());
-
-			$path = __DIR__.'/../../../private/img/';
-			$filename = $files['trombine']->getClientOriginalName();
-			$extension = $files['trombine']->guessExtension();
-			
-			if (!$extension || ! in_array($extension, array('png', 'jpg', 'jpeg','bmp'))) {
-				$app['session']->getFlashBag()->add('error','Désolé, votre image ne semble pas valide (vérifiez le format de votre image)');
-				return $app->redirect($app['url_generator']->generate('trombine'),301);
-			}
-						
-			$trombineFilename = hash('md5',$app['user']->getUsername().$filename . time()).'.'.$extension; 
-			
-			$image = $app['imagine']->open($files['trombine']->getPathname());
-			$image->resize($image->getSize()->widen( 160 ));
-			$image->save($path. $trombineFilename);
-
-			$app['user']->setTrombineUrl($trombineFilename);
-			$app['orm.em']->persist($app['user']);
-			$app['orm.em']->flush();
-			
-			$app['session']->getFlashBag()->add('success','Votre photo a été enregistrée');
-			return $app->redirect($app['url_generator']->generate('trombine'),301);
-		}
-		
-		return $app['twig']->render('public/trombine.twig', array(
-				'form' => $form->createView()
-		));
-	}
-	
-	/**
-	 * Obtenir une image protégée
-	 * 
-	 * @param Request $request
-	 * @param Application $app
-	 */
-	public function getTrombineAction(Request $request, Application $app)
-	{
-		$trombine = $request->get('trombine');
-		$filename = __DIR__.'/../../../private/img/'.$trombine;
-		//return $app->sendFile($filename);
-		
-		$stream = function () use ($filename) {
-			readfile($filename);
-		};
-		return $app->stream($stream, 200, array(
-				'Content-Type' => 'image/jpeg',
-				'cache-control' => 'private'
-		));
-	}
-	
-	/**
 	 * Fourni le blason pour affichage
 	 *
 	 * @param Request $request
@@ -260,40 +207,23 @@ class HomepageController
 	 * @param Application $app
 	 */
 	public function joueurIndexAction(Request $request, Application $app)
-	{
-		$form = $app['form.factory']->createBuilder(new GroupeInscriptionForm(), array())
-			->add('subscribe','submit', array('label' => 'S\'inscrire'))
-			->getForm();
-			
+	{	
 		$repoGn = $app['orm.em']->getRepository('LarpManager\Entities\Gn');
 		$gns = $repoGn->findByActive();
 		
 		$repoAnnonce = $app['orm.em']->getRepository('LarpManager\Entities\Annonce');
 		$annonces = $repoAnnonce->findBy(array('archive' => false));
 		
+		$personnage = $app['personnage.manager']->getCurrentPersonnage();
+		
 		return $app['twig']->render('homepage/index.twig', array(
-				'form_groupe' => $form->createView(),
 				'gns' => $gns,
 				'annonces' => $annonces,
+				'user' => $app['user'],
+				'personnage' => $personnage,
 		));
 	}
 	
-	/**
-	 * Affichage de la page d'acceuil pour les orgas
-	 * 
-	 * @param Request $request
-	 * @param Application $app
-	 */
-	public function orgaIndexAction(Request $request, Application $app)
-	{
-		
-		$repoAnnonce = $app['orm.em']->getRepository('LarpManager\Entities\Annonce');
-		$annonces = $repoAnnonce->findBy(array('archive' => false));
-		
-		return $app['twig']->render('homepage/orga.twig', array(
-				'annonces' => $annonces,
-		));
-	}
 	
 	/**
 	 * Affiche une carte du monde

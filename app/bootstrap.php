@@ -1,4 +1,21 @@
 <?php
+/**
+ * LarpManager - A Live Action Role Playing Manager
+ * Copyright (C) 2016 Kevin Polez
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 use Silex\Provider\SessionServiceProvider;
 use Silex\Provider\SecurityServiceProvider;
@@ -18,8 +35,7 @@ use Dflydev\Silex\Provider\DoctrineOrm\DoctrineOrmServiceProvider;
 use Saxulum\DoctrineOrmManagerRegistry\Silex\Provider\DoctrineOrmManagerRegistryProvider;
 use Nicl\Silex\MarkdownServiceProvider;
 
-use LarpManager\User\UserServiceProvider;
-use LarpManager\Personnage\PersonnageServiceProvider;
+use LarpManager\Services\UserServiceProvider;
 use LarpManager\Services\LarpManagerServiceProvider;
 use LarpManager\Services\Regexp;
 
@@ -161,9 +177,7 @@ else
 	// markdown syntaxe pour les forums
 	$app->register(new MarkdownServiceProvider());
 	
-	// Other management
-	$app->register(new PersonnageServiceProvider());
-	
+	// LarpManager service provider
 	$app->register(new LarpManagerServiceProvider());
 	
 	// Define firewall
@@ -184,7 +198,7 @@ else
 			   }),
 		),
 		'secured_area' => array(	// le reste necessite d'être connecté
-			'pattern' => '^/[annonce|statistique|stock|droit|forum|groupe|gn|personnage|territoire|appelation|langue|ressource|religion|age|genre|level|competence|competenceFamily|joueur|etatCivil]/.*$',
+			'pattern' => '^/[annonce|restriction|statistique|billet|stock|droit|forum|groupe|gn|personnage|territoire|appelation|langue|ressource|religion|age|genre|level|competence|competenceFamily|joueur|etatCivil]/.*$',
 			'anonymous' => false,
 			'remember_me' => array(),
 			'form' => array(
@@ -244,6 +258,8 @@ else
 	$app->mount('/document', new LarpManager\DocumentControllerProvider());
 	$app->mount('/token', new LarpManager\TokenControllerProvider());
 	$app->mount('/lieu', new LarpManager\LieuControllerProvider());
+	$app->mount('/restriction', new LarpManager\RestrictionControllerProvider());
+	$app->mount('/billet', new LarpManager\BilletControllerProvider());
 		
 
 	/**
@@ -265,6 +281,8 @@ else
 	 */
 	$app['security.access_rules'] = array(
 		array('^/admin/.*$', 'ROLE_ADMIN'),
+		array('^/restriction/.*$', 'ROLE_ADMIN'),
+		array('^/billet/.*$', 'ROLE_ADMIN'),
 		array('^/trombinoscope/.*$', 'ROLE_SCENARISTE'),
 		array('^/pnj/.*$', 'ROLE_USER'),
 		array('^/groupe/.*$', 'ROLE_USER'),
@@ -274,7 +292,7 @@ else
 		array('^/chronologie/.*$', 'ROLE_USER'),
 		array('^/gn/.*$', 'ROLE_USER'),
 		array('^/personnage/.*$', 'ROLE_USER'),
-		array('^/personnageSecondaire/.*$', 'ROLE_USER'),
+		array('^/personnageSecondaire/.*$', 'ROLE_ADMIN'),
 		array('^/joueur/.*$', 'ROLE_USER'),
 		array('^/territoire/.*$', 'ROLE_USER'),
 		array('^/religion/.*$', 'ROLE_USER'),

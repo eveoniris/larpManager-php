@@ -1,67 +1,33 @@
-{# page d'acceuil lorsque l'utilisateur n'est pas connecté.
-   dans ce cas, l'utilisateur ne peux faire que deux choix :
-   	- se connecter
-   	- ou se créer un compte #}
+{# page d'acceuil lorsque l'utilisateur n'est pas connecté. #}
    	
 {% extends "layout.twig" %}
 
 {% block content %}
-
-<div class="row">
-
-	<div class="col-xs-6 col-md-6">
-	
-		<div class="thumbnail">
-			<div class="caption">
-				<center><h3>Déjà enregistré ?</h3></center>
+<div class="well well-sm">
+	<div class="row">
+		<div class="col-md-10">
+			<div class="header">
+				<h5>LarpManager ? qu'est-ce donc ?</h5>
 			</div>
-			<p>
-				<center>
-					Connectez-vous pour acceder à l'interface larpManager.
-				</center>
-			</p>
-			<p>
-				<center>
-					<a class="btn btn-primary" href="{{ path('user.login') }}">Connexion</a>
-				</center>
+			<p class="lead">
+				LarpManager est le logiciel utilisé par Eve-Oniris pour la gestion de ses jeux grandeur nature. 
+				Il est obligatoire de se créer un compte sur LarpManager pour pouvoir participer au jeu "Légendes d'Hyborées 3" qui aura lieu du 25 au 27 aout 2017.
+				<ul>
+					<li>Vous êtes un nouveau joueur ? <a href="{{ path('user.register') }}">Créez vous un compte</a>, forgez votre personnage, et rejoignez l'un des nombreux groupes de joueurs.</li>
+					<li>Vous êtes un ancien joueur ? <a href="{{ path('user.login') }}">Connectez vous</a> et poursuivez l'aventure.</li>
+				</ul>
+				Des ressources sont disponibles si vous voulez explorer l'Hyborée avant de faire le premier pas.
+				<ul>
+					<li><a href="{{ path('world') }}">Voir la carte intéractive de l'Hyborée</a></li>
+					<li><a href="http://www.eveoniris.com/">Voir le site de l'association Eve-Oniris</a></li>
+					
+				</ul>
 			</p>
 		</div>
-	</div>
-	
-	<div class="col-xs-6 col-md-6">
-	
-		<div class="thumbnail">
-			<div class="caption">
-				<center><h3>Nouvel utilisateur ?</h3></center>
-			</div>
-			<p>
-				<center>
-					Enregistrez-vous pour créer votre personnage et participer aux grandeur natures d'eve-oniris</p>
-				</center>
-			<p>
-				<center>
-					<a class="btn btn-primary" href="{{ path('user.register') }}">S'enregistrer</a>
-				</center>
-			</p>
+		<div class="col-md-2">
+			<img src="{{ app.request.basepath }}/img/logo_eve.png" class="img-responsive" />
 		</div>
 	</div>
 </div>
 
-<div class="row">
-
-	<div class="col-xs-12 col-md-12">
-	
-		<div class="thumbnail">
-			<div class="caption">
-				<center><h3>Explorer l'Hyborée</h3></center>
-			</div>
-			
-			<p>
-				<center>
-					<a class="btn btn-primary" href="{{ path('world') }}">Voir la carte</a>
-				</center>
-			</p>
-		</div>
-	</div>
-</div>
 {% endblock content %}

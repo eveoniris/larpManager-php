@@ -23,7 +23,6 @@ body {
   	line-height: 1.42857143;
   	color: #333;
 	background-color: #fff;
-	margin-bottom: 60px;
 	background: url("../img/landscape2.jpg")no-repeat;
 	background-size: cover !important;
 	background-attachment: fixed;
@@ -83,6 +82,17 @@ body {
   border: 0px none;
 }
 
+footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 60px;
+  background-color: #151515;
+  background: rgba(21, 21, 21, 0.5);
+  padding:5px;
+}
+
+
 ul.forum 
 {
  background-color:#f2f2f2;
@@ -93,15 +103,6 @@ ul.forum li
 {
   background-color:#f2f2f2;
   border-color: #aaa;
-}
-
-#footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  /* Set the fixed height of the footer here */
-  height: 60px;
-  background-color: #f5f5f5;
 }
 
 /**

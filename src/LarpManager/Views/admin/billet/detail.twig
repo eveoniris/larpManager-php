@@ -1,0 +1,31 @@
+{% extends "layout.twig" %}
+
+{% block title %}Billets{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path('billet.list') }}">Liste des billets</a></li>
+		<li class="active">{{ billet.label }}</li>
+	</ol>
+	
+	
+		
+	<div class="well bs-component">
+		<h4>{{ billet.label }}</h4>
+		<div class="list-group">
+			<div class="list-group-item">
+				Description : {{ billet.description|markdown }}
+			</div>
+			<div class="list-group-item">
+				GN : {{ billet.gn }}
+			</div>
+			<div class="list-group-item">
+				Quantité : {{ billet.users|length }}
+			</div>
+		</div>
+	</div>
+	
+	
+{% endblock %}

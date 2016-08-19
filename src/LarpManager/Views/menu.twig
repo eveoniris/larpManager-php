@@ -14,8 +14,22 @@
 
 	<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 		<ul class="nav navbar-nav">
-			<li><a href="http://www.eveoniris.com">Eve-Oniris</a></li>
-			
+		
+			<li class="dropdown">
+				<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+					{% if app.user %}Bienvenu {{ app.user.name }}{% else %}Connectez-vous !{% endif %}<span class="caret"></span>
+				</a>
+				<ul class="dropdown-menu">
+					{%  if app.user %}			
+						<li><a href="{{ path('user.logout') }}">Déconnection</a></li>
+					{%  else %}
+						<li><a href="{{ path('user.login') }}">Connection</a></li>
+						<li><a href="{{ path('user.register') }}">S'enregistrer</a></li>
+						<li><a href="{{ path('user.forgot-password') }}">Mot de passe oublié ?</a></li>
+					{%  endif %}
+				</ul>
+			</li>	
+					
 			{# Menus reservé aux admins #}
 			{% if is_granted('ROLE_SCENARISTE', app.user) %}
 				<li class="dropdown">
@@ -23,7 +37,9 @@
 					<ul class="dropdown-menu">
 						<li><a href="{{ path('annonce.list') }}">Liste des annonces</a></li>
 						<li><a href="{{ path('gn.list') }}">Liste des grandeurs natures</a></li>
+						<li><a href="{{ path('billet.list') }}">Liste des billets</a></li>
 						<li><a href="{{ path('user.admin.list') }}">Liste des utilisateurs</a></li>
+						<li><a href="{{ path('restriction.list') }}">Restrictions alimentaires</a></li>
 						<li><a href="{{ path('admin.restauration') }}">Restauration</a></li>
 						<li><a href="{{ path('groupe.admin.list') }}">Liste des groupes</a></li>
 						<li><a href="{{ path('groupeSecondaire.admin.list') }}">Liste des groupes secondaires</a></li>
@@ -88,7 +104,7 @@
 						<li><a href="{{ path('magie.potion.list') }}">Potions</a></li>
 						<li><a href="{{ path('magie.sphere.list') }}">Sphères</a></li>
 						<li><a href="{{ path('magie.priere.list') }}">Prières</a></li>
-						<li><a href="{{ path('personnageSecondaire.admin.list') }}">Personnage secondaire</a></li>
+						<li><a href="{{ path('personnageSecondaire.list') }}">Personnage secondaire</a></li>
 					</ul>
 				</li>
 			{% endif %}
@@ -120,7 +136,6 @@
 						<li><a href="{{ path('classe.list') }}">Les classes</a></li>
 						<li><a href="{{ path('groupeSecondaire.list') }}">Les groupes secondaires</a></li>
 						<li><a href="{{ path('religion.list') }}">Les religions</a></li>
-						<li><a href="{{ path('personnageSecondaire.list') }}">Les personnages secondaires</a></li>
 						<li><a href="{{ path('world') }}">Carte</a></li>
 						<li><a href="{{ path('rules') }}">Règles</a></li>
 						
@@ -128,25 +143,16 @@
 				</li>
 			{% endif %}
 			
-			<li class="dropdown">
-				<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Compte<span class="caret"></span></a>
-				<ul class="dropdown-menu">
-					{%  if app.user %}			
-						{% if is_granted('ROLE_USER', app.user) %}
-							<li><a href="{{ path('etatCivil') }}">Mon état-civil</a></li>
-						{% endif %}
+			{% if is_granted('ROLE_USER', app.user) %}
+				<li class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Compte<span class="caret"></span></a>
+					<ul class="dropdown-menu">
 						<li><a href="{{ path('user') }}">Mon compte</a></li>	
 						<li><a href="{{ path('user.messagerie') }}">Ma messagerie</a></li>
-						<li><a href="{{ path('user.billetterie') }}">Billetterie</a></li>				
-						<li><a href="{{ path('user.logout') }}">Déconnection</a></li>
-					{%  else %}
-						<li><a href="{{ path('user.login') }}">Connection</a></li>
-						<li><a href="{{ path('user.register') }}">S'enregistrer</a></li>
-					{%  endif %}
-					<li><a href="{{ path('legal') }}">Mentions légales</a></li>
-					<li><a href="{{ path('dev') }}">Développement</a></li>
-				</ul>
-			</li>	
+						<li><a href="{{ path('user.billetterie') }}">Billetterie</a></li>									
+					</ul>
+				</li>	
+			{%  endif %}
 						
 			{% if is_granted('ADMIN_USER', app.user) %}
 			<li class="dropdown">

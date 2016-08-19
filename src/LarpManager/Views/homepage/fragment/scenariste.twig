@@ -1,0 +1,14 @@
+<div class="header">
+	<h5>Vos groupes à scénariser</h5>
+</div>
+
+{% if user.groupeScenariste|length > 0 %}				
+	<ul class="list-group">
+		{% for groupe in app.user.groupeScenariste %}
+			<li class="list-group-item"><a href="{{ path('groupe.detail', {'index': groupe.id}) }}">{{ groupe.nom }}</a></li>
+		{% endfor %}
+	</ul>
+{% else %}
+	Aucun groupe ne vous a été alloué. Rapprochez vous d'un membre du pentagone si vous pensez que la situation
+	doit être corrigée.
+{%  endif %}
