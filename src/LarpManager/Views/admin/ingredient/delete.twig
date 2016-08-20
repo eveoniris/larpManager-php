@@ -12,7 +12,7 @@
 	
 	
 	<div class="well bs-component">
-		<form action="{{ path('ingredient.admin.delete', {'ingredient': ingredient.id}) }}" method="POST" {{ form_enctype(form) }} novalidate>
+		<form action="{{ path('ingredient.admin.delete', {'ingredient': ingredient.id}) }}" method="POST" {{ form_enctype(form) }}>
 			<fieldset>
 				<legend>Supression d'un ingredient</legend>
 					{{ ingredient.label }} -- Niveau {{ ingredient.niveau }}

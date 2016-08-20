@@ -1,6 +1,6 @@
 {% extends "layout.twig"  %}
 
-{% block title %}Sign in{% endblock %}
+{% block title %}Connection{% endblock %}
 
 {% block content %}
 
@@ -8,50 +8,46 @@
         <p>Hello, {{ app.user.displayName }}.</p>
         <p><a href="{{ path('user.logout') }}">Sign out</a></p>
     {% else %}
-		<div class="well">
-	        <p class="text-muted lead">
-	            Vous n'avez pas de compte ? <a href="{{ path('user.register') }}">Enregistrez-vous.</a>
-	        </p>
-	
-	        {% if error %}
-	            <div class="alert alert-danger">{{ error|nl2br }}</div>
-	        {% endif %}
-	
-	        <form class="form-horizontal" method="POST" action="{{ path('user.login_check') }}">
-	
-	            <div class="form-group">
-	                <label class="col-sm-2 control-label" for="inputEmail">Email</label>
-	                <div class="col-sm-6">
-	                    <input class="form-control" name="_username" type="text" id="inputEmail" placeholder="Email" required value="{{ last_username }}">
-	                </div>
-	            </div>
-	
-	            <div class="form-group">
-	                <label class="col-sm-2 control-label" for="inputPassword">Mot de passe</label>
-	                <div class="col-sm-6">
-	                    <input class="form-control" name="_password" type="password" id="inputPassword" required placeholder="Mot de passe">
-	                </div>
-	            </div>
-	
-	            {% if allowRememberMe %}
-	                <div class="form-group">
-	                    <div class="col-sm-6 col-sm-offset-2 checkbox">
-	                        <label>
-	                            <input type="checkbox" name="_remember_me" value="true" checked> Se rappeler de moi sur cet ordinateur
-	                        </label>
-	                    </div>
-	                </div>
-	            {% endif %}
-	
-	            <div class="form-group">
-	                <div class="col-sm-8 col-sm-offset-2">
-	                    <button type="submit" class="btn btn-primary">Se connecter</button>
-	                    <a style="margin-left: 10px;" href="{{ path('user.forgot-password') }}">Mot de passe oublié ?</a>
-	                </div>
-	            </div>
-	
-	        </form>
-	       </div>
+    	<div class="row">
+    		<div class="col-md-4">&nbsp;</div>
+			<div class="col-md-4">
+				<div class="well well-sm">
+						
+					<div class="header">
+			        	<h5>Connection à LarpManager</h5>
+			        </div>
+
+			        {% if error %}
+			            <div class="alert alert-danger">{{ error|nl2br }}</div>
+			        {% endif %}
+		
+			        <form class="form" method="POST" action="{{ path('user.login_check') }}">
+						<div class="form-group">
+			                <input class="form-control" name="_username" type="text" id="inputEmail" placeholder="Email" required value="{{ last_username }}">
+			            </div>
+			
+			            <div class="form-group">
+			                <input class="form-control" name="_password" type="password" id="inputPassword" required placeholder="Mot de passe">
+			            </div>
+			
+			            {% if allowRememberMe %}
+			                <div class="form-group">
+		                        <label>
+		                            <input type="checkbox" name="_remember_me" value="true" checked> Se rappeler de moi sur cet ordinateur
+		                        </label>	                    
+			                </div>
+			            {% endif %}
+			
+			            <div class="form-group">
+							<button type="submit" class="btn btn-primary">Se connecter</button>
+							<a style="margin-left: 10px;" href="{{ path('user.forgot-password') }}">Mot de passe oublié ?</a>
+			            </div>			
+			        </form>
+		    	</div>
+		    </div>
+		    <div class="col-md-4">&nbsp;</div>
+		    
+	    </div>
 
     {% endif %}
 {% endblock %}

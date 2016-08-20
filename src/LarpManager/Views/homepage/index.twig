@@ -4,125 +4,77 @@
 
 {% block content %}
 
-	<div class="well bs-component">
-	
-		{# Liste des choses à faire #}
-		{% if not app.user.etatCivil  
-			or app.user.groupes|length == 0 
-			or app.user.personnages|length == 0 %}
+	<div class="row">
+		<div class="col-md-3">
+			<div class="well well-sm">				
+				{# si l'utilisateur est scénariste, lui afficher les liens vers les groupes dont il a la responsabilité #}
+				{% if is_granted('ROLE_SCENARISTE', app.user) %}
+					{% include 'homepage/fragment/scenariste.twig' with {'user': user} %}
+				{% endif %}
+				
+				{# liste des personnages de l'utilisateur #}
+				{% include 'homepage/fragment/personnages.twig' with {'personnages': user.personnages} %}
+				
+				{# gestion du personnage secondaire #}
+				{% include 'homepage/fragment/personnageSecondaire.twig' with {'personnageSecondaire': user.personnageSecondaire} %}
+												
+				{# gestion administrative #}
+				{% include 'homepage/fragment/administration.twig' with {'user': user} %}
+			</div>
+		</div>
+		<div class="col-md-9">
 			<div class="well well-sm">
-				<h6>Liste des choses importantes à faire :</h6>
-				<ol>
-				{% if not app.user.etatCivil %}
-					<li>Enregistrer mon état-civil</li>
-				{% endif %}
-								
-				{% if app.user.groupes|length == 0 %}
-					<li>S'inscrire dans un groupe</li>
-				{% endif %}
-				
-				{% if app.user.personnages|length == 0 %}
-					<li>Créer mon personnage</li>
-				{% endif %}
-				</ol>
-			</div>
-		{% endif %}
-		
-		{# enregistrement de l'état-civil #}
-		{% if not app.user.etatCivil %}
-			<div class="panel panel-success">
-				<div class="panel-heading">{% trans %}record_player_title{% endtrans %}</div>
-				<div class="panel-body">
-					<p>{% trans %}record_player_explain{% endtrans %}</p>
-					<a class="btn btn-default" href="{{ path('user.information.add', {'id': app.user.id}) }}">{% trans %}record_player_link{% endtrans %}</a>
+				<div class="header">
+					<h5>Rappels</h5>
 				</div>
+				
+				{% if not user.personnageSecondaire %}
+					<div class="alert alert-danger" role="alert">
+						<p>
+							<i class="fa fa-exclamation-triangle" aria-hidden="true"></i>&nbsp;
+							Vous <strong>devez</strong>&nbsp;<a href="{{ path('user.personnageSecondaire') }}">choisir un personnage secondaire</a>.
+						</p>
+					</div>
+				{% endif %}
+				
+				{% if not user.etatCivil %}
+					<div class="alert alert-danger" role="alert">
+						<p>
+							<i class="fa fa-exclamation-triangle" aria-hidden="true"></i>&nbsp;
+							Vous <strong>devez</strong> remplir votre état civil.
+						</p>
+					</div>
+				{% endif %}
+				
+				{% if user.personnages|length == 0 %}
+					<div class="alert alert-danger" role="alert">
+						<p>
+							<i class="fa fa-exclamation-triangle" aria-hidden="true"></i>&nbsp;
+							Vous <strong>devez</strong> créer un personnage.
+						</p>
+					</div>
+				{% endif %}
+				
+				{% for personnage in user.personnages %}
+					{% if not personnage.trombineUrl %}
+						<div class="alert alert-danger" role="alert">
+							<p>
+								<i class="fa fa-exclamation-triangle" aria-hidden="true"></i>&nbsp;
+								Votre personnage {{ personnage.nom }} {{ personnage.surnom }} n'a pas photo. Cette photo est utilisé pour les trombinoscopes afin que les autres joueurs en intéraction avec vous puissent vous reconnaitre.
+								<a href="{{ path('personnage.trombine.update', {'personnage': personnage.id}) }}">Choisir une photo</a>
+							</p>
+						</div>
+					{% endif %}
+				{% endfor %}
 			</div>
-		{% endif %}
-		
-		{% if not app.user.trombineUrl %}
-			<div class="panel panel-success">
-				<div class="panel-heading">Avez-vous pensez à poster une photo de vous ?</div>
-				<div class="panel-body">
-					<p>Votre photo est utilisé pour les trombinoscopes, afin que les autres joueurs en intéraction avec vous puissent vous reconnaitre</p>
-					<a class="btn btn-default" href="{{ path('trombine') }}">Ma trombine</a>
+			{% for  annonce in annonces%}
+				<div class="well well-sm">
+					<div class="header">
+						<h5>{{ annonce.title }}</h5>
+					</div>
+					{{ annonce.text|markdown }}
 				</div>
-			</div>
-		{% endif %}
-		
-		
-		<div class="row">
-			{% include "link.twig" with {
-				'title' : "Votre groupe",
-				'link' :  path('groupe'),
-				'color' : "bg-primary",
-				'icon': 'fa-users' 
-				} %}
-				
-			{% include "link.twig" with {
-				'title' : "Vos groupes secondaires",
-				'link' :  path('groupeSecondaire'),
-				'color' : "bg-success",
-				'icon': 'fa-users' 
-				} %}
-				
-			{% include "link.twig" with {
-				'title' : "Votre personnage",
-				'link' :  path('personnage'),
-				'color' : "bg-primary",
-				'icon': 'fa-user' 
-				} %}
-				
-			{% include "link.twig" with {
-				'title' : "Votre personnage secondaire",
-				'link' :  path('personnageSecondaire'),
-				'color' : "bg-success",
-				'icon': 'fa-user-plus' 
-				} %}
-				
-			{% include "link.twig" with {
-				'title' : "Background",
-				'link' :  path('background.joueur'),
-				'color' : "bg-success",
-				'icon': 'fa-book' 
-				} %}
-				
-			{% include "link.twig" with {
-				'title' : "Discuter",
-				'link' :  path('discuter'),
-				'color' : "bg-primary",
-				'icon': 'fa-comments' 
-				} %}
-				
-			{% include "link.twig" with {
-				'title' : "Evenements",
-				'link' :  path('evenement'),
-				'color' : "bg-success",
-				'icon': 'fa-calendar' 
-				} %}
-				
-			{% include "link.twig" with {
-				'title' : "Ma trombine",
-				'link' :  path('trombine'),
-				'color' : "bg-success",
-				'icon': 'fa-camera' 
-				} %}
-				
-			{% include "link.twig" with {
-				'title' : "Le monde",
-				'link' :  path('world'),
-				'color' : "bg-success",
-				'icon': 'fa-globe' 
-				} %}	
-		</div>	
-		
-		{# affichage de l'annonce la plus récente et du lien vers les archives des annonces #}
-		{% for annonce in annonces %}
-			<div class="header">
-				<h5>{{ annonce.title }}</h5>
-			</div>
-			{{ annonce.text|markdown }}
-			<br/>
-		{% endfor %}						
-	</div>
-	
+			{% endfor %}
+		</div>		
+	</div>	
 {% endblock content %}

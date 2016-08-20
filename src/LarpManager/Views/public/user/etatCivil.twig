@@ -1,97 +1,27 @@
 {% extends "layout.twig" %}
 
-{% block title %}Mon état-civil{% endblock title %}
+{% block title %}Informations administratives{% endblock title %}
 
 {% block content %}
 
-	<div class="container-fluid">
-	
-		<ol class="breadcrumb">
-			<li>Navigation :</li>
-			<li><a href="{{ path('homepage')  }}">Accueil</a></li>
-			<li class="active">Mon état-civil</li>
-		</ol>
-		
-		<div class="well">
-			Consulter les <a href="{{ path('legal') }}">mentions légales</a>.
-		</div>
-	
-		<div class="panel panel-default">
-			<div class="panel-heading">
-				<h4 class="list-group-item-heading">
-					Etat-civil de {{ user.username }}
-				</h4>
-			</div>
-		
-				
-			<div class="panel-body">
-				{% if user.etatCivil %}
-				<table class="table table-striped table-bordered table-condensed table-hover">
-					<caption>mes informations personnelles</caption>
-					<thead>
-						<tr>
-							<th class="col-md-4"></th>
-							<th class="col-md-8"></th>
-						</tr>
-					</thead>
-					<tbocy>
-						<tr>
-							<th>Nom civil</th>
-							<td>{{ user.etatCivil.nom }}</td>
-						</tr>
-						<tr>
-							<th>Prénom civil</th>
-							<td>{{ user.etatCivil.prenom }}</td>
-						</tr>
-						<tr>
-							<th>Date de naissance</th>
-							<td>
-								{% if user.etatCivil.dateNaissance %}
-									{{ user.etatCivil.dateNaissance|date('Y-m-d') }}
-								{% else %}
-									Non renseigné
-								{% endif %}
-								</td>
-						</tr>
-						<tr>
-							<th>Prénom d'usage</th>
-							<td>{{ user.etatCivil.prenomUsage }}</td>
-						</tr>
-						<tr>
-							<th>Numéro de téléphone</th>
-							<td>{{ user.etatCivil.telephone }}</td>
-						</tr>
-						<tr>
-							<th>Problèmes médicaux</th>
-							<td>{{ user.etatCivil.problemeMedicaux }}</td>
-						</tr>
-						<tr>
-							<th>Personne à prévenir en cas d'urgence</th>
-							<td>{{ user.etatCivil.personneAPrevenir }}</td>
-						</tr>
-						<tr>
-							<th>Numéro de téléphone de la personne à prévenir</th>
-							<td>{{ user.etatCivil.telPap }}</td>
-						</tr>
-						<tr>
-							<th>Numéro d'adhérant à la FédéGn</th>
-							<td>{{ user.etatCivil.fedegn }}</td>
-						</tr>
-						<tr>
-							<th>Date de fin de validité de l'assurance FédéGN</th>
-							<td>{% if user.etatCivil.dateFinValiditeFedegn %}{{ user.etatCivil.dateFinValiditeFedegn|date('Y-m-d') }}{%else%}non spécifié{% endif %}</td>
-						</tr>
-					</tbocy>
-				</table>
-					<a class="btn btn-default" href="{{ path('user.information.update', {'id': app.user.id}) }}">Modifier mes informations</a>
-				{% else %}
-					<p>{% trans %}record_player_explain{% endtrans %}</p>
-					<a class="btn btn-default" href="{{ path('user.information.add', {'id': app.user.id}) }}">{% trans %}record_player_link{% endtrans %}</a>
-				{% endif %}
-			</div>
-			
-		</div>
-	
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li class="active">Mes informations administratives</li>
+	</ol>
+
+	<div class="well">
+		Consulter les <a href="{{ path('legal') }}">mentions légales</a>.
 	</div>
-{% endblock content %}
+			
+	<div class="well bs-component">
+		<form action="{{ path('user.etatCivil') }}" method="POST" {{ form_enctype(form) }}>
+			<fieldset>
+				<legend>Enregistrement de votre état-civil</legend>
+					{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+					{{ form(form) }}
+			</fieldset>
+		</form>
+	</div>
+
 	
+{% endblock content %}

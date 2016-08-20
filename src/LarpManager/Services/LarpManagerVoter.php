@@ -434,9 +434,9 @@ class LarpManagerVoter implements VoterInterface
 	 */
 	protected function isOwnerOfPersonnage(User $user, $personnageId)
 	{
-		if ( $user->getPersonnage() )
+		foreach ( $user->getPersonnages() as $personnage )
 		{
-			if ( $user->getPersonnage()->getId() == $personnageId ) return true;
+			if ( $personnage->getId() == $personnageId ) return true;
 		}
 		return false;
 	}

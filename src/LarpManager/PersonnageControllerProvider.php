@@ -1,5 +1,23 @@
 <?php
 
+/**
+ * LarpManager - A Live Action Role Playing Manager
+ * Copyright (C) 2016 Kevin Polez
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 namespace LarpManager;
 
 use Silex\Application;
@@ -12,6 +30,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
  * 
  * @author kevin
  *
+ * Securité de base : ROLE_USER
  */
 class PersonnageControllerProvider implements ControllerProviderInterface
 {
@@ -494,6 +513,45 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 			->method('GET|POST')
 			->convert('personnage', 'converter.personnage:convert')
 			->before($mustOwn);
+
+		/** Affichage de la page trombine */
+		$controllers->match('/{personnage}/trombine/update','LarpManager\Controllers\PersonnageController::trombineAction')
+			->assert('personnage', '\d+')
+			->bind('personnage.trombine.update')
+			->method('GET|POST')
+			->convert('personnage', 'converter.personnage:convert')
+			->before($mustOwn);
+			
+		/** Récupére une trombine */
+		$controllers->match('/{personnage}/trombine','LarpManager\Controllers\PersonnageController::getTrombineAction')
+			->assert('personnage', '\d+')
+			->bind('personnage.trombine')
+			->method('GET')
+			->convert('personnage', 'converter.personnage:convert');
+			
+		/**
+		 * Selection du personnage courant
+		 */
+		$controllers->match('/{personnage}/select','LarpManager\Controllers\PersonnageController::selectAction')
+			->assert('personnage', '\d+')
+			->bind("personnage.select")
+			->method('GET')
+			->convert('personnage', 'converter.personnage:convert')
+			->before($mustOwn);
+			
+		/**
+		 * De-Selection du personnage courant
+		 */
+		$controllers->match('/unselect','LarpManager\Controllers\PersonnageController::unselectAction')
+			->bind("personnage.unselect")
+			->method('GET');
+			
+		/**
+		 * Création d'un nouveau personnage
+		 */
+		$controllers->match('/new','LarpManager\Controllers\PersonnageController::newAction')
+			->bind("personnage.new")
+			->method('GET|POST');
 					
 		return $controllers;
 	}

@@ -1,0 +1,386 @@
+	<div class="well well-sm">
+		{# informations générales #}
+		<div class="header">
+			<h5>Informations</h5>
+		</div>
+		
+		<div class="row">
+			<div class="col-sm-6">
+				<ul class="list-group">
+					<li class="list-group-item">
+						<strong>Numéro :</strong> {{ personnage.id }}
+					</li>
+					<li class="list-group-item">
+						<strong>Nom :</strong> {{ personnage.nom }}
+					</li>
+					<li class="list-group-item">
+						<strong>Surnom :</strong> {{ personnage.surnom }}
+					</li>
+					<li class="list-group-item">
+						<strong>Classe :</strong> {{ personnage.classeName }}
+					</li>
+					<li class="list-group-item">
+						<strong>Age :</strong> {{ personnage.age }}
+					</li>
+					<li class="list-group-item">
+						<strong>Genre :</strong> {{ personnage.genre }}
+					</li>
+					<li class="list-group-item">
+						{% if personnage.intrigue %}
+							Participe aux intrigues
+						{% else %}
+							Ne participe pas aux intrigues
+						{% endif %}
+					</li>
+					<li class="list-group-item">
+						<strong>Expérience :</strong> {{ personnage.xp|default(0) }}
+					</li>
+					<li class="list-group-item">
+						<strong>Renommée :</strong> {{ personnage.renomme|default(0) }}
+					</li>
+					{# <li class="list-group-item">
+						<strong>Titre :</strong> {{ app['personnage.manager'].titre(personnage)|default('Aucun') }}
+					</li> #}
+				</ul>
+			</div>
+			
+			{# Illustration de la classe #}
+			<div class="col-sm-6">
+				<div class="pull-right">
+					{% if personnage.genre == 'Masculin' %}
+						<img width="216" height="300" alt="{{ personnage.classe.labelMasculin }}" src="{{ app.request.basepath }}/img/{{ personnage.classe.imageM }}" />
+					{% else %}
+						<img width="216" height="200" alt="{{ personnage.classe.labelFeminin }}" src="{{ app.request.basepath }}/img/{{ personnage.classe.imageF }}" />
+					{% endif %}
+				</div>
+			</div>
+		</div>
+		
+		<div class="header">
+			<h5>Pugilat</h5>
+		</div>
+		<div class="row">
+			<div class="col-sm-6">
+				{{ app['personnage.manager'].pugilat(personnage)|default(0) }}
+			</div>
+			<div class="col-sm-6">
+				Le score de pugilat est le nombre de niveaux cumulés (apprenti 1, initié 2, expert 3 etc…) dans les compétences martiales :
+				Agilité / Armes à distance / Armes à 1 main / Armes à 2 mains / Armes d’hast / Armure / Attaque sournoise / Protection / Résistance / Sauvagerie / Stratégie / Survie
+				Si quelqu'un essaie d'intervenir avec une arme dans votre combat, l'effet du pugilat s'applique immédiatement. (écourtez le combat)
+			</div>		
+		</div>
+		
+		{# Religion #}
+		<div class="header">
+			<h5>Religion</h5>
+		</div>
+		
+		<div class="row">
+			<div class="col-sm-6">
+				Vous pouvez choisir autant de religions que vous voulez. Attention toutefois, les règles suivantes s'appliquent :
+				<ul>
+					<li>Vous ne pouvez avoir qu'une seule religion au niveau "Fervent"</li>
+					<li>Si vous choisissez une religion au niveau "Fanatique", vous perdez toutes vos autres religions (un Fanatique n'a qu'une seule religion).</li>
+				</ul>			
+			</div>
+			<div class="col-sm-6">
+				<ul class="list-group">
+					{% for personnageReligion in personnage.personnagesReligions %}
+						<li class="list-group-item">
+							{{ personnageReligion.religion.label }} - {{ personnageReligion.religionLevel.label }} - <a href="{{ path('forum.topic',{'index': personnageReligion.religion.topic.id }) }}">Forum</a>
+						</li>
+					{% endfor %}
+					<li class="list-group-item">
+						<a class="btn btn-default" href="{{ path('personnage.religion.add',{'personnage': personnage.id}) }}">
+							<i class="fa fa-plus"></i>
+							Choisir une nouvelle religion
+						</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+		
+		{% if personnage.hasCompetence('Prêtrise') %}
+			<div class="header">
+				<h5>Vos prières</h5>
+			</div>
+			
+			<div class="row">
+				<div class="col-sm-12">
+					{% for priere in personnage.prieres %}
+						<p>
+							<strong>{{ priere.sphere.label }} - Niveau {{ priere.niveau }}</strong>
+							{{ priere.label }}&nbsp;/&nbsp;
+							{% if priere.documentUrl %}
+								<a href="{{ path('magie.priere.document',{'priere' :priere.id, 'document':priere.documentUrl}) }}">Téléchargez le document</a>
+							{% endif %}
+						</p>
+					{% endfor %}
+				</div>
+			</div>
+		{% endif %}
+		
+		{# Origine #}
+		<div class="header">
+			<h5>Origine</h5>
+		</div>
+		
+		<div class="row">
+			<div class="col-sm-6">
+				{% if personnage.territoire %}
+					<p><strong>{{ personnage.territoire.nom }}</strong></p>
+				{% else %}
+					<p>
+						<a class="btn btn-default" href="{{ path('personnage.origin.add',{'personnage': personnage.id}) }}">Choisir une origine</a>
+					</p>
+				{% endif %}
+			</div>
+			<div class="col-sm-6">
+				{% if personnage.territoire %}
+					{{ personnage.territoire.description|markdown }}
+				{% endif %}
+			</div>
+		</div>
+		
+		
+		{% if personnage.hasCompetence('Alchimie') %}
+			<div class="header">
+				<h5>Alchimie</h5>
+			</div>
+			
+			{% if personnage.hasTrigger('ALCHIMIE APPRENTI') %}
+				<blockquote>
+					<p>Votre compétence Alchimie vous permet de choisir une potion de niveau apprenti.</p>
+					<a href="{{ path('personnage.magie.potion', {'personnage': personnage.id, 'niveau' : 1}) }}">Choisir une nouvelle potion</a>
+				</blockquote>
+			{% endif %}
+			
+			{% if personnage.hasTrigger('ALCHIMIE INITIE') %}
+				<blockquote>
+					<p>Votre compétence Alchimie vous permet de choisir une potion de niveau initié.</p>
+					<a href="{{ path('personnage.magie.potion', {'personnage': personnage.id, 'niveau' : 2}) }}">Choisir une nouvelle potion</a>
+				</blockquote>
+			{% endif %}
+			
+			{% if personnage.hasTrigger('ALCHIMIE EXPERT') %}
+				<blockquote>
+					<p>Votre compétence Alchimie vous permet de choisir une potion de niveau expert.</p>
+					<a href="{{ path('personnage.magie.potion', {'personnage': personnage.id, 'niveau' : 3}) }}">Choisir une nouvelle potion</a>
+				</blockquote>
+			{% endif %}
+			
+			{% if personnage.hasTrigger('ALCHIMIE MAITRE') %}
+				<blockquote>
+					<p>Votre compétence Alchimie vous permet de choisir une potion de niveau maitre.</p>
+					<a href="{{ path('personnage.magie.potion', {'personnage': personnage.id, 'niveau' : 4}) }}">Choisir une nouvelle potion</a>
+				</blockquote>
+			{% endif %}
+			
+			<h6>Liste de vos potions</h6>
+			<div class="list-group">
+			{% for potion in personnage.potions %}
+				<div class="list-group-item">
+					<div class="list-group-item-heading">{{ potion.label }} - Niveau {{ potion.niveau }} </div>
+					<div class="list-group-item-text">{{ potion.description|markdown }}</div>
+					{% if potion.documentUrl %}
+					<div class="list-group-item-text"><a href="{{ path('magie.potion.document', {'potion': potion.id, 'document': potion.documentUrl}) }}">Télécharger le pdf associé</a></div>
+					{% endif %}
+				</div>
+			{% endfor %}
+			</div>
+			
+		{% endif %}
+		
+		{% if personnage.hasCompetence('Magie') %}
+			<div class="header">
+				<h5>Magie</h5>
+			</div>
+			
+			<h5><a href="{{ path('magie') }}">Découvrir les domaines de magie et les sortilèges associés</a></h5>
+			
+			{% if personnage.hasTrigger('MAGIE APPRENTI') %}
+				<blockquote>
+					<p>Votre compétence Magie au niveau apprenti vous permet de choisir un domaine de magie.</p>
+					<p>Les sorts que vous lancez dans ce domaine coûteront moins cher que les autres en mana.</p>
+					<a href="{{ path('personnage.magie.domaine', {'personnage': personnage.id}) }}">Choisir un domaine de magie</a>
+				</blockquote>
+			{% endif %}
+			
+			{% if personnage.hasTrigger('MAGIE EXPERT') %}
+				<blockquote>
+					<p>Votre compétence Magie au niveau expert vous permet de choisir un domaine de magie.</p>
+					<p>Les sorts que vous lancez dans ce domaine coûteront moins cher que les autres en mana.</p>
+					<a href="{{ path('personnage.magie.domaine', {'personnage': personnage.id}) }}">Choisir un domaine de magie</a>
+				</blockquote>
+			{% endif %}
+			
+			{% if personnage.hasTrigger('MAGIE APPRENTI SORT') %}
+				<blockquote>
+					<p>Votre compétence Magie au niveau apprenti vous permet de choisir un nouveau sortilège.</p>
+					<a href="{{ path('personnage.magie.sort', {'personnage': personnage.id, 'niveau' : 1}) }}">Choisir un sortilège</a>
+				</blockquote>
+			{% endif %}
+			
+			{% if personnage.hasTrigger('MAGIE INITIE SORT') %}
+				<blockquote>
+					<p>Votre compétence Magie au niveau initié vous permet de choisir un nouveau sortilège.</p>
+					<a href="{{ path('personnage.magie.sort', {'personnage': personnage.id,'niveau': 2}) }}">Choisir un sortilège</a>
+				</blockquote>
+			{% endif %}
+			
+			{% if personnage.hasTrigger('MAGIE EXPERT SORT') %}
+				<blockquote>
+					<p>Votre compétence Magie au niveau expert vous permet de choisir un nouveau sortilège.</p>
+					<a href="{{ path('personnage.magie.sort', {'personnage': personnage.id, 'niveau' : 3}) }}">Choisir un sortilège</a>
+				</blockquote>
+			{% endif %}
+			
+			{% if personnage.hasTrigger('MAGIE MAITRE SORT') %}
+				<blockquote>
+					<p>Votre compétence Magie au niveau maître vous permet de choisir un nouveau sortilège.</p>
+					<a href="{{ path('personnage.magie.sort', {'personnage': personnage.id, 'niveau' : 4}) }}">Choisir un sortilège</a>
+				</blockquote>
+			{% endif %}
+			
+			
+			<h6>Liste de vos domaines de Magie</h6>
+			<div class="list-group">
+			{% for domaine in personnage.domaines %}
+				<div class="list-group-item">
+					{{ domaine.label|markdown }}
+					{{ domaine.description|markdown }}
+				</div>
+			{% endfor %}
+			</div>
+			
+			<h6>Liste de vos sortilèges</h6>
+			<div class="list-group">
+			{% for sort in personnage.sorts %}
+				<div class="list-group-item">
+					<div class="list-group-item-heading">{{ sort.label }} - {{ sort.domaine.label }} Niveau {{ sort.niveau }} </div>
+					<div class="list-group-item-text">{{ sort.description|markdown }}</div>
+					<div class="list-group-item-text">
+						Cout en mana
+						{% if sort.domaine in personnage.domaines %} {{ sort.niveau }}
+						{% else %} {{ sort.niveau * 2 }}
+						{% endif %}
+					</div>
+					{% if sort.documentUrl %}
+					<div class="list-group-item-text"><a href="{{ path('magie.sort.document', {'sort': sort.id, 'document': sort.documentUrl}) }}">Télécharger le pdf associé</a></div>
+					{% endif %}
+				</div>
+			{% endfor %}
+			</div>
+			
+		{% endif %}
+		
+		
+		<div class="header">
+			<h5>Languages connus</h5>
+		</div>
+		
+		{% if personnage.hasTrigger('LITTERATURE INITIE') %}
+			<blockquote>
+				<p>Votre compétence Littérature au niveau initié vous permet de choisir trois langues supplémentaires</p>
+				<a href="{{ path('personnage.litterature.initie', {'personnage': personnage.id}) }}">Choisir les langues supplémentaires</a>
+			</blockquote>
+		{% endif %}
+		{% if personnage.hasTrigger('LITTERATURE EXPERT') %}
+			<blockquote>
+				<p>Votre compétence Littérature au niveau expert vous permet de choisir trois langues supplémentaires</p>
+				<a href="{{ path('personnage.litterature.expert', {'personnage': personnage.id}) }}">Choisir les langues supplémentaires</a>
+			</blockquote>
+		{% endif %}
+		<ul class="list-group">
+			{% for personnageLangue in personnage.personnageLangues %}
+				<li class="list-group-item"><strong>{{ personnageLangue.langue }}</strong>&nbsp;<small>(obtenu grace à votre {{ personnageLangue.source }})</small>{{ personnageLangue.langue.description|markdown }}</li>
+			{% endfor %}
+		</ul>
+		
+		{# Compétences #}
+		<div class="header">
+			<h5>Compétences</h5>
+		</div>
+		
+		<div class="row">
+			<div class="col-sm-6">
+				<h6>Compétences <small>({{ personnage.xp|default(0) }} xp)</small></h6>
+				
+				<ul class="list-group">
+					
+					{% for competence in personnage.competences %}
+						<li class="list-group-item">
+							<strong>{{ competence.competenceFamily.label }}</strong>&nbsp({{ competence.level.label }}) : {{ competence.description|markdown }}
+							<p class="list-group-item-text">
+			    				{% if competence.documentUrl %}
+			    					<a class="btn btn-default btn-sm" href="{{ path('competence.document',{'competence' : competence.id, 'document':competence.documentUrl}) }}">
+			    						<i class="fa fa-file"></i> Téléchargez l'aide de jeu
+			    					</a>
+			    				{% endif %}
+		    				</p>							
+						</li>
+					{% endfor %}
+					<li class="list-group-item">
+						<a class="btn btn-default" href="{{ path('personnage.competence.add', {'personnage': personnage.id}) }}">
+							<i class="fa fa-plus"></i>
+							Acheter une nouvelle compétence
+						</a>
+					</li>
+				</ul>
+			</div>
+			
+			<div class="col-sm-6">
+				<h6>Historique</h6>
+				<ul class="list-group">		
+				{% for historique in personnage.experienceGains %}
+					<li class="list-group-item">{{ historique.operationDate|date("Y-m-d h:i:s") }} : + {{ historique.xpGain }} xp {% if historique.explanation %} pour la raison suivante : "{{ historique.explanation }}"{% endif %}.</li>
+				{% endfor %}
+				{% for historique in personnage.experienceUsages %}
+					<li class="list-group-item">{{ historique.operationDate|date("Y-m-d h:i:s") }} : - {{ historique.xpUse }} xp pour acquérir {{ historique.competence.label }}.</li>
+				{% endfor %}
+			</div>
+		</div>
+			
+		{# Groupes secondaires #}
+		<div class="header">
+			<h5>Groupes secondaires</h5>
+		</div>
+		
+		<div class="row">
+			<div class="col-sm-6">
+				<ul class="list-group">
+						
+					{% for groupeSecondaire in personnage.secondaryGroups %}
+						<li class="list-group-item">
+							<a href="{{ path('groupeSecondaire.joueur', {'groupe':groupeSecondaire.id}) }}">{{ groupeSecondaire.label }}</a>
+						</li>
+					{% endfor %}
+					<li class="list-group-item">
+						<a class="btn btn-default" href="{{ path('groupeSecondaire.list') }}">
+							<i class="fa fa-list"></i>
+							Liste des groupes secondaires
+						</a>
+					</li>
+				</ul>
+			</div>
+		
+			<div class="col-sm-6">
+				{% if personnage.postulants|length > 0 %}
+					<ul class="list-group">
+						{% for postulant in personnage.postulants %}
+							<li class="list-group-item">Votre candidature au groupe {{ postulant.secondaryGroup.label }} est en attente de validation.</li>
+						{% endfor %}
+					</ul>
+				{% endif %}
+			</div>
+		</div>
+
+		{# Autre 
+		<div class="header">
+			<h5>Autre</h5>
+		</div>
+		
+		<h6>Téléchargement</h6>
+		<a class="btn btn-default" href="{{ path('personnage.export', {'personnage':personnage.id}) }}">Télécharger le pdf</a>
+		#}	
+	</div>

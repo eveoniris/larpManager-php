@@ -1,5 +1,23 @@
 <?php
 
+/**
+ * LarpManager - A Live Action Role Playing Manager
+ * Copyright (C) 2016 Kevin Polez
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 namespace LarpManager;
 
 use Silex\Application;
@@ -18,31 +36,15 @@ class PersonnageSecondaireControllerProvider implements ControllerProviderInterf
 	public function connect(Application $app)
 	{
 		$controllers = $app['controllers_factory'];
-		
-		/**
-		 * Vérifie que l'utilisateur dispose du role ADMIN
-		 * @var unknown $mustBeAdmin
-		 */
-		$mustBeAdmin = function(Request $request) use ($app) {
-			if (!$app['security.authorization_checker']->isGranted('ROLE_ADMIN')) {
-				throw new AccessDeniedException();
-			}
-		};
-
-		$controllers->match('/','LarpManager\Controllers\PersonnageSecondaireController::accueilAction')
-			->bind("personnageSecondaire")
-			->method('GET');
-		
+	
 		/** Liste des archétypes de personnage secondaire */
-		$controllers->match('/admin/list','LarpManager\Controllers\PersonnageSecondaireController::indexAction')
-			->bind("personnageSecondaire.admin.list")
-			->before($mustBeAdmin)
+		$controllers->match('/list','LarpManager\Controllers\PersonnageSecondaireController::indexAction')
+			->bind("personnageSecondaire.list")
 			->method('GET');
 
 		/** Formulaire d'ajout d'un archétype de personnage secondaire */
 		$controllers->match('/add','LarpManager\Controllers\PersonnageSecondaireController::addAction')
 			->bind("personnageSecondaire.add")
-			->before($mustBeAdmin)
 			->method('GET|POST');
 		
 		/** Formulaire de modification d'un archétype de personnage secondaire */
@@ -50,7 +52,6 @@ class PersonnageSecondaireControllerProvider implements ControllerProviderInterf
 			->assert('personnageSecondaire', '\d+')
 			->bind("personnageSecondaire.update")
 			->method('GET|POST')
-			->before($mustBeAdmin)
 			->convert('personnageSecondaire', 'converter.personnageSecondaire:convert');
 		
 		/** Formulaire de supression d'un archétype de personnage secondaire */
@@ -58,18 +59,7 @@ class PersonnageSecondaireControllerProvider implements ControllerProviderInterf
 			->assert('personnageSecondaire', '\d+')
 			->bind("personnageSecondaire.delete")
 			->method('GET|POST')
-			->before($mustBeAdmin)
 			->convert('personnageSecondaire', 'converter.personnageSecondaire:convert');
-		
-		/** Formulaire de choix d'un personnage secondaire */
-		$controllers->match('/choice','LarpManager\Controllers\PersonnageSecondaireController::choiceAction')
-			->method('GET|POST')
-			->bind('personnageSecondaire.choice');
-		
-		/** information sur les archétypes de personnage secondaire */
-		$controllers->match('/list','LarpManager\Controllers\PersonnageSecondaireController::listAction')
-			->method('GET')
-			->bind('personnageSecondaire.list');
 			
 		return $controllers;
 	}

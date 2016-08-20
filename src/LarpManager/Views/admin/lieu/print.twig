@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    	<meta charset="utf-8">
+    	<title>LarpManager - Impression de la liste des lieux</title>
+    	<style>
+    		table{
+    			width: 100%;
+    			border-collapse:collapse;
+    		}
+    	</style>
+    </head>
+    <body>
+    
+    <table border="1">
+    	<caption><h4>Liste des lieux</h4></caption>
+   		<thead>
+			<tr>
+				<th>Nom</th>
+				<th>Description</th>
+				<th>Documents</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for lieu in lieux %}
+			<tr>
+				<td>{{ lieu.nom }}</td>
+				<td>{{ lieu.description|markdown }}</td>
+				<td>{% if lieu.documents|length > 0 %}Document(s) : {{ lieu.documents|join(', ') }}{% else %}Aucune documents entreposés{% endif %}</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+    </table>
+    
+    </body>
+</html>

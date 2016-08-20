@@ -50,6 +50,13 @@
 {% endif %}
 </ul>
 
+<strong>Documents</strong>
+<ul>
+{% for document in groupe.documents %}
+	<li>{{ document.code }} -- {{ document.titre }}</li>
+{% endfor %}
+</ul>
+
 <strong>Matériel</strong>
 <p>{{ groupe.materielRaw }}</p>
 

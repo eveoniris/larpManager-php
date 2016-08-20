@@ -1,5 +1,23 @@
 <?php
 
+/**
+ * LarpManager - A Live Action Role Playing Manager
+ * Copyright (C) 2016 Kevin Polez
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 namespace LarpManager;
 
 use Silex\Application;
@@ -39,14 +57,14 @@ class LieuControllerProvider implements ControllerProviderInterface
 		/**
 		 * Imprimer la liste des lieux
 		 */
-		$controllers->match('/','LarpManager\Controllers\LieuController::printAction')
+		$controllers->match('/print','LarpManager\Controllers\LieuController::printAction')
 			->bind("lieu.print")
 			->method('GET');
 				
 		/**
 		 * Télécharger la liste des lieux
 		 */
-		$controllers->match('/','LarpManager\Controllers\LieuController::downloadAction')
+		$controllers->match('/download','LarpManager\Controllers\LieuController::downloadAction')
 			->bind("lieu.download")
 			->method('GET');
 		
@@ -84,6 +102,14 @@ class LieuControllerProvider implements ControllerProviderInterface
 			->bind("lieu.delete")
 			->method('GET|POST');
 
+		/**
+		 * Gestion des documents lié au lieu
+		 */
+		$controllers->match('/{lieu}/documents','LarpManager\Controllers\LieuController::documentAction')
+			->bind("lieu.documents")
+			->convert('lieu', 'converter.lieu:convert')
+			->method('GET|POST');
+			
 		return $controllers;
 	}
 }

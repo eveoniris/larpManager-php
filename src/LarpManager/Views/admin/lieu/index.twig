@@ -1,0 +1,54 @@
+{% extends "layout.twig" %}
+
+{% block title %}Lieux{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li class="active">Liste des lieux</li>
+	</ol>
+
+	<div class="well well-sm">
+	
+		<div class="btn-toolbar" role="toolbar" aria-label="...">
+			<div class="btn-group" role="group" aria-label="...">
+				<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Ajouter un lieu" href="{{ path('lieu.add') }}"><i class="fa fa-plus"></i></a>
+				<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Imprimer la liste" href="{{ path('lieu.print') }}"><i class="fa fa-print"></i></a>
+				<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Télécharger la liste (CSV)" href="{{ path('lieu.download') }}"><i class="fa fa-download"></i></a>
+			</div>
+		</div>
+	</div>	
+	
+		<table class="table table-condensed table-striped table-bordered">
+			<thead>
+				<tr>
+					<th>Nom</th>
+					<th>Description</th>
+					<th>Documents</th>
+					<th />
+				</tr>
+			</thead>
+			<tbody>
+				{% for lieu in lieux %}
+				<tr>
+					<td>{{ lieu.nom }}</td>
+					<td>{{ lieu.description|markdown }}</td>
+					<td>{% if lieu.documents|length > 0 %}{{ lieu.documents|join(', ') }}{% else %}Aucune document entreposés{% endif %}</td>
+					<td>
+						<div class="btn-toolbar pull-right" role="toolbar" aria-label="...">
+							<div class="btn-group" role="group" aria-label="...">
+								<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Modifier les documents" href="{{ path('lieu.documents', {'lieu': lieu.id}) }}"><i class="fa fa-files-o"></i></a>
+								<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Modifier" href="{{ path('lieu.update',{'lieu':lieu.id}) }}"><i class="fa fa-pencil"></i></a>
+								<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Détail" href="{{ path('lieu.detail',{'lieu':lieu.id}) }}"><i class="fa fa-eye"></i></a>
+								<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Supprimer" href="{{ path('lieu.delete',{'lieu':lieu.id}) }}"><i class="fa fa-eraser"></i></a>
+							</div>
+						</div>
+					</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+
+	
+{% endblock %}

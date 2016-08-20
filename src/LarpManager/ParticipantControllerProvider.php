@@ -1,5 +1,23 @@
 <?php
 
+/**
+ * LarpManager - A Live Action Role Playing Manager
+ * Copyright (C) 2016 Kevin Polez
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 namespace LarpManager;
 
 use Silex\Application;
@@ -143,18 +161,6 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 			->assert('index', '\d+')
 			->bind("admin.joueur.xp")
 			->method('GET|POST')
-			->before(function(Request $request) use ($app) {
-				if (!$app['security.authorization_checker']->isGranted('ROLE_ORGA') ) {
-					throw new AccessDeniedException();
-				}
-			});
-
-		/**
-		 * Information de restauration
-		 */
-		$controllers->match('/admin/restauration','LarpManager\Controllers\ParticipantController::adminRestaurationAction')
-			->bind("admin.restauration")
-			->method('GET')
 			->before(function(Request $request) use ($app) {
 				if (!$app['security.authorization_checker']->isGranted('ROLE_ORGA') ) {
 					throw new AccessDeniedException();

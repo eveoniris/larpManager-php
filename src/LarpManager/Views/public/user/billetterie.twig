@@ -3,16 +3,61 @@
 {% block title %}Billetterie{% endblock title %}
 
 {% block content %}
-
-<div class="container-fluid">
 	
-		<ol class="breadcrumb">
-			<li>Navigation :</li>
-			<li><a href="{{ path('homepage')  }}">Accueil</a></li>
-			<li class="active">Billetterie</li>
-		</ol>
-		
-		<h2>Votre ID LarpManager est : {{ user.id }}</h2>
+	<ol class="breadcrumb">
+		<li>Navigation :</li>
+		<li><a href="{{ path('homepage')  }}">Accueil</a></li>
+		<li class="active">Billetterie</li>
+	</ol>
+
+	<div class="row">
+		<div class="col-md-6">
+			<div class="well well-sm">	
+				<div class="header">
+					<h5>Billetterie</h5>
+				</div>	
+				<blockquote>
+					<strong>Votre ID LarpManager est : {{ user.id }}</strong>. Il vous sera demandé lors de votre achat. Cet ID nous permet d'associer votre billet à votre compte LarpManager. Si vous effectuez un achat pour plusieurs personnes, pensez à vous munir de leurs ID LarpManager.
+				</blockquote>
+				<div class="text-center">
+					<iframe id="haWidget" src="https://www.helloasso.com/associations/eve-oniris/evenements/legendes-d-hyboree-3/widget" style="width:800px;height:750px;border:none;" onload="scroll(0,0);"></iframe>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-6">
+			<div class="well well-sm">
+				<div class="header">
+					<h5>Liste des groupes</h5>
+				</div>			
+				<table class="table table-condensed table-striped">
+					<thead>
+						<tr>
+							<th>Numéro</th>
+							<th>Groupe</th>
+							<th>Nation</th>
+							<th>Ancien responsable</th>
+						</tr>
+					</thead>
+				{% for groupe in groupes %}
+					<tr>
+						<td>{{ groupe.numero }}</td>
+						<td>{{ groupe.nom }}</td>
+						<td>
+							{% if groupe.territoire %}
+								{{ groupe.territoire.nom }}
+							{% endif %}
+						</td>
+						<td>
+							{% if groupe.responsable %}
+								{{ groupe.responsable.etatCivil.nom }} {{ groupe.responsable.etatCivil.prenom }}
+							{% endif %}
+						</td>
+					</tr>
+				{% endfor %}
+				</table>
+			</div>
+		</div>
+	</div>
 </div>
 
 {% endblock content %}

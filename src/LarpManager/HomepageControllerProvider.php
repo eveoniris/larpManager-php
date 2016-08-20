@@ -51,18 +51,6 @@ class HomepageControllerProvider implements ControllerProviderInterface
 					->method('GET')
 					->bind('homepage');
 					
-		/** Affichage de la page trombine */
-		$controllers->match('/trombine','LarpManager\Controllers\HomepageController::trombineAction')
-					->method('GET|POST')
-					->bind('trombine')
-					->before($mustBeUser);
-			
-		/** Récupére une trombine */
-		$controllers->match('/trombine/{trombine}','LarpManager\Controllers\HomepageController::getTrombineAction')
-					->method('GET')
-					->bind('trombine.get')
-					->before($mustBeUser);
-		
 		/** Page de gestion des règles */
 		$controllers->match('/rules/admin','LarpManager\Controllers\HomepageController::rulesAdminAction')
 					->method('GET|POST')

@@ -1,5 +1,23 @@
 <?php
 
+/**
+ * LarpManager - A Live Action Role Playing Manager
+ * Copyright (C) 2016 Kevin Polez
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 namespace LarpManager;
 
 use Silex\Application;
@@ -11,6 +29,8 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
  * LarpManager\GnControllerProvider
  * 
  * @author kevin
+ * 
+ * Role de base : ROLE_USER
  */
 class GnControllerProvider implements ControllerProviderInterface
 {
@@ -30,16 +50,22 @@ class GnControllerProvider implements ControllerProviderInterface
 		$controllers = $app['controllers_factory'];
 
 		/**
+		 * Vérifie que l'utilisateur dispose du role ADMIN
+		 * @var unknown $mustBeAdmin
+		 */
+		$mustBeAdmin = function(Request $request) use ($app) {
+			if (!$app['security.authorization_checker']->isGranted('ROLE_ADMIN')) {
+				throw new AccessDeniedException();
+			}
+		};
+		
+		/**
 		 * Voir la liste des gns
 		 */
 		$controllers->match('/','LarpManager\Controllers\GnController::listAction')
 			->bind("gn.list")
 			->method('GET')
-			->before(function(Request $request) use ($app) {
-				if (!$app['security.authorization_checker']->isGranted('ROLE_ADMIN')) {
-					throw new AccessDeniedException();
-				}
-			});
+			->before($mustBeAdmin);
 
 		/**
 		 * Ajouter un gn
@@ -47,32 +73,36 @@ class GnControllerProvider implements ControllerProviderInterface
 		$controllers->match('/add','LarpManager\Controllers\GnController::addAction')
 			->bind("gn.add")
 			->method('GET|POST')
-			->before(function(Request $request) use ($app) {
-				if (!$app['security.authorization_checker']->isGranted('ROLE_ADMIN')) {
-					throw new AccessDeniedException();
-				}
-			});
+			->before($mustBeAdmin);
 
 		/**
 		 * Modifier un gn
 		 */
-		$controllers->match('/{index}/update','LarpManager\Controllers\GnController::updateAction')
-			->assert('index', '\d+')
+		$controllers->match('/{gn}/update','LarpManager\Controllers\GnController::updateAction')
+			->assert('gn', '\d+')
+			->convert('gn', 'converter.gn:convert')
 			->bind("gn.update")
 			->method('GET|POST')
-			->before(function(Request $request) use ($app) {
-				if (!$app['security.authorization_checker']->isGranted('ROLE_ADMIN')) {
-					throw new AccessDeniedException();
-				}
-			});
+			->before($mustBeAdmin);
 
 		/**
 		 * voir le détail d'un gn
 		 */
-		$controllers->match('/{index}','LarpManager\Controllers\GnController::detailAction')
-			->assert('index', '\d+')
+		$controllers->match('/{gn}','LarpManager\Controllers\GnController::detailAction')
+			->assert('gn', '\d+')
+			->convert('gn', 'converter.gn:convert')
 			->bind("gn.detail")
 			->method('GET');
+			
+		/**
+		 * Voir les ventes d'un GN
+		 */
+		$controllers->match('/{gn}/vente','LarpManager\Controllers\GnController::venteAction')
+			->assert('gn', '\d+')
+			->convert('gn', 'converter.gn:convert')
+			->bind("gn.vente")
+			->method('GET')
+			->before($mustBeAdmin);
 
 		return $controllers;
 	}

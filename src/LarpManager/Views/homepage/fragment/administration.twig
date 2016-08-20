@@ -1,0 +1,12 @@
+<div class="header">
+	<h5>Administratif</h5>
+</div>
+<ul class="list-group">
+	<li class="list-group-item"><a href="{{ path('user.etatCivil') }}">Modifier mes informations administratives</a></li>
+	<li class="list-group-item"><a href="{{ path('user.restriction') }}">Mes restrictions alimentaires</a></li>
+	<li class="list-group-item"><a href="{{ path('user.fedegn') }}">Assurance Fédégn</a></li>
+	<li class="list-group-item"><a href="{{ path('user.billetterie') }}">Billetterie</a></li>
+	{% for billet in user.billets %}
+		<li class="list-group-item">{{ billet.gn.label }} -- {{ billet.label }}</li>
+	{% endfor %}
+</ul>

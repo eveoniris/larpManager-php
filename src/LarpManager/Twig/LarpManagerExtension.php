@@ -2,7 +2,7 @@
 
 namespace LarpManager\Twig;
 
-use LarpManager\Services\ForumRightManager;
+use LarpManager\Services\Manager\ForumRightManager;
 use Doctrine\ORM\PersistentCollection;
 use Silex\Application;
 

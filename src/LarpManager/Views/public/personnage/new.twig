@@ -1,0 +1,21 @@
+{% extends "layout.twig" %}
+
+{% block title %}Nouveau personnage{% endblock title %}
+
+{% block content %}
+
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage')  }}">Accueil</a></li>
+		<li class="active">Nouveau personnage</li>
+	</ol>
+	
+	<div class="well bs-component">
+		<form action="{{ path('personnage.new') }}" method="POST" {{ form_enctype(form) }}>
+			<fieldset>
+				{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+				{{ form(form) }}
+			</fieldset>
+		</form>
+	</div>
+{% endblock content %}

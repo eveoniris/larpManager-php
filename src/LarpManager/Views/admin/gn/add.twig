@@ -21,21 +21,3 @@
 	</div>
 	
 {% endblock content %}
-
-{% block javascript %}
-
-	{{ parent() }}
-
-	{# inclusion du plugin tinymce pour la saisie du post #}   
-	<script src="{{ app.request.basepath }}/js/tinymce/tinymce.min.js"></script>
-
-	<script type="text/javascript">
-		tinyMCE.init({
-				mode: "textareas",
-				theme: "modern",
-				plugins : "spellchecker,insertdatetime,preview", 
-		});
-		
-	</script>
-
-{% endblock javascript %}

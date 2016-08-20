@@ -1,0 +1,30 @@
+{% extends "layout.twig" %}
+
+{% block title %}Lieux{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path('lieu') }}">Liste des lieux</a></li>
+		<li class="active">{{ lieu.nom }}</li>
+	</ol>
+	
+	
+		
+	<div class="well bs-component">
+		<h4>{{ lieu.nom }}</h4>
+		<div class="list-group">
+			<div class="list-group-item">
+				Description : {{ lieu.description|markdown }}
+			</div>
+			<div class="list-group-item">
+				<a href=" {{ path('lieu.documents', {'lieu': lieu.id}) }}">Modifier la liste de documents</a><br />
+				Documents entreposés : {{ lieu.documents|join(', ') }}
+			</div>
+				
+		</div>
+	</div>
+	
+	
+{% endblock %}

@@ -21,6 +21,7 @@
         {% endblock head %}
     </head>
     <body>
+
     
     	<div id="menu" >
     		{% block menu %}
@@ -28,6 +29,7 @@
     		{% endblock menu %}
     	</div>
 	
+		{# corps de la page #}
         <div id="content" class="container-fluid">
         
         	{% for message in app.session.getFlashBag.get('success') %}
@@ -45,7 +47,28 @@
         	{% block content %}{% endblock content %}
         </div>
 			
-         
+		{# Pied de page #}
+        <footer>
+        
+
+	        <div class="pull-left" style="margin-left: 50px;">
+
+	        		<ul>
+	        			<li><a href="http://www.fedegn.org/">FédéGN</a></li>
+	        			<li><a href="http://www.eveoniris.com/">Eve-oniris</a></li>
+	        		</ul>
+	        </div>
+	        
+	        <div class="pull-right" style="margin-right: 50px;">
+		       	<ul>
+			       	<li><a href="{{ path('legal') }}">Mentions légales</a></li>
+					<li><a href="{{ path('dev') }}">Développement</a></li>
+				</ul>
+	        </div>
+	        
+        
+      	</footer>
+
          
         <script src="{{ app.request.basepath }}/js/jquery-1.11.3.min.js"></script>
         <script src="{{ app.request.basepath }}/js/bootstrap.min.js"></script>

@@ -1,5 +1,23 @@
 <?php
 
+/**
+ * LarpManager - A Live Action Role Playing Manager
+ * Copyright (C) 2016 Kevin Polez
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 namespace LarpManager\Controllers;
 
 use Symfony\Component\HttpFoundation\Request;
@@ -21,6 +39,10 @@ use LarpManager\Form\AcceptPeaceForm;
 use LarpManager\Form\RefusePeaceForm;
 use LarpManager\Form\CancelRequestedPeaceForm;
 use LarpManager\Form\GroupeInscriptionForm;
+use LarpManager\Form\GroupeDocumentForm;
+
+use LarpManager\Entities\Groupe;
+use LarpManager\Entities\Document;
 
 
 /**
@@ -154,6 +176,36 @@ class GroupeController
 				'px' => $quete['px'],
 				'recompenses' => $quete['recompenses'],
 			));
+	}
+	
+	/**
+	 * Ajoute un document dans le matériel du groupe
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function adminDocumentAction(Request $request, Application $app, Groupe $groupe)
+	{
+		$form = $app['form.factory']->createBuilder(new GroupeDocumentForm(), $groupe)
+			->add('submit','submit', array('label' => 'Enregistrer'))
+			->getForm();
+		
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$groupe = $form->getData();
+			$app['orm.em']->persist($groupe);
+			$app['orm.em']->flush();
+			
+			$app['session']->getFlashBag()->add('success', 'Le document a été ajouté au groupe.');
+			return $app->redirect($app['url_generator']->generate('groupe.detail', array('index' => $groupe->getId())));
+		}
+		
+		return $app['twig']->render('admin/groupe/documents.twig', array(
+				'groupe' => $groupe,
+				'form' => $form->createView(),
+		)); 
 	}
 	
 	/**
