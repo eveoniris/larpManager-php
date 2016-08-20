@@ -42,6 +42,7 @@ use LarpManager\Services\Converter\PostulantConverter;
 use LarpManager\Services\Converter\PotionConverter;
 use LarpManager\Services\Converter\PriereConverter;
 use LarpManager\Services\Converter\ReligionConverter;
+use LarpManager\Services\Converter\RestaurationConverter;
 use LarpManager\Services\Converter\RestrictionConverter;
 use LarpManager\Services\Converter\SecondaryGroupConverter;
 use LarpManager\Services\Converter\SortConverter;
@@ -275,6 +276,11 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 		// Restriction converter
 		$app['converter.restriction'] = $app->share(function($app) {
 			return new RestrictionConverter($app['orm.em']);
+		});
+
+		// Restauration converter
+		$app['converter.restauration'] = $app->share(function($app) {
+			return new RestaurationConverter($app['orm.em']);
 		});
 	}
 

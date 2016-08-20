@@ -166,18 +166,6 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 					throw new AccessDeniedException();
 				}
 			});
-
-		/**
-		 * Information de restauration
-		 */
-		$controllers->match('/admin/restauration','LarpManager\Controllers\ParticipantController::adminRestaurationAction')
-			->bind("admin.restauration")
-			->method('GET')
-			->before(function(Request $request) use ($app) {
-				if (!$app['security.authorization_checker']->isGranted('ROLE_ORGA') ) {
-					throw new AccessDeniedException();
-				}
-			});
 			
 		/**
 		 * Saisie des informations joueurs

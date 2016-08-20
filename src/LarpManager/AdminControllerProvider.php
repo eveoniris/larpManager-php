@@ -43,7 +43,7 @@ class AdminControllerProvider implements ControllerProviderInterface
 			->method('GET');
 		
 		/**
-		 * Page d'accueil de l'interface d'administration
+		 * Liste des rappels mails a effectuer
 		 */
 		$controllers->match('/rappels','LarpManager\Controllers\AdminController::rappelsAction')
 			->bind("admin.rappels")

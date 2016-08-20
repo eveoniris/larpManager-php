@@ -139,38 +139,7 @@ class LarpManagerManager
 	{
 		$repo = $this->app['orm.em']->getRepository('\LarpManager\Entities\Gn');
 		return $repo->findGnActif();
-	}
-	
-	/**
-	 * Fourni la liste des lieux de restauration
-	 */
-	public function getAvailableTaverns()
-	{
-		$availableTaverns = array(
-				0 => 'Rien',
-				1 => 'Taverne du Flôt du Houblon',
-				2 => 'Taverne du Chacal d’Airain',
-				3 => 'Taverne orientale',
-				4 => 'Salle PNJ',
-				5 => 'La Fosse',
-				6 => 'Le camp parental',
-		);
-		
-		return $availableTaverns;
-	}
-	
-	
-	public function getTavern(\LarpManager\Entities\Participant $participant)
-	{
-		$taverns = $this->getAvailableTaverns();
-		
-		$tavernId = $participant->getTavernId();
-		if ( ! $tavernId ) $tavernId = 0;
-		
-		$tavern = $taverns[$tavernId];
-		return $tavern;
-	}
-		
+	}	
 	
 	/**
 	 * Fourni la liste des ROLES utilisé dans LarpManager

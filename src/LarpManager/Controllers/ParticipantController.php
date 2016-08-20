@@ -104,31 +104,6 @@ class ParticipantController
 	}
 	
 	/**
-	 * Gestion des lieu de restauration
-	 * @param Request $request
-	 * @param Application $app
-	 */
-	public function adminRestaurationAction(Request $request, Application $app)
-	{
-		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Participant');
-		
-		
-		$availableTaverns = $app['larp.manager']->getAvailableTaverns();
-		$tavern = array();
-		foreach ($availableTaverns as $key => $tavern)
-		{
-			$taverns[$key] = array(
-				'label' => $tavern,
-				'joueurs' => $repo->findAllByTavern($key),
-			);
-		}
-				
-		return $app['twig']->render('admin/restauration.twig', array(
-				'taverns' => $taverns,
-		));
-	}
-	
-	/**
 	 * Affiche le formulaire d'ajout d'un joueur
 	 * 
 	 * @param Request $request
