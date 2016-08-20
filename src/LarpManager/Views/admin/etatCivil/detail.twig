@@ -1,6 +1,6 @@
 {% extends "layout.twig"  %}
 
-{% block title %}{{ user.displayName }}{% endblock %}
+{% block title %}Etat-civil{% endblock %}
 
 {% block content %}
 
@@ -13,7 +13,7 @@
 	<div class="panel panel-default">
 		<div class="panel-heading">
 			<h4 class="list-group-item-heading">
-				Etat civil de l'utilisateur {{ user.username }}
+				Etat civil de {{ etatCivil.prenom }} {{ etatCivil.nom }}
 			</h4>
 		</div>
 		
@@ -29,17 +29,17 @@
 				<tbocy>
 					<tr>
 						<th>Nom civil</th>
-						<td>{{ user.etatCivil.nom }}</td>
+						<td>{{ etatCivil.nom }}</td>
 					</tr>
 					<tr>
 						<th>Prénom civil</th>
-						<td>{{ user.etatCivil.prenom }}</td>
+						<td>{{ etatCivil.prenom }}</td>
 					</tr>
 					<tr>
 						<th>Date de naissance</th>
 						<td>
-							{% if user.etatCivil.dateNaissance %}
-								{{ user.etatCivil.dateNaissance|date('Y-m-d') }}
+							{% if etatCivil.dateNaissance %}
+								{{ etatCivil.dateNaissance|date('Y-m-d') }}
 							{% else %}
 								Non renseigné
 							{% endif %}
@@ -47,35 +47,27 @@
 					</tr>
 					<tr>
 						<th>Prénom d'usage</th>
-						<td>{{ user.etatCivil.prenomUsage }}</td>
+						<td>{{ etatCivil.prenomUsage }}</td>
 					</tr>
 					<tr>
 						<th>Numéro de téléphone</th>
-						<td>{{ user.etatCivil.telephone }}</td>
-					</tr>
-					<tr>
-						<th>Photo</th>
-						<td>{{ user.etatCivil.photo }}</td>
+						<td>{{ etatCivil.telephone }}</td>
 					</tr>
 					<tr>
 						<th>Problèmes médicaux</th>
-						<td>{{ user.etatCivil.problemeMedicaux }}</td>
+						<td>{{ etatCivil.problemeMedicaux }}</td>
 					</tr>
 					<tr>
 						<th>Personne à prévenir en cas d'urgence</th>
-						<td>{{ user.etatCivil.personneAPrevenir }}</td>
+						<td>{{ etatCivil.personneAPrevenir }}</td>
 					</tr>
 					<tr>
 						<th>Numéro de téléphone de la personne à prévenir</th>
-						<td>{{ user.etatCivil.telPap }}</td>
+						<td>{{ etatCivil.telPap }}</td>
 					</tr>
 					<tr>
 						<th>Numéro d'adhérant à la FédéGn</th>
-						<td>{{ user.etatCivil.fedegn }}</td>
-					</tr>
-					<tr>
-						<th>Date de fin de validité de l'assurance FédéGN</th>
-						<td>{% if user.etatCivil.dateFinValiditeFedegn %}{{ user.etatCivil.dateFinValiditeFedegn|date('Y-m-d') }}{%else%}non spécifié{% endif %}</td>
+						<td>{{ etatCivil.fedegn }}</td>
 					</tr>
 				</tbocy>
 			</table>

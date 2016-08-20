@@ -8,7 +8,6 @@ use Symfony\Component\Security\Core\Authorization\Voter\RoleHierarchyVoter;
 
 use LarpManager\Twig\LarpManagerExtension;
 use LarpManager\Services\LarpManagerVoter;
-use LarpManager\Services\fpdf\FPDF;
 
 use LarpManager\Services\Manager\ForumRightManager;
 use LarpManager\Services\Manager\LarpManagerManager;
@@ -25,7 +24,9 @@ use LarpManager\Services\Converter\ConstructionConverter;
 use LarpManager\Services\Converter\DocumentConverter;
 use LarpManager\Services\Converter\DomaineConverter;
 use LarpManager\Services\Converter\EnemyConverter;
+use LarpManager\Services\Converter\EtatCivilConverter;
 use LarpManager\Services\Converter\EventConverter;
+use LarpManager\Services\Converter\GnConverter;
 use LarpManager\Services\Converter\GroupeConverter;
 use LarpManager\Services\Converter\IngredientConverter;
 use LarpManager\Services\Converter\LieuConverter;
@@ -41,6 +42,7 @@ use LarpManager\Services\Converter\PostulantConverter;
 use LarpManager\Services\Converter\PotionConverter;
 use LarpManager\Services\Converter\PriereConverter;
 use LarpManager\Services\Converter\ReligionConverter;
+use LarpManager\Services\Converter\RestrictionConverter;
 use LarpManager\Services\Converter\SecondaryGroupConverter;
 use LarpManager\Services\Converter\SortConverter;
 use LarpManager\Services\Converter\SphereConverter;
@@ -99,14 +101,7 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 			$personnageManager = new PersonnageManager($app);
 			return $personnageManager;
 		});
-		
-		// fpdf
-		$app['pdf.manager'] = $app->share(function($app) {
-			$fpdf = new FPDF();
-			$fpdf->FPDF();
-			return $fpdf;
-		});
-		
+				
 		// age converter
 		$app['converter.age'] = $app->share(function($app) {
 			return new AgeConverter($app['orm.em']);
@@ -265,6 +260,21 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 		// Billet converter
 		$app['converter.billet'] = $app->share(function($app) {
 			return new BilletConverter($app['orm.em']);
+		});
+		
+		// EtatCivil converter
+		$app['converter.etatCivil'] = $app->share(function($app) {
+			return new EtatCivilConverter($app['orm.em']);
+		});
+		
+		// Gn converter
+		$app['converter.gn'] = $app->share(function($app) {
+			return new GnConverter($app['orm.em']);
+		});
+		
+		// Restriction converter
+		$app['converter.restriction'] = $app->share(function($app) {
+			return new RestrictionConverter($app['orm.em']);
 		});
 	}
 

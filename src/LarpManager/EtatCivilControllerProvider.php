@@ -17,28 +17,36 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+ 
 
-namespace LarpManager\Repository;
+namespace LarpManager;
 
-use Doctrine\ORM\EntityRepository;
+use Silex\Application;
+use Silex\ControllerProviderInterface;
 
 /**
- * LarpManager\Repository\TitreRepository
+ * LarpManager\EtatCivilControllerProvider
  *
  * @author kevin
+ *
  */
-class TitreRepository extends EntityRepository
+class EtatCivilControllerProvider implements ControllerProviderInterface
 {
-	/**
-	 * Trouve tous les titres classé par renommé
-	 * @return ArrayCollection $sorts
-	 */
-	public function findByRenomme()
-	{
-		$titres = $this->getEntityManager()
-			->createQuery('SELECT t FROM LarpManager\Entities\Titre t ORDER BY t.renomme ASC')
-			->getResult();
 
-		return $titres;
+	public function connect(Application $app)
+	{
+		$controllers = $app['controllers_factory'];
+		
+		/**
+		 * Affiche l'état civil d'un utilisateur
+		 */
+		$controllers->match('/{etatCivil}', 'LarpManager\Controllers\EtatCivilController::detailAction')
+			->assert('etatCivil', '\d+')
+			->bind('etatCivil.detail')
+			->method('GET')
+			->convert('etatCivil', 'converter.etatCivil:convert');
+		
+		return $controllers;
 	}
+
 }

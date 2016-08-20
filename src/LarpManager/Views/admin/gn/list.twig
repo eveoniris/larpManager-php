@@ -66,13 +66,17 @@
 						{% endif %}
 						</a> 
 					</th>
+					<th>Etat</th>
+					<th>Ventes</th>
 				</tr>
 			</thead>
 			<tbody>
 				{% for gn in gns %}
 					<tr>
-						<td><a href="{{ path('gn.update',{'index':gn.id}) }}">{{ gn.id }}</a></td>
-						<td><a href="{{ path('gn.detail',{'index':gn.id}) }}">{{ gn.label }}</a></td>
+						<td><a href="{{ path('gn.update',{'gn':gn.id}) }}">{{ gn.id }}</a></td>
+						<td><a href="{{ path('gn.detail',{'gn':gn.id}) }}">{{ gn.label }}</a></td>
+						<td>{% if gn.actif %}<span class="text-success">Actif</span>{% else %}non actif{% endif %}</td>
+						<td><a href="{{ path('gn.vente',{'gn': gn.id}) }}">Ventes</a></td>
 					</tr>
 				{% endfor %}
 			</tbody>

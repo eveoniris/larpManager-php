@@ -96,7 +96,7 @@
 					</th>
 					<th>Etat-civil</th>
 					<th>Droits</th>
-					<th>Jeu</th>
+					<th />
 				</tr>
 			</thead>
 			<tbody>
@@ -109,29 +109,19 @@
 						{%  if not user.etatCivil %}
 							<span class="text-warning">Etat-civil non renseigné</span>
 						{% else %}
-							<a href=" {{ path('user.admin.etatCivil', {'user':user.id}) }}">									
+							<a href=" ">									
 								{{ user.etatCivil.nom }} {{ user.etatCivil.prenom }}
 							</a>									
 						{% endif %}
 					</td>
 					<td>{{ user.roles|join(', ') }}</td>
 					<td>
-						{% if user.participant %}
-				        	<div>
-				        		Participe à {{ user.participant.gn.label }}
-				        	</div>
-				        	{% if user.participant.groupe %}
-				        		<div>
-				        			Membre du groupe <a href="{{ path('groupe.detail',{'index':user.participant.groupe.id})  }}">{{ user.participant.groupe.nom }}</a>
-				        		</div>
-				        	{% endif %}
-				        
-				        	{% if user.participant.personnage %}
-				        		<div>
-									Personnage : <a href="{{ path('personnage.admin.detail',{'personnage':user.participant.personnage.id}) }}">{{ user.participant.personnage.publicName }}</a>
-								</div>	        		
-				        	{% endif %}
-				        {% endif %}
+						<div class="btn-toolbar pull-right" role="toolbar" aria-label="...">
+							<div class="btn-group" role="group" aria-label="...">
+								<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Voir l\'état civil" href="{{ path('etatCivil.detail', {'etatCivil':user.etatCivil.id}) }}"><i class="fa fa-user"></i></a>
+								<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Ajouter un billet" href="{{ path('user.billet',{'user':user.id}) }}"><i class="fa fa-ticket"></i></a>
+							</div>
+						</div>
 					</td>
 				</tr>
 			{% endfor %}

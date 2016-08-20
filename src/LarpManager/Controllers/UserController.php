@@ -34,8 +34,10 @@ use LarpManager\Form\MessageForm;
 use LarpManager\Form\NewMessageForm;
 use LarpManager\Form\RestrictionForm;
 use LarpManager\Form\UserRestrictionForm;
+use LarpManager\Form\UserBilletForm;
 
 use LarpManager\Entities\Restriction;
+use LarpManager\Entities\User;
 
 use JasonGrimes\Paginator;
 
@@ -62,7 +64,61 @@ class UserController
 	private $isPasswordResetEnabled = true;
 	
 	/**
-	 * Restriction alimentaires
+	 * Genere un mot de passe aléatoire
+	 *
+	 * @param number $length
+	 * @return string $password
+	 */
+	protected function generatePassword($length = 10)
+	{
+		$alphabets = range('A','Z');
+		$numbers = range('0','9');
+		$additional_characters = array('_','.');
+	
+		$final_array = array_merge($alphabets,$numbers,$additional_characters);
+	
+		$password = '';
+	
+		while($length--) {
+			$key = array_rand($final_array);
+			$password .= $final_array[$key];
+		}
+	
+		return $password;
+	}
+	
+	/**
+	 * Gestion des billets d'un utilisateur
+	 * 
+	 * @param Application $app
+	 * @param Request $request
+	 * @param User $user
+	 */
+	public function billetAction(Application $app, Request $request, User $user)
+	{
+		$form = $app['form.factory']->createBuilder(new UserBilletForm(), $user)
+			->add('save','submit', array('label' => 'Sauvegarder'))
+			->getForm();
+		
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$user = $form->getData();
+			$app['orm.em']->persist($user);
+			$app['orm.em']->flush();
+			
+			$app['session']->getFlashBag()->add('success', 'Vos modifications ont été enregistré.');
+			return $app->redirect($app['url_generator']->generate('user.admin.list'),301);
+		}
+		return $app['twig']->render('admin/user/billet.twig', array(
+				'user' => $user,
+				'form' => $form->createView(),
+		));
+	}
+	
+	/**
+	 * Choix des restrictions alimentaires par l'utilisateur
 	 */
 	public function restrictionAction(Application $app, Request $request)
 	{	
@@ -189,6 +245,32 @@ class UserController
 			
 	}
 
+
+	/**
+	 * Affiche la billetterie
+	 *
+	 * @param Application $app
+	 * @param Request $request
+	 * @param unknown $id
+	 * @throws NotFoundHttpException
+	 */
+	public function billetterieAction(Application $app, Request $request)
+	{
+		$repo = $app['orm.em']->getRepository('LarpManager\Entities\Groupe');
+			
+		$query = $repo->createQueryBuilder('g')
+			->where('g.pj = true')
+			->orderBy('g.numero','ASC')
+			->getQuery();
+			
+		$groupes = $query->getResult();
+	
+		return $app['twig']->render('public/user/billetterie.twig', array(
+				'groupes' => $groupes,
+				'user' => $app['user'],
+		));
+	}
+	
 	/**
 	 * Création d'un utilisateur
 	 * 
@@ -222,30 +304,6 @@ class UserController
 	}
 	
 	/**
-	 * Genere un mot de passe aléatoire
-	 * 
-	 * @param number $length
-	 * @return string $password
-	 */
-	protected function generatePassword($length = 10)
-	{
-		$alphabets = range('A','Z');
-		$numbers = range('0','9');
-		$additional_characters = array('_','.');
-		
-		$final_array = array_merge($alphabets,$numbers,$additional_characters);
-		
-		$password = '';
-		
-		while($length--) {
-			$key = array_rand($final_array);
-			$password .= $final_array[$key];
-		}
-		
-		return $password;
-	}
-
-	/**
 	 * Affiche le détail de l'utilisateur courant
 	 * 
 	 * @param Application $app
@@ -258,20 +316,7 @@ class UserController
 	
 		return $app->redirect($app['url_generator']->generate('user.view', array('id' => $app['user']->getId())));
 	}
-	
-	/**
-	 * Affiche de détail de l'état-civil de l'utilisateur courant
-	 * @param Application $app
-	 * @return \Symfony\Component\HttpFoundation\RedirectResponse
-	 */
-	public function viewSelfEtatCivilAction(Application $app) {
-		if (!$app['user']) {
-			return $app->redirect($app['url_generator']->generate('user.login'));
-		}
 		
-		return $app->redirect($app['url_generator']->generate('user.etatCivil.view', array('id' => $app['user']->getId())));
-	}
-	
 	/**
 	 * Affiche la messagerie de l'utilisateur courant
 	 * 
@@ -347,31 +392,6 @@ class UserController
 		));
 	}
 
-	/**
-	 * Affiche la messagerie de l'utilisateur
-	 *
-	 * @param Application $app
-	 * @param Request $request
-	 * @param unknown $id
-	 * @throws NotFoundHttpException
-	 */
-	public function billetterieAction(Application $app, Request $request)
-	{		
-		$repo = $app['orm.em']->getRepository('LarpManager\Entities\Groupe');
-		 
-		$query = $repo->createQueryBuilder('g')
-			->where('g.pj = true')
-			->orderBy('g.numero','ASC')
-			->getQuery();
-			
-		$groupes = $query->getResult();
-		
-		
-		return $app['twig']->render('public/user/billetterie.twig', array(
-				'groupes' => $groupes,
-				'user' => $app['user'],
-		));
-	}
 	
 	/**
 	 * Interface d'envoi d'un message
@@ -744,20 +764,7 @@ class UserController
 				'form' => $form->createView(),
 		));
 	}
-	
-	/**
-	 * Affiche l'état civil de l'utilisateur
-	 * @param Application $app
-	 * @param Request $request
-	 */
-	public function adminEtatCivilAction(Application $app, Request $request)
-	{
-		$user = $request->get('user');
-		return $app['twig']->render('admin/user/etatCivil.twig', array(
-				'user' => $user,
-		));
-	}
-	
+		
 	/**
 	 * Enregistre un utilisateur
 	 * 

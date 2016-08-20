@@ -18,27 +18,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace LarpManager\Repository;
+namespace LarpManager\Controllers;
 
-use Doctrine\ORM\EntityRepository;
+use Silex\Application;
+use Symfony\Component\HttpFoundation\Request;
+
+use LarpManager\Entities\EtatCivil;
 
 /**
- * LarpManager\Repository\TitreRepository
+ * LarpManager\Controllers\EtatCivilController
  *
  * @author kevin
+ *
  */
-class TitreRepository extends EntityRepository
+class EtatCivilController
 {
-	/**
-	 * Trouve tous les titres classé par renommé
-	 * @return ArrayCollection $sorts
-	 */
-	public function findByRenomme()
-	{
-		$titres = $this->getEntityManager()
-			->createQuery('SELECT t FROM LarpManager\Entities\Titre t ORDER BY t.renomme ASC')
-			->getResult();
 
-		return $titres;
+	/**
+	 * Affiche l'état civil de l'utilisateur
+	 * @param Application $app
+	 * @param Request $request
+	 */
+	public function detailAction(Application $app, Request $request, EtatCivil $etatCivil)
+	{
+		return $app['twig']->render('admin/etatCivil/detail.twig', array(
+				'etatCivil' => $etatCivil,
+		));
 	}
 }

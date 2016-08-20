@@ -1,0 +1,23 @@
+{% extends "layout.twig" %}
+
+{% block title %}Restrictions alimentaires{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path('restriction.list') }}">Liste des restrictions alimentaires</a></li>
+		<li class="active">Détail d'une restriction alimentaire</li>
+	</ol>
+	
+	<div class="well well-sm">
+		<div class="list-group">
+			<div class="list-group-item">{{ restriction.label }}</div>
+			<div class="list-group-item">{{ restriction.creationDate|date('Y-m-d') }}</div>
+			<div class="list-group-item">{{ restriction.updateDate|date('Y-m-d') }}</div>
+			<div class="list-group-item">{{ restriction.auteur.name }}</div>
+			<div class="list-group-item">Quantité : {{ restriction.users|length }}</div>
+		</div>
+	</div>
+	
+{% endblock %}

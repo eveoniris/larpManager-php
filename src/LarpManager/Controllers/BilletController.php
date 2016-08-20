@@ -147,4 +147,18 @@ class BilletController
 				'billet' => $billet,
 		));
 	}
+	
+	/**
+	 * Liste des utilisateurs ayant ce billet
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Billet $billet
+	 */
+	public function userAction(Request $request, Application $app, Billet $billet)
+	{
+		return $app['twig']->render('admin\billet\user.twig', array(
+				'billet' => $billet,
+		));
+	}
 }

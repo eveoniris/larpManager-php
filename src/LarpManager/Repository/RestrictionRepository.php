@@ -23,22 +23,21 @@ namespace LarpManager\Repository;
 use Doctrine\ORM\EntityRepository;
 
 /**
- * LarpManager\Repository\TitreRepository
+ * LarpManager\Repository\RestrictionRepository
  *
  * @author kevin
  */
-class TitreRepository extends EntityRepository
+class RestrictionRepository extends EntityRepository
 {
 	/**
-	 * Trouve tous les titres classé par renommé
-	 * @return ArrayCollection $sorts
+	 * Fourni la liste des restrictions alimentaires
+	 * @return \Doctrine\Common\Collections\Collection
 	 */
-	public function findByRenomme()
+	public function findAllOrderedByLabel()
 	{
-		$titres = $this->getEntityManager()
-			->createQuery('SELECT t FROM LarpManager\Entities\Titre t ORDER BY t.renomme ASC')
-			->getResult();
+		$query = $this->getEntityManager()->createQuery('SELECT r FROM LarpManager\Entities\Restriction r ORDER BY r.label ASC');
+		$ressources = $query->getResult();
 
-		return $titres;
+		return $ressources;
 	}
 }

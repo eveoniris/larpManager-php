@@ -6,8 +6,7 @@
 
 	<div class="row">
 		<div class="col-md-3">
-			<div class="well well-sm">
-
+			<div class="well well-sm">				
 				{# si l'utilisateur est scénariste, lui afficher les liens vers les groupes dont il a la responsabilité #}
 				{% if is_granted('ROLE_SCENARISTE', app.user) %}
 					{% include 'homepage/fragment/scenariste.twig' with {'user': user} %}

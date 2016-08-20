@@ -1,0 +1,37 @@
+{% extends "layout.twig" %}
+
+{% block title %}Grandeur nature{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path("gn.list") }}">Liste des grandeur nature</a></li>
+		<li class="active">Détail des ventes -- {{ gn.label }}</li>
+	</ol>
+	
+	<div class="well well-sm">
+		<div class="header"><h5>Liste des billets</h5></div>
+		
+		<table class="table">
+			<thead>
+				<tr>
+					<th>Billet</th>
+					<th>Quantité</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+			{% for billet in gn.billets %}
+				<tr>
+					<td>{{ billet.label }}</td>
+					<td>{{ billet.users|length }}</td>
+					<td><a href="{{ path('billet.user', {'billet': billet.id}) }}">Liste des utilisateurs</a></td>
+				</tr>
+			{% endfor %}
+			</tbody>
+		</table>	
+		
+	</div>
+	
+{% endblock content %}

@@ -79,31 +79,31 @@ class UserControllerProvider implements ControllerProviderInterface
 		
 		$controllers->get('/', 'LarpManager\Controllers\UserController::viewSelfAction')
 			->bind('user')
-			->before(function(Request $request) use ($app) {
-			// Require login. This should never actually cause access to be denied,
-			// but it causes a login form to be rendered if the viewer is not logged in.
-			if (!$app['user']) {
-				throw new AccessDeniedException();
-			}
-		});
+			->before($mustBeUser);
 		
 		/**
 		 * Affichage de la messagie de l'utilisateur 
 		 */
 		$controllers->get('/messagerie', 'LarpManager\Controllers\UserController::viewSelfMessagerieAction')
 			->bind('user.messagerie')
-			->before(function(Request $request) use ($app) {
-				if ( !$app['user']) {
-					throw new AccessDeniedException();
-				}
-		});
+			->before($mustBeUser);
 			
 		/**
 		 * Billetterie
 		 */
 		$controllers->get('/billetterie', 'LarpManager\Controllers\UserController::billetterieAction')
 			->bind('user.billetterie')
-			->before($mustBeUser);		
+			->before($mustBeUser);
+			
+		/**
+		 * Ajoute un billet à un utilisateur
+		 */
+		$controllers->get('/{user}/billet', 'LarpManager\Controllers\UserController::billetAction')
+			->assert('user', '\d+')
+			->convert('user', 'converter.user:convert')
+			->method('GET|POST')
+			->bind('user.billet')
+			->before($mustBeAdmin);
 			
 		/** 
 		 * Formulaire de choix d'un personnage secondaire 
@@ -249,16 +249,6 @@ class UserControllerProvider implements ControllerProviderInterface
 			->method('GET|POST')
 			->before($mustBeAdmin);
 			
-		/**
-		 * Affiche l'état civil d'un utilisateur
-		 */
-		$controllers->match('/admin/{user}/etatCivil', 'LarpManager\Controllers\UserController::adminEtatCivilAction')
-			->assert('id', '\d+')
-			->bind('user.admin.etatCivil')
-			->method('GET')
-			->convert('user', 'converter.user:convert')
-			->before($mustBeAdmin);
-
 		/**
 		 * Gestion des droits
 		 */

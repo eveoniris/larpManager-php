@@ -18,27 +18,48 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace LarpManager\Repository;
+namespace LarpManager\Form;
 
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Doctrine\ORM\EntityRepository;
 
 /**
- * LarpManager\Repository\TitreRepository
+ * LarpManager\Form\RestrictionDeleteForm
  *
  * @author kevin
+ *
  */
-class TitreRepository extends EntityRepository
+class RestrictionDeleteForm extends AbstractType
 {
 	/**
-	 * Trouve tous les titres classé par renommé
-	 * @return ArrayCollection $sorts
+	 * Construction du formulaire
+	 * 
+	 * @param FormBuilderInterface $builder
+	 * @param array $options
 	 */
-	public function findByRenomme()
+	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
-		$titres = $this->getEntityManager()
-			->createQuery('SELECT t FROM LarpManager\Entities\Titre t ORDER BY t.renomme ASC')
-			->getResult();
-
-		return $titres;
+	}
+	
+	/**
+	 * Définition de l'entité concerné
+	 * 
+	 * @param OptionsResolver $resolver
+	 */
+	public function configureOptions(OptionsResolver $resolver)
+	{
+		$resolver->setDefaults(array(
+				'data_class' => 'LarpManager\Entities\Restriction',
+		));
+	}
+	
+	/**
+	 * Nom du formulaire
+	 */
+	public function getName()
+	{
+		return 'restrictionDelete';
 	}
 }

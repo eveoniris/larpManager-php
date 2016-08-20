@@ -28,11 +28,12 @@
 namespace LarpManager\Entities;
 
 use LarpManager\Entities\BaseRestriction;
+use LarpManager\Entities\User;
 
 /**
  * LarpManager\Entities\Restriction
  *
- * @Entity()
+ * @Entity(repositoryClass="LarpManager\Repository\RestrictionRepository")
  */
 class Restriction extends BaseRestriction
 {
@@ -45,5 +46,23 @@ class Restriction extends BaseRestriction
 		$this->setUpdateDate(new \Datetime('NOW'));
 	}		
 	
+	/**
+	 * Fourni le créateur de la restriction
+	 */
+	public function getAuteur()
+	{
+		return $this->getUserRelatedByAuteurId();
+	}
+	
+	/**
+	 * Défini le créateur de la restriction
+	 * 
+	 * @param User $user
+	 */
+	public function setAuteur(User $user)
+	{
+		$this->setUserRelatedByAuteurId($user);
+		return $this;
+	}
 			
 }

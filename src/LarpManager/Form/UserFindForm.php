@@ -50,6 +50,7 @@ class UserFindForm extends AbstractType
 						'nom' => 'Nom',
 						'username' => 'Pseudo',
 						'email' => 'Email',
+						'id' => 'ID',
 					),
 					'label' => 'Type',
 				));

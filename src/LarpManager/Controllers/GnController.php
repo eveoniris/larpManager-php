@@ -24,6 +24,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Silex\Application;
 
 use LarpManager\Form\GnForm;
+use LarpManager\Entities\Gn;
 use JasonGrimes\Paginator;
 
 /**
@@ -74,10 +75,8 @@ class GnController
 	 * @param Application $app
 	 */
 	public function addAction(Request $request, Application $app)
-	{
-		$gn = new \LarpManager\Entities\Gn();
-	
-		$form = $app['form.factory']->createBuilder(new GnForm(), $gn)
+	{	
+		$form = $app['form.factory']->createBuilder(new GnForm(), new Gn())
 			->add('save','submit', array('label' => "Sauvegarder"))
 			->getForm();
 	
@@ -124,27 +123,15 @@ class GnController
 	 * @param Request $request
 	 * @param Application $app
 	 */
-	public function detailAction(Request $request, Application $app)
-	{
-		$id = $request->get('index');
-	
-		$gn = $app['orm.em']->find('\LarpManager\Entities\Gn',$id);
-	
-		if ( $gn )
+	public function detailAction(Request $request, Application $app, Gn $gn)
+	{	
+		if ( $app['security.authorization_checker']->isGranted('ROLE_ADMIN') )
 		{
-			if ( $app['security.authorization_checker']->isGranted('ROLE_ADMIN') )
-			{
-				return $app['twig']->render('admin/gn/detail.twig', array('gn' => $gn));
-			}
-			else
-			{
-				return $app['twig']->render('public/gn/detail.twig', array('gn' => $gn));
-			}
+			return $app['twig']->render('admin/gn/detail.twig', array('gn' => $gn));
 		}
 		else
 		{
-			$app['session']->getFlashBag()->add('error', 'Le gn n\'a pas été trouvé.');
-			return $app->redirect($app['url_generator']->generate('gn.list'));
+			return $app['twig']->render('public/gn/detail.twig', array('gn' => $gn));
 		}	
 	}
 	
@@ -154,12 +141,8 @@ class GnController
 	 * @param Request $request
 	 * @param Application $app
 	 */
-	public function updateAction(Request $request, Application $app)
-	{
-		$id = $request->get('index');
-	
-		$gn = $app['orm.em']->find('\LarpManager\Entities\Gn',$id);
-	
+	public function updateAction(Request $request, Application $app, Gn $gn)
+	{	
 		$form = $app['form.factory']->createBuilder(new GnForm(), $gn)
 			->add('update','submit', array('label' => "Sauvegarder"))
 			->add('delete','submit', array('label' => "Supprimer"))
@@ -191,6 +174,20 @@ class GnController
 		return $app['twig']->render('admin/gn/update.twig', array(
 				'gn' => $gn,
 				'form' => $form->createView(),
+		));
+	}
+	
+	/**
+	 * Détail des ventes et participation au Gn
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Gn $gn
+	 */
+	public function venteAction(Request $request, Application $app, Gn $gn)
+	{
+		return $app['twig']->render('admin/gn/vente.twig', array(
+				'gn' => $gn,
 		));
 	}
 }

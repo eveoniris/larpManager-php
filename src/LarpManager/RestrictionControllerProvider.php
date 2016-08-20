@@ -82,7 +82,7 @@ class RestrictionControllerProvider implements ControllerProviderInterface
 		/**
 		 * Mise à jour d'une restriction
 		 */
-		$controllers->match('/{restriction}/update','LarpManager\Controllers\ResrtictionController::updateAction')
+		$controllers->match('/{restriction}/update','LarpManager\Controllers\RestrictionController::updateAction')
 			->assert('restriction', '\d+')
 			->convert('restriction', 'converter.restriction:convert')
 			->bind("restriction.update")

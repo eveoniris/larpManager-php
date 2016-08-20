@@ -64,4 +64,12 @@ class Billet extends BaseBillet
 	{
 		return $this->getUserRelatedByCreateurId();
 	}
+	
+	/**
+	 * Fourni le label complet d'un billet
+	 */
+	public function fullLabel()
+	{
+		return $this->getGn()->getLabel(). ' - ' . $this->getLabel();
+	}
 }

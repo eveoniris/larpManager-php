@@ -27,8 +27,6 @@ use LarpManager\Form\GnInscriptionForm;
 use LarpManager\Form\TrombineForm;
 use LarpManager\Form\RuleForm;
 
-
-
 /**
  * LarpManager\Controllers\HomepageController
  *
@@ -51,7 +49,16 @@ class HomepageController
 			return $this->notConnectedIndexAction($request, $app);
 		}
 		
-		return $this->joueurIndexAction($request, $app);
+		$repoAnnonce = $app['orm.em']->getRepository('LarpManager\Entities\Annonce');
+		$annonces = $repoAnnonce->findBy(array('archive' => false));
+		
+		$personnage = $app['personnage.manager']->getCurrentPersonnage();
+		
+		return $app['twig']->render('homepage/index.twig', array(
+				'annonces' => $annonces,
+				'user' => $app['user'],
+				'personnage' => $personnage,
+		));
 	}
 	
 	
@@ -192,38 +199,7 @@ class HomepageController
 	public function notConnectedIndexAction(Request $request, Application $app)
 	{
 		return $app['twig']->render('homepage/not_connected.twig');
-	}
-	
-	/**
-	 * affiche la page d'acceuil.
-	 *
-	 * Si l'utilisateur a enregistrer ses informations de joueur, on lui propose la liste
-	 * des GNs auquel il peux s'inscrire.
-	 *
-	 * Si l'utilisateur n'a pas enregistré ses informations de joueur, on lui propose la liste
-	 * de tous les GNs actifs.
-	 *
-	 * @param Request $request
-	 * @param Application $app
-	 */
-	public function joueurIndexAction(Request $request, Application $app)
-	{	
-		$repoGn = $app['orm.em']->getRepository('LarpManager\Entities\Gn');
-		$gns = $repoGn->findByActive();
-		
-		$repoAnnonce = $app['orm.em']->getRepository('LarpManager\Entities\Annonce');
-		$annonces = $repoAnnonce->findBy(array('archive' => false));
-		
-		$personnage = $app['personnage.manager']->getCurrentPersonnage();
-		
-		return $app['twig']->render('homepage/index.twig', array(
-				'gns' => $gns,
-				'annonces' => $annonces,
-				'user' => $app['user'],
-				'personnage' => $personnage,
-		));
-	}
-	
+	}	
 	
 	/**
 	 * Affiche une carte du monde

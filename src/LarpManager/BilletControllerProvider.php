@@ -79,6 +79,14 @@ class BilletControllerProvider implements ControllerProviderInterface
 			->convert('billet', 'converter.billet:convert')
 			->method('GET|POST');
 			
+		/**
+		 * Liste des utilisateurs ayant ce billet
+		 */
+		$controllers->match('/{billet}/user','LarpManager\Controllers\BilletController::userAction')
+			->bind("billet.user")
+			->convert('billet', 'converter.billet:convert')
+			->method('GET');
+			
 		return $controllers;
 	}
 }

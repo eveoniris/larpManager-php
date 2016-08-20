@@ -62,14 +62,14 @@ class RestrictionController
 	}
 
 	/**
-	 * Télécharger la liste des lieux
+	 * Télécharger la liste des restrictions alimentaires
 	 *
 	 * @param Request $request
 	 * @param Application $app
 	 */
 	public function downloadAction(Request $request, Application $app)
 	{
-		$lieux = $app['orm.em']->getRepository('\LarpManager\Entities\Restriction')->findAllOrderedByLabel();
+		$restrictions = $app['orm.em']->getRepository('\LarpManager\Entities\Restriction')->findAllOrderedByLabel();
 	
 		header("Content-Type: text/csv");
 		header("Content-Disposition: attachment; filename=eveoniris_restrictions_".date("Ymd").".csv");
@@ -84,11 +84,11 @@ class RestrictionController
 		'nom',
 		'nombre'), ';');
 			
-		foreach ($lieux as $lieu)
+		foreach ($restrictions as $restriction)
 		{
 			$line = array();
-			$line[] = utf8_decode($lieu->getNom());
-			$line[] = utf8_decode($lieu->getUsers()->count());			
+			$line[] = utf8_decode($restriction->getLabel());
+			$line[] = utf8_decode($restriction->getUsers()->count());			
 			fputcsv($output, $line, ';');
 		}
 			
@@ -141,11 +141,11 @@ class RestrictionController
 	 * 
 	 * @param Request $request
 	 * @param Application $app
-	 * @param Lieu $lieu
+	 * @param Restriction $restriction
 	 */
-	public function detailAction(Request $request, Application $app, Lieu $lieu)
+	public function detailAction(Request $request, Application $app, Restriction $restriction)
 	{		
-		return $app['twig']->render('admin/lieu/detail.twig', array('lieu' => $lieu));
+		return $app['twig']->render('admin/restriction/detail.twig', array('restriction' => $restriction));
 	}
 	
 	/**
@@ -153,11 +153,11 @@ class RestrictionController
 	 * 
 	 * @param Request $request
 	 * @param Application $app
-	 * @param Lieu $lieu
+	 * @param Restriction $restriction
 	 */
-	public function updateAction(Request $request, Application $app, Lieu $lieu)
+	public function updateAction(Request $request, Application $app, Restriction $restriction)
 	{		
-		$form = $app['form.factory']->createBuilder(new LieuForm(), $lieu)
+		$form = $app['form.factory']->createBuilder(new RestrictionForm(), $restriction)
 			->add('save','submit', array('label' => "Sauvegarder"))
 			->getForm();
 		
@@ -165,30 +165,30 @@ class RestrictionController
 		
 		if ( $form->isValid() )
 		{
-			$lieu = $form->getData();	
-			$app['orm.em']->persist($lieu);
+			$restriction = $form->getData();	
+			$app['orm.em']->persist($restriction);
 			$app['orm.em']->flush();
 				
-			$app['session']->getFlashBag()->add('success', 'Le lieu a été modifié.');
-			return $app->redirect($app['url_generator']->generate('lieu'),301);
+			$app['session']->getFlashBag()->add('success', 'La restriction alimentaire a été modifié.');
+			return $app->redirect($app['url_generator']->generate('restriction.list'),301);
 		}
 
-		return $app['twig']->render('admin/lieu/update.twig', array(
-				'lieu' => $lieu,
+		return $app['twig']->render('admin/restriction/update.twig', array(
+				'restriction' => $restriction,
 				'form' => $form->createView(),
 		));	
 	}
 	
 	/**
-	 * Suppression d'un lieu
+	 * Suppression d'une restriction alimentaire
 	 * 
 	 * @param Request $request
 	 * @param Application $app
-	 * @param Lieu $lieu
+	 * @param Restriction $restriction
 	 */
-	public function deleteAction(Request $request, Application $app, Lieu $lieu)
+	public function deleteAction(Request $request, Application $app, Restriction $restriction)
 	{	
-		$form = $app['form.factory']->createBuilder(new LieuDeleteForm(), $lieu)
+		$form = $app['form.factory']->createBuilder(new RestrictionDeleteForm(), $restriction)
 			->add('save','submit', array('label' => "Supprimer"))
 			->getForm();
 		
@@ -196,50 +196,19 @@ class RestrictionController
 		
 		if ( $form->isValid() )
 		{
-			$lieu = $form->getData();
+			$restriction = $form->getData();
 				
-			$app['orm.em']->remove($lieu);
+			$app['orm.em']->remove($restriction);
 			$app['orm.em']->flush();
 				
-			$app['session']->getFlashBag()->add('success', 'Le lieu a été supprimé.');
-			return $app->redirect($app['url_generator']->generate('lieu'),301);
+			$app['session']->getFlashBag()->add('success', 'La restriction alimentaire a été supprimé.');
+			return $app->redirect($app['url_generator']->generate('restriction.list'),301);
 		}
 
-		return $app['twig']->render('admin/lieu/delete.twig', array(
-				'lieu' => $lieu,
+		return $app['twig']->render('admin/restriction/delete.twig', array(
+				'restriction' => $restriction,
 				'form' => $form->createView(),
 		));
 	}
-	
-	/**
-	 * Gestion de la liste des documents lié à un lieu
-	 * 
-	 * @param Request $request
-	 * @param Application $app
-	 * @param Lieu $lieu
-	 */
-	public function documentAction(Request $request, Application $app, Lieu $lieu)
-	{
-		$form = $app['form.factory']->createBuilder(new LieuDocumentForm(), $lieu)
-			->add('submit','submit', array('label' => 'Enregistrer'))
-			->getForm();
-		
-		$form->handleRequest($request);
-			
-		if ( $form->isValid() )
-		{
-			$lieu = $form->getData();
-			$app['orm.em']->persist($lieu);
-			$app['orm.em']->flush();
-				
-			$app['session']->getFlashBag()->add('success', 'Le document a été ajouté au lieu.');
-			return $app->redirect($app['url_generator']->generate('lieu.detail', array('lieu' => $lieu->getId())));
-		}
-		
-		return $app['twig']->render('admin/lieu/documents.twig', array(
-				'lieu' => $lieu,
-				'form' => $form->createView(),
-		));
-	}
-		
+
 }
