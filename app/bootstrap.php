@@ -198,7 +198,7 @@ else
 			   }),
 		),
 		'secured_area' => array(	// le reste necessite d'être connecté
-			'pattern' => '^/[annonce|restriction|statistique|billet|etatCivil|stock|droit|forum|groupe|gn|personnage|territoire|appelation|langue|ressource|religion|age|genre|level|competence|competenceFamily]/.*$',
+			'pattern' => '^/[annonce|restriction|statistique|billet|etatCivil|restauration|stock|droit|forum|groupe|gn|personnage|territoire|appelation|langue|ressource|religion|age|genre|level|competence|competenceFamily]/.*$',
 			'anonymous' => false,
 			'remember_me' => array(),
 			'form' => array(
@@ -259,6 +259,7 @@ else
 	$app->mount('/token', new LarpManager\TokenControllerProvider());
 	$app->mount('/lieu', new LarpManager\LieuControllerProvider());
 	$app->mount('/restriction', new LarpManager\RestrictionControllerProvider());
+	$app->mount('/restauration', new LarpManager\RestaurationControllerProvider());
 	$app->mount('/billet', new LarpManager\BilletControllerProvider());
 	$app->mount('/etatCivil', new LarpManager\EtatCivilControllerProvider());
 		
@@ -285,6 +286,7 @@ else
 		array('^/restriction/.*$', 'ROLE_ADMIN'),
 		array('^/billet/.*$', 'ROLE_ADMIN'),
 		array('^/etatCivil/.*$', 'ROLE_ADMIN'),
+		array('^/restauration/.*$', 'ROLE_ADMIN'),
 		array('^/trombinoscope/.*$', 'ROLE_SCENARISTE'),
 		array('^/pnj/.*$', 'ROLE_USER'),
 		array('^/groupe/.*$', 'ROLE_USER'),
