@@ -8,10 +8,6 @@
 		<li><a href="{{ path('homepage') }}">Accueil</a></li>
 		<li class="active">Mes informations administratives</li>
 	</ol>
-
-	<div class="well">
-		Consulter les <a href="{{ path('legal') }}">mentions légales</a>.
-	</div>
 			
 	<div class="well bs-component">
 		<form action="{{ path('user.etatCivil') }}" method="POST" {{ form_enctype(form) }}>

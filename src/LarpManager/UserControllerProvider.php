@@ -49,6 +49,8 @@ class UserControllerProvider implements ControllerProviderInterface
 	 *  - user.login_check
 	 *  - user.billetterie
 	 *  - user.restauration
+	 *  - user.gn
+	 *  - user.gn.detail
 	 *
 	 * @param Application $app
 	 * @return Controllers $controllers
@@ -145,6 +147,42 @@ class UserControllerProvider implements ControllerProviderInterface
 		 */
 		$controllers->match('/fedegn', 'LarpManager\Controllers\UserController::fedegnAction')
 			->bind('user.fedegn')
+			->method('GET')
+			->before($mustBeUser);
+			
+		/**
+		 * Affiche la liste des GN
+		 */
+		$controllers->match('/gn', 'LarpManager\Controllers\UserController::gnListAction')
+			->bind('user.gn.list')
+			->method('GET')
+			->before($mustBeUser);
+			
+		/**
+		 * Affiche les informations d'un GN
+		 */
+		$controllers->match('/gn/{gn}', 'LarpManager\Controllers\UserController::gnDetailAction')
+			->assert('gn', '\d+')
+			->convert('gn', 'converter.gn:convert')
+			->bind('user.gn.detail')			
+			->method('GET')
+			->before($mustBeUser);
+			
+		/**
+		 * Affiche les informations d'un billet
+		 */
+		$controllers->match('/userHasBillet/{userHasBillet}', 'LarpManager\Controllers\UserController::userHasBilletDetailAction')
+			->assert('userHasBillet', '\d+')
+			->convert('userHasBillet', 'converter.userHasBillet:convert')
+			->bind('user.userHasBillet.detail')
+			->method('GET')
+			->before($mustBeUser);
+			
+		/**
+		 * Affiche la liste des billets
+		 */
+		$controllers->match('/userHasBillet', 'LarpManager\Controllers\UserController::userHasBilletListAction')
+			->bind('user.userHasBillet.list')
 			->method('GET')
 			->before($mustBeUser);
 			

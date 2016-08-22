@@ -40,6 +40,8 @@ use LarpManager\Form\UserRestaurationForm;
 use LarpManager\Entities\Restriction;
 use LarpManager\Entities\User;
 use LarpManager\Entities\UserHasRestauration;
+use LarpManager\Entities\UserHasBillet;
+use LarpManager\Entities\Gn;
 
 use JasonGrimes\Paginator;
 
@@ -98,7 +100,9 @@ class UserController
 	 */
 	public function billetAction(Application $app, Request $request, User $user)
 	{
-		$form = $app['form.factory']->createBuilder(new UserBilletForm(), $user)
+		$userHasBillet = new UserHasBillet();
+		
+		$form = $app['form.factory']->createBuilder(new UserBilletForm(), $userHasBillet)
 			->add('save','submit', array('label' => 'Sauvegarder'))
 			->getForm();
 		
@@ -106,7 +110,8 @@ class UserController
 			
 		if ( $form->isValid() )
 		{
-			$user = $form->getData();
+			$userHasBillet = $form->getData();
+			$user->addUserHasBillet($userHasBillet);
 			$app['orm.em']->persist($user);
 			$app['orm.em']->flush();
 			
@@ -188,6 +193,70 @@ class UserController
 		
 		return $app['twig']->render('public/user/restriction.twig', array(
 				'form' => $form->createView(),
+		));
+	}
+	
+	/**
+	 * Affiche la liste des GN actifs
+	 * 
+	 * @param Application $app
+	 * @param Request $request
+	 */
+	public function gnListAction(Application $app, Request $request)
+	{
+		$gns = $app['orm.em']->getRepository('LarpManager\Entities\Gn')->findActive();
+		
+		return $app['twig']->render('public/gn/list.twig', array(
+				'gns' => $gns,
+		));
+	}
+	
+	/**
+	 * Affiche les informations à propos d'un GN
+	 * 
+	 * @param Application $app
+	 * @param Request $request
+	 * @param Gn $gn
+	 */
+	public function gnDetailAction(Application $app, Request $request, Gn $gn)
+	{
+		return $app['twig']->render('public/gn/detail.twig', array(
+				'gn' => $gn,
+		));
+	}
+	
+	/**
+	 * Affiche le détail d'un billet d'un utilisateur
+	 * 
+	 * @param Application $app
+	 * @param Request $request
+	 * @param UserHasBillet $userHasBillet
+	 */
+	public function userHasBilletDetailAction(Application $app, Request $request, UserHasBillet $userHasBillet)
+	{
+		if ( $userHasBillet->getUser() != $app['user'])
+		{
+			$app['session']->getFlashBag()->add('error','Vous ne pouvez pas acceder à cette information');
+			return $app->redirect($app['url_generator']->generate('homepage'),301);
+		}
+		
+		return $app['twig']->render('public/userHasBillet/detail.twig', array(
+				'userHasBillet' => $userHasBillet,
+		));
+	}
+	
+	/**
+	 * Affiche la liste des billets de l'utilisateur
+	 * 
+	 * @param Application $app
+	 * @param Request $request
+	 */
+	public function userHasBilletListAction(Application $app, Request $request)
+	{	
+		$userHasBillets = $app['user']->getUserHasBillets();
+		
+		return $app['twig']->render('public/userHasBillet/list.twig', array(
+				'userHasBillets' => $userHasBillets,
 		));
 	}
 	

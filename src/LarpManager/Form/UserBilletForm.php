@@ -39,11 +39,11 @@ class UserBilletForm extends AbstractType
 	 */
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
-		$builder->add('billets','entity', array(
-				'label' => 'Choisissez les billets possédé par cet utilisateur',
-				'multiple' => true,
+		$builder->add('billet','entity', array(
+				'label' => 'Choisissez le billet a donner à cet utilisateur',
+				'multiple' => false,
 				'expanded' => true,
-				'required' => false,
+				'required' => true,
 				'class' => 'LarpManager\Entities\Billet',
 				'property' => 'fullLabel',
 		));
@@ -58,7 +58,7 @@ class UserBilletForm extends AbstractType
 	public function setDefaultOptions(OptionsResolverInterface $resolver)
 	{
 		$resolver->setDefaults(array(
-		 	'class' => 'LarpManager\Entities\User',
+		 	'class' => 'LarpManager\Entities\UserHasBillet',
 		 ));
 	}
 

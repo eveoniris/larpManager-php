@@ -29,6 +29,8 @@ namespace LarpManager\Entities;
 
 use LarpManager\Entities\BaseBillet;
 use LarpManager\Entities\User;
+use Doctrine\Common\Collections\ArrayCollection;
+
 
 /**
  * LarpManager\Entities\Billet
@@ -44,6 +46,21 @@ class Billet extends BaseBillet
 	{
 		$this->setCreationDate(new \Datetime('NOW'));
 		$this->setUpdateDate(new \Datetime('NOW'));
+	}
+	
+	/**
+	 * Fourni la liste de tous les utilisateurs ayant ce billet
+	 */
+	public function getUsers()
+	{
+		$result = new ArrayCollection();
+		
+		foreach ( $this->getUserHasBillets() as $userHasBillet)
+		{
+			$result[] = $userHasBillet->getUser();
+		}
+		
+		return $result;
 	}
 	
 	/**

@@ -55,7 +55,6 @@ class UserRestaurationForm extends AbstractType
 					'class' => 'LarpManager\Entities\Gn',
 					'property' => 'label',
 				));
-		
 	}
 
 

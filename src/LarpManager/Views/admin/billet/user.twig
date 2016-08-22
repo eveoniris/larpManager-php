@@ -12,8 +12,8 @@
 	
 	<div class="well well-sm">
 		<div class="list-group">
-			{% for user in billet.users %}
-				<div class="list-group-item">{{ user.name }}</div>
+			{% for userHasBillet in billet.userHasBillets %}
+				<div class="list-group-item">{{ userHasBillet.user.etatCivil.nom }} {{ userHasBillet.user.etatCivil.prenom }}</div>
 			{% endfor %}
 		</div>
 	</div>

@@ -41,6 +41,8 @@ class GnControllerProvider implements ControllerProviderInterface
 	 * 	- gn.add
 	 *  - gn.update
 	 *  - gn.detail
+	 *  - gn.vente
+	 *  - gn.fedegn
 	 *
 	 * @param Application $app
 	 * @return Controllers $controllers
@@ -48,32 +50,21 @@ class GnControllerProvider implements ControllerProviderInterface
 	public function connect(Application $app)
 	{
 		$controllers = $app['controllers_factory'];
-
-		/**
-		 * Vérifie que l'utilisateur dispose du role ADMIN
-		 * @var unknown $mustBeAdmin
-		 */
-		$mustBeAdmin = function(Request $request) use ($app) {
-			if (!$app['security.authorization_checker']->isGranted('ROLE_ADMIN')) {
-				throw new AccessDeniedException();
-			}
-		};
+		
 		
 		/**
 		 * Voir la liste des gns
 		 */
 		$controllers->match('/','LarpManager\Controllers\GnController::listAction')
 			->bind("gn.list")
-			->method('GET')
-			->before($mustBeAdmin);
+			->method('GET');
 
 		/**
 		 * Ajouter un gn
 		 */
 		$controllers->match('/add','LarpManager\Controllers\GnController::addAction')
 			->bind("gn.add")
-			->method('GET|POST')
-			->before($mustBeAdmin);
+			->method('GET|POST');
 
 		/**
 		 * Modifier un gn
@@ -82,17 +73,23 @@ class GnControllerProvider implements ControllerProviderInterface
 			->assert('gn', '\d+')
 			->convert('gn', 'converter.gn:convert')
 			->bind("gn.update")
-			->method('GET|POST')
-			->before($mustBeAdmin);
+			->method('GET|POST');
 
+			/**
+			 * voir le détail d'un gn
+			 */
+		$controllers->match('/{gn}/delete','LarpManager\Controllers\GnController::deleteAction')
+			->assert('gn', '\d+')
+			->convert('gn', 'converter.gn:convert')
+			->bind("gn.delete");
+			
 		/**
 		 * voir le détail d'un gn
 		 */
 		$controllers->match('/{gn}','LarpManager\Controllers\GnController::detailAction')
 			->assert('gn', '\d+')
 			->convert('gn', 'converter.gn:convert')
-			->bind("gn.detail")
-			->method('GET');
+			->bind("gn.detail");
 			
 		/**
 		 * Voir les ventes d'un GN
@@ -101,8 +98,16 @@ class GnControllerProvider implements ControllerProviderInterface
 			->assert('gn', '\d+')
 			->convert('gn', 'converter.gn:convert')
 			->bind("gn.vente")
-			->method('GET')
-			->before($mustBeAdmin);
+			->method('GET');
+			
+		/**
+		 * Voir les données necessaire pour la FédéGN
+		 */
+		$controllers->match('/{gn}/fedegn','LarpManager\Controllers\GnController::fedegnAction')
+			->assert('gn', '\d+')
+			->convert('gn', 'converter.gn:convert')
+			->bind("gn.fedegn")
+			->method('GET');
 
 		return $controllers;
 	}

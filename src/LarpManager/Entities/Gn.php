@@ -27,6 +27,7 @@
 
 namespace LarpManager\Entities;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use LarpManager\Entities\BaseGn;
 
 /**
@@ -39,5 +40,23 @@ class Gn extends BaseGn
 	public function __toString()
 	{
 		return $this->getLabel();	
+	}
+	
+	/**
+	 * Fourni la liste des utilisateurs de ce GN
+	 */
+	public function getUsers()
+	{
+		$result = new ArrayCollection();
+		
+		foreach ( $this->getBillets() as $billet)
+		{
+			foreach ( $billet->getUserHasBillets() as $userHasBillet)
+			{
+				$result[] = $userHasBillet->getUser();	
+			}
+		}
+		
+		return $result;
 	}
 }

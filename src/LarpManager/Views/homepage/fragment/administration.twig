@@ -6,7 +6,28 @@
 	<li class="list-group-item"><a href="{{ path('user.restriction') }}">Mes restrictions alimentaires</a></li>
 	<li class="list-group-item"><a href="{{ path('user.fedegn') }}">Assurance Fédégn</a></li>
 	<li class="list-group-item"><a href="{{ path('user.billetterie') }}">Billetterie</a></li>
-	{% for billet in user.billets %}
-		<li class="list-group-item">{{ billet.gn.label }} -- {{ billet.label }}</li>
+</ul>
+
+<div class="header">
+	<h5>Mes billets</h5>
+</div>
+<ul class="list-group">
+	{% for userHasBillet in user.userHasBillets %}
+		<li class="list-group-item">
+			<a href="{{ path('user.gn.detail', {'gn':  userHasBillet.billet.gn.id}) }}">{{ userHasBillet.billet.gn.label }}</a> 
+			&nbsp;/&nbsp;
+			<a href="{{ path('user.userHasBillet.detail', {'userHasBillet': userHasBillet.id}) }}">{{ userHasBillet.billet.label }}</a> 
+			&nbsp;obtenu le {{ userHasBillet.date|date('Y-m-d') }}
+		</li>
 	{% endfor %}
 </ul>
+
+<div class="header">
+	<h5>Ma restauration</h5>
+</div>
+<ul class="list-group">
+	{% for userHasRestauration in user.userHasRestaurations %}
+		<li class="list-group-item"><strong>{{ userHasRestauration.gn.label }} / {{ userHasRestauration.restauration.label }}</strong> obtenu le {{ userHasRestauration.date|date('Y-m-d') }}</li>
+	{% endfor %}
+</ul>
+

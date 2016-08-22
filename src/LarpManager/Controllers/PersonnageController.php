@@ -47,6 +47,7 @@ use LarpManager\Form\PersonnageBackgroundForm;
 use LarpManager\Form\PersonnageStatutForm;
 use LarpManager\Form\PersonnageDeleteForm;
 use LarpManager\Form\PersonnageXpForm;
+use LarpManager\Form\TrombineForm;
 
 /**
  * LarpManager\Controllers\PersonnageController

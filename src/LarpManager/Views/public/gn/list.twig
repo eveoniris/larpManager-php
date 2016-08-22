@@ -1,0 +1,48 @@
+{% extends "layout.twig" %}
+
+{% block title %}Gn{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage')  }}">Accueil</a></li>
+		<li class="active">Liste des GNs</li>
+	</ol>
+								
+	<div class="well well-sm">
+		<div class="header"><h5>Liste des GNs</h5></div>
+		
+		<div class="list-group">
+			{% for gn in gns %}
+				<div class="list-group-item">
+					
+						<div class="list-group-item-heading">
+							<h6>{{ gn.label }}, <small>du <strong>{{ gn.dateDebut|date('Y-m-d') }}</strong> au <strong>{{ gn.dateFin|date('Y-m-d') }}</strong></small></h6>
+						</div>
+						<div class="list-group-item-body">
+							<div class="list-group-item-text">
+								{% if gn.description %}
+									{{ gn.description|markdown }}
+								{% else %}
+									Aucune description.
+								{% endif %}
+							</div>
+							<div class="list-group-item-text">
+								<a href="{{ path('user.gn.detail', {'gn': gn.id}) }}">Voir le détail du GN</a><br />
+								{% set userHasBillet = app.user.userHasBillet(gn) %}
+								{% if userHasBillet %}
+									<p class="text-success">
+										<i class="fa fa-check" aria-hidden="true"></i>&nbsp;Vous participez à ce GN.
+										<a href="{{ path('user.userHasBillet.detail', {'userHasBillet': userHasBillet.id }) }}">Voir votre billet</a>
+									</p>
+								{% endif %}
+							</div>
+						</div>
+					
+					
+				</div>
+			{% endfor %}
+		</div>
+	</div>
+
+{% endblock content %}

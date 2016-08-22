@@ -67,16 +67,28 @@
 						</a> 
 					</th>
 					<th>Etat</th>
-					<th>Ventes</th>
+					<th>Nombre de participants</th>
+					<th></th>
 				</tr>
 			</thead>
 			<tbody>
 				{% for gn in gns %}
 					<tr>
-						<td><a href="{{ path('gn.update',{'gn':gn.id}) }}">{{ gn.id }}</a></td>
-						<td><a href="{{ path('gn.detail',{'gn':gn.id}) }}">{{ gn.label }}</a></td>
+						<td>{{ gn.id }}</td>
+						<td>{{ gn.label }}</td>
 						<td>{% if gn.actif %}<span class="text-success">Actif</span>{% else %}non actif{% endif %}</td>
-						<td><a href="{{ path('gn.vente',{'gn': gn.id}) }}">Ventes</a></td>
+						<td>{{ gn.users|length }}</td>
+						<td>
+							<div class="btn-toolbar pull-right" role="toolbar" aria-label="...">
+								<div class="btn-group" role="group" aria-label="...">
+									<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Ventes" href="{{ path('gn.vente',{'gn': gn.id}) }}"><i class="fa fa-shopping-basket" aria-hidden="true"></i></a>
+									<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="FédéGN" href="{{ path('gn.fedegn',{'gn': gn.id}) }}"><i class="fa fa-university" aria-hidden="true"></i></a>
+									<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Modifier" href="{{ path('gn.update',{'gn':gn.id}) }}"><i class="fa fa-pencil"></i></a>
+									<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Détail" href="{{ path('gn.detail',{'gn':gn.id}) }}"><i class="fa fa-eye"></i></a>
+									<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Supprimer" href="{{ path('gn.delete',{'gn':gn.id}) }}"><i class="fa fa-eraser"></i></a>
+								</div>
+							</div>
+						</td>
 					</tr>
 				{% endfor %}
 			</tbody>

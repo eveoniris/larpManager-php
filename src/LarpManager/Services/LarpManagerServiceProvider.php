@@ -52,6 +52,7 @@ use LarpManager\Services\Converter\TitreConverter;
 use LarpManager\Services\Converter\TokenConverter;
 use LarpManager\Services\Converter\TriggerConverter;
 use LarpManager\Services\Converter\UserConverter;
+use LarpManager\Services\Converter\UserHasBilletConverter;
 
 /**
  * LarpManager\LarpManagerServiceProvider
@@ -281,6 +282,11 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 		// Restauration converter
 		$app['converter.restauration'] = $app->share(function($app) {
 			return new RestaurationConverter($app['orm.em']);
+		});
+		
+		// Restauration converter
+		$app['converter.userHasBillet'] = $app->share(function($app) {
+			return new UserHasBilletConverter($app['orm.em']);
 		});
 	}
 

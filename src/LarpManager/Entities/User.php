@@ -59,17 +59,55 @@ class User extends BaseUser implements AdvancedUserInterface, \Serializable
 		return $this->getUsername();
 	}
 		
+	/**
+	 * Alias vers username
+	 */
 	public function getName()
 	{
 		return $this->getUsername();
 	}
 	
+	/**
+	 * username + email
+	 */
 	public function getIdentity()
 	{
 		return $this->getUsername() . ' ' . $this->getEmail();
 	}
 	
+	
+	/**
+	 * Indique si l'utilisateur participe à un GN
+	 * 
+	 * @param Gn $gn
+	 * @return boolean
+	 */
+	public function takePart(Gn $gn) {
+		foreach ( $this->getUserHasBillets() as $userHasBillet )
+		{
+			if ( $userHasBillet->getBillet()->getGn()->getId() == $gn->getId() )
+				return true;
+		}
+		
+		return false;
+	}
 
+	/**
+	 * Fourni le billet relatif à un GN
+	 * 
+	 * @param Gn $gn
+	 * @return UserHasBillet $userHasBillet
+	 */
+	public function getUserHasBillet(GN $gn)
+	{
+		foreach ( $this->getUserHasBillets() as $userHasBillet )
+		{
+			if ( $userHasBillet->getBillet()->getGn()->getId() == $gn->getId() )
+				return $userHasBillet;
+		}
+		return null;
+	}
+	
 	/**
 	 * Surcharge pour ajouter la relation avec l'entité User
 	 *
@@ -83,9 +121,24 @@ class User extends BaseUser implements AdvancedUserInterface, \Serializable
 	}
 	
 	/**
-	 * Vérifie si un post est surveillé par l'utilisateur
+	 * Surcharge pour ajouter la relation avec l'entité User
+	 *
+	 * @param \LarpManager\Entities\UserHasRestauration $userHasRestauration
+	 * @return \LarpManager\Entities\User
 	 */
-	public function isInWatchingList($post)
+	public function addUserHasBillet(UserHasBillet $userHasBillet)
+	{
+		$userHasBillet->setUser($this);
+		return parent::addUserHasBillet($userHasBillet);
+	}
+	
+	/**
+	 * Vérifie si un post est surveillé par l'utilisateur
+	 * 
+	 * @param \LarpManager\Entities\Post $post
+	 * @return boolean
+	 */
+	public function isInWatchingList(Post $post)
 	{
 		foreach ($this->getPosts() as $p)
 		{

@@ -7,13 +7,13 @@
 	<ol class="breadcrumb">
 		<li><a href="{{ path('homepage') }}">Accueil</a></li>
 		<li><a href="{{ path('user.admin.list') }}">Liste des utilisateurs</a></li>
-		<li class="active">Gestion des billets de #{{ user.id }} {{ user.name }}</li>
+		<li class="active">Ajout d'un billet à #{{ user.id }} {{ user.name }}</li>
 	</ol>
 	
 	<div class="well bs-component">
 		<form action="{{ path('user.billet', {'user': user.id}) }}" method="POST" {{ form_enctype(form) }}>
 			<fieldset>
-				<legend>Selectionnez les billets possédé par {{ user.name }}</legend>
+				<legend>Selectionnez le billet a ajouter à {{ user.name }}</legend>
 					{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
 					{{ form(form) }}
 			</fieldset>

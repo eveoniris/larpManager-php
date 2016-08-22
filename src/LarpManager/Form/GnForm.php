@@ -44,7 +44,12 @@ class GnForm extends AbstractType
 					'required' => true,	
 				))
 				->add('description','textarea', array(
-					'required' => false,	
+					'label' => 'Description du GN',
+					'required' => false,
+					'attr' =>  array(
+							'class' => 'tinymce',
+							'row' => 9,
+					)
 				))
 				->add('xpCreation','integer', array(
 					'label' => 'Point d\'expérience à la création d\'un personnage',

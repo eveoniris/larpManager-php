@@ -25,7 +25,7 @@
 			{% for billet in gn.billets %}
 				<tr>
 					<td>{{ billet.label }}</td>
-					<td>{{ billet.users|length }}</td>
+					<td>{{ billet.userHasBillets|length }}</td>
 					<td><a href="{{ path('billet.user', {'billet': billet.id}) }}">Liste des utilisateurs</a></td>
 				</tr>
 			{% endfor %}

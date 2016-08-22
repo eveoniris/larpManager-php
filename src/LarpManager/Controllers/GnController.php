@@ -190,4 +190,21 @@ class GnController
 				'gn' => $gn,
 		));
 	}
+
+	/**
+	 * Présente les listes necessaires pour la FédéGN
+	 *  
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Gn $gn
+	 */
+	public function fedegnAction(Request $request, Application $app, Gn $gn)
+	{
+		$userHasBillets = $app['orm.em']->getRepository('LarpManager\Entities\UserHasBillet')->findAllByGn($gn);
+		
+		return $app['twig']->render('admin/gn/fedegn.twig', array(
+				'gn' => $gn,
+				'userHasBillets' => $userHasBillets,
+		));
+	}
 }
