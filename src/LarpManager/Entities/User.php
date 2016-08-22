@@ -69,6 +69,19 @@ class User extends BaseUser implements AdvancedUserInterface, \Serializable
 		return $this->getUsername() . ' ' . $this->getEmail();
 	}
 	
+
+	/**
+	 * Surcharge pour ajouter la relation avec l'entité User
+	 *
+	 * @param \LarpManager\Entities\UserHasRestauration $userHasRestauration
+	 * @return \LarpManager\Entities\User
+	 */
+	public function addUserHasRestauration(UserHasRestauration $userHasRestauration)
+	{
+		$userHasRestauration->setUser($this);
+		return parent::addUserHasRestauration($userHasRestauration);
+	}
+	
 	/**
 	 * Vérifie si un post est surveillé par l'utilisateur
 	 */

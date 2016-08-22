@@ -11,12 +11,14 @@
 	</ol>
 	
 	<div class="well well-sm">
-		<div class="header"><h5>{{ restauration.label }} - utilisateurs</h5></div>
-		<ul class="list-group">
-			{% for user in restauration.users %}
-				<li class="list-group-item">{{ user.etatCivil.nom }} {{ user.etatCivil.prenom }} {% if user.restrictions|length > 0 %}&nbsp;--&nbsp;{{ user.restrictions|join(', ') }}{% endif %}</li>
-			{% endfor %}			
-		</ul>
+		{% for userByGn in restauration.userByGn %}
+			<div class="header"><h5>{{ userByGn.gn.label }} - {{ userByGn.count }} utilisateurs</h5></div>
+			<ul class="list-group">
+				{% for user in userByGn.users %}
+					<li class="list-group-item">{{ user.etatCivil.nom }} {{ user.etatCivil.prenom }} {% if user.restrictions|length > 0 %}&nbsp;--&nbsp;{{ user.restrictions|join(', ') }}{% endif %}</li>
+				{% endfor %}			
+			</ul>
+		{% endfor %}
 	</div>
 	
 {% endblock %}

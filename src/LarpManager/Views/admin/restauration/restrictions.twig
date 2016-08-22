@@ -11,12 +11,14 @@
 	</ol>
 	
 	<div class="well well-sm">
-		<div class="header"><h5>{{ restauration.label }} - restrictions alimentaires</h5></div>
-		<ul class="list-group">
-			{% for restriction in restrictions %}
-				<li class="list-group-item">{{ restriction.label }} -- nombre de personnes : {{ restriction.1 }}</li>
-			{% endfor %}			
-		</ul>
+		{% for restrictionByGn in restauration.restrictionByGn %}
+			<div class="header"><h5>Restrictions alimentaires pour {{ restrictionByGn.gn.label }}</h5></div>
+			<ul class="list-group">
+				{% for res in restrictionByGn.restrictions %}
+					<li class="list-group-item">{{ res.restriction.label }} -- nombre de personnes : {{ res.count }}</li>
+				{% endfor %}			
+			</ul>
+		{% endfor %}			
 	</div>
 	
 {% endblock %}

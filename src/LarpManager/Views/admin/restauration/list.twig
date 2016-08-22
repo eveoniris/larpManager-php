@@ -32,7 +32,11 @@
 				<tr>
 					<td>{{ restauration.label }}</td>
 					<td>{{ restauration.description|markdown }}</td>
-					<td>{{ restauration.users|length }}</td>
+					<td>
+						{% for userByGn in restauration.userByGn %}
+							{{ userByGn.gn.label }} : {{ userByGn.count }}<br />
+						{% endfor %}
+					</td>
 					<td>
 						<div class="btn-toolbar pull-right" role="toolbar" aria-label="...">
 							<div class="btn-group" role="group" aria-label="...">

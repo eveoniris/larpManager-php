@@ -27,6 +27,7 @@
 
 namespace LarpManager\Entities;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use LarpManager\Entities\BaseRestauration;
 
 /**
@@ -36,4 +37,83 @@ use LarpManager\Entities\BaseRestauration;
  */
 class Restauration extends BaseRestauration
 {
+	/**
+	 * Fourni la liste des utilisateurs classé par GN
+	 */
+	public function getUserByGn()
+	{
+		$result = new ArrayCollection();
+		foreach ( $this->getUserHasRestaurations() as $userHasRestauration)
+		{
+			if ( $result->containsKey($userHasRestauration->getGn()->getId()) )
+			{
+				$gn = $result->get($userHasRestauration->getGn()->getId());
+				$gn['count']++;
+				$gn['users'][] = $userHasRestauration->getUser();
+				$result[$userHasRestauration->getGn()->getId()] = $gn;
+			}
+			else
+			{
+				$result[$userHasRestauration->getGn()->getId()] = array(
+						'gn' => $userHasRestauration->getGn(),
+						'count' => 1,
+						'users' => array($userHasRestauration->getUser()),
+				);
+			}
+		}
+		return $result;
+	}
+	
+	/**
+	 * Fourni la liste des restrictions classé par GN
+	 */
+	public function getRestrictionByGn()
+	{
+		$result = new ArrayCollection();
+		foreach ( $this->getUserHasRestaurations() as $userHasRestauration)
+		{
+			if ( $userHasRestauration->getUser()->getRestrictions()->count() > 0);
+			{
+				if ( $result->containsKey($userHasRestauration->getGn()->getId()) )
+				{
+					$gn = $result->get($userHasRestauration->getGn()->getId());
+					
+					foreach ( $userHasRestauration->getUser()->getRestrictions() as $restriction)
+					{
+						if ( ! $gn['restrictions']->containsKey($restriction->getId()))
+						{
+							$gn['restrictions'][$restriction->getId()] = array(
+									'restriction' => $restriction,
+									'count' => 1,
+								);
+						}
+						else
+						{
+							$restriction = $gn['restrictions']->get($restriction->getId());
+							$restriction['count']++;
+							$gn['restrictions'][$restriction->getId()] = $restriction;
+						}
+					}
+					
+					$result[$userHasRestauration->getGn()->getId()] = $gn;
+				}
+				else
+				{
+					$result[$userHasRestauration->getGn()->getId()] = array(
+						'gn' => $userHasRestauration->getGn(),
+						'restrictions' => new ArrayCollection(),
+					);
+					
+					foreach ( $userHasRestauration->getUser()->getRestrictions() as $restriction)
+					{
+						$result[$userHasRestauration->getGn()->getId()]['restrictions'][$restriction->getId()] = array(
+								'restriction' => $restriction,
+								'count' => 1,
+							);
+					}
+				}
+			}
+		}
+		return $result;
+	}
 }

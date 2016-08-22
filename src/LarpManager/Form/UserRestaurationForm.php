@@ -39,14 +39,23 @@ class UserRestaurationForm extends AbstractType
 	 */
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
-		$builder->add('restaurations','entity', array(
-				'label' => 'Choisissez le lieu de restauration de cet utilisateur',
-				'multiple' => true,
-				'expanded' => true,
-				'required' => false,
-				'class' => 'LarpManager\Entities\Restauration',
-				'property' => 'label',
-		));
+		$builder->add('restauration','entity', array(
+					'label' => 'Choisissez le lieu de restauration de cet utilisateur',
+					'multiple' => false,
+					'expanded' => true,
+					'required' => true,
+					'class' => 'LarpManager\Entities\Restauration',
+					'property' => 'label',
+				))
+				->add('gn','entity', array(
+					'label' => 'Choisissez le GN concerné',
+					'multiple' => false,
+					'expanded' => true,
+					'required' => true,
+					'class' => 'LarpManager\Entities\Gn',
+					'property' => 'label',
+				));
+		
 	}
 
 
@@ -58,7 +67,7 @@ class UserRestaurationForm extends AbstractType
 	public function setDefaultOptions(OptionsResolverInterface $resolver)
 	{
 		$resolver->setDefaults(array(
-		 	'class' => 'LarpManager\Entities\User',
+		 	'class' => 'LarpManager\Entities\UserHasRestauration',
 		 ));
 	}
 

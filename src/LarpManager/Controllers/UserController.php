@@ -39,6 +39,7 @@ use LarpManager\Form\UserRestaurationForm;
 
 use LarpManager\Entities\Restriction;
 use LarpManager\Entities\User;
+use LarpManager\Entities\UserHasRestauration;
 
 use JasonGrimes\Paginator;
 
@@ -127,7 +128,10 @@ class UserController
 	 */
 	public function restaurationAction(Application $app, Request $request, User $user)
 	{ 
-		$form = $app['form.factory']->createBuilder(new UserRestaurationForm(), $user)
+		$userHasRestauration = new UserHasRestauration();
+		
+		
+		$form = $app['form.factory']->createBuilder(new UserRestaurationForm(), $userHasRestauration)
 			->add('save','submit', array('label' => 'Sauvegarder'))
 			->getForm();
 		
@@ -135,7 +139,8 @@ class UserController
 			
 		if ( $form->isValid() )
 		{
-			$user = $form->getData();
+			$userHasRestauration = $form->getData();
+			$user->addUserHasRestauration($userHasRestauration);
 			$app['orm.em']->persist($user);
 			$app['orm.em']->flush();
 				
