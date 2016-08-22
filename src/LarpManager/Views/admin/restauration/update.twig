@@ -1,0 +1,24 @@
+{% extends "layout.twig" %}
+
+{% block title %}Lieux de restauration{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path('restauration.list') }}">Liste des lieux de restauration</a></li>
+		<li class="active">Modifier un lieu de restauration</li>
+	</ol>
+	
+	<div class="well well-sm">
+		<form action="{{ path('restauration.update', {'restauration': restauration.id}) }}" method="POST" {{ form_enctype(form) }} novalidate>
+			<fieldset>
+				<legend>Ajouter un lieu de restauration</legend>
+				{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+	
+				{{ form(form) }}
+			</fieldset>
+		</form>
+	</div>
+	
+{% endblock %}

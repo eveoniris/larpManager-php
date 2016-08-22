@@ -114,6 +114,7 @@ class BilletController
 		
 		return $app['twig']->render('admin\billet\update.twig', array(
 				'form' => $form->createView(),
+				'billet' => $billet,
 		));
 	}
 	

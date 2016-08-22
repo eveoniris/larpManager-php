@@ -48,6 +48,7 @@ class UserControllerProvider implements ControllerProviderInterface
 	 *  - user.forgot-password
 	 *  - user.login_check
 	 *  - user.billetterie
+	 *  - user.restauration
 	 *
 	 * @param Application $app
 	 * @return Controllers $controllers
@@ -103,6 +104,16 @@ class UserControllerProvider implements ControllerProviderInterface
 			->convert('user', 'converter.user:convert')
 			->method('GET|POST')
 			->bind('user.billet')
+			->before($mustBeAdmin);
+		
+		/**
+		 * Ajoute un billet à un utilisateur
+		 */
+		$controllers->get('/{user}/restauration', 'LarpManager\Controllers\UserController::restaurationAction')
+			->assert('user', '\d+')
+			->convert('user', 'converter.user:convert')
+			->method('GET|POST')
+			->bind('user.restauration')
 			->before($mustBeAdmin);
 			
 		/** 

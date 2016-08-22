@@ -17,7 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace LarpManager\Form;
 
 use Symfony\Component\Form\AbstractType;
@@ -25,53 +24,49 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
- * LarpManager\Form\RestaurationForm
+ * LarpManager\Form\UserRestaurationForm
  *
  * @author kevin
  *
  */
-class RestaurationForm extends AbstractType
+class UserRestaurationForm extends AbstractType
 {
 	/**
 	 * Construction du formulaire
-	 * 
+	 *
 	 * @param FormBuilderInterface $builder
 	 * @param array $options
 	 */
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
-		$builder->add('label','text', array(
-				'required' => true,
-				'label' => 'Label',
-				))
-				->add('description', 'textarea', array(
+		$builder->add('restaurations','entity', array(
+				'label' => 'Choisissez le lieu de restauration de cet utilisateur',
+				'multiple' => true,
+				'expanded' => true,
 				'required' => false,
-				'label' => 'Description',
-				'attr' => array(
-						'class' => 'tinymce',
-						'row' => 9,
-					),
-				));
-		
+				'class' => 'LarpManager\Entities\Restauration',
+				'property' => 'label',
+		));
 	}
-	
+
+
 	/**
 	 * Définition de l'entité concerné
-	 * 
+	 *
 	 * @param OptionsResolverInterface $resolver
 	 */
 	public function setDefaultOptions(OptionsResolverInterface $resolver)
 	{
 		$resolver->setDefaults(array(
-				'data_class' => 'LarpManager\Entities\Restauration',
-		));
+		 	'class' => 'LarpManager\Entities\User',
+		 ));
 	}
-	
+
 	/**
 	 * Nom du formulaire
 	 */
 	public function getName()
 	{
-		return 'restauration';
+		return 'userRestauration';
 	}
-}
+} 

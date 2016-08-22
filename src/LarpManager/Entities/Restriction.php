@@ -44,7 +44,12 @@ class Restriction extends BaseRestriction
 	{
 		$this->setCreationDate(new \Datetime('NOW'));
 		$this->setUpdateDate(new \Datetime('NOW'));
-	}		
+	}
+	
+	public function __toString()
+	{
+		return $this->getLabel();
+	}
 	
 	/**
 	 * Fourni le créateur de la restriction

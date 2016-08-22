@@ -120,6 +120,7 @@
 							<div class="btn-group" role="group" aria-label="...">
 								<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Voir l\'état civil" href="{{ path('etatCivil.detail', {'etatCivil':user.etatCivil.id}) }}"><i class="fa fa-user"></i></a>
 								<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Ajouter un billet" href="{{ path('user.billet',{'user':user.id}) }}"><i class="fa fa-ticket"></i></a>
+								<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Choisir le lieu de restauration" href="{{ path('user.restauration',{'user':user.id}) }}"><i class="fa fa-coffee"></i></a>
 							</div>
 						</div>
 					</td>

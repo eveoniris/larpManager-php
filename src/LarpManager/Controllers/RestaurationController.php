@@ -149,6 +149,48 @@ class RestaurationController
 	}
 	
 	/**
+	 * Liste des utilisateurs ayant ce lieu de restauration
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Restauration $restauration
+	 */
+	public function usersAction(Request $request, Application $app, Restauration $restauration)
+	{
+		return $app['twig']->render('admin/restauration/users.twig', array('restauration' => $restauration));
+	}
+	
+	/**
+	 * Liste des restrictions alimentaires
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Restauration $restauration
+	 */
+	public function restrictionsAction(Request $request, Application $app, Restauration $restauration)
+	{		
+		$qb = $app['orm.em']->createQueryBuilder('r');
+		$qb->select('r.label')
+			->addSelect($qb->expr()->count('u.id'))
+			->from('LarpManager\Entities\Restriction', 'r')
+			->leftJoin('r.users', 'u')
+			->leftJoin('u.restaurations', 'res')
+			->where('res.id = :restaurationId')
+			->groupBy('r.id')
+			->orderBy('r.label', 'ASC')
+			->setParameter('restaurationId', $restauration->getId());
+		
+		$query = $qb->getQuery();
+		
+		$restrictions = $query->getResult();
+		
+		return $app['twig']->render('admin/restauration/restrictions.twig', array(
+			'restauration' => $restauration,
+			'restrictions' => $restrictions
+		));
+	}
+	
+	/**
 	 * Mise à jour d'un lieu de restauration
 	 * 
 	 * @param Request $request

@@ -1,0 +1,22 @@
+{% extends "layout.twig" %}
+
+{% block title %}Lieux de restauration{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path('restauration.list') }}">Liste des lieux de restauration</a></li>
+		<li class="active">{{ restauration.label }} - restrictions alimentaires</li>
+	</ol>
+	
+	<div class="well well-sm">
+		<div class="header"><h5>{{ restauration.label }} - restrictions alimentaires</h5></div>
+		<ul class="list-group">
+			{% for restriction in restrictions %}
+				<li class="list-group-item">{{ restriction.label }} -- nombre de personnes : {{ restriction.1 }}</li>
+			{% endfor %}			
+		</ul>
+	</div>
+	
+{% endblock %}

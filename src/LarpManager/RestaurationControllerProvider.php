@@ -38,7 +38,8 @@ class RestaurationControllerProvider implements ControllerProviderInterface
 	 * Routes :
 	 * 	- restauration.list
 	 * 	- restauration.print
-	 * 	- restauration.download 
+	 * 	- restauration.download
+	 *  - restauration.user 
 	 * 	- restauration.add
 	 *  - restauration.update
 	 *  - restauration.detail
@@ -70,6 +71,24 @@ class RestaurationControllerProvider implements ControllerProviderInterface
 		 */
 		$controllers->match('/download','LarpManager\Controllers\RestaurationController::downloadAction')
 			->bind("restauration.download")
+			->method('GET');
+			
+		/**
+		 * Liste des utilisateurs d'un lieu de restauration
+		 */
+		$controllers->match('/{restauration}/users','LarpManager\Controllers\RestaurationController::usersAction')
+			->bind("restauration.users")
+			->assert('restauration', '\d+')
+			->convert('restauration', 'converter.restauration:convert')
+			->method('GET');
+			
+		/**
+		 * Liste des restrictions alimentaires d'un lieu de restauration
+		 */
+		$controllers->match('/{restauration}/restrictions','LarpManager\Controllers\RestaurationController::restrictionsAction')
+			->bind("restauration.restrictions")
+			->assert('restauration', '\d+')
+			->convert('restauration', 'converter.restauration:convert')
 			->method('GET');
 		
 		/**

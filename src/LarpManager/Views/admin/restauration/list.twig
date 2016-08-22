@@ -36,6 +36,8 @@
 					<td>
 						<div class="btn-toolbar pull-right" role="toolbar" aria-label="...">
 							<div class="btn-group" role="group" aria-label="...">
+								<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Utilisateurs" href="{{ path('restauration.users',{'restauration':restauration.id}) }}"><i class="fa fa-users"></i></a>
+								<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Restrictions alimentaires" href="{{ path('restauration.restrictions',{'restauration':restauration.id}) }}"><i class="fa fa-ban"></i></a>
 								<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Modifier" href="{{ path('restauration.update',{'restauration':restauration.id}) }}"><i class="fa fa-pencil"></i></a>
 								<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Détail" href="{{ path('restauration.detail',{'restauration':restauration.id}) }}"><i class="fa fa-eye"></i></a>
 								<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Supprimer" href="{{ path('restauration.delete',{'restauration':restauration.id}) }}"><i class="fa fa-eraser"></i></a>

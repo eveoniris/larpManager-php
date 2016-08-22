@@ -25,12 +25,12 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
- * LarpManager\Form\RestaurationForm
+ * LarpManager\Form\RestaurationDeleteForm
  *
  * @author kevin
  *
  */
-class RestaurationForm extends AbstractType
+class RestaurationDeleteForm extends AbstractType
 {
 	/**
 	 * Construction du formulaire
@@ -39,20 +39,7 @@ class RestaurationForm extends AbstractType
 	 * @param array $options
 	 */
 	public function buildForm(FormBuilderInterface $builder, array $options)
-	{
-		$builder->add('label','text', array(
-				'required' => true,
-				'label' => 'Label',
-				))
-				->add('description', 'textarea', array(
-				'required' => false,
-				'label' => 'Description',
-				'attr' => array(
-						'class' => 'tinymce',
-						'row' => 9,
-					),
-				));
-		
+	{		
 	}
 	
 	/**
@@ -72,6 +59,6 @@ class RestaurationForm extends AbstractType
 	 */
 	public function getName()
 	{
-		return 'restauration';
+		return 'restaurationDelete';
 	}
 }

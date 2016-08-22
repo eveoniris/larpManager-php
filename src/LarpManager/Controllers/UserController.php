@@ -35,6 +35,7 @@ use LarpManager\Form\NewMessageForm;
 use LarpManager\Form\RestrictionForm;
 use LarpManager\Form\UserRestrictionForm;
 use LarpManager\Form\UserBilletForm;
+use LarpManager\Form\UserRestaurationForm;
 
 use LarpManager\Entities\Restriction;
 use LarpManager\Entities\User;
@@ -112,6 +113,36 @@ class UserController
 			return $app->redirect($app['url_generator']->generate('user.admin.list'),301);
 		}
 		return $app['twig']->render('admin/user/billet.twig', array(
+				'user' => $user,
+				'form' => $form->createView(),
+		));
+	}
+	
+	/**
+	 * Choix du lieu de restauration d'un utilisateur
+	 * 
+	 * @param Application $app
+	 * @param Request $request
+	 * @param User $user
+	 */
+	public function restaurationAction(Application $app, Request $request, User $user)
+	{ 
+		$form = $app['form.factory']->createBuilder(new UserRestaurationForm(), $user)
+			->add('save','submit', array('label' => 'Sauvegarder'))
+			->getForm();
+		
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$user = $form->getData();
+			$app['orm.em']->persist($user);
+			$app['orm.em']->flush();
+				
+			$app['session']->getFlashBag()->add('success', 'Vos modifications ont été enregistré.');
+			return $app->redirect($app['url_generator']->generate('user.admin.list'),301);
+		}
+		return $app['twig']->render('admin/user/restauration.twig', array(
 				'user' => $user,
 				'form' => $form->createView(),
 		));

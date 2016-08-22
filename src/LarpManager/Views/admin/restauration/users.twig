@@ -1,0 +1,22 @@
+{% extends "layout.twig" %}
+
+{% block title %}Lieux de restauration{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path('restauration.list') }}">Liste des lieux de restauration</a></li>
+		<li class="active">{{ restauration.label }} - utilisateurs</li>
+	</ol>
+	
+	<div class="well well-sm">
+		<div class="header"><h5>{{ restauration.label }} - utilisateurs</h5></div>
+		<ul class="list-group">
+			{% for user in restauration.users %}
+				<li class="list-group-item">{{ user.etatCivil.nom }} {{ user.etatCivil.prenom }} {% if user.restrictions|length > 0 %}&nbsp;--&nbsp;{{ user.restrictions|join(', ') }}{% endif %}</li>
+			{% endfor %}			
+		</ul>
+	</div>
+	
+{% endblock %}
