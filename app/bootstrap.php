@@ -37,6 +37,7 @@ use Nicl\Silex\MarkdownServiceProvider;
 
 use LarpManager\Services\UserServiceProvider;
 use LarpManager\Services\LarpManagerServiceProvider;
+use LarpManager\Services\SnappyServiceProvider;
 use LarpManager\Services\Regexp;
 
 $loader = require_once __DIR__.'/../vendor/autoload.php';
@@ -155,6 +156,16 @@ $app->register(new UrlGeneratorServiceProvider());
 
 // Sessions
 $app->register(new SessionServiceProvider());
+
+// PDF
+$app['snappy.pdf_options'] = array(
+	'viewport-size' => "1024x768",
+	'page-size' => 'A4',
+);
+
+$app['snappy.image_binary'] = __DIR__."/../vendor/wemersonjanuario/wkhtmltopdf-windows/bin/64bit/wkhtmltoimage.exe";
+$app['snappy.pdf_binary'] = __DIR__."/../vendor/wemersonjanuario/wkhtmltopdf-windows/bin/64bit/wkhtmltopdf.exe";
+$app->register(new SnappyServiceProvider());
 
 /**
  * Définition des routes
@@ -282,12 +293,14 @@ else
 	 * Gestion des droits d'accés
 	 */
 	$app['security.access_rules'] = array(
+		array('^/annonce/.*$', 'ROLE_ADMIN'),
+		array('^/droit/.*$', 'ROLE_ADMIN'),
 		array('^/admin/.*$', 'ROLE_ADMIN'),
 		array('^/restriction/.*$', 'ROLE_ADMIN'),
 		array('^/billet/.*$', 'ROLE_ADMIN'),
 		array('^/etatCivil/.*$', 'ROLE_ADMIN'),
 		array('^/restauration/.*$', 'ROLE_ADMIN'),
-		array('^/gn/.*$', 'ROLE_ADMIN'),
+		array('^/gn/.*$', 'ROLE_USER'),
 		array('^/trombinoscope/.*$', 'ROLE_SCENARISTE'),
 		array('^/pnj/.*$', 'ROLE_USER'),
 		array('^/groupe/.*$', 'ROLE_USER'),
@@ -302,10 +315,6 @@ else
 		array('^/religion/.*$', 'ROLE_USER'),
 		array('^/groupeSecondaireType/.*$', 'ROLE_SCENARISTE'),
 		array('^/background/.*$', 'ROLE_USER'),
-		array('^/debriefing/.*$', 'ROLE_SCENARISTE'),
-		array('^/annonce/.*$', 'ROLE_ADMIN'),
-		array('^/droit/.*$', 'ROLE_ADMIN'),
-		array('^/api/.*$', 'ROLE_SCENARISTE'),
 		array('^/age/.*$', 'ROLE_REGLE'),
 		array('^/magie/.*$', 'ROLE_USER'),
 		array('^/genre/.*$', 'ROLE_REGLE'),

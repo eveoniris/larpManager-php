@@ -48,6 +48,8 @@ class UserRestrictionForm extends AbstractType
 					'expanded' => true,
 					'class' => 'LarpManager\Entities\Restriction',
 					'property' => 'label',
+					'placeholder' => 'Aucune',
+					'empty_data'  => null,
 				))
 				->add('new_restriction','text', array(
 					'required' => false,

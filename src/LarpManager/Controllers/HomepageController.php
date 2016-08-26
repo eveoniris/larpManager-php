@@ -26,6 +26,10 @@ use LarpManager\Form\GroupeInscriptionForm;
 use LarpManager\Form\GnInscriptionForm;
 use LarpManager\Form\TrombineForm;
 use LarpManager\Form\RuleForm;
+use LarpManager\Form\EtatCivilForm;
+use LarpManager\Form\UserRestrictionForm;
+
+use LarpManager\Entities\EtatCivil;
 
 /**
  * LarpManager\Controllers\HomepageController
@@ -49,8 +53,13 @@ class HomepageController
 			return $this->notConnectedIndexAction($request, $app);
 		}
 		
+		if ( ! $app['user']->getEtatCivil() )
+		{
+			return $app->redirect($app['url_generator']->generate('newUser.step1'),301);
+		}
+		
 		$repoAnnonce = $app['orm.em']->getRepository('LarpManager\Entities\Annonce');
-		$annonces = $repoAnnonce->findBy(array('archive' => false));
+		$annonces = $repoAnnonce->findBy(array('archive' => false, 'gn' => null));
 		
 		$personnage = $app['personnage.manager']->getCurrentPersonnage();
 		
@@ -61,6 +70,98 @@ class HomepageController
 		));
 	}
 	
+	/**
+	 * Première étape pour un nouvel utilisateur
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function newUserStep1Action(Request $request, Application $app)
+	{
+		return $app['twig']->render('public/newUser/step1.twig', array());
+	}
+	
+	/**
+	 * Seconde étape pour un nouvel utilisateur : enregistrer les informations administratives
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function newUserStep2Action(Request $request, Application $app)
+	{
+		$etatCivil = $app['user']->getEtatCivil();
+		if (  ! $etatCivil )
+			$etatCivil = new EtatCivil();
+	
+		$form = $app['form.factory']->createBuilder(new EtatCivilForm(), $etatCivil)
+			->getForm();
+
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$etatCivil = $form->getData();
+			$app['user']->setEtatCivil($etatCivil);
+			
+			$app['orm.em']->persist($app['user']);
+			$app['orm.em']->flush();
+			
+			return $app->redirect($app['url_generator']->generate('newUser.step3'),301);
+		}
+		
+		return $app['twig']->render('public/newUser/step2.twig', array(
+				'form' => $form->createView(),
+		));
+	}
+	
+	/**
+	 * Troisième étape pour un nouvel utilisateur : les restrictions alimentaires
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function newUserStep3Action(Request $request, Application $app)
+	{
+		$form = $app['form.factory']->createBuilder(new UserRestrictionForm(),$app['user'])
+			->getForm();
+		
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$user = $form->getData();
+			$newRestriction = $form->get("new_restriction")->getData();
+			if ( $newRestriction )
+			{
+				$restriction = new Restriction();
+				$restriction->setUserRelatedByAuteurId($app['user']);
+				$restriction->setLabel($newRestriction);
+			
+				$app['orm.em']->persist($restriction);
+				$user->addRestriction($restriction);
+			}
+				
+			$app['orm.em']->persist($user);
+			$app['orm.em']->flush();
+			
+			return $app->redirect($app['url_generator']->generate('newUser.step4'),301);
+				
+		}
+		return $app['twig']->render('public/newUser/step3.twig', array(
+				'form' => $form->createView(),
+		));
+	}
+	
+	/**
+	 * Quatrième étape pour un nouvel utilisateur : choisir un GN
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function newUserStep4Action(Request $request, Application $app)
+	{
+		return $app['twig']->render('public/newUser/step4.twig');
+	}
 	
 	/**
 	 * Page listant les règles à télécharger

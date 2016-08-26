@@ -338,6 +338,26 @@ class GroupeControllerProvider implements ControllerProviderInterface
 			->before($mustBeAdmin);
 			
 		/**
+		 * Membres du groupe (Scénariste uniquement)
+		 */
+		$controllers->match('/{groupe}/users','LarpManager\Controllers\GroupeController::usersAction')
+			->assert('groupe', '\d+')
+			->bind("groupe.users")
+			->convert('groupe', 'converter.groupe:convert')
+			->method('GET|POST')
+			->before($mustBeScenariste);
+
+		/**
+		 * Enveloppe du groupe (Scénariste uniquement)
+		 */
+		$controllers->match('/{groupe}/envelope','LarpManager\Controllers\GroupeController::envelopeAction')
+			->assert('groupe', '\d+')
+			->bind("groupe.envelope")
+			->convert('groupe', 'converter.groupe:convert')
+			->method('GET|POST')
+			->before($mustBeScenariste);
+			
+		/**
 		 * Impression du matériel necessaire
 		 */
 		$controllers->match('/{groupe}/print/materiel','LarpManager\Controllers\GroupeController::printMaterielAction')
@@ -393,6 +413,26 @@ class GroupeControllerProvider implements ControllerProviderInterface
 		$controllers->match('/{groupe}/unlock','LarpManager\Controllers\GroupeController::unlockAction')
 			->assert('groupe', '\d+')
 			->bind("groupe.unlock")
+			->convert('groupe', 'converter.groupe:convert')
+			->method('GET')
+			->before($mustBeScenariste);
+			
+		/**
+		 * available
+		 */
+		$controllers->match('/{groupe}/available','LarpManager\Controllers\GroupeController::availableAction')
+			->assert('groupe', '\d+')
+			->bind("groupe.available")
+			->convert('groupe', 'converter.groupe:convert')
+			->method('GET')
+			->before($mustBeScenariste);
+				
+		/**
+		 * unvailable
+		 */
+		$controllers->match('/{groupe}/unvailable','LarpManager\Controllers\GroupeController::unvailableAction')
+			->assert('groupe', '\d+')
+			->bind("groupe.unvailable")
 			->convert('groupe', 'converter.groupe:convert')
 			->method('GET')
 			->before($mustBeScenariste);

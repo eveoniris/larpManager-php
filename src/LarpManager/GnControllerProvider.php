@@ -43,6 +43,7 @@ class GnControllerProvider implements ControllerProviderInterface
 	 *  - gn.detail
 	 *  - gn.vente
 	 *  - gn.fedegn
+	 *  - gn.billetterie
 	 *
 	 * @param Application $app
 	 * @return Controllers $controllers
@@ -51,20 +52,30 @@ class GnControllerProvider implements ControllerProviderInterface
 	{
 		$controllers = $app['controllers_factory'];
 		
+		/**
+		 * Vérifie que l'utilisateur dispose du role ADMIN
+		 */
+		$mustBeAdmin = function(Request $request) use ($app) {
+			if (!$app['security.authorization_checker']->isGranted('ROLE_ADMIN')) {
+				throw new AccessDeniedException();
+			}
+		};
 		
 		/**
 		 * Voir la liste des gns
 		 */
 		$controllers->match('/','LarpManager\Controllers\GnController::listAction')
 			->bind("gn.list")
-			->method('GET');
+			->method('GET')
+			->before($mustBeAdmin);
 
 		/**
 		 * Ajouter un gn
 		 */
 		$controllers->match('/add','LarpManager\Controllers\GnController::addAction')
 			->bind("gn.add")
-			->method('GET|POST');
+			->method('GET|POST')
+			->before($mustBeAdmin);
 
 		/**
 		 * Modifier un gn
@@ -73,15 +84,17 @@ class GnControllerProvider implements ControllerProviderInterface
 			->assert('gn', '\d+')
 			->convert('gn', 'converter.gn:convert')
 			->bind("gn.update")
-			->method('GET|POST');
+			->method('GET|POST')
+			->before($mustBeAdmin);
 
-			/**
-			 * voir le détail d'un gn
-			 */
+		/**
+		 * Supprimer un gn
+		 */
 		$controllers->match('/{gn}/delete','LarpManager\Controllers\GnController::deleteAction')
 			->assert('gn', '\d+')
 			->convert('gn', 'converter.gn:convert')
-			->bind("gn.delete");
+			->bind("gn.delete")
+			->before($mustBeAdmin);
 			
 		/**
 		 * voir le détail d'un gn
@@ -89,7 +102,8 @@ class GnControllerProvider implements ControllerProviderInterface
 		$controllers->match('/{gn}','LarpManager\Controllers\GnController::detailAction')
 			->assert('gn', '\d+')
 			->convert('gn', 'converter.gn:convert')
-			->bind("gn.detail");
+			->bind("gn.detail")
+			->before($mustBeAdmin);
 			
 		/**
 		 * Voir les ventes d'un GN
@@ -98,7 +112,8 @@ class GnControllerProvider implements ControllerProviderInterface
 			->assert('gn', '\d+')
 			->convert('gn', 'converter.gn:convert')
 			->bind("gn.vente")
-			->method('GET');
+			->method('GET')
+			->before($mustBeAdmin);
 			
 		/**
 		 * Voir les données necessaire pour la FédéGN
@@ -107,8 +122,19 @@ class GnControllerProvider implements ControllerProviderInterface
 			->assert('gn', '\d+')
 			->convert('gn', 'converter.gn:convert')
 			->bind("gn.fedegn")
-			->method('GET');
+			->method('GET')
+			->before($mustBeAdmin);
 
+		/**
+		 * Affiche la billetterie d'un GN
+		 */
+		$controllers->match('/{gn}/billetterie', 'LarpManager\Controllers\UserController::billetterieAction')
+			->assert('gn', '\d+')
+			->convert('gn', 'converter.gn:convert')
+			->bind('gn.billetterie')
+			->method('GET');
+			
+			
 		return $controllers;
 	}
 }

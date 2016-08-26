@@ -42,12 +42,14 @@ class LarpManagerVoter implements VoterInterface
 				'MODERATOR',
 				'GROUPE_MEMBER',
 				'TERRITOIRE_MEMBER',
+				'GN_PARTICIPANT',
 				'GROUPE_RESPONSABLE',
 				'GROUPE_SECONDAIRE_MEMBER',
 				'GROUPE_SECONDAIRE_RESPONSABLE',
 				'JOUEUR_OWNER',
 				'JOUEUR_NOT_REGISTERED',
 				'OWN_PERSONNAGE',
+				'OWN_PARTICIPANT',
 				'TERRITOIRE_MEMBER',
 				'TOPIC_RIGHT',
 		));
@@ -117,6 +119,14 @@ class LarpManagerVoter implements VoterInterface
 				$topic = $object;
 				return $this->hasTopicRight($user, $topic, $token) ? VoterInterface::ACCESS_GRANTED : VoterInterface::ACCESS_DENIED;
 			}
+			if ($attribute == 'GN_PARTICIPANT') {
+				$gnId = $object;
+				return $this->participeTo($user, $gnId, $token) ? VoterInterface::ACCESS_GRANTED : VoterInterface::ACCESS_DENIED;
+			}
+			if ($attribute == 'OWN_PARTICIPANT') {
+				$participantId = $object;
+				return $this->isOwnerOfParticipant($user, $participantId, $token) ? VoterInterface::ACCESS_GRANTED : VoterInterface::ACCESS_DENIED;
+			}
 		}
 		
 		return VoterInterface::ACCESS_ABSTAIN;
@@ -153,6 +163,38 @@ class LarpManagerVoter implements VoterInterface
 			default :
 				return true;
 		}
+	}
+	
+	/**
+	 * Dtermine si le participant appartient à l'utilisateur
+	 * 
+	 * @param unknown $user
+	 * @param unknown $participantId
+	 * @param unknown $token
+	 */
+	protected function isOwnerOfParticipant($user, $participantId, $token)
+	{
+		foreach (  $user->getParticipants() as $participant )
+		{
+			if ( $participant->getId() == $participantId ) return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Détermine si un utilisateur participe ou pas à un jeu
+	 * 
+	 * @param unknown $user
+	 * @param unknown $gn
+	 * @param unknown $token
+	 */
+	protected function participeTo($user, $gnId, $token)
+	{		
+		foreach (  $user->getParticipants() as $participant )
+		{
+			if ( $participant->getGn()->getId() == $gnId ) return true;
+		}
+		return false;
 	}
 	
 	/**

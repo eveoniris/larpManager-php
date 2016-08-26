@@ -48,9 +48,20 @@ class AnnonceForm extends AbstractType
 						'choices' => array(false => 'Publique', true => 'Dans les archive'),
 						'label' => 'Choisissez la visibilité de votre annonce',
 				))
+				->add('gn', 'entity', array(
+						'label' => 'Choisissez le jeu auquel cette annonce fait référence',
+						'required' => true,
+						'multiple' => false,
+						'class' => 'LarpManager\Entities\Gn',
+						'property' => 'label',
+						'empty_data'  => null,
+						'placeholder' => 'Aucun',
+				))
 				->add('text','textarea', array(
 					'required' => true,
-					'attr' => array('rows' => 9),
+					'attr' => array(
+						'rows' => 9,
+						'class' => 'tinymce'),
 				));
 	}
 	

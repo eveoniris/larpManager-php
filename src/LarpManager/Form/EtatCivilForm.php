@@ -43,39 +43,63 @@ class EtatCivilForm extends AbstractType
 		$builder->add('nom','text', array(
 					'label' => 'Nom civil',
 					'required' => true,
+					'attr' => array(
+						'placeholder' => 'Nom civil'
+					)
 				))
 				->add('prenom','text', array(
 					'label' => 'Prénom civil',
 					'required' => true,
+					'attr' => array(
+						'placeholder' => 'Prénom civil'
+					)
 				))
 				->add('prenom_usage','text', array(
 					'label' => 'Nom d\'usage',
 					'required' => false,
+					'attr' => array(
+						'placeholder' => 'Nom d\'usage'
+					)
 				))
 				->add('date_naissance','date', array(
-						'label' => 'Date de naissance',
-						'required' => false,
-						'years' => range(1900,2020),
+					'label' => 'Date de naissance',
+					'required' => true,
+					'years' => range(1900,2020),
 				))
 				->add('telephone','text', array(
 					'label' => 'Numéro de téléphone',
 					'required' => true,
+					'attr' => array(
+						'placeholder' => 'Numéro de téléphone'
+					)
 				))
 				->add('probleme_medicaux','textarea', array(
-					'label' => 'Eventuel problèmes médicaux',
-					'required' => true,
+					'label' => 'Problèmes médicaux',
+					'required' => false,
+					'attr' => array(
+						'placeholder' => 'Indiquez içi les problèmes médicaux qui vous semblent pertinants'
+					)
 				))
 				->add('personne_a_prevenir','text', array(
-					'label' => 'Personne à prévenir en cas de problème',
+					'label' => 'Personne à prévenir en cas d\'urgence',
 					'required' => true,
+					'attr' => array(
+						'placeholder' => 'Nom et prénom'
+					)
 				))
 				->add('tel_pap','text', array(
 					'label' => 'Numéro de téléphone de la personne à prévenir',
 					'required' => true,
+					'attr' => array(
+						'placeholder' => 'Numéro de téléphone'
+					)
 				))
 				->add('fedegn','text', array(
-					'label' => 'Numéro d’adhérent FédéGN',
+					'label' => 'Numéro de carte FédéGN',
 					'required' => false,
+					'attr' => array(
+						'placeholder' => 'votre numéro de carte GN ou GN+'
+					)
 				));
 	}
 	

@@ -30,10 +30,24 @@ use LarpManager\Entities\Groupe;
  */
 class GroupeRepository extends EntityRepository
 {
-	
+	/**
+	 * Trouve tous les groupes classé par ordre alphabétique
+	 */
 	public function findAll()
 	{
 		return $this->findBy(array(), array('nom' => 'ASC'));
+	}
+	
+	/**
+	 * Trouve tous les groupes de PJ classé par numéro
+	 */
+	public function findAllPj()
+	{
+		$groupes = $this->getEntityManager()
+			->createQuery('SELECT g FROM LarpManager\Entities\Groupe g WHERE g.pj = true ORDER BY g.numero ASC')
+			->getResult();
+		
+		return $groupes;
 	}
 	
 	/**

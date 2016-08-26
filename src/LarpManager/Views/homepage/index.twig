@@ -12,69 +12,58 @@
 					{% include 'homepage/fragment/scenariste.twig' with {'user': user} %}
 				{% endif %}
 				
-				{# liste des personnages de l'utilisateur #}
-				{% include 'homepage/fragment/personnages.twig' with {'personnages': user.personnages} %}
-				
-				{# gestion du personnage secondaire #}
-				{% include 'homepage/fragment/personnageSecondaire.twig' with {'personnageSecondaire': user.personnageSecondaire} %}
+				{# liste des événements de l'utilisateur #}
+				{% include 'homepage/fragment/participants.twig' with {'participants': user.participants} %}
 												
 				{# gestion administrative #}
 				{% include 'homepage/fragment/administration.twig' with {'user': user} %}
 			</div>
 		</div>
 		<div class="col-md-9">
-			<div class="well well-sm">
-				<div class="header">
-					<h5>Rappels</h5>
+			
+			{# Si l'utilisateur n'a pas d'événement futur de prévu, lui proposer de choisir un événement dans la liste #}
+			{# Si pour un événement futur, l'utilisateur n'a pas de billet, lui proposer de prendre un billet #}					
+			{% if not user.hasFuturEvent %}
+				<div class="panel panel-conan">
+					<div class="panel-heading">
+						Choisir un jeu ?
+					</div>
+					<div class="panel-body">
+						<p>Vous ne participez à aucun jeu. Nous vous proposons de parcourir la liste des jeux proposés par Eve-Oniris et d'en selectionner un.</p>
+						<p><i class="fa fa-calendar" aria-hidden="true"></i>&nbsp;<a href="{{ path('user.gn.list') }}">Voir la liste des jeux</a>.</p>
+					</div>
 				</div>
-				
-				{% if not user.personnageSecondaire %}
-					<div class="alert alert-danger" role="alert">
-						<p>
-							<i class="fa fa-exclamation-triangle" aria-hidden="true"></i>&nbsp;
-							Vous <strong>devez</strong>&nbsp;<a href="{{ path('user.personnageSecondaire') }}">choisir un personnage secondaire</a>.
-						</p>
-					</div>
-				{% endif %}
-				
-				{% if not user.etatCivil %}
-					<div class="alert alert-danger" role="alert">
-						<p>
-							<i class="fa fa-exclamation-triangle" aria-hidden="true"></i>&nbsp;
-							Vous <strong>devez</strong> remplir votre état civil.
-						</p>
-					</div>
-				{% endif %}
-				
-				{% if user.personnages|length == 0 %}
-					<div class="alert alert-danger" role="alert">
-						<p>
-							<i class="fa fa-exclamation-triangle" aria-hidden="true"></i>&nbsp;
-							Vous <strong>devez</strong> créer un personnage.
-						</p>
-					</div>
-				{% endif %}
-				
-				{% for personnage in user.personnages %}
-					{% if not personnage.trombineUrl %}
-						<div class="alert alert-danger" role="alert">
-							<p>
-								<i class="fa fa-exclamation-triangle" aria-hidden="true"></i>&nbsp;
-								Votre personnage {{ personnage.nom }} {{ personnage.surnom }} n'a pas photo. Cette photo est utilisé pour les trombinoscopes afin que les autres joueurs en intéraction avec vous puissent vous reconnaitre.
-								<a href="{{ path('personnage.trombine.update', {'personnage': personnage.id}) }}">Choisir une photo</a>
-							</p>
+			{% else %}
+				{% for participant in user.futurEvents %}
+					{% if not participant.billet %}
+						<div class="panel panel-conan">
+							<div class="panel-heading">
+								Prendre un billet
+							</div>
+							<div class="panel-body">
+								<div class="media">
+									<div class="media-left">
+										<i class="fa fa-shopping-basket fa-5x" aria-hidden="true"></i>
+									</div>
+									<div class="media-body">
+										<p>Vous participez à <strong>{{ participant.gn }}</strong> mais vous n'avez pas encore de billet. Nous vous invitons à prendre un billet au plus vite afin de pouvoir rejoindre un groupe et créer votre personnage.</p>
+										<p class="text-danger">Un billet est obligatoire pour l'accès au jeu {{ participant.gn }}</p>
+										<div class="clearfix">
+											<div class="pull-right">
+												<a class="btn btn-primary btn-lg" href="{{ path('gn.billetterie', {'gn': participant.gn.id}) }}">Billetterie</a>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
 						</div>
 					{% endif %}
 				{% endfor %}
-			</div>
-			{% for  annonce in annonces%}
-				<div class="well well-sm">
-					<div class="header">
-						<h5>{{ annonce.title }}</h5>
-					</div>
-					{{ annonce.text|markdown }}
-				</div>
-			{% endfor %}
+			{% endif %}
+			
+			{# affichage des annonces #}
+			{% include 'homepage/fragment/annonces.twig' with {'annonces': annonces} %}
+			
 		</div>		
 	</div>	
 {% endblock content %}

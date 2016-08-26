@@ -26,6 +26,8 @@ use Silex\ControllerProviderInterface;
 /**
  * LarpManager\AppelationControllerProvider
  * 
+ * Role de base : ROLE_ADMIN
+ * 
  * @author kevin
  */
 class AnnonceControllerProvider implements ControllerProviderInterface
@@ -38,6 +40,7 @@ class AnnonceControllerProvider implements ControllerProviderInterface
 	 * 	- annonce.add
 	 *  - annonce.update
 	 *  - annonce.detail
+	 *  - annonce.delete
 	 *
 	 * @param Application $app
 	 * @return Controllers $controllers
@@ -46,24 +49,47 @@ class AnnonceControllerProvider implements ControllerProviderInterface
 	{
 		$controllers = $app['controllers_factory'];
 		
+		/**
+		 * Liste des annnonces
+		 */
 		$controllers->match('/list','LarpManager\Controllers\AnnonceController::listAction')
 			->bind("annonce.list")
 			->method('GET');
 		
+		/**
+		 * Ajouter une annonce
+		 */
 		$controllers->match('/add','LarpManager\Controllers\AnnonceController::addAction')
 			->bind("annonce.add")
 			->method('GET|POST');
 		
-		$controllers->match('/{index}/update','LarpManager\Controllers\AnnonceController::updateAction')
-			->assert('index', '\d+')
+		/**
+		 * Mise à jour d'une annonce
+		 */
+		$controllers->match('/{annonce}/update','LarpManager\Controllers\AnnonceController::updateAction')
+			->assert('annonce', '\d+')
+			->convert('annonce', 'converter.annonce:convert')
 			->bind("annonce.update")
 			->method('GET|POST');
 		
-		$controllers->match('/{index}','LarpManager\Controllers\AnnonceController::detailAction')
-			->assert('index', '\d+')
+		/**
+		 * Détail d'une annonce
+		 */
+		$controllers->match('/{annonce}','LarpManager\Controllers\AnnonceController::detailAction')
+			->assert('annonce', '\d+')
+			->convert('annonce', 'converter.annonce:convert')
 			->bind("annonce.detail")
 			->method('GET');
 					
+		/**
+		 * Suppression d'une annonce
+		 */
+		$controllers->match('/{annonce}/delete','LarpManager\Controllers\AnnonceController::deleteAction')
+			->assert('annonce', '\d+')
+			->convert('annonce', 'converter.annonce:convert')
+			->bind("annonce.delete")
+			->method('GET|POST');
+			
 		return $controllers;
 	}
 }

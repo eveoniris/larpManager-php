@@ -43,6 +43,31 @@ class Gn extends BaseGn
 	}
 	
 	/**
+	 * Indique si le jeu est passé ou pas
+	 * 
+	 * @return boolean
+	 */
+	public function isPast()
+	{
+		$now = new \Datetime('NOW');
+		if ( $this->getDateFin() <  $now ) return true;
+		return false;
+	}
+	
+	/**
+	 * Fourni le nombre de billet vendu pour ce jeu
+	 */
+	public function getBilletCount()
+	{
+		$count = 0;
+		foreach ( $this->getParticipants() as $participant)
+		{
+			if ( $participant->getBillet() ) $count++;
+		}
+		return $count;
+	}
+	
+	/**
 	 * Fourni la liste des utilisateurs de ce GN
 	 */
 	public function getUsers()
@@ -51,9 +76,9 @@ class Gn extends BaseGn
 		
 		foreach ( $this->getBillets() as $billet)
 		{
-			foreach ( $billet->getUserHasBillets() as $userHasBillet)
+			foreach ( $billet->getParticipants() as $participant)
 			{
-				$result[] = $userHasBillet->getUser();	
+				$result[] = $participant->getUser();	
 			}
 		}
 		

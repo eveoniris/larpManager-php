@@ -200,11 +200,28 @@ class GnController
 	 */
 	public function fedegnAction(Request $request, Application $app, Gn $gn)
 	{
-		$userHasBillets = $app['orm.em']->getRepository('LarpManager\Entities\UserHasBillet')->findAllByGn($gn);
+		$participantHasBillets = $app['orm.em']->getRepository('LarpManager\Entities\ParticipantHasBillet')->findAllByGn($gn);
 		
 		return $app['twig']->render('admin/gn/fedegn.twig', array(
 				'gn' => $gn,
-				'userHasBillets' => $userHasBillets,
+				'participantHasBillets' => $participantHasBillets,
+		));
+	}
+	
+	/**
+	 * Affiche la billetterie d'un GN
+	 *
+	 * @param Application $app
+	 * @param Request $request
+	 * @param Gn $gn
+	 */
+	public function billetterieAction(Application $app, Request $request, Gn $gn)
+	{
+		$groupes = $app['orm.em']->getRepository('LarpManager\Entities\Groupe')->findAllPj();
+	
+		return $app['twig']->render('public/gn/billetterie.twig', array(
+				'gn' => $gn,
+				'groupes' => $groupes,
 		));
 	}
 }

@@ -51,6 +51,39 @@ class HomepageControllerProvider implements ControllerProviderInterface
 					->method('GET')
 					->bind('homepage');
 					
+		/**
+		 * Affichage de la premiere étape
+		 */
+		$controllers->match('/newUser/step1','LarpManager\Controllers\HomepageController::newUserStep1Action')
+					->method('GET')
+					->bind('newUser.step1')
+					->before($mustBeUser);
+					
+		/**
+		 * Affichage de la seconde étape
+		 */
+		$controllers->match('/newUser/step2','LarpManager\Controllers\HomepageController::newUserStep2Action')
+					->method('GET|POST')
+					->bind('newUser.step2')
+					->before($mustBeUser);
+					
+		/**
+		 * Affichage de la troisième étape
+		 */
+		$controllers->match('/newUser/step3','LarpManager\Controllers\HomepageController::newUserStep3Action')
+					->method('GET|POST')
+					->bind('newUser.step3')
+					->before($mustBeUser);
+					
+		/**
+		 * Affichage de la troisième étape
+		 */
+		$controllers->match('/newUser/step4','LarpManager\Controllers\HomepageController::newUserStep4Action')
+					->method('GET')
+					->bind('newUser.step4')
+					->before($mustBeUser);
+					
+					
 		/** Page de gestion des règles */
 		$controllers->match('/rules/admin','LarpManager\Controllers\HomepageController::rulesAdminAction')
 					->method('GET|POST')

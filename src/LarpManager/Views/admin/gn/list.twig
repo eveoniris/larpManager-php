@@ -68,6 +68,7 @@
 					</th>
 					<th>Etat</th>
 					<th>Nombre de participants</th>
+					<th>Nombre de billets vendu</th>
 					<th></th>
 				</tr>
 			</thead>
@@ -77,7 +78,8 @@
 						<td>{{ gn.id }}</td>
 						<td>{{ gn.label }}</td>
 						<td>{% if gn.actif %}<span class="text-success">Actif</span>{% else %}non actif{% endif %}</td>
-						<td>{{ gn.users|length }}</td>
+						<td>{{ gn.participants|length }}</td>
+						<td>{{ gn.billetCount }}</td>
 						<td>
 							<div class="btn-toolbar pull-right" role="toolbar" aria-label="...">
 								<div class="btn-group" role="group" aria-label="...">

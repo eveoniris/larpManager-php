@@ -1,0 +1,8 @@
+{% for  annonce in annonces%}
+	<div class="panel panel-conan">
+		<div class="panel-heading">{{ annonce.title }}</div>
+		<div class="panel-body">
+			{{ annonce.text|markdown }}
+		</div>
+	</div>
+{% endfor %}

@@ -35,11 +35,11 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 	/**
 	 * Initialise les routes pour les joueurs
 	 * Routes :
-	 * 	- joueur : liste des joueurs
-	 * 	- joueur.add : Ajoute un joueur (saisie des informations joueurs par un utilisateur)
-	 *  - joueur.update : Mise à jour des informations joueur par un utilisateur
-	 *  - joueur.detail : Détail des informations joueur
-	 *  - joueur.xp : modification des XP pour un joueur
+	 * 	- participant : liste des joueurs
+	 * 	- participant.add : Ajoute un joueur (saisie des informations joueurs par un utilisateur)
+	 *  - participant.update : Mise à jour des informations joueur par un utilisateur
+	 *  - participant.detail : Détail des informations joueur
+	 *  - participant.xp : modification des XP pour un joueur
 	 *
 	 * @param Application $app
 	 * @return Controllers $controllers
@@ -50,64 +50,45 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 		$controllers = $app['controllers_factory'];
 		
 		/**
+		 * Vérifie que l'utilisateur participe à ce gn
+		 */
+		$mustOwnParticipant = function(Request $request) use ($app) {
+			if (!$app['user']) {
+				return $app->redirect($app['url_generator']->generate('user.login'));
+			}
+			if (!$app['security.authorization_checker']->isGranted('OWN_PARTICIPANT', $request->get('participant'))) {
+				throw new AccessDeniedException();
+			}
+		};
+		
+		/**
+		 * Page de contrôle d'un joueur
+		 */
+		$controllers->match('/{participant}', 'LarpManager\Controllers\ParticipantController::indexAction')
+			->assert('participant', '\d+')
+			->convert('participant', 'converter.participant:convert')
+			->bind('participant.index')
+			->method('GET')
+			->before($mustOwnParticipant);
+		
+		/**
+		 * Affecte un personnage secondaire à un participant
+		 */
+		$controllers->match('/{participant}/personnageSecondaire','LarpManager\Controllers\ParticipantController::personnageSecondaireAction')
+			->assert('participant', '\d+')
+			->method('GET|POST')
+			->bind('participant.personnageSecondaire')
+			->convert('participant', 'converter.participant:convert')
+			->before($mustOwnParticipant);
+		
+			
+			
+		/**
 		 * Liste des joueurs
 		 * Accessible uniquement aux admin
 		 */
 		$controllers->match('/admin','LarpManager\Controllers\ParticipantController::listAction')
 			->bind("participant")
-			->method('GET')
-			->before(function(Request $request) use ($app) {
-				if (!$app['security.authorization_checker']->isGranted('ROLE_ADMIN')) {
-					throw new AccessDeniedException();
-				}
-			});
-			
-
-		/**
-		 * Liste des joueurs
-		 * Accessible uniquement aux admin
-		 */
-		$controllers->match('/admin/non','LarpManager\Controllers\ParticipantController::listNonAction')
-			->bind("participant.non")
-			->method('GET')
-			->before(function(Request $request) use ($app) {
-				if (!$app['security.authorization_checker']->isGranted('ROLE_ADMIN')) {
-					throw new AccessDeniedException();
-				}
-		});
-			
-		/**
-		 * Liste des joueurs
-		 * Accessible uniquement aux admin
-		 */
-		$controllers->match('/admin/fedegn','LarpManager\Controllers\ParticipantController::listFedegnAction')
-			->bind("participant.fedegn")
-			->method('GET')
-			->before(function(Request $request) use ($app) {
-				if (!$app['security.authorization_checker']->isGranted('ROLE_ADMIN')) {
-					throw new AccessDeniedException();
-				}
-			});
-			
-		/**
-		 * Liste des joueurs
-		 * Accessible uniquement aux admin
-		 */
-		$controllers->match('/admin/fedegn/non','LarpManager\Controllers\ParticipantController::listFedegnNonAction')
-			->bind("participant.non.fedegn")
-			->method('GET')
-			->before(function(Request $request) use ($app) {
-				if (!$app['security.authorization_checker']->isGranted('ROLE_ADMIN')) {
-					throw new AccessDeniedException();
-				}
-			});
-			
-		/**
-		 * Liste des joueurs
-		 * Accessible uniquement aux admin
-		 */
-		$controllers->match('/admin/fedegn/non/pnj','LarpManager\Controllers\ParticipantController::listFedegnPnjNonAction')
-			->bind("participant.pnj.non.fedegn")
 			->method('GET')
 			->before(function(Request $request) use ($app) {
 				if (!$app['security.authorization_checker']->isGranted('ROLE_ADMIN')) {

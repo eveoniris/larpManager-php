@@ -25,12 +25,12 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
- * LarpManager\Form\UserPersonnageSecondaireForm
+ * LarpManager\Form\ParticipantPersonnageSecondaireForm
  * 
  * @author kevin
  *
  */
-class UserPersonnageSecondaireForm extends AbstractType
+class ParticipantPersonnageSecondaireForm extends AbstractType
 {
 	/**
 	 * Construction du formulaire
@@ -41,8 +41,9 @@ class UserPersonnageSecondaireForm extends AbstractType
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
 		$builder->add('personnageSecondaire','entity', array(
-						'label' => 'Archétype',
+						'label' => 'Choisissez un archétype',
 						'required' => true,
+						'expanded' => true,
 						'class' => 'LarpManager\Entities\PersonnageSecondaire',
 						'property' => 'label'));
 	}
@@ -55,7 +56,7 @@ class UserPersonnageSecondaireForm extends AbstractType
 	public function setDefaultOptions(OptionsResolverInterface $resolver)
 	{
 		$resolver->setDefaults(array(
-				'class' => 'LarpManager\Entities\User',
+				'class' => 'LarpManager\Entities\Participant',
 		));
 	}
 	
@@ -64,6 +65,6 @@ class UserPersonnageSecondaireForm extends AbstractType
 	 */
 	public function getName()
 	{
-		return 'userPersonnageSecondaire';
+		return 'participantPersonnageSecondaire';
 	}
 }

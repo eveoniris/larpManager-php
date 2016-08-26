@@ -51,6 +51,8 @@ class UserControllerProvider implements ControllerProviderInterface
 	 *  - user.restauration
 	 *  - user.gn
 	 *  - user.gn.detail
+	 *  - user.gn.participe
+	 *  - user.gn.list
 	 *
 	 * @param Application $app
 	 * @return Controllers $controllers
@@ -79,7 +81,7 @@ class UserControllerProvider implements ControllerProviderInterface
 				throw new AccessDeniedException();
 			}
 		};
-		
+				
 		$controllers->get('/', 'LarpManager\Controllers\UserController::viewSelfAction')
 			->bind('user')
 			->before($mustBeUser);
@@ -117,14 +119,6 @@ class UserControllerProvider implements ControllerProviderInterface
 			->method('GET|POST')
 			->bind('user.restauration')
 			->before($mustBeAdmin);
-			
-		/** 
-		 * Formulaire de choix d'un personnage secondaire 
-		 */
-		$controllers->match('/personnageSecondaire','LarpManager\Controllers\UserController::personnageSecondaireAction')
-			->method('GET|POST')
-			->bind('user.personnageSecondaire')
-			->before($mustBeUser);
 			
 		/**
 		 * Restrictions alimentaires
@@ -167,25 +161,17 @@ class UserControllerProvider implements ControllerProviderInterface
 			->bind('user.gn.detail')			
 			->method('GET')
 			->before($mustBeUser);
-			
+					
 		/**
-		 * Affiche les informations d'un billet
+		 * Participer à un jeu
 		 */
-		$controllers->match('/userHasBillet/{userHasBillet}', 'LarpManager\Controllers\UserController::userHasBilletDetailAction')
-			->assert('userHasBillet', '\d+')
-			->convert('userHasBillet', 'converter.userHasBillet:convert')
-			->bind('user.userHasBillet.detail')
-			->method('GET')
+		$controllers->match('/gn/{gn}/participe', 'LarpManager\Controllers\UserController::gnParticipeAction')
+			->assert('gn', '\d+')
+			->convert('gn', 'converter.gn:convert')
+			->bind('user.gn.participe')
+			->method('GET|POST')
 			->before($mustBeUser);
-			
-		/**
-		 * Affiche la liste des billets
-		 */
-		$controllers->match('/userHasBillet', 'LarpManager\Controllers\UserController::userHasBilletListAction')
-			->bind('user.userHasBillet.list')
-			->method('GET')
-			->before($mustBeUser);
-			
+						
 		/**
 		 * Vue d'un utilisateur
 		 */

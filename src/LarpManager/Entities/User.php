@@ -60,6 +60,84 @@ class User extends BaseUser implements AdvancedUserInterface, \Serializable
 	}
 		
 	/**
+	 * Recherche si l'utilisateur à un événement futur de prévu
+	 */
+	public function hasFuturEvent()
+	{
+		$now = new \Datetime('NOW');
+		foreach ( $this->getParticipants() as $participant )
+		{
+			if ( $participant->getGn()->getDateDebut() > $now )
+			{
+				return true;
+			}
+			
+		}
+		return false;
+	}
+	
+	/**
+	 * Fourni la liste de tous les événements futur auquel l'utilisateur participe
+	 */
+	public function getFuturEvents()
+	{
+		$futurEvents = new ArrayCollection();
+		$now = new \Datetime('NOW');
+		
+		foreach ( $this->getParticipants() as $participant )
+		{
+			if ( $participant->getGn()->getDateDebut() > $now )
+			{
+				$futurEvents[] = $participant;
+			}
+				
+		}
+		return $futurEvents;
+	}
+	
+	public function getParticipant(Gn $gn)
+	{
+		foreach ( $this->getParticipants() as $participant )
+		{
+			if ( $participant->getGn() == $gn )
+			{
+				return $participant;		
+			}
+		}
+		return null;
+	}
+		
+	
+	/**
+	 * Fourni tous les billets d'un utilisateur
+	 */
+	public function getBillets()
+	{
+		$billets = new ArrayCollection();
+		foreach ( $this->getParticipants() as $participant )
+		{
+			if ( $participant->getBillet() )
+			{
+				$billets[] = $participant->getBillet();
+			}
+		}
+		return $billets;
+	}
+	
+	/**
+	 * Fourni la liste des tous les GN auquel l'utillisateur participe
+	 */
+	public function getGns()
+	{
+		$gns = new ArrayCollection();
+		foreach ( $this->getParticipants() as $participant )
+		{
+			$gns[] = $participant->getGn();
+		}
+		return $gns;
+	}
+	
+	/**
 	 * Alias vers username
 	 */
 	public function getName()
@@ -83,53 +161,13 @@ class User extends BaseUser implements AdvancedUserInterface, \Serializable
 	 * @return boolean
 	 */
 	public function takePart(Gn $gn) {
-		foreach ( $this->getUserHasBillets() as $userHasBillet )
+		foreach ( $this->getParticipants() as $participant )
 		{
-			if ( $userHasBillet->getBillet()->getGn()->getId() == $gn->getId() )
+			if ( $participant->getGn() == $gn )
 				return true;
 		}
 		
 		return false;
-	}
-
-	/**
-	 * Fourni le billet relatif à un GN
-	 * 
-	 * @param Gn $gn
-	 * @return UserHasBillet $userHasBillet
-	 */
-	public function getUserHasBillet(GN $gn)
-	{
-		foreach ( $this->getUserHasBillets() as $userHasBillet )
-		{
-			if ( $userHasBillet->getBillet()->getGn()->getId() == $gn->getId() )
-				return $userHasBillet;
-		}
-		return null;
-	}
-	
-	/**
-	 * Surcharge pour ajouter la relation avec l'entité User
-	 *
-	 * @param \LarpManager\Entities\UserHasRestauration $userHasRestauration
-	 * @return \LarpManager\Entities\User
-	 */
-	public function addUserHasRestauration(UserHasRestauration $userHasRestauration)
-	{
-		$userHasRestauration->setUser($this);
-		return parent::addUserHasRestauration($userHasRestauration);
-	}
-	
-	/**
-	 * Surcharge pour ajouter la relation avec l'entité User
-	 *
-	 * @param \LarpManager\Entities\UserHasRestauration $userHasRestauration
-	 * @return \LarpManager\Entities\User
-	 */
-	public function addUserHasBillet(UserHasBillet $userHasBillet)
-	{
-		$userHasBillet->setUser($this);
-		return parent::addUserHasBillet($userHasBillet);
 	}
 	
 	/**

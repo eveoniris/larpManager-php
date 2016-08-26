@@ -1,0 +1,20 @@
+{% extends "layout.twig" %}
+
+{% block title %}Configuration du compte - Etape 1{% endblock title %}
+
+{% block content %}
+<div class="jumbotron">
+  <h1>Bienvenue sur LarpManager</h1>
+  <hr />
+  <p>Avant de pouvoir rejoindre un groupe et créer votre personnage, vous devez compléter votre compte.</p>
+  <p>Les informations demandées sont obligatoires pour participer aux jeux grandeurs natures de l'association Eve-Oniris.</p>
+  <p>Cette procédure n'est a suivre qu'une seule fois.</p>
+  <div class="clearfix">
+  	<div class="pull-right">
+  		<p>
+  			<a class="btn btn-primary btn-lg" href="{{ path('newUser.step2') }}" role="button">Etape suivante <i class="fa fa-angle-double-right" aria-hidden="true"></i></a>
+  		</p>
+  	</div>
+  </div>
+</div>
+{% endblock content %}

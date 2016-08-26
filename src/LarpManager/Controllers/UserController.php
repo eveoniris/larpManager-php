@@ -42,6 +42,9 @@ use LarpManager\Entities\User;
 use LarpManager\Entities\UserHasRestauration;
 use LarpManager\Entities\UserHasBillet;
 use LarpManager\Entities\Gn;
+use LarpManager\Entities\Participant;
+
+use LarpManager\Repository\ParticipantRepository;
 
 use JasonGrimes\Paginator;
 
@@ -226,6 +229,62 @@ class UserController
 	}
 	
 	/**
+	 * Formulaire de participation à un jeu
+	 * 
+	 * @param Application $app
+	 * @param Request $request
+	 * @param Gn $gn
+	 */
+	public function gnParticipeAction(Application $app, Request $request, Gn $gn)
+	{
+		$form = $app['form.factory']->createBuilder()
+			->add('oldParticipant','entity', array(
+					'label' => 'Si vous êtes un ancien joueur, selectionnez le personnage avec lequel vous voulez participer',
+					'class' => 'LarpManager\Entities\Participant',
+					'property' => 'personnage',
+					'multiple' => false,
+					'expanded' => true,
+					'query_builder' => function(ParticipantRepository $er) use ($app) {
+						return $er->createQueryBuilder('p')
+							->join('p.user','u')
+							->where('u.id = :userId')
+							->setParameter('userId',$app['user']->getId());
+					},
+			))
+			->getForm();
+		
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
+		{
+			$data = $form->getData();
+			$oldParticipant = $data['oldParticipant'];
+			
+			$participant = new Participant();
+			$participant->setUser($app['user']);
+			$participant->setGn($gn);
+			
+			if ($oldParticipant)
+			{
+				$participant->setGroupe($oldParticipant->getGroupe());
+				$participant->setPersonnage($oldParticipant->getPersonnage());
+				$participant->setPersonnageSecondaire($oldParticipant->getPersonnageSecondaire());
+			}
+			
+			$app['orm.em']->persist($participant);
+			$app['orm.em']->flush();
+			
+			$app['session']->getFlashBag()->add('success', 'Vous participez maintenant à '.$gn->getLabel().' !');
+			return $app->redirect($app['url_generator']->generate('homepage'),301);
+		}
+		
+		return $app['twig']->render('public/gn/participe.twig', array(
+				'gn' => $gn,
+				'form' => $form->createView(),
+		));
+	}
+		
+	/**
 	 * Affiche le détail d'un billet d'un utilisateur
 	 * 
 	 * @param Application $app
@@ -312,44 +371,6 @@ class UserController
 				'form' => $form->createView(),
 		));
 	}
-	
-	/**
-	 * Choix du personnage secondaire par un utilisateur
-	 *
-	 * @param Request $request
-	 * @param Application $app
-	 */
-	public function personnageSecondaireAction(Request $request, Application $app)
-	{
-		$user = $app['user'];
-		
-		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\PersonnageSecondaire');
-		$personnageSecondaires = $repo->findAll();
-	
-		$form = $app['form.factory']->createBuilder(new UserPersonnageSecondaireForm(), $user)
-			->add('choice','submit', array('label' => 'Enregistrer'))
-			->getForm();
-			
-		$form->handleRequest($request);
-			
-		if ( $form->isValid() )
-		{
-			$user = $form->getData();
-			$app['orm.em']->persist($user);
-			$app['orm.em']->flush();
-				
-			$app['session']->getFlashBag()->add('success','Le personnage secondaire a été enregistré.');
-			return $app->redirect($app['url_generator']->generate('homepage'),301);
-		}
-	
-		return $app['twig']->render('public/user/personnageSecondaire.twig', array(
-				'user' => $user,
-				'personnageSecondaires' => $personnageSecondaires,
-				'form' => $form->createView(),
-		));
-			
-	}
-
 
 	/**
 	 * Affiche la billetterie

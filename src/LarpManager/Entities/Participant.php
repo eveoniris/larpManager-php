@@ -36,6 +36,14 @@ use LarpManager\Entities\BaseParticipant;
  */
 class Participant extends BaseParticipant
 {
+	/**
+	 * Constructeur
+	 */
+	public function __construct()
+	{
+		$this->setSubscriptionDate(new \Datetime('NOW'));
+	}
+	
 	public function __toString()
 	{
 		return $this->getUser()->getDisplayName();

@@ -1,0 +1,55 @@
+{% extends "layout.twig" %}
+
+{% block title %}Gn{% endblock title %}
+
+{% block content %}
+
+	<div class="well well-sm">
+		<ol class="breadcrumb">
+			<li><a href="{{ path('homepage')  }}">Accueil</a></li>
+			<li><a href="{{path('user.gn.list') }}">Liste des GNs</a></li>
+			<li class="active">Billetterie -- {{ gn.label }}</li>
+		</ol>
+		
+		<blockquote>
+			Nous vous proposons quatre type de billet. 
+			<ul>
+				<li>Le billet "Chef de groupe" vous permet de réserver un groupe.</li>
+				<li>Le billet "Joueur" vous permettra de rejoindre un groupe.</li>
+				<li>Le billet "Personnage non joueur" vous permettra de rejoindre l'équipe d'Eve-Oniris pour annimer le jeu.</li>
+				<li>Le billet "Enfant" vous permettra de bénéficier pour votre enfant du village d'enfant</li>
+			</ul>
+			Si vous voulez réserver un groupe, prennez une place "Réservation d'un groupe", et indiquez dans le formulaire le nom du groupe que vous voulez réserver.
+		</blockquote>
+	
+	
+	<div class="row">
+		<div class="col-md-6">	
+			{{ gn.billetterie|raw }}
+		</div>
+		<div class="col-md-6">
+			<table class="table table-stripped table-condensed">
+				<thead>
+					<tr>
+						<th>Numéro</th>
+						<th>Groupe</th>
+						<th>Statut</th>
+						<th>Chef de groupe</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for groupe in groupes %}
+						<tr>
+							<td>{{ groupe.numero }}</td>
+							<td>{{ groupe.nom }}</td>
+							<td>{% if groupe.free %}<span class="text-success">Libre</span>{% else %}<span class="text-danger">Reservé</span>{% endif %}</td>
+							<td>{{ groupe.responsable.etatCivil.nom }} {{ groupe.responsable.etatCivil.prenom }} - {{ groupe.responsable.email }}</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+	</div>
+	
+{% endblock %}

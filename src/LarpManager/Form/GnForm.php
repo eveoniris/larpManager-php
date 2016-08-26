@@ -79,6 +79,10 @@ class GnForm extends AbstractType
 							'row' => 9,
 						),
 				))
+				->add('billetterie','textarea', array(
+						'label' => 'Code de la billetterie',
+						'required' => false,
+				))
 				->add('actif','choice', array(
 						'label' => 'GN actif ?',
 						'required' => true,

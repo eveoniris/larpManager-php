@@ -50,6 +50,7 @@ class Groupe extends BaseGroupe
 	{		
 		$this->setClasseOpen(0);
 		$this->setLock(false);
+		$this->setFree(true);
 		parent::__construct();
 	}
 	
@@ -87,6 +88,19 @@ class Groupe extends BaseGroupe
 			$ressources = new ArrayCollection(array_merge($ressources->toArray(), $territoire->getExportations()->toArray()));
 		}
 		return $ressources;
+	}
+	
+	/**
+	 * Fourni tous les ingrédients obtenu par le groupe grace à ses territoires
+	 */
+	public function getIngredients()
+	{
+		$ingredients = new ArrayCollection();
+		foreach ( $this->getTerritoires() as $territoire)
+		{
+			$ingredients = new ArrayCollection(array_merge($ingredients->toArray(), $territoire->getIngredients()->toArray()));
+		}
+		return $ingredients;
 	}
 	
 	/**

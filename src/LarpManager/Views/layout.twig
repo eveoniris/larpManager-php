@@ -9,11 +9,13 @@
 			<link rel="shortcut icon" href="{{ app.request.basepath }}/favicon.ico" type="image/x-icon">
 			<link rel="icon" href="{{ app.request.basepath }}/favicon.ico" type="image/x-icon">
 			
-			<link rel="stylesheet" href="{{ app.request.basepath }}/css/style.css" />
             <link rel="stylesheet" href="{{ app.request.basepath }}/css/normalize.css" />			                        
             <link rel="stylesheet" href="{{ app.request.basepath }}/font-awesome-4.6.3/css/font-awesome.min.css" />
             <link rel="stylesheet" href="{{ app.request.basepath }}/css/bootstrap.min.css" />
             <link rel="stylesheet" href="{{ app.request.basepath }}/css/cyborg_bootstrap.min.css" />
+            <link rel="stylesheet" href="{{ app.request.basepath }}/Pnotify/css/pnotify.custom.min.css" />
+            
+            <link rel="stylesheet" href="{{ app.request.basepath }}/css/style.css" />
                                     
 			{% block style %}{% endblock style %}
 						            
@@ -33,15 +35,15 @@
         <div id="content" class="container-fluid">
         
         	{% for message in app.session.getFlashBag.get('success') %}
-    			<div class="alert alert-success" role="alert">{{ message }}</div>
+    			<div class="notifySuccess">{{ message }}</div>
 			{% endfor %}
 			
 			{% for message in app.session.getFlashBag.get('alert') %}
-    			<div class="alert alert-warning" role="alert">{{ message }}</div>
+    			<div class="notifyWarning">{{ message }}</div>
 			{% endfor %}
 			
 			{% for message in app.session.getFlashBag.get('error') %}
-    			<div class="alert alert-danger" role="alert">{{ message }}</div>
+    			<div class="notifyError">{{ message }}</div>
 			{% endfor %}
 			
         	{% block content %}{% endblock content %}
@@ -72,6 +74,56 @@
          
         <script src="{{ app.request.basepath }}/js/jquery-1.11.3.min.js"></script>
         <script src="{{ app.request.basepath }}/js/bootstrap.min.js"></script>
+        <script src="{{ app.request.basepath }}/Pnotify/js/pnotify.custom.min.js"></script>
+        
+        {# active pnotify #}
+        <script  type="text/javascript">
+        	PNotify.prototype.options.styling = "fontawesome";
+
+        	function createNotifyError(notice)
+        	{
+        		new PNotify({
+        		    title: $(notice).attr('title'),
+        		    text: $(notice).text(),
+        		    type: 'notice',
+        		    hide: false
+        		});
+        		$(notice).remove();
+            }
+
+        	function createNotifySuccess(notice)
+        	{
+        		new PNotify({
+        		    title: $(notice).attr('title'),
+        		    text: $(notice).text(),
+        		    type: 'success',
+        		});
+        		$(notice).remove();
+            }
+
+        	function createNotifyWarning(notice)
+        	{
+        		new PNotify({
+        		    title: $(notice).attr('title'),
+        		    text: $(notice).text(),
+        		    type: 'warning',
+        		});
+        		$(notice).remove();
+            }
+        	
+        	$(function(){
+        		$("div.notifyError").each(function() {
+            		createNotifyError(this);
+        		});
+        		$("div.notifySuccess").each(function() {
+            		createNotifySuccess(this);
+        		});
+        		$("div.notifyWarning").each(function() {
+            		createNotifySuccess(this);
+        		});
+        	});
+        	
+        </script>
         
         {# manipulation des dates #}
         <script src="{{ app.request.basepath }}/js/moment.js"></script>

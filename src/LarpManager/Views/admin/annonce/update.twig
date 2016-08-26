@@ -11,58 +11,12 @@
 	</ol>
 	
 	<div class="well bs-component">
-		<form action="{{ path('annonce.update', {'index': annonce.id}) }}" method="POST" {{ form_enctype(form) }}>
+		<form action="{{ path('annonce.update', {'annonce': annonce.id}) }}" method="POST" {{ form_enctype(form) }} novalidate>
 			<fieldset>
 				<legend>Modification d'une annonce</legend>
 					{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
 					{{ form(form) }}
 			</fieldset>
 		</form>
-	</div>
-	
-	<div class="modal fade" id="confirm-submit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-	    <div class="modal-dialog">
-	        <div class="modal-content">
-	            <div class="modal-header">
-	                <h6>Confirmer la suppression</h6>
-	            </div>
-	            <div class="modal-body">
-	            	<p>Etes-vous certain de vouloir supprimer l'annonce suivante :</p>
-	            	{{ annonce.title }}
-	            	{{ annonce.text|markdown }}
-	            </div>
-	            <div class="modal-footer">
-	            	<button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
-	            	<a href="#" id="submit" class="btn btn-success success">Supprimer</a>
-	            </div>
-	        </div>
-	    </div>
-	</div>
-	
+	</div>	
 {% endblock content %}
-
-{% block javascript %}
-
-	{{ parent() }}
-
-	{# inclusion du plugin tinymce pour la saisie du post #}   
-	<script src="{{ app.request.basepath }}/js/tinymce/tinymce.min.js"></script>
-
-	<script type="text/javascript">
-		tinyMCE.init({
-				mode: "textareas",
-				theme: "modern",
-				plugins : "spellchecker,insertdatetime,preview", 
-		});
-
-		$(document).ready(function() {
-
-			$('#submit').click(function(){
-			    $('form').submit();
-			});	
-		});
-		
-		
-	</script>
-
-{% endblock javascript %}

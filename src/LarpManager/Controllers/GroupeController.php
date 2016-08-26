@@ -21,6 +21,7 @@
 namespace LarpManager\Controllers;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Silex\Application;
 use Doctrine\Common\Collections\ArrayCollection;
 use JasonGrimes\Paginator;
@@ -209,15 +210,41 @@ class GroupeController
 	}
 	
 	/**
+	 * Gestion de l'enveloppe de groupe
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Groupe $groupe
+	 */
+	public function envelopeAction(Request $request, Application $app, Groupe $groupe)
+	{
+		return $app['twig']->render('admin/groupe/envelope.twig', array(
+				'groupe' => $groupe,
+		));
+	}
+	
+	/**
+	 * Gestion des membres du groupe
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Groupe $groupe
+	 */
+	public function usersAction(Request $request, Application $app, Groupe $groupe)
+	{
+		return $app['twig']->render('admin/groupe/users.twig', array(
+				'groupe' => $groupe,
+		));
+	}
+	
+	/**
 	 * vérouillage d'un groupe
 	 *
 	 * @param Request $request
 	 * @param Application $app
 	 */
-	public function lockAction(Request $request, Application $app)
+	public function lockAction(Request $request, Application $app, Groupe $groupe)
 	{
-		$groupe = $request->get('groupe');
-	
 		$groupe->setLock(true);
 		$app['orm.em']->persist($groupe);
 		$app['orm.em']->flush();
@@ -232,15 +259,45 @@ class GroupeController
 	 * @param Request $request
 	 * @param Application $app
 	 */
-	public function unlockAction(Request $request, Application $app)
-	{
-		$groupe = $request->get('groupe');
-	
+	public function unlockAction(Request $request, Application $app, Groupe $groupe)
+	{	
 		$groupe->setLock(false);
 		$app['orm.em']->persist($groupe);
 		$app['orm.em']->flush();
 	
 		$app['session']->getFlashBag()->add('success', 'Le groupe est dévérouillé');
+		return $app->redirect($app['url_generator']->generate('groupe.detail', array('index' => $groupe->getId())));
+	}
+	
+	/**
+	 * rendre disponible un groupe
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function availableAction(Request $request, Application $app, Groupe $groupe)
+	{
+		$groupe->setFree(true);
+		$app['orm.em']->persist($groupe);
+		$app['orm.em']->flush();
+	
+		$app['session']->getFlashBag()->add('success', 'Le groupe est maintenant disponible. Il pourra être réservé par un joueur');
+		return $app->redirect($app['url_generator']->generate('groupe.detail', array('index' => $groupe->getId())));
+	}
+	
+	/**
+	 * rendre indisponible un groupe
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function unvailableAction(Request $request, Application $app, Groupe $groupe)
+	{	
+		$groupe->setFree(false);
+		$app['orm.em']->persist($groupe);
+		$app['orm.em']->flush();
+	
+		$app['session']->getFlashBag()->add('success', 'Le groupe est maintenant réservé. Il ne pourra plus être réservé par un joueur');
 		return $app->redirect($app['url_generator']->generate('groupe.detail', array('index' => $groupe->getId())));
 	}
 	
@@ -473,9 +530,19 @@ class GroupeController
 	{
 		$groupe = $request->get('groupe');
 	
-		return $app['twig']->render('admin/groupe/printMaterielGroupe.twig', array(
+		$html = $app['twig']->render('admin/groupe/printMaterielGroupe.twig', array(
 				'groupe' => $groupe
 		));
+		
+		$filename = sprintf('test-%s.pdf', date('Y-m-d'));
+		
+		return new Response(
+				$app['snappy.pdf']->getOutputFromHtml($html),
+				200,
+				[
+						'Content-Type'        => 'application/pdf',
+						'Content-Disposition' => sprintf('attachment; filename="%s"', $filename),
+				]);
 	}
 	
 	/**

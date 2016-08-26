@@ -22,7 +22,7 @@
 			    Montre <strong>{{ paginator.currentPageFirstItem }} - {{ paginator.currentPageLastItem }}</strong>.
 		    </li>
 		    <li class="list-group-item">
-		    	<a href="{{ path('annonce.add') }}">Ajouter une annonce</a>
+		    	<a href="{{ path('annonce.add') }}"><i class="fa fa-plus"></i> Ajouter une annonce</a>
 		    </li>
 		 </ul>
 
@@ -86,15 +86,27 @@
 						</a> 
 					</th>
 					<th>Etat</th>
+					<th>Gn</th>
+					<th />
 				</tr>
 			</thead>
 			<tbody>
 				{% for annonce in annonces %}
 					<tr>
-						<td><a href="{{ path('annonce.update',{'index':annonce.id}) }}">{{ annonce.id }}</a></td>
-						<td><a href="{{ path('annonce.detail',{'index':annonce.id}) }}">{{ annonce.title }}</a></td>
+						<td>{{ annonce.id }}</td>
+						<td>{{ annonce.title }}</td>
 						<td>{{ annonce.creationDate|date('Y-m-d') }}</td>
 						<td>{% if annonce.archive %}Archivé{% else %}<span class="text-success">Publié</span>{% endif %}</td>
+						<td>{% if annonce.gn %}{{ annonce.gn.label }}{% else %}Aucun{% endif %}</td>
+						<td>
+							<div class="btn-toolbar pull-right" role="toolbar" aria-label="...">
+								<div class="btn-group" role="group" aria-label="...">
+									<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Modifier" href="{{ path('annonce.update',{'annonce':annonce.id}) }}"><i class="fa fa-pencil" aria-hidden="true"></i></a>
+									<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Détail" href="{{ path('annonce.detail',{'annonce':annonce.id}) }}"><i class="fa fa-eye" aria-hidden="true"></i></a>
+									<a class="btn btn-danger" data-toggle="tooltip" data-placement="top" title="Supprimer" href="{{ path('annonce.delete',{'annonce':annonce.id}) }}"><i class="fa fa-eraser" aria-hidden="true"></i></a>
+								</div>
+							</div>
+						</td>
 					</tr>
 				{% endfor %}
 			</tbody>

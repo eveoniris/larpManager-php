@@ -1,0 +1,14 @@
+<blockquote>Cette liste correspond au matériel qui sera présent dans l'enveloppe de début de jeu remise au groupe</blockquote>
+
+<h6><i class="fa fa-circle"></i> Documents</h6>
+<a href=" {{ path('groupe.admin.documents', {'groupe': groupe.id}) }}">Modifier la liste de documents</a>
+<ul>
+{% for document in groupe.documents %}
+	<li><a href="{{ path('document.detail', {'document':document.id}) }}"><strong>{{ document.code }}</strong>&nbsp;{{ document.titre }}</a></li>
+{% endfor %}
+</ul>
+
+<h6><i class="fa fa-circle"></i> Objets de jeu</h6>
+
+{{ groupe.materiel|markdown }}
+		

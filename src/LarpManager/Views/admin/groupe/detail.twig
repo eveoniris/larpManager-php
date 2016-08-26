@@ -5,390 +5,177 @@
 
 	<ol class="breadcrumb">
 		<li><a href="{{ path('homepage') }}">Accueil</a></li>
-		{% if is_granted('ROLE_ADMIN', app.user) %}<li><a href="{{ path("groupe.admin.list") }}">Liste des groupes</a></li>{% endif %}
-		<li class="active">Détail d'un groupe</li>
+		<li><a href="{{ path("groupe.admin.list") }}">Liste des groupes</a></li>
+		<li class="active">{{ groupe.nom }}</li>
 	</ol>
-	
-<div class="container-fluid">
-	<div class="row">
-		<div class="col-xs-12 col-md-6">
-		
 						
-			<div class="well well-sm bs-component">
-				<h4>
-					{{ groupe.numero|default('?') }} - {{ groupe.nom }}
-				</h4>
-				{% if groupe.lock %}
-					<p class="text-danger">
-					!! Groupe verouillé !! <a class="btn btn-primary" role="button" href="{{ path('groupe.unlock', {'groupe' : groupe.id}) }}"><i class="fa fa-unlock" aria-hidden="true"></i></a>
-					</p>
-				{% else %}
-					<p class="text-success">
-					Groupe déverouillé <a class="btn btn-danger" role="button" href="{{ path('groupe.lock', {'groupe' : groupe.id}) }}"><i class="fa fa-lock" aria-hidden="true"></i></a>
-					</p>
-				{% endif %}
-			</div>			
-		  						    		
-	    	<div class="list-group">
-	    		
-	    		<div class="list-group-item">
-		    		<h4 class="list-group-item-heading">Description <small>(Visible par tous)</small></h4>
-    				<p class="list-group-item-text">
-    				{% if not groupe.description %}
-    					<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
-    					Attention, ce groupe n'a pas de description.
-    				{% else %}
-    					{{ groupe.description|markdown }}
-    				{% endif %}
-    				</p>
-   	    		</div>
-						
+			<div class="well well-sm">
 
-				<div class="list-group-item">
-	    			<h4 class="list-group-item-heading">Pays</h4>
-	    			<p class="list-group-item-text">
-	    				{% if groupe.territoire %}
-	    					<a href="{{ path('territoire.admin.detail', {'territoire': groupe.territoire.id}) }}">{{ groupe.territoire.nom }}</a>
-	    				{% else %}
-	    					Ce groupe n'est pas rataché à un pays.
-	    				{% endif %}
-	    			</p>
-	    			<p class="list-group-item-text">
-	    				<a href="{{ path('groupe.admin.pays.update', {'groupe': groupe.id}) }}">Modifier le pays</a>
-	    			</p>
-	    		</div>
-	    			
-	    		<div class="list-group-item">
-	    			<h4 class="list-group-item-heading">Territoire(s) contrôlé(s)</h4>
-	    			
-	    			{% for territoire in groupe.territoires %}
-		    			<p class="list-group-item-text">
-	    					<a href="{{ path('territoire.admin.detail', {'territoire': territoire.id}) }}">{{ territoire.nom }}</a>
-	    					&nbsp;/&nbsp;&nbsp;<span class="glyphicon glyphicon-minus" aria-hidden="true"></span><a href="{{ path('groupe.territoire.remove', {'groupe': groupe.id, 'territoire': territoire.id}) }}">Retirer</a>
-						</p>
-    				{% endfor %}
-    					<p class="list-group-item-text">
-    						<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-    						<a href="{{ path('groupe.territoire.add', {'groupe': groupe.id}) }}">Ajouter un territoire</a>
-    					</p>
-	    		</div>
-
-	    		<div class="list-group-item">
-	    			<h4 class="list-group-item-heading">Ressources fournies par les territoires</h4>
-	    			<h6 class="list-group-item-heading">Richesse</h6>
-	    			{% for territoire in groupe.territoires %}
-	    				<p class="list-group-item-text">
-	    					<strong>{{ territoire.tresor|default(0) }} PA</strong> fourni par <strong>{{ territoire.nom }}</strong>
-	    				</p>
-	    			{% endfor %}
-	    			<h6 class="list-group-item-heading">Ressources</h6>
-	    			{% for territoire in groupe.territoires %}
-	    				{% for ressource in territoire.exportations %}
-		    				<p class="list-group-item-text">
-		    					<strong>{{ ressource.label }}</strong> fourni par <strong>{{ territoire.nom }}</strong>
-		    				</p>
-	    				{% endfor %}
-	    			{% endfor %}
-	    			<h6 class="list-group-item-heading">Ingrédients</h6>
-	    			{% for territoire in groupe.territoires %}
-	    				{% for ingredient in territoire.ingredients %}
-	    					<p class="list-group-item-text">
-		    					<strong>{{ ingredient.label }}</strong> fourni par <strong>{{ territoire.nom }}</strong>
-		    				</p>
-		    			{% endfor %}
-	    			{% endfor %}
-	    			
-	    			<h6 class="list-group-item-heading">Quête commerciale</h6>
-	    			<p class="list-group-item-text">
-		    			<a href="{{ path('groupe.quete',{'groupe': groupe.id}) }}">Générer une quête commerciale</a>
-		    		</p>
-	    		</div>
-
-	    			
-	    		<div class="list-group-item">
-		    		<h4 class="list-group-item-heading">Scénariste</h4>
-    				<p class="list-group-item-text">
-    					{% if not groupe.scenariste %}
-    						<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
-	    					Attention, ce groupe n'a pas de scénariste.
-    					{% else %}
-    						{{ groupe.scenariste.username }} {{ groupe.scenariste.email }}
-    						{% if groupe.scenariste.etatCivil %}
-    							(&nbsp;{{ groupe.scenariste.etatCivil.nom }} {{ groupe.scenariste.etatCivil.prenom }}&nbsp;)
-    						{% endif %}
-    							
-    					{% endif %}
-    				</p>
-    				<p class="list-group-item-text">
-    					<span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>
-    					<a href="#">Contacter par mail</a>
-    				</p>
-	    		</div>
-	    			
-	    		<div class="list-group-item">
-	    			<h4 class="list-group-item-heading">Membres du groupe</h4>
-	    			<p class="list-group-item-text">
-	    				<ul>
-	    					{% if groupe.responsable %}<li><strong>{{ groupe.responsable.username }}</strong>&nbsp;(Responsable du groupe)</li>{% endif %}
-	    					<li><a href="{{ path('groupe.admin.participant.add', {'groupe': groupe.id}) }}">Ajouter un utilisateur dans ce groupe</a> ( places disponibles : {{ groupe.classeOpen - groupe.participants|length}})</li>
-	    				</ul>
-	    				<table class="table">
-	    					<thead>
-	    						<tr>
-	    							<th>Utilisateur</th>
-	    							<th>Nom prénom</th>
-	    							<th>Email</th>
-	    							<th>Personnage</th>
-	    							<th>Classe</th>
-	    							<th>Restauration</th>
-    								<th></th>
-	    						</tr>
-	    					</thead>
-	    					<tbody>
-							{% for participant in groupe.participants %}
-								<tr>
-									<td>{{ participant }}</td>
-									<td>
-										{% if participant.user.etatCivil %}
-											{{ participant.user.etatCivil.nom }} {{ participant.user.etatCivil.prenom }}
-										{% endif %}
-									</td>
-									<td>{{ participant.user.email }}</td>
-									<td>
-										{% if participant.personnage %}
-											<a href="{{ path('personnage.admin.detail', {'personnage': participant.personnage.id}) }}">{{ participant.personnage.nom }} {{ participant.personnage.surnom }}</a>
-										{% else %}
-											<a href="{{ path('personnage.admin.add', {'participant': participant.id}) }}">Creer le personnage</a>
-										{% endif %}
-									</td>
-									<td>
-										{% if participant.personnage %}
-											{{ participant.personnage.classeName }}
-										{% endif %}
-									</td>
-									<td>
-										{% if participant.getTavernId %}
-											{{ app['larp.manager'].getTavern(participant) }}
-										{% else %}
-											Rien
-										{% endif %}
-									</td>
-									<td><a href="{{ path('groupe.admin.participant.remove', {'groupe': groupe.id, 'participant': participant.id}) }}">Retirer</a></td>
-								</tr>
-							{% endfor %}
-							</tbody>
-						</table>
-	    			</p>
-	    		</div>
-	    		
-	    		<div class="list-group-item">
-		    		<h4 class="list-group-item-heading">Trombinoscope</h4>
-
-					<div class="row">
-					{% for participant in  groupe.participants %}
-						<div class="col-xs-6 col-md-3">
-							{% if participant.user.trombineUrl %}
-								<img width="160" src="{{ path('trombine.get', {'trombine' : participant.user.trombineUrl }) }}" />
-								{% if participant.personnage %}
-									<div>{{ participant.personnage.publicName }}</div>
-								{% endif %}
-								<div>{{ participant.user.etatCivil.nom }} {{ participant.user.etatCivil.prenom }}</div>
-							{% endif %}
+				<div class="row">
+					<div class="col-md-8">
+						<div class="header">
+							<h5>{{ groupe.numero|default('?') }} - {{ groupe.nom }}</h5>
 						</div>
-					{% endfor %}
-					</div>
-				</div>
-	    			
-	    		<div class="list-group-item">
-		    		<h4 class="list-group-item-heading">Code</h4>
-    				<p class="list-group-item-text">
-    					<strong>{{ groupe.code }}</strong>
-    				</p>
-    				<p class="list-group-item-text">
-    					Ce code permet à des joueurs invité par le chef de groupe de participer au groupe.
-    				</p>
-	    		</div>
-	    			
-	    		<div class="list-group-item">
-		    		<h4 class="list-group-item-heading">Jeu stratégique</h4>
-    				<p class="list-group-item-text">
-    				{% if groupe.jeuStrategique %}
-    					<span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span>
-		    			participe au jeu stratégique.
-		    		{% else %}
-    					ne participe pas au jeu stratégique.
-    				{% endif %}
-		    		</p>
-	    		</div>
-	    			
-	    		<div class="list-group-item">
-    				<h4 class="list-group-item-heading">Jeu maritime</h4>
-    				<p class="list-group-item-text">
-    				{% if groupe.jeuMaritime %}
-    					<span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span>
-		    			participe au jeu maritime.
-		    		{% else %}
-    					ne participe pas au jeu maritime.
-    				{% endif %}
-		    		</p>
-		    	</div>
-		    		
-		    	<div class="list-group-item">
-    				<h4 class="list-group-item-heading">Composition du groupe</h4>
-    				<p class="list-group-item-text"><strong>Nombre de place ouverte : </strong>{{ groupe.classeOpen }}</p>
-    				<p class="list-group-item-text">
-    					{% if groupe.classes|length == 0 %}
-    					<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
-	    					Attention, ce groupe n'a pas de classes définies.
-    					{% else %}
-    						{% for classe in groupe.classes %}
-    							- {{ classe }}<br />
-    						{% endfor %}
-    					{% endif %}
-    				</p>
-    			</div>
-    			
-    			<div class="list-group-item">
-    				<h4 class="list-group-item-heading">Alliés</h4>
-					{% for alliance in groupe.alliances %}
-	    				<p class="list-group-item-text">
-	    					{% if alliance.groupe == groupe %}
-								{{ alliance.requestedGroupe }}
-							{% else %}
-								{{ alliance.groupe }}
-							{% endif %}
-	    				</p>
-    				{% endfor %}
-    				{% for alliance in groupe.waitingAlliances %}
-	    				<p class="list-group-item-text">
-	    					{% if alliance.groupe == groupe %}
-	    						Vous avez demandé une alliance avec <strong>{{ alliance.requestedGroupe }}</strong>.
-	    					{% else %}
-	    						Sollicité pour une alliance par <strong>{{ alliance.groupe }}</strong>.
-	    					{% endif %}
-	    				</p>
-    				{% endfor %}
-    			</div>
-    			
-    			<div class="list-group-item">
-    				<h4 class="list-group-item-heading">Ennemis</h4>
-    				{% for ennemi in groupe.ennemies %}
-    					<p class="list-group-item-text">
-    						{% if ennemi.groupe == groupe %}
-								Vous avez déclaré la guerre à <strong>{{ ennemi.requestedGroupe }}</strong>.
-							{% else %}
-								<strong>{{ ennemi.groupe }}</strong> vous a déclaré la guerre.
-							{% endif %}
-    					</p>
-    				{% endfor %}
-    				{% for war in groupe.waitingPeace %}
-    					<p class="list-group-item-text">
-    						{% if war.groupe == groupe %}
-    							Vous avez demandé la paix avec <strong>{{ war.requestedGroupe }}</strong>.
-    						{% else %}
-    							<strong>{{ war.groupe }}</strong> propose la paix.
-    						{% endif %}
-    					</p>
-    				{% endfor %}
-    			</div>
-
-    			<div class="list-group-item">
-    				<h4 class="list-group-item-heading">Gns</h4>
-					
-					<p class="list-group-item-text">
-						{{ groupe.gns|join(', ') }}
-					</p>
-				</div>
-    				    				
-
-	  			<div class="list-group-item">
-		  			<div class="btn-group" role="group" aria-label="...">
-		  				<a  class="btn btn-primary" role="button" href="{{ path('groupe.update', {index : groupe.id}) }}">Modifier</a>
-					</div>
-				</div>
-  			</div>
-		</div>
-		
-		<div class="col-xs-12 col-md-6">
-		
-			<div class="panel panel-default">
-				<div class="panel-heading">Restauration</div>
-				<div class="panel-body">
-					<div class="btn-group" role="group" aria-label="...">
-						<a class="btn btn-primary" role="button" href="{{ path('groupe.restauration', {'groupe' : groupe.id}) }}">Restauration</a>
-					</div>
-				</div>
-			</div>
-		
-			<div class="panel panel-default">
-				<div class="panel-heading">Impression</div>
-				<div class="panel-body">
-					<div class="btn-group" role="group" aria-label="...">
-						<a class="btn btn-primary" role="button" href="{{ path('groupe.print.materiel', {'groupe' : groupe.id}) }}">Matériel necessaire (personnages)</a>
-						<a class="btn btn-primary" role="button" href="{{ path('groupe.print.perso', {'groupe' : groupe.id}) }}">Fiche de perso</a>
-						<a class="btn btn-primary" role="button" href="{{ path('groupe.print.background', {'groupe' : groupe.id}) }}">Background</a>
-					</div>
-				</div>
-			</div>
-			
-			<div class="panel panel-default">
-				<div class="panel-heading">Matériel</div>
-				<div class="panel-body">
-					<a href=" {{ path('groupe.admin.documents', {'groupe': groupe.id}) }}">Modifier la liste de documents</a>
-					<ul>
-					{% for document in groupe.documents %}
-						<li><a href="{{ path('document.detail', {'document':document.id}) }}"><strong>{{ document.code }}</strong>&nbsp;{{ document.titre }}</a></li>
-					{% endfor %}
-					</ul>
-					{{ groupe.materiel|markdown }}
-					<a class="btn btn-primary" role="button" href="{{ path('groupe.print.materiel.groupe', {'groupe' : groupe.id}) }}">Imprimer</a>
-				</div>
-			</div>
-				
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					Backgrounds
-					<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Ajouter" href="{{ path('background.add', {'groupe': groupe.id}) }}"><i class="fa fa-plus"></i></a>
-				</div>
-				<div class="panel-body">
-					<div class="list-group">
-						{% for background in groupe.backgrounds %}
-							<div class="list-group-item">
-								<div class="list-group-item-heading">
-									<h6>
-										{% if background.gn %}
-											GN {{ background.gn.label }} -&nbsp;
-										{% endif %}
-										<a href="{{ path('background.detail', {'background': background.id})  }}">{{ background.titre|default('Pas de titre') }}</a>
-									
-										<div class="btn-toolbar pull-right" role="toolbar" aria-label="...">
-											<div class="btn-group" role="group" aria-label="...">
-												<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Modifier" href="{{ path('background.update', {'background': background.id}) }}"><i class="fa fa-pencil"></i></a>
-												<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Supprimer" href="{{ path('background.delete', {'background': background.id}) }}"><i class="fa fa-eraser"></i></a>
-											</div>
-										</div>
-									</h6>
+								
+								
+						<div>
+						  	<!-- Nav tabs -->
+							<ul class="nav nav-tabs" role="tablist">
+	    						<li role="presentation" class="active"><a href="#detail" aria-controls="detail" role="tab" data-toggle="tab">Détail</a></li>
+	    						<li role="presentation"><a href="#membres" aria-controls="membres" role="tab" data-toggle="tab">Membres</a></li>
+	    						<li role="presentation"><a href="#backgrounds" aria-controls="backgrounds" role="tab" data-toggle="tab">Backgrounds</a></li>
+	    						<li role="presentation"><a href="#enveloppe" aria-controls="enveloppe" role="tab" data-toggle="tab">Enveloppe</a></li>
+	    					</ul>
+	    					
+	    					<!-- Tab panes -->
+							<div class="tab-content">
+								<div role="tabpanel" class="tab-pane active" id="detail">
+									{% include 'admin/groupe/fragment/detail.twig' with {'groupe': groupe} %}
 								</div>
-								<p class="list-group-item-text text-warning">
-						    		{{ background.visibility|explainVisibility }}
-						    	</p>
-						    	<p class="list-group-item-text">
-						    		Auteur : {{ background.user.username }}
-						    	</p>
-						    	<p class="list-group-item-text">
-						    		Création  : {{ background.creationDate|date('Y-m-d H:i:s') }}
-						    	</p>
-						    	<p class="list-group-item-text">
-						    		Dernière modification  : {{ background.updateDate|date('Y-m-d H:i:s') }}
-						    	</p>
-					    	</div>
-				    	{% endfor %}
-				    </div>
-			    </div>	
-			</div>
-		</div>
-	</div>
-</div>
+								<div role="tabpanel" class="tab-pane" id="membres">
+									{% include 'admin/groupe/fragment/membres.twig' with {'groupe': groupe} %}
+								</div>
+								<div role="tabpanel" class="tab-pane" id="backgrounds">
+									{% include 'admin/groupe/fragment/backgrounds.twig' with {'groupe': groupe} %}
+								</div>
+								<div role="tabpanel" class="tab-pane" id="enveloppe">
+									{% include 'admin/groupe/fragment/enveloppe.twig' with {'groupe': groupe} %}
+								</div>
+							</div>
+						</div>
+    				
+						
+					</div>
+					<div class="col-md-4">
+						<ul class="list-group">
+							<li class="list-group-item">
+								<div class="btn-group" role="group" aria-label="...">
+									<div class="btn-group">
+										<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+										    <i class="fa fa-print"></i>
+	  									</button>
+	  									<ul class="dropdown-menu">
+	  										<li><a href="{{ path('groupe.print.materiel.groupe', {'groupe' : groupe.id}) }}">Matériel necessaire (groupe)</a></li>
+	  										<li><a href="{{ path('groupe.print.materiel', {'groupe' : groupe.id}) }}">Matériel necessaire (personnages)</a></li>
+											<li><a href="{{ path('groupe.print.perso', {'groupe' : groupe.id}) }}">Fiche de perso</a></li>
+											<li><a href="{{ path('groupe.print.background', {'groupe' : groupe.id}) }}">Background</a></li>
+	  									</ul>
+	  								</div>
+									<div class="btn-group">
+										<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+										    <i class="fa fa-bars"></i>
+	  									</button>
+										
+										<ul class="dropdown-menu">
+											{% if groupe.lock %}
+												<li><a href="{{ path('groupe.unlock', {'groupe' : groupe.id}) }}"><i class="fa fa-unlock fa-fw"></i> Ouvrir</a></li>
+											{% else %}
+												<li><a href="{{ path('groupe.lock', {'groupe' : groupe.id}) }}"><i class="fa fa-lock fa-fw"></i> Fermer</a></li>
+											{% endif %}
+											{% if groupe.free %}
+												<li><a href="{{ path('groupe.unvailable', {'groupe' : groupe.id}) }}">Rendre indisponible</a></li>
+											{% else %}
+												<li><a href="{{ path('groupe.available', {'groupe' : groupe.id}) }}">Rendre disponible</a></li>
+											{% endif %}
+											<li role="separator" class="divider"></li>
+											<li><a href="">Choisir le scénariste</a></li>
+											<li><a href="">Choisir le responsable</a></li>
+											<li role="separator" class="divider"></li>
+											<li><a href=""><i class="fa fa-pencil"></i> Modifier la description</a></li>
+											<li><a href="{{ path('groupe.admin.pays.update', {'groupe': groupe.id}) }}"><i class="fa fa-pencil"></i> Modifier le pays</a></li>
+											<li><a href="{{ path('groupe.territoire.add', {'groupe': groupe.id}) }}"><i class="fa fa-plus"></i> Ajouter un territoire</a></li>
+											<li><a href="{{ path('groupe.quete',{'groupe': groupe.id}) }}">Générer une quête commerciale</a></li>
+											<li><a href="">Type de jeu</a></li>
+											<li role="separator" class="divider"></li>
+											<li><a href="{{ path('groupe.place', {'index':groupe.id}) }}">Modifier le nombre de place</a></li>
+											<li><a href="{{ path('groupe.admin.participant.add', {'groupe': groupe.id}) }}">Ajouter un utilisateur</a></li>
+											<li><a href="">Modifier le code</a></li>
+											<li><a href="">Modifier la composition du groupe</a></li>
+										</ul>
+									</div>
+									<a role="button" class="btn btn-default" href="{{ path('groupe.restauration', {'groupe' : groupe.id}) }}">
+										<i class="fa fa-coffee"></i>
+	  								</a>
+								</div>
+							
+							</li>
+							<li class="list-group-item">
+								{% if groupe.lock %}
+									Le groupe est <strong class="text-warning">fermé</strong>.
+								{% else %}
+									Le groupe est <strong class="text-success">ouvert</strong>.
+								{% endif  %}
+							</li>
+							<li class="list-group-item">
+								{% if groupe.free %}
+									Le groupe est <strong class="text-success">disponible</strong>.
+								{% else %}
+									Le groupe est <strong class="text-warning">réservé</strong>.
+								{% endif  %}
+							</li>
+							<li class="list-group-item">
+								<strong>Scénariste : </strong>
+						
+								{% if not groupe.scenariste %}
+		    						<span class="fa fa-exclamation-triangle" aria-hidden="true"></span>
+			    					Attention, ce groupe n'a pas de scénariste.
+		    					{% else %}
+		    						{% if groupe.scenariste.etatCivil %}
+		    							{{ groupe.scenariste.etatCivil.nom }} {{ groupe.scenariste.etatCivil.prenom }}
+		    						{% endif %}
+		    						&nbsp;{{ groupe.scenariste.email }}
+		    					{% endif %}
+							</li>
+							
+							<li class="list-group-item">
+								<strong>Responsable : </strong>
+						
+								{% if not groupe.responsable %}
+									<span class="fa fa-exclamation-triangle" aria-hidden="true"></span>
+			    					Attention, ce groupe n'a pas de responsable.
+								{% else %}
+									{% if groupe.responsable.etatCivil %}
+										{{ groupe.responsable.etatCivil.nom }} {{ groupe.responsable.etatCivil.prenom }}
+									{% endif %}
+									&nbsp;{{ groupe.responsable.email }}
+								{% endif %}
+							</li>
+							
+							<li class="list-group-item">
+								<strong>places disponibles : </strong>
+								{{ groupe.classeOpen - groupe.participants|length}}
+							</li>
+							
+							<li class="list-group-item">
+								<strong>Code : </strong>
+								{{ groupe.code }}
+							</li>
+							
+							
+							<li class="list-group-item">
+		    					<strong>Jeu stratégique : </strong>
+    				
+    							{% if groupe.jeuStrategique %}
+    								<span class="text-success">participe.</span>
+		    					{% else %}
+    								<span class="text-warning">ne participe pas.</span>
+    							{% endif %}
+		    				</li>
+	    			
+	    					<li class="list-group-item">
+    							<strong>Jeu maritime : </strong>
+			    				
+			    				{% if groupe.jeuMaritime %}
+					    			<span class="text-success">participe.</span>
+					    		{% else %}
+			    					<span class="text-warning">ne participe pas.</span>
+			    				{% endif %}
+					    	</li>
+							
+						</ul>						
+					</div>
+				</div>
+			</div>			
 	
 			
 {% endblock %}

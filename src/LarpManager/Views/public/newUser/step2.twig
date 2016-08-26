@@ -1,0 +1,35 @@
+{% extends "layout.twig" %}
+
+{% block title %}Configuration du compte - Etape 2{% endblock title %}
+
+{% block content %}
+<div class="jumbotron">
+  <h1><i class="fa fa-ambulance " aria-hidden="true"></i> Vos informations personnelles</h1>
+  <hr />
+  <div class="row">
+  	<div class="col-md-6">
+  		<p>Ces informations pourront être transmises aux services de secours présents pendant les événements organisés par l'association Eve-Oniris.</p>
+  		<p>En conformité avec les dispositions de la loi du 06/01/1978, ce site fait l'objet d'une déclaration préalable auprès de la Commission Nationale Informatique et Liberté (CNIL). Le numéro de déclaration est le n°1902381v0.</p>
+  		<p>Les champs marqués d'un astérix rouge sont obligatoires</p>
+  	</div>
+  	<div class="col-md-6">
+		  <form class="form" action="{{ path('newUser.step2') }}" method="POST" {{ form_enctype(form) }}>
+			{% form_theme form 'Form/bootstrap_3_horizontal_layout.html.twig' %}
+			{{ form_widget(form) }}
+			 <div class="clearfix">
+			  	<div class="pull-right">
+			  		<p>
+			  			<a class="btn btn-primary btn-lg" href="{{ path('newUser.step1') }}" role="button"><i class="fa fa-angle-double-left" aria-hidden="true"></i> Etape précédente</a>
+			  			<button type="submit" class="btn btn-primary btn-lg" >Etape suivante <i class="fa fa-angle-double-right" aria-hidden="true"></i></button>
+			  		</p>
+			  	</div>
+			  </div>
+			  {{ form_rest(form) }}
+		  </form>
+	</div>
+  </div>
+  
+ 
+</div>
+
+{% endblock content %}

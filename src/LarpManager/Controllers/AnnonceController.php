@@ -22,8 +22,13 @@ namespace LarpManager\Controllers;
 
 use Symfony\Component\HttpFoundation\Request;
 use Silex\Application;
-use LarpManager\Form\AnnonceForm;
 use JasonGrimes\Paginator;
+
+use LarpManager\Form\AnnonceForm;
+use LarpManager\Form\AnnonceDeleteForm;
+use LarpManager\Entities\Annonce;
+
+
 
 /**
  * LarpManager\Controllers\AnnonceController
@@ -41,7 +46,7 @@ class AnnonceController
 	 */
 	public function listAction(Request $request, Application $app)
 	{
-		$order_by = $request->get('order_by') ?: 'id';
+		$order_by = $request->get('order_by') ?: 'creation_date';
 		$order_dir = $request->get('order_dir') == 'DESC' ? 'DESC' : 'ASC';
 		$limit = (int)($request->get('limit') ?: 50);
 		$page = (int)($request->get('page') ?: 1);
@@ -70,14 +75,13 @@ class AnnonceController
 	
 	/**
 	 * Ajout d'une annonce
+	 * 
 	 * @param Request $request
 	 * @param Application $app
 	 */
 	public function addAction(Request $request, Application $app)
-	{
-		$annonce = new \LarpManager\Entities\Annonce();
-		
-		$form = $app['form.factory']->createBuilder(new AnnonceForm(), $annonce)
+	{		
+		$form = $app['form.factory']->createBuilder(new AnnonceForm(), new Annonce())
 			->add('save','submit', array('label' => "Sauvegarder"))
 			->add('save_continue','submit', array('label' => "Sauvegarder & continuer"))
 			->getForm();
@@ -109,27 +113,15 @@ class AnnonceController
 	}
 	
 	/**
-	 * Mise à jour d'une classe
+	 * Mise à jour d'une annnonce
+	 * 
 	 * @param Request $request
 	 * @param Application $app
 	 */
-	public function updateAction(Request $request, Application $app)
-	{
-		$id = $request->get('index');
-		
-		$annonce = $app['orm.em']->find('\LarpManager\Entities\Annonce',$id);
-		
+	public function updateAction(Request $request, Application $app, Annonce $annonce)
+	{		
 		$form = $app['form.factory']->createBuilder(new AnnonceForm(), $annonce)
 			->add('update','submit', array('label' => "Sauvegarder"))
-			->add('delete','button', array(
-					'label' => "Supprimer",
-					'attr' => array(
-						'value' => "Submit",
-						'data-toggle' => "modal",
-						'data-target' => "#confirm-submit",
-						'class' => 'btn btn-default'
-					),
-			))
 			->getForm();
 		
 		$form->handleRequest($request);
@@ -138,22 +130,11 @@ class AnnonceController
 		{
 			$annonce = $form->getData();
 
-			if ($form->get('update')->isClicked())
-			{
-				$annonce->setUpdateDate(new \Datetime('NOW'));
+			$annonce->setUpdateDate(new \Datetime('NOW'));
 				
-				$app['orm.em']->persist($annonce);
-				$app['orm.em']->flush();
-				$app['session']->getFlashBag()->add('success', 'L\'annonce a été mise à jour.');
-			}
-			else
-			{
-				$app['orm.em']->remove($annonce);
-				$app['orm.em']->flush();
-					
-				$app['session']->getFlashBag()->add('success', 'L\'annonce a été supprimée.');
-			}
-		
+			$app['orm.em']->persist($annonce);
+			$app['orm.em']->flush();
+			$app['session']->getFlashBag()->add('success', 'L\'annonce a été mise à jour.');
 			return $app->redirect($app['url_generator']->generate('annonce.list'));
 		}
 			
@@ -165,24 +146,45 @@ class AnnonceController
 	
 	/**
 	 * Détail d'une annonce
+	 * 
 	 * @param Request $request
 	 * @param Application $app
 	 */
-	public function detailAction(Request $request, Application $app)
+	public function detailAction(Request $request, Application $app, Annonce $annonce)
 	{
-		$id = $request->get('index');
+		return $app['twig']->render('admin/annonce/detail.twig', array('annonce' => $annonce));
+	}
+	
+	/**
+	 * Suppression d'une annonce
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Annonce $annonce
+	 */
+	public function deleteAction(Request $request, Application $app, Annonce $annonce)
+	{
+		$form = $app['form.factory']->createBuilder(new AnnonceDeleteForm(), $annonce)
+			->add('delete','submit', array('label' => "Supprimer"))
+			->getForm();
 		
-		$annonce = $app['orm.em']->find('\LarpManager\Entities\Annonce',$id);
+		$form->handleRequest($request);
 		
-		if ( $annonce )
+		if ( $form->isValid() )
 		{
-			return $app['twig']->render('admin/annonce/detail.twig', array('annonce' => $annonce));
-		}
-		else
-		{
-			$app['session']->getFlashBag()->add('error', 'L\'annonce n\'a pas été trouvée.');
+			$annonce = $form->getData();
+			
+			$app['orm.em']->remove($annonce);
+			$app['orm.em']->flush();
+				
+			$app['session']->getFlashBag()->add('success', 'L\'annonce a été supprimée.');
 			return $app->redirect($app['url_generator']->generate('annonce.list'));
 		}
+		
+		return $app['twig']->render('admin/annonce/delete.twig', array(
+				'annonce' => $annonce,
+				'form' => $form->createView(),
+		));
 	}
 
 }

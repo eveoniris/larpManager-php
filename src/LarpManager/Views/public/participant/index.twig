@@ -1,0 +1,169 @@
+{% extends "layout.twig" %}
+
+{% block title %}{{ gn.label }}{% endblock title %}
+
+{% block content %}
+
+
+<ol class="breadcrumb">
+	<li><a href="{{ path('homepage')  }}">Accueil</a></li>
+	<li class="active">Interface de gestion de {{ gn.label }}</li>
+</ol>
+
+<div class="row">
+	<div class="col-md-3">
+		<div class="well well-sm">
+			<div class="header">
+				<h5>Vous</h5>
+			</div>
+			
+			<ul class="list-group">
+				<li class="list-group-item">
+				{% if participant.groupe %}
+					<a href="">Votre groupe</a>
+				{% else %}
+					<a href="{{ path('groupe') }}">Rejoindre un groupe</a>
+				{% endif %}
+				</li>
+				
+				
+				
+				<li class="list-group-item">
+					{% if participant.personnage %}
+						<a href="{{ path('personnage.detail', {'personnage': participant.personnage.id}) }}">
+    						{{ participant.personnage.nom }} {{ participant.personnage.surnom }}&nbsp;--&nbsp;{{ participant.personnage.classeName }}
+    					</a>
+					{% else %}
+						Vous n'avez pas de personnage
+					{% endif %}
+				</li>
+
+				<li class="list-group-item">
+				{% if participant.personnageSecondaire %}
+ 					Personnage secondaire :&nbsp;<strong>{{ participant.personnageSecondaire.classe.label }}</strong>
+ 				{% else %}
+ 					Vous n'avez pas de personne secondaire.
+				{% endif %}
+				<a href="{{ path('participant.personnageSecondaire', {'participant': participant.id}) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Modifier</a>
+				</li>
+				
+				<li class="list-group-item">Groupe secondaire</li>
+				<li class="list-group-item">Background</li>
+			</ul>
+			
+			<div class="header">
+				<h5>Règles</h5>
+			</div>
+			<ul class="list-group">
+				<li class="list-group-item"><a href="{{ path('classe.list') }}">Les classes</a></li>
+				<li class="list-group-item"><a href="{{ path('competence.list') }}">Les compétences</a></li>
+				<li class="list-group-item"><a href="{{ path('rules') }}">Les règles</a></li>
+				<li class="list-group-item"><a href="{{ path('personnageSecondaire.list') }}">Les personnages secondaires</a></li>
+			</ul>
+			
+			<div class="header">
+				<h5>Univers</h5>
+			</div>
+			<ul class="list-group">
+				<li class="list-group-item"><a href="{{ path('world') }}">La carte</a></li>
+				<li class="list-group-item"><a href="{{ path('groupe') }}">Les groupes</a></li>
+				<li class="list-group-item"><a href="{{ path('groupeSecondaire.list') }}">Les groupes secondaires</a></li>
+				<li class="list-group-item"><a href="{{ path('religion.list') }}">Les religions</a></li>
+			</ul>			
+			
+			<div class="header">
+	<h5>Mes billets</h5>
+</div>
+<ul class="list-group">
+	{% for billet in app.user.billets %}
+		<li class="list-group-item">
+			<i class="fa fa-ticket" aria-hidden="true"></i>&nbsp;
+			<a href="{{ path('user.gn.detail', {'gn':  billet.gn.id}) }}">{{ billet.gn.label }}</a> 
+			&nbsp;/&nbsp;{{ billet.label }} 
+		</li>
+	{% endfor %}
+</ul>
+
+
+		</div>
+	</div>
+	<div class="col-md-9">
+	
+		{% if not participant.billet 
+			or not participant.groupe
+			or not participant.personnage
+			or not participant.personnageSecondaire %}
+			<div class="panel panel-conan">
+				<div class="panel-heading">Rappel !</div>
+				<div class="panel-body">
+					{% if not participant.billet %}
+						<p class="text-danger"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i>Vous n'avez pas de billet. Vous devez impérativement avoir un Billet pour pouvoir rejoindre un groupe.</p>
+						<div class="clearfix">
+							<div class="pull-right">
+								<a class="btn btn-primary btn-lg" href="{{ path('gn.billetterie', {'gn': participant.gn.id}) }}">Billetterie</a>
+							</div>
+						</div>
+					{% endif %}
+					{% if not participant.groupe %}<p class="text-danger"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i>Vous n'êtes pas dans un groupe. Vous devez impérativement entrer dans un groupe pour pouvoir créer un personnage.</p>{% endif %}
+					{% if not participant.personnage %}<p class="text-danger"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i>Vous n'avez pas encore de personnage. Vous devez impérativement vous créer un personnage.</p>{% endif %}
+					{% if not participant.personnageSecondaire %}<p class="text-danger"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i>Vous n'avez pas encore de personnage secondaire. Vous devez impérativement choisir un personnage secondaire.</p>{% endif %}
+				</div>
+			</div>
+		{% endif %}
+		
+		
+		
+		<div class="panel panel-conan">
+			<div class="panel-heading">
+				Billet & restauration
+			</div>
+			<div class="panel-body">
+				<ul class="list-group">
+				{% if participant.billet %}
+				{% else %}
+					<li class="list-group-item">Vous n'avez pas de billet. Utilisez la billetterie pour en obtenir un.</li>
+				{% endif %}
+				<ul class="list-group">
+					{% for participantHasRestauration in participant.participantHasRestaurations %}
+						<li class="list-group-item">
+							<i class="fa fa-coffee" aria-hidden="true"></i>&nbsp;
+							{{ participantHasRestauration.restauration.label }}</strong> obtenu le {{ participantHasRestauration.date|date('Y-m-d') }}
+						</li>
+					{% else %}
+						<li class="list-group-item">Vous n'avez pas de restauration prévu pendant le jeu. Utilisez la billeterie si vous voulez bénéficier de repas et de ticket boissons pendant le jeu.</li>
+					{% endfor %}
+				</ul>
+			</div>
+		</div>
+		
+		<div class="panel panel-conan">
+			<div class="panel-heading">
+				Messages non lu
+			</div>
+			<div class="panel-body">
+				Vos message non lu
+			</div>
+		</div>
+		
+		<div class="panel panel-conan">
+			<div class="panel-heading">
+				Dernières réponses forum
+			</div>
+			<div class="panel-body">
+				Liste des dernières réponses sur le forum
+			</div>
+		</div>
+		
+		{% for annonce in participant.gn.annonces %}
+			<div class="panel panel-conan">
+				<div class="panel-heading">{{ annonce.title }}</div>
+				<div class="panel-body">
+					{{ annonce.text|markdown }}
+				</div>
+			</div>
+		{% endfor %}
+
+	</div>
+</div>
+
+{% endblock %}

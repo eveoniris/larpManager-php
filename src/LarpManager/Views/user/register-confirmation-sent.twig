@@ -3,12 +3,18 @@
 {% block title %}Email confirmation envoyé{% endblock %}
 
 {% block content %}
-
-	<div class="well well-sm">
-		<h1>Merci !</h1>
-
-    	<p>Un email a été envoyé à <strong>{{ email }}</strong>.</p>
-
-    	<p>Merci de cliquer sur le lien présent dans le message pour activer votre compte.</p>
-	</div>
+        <div class="row">
+			<div class="col-md-4">&nbsp;</div>
+			<div class="col-md-4">
+				<div class="well well-sm">
+					<h2>Merci !</h2>
+					<blockquote>
+				    	<p>Un email a été envoyé à <strong>{{ email }}</strong>.</p>
+				    	<p>Merci de cliquer sur le lien présent dans le message pour activer votre compte.</p>
+				    	<p>Une fois votre compte activé, vous pourrez vous connecter à LarpManager.</p>
+			    	</blockquote>
+				</div>
+			</div>
+			<div class="col-md-4">&nbsp;</div>
+		</div>
 {% endblock %}

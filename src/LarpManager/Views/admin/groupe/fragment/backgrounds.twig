@@ -1,0 +1,41 @@
+<div class="panel panel-default">
+				<div class="panel-heading">
+					Backgrounds
+					<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Ajouter" href="{{ path('background.add', {'groupe': groupe.id}) }}"><i class="fa fa-plus"></i></a>
+				</div>
+				<div class="panel-body">
+					<div class="list-group">
+						{% for background in groupe.backgrounds %}
+							<div class="list-group-item">
+								<div class="list-group-item-heading">
+									<h6>
+										{% if background.gn %}
+											GN {{ background.gn.label }} -&nbsp;
+										{% endif %}
+										<a href="{{ path('background.detail', {'background': background.id})  }}">{{ background.titre|default('Pas de titre') }}</a>
+									
+										<div class="btn-toolbar pull-right" role="toolbar" aria-label="...">
+											<div class="btn-group" role="group" aria-label="...">
+												<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Modifier" href="{{ path('background.update', {'background': background.id}) }}"><i class="fa fa-pencil"></i></a>
+												<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Supprimer" href="{{ path('background.delete', {'background': background.id}) }}"><i class="fa fa-eraser"></i></a>
+											</div>
+										</div>
+									</h6>
+								</div>
+								<p class="list-group-item-text text-warning">
+						    		{{ background.visibility|explainVisibility }}
+						    	</p>
+						    	<p class="list-group-item-text">
+						    		Auteur : {{ background.user.username }}
+						    	</p>
+						    	<p class="list-group-item-text">
+						    		Création  : {{ background.creationDate|date('Y-m-d H:i:s') }}
+						    	</p>
+						    	<p class="list-group-item-text">
+						    		Dernière modification  : {{ background.updateDate|date('Y-m-d H:i:s') }}
+						    	</p>
+					    	</div>
+				    	{% endfor %}
+				    </div>
+			    </div>	
+			</div>

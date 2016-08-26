@@ -29,6 +29,10 @@ use LarpManager\Form\FindJoueurForm;
 use LarpManager\Form\RestaurationForm;
 use LarpManager\Form\JoueurXpForm;
 
+use LarpManager\Form\ParticipantPersonnageSecondaireForm;
+
+use LarpManager\Entities\Participant;
+
 /**
  * LarpManager\Controllers\ParticipantController
  *
@@ -38,69 +42,56 @@ use LarpManager\Form\JoueurXpForm;
 class ParticipantController
 {
 	
-	/**
-	 * liste des participants
-	 *
-	 * @param Request $request
-	 * @param Application $app
-	 */
-	public function listAction(Request $request, Application $app)
-	{
-		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Participant');
-		$participants = $repo->findAllOrderedByUsernameGroupe();
-		return $app['twig']->render('admin/participant.twig', array('participants' => $participants));
-	}
-	
-	/**
-	 * liste des non participants
-	 *
-	 * @param Request $request
-	 * @param Application $app
-	 */
-	public function listNonAction(Request $request, Application $app)
-	{
-		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Participant');
-		$participants = $repo->findAllOrderedByUsernameNonGroupe();
-		return $app['twig']->render('admin/participantNon.twig', array('participants' => $participants));
-	}
-	
-	/**
-	 * liste des participants fédégn
-	 *
-	 * @param Request $request
-	 * @param Application $app
-	 */
-	public function listFedegnAction(Request $request, Application $app)
-	{
-		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Participant');
-		$participants = $repo->findAllOrderedByUsernameGroupeFedegn();
-		return $app['twig']->render('admin/participantFedegn.twig', array('participants' => $participants));
-	}
 
 	/**
-	 * liste des participants non fédégn
+	 * Interface Joueur d'un jeu
 	 *
-	 * @param Request $request
 	 * @param Application $app
+	 * @param Request $request
+	 * @param Gn $gn
 	 */
-	public function listFedegnNonAction(Request $request, Application $app)
+	public function indexAction(Application $app, Request $request, Participant $participant)
 	{
-		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Participant');
-		$participants = $repo->findAllOrderedByUsernameGroupeNonFedegn();
-		return $app['twig']->render('admin/participantFedegnNon.twig', array('participants' => $participants));
+		return $app['twig']->render('public/participant/index.twig', array(
+				'gn' => $participant->getGn(),
+				'participant' => $participant,
+		));
 	}
 	
 	/**
-	 * liste des participants non fédégn
+	 * Choix du personnage secondaire par un utilisateur
 	 *
 	 * @param Request $request
 	 * @param Application $app
 	 */
-	public function listFedegnPnjNonAction(Request $request, Application $app)
-	{
-		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Participant');
-		$participants = $repo->findAllOrderedByUsernameGroupePNJNonFedegn();
-		return $app['twig']->render('admin/participantFedegnPnjNon.twig', array('participants' => $participants));
+	public function personnageSecondaireAction(Request $request, Application $app, Participant $participant)
+	{	
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\PersonnageSecondaire');
+		$personnageSecondaires = $repo->findAll();
+	
+		$form = $app['form.factory']->createBuilder(new ParticipantPersonnageSecondaireForm(), $participant)
+			->add('choice','submit', array('label' => 'Enregistrer'))
+			->getForm();
+			
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$participant = $form->getData();
+			$app['orm.em']->persist($participant);
+			$app['orm.em']->flush();
+	
+			$app['session']->getFlashBag()->add('success','Le personnage secondaire a été enregistré.');
+						
+			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+		}
+	
+		return $app['twig']->render('public/participant/personnageSecondaire.twig', array(
+				'participant' => $participant,
+				'personnageSecondaires' => $personnageSecondaires,
+				'form' => $form->createView(),
+		));
+			
 	}
 	
 	/**

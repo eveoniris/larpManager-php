@@ -1,0 +1,25 @@
+<div class="header">
+	<h5>Vos jeux</h5>
+</div>
+
+<ul class="list-group">
+	{% for participant in participants %}
+		<li class="list-group-item">
+    		<a href="{{ path('participant.index', {'participant': participant.id}) }}">
+    			{{ participant.gn.label }}
+    		</a>
+			&nbsp;//&nbsp;
+    		{% if not participant.gn.isPast %}
+	    		{% if participant.billet %}
+	    			<span class="text-success">{{ participant.billet.label }}</span>
+	    		{% else %}
+	    			<span class="text-danger">Vous n'avez pas de billet !</span>
+	    		{% endif %}
+	    	{% else %}
+	    		<span class="text-notice">Le jeu est terminé</span>
+	    	{% endif %}
+    		
+    	</li>   				
+	{% endfor %}
+	<li class="list-group-item"><i class="fa fa-calendar" aria-hidden="true"></i>&nbsp;<a href="{{ path('user.gn.list') }}">Liste des jeux</a></li>
+</ul>

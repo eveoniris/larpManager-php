@@ -16,6 +16,7 @@ use LarpManager\Services\Manager\FedegnManager;
 
 use LarpManager\Services\Converter\AgeConverter;
 use LarpManager\Services\Converter\AllianceConverter;
+use LarpManager\Services\Converter\AnnonceConverter;
 use LarpManager\Services\Converter\BackgroundConverter;
 use LarpManager\Services\Converter\BilletConverter;
 use LarpManager\Services\Converter\ClasseConverter;
@@ -31,6 +32,7 @@ use LarpManager\Services\Converter\GroupeConverter;
 use LarpManager\Services\Converter\IngredientConverter;
 use LarpManager\Services\Converter\LieuConverter;
 use LarpManager\Services\Converter\MembreConverter;
+use LarpManager\Services\Converter\ParticipantConverter;
 use LarpManager\Services\Converter\PersonnageBackgroundConverter;
 use LarpManager\Services\Converter\PersonnageConverter;
 use LarpManager\Services\Converter\PersonnageLangueConverter;
@@ -107,6 +109,11 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 		// age converter
 		$app['converter.age'] = $app->share(function($app) {
 			return new AgeConverter($app['orm.em']);
+		});
+		
+		// age converter
+		$app['converter.annonce'] = $app->share(function($app) {
+			return new AnnonceConverter($app['orm.em']);
 		});
 		
 		// classe converter
@@ -283,10 +290,10 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 		$app['converter.restauration'] = $app->share(function($app) {
 			return new RestaurationConverter($app['orm.em']);
 		});
-		
+
 		// Restauration converter
-		$app['converter.userHasBillet'] = $app->share(function($app) {
-			return new UserHasBilletConverter($app['orm.em']);
+		$app['converter.participant'] = $app->share(function($app) {
+			return new ParticipantConverter($app['orm.em']);
 		});
 	}
 

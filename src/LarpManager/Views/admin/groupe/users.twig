@@ -1,0 +1,17 @@
+{% extends "layout.twig" %}
+
+{% block title %}{{ groupe.nom}} - membres{% endblock title %}
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path("groupe.admin.list") }}">Liste des groupes</a></li>
+		<li><a href="{{ path("groupe.detail", {'index':groupe.id}) }}">{{ groupe.nom }}</a></li>
+		<li class="active">Membres</li>
+	</ol>
+
+	<div class="well well-sm">
+		
+	</div>	    		
+				
+{% endblock content %}		    		

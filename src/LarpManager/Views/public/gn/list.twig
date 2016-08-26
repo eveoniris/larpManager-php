@@ -4,45 +4,52 @@
 
 {% block content %}
 
-	<ol class="breadcrumb">
-		<li><a href="{{ path('homepage')  }}">Accueil</a></li>
-		<li class="active">Liste des GNs</li>
-	</ol>
-								
 	<div class="well well-sm">
-		<div class="header"><h5>Liste des GNs</h5></div>
-		
-		<div class="list-group">
+		<ol class="breadcrumb">
+			<li><a href="{{ path('homepage')  }}">Accueil</a></li>
+			<li class="active">Liste des GNs</li>
+		</ol>
+	
+		<blockquote>
+			Voici la liste des jeux organisé par Eve-Oniris. Choisissez celui auquel vous vouler participer. Vous pourrez ainsi acceder aux différentes ressources (Règles, groupes, univers, billeterie) qui composent le jeu.
+		</blockquote>
+	</div>
+	
+	<div class="row">
 			{% for gn in gns %}
-				<div class="list-group-item">
-					
-						<div class="list-group-item-heading">
-							<h6>{{ gn.label }}, <small>du <strong>{{ gn.dateDebut|date('Y-m-d') }}</strong> au <strong>{{ gn.dateFin|date('Y-m-d') }}</strong></small></h6>
+				<div class="col-md-4">
+					<div class="panel panel-conan">
+						<div class="panel-heading">
+								{{ gn.label }}
 						</div>
-						<div class="list-group-item-body">
-							<div class="list-group-item-text">
-								{% if gn.description %}
-									{{ gn.description|markdown }}
-								{% else %}
-									Aucune description.
-								{% endif %}
+	  					<div class="panel-body">
+	  						<div class="row">
+	  							<div class="col-md-8">
+			  						<p>Du <strong>{{ gn.dateDebut|date('Y-m-d') }}</strong> au <strong>{{ gn.dateFin|date('Y-m-d') }}</strong></p>
+			    					{% if gn.description %}
+										{{ gn.description|markdown }}
+									{% else %}
+										Aucune description.
+									{% endif %}
+								</div>
+								<div class="col-md-4">														
+				  					<ul class="list-group">
+										<li class="list-group-item"><a href="{{ path('user.gn.detail', {'gn': gn.id}) }}"><i class="fa fa-eye" aria-hidden="true"></i>&nbsp;Plus d'informations</a></li>
+										{% if app.user.takePart(gn) %}
+											<li class="list-group-item"><span class="text-success">Vous participez à ce jeu</span></li>
+										{% else %}
+											<li class="list-group-item"><a href="{{ path('user.gn.participe', {'gn': gn.id}) }}"><i class="fa fa-check" aria-hidden="true"></i>&nbsp;Participer !</a></li>
+										{% endif %}
+									</ul>
+								</div>
 							</div>
-							<div class="list-group-item-text">
-								<a href="{{ path('user.gn.detail', {'gn': gn.id}) }}">Voir le détail du GN</a><br />
-								{% set userHasBillet = app.user.userHasBillet(gn) %}
-								{% if userHasBillet %}
-									<p class="text-success">
-										<i class="fa fa-check" aria-hidden="true"></i>&nbsp;Vous participez à ce GN.
-										<a href="{{ path('user.userHasBillet.detail', {'userHasBillet': userHasBillet.id }) }}">Voir votre billet</a>
-									</p>
-								{% endif %}
-							</div>
-						</div>
-					
-					
+	  					</div>
+					</div>
 				</div>
+
 			{% endfor %}
 		</div>
-	</div>
+		
+	
 
 {% endblock content %}

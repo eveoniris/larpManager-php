@@ -1,8 +1,3 @@
-.row [class*="col-"]{
-  margin-bottom: -99999px;
-  padding-bottom: 99999px;
-}
-
 .row{
   overflow: hidden; 
 }
@@ -18,10 +13,10 @@ html {
 }
 
 body {
-	font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+	/*font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;*/
 	font-size: 14px;
   	line-height: 1.42857143;
-  	color: #333;
+  	/*color: #333;*/
 	background-color: #fff;
 	background: url("../img/landscape2.jpg")no-repeat;
 	background-size: cover !important;
@@ -82,6 +77,23 @@ body {
   border: 0px none;
 }
 
+.white-box
+{
+	border: 1px solid #000;
+	background-color: #fff;
+	background: rgba(255, 255, 255, 0.9);
+	color: #000;
+	padding: 10px;
+}
+
+.jumbotron hr
+{
+    height: 12px;
+    border: 0;
+    box-shadow: inset 0 12px 12px -12px rgba(255, 255, 255, 0.5);
+}
+
+
 footer {
   position: absolute;
   bottom: 0;
@@ -105,6 +117,13 @@ ul.forum li
   border-color: #aaa;
 }
 
+.panel-conan > .panel-heading {
+    background: url("../img/header.png") repeat scroll 0% 0% / 100% 100% transparent;
+    color: white;
+    padding-left: 30px;
+    margin-top: 10px;
+}
+
 /**
  * Ajoute un asterix rouge si le champ est obligatoire
  */        
@@ -116,46 +135,6 @@ ul.forum li
 	margin-left: 5px;
 }
 
-/** 
- *	Icones 
- */
-
-[class^="icon-"],[class*=" icon-"]{
-	display:inline-block;
-	width:14px;
-	height:14px;
-	line-height:14px;
-	vertical-align:text-top;
-	background-image:url("../img/glyphicons-halflings.png");
-	background-position:14px 14px;
-	background-repeat:no-repeat;
-	*margin-right:.3em;
-}
-
-[class^="icon-"]:last-child,[class*=" icon-"]:last-child{
-	*margin-left:0;
-}
-.icon-plus-sign{
-	background-position:0 -96px;
-}
-.icon-pencil{
-	background-position:0 -72px;
-}
-.icon-document{
-	background-position:-24px -24px;
-}
-.icon-plus{
-	background-position:-408px -96px;
-}
-.icon-next-page{
-	background-position:-336px -72px;
-}
-.icon-prev-page{
-	background-position:-240px -72px;
-}
-.icon-first-page{
-	background-position:-192px -72px;
-}
-.icon-last-page{
-	background-position:-384px -72px;
+.form .form-control {
+	margin-bottom: 15px;
 }

@@ -21,6 +21,9 @@
 				</a>
 				<ul class="dropdown-menu">
 					{%  if app.user %}			
+						<li><a href="{{ path('user') }}">Mon compte</a></li>
+						<li><a href="{{ path('user.messagerie') }}">Ma messagerie</a></li>
+						<li><a href="{{ path('forum') }}">Forum</a></li>
 						<li><a href="{{ path('user.logout') }}">Déconnection</a></li>
 					{%  else %}
 						<li><a href="{{ path('user.login') }}">Connection</a></li>
@@ -126,12 +129,11 @@
 				</li>
 			{% endif %}
 			
-			{# Menus reservé aux utilisateurs #}
+			{# Menus reservé aux utilisateurs 
 			{% if is_granted('ROLE_USER', app.user) %}
 				<li class="dropdown">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Joueur<span class="caret"></span></a>
 					<ul class="dropdown-menu">
-						<li><a href="{{ path('forum') }}">Forum</a></li>
 						<li><a href="{{ path('competence.list') }}">Les compétences</a></li>
 						<li><a href="{{ path('classe.list') }}">Les classes</a></li>
 						<li><a href="{{ path('groupeSecondaire.list') }}">Les groupes secondaires</a></li>
@@ -143,17 +145,8 @@
 				</li>
 			{% endif %}
 			
-			{% if is_granted('ROLE_USER', app.user) %}
-				<li class="dropdown">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Compte<span class="caret"></span></a>
-					<ul class="dropdown-menu">
-						<li><a href="{{ path('user') }}">Mon compte</a></li>	
-						<li><a href="{{ path('user.messagerie') }}">Ma messagerie</a></li>
-						<li><a href="{{ path('user.billetterie') }}">Billetterie</a></li>									
-						<li><a href="{{ path('user.gn.list') }}">Liste des GNs</a></li>
-					</ul>
-				</li>	
-			{%  endif %}
+			
+			#}
 						
 			{% if is_granted('ADMIN_USER', app.user) %}
 			<li class="dropdown">
