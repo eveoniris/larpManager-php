@@ -1,0 +1,28 @@
+{% extends "layout.twig" %}
+
+{% block title %}Rejoindre un groupe{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Page d'accueil</a></li>
+		<li><a href="{{ path('participant.index', {'participant' : participant.id}) }}">{{ participant.gn.label }}</a></li>
+		<li class="active">Rejoindre un groupe</li>
+	</ol>
+	
+	<div class="well well-sm">
+
+		<div class="header">
+			<h5>{% trans %}subscribe_group_title{% endtrans %}</h5>
+		</div>
+							
+		<p>{% trans %}subscribe_group_explain{% endtrans %}</p>
+						
+						
+		<form action="{{ path('participant.groupe.join', {'participant': participant.id}) }}" method="POST" {{ form_enctype(form) }}>
+			{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+			{{ form(form) }}
+		</form>
+	</div>
+	
+{% endblock content %}

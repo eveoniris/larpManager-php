@@ -100,14 +100,7 @@ class GroupeControllerProvider implements ControllerProviderInterface
 				throw new AccessDeniedException();
 			}
 		};
-		
-		/**
-		 * Accueil groupe pour les joueurs
-		 */
-		$controllers->match('/','LarpManager\Controllers\GroupeController::accueilAction')
-			->bind("groupe")
-			->method('GET');
-			
+					
 		/**
 		 * Ajoute un nouveau personnage dans un groupe
 		 */

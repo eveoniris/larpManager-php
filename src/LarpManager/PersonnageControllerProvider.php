@@ -355,17 +355,6 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 			->method('GET|POST')
 			->convert('personnage', 'converter.personnage:convert')
 			->before($mustBeOrga);
-
-		/**
-		 * Détail d'un personnage
-		 * Accessible uniquement au proprietaire du personnage
-		 */
-		$controllers->match('/{personnage}/detail','LarpManager\Controllers\PersonnageController::detailAction')
-			->assert('personnage', '\d+')
-			->bind("personnage.detail")
-			->method('GET')
-			->convert('personnage', 'converter.personnage:convert')
-			->before($mustOwn);
 		
 		/**
 		 * Export du personnage
@@ -378,16 +367,6 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 			->convert('personnage', 'converter.personnage:convert')
 			->before($mustOwn);			
 		
-		/**
-		 * Ajout d'une compétence au personnage
-		 * Accessible uniquement au proprietaire du personnage
-		 */
-		$controllers->match('/{personnage}/competence/add','LarpManager\Controllers\PersonnageController::addCompetenceAction')
-			->assert('personnage', '\d+')
-			->bind("personnage.competence.add")
-			->method('GET|POST')
-			->convert('personnage', 'converter.personnage:convert')
-			->before($mustOwn);
 		
 		/**
 		 * Formulaire de choix du domaine de magie
@@ -491,28 +470,6 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 			->convert('personnage', 'converter.personnage:convert')
 			->convert('background', 'converter.personnageBackground:convert')
 			->before($mustBeOrga);			
-			
-		/**
-		 * Choix d'une religion
-		 * Accessible uniquement au proprietaire du personnage
-		 */
-		$controllers->match('/{personnage}/religion/add','LarpManager\Controllers\PersonnageController::addReligionAction')
-			->assert('personnage', '\d+')
-			->bind("personnage.religion.add")
-			->method('GET|POST')
-			->convert('personnage', 'converter.personnage:convert')
-			->before($mustOwn);
-		
-		/**
-		 * Choix d'une origine
-		 * Accessible uniquement au proprietaire du personnage, s'il n'a pas déjà choisi d'origine
-		 */
-		$controllers->match('/{personnage}/origin/add','LarpManager\Controllers\PersonnageController::updateOriginAction')
-			->assert('personnage', '\d+')
-			->bind("personnage.origin.add")
-			->method('GET|POST')
-			->convert('personnage', 'converter.personnage:convert')
-			->before($mustOwn);
 
 		/** Affichage de la page trombine */
 		$controllers->match('/{personnage}/trombine/update','LarpManager\Controllers\PersonnageController::trombineAction')
@@ -528,23 +485,6 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 			->bind('personnage.trombine')
 			->method('GET')
 			->convert('personnage', 'converter.personnage:convert');
-			
-		/**
-		 * Selection du personnage courant
-		 */
-		$controllers->match('/{personnage}/select','LarpManager\Controllers\PersonnageController::selectAction')
-			->assert('personnage', '\d+')
-			->bind("personnage.select")
-			->method('GET')
-			->convert('personnage', 'converter.personnage:convert')
-			->before($mustOwn);
-			
-		/**
-		 * De-Selection du personnage courant
-		 */
-		$controllers->match('/unselect','LarpManager\Controllers\PersonnageController::unselectAction')
-			->bind("personnage.unselect")
-			->method('GET');
 			
 		/**
 		 * Création d'un nouveau personnage

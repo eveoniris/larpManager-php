@@ -39,7 +39,6 @@ use LarpManager\Form\RequestPeaceForm;
 use LarpManager\Form\AcceptPeaceForm;
 use LarpManager\Form\RefusePeaceForm;
 use LarpManager\Form\CancelRequestedPeaceForm;
-use LarpManager\Form\GroupeInscriptionForm;
 use LarpManager\Form\GroupeDocumentForm;
 
 use LarpManager\Entities\Groupe;
@@ -559,24 +558,7 @@ class GroupeController
 				'groupe' => $groupe
 		));
 	}
-	
-	/**
-	 * Page d'accueil de gestion des groupes
-	 * 
-	 * @param Request $request
-	 * @param Application $app
-	 */
-	public function accueilAction(Request $request, Application $app)
-	{
-		$form = $app['form.factory']->createBuilder(new GroupeInscriptionForm(), array())
-			->add('subscribe','submit', array('label' => 'S\'inscrire'))
-			->getForm();
 		
-		return $app['twig']->render('public/groupe/accueil.twig', array(
-				'form' => $form->createView()
-		));
-	}
-	
 	/**
 	 * Visualisation des liens entre groupes
 	 * @param Request $request

@@ -1,0 +1,21 @@
+{# Religion #}
+<div class="header">
+	<h5>Religion</h5>
+</div>
+
+<div class="row">
+	<div class="col-sm-6">
+		<div class="list-group">
+			{% for personnageReligion in personnage.personnagesReligions %}
+				<a class="list-group-item" href="{{ path('forum.topic',{'index': personnageReligion.religion.topic.id }) }}">{{ personnageReligion.religion.label }} - {{ personnageReligion.religionLevel.label }}</a>
+			{% endfor %}
+		</div>
+	</div>
+	<div class="col-sm-6">
+		Vous pouvez choisir autant de religions que vous voulez. Attention toutefois, les règles suivantes s'appliquent :
+		<ul>
+			<li>Vous ne pouvez avoir qu'une seule religion au niveau "Fervent"</li>
+			<li>Si vous choisissez une religion au niveau "Fanatique", vous perdez toutes vos autres religions (un Fanatique n'a qu'une seule religion).</li>
+		</ul>			
+	</div>
+</div>

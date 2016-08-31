@@ -1,0 +1,58 @@
+{% extends "layout.twig" %}
+
+{% block title %}{{ personnage.publicName }}{% endblock title %}
+
+{% block content %}
+
+
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Page d'accueil</a></li>
+		<li><a href="{{ path('participant.index', {'participant' : participant.id}) }}">{{ participant.gn.label }}</a></li>
+		<li><a href="{{ path('participant.personnage', {'participant' : participant.id}) }}">{{ personnage.nom }} {{ personnage.surnom }}</a></li>
+		<li class="active">Achat d'une compétence</li>
+	</ol>
+	
+	<div class="row">
+		<div class="col-md-4">
+		
+			<div class="well well-sm">
+				<form action="{{ path('participant.competence.add',{'participant':participant.id}) }}" method="POST" {{ form_enctype(form) }}>
+					<fieldset>
+						<legend>{{ personnage.publicName }} - <small>Achat d'une compétence</small></legend>
+						
+						<ul class="list-group">
+							<li class="list-group-item">Vous disposez de <strong>{{ personnage.xp }}</strong> Points d'expériences.</li>
+							<li class="list-group-item">Vos compétences favorites sont : {{ personnage.classe.competenceFamilyFavorites|join(', ') }}</li>
+							<li class="list-group-item">Vos compétences normales sont : {{ personnage.classe.competenceFamilyNormales|join(', ') }}</li>
+							<li class="list-group-item">Les autres compétences sont méconnues</li>
+						</ul> 
+				
+						{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+			
+						{{ form_row(form.competenceId) }}
+						{{ form_rest(form) }}
+					</fieldset>
+				</form>
+			</div>
+		</div>
+		<div class="col-md-8">
+	
+			<div class="well well-sm">
+				<div class="header">
+					<h5>Détail des competences accessibles</h5>
+				</div>
+				
+				<div class="list-group">
+					{% for competence in competences|sort %}
+						<div class="list-group-item">
+							<div class="list-group-item-heading"><h6>{{ competence.label }} -- {{ app['personnage.manager'].getCompetenceCout(personnage, competence) }} XP</h6></div>
+							<div class="list-group-item-text">{{ competence.description|markdown }}</div>
+						</div>
+					{% endfor %}
+				</div>
+			</div>
+		</div>
+	</div>
+
+{% endblock content %}

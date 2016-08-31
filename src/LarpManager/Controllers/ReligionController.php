@@ -77,22 +77,7 @@ class ReligionController
 	
 		return $app['twig']->render('admin/religion/mail.twig', array('religions' => $religions));
 	}
-	
-	
-	/**
-	 * Liste des religions (pour les joueurs)
-	 * 
-	 * @param Request $request
-	 * @param Application $app
-	 */
-	public function listAction(Request $request, Application $app)
-	{
-		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Religion');
-		$religions = $repo->findAllOrderedByLabel();
 		
-		return $app['twig']->render('public/religion/list.twig', array('religions' => $religions));
-	}
-	
 	/**
 	 * Detail d'une religion
 	 * 
@@ -105,7 +90,7 @@ class ReligionController
 		
 		$religion = $app['orm.em']->find('\LarpManager\Entities\Religion',$id);
 		
-		return $app['twig']->render('religion/detail.twig', array('religion' => $religion));
+		return $app['twig']->render('admin/religion/detail.twig', array('religion' => $religion));
 	}
 	
 	/**
@@ -166,7 +151,7 @@ class ReligionController
 			}
 		}
 		
-		return $app['twig']->render('religion/add.twig', array(
+		return $app['twig']->render('admin/religion/add.twig', array(
 				'form' => $form->createView(),
 		));
 	}
@@ -234,7 +219,7 @@ class ReligionController
 			}
 		}		
 
-		return $app['twig']->render('religion/update.twig', array(
+		return $app['twig']->render('admin/religion/update.twig', array(
 				'religion' => $religion,
 				'form' => $form->createView(),
 		));
@@ -300,7 +285,7 @@ class ReligionController
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\ReligionLevel');
 		$religionLevels = $repo->findAllOrderedByIndex();
 	
-		return $app['twig']->render('religion/level/index.twig', array('religionLevels' => $religionLevels));
+		return $app['twig']->render('admin/religion/level/index.twig', array('religionLevels' => $religionLevels));
 	}
 	
 	/**
@@ -315,7 +300,7 @@ class ReligionController
 	
 		$religionLevel = $app['orm.em']->find('\LarpManager\Entities\ReligionLevel',$id);
 	
-		return $app['twig']->render('religion/level/detail.twig', array('religionLevel' => $religionLevel));
+		return $app['twig']->render('admin/religion/level/detail.twig', array('religionLevel' => $religionLevel));
 	}
 	
 	/**
@@ -357,7 +342,7 @@ class ReligionController
 			}
 		}
 	
-		return $app['twig']->render('religion/level/add.twig', array(
+		return $app['twig']->render('admin/religion/level/add.twig', array(
 				'form' => $form->createView(),
 		));
 	}
@@ -405,7 +390,7 @@ class ReligionController
 			}
 		}
 	
-		return $app['twig']->render('religion/level/update.twig', array(
+		return $app['twig']->render('admin/religion/level/update.twig', array(
 				'religionLevel' => $religionLevel,
 				'form' => $form->createView(),
 		));

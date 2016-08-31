@@ -37,16 +37,7 @@ use LarpManager\Form\MessageForm;
  */
 class GroupeSecondaireController
 {
-	/**
-	 * Page d'accueil de gestion des groupes secondaires
-	 * @param Request $request
-	 * @param Application $app
-	 */
-	public function accueilAction(Request $request, Application $app)
-	{
-		return $app['twig']->render('public/groupeSecondaire/accueil.twig', array());
-	}
-	
+
 	/**
 	 * Liste des groupes secondaires (pour les orgas)
 	 *
@@ -83,129 +74,6 @@ class GroupeSecondaireController
 		return $app['twig']->render('admin/groupeSecondaire/list.twig', array(
 				'groupeSecondaires' => $groupeSecondaires,
 				'paginator' => $paginator,
-				'form' => $form->createView(),
-		));
-	}
-	
-	/**
-	 * Liste des groupes secondaires (pour les joueurs)
-	 *
-	 * @param Request $request
-	 * @param Application $app
-	 */
-	public function listAction(Request $request, Application $app)
-	{
-		$order_by = $request->get('order_by') ?: 'label';
-		$order_dir = $request->get('order_dir') == 'DESC' ? 'DESC' : 'ASC';
-		$limit = (int)($request->get('limit') ?: 50);
-		$page = (int)($request->get('page') ?: 1);
-		$offset = ($page - 1) * $limit;
-	
-		$criteria = array();
-	
-		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\SecondaryGroup');
-		$groupeSecondaires = $repo->findBy(
-				$criteria,
-				array( $order_by => $order_dir),
-				$limit,
-				$offset);
-	
-		$numResults = $repo->findCount($criteria);
-	
-		$paginator = new Paginator($numResults, $limit, $page,
-				$app['url_generator']->generate('groupeSecondaire.list') . '?page=(:num)&limit=' . $limit . '&order_by=' . $order_by . '&order_dir=' . $order_dir
-				);
-	
-		return $app['twig']->render('public/groupeSecondaire/list.twig', array(
-				'groupeSecondaires' => $groupeSecondaires,
-				'paginator' => $paginator,
-		));
-	}
-	
-	/**
-	 * Postuler à un groupe secondaire
-	 * 
-	 * @param Request $request
-	 * @param Application $app
-	 */
-	public function postulerAction(Request $request, Application $app)
-	{	
-		$groupeSecondaire = $request->get('groupe');
-
-		/**
-		 * L'utilisateur doit avoir un personnage
-		 * @var Personnage $personnage
-		 */
-		$personnage = $app['user']->getPersonnage();
-		
-		if ( ! $personnage )
-		{
-			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créer un personnage avant de postuler à un groupe !');
-			return $app->redirect($app['url_generator']->generate('homepage'));
-		}
-
-		/**
-		 * Si le joueur est déjà postulant dans ce groupe, refuser la demande
-		 */
-		if ( $groupeSecondaire->isPostulant($personnage) )
-		{
-			$app['session']->getFlashBag()->add('error', 'Votre avez déjà postulé dans ce groupe. Inutile d\'en refaire la demande.');
-			return $app->redirect($app['url_generator']->generate('homepage'));
-		}
-		
-		/**
-		 * Si le joueur est déjà membre de ce groupe, refuser la demande
-		 */
-		if ( $groupeSecondaire->isMembre($personnage) )
-		{
-			$app['session']->getFlashBag()->add('error', 'Votre êtes déjà membre de ce groupe. Inutile d\'en refaire la demande.');
-			return $app->redirect($app['url_generator']->generate('homepage'));
-		}
-		
-		/**
-		 * Création du formulaire
-		 * @var unknown $form
-		 */		
-		$form = $app['form.factory']->createBuilder(new GroupeSecondairePostulerForm())
-			->add('postuler','submit', array('label' => "Postuler"))
-			->getForm();
-		
-		$form->handleRequest($request);
-		
-		if ( $form->isValid() )
-		{
-			$data = $form->getData();
-			
-			$postulant = new \LarpManager\Entities\Postulant();
-			$postulant->setPersonnage($app['user']->getPersonnage());
-			$postulant->setSecondaryGroup($groupeSecondaire);
-			$postulant->setExplanation($data['explanation']);
-			$postulant->setWaiting(false);
-		
-			$app['orm.em']->persist($postulant);
-			$app['orm.em']->flush();
-			
-			
-			// envoi d'un mail au chef du groupe secondaire
-			if ( $groupeSecondaire->getResponsable() )
-			{
-				$message = "Nouvelle candidature";
-				$message = \Swift_Message::newInstance()
-					->setSubject('[LarpManager] Nouvelle candidature')
-					->setFrom(array('noreply@eveoniris.com'))
-					->setTo(array($groupeSecondaire->getResponsable()->getParticipant()->getUser()->getEmail()))
-					->setBody($message);
-				 
-				$app['mailer']->send($message);
-			}
-			
-			$app['session']->getFlashBag()->add('success', 'Votre candidature a été enregistrée, et transmise au chef de groupe.');
-		
-			return $app->redirect($app['url_generator']->generate('homepage'));
-		}
-		
-		return $app['twig']->render('public/groupeSecondaire/postuler.twig', array(
-				'groupeSecondaire' => $groupeSecondaire,
 				'form' => $form->createView(),
 		));
 	}
@@ -482,24 +350,7 @@ class GroupeSecondaireController
 		return $app['twig']->render('admin/groupeSecondaire/detail.twig', array(
 				'groupeSecondaire' => $groupeSecondaire));
 	}
-		
-	/**
-	 * Affichage à destination d'un membre du groupe secondaire
-	 * @param Request $request
-	 * @param Application $app
-	 */
-	public function joueurAction(Request $request, Application $app)
-	{
-		$groupeSecondaire = $request->get('groupe');
-		
-		$personnage = $app['user']->getPersonnage();
-		$membre = $personnage->getMembre($groupeSecondaire);
-		
-		return $app['twig']->render('public/groupeSecondaire/detail.twig', array(
-				'groupeSecondaire' => $groupeSecondaire,
-				'membre' => $membre,
-		));		
-	}	
+
 	
 	/**
 	 * Accepter une candidature à un groupe secondaire

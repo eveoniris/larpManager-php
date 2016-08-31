@@ -96,14 +96,6 @@ class BackgroundControllerProvider implements ControllerProviderInterface
 			->convert('background', 'converter.background:convert')
 			->method('GET|POST')
 			->before($mustBeScenariste);
-		
-		/**
-		 * Affiche les background d'un utilisateur
-		 */
-		$controllers->match('/joueur','LarpManager\Controllers\BackgroundController::joueurAction')
-			->bind("background.joueur")
-			->method('GET')
-			->before($mustBeUser);
 			
 		return $controllers;
 	}

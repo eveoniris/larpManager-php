@@ -371,31 +371,6 @@ class UserController
 				'form' => $form->createView(),
 		));
 	}
-
-	/**
-	 * Affiche la billetterie
-	 *
-	 * @param Application $app
-	 * @param Request $request
-	 * @param unknown $id
-	 * @throws NotFoundHttpException
-	 */
-	public function billetterieAction(Application $app, Request $request)
-	{
-		$repo = $app['orm.em']->getRepository('LarpManager\Entities\Groupe');
-			
-		$query = $repo->createQueryBuilder('g')
-			->where('g.pj = true')
-			->orderBy('g.numero','ASC')
-			->getQuery();
-			
-		$groupes = $query->getResult();
-	
-		return $app['twig']->render('public/user/billetterie.twig', array(
-				'groupes' => $groupes,
-				'user' => $app['user'],
-		));
-	}
 	
 	/**
 	 * Création d'un utilisateur

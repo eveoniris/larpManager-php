@@ -6,12 +6,13 @@
 
 	<ol class="breadcrumb">
 		<li><a href="{{ path('homepage')  }}">Accueil</a></li>
-		<li><a href="{{ path('personnage')  }}">Votre personnage</a></li>
+		<li><a href="{{ path('participant.index', {'participant' : participant.id}) }}">{{ participant.gn.label }}</a></li>
+		<li><a href="{{ path('participant.personnage', {'participant': participant.id}) }}">{{ personnage.nom }} {{ personnage.surnom }}</a></li>
 		<li class="active">Choix d'une origine</li>
 	</ol>
 	
 	<div class="well bs-component">
-		<form action="{{ path('personnage.origin.add',{'personnage':personnage.id}) }}" method="POST" {{ form_enctype(form) }}>
+		<form action="{{ path('participant.origine',{'participant':participant.id}) }}" method="POST" {{ form_enctype(form) }}>
 			<fieldset>
 				<legend>{{ personnage.publicName }} - <small>Choix d'une origine</small></legend>
 				<p>Choisissez l'origine de votre personnage, en général, les personnages sont issus du même pays que celui de leur groupe !</p>

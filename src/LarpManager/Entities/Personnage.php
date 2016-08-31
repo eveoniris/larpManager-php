@@ -117,7 +117,67 @@ class Personnage extends BasePersonnage
 		}
 		return $backgrounds;
 	}
-		
+	
+	/**
+	 * Vérifie si le personnage connait cette priere
+	 * 
+	 * @param Priere $priere
+	 * @return boolean
+	 */
+	public function isKnownPriere(Priere $p)
+	{
+		foreach ( $this->getPrieres() as $priere)
+		{
+			if ( $priere == $p ) return true;
+		}
+		return false;
+	}
+			
+	/**
+	 * Vérifie si le personnage connait cette potion
+	 * 
+	 * @param Potion $priere
+	 * @return boolean
+	 */
+	public function isKnownPotion(Potion $p)
+	{
+		foreach ( $this->getPotions() as $potion)
+		{
+			if ( $potion == $p ) return true;
+		}
+		return false;
+	}	
+
+	/**
+	 * Vérifie si le personnage connait ce sort
+	 * 
+	 * @param Sort $sort
+	 * @return boolean
+	 */
+	public function isKnownSort(Sort $s)
+	{
+		foreach ( $this->getSorts() as $sort)
+		{
+			if ( $sort == $s ) return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Vérifie si le personnage connait cette competence
+	 * 
+	 * @param Competence $competence
+	 * @return boolean
+	 */
+	public function isKnownCompetence($competence)
+	{
+		foreach ( $this->getCompetences() as $c)
+		{
+			if ( $competence == $c ) return true;
+		}
+		return false;
+	}
+	
 	
 	/**
 	 * Vérifie si le personnage connait cette langue
@@ -227,18 +287,31 @@ class Personnage extends BasePersonnage
 	}
 	
 	/**
-	 * Determine si le score du personnage été en erreur
+	 * Fourni le score de pugilat
 	 */
-	public function hasPugilatErreur()
+	public function getPugilat()
 	{
-		foreach ( $this->getCompetences() as $competence)
+		$pugilat = 0;
+		$pugilat = $this->getCompetencePugilat('Agilité')
+			+ $this->getCompetencePugilat('Armes à distance')
+			+ $this->getCompetencePugilat('Armes à 1 main')
+			+ $this->getCompetencePugilat('Armes à 2 mains')
+			+ $this->getCompetencePugilat('Armes d\'hast')
+			+ $this->getCompetencePugilat('Armure')
+			+ $this->getCompetencePugilat('Attaque sournoise')
+			+ $this->getCompetencePugilat('Protection')
+			+ $this->getCompetencePugilat('Résistance')
+			+ $this->getCompetencePugilat('Sauvagerie')
+			+ $this->getCompetencePugilat('Stratégie')
+			+ $this->getCompetencePugilat('Survie');
+		
+		// armurerie au niveau initié double le score de pugilat
+		if ( $this->getCompetenceNiveau('Armurerie') >= 2 )
 		{
-			if ( in_array($competence->getCompetenceFamily()->getId(),array(1,6,7,9,10,13,16,18,19,24,27,31)))
-			{
-				if ( $competence->getLevel()->getIndex() > 1 ) return true;
-			}
+			$pugilat = $pugilat * 2;
 		}
-		return false;
+		
+		return $pugilat;
 	}
 	
 	/**

@@ -128,7 +128,7 @@ class GnControllerProvider implements ControllerProviderInterface
 		/**
 		 * Affiche la billetterie d'un GN
 		 */
-		$controllers->match('/{gn}/billetterie', 'LarpManager\Controllers\UserController::billetterieAction')
+		$controllers->match('/{gn}/billetterie', 'LarpManager\Controllers\GnController::billetterieAction')
 			->assert('gn', '\d+')
 			->convert('gn', 'converter.gn:convert')
 			->bind('gn.billetterie')

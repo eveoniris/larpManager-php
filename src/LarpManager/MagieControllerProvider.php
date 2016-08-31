@@ -169,15 +169,9 @@ class MagieControllerProvider implements ControllerProviderInterface
 		$controllers->match('/sort/{sort}/document/{document}','LarpManager\Controllers\MagieController::getSortDocumentAction')
 			->bind("magie.sort.document")
 			->convert('sort', 'converter.sort:convert')
+			->before($mustBeScenariste)
 			->method('GET');
-		
-		/**
-		 * Page de présentation de la magie, domaine et sortilèges
-		 */
-		$controllers->match('/','LarpManager\Controllers\MagieController::indexAction')
-			->bind('magie')
-			->method('GET');
-			
+					
 		/**
 		 * Lister les potions
 		 */
@@ -230,6 +224,7 @@ class MagieControllerProvider implements ControllerProviderInterface
 		$controllers->match('/potion/{potion}/document/{document}','LarpManager\Controllers\MagieController::getPotionDocumentAction')
 			->bind("magie.potion.document")
 			->convert('potion', 'converter.potion:convert')
+			->before($mustBeScenariste)
 			->method('GET');
 	
 		/**

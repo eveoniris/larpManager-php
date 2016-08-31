@@ -1,0 +1,43 @@
+{% extends "layout.twig" %}
+
+{% block title %}Liste des groupes{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Page d'accueil</a></li>
+		<li><a href="{{ path('participant.index', {'participant' : participant.id}) }}">{{ participant.gn.label }}</a></li>
+		<li class="active">Liste des groupes</li>
+	</ol>
+
+	<div class="well well-sm">
+		<div class="header">
+			<h5>Liste des groupes</h5>
+		</div>
+		
+		<blockquote>Les places disponibles representent le nombre de joueurs recherchés par le chef de groupe pour compléter son groupe.</blockquote>
+		
+		<div class="list-group">
+			{% for groupe in groupes %}
+				<div class="list-group-item">
+					<div class="list-group-item-heading">
+						<h5>#{{ groupe.numero }} - {{ groupe.nom }}</h5>
+					</div>
+					<div class="list-group-item-text">{{ groupe.description|markdown }}</div>
+					<div class="list-group-item-text">Chef de groupe : {{ groupe.responsable.email }}</div>
+					<div class="list-group-item-text">
+						{% if groupe.placeAvailable
+						 and groupe.placeAvailable > 0 %}
+						 	<span class="text-success">
+						{% else %}
+							<span class="text-danger">
+						{% endif %}
+							Places disponibles : {{ groupe.placeAvailable|default(0) }}
+						</span>
+						
+					</div>
+				</div>
+			{% endfor %}
+		</div>
+	</div>
+{% endblock content %}

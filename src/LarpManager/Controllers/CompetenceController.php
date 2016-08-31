@@ -73,18 +73,6 @@ class CompetenceController
 			
 		return $app['twig']->render('admin/competence/materiel.twig', array('competences' => $competences));
 	}
-
-	/**
-	 * Liste des compétences pour les joueurs
-	 * 
-	 * @param Request $request
-	 * @param Application $app
-	 */
-	public function listAction(Request $request, Application $app)
-	{
-		$competences = $app['larp.manager']->getRootCompetences();
-		return $app['twig']->render('public/competence/index.twig', array('competences' => $competences));
-	}
 	
 	/**
 	 * Ajout d'une compétence

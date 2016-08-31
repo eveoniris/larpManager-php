@@ -1,0 +1,29 @@
+{% extends "layout.twig" %}
+
+{% block title %}{{ regle.label }}{% endblock title %}
+
+{% block content %}
+
+<ol class="breadcrumb">
+	<li><a href="{{ path('homepage')  }}">Accueil</a></li>
+	<li><a href="{{ path('participant.index', {'participant' : participant.id}) }}">{{ participant.gn.label }}</a></li>
+	<li><a href="{{ path('participant.regle.list', {'participant' : participant.id}) }}">Liste des règles</a></li>
+	<li class="active">{{ regle.label }}</li>
+</ol>
+
+
+<div class="well well-sm">
+	<div class="header">
+		<h5>{{ regle.label }}</h5>
+	</div>
+	
+	<blockquote>{{ regle.description|markdown }}</blockquote>
+	
+	<object type="application/pdf" width="100%" height="1200px" >
+		<param name="src" value="{{ path('participant.regle.document',{'participant': participant.id, 'rule' :regle.id}) }}" />
+	 
+		<p>It appears your Web browser is not configured to display PDF files. No worries, just {{ path('participant.regle.document',{'participant': participant.id, 'rule' : regle.id}) }}">click here to download the PDF file.</a></p>
+	</object>
+
+</div>
+{% endblock content %}

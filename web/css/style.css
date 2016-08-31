@@ -24,6 +24,10 @@ body {
 	border-top: 0 !important;
 }
 
+#content {
+	margin-bottom : 60px;
+}
+
 .svg-content { 
 	display: inline-block;
 	position: relative;

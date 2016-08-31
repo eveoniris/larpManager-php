@@ -94,13 +94,6 @@ class UserControllerProvider implements ControllerProviderInterface
 			->before($mustBeUser);
 			
 		/**
-		 * Billetterie
-		 */
-		$controllers->get('/billetterie', 'LarpManager\Controllers\UserController::billetterieAction')
-			->bind('user.billetterie')
-			->before($mustBeUser);
-			
-		/**
 		 * Ajoute un billet à un utilisateur
 		 */
 		$controllers->get('/{user}/billet', 'LarpManager\Controllers\UserController::billetAction')

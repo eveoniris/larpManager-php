@@ -40,7 +40,25 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 	 *  - participant.update : Mise à jour des informations joueur par un utilisateur
 	 *  - participant.detail : Détail des informations joueur
 	 *  - participant.xp : modification des XP pour un joueur
-	 *
+	 *  - participant.background
+	 *  - participant.groupeSecondaire.list
+	 *  - participant.groupeSecondaire.detail
+	 *  - participant.personnage
+	 *  - participant.priere.detail
+	 *  - participant.priere.document
+	 *  - participant.potion.detail
+	 *  - participant.potion.document
+	 *  - participant.magie
+	 *  - participant.competence.list
+	 *  - participant.competence.detail
+	 *  - participant.competence.document
+	 *  - participant.groupe.join
+	 *  - participant.groupe.list
+	 *  - participant.groupe.detail
+	 *  - participant.regle.list
+	 *  - participant.regle.detail
+	 *  - participant.regle.document
+	 *    
 	 * @param Application $app
 	 * @return Controllers $controllers
 	 * @throws AccessDeniedException
@@ -70,7 +88,99 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 			->bind('participant.index')
 			->method('GET')
 			->before($mustOwnParticipant);
-		
+
+		/** Liste des règles */
+		$controllers->match('/{participant}/regle','LarpManager\Controllers\ParticipantController::regleListAction')
+			->assert('participant', '\d+')
+			->convert('participant', 'converter.participant:convert')
+			->method('GET')
+			->bind('participant.regle.list')
+			->before($mustOwnParticipant);
+				
+		/** Récupére un fichier de règle */
+		$controllers->match('/{participant}/regle/{rule}','LarpManager\Controllers\ParticipantController::regleDetailAction')
+			->assert('participant', '\d+')
+			->convert('participant', 'converter.participant:convert')
+			->assert('rule', '\d+')
+			->convert('rule', 'converter.rule:convert')
+			->method('GET')
+			->bind('participant.regle.detail')
+			->before($mustOwnParticipant);
+				
+		/** Récupére un fichier de règle */
+		$controllers->match('/{participant}/regle/{rule}/document','LarpManager\Controllers\ParticipantController::regleDocumentAction')
+			->assert('participant', '\d+')
+			->convert('participant', 'converter.participant:convert')
+			->assert('rule', '\d+')
+			->convert('rule', 'converter.rule:convert')
+			->method('GET')
+			->bind('participant.regle.document')
+			->before($mustOwnParticipant);
+				
+		/** Affichage de la cartographie du monde de conan */
+		$controllers->match('/{participant}/world','LarpManager\Controllers\ParticipantController::worldAction')
+			->assert('participant', '\d+')
+			->convert('participant', 'converter.participant:convert')
+			->method('GET')
+			->bind('participant.world')
+			->before($mustOwnParticipant);
+
+		/** Affichage de la cartographie du monde de conan */
+		$controllers->match('/{participant}/world/countries.json','LarpManager\Controllers\ParticipantController::countriesAction')
+			->assert('participant', '\d+')
+			->convert('participant', 'converter.participant:convert')
+			->method('GET')
+			->bind('participant.world.countries.json')
+			->before($mustOwnParticipant);
+			
+		/** Affichage de la cartographie du monde de conan */
+		$controllers->match('/{participant}/world/regions.json','LarpManager\Controllers\ParticipantController::regionsAction')
+			->assert('participant', '\d+')
+			->convert('participant', 'converter.participant:convert')
+			->method('GET')
+			->bind('participant.world.regions.json')
+			->before($mustOwnParticipant);
+				
+		/** Affichage de la cartographie du monde de conan */
+		$controllers->match('/{participant}/world/fiefs.json','LarpManager\Controllers\ParticipantController::fiefsAction')
+			->assert('participant', '\d+')
+			->convert('participant', 'converter.participant:convert')
+			->method('GET')
+			->bind('participant.world.fiefs.json')
+			->before($mustOwnParticipant);
+			
+		/**
+		 * Liste des groupes
+		 */
+		$controllers->match('/{participant}/groupe/list','LarpManager\Controllers\ParticipantController::groupeListAction')
+			->assert('participant', '\d+')
+			->convert('participant', 'converter.participant:convert')
+			->bind("participant.groupe.list")
+			->method('GET')
+			->before($mustOwnParticipant);
+			
+		/**
+		 * Rejoindre un groupe
+		 */
+		$controllers->match('/{participant}/groupe/join','LarpManager\Controllers\ParticipantController::groupeJoinAction')
+			->assert('participant', '\d+')
+			->convert('participant', 'converter.participant:convert')
+			->bind("participant.groupe.join")
+			->method('GET|POST')
+			->before($mustOwnParticipant);
+			
+		/**
+		 * détail d'un groupe
+		 */
+		$controllers->match('/{participant}/groupe/{groupe}','LarpManager\Controllers\ParticipantController::groupeDetailAction')
+			->assert('participant', '\d+')
+			->convert('participant', 'converter.participant:convert')
+			->assert('groupe', '\d+')
+			->convert('groupe', 'converter.groupe:convert')
+			->bind("participant.groupe.detail")
+			->method('GET')
+			->before($mustOwnParticipant);
+			
 		/**
 		 * Affecte un personnage secondaire à un participant
 		 */
@@ -81,6 +191,234 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 			->convert('participant', 'converter.participant:convert')
 			->before($mustOwnParticipant);
 		
+
+		/**
+		 * Affiche les background d'un utilisateur
+		 */
+		$controllers->match('/{participant}/background','LarpManager\Controllers\ParticipantController::backgroundAction')
+			->assert('participant', '\d+')
+			->convert('participant', 'converter.participant:convert')
+			->bind("participant.background")
+			->method('GET')
+			->before($mustOwnParticipant);
+			
+
+		/**
+		 * Liste de tous les groupes secondaires public
+		 */
+		$controllers->match('/{participant}/groupeSecondaire/list','LarpManager\Controllers\ParticipantController::groupeSecondaireListAction')
+			->assert('participant', '\d+')
+			->convert('participant', 'converter.participant:convert')
+			->bind("participant.groupeSecondaire.list")
+			->method('GET')
+			->before($mustOwnParticipant);
+				
+			
+		/**
+		 * Postuler à un groupe secondaire
+		 */
+		$controllers->match('/{participant}/groupeSecondaire/{groupeSecondaire}/postuler','LarpManager\Controllers\ParticipantController::groupeSecondairePostulerAction')
+			->assert('participant', '\d+')
+			->convert('participant', 'converter.participant:convert')
+			->assert('groupeSecondaire', '\d+')
+			->convert('groupeSecondaire', 'converter.secondaryGroup:convert')
+			->bind("participant.groupeSecondaire.postuler")
+			->method('GET|POST')
+			->before($mustOwnParticipant);
+		
+		/**
+		 * Detail d'un groupe secondaire à destination des membres de ce groupe
+		 */
+		$controllers->match('/{participant}/groupeSecondaire/{groupeSecondaire}/detail','LarpManager\Controllers\ParticipantController::groupeSecondaireDetailAction')
+			->assert('participant', '\d+')
+			->convert('participant', 'converter.participant:convert')
+			->assert('groupeSecondaire', '\d+')
+			->convert('groupeSecondaire', 'converter.secondaryGroup:convert')
+			->bind("participant.groupeSecondaire.detail")
+			->method('GET')
+			->before($mustOwnParticipant);
+			
+		/**
+		 * Liste des religions
+		 */
+		$controllers->match('/{participant}/religion/list','LarpManager\Controllers\ParticipantController::religionListAction')
+			->assert('participant', '\d+')
+			->convert('participant', 'converter.participant:convert')
+			->bind("participant.religion.list")
+			->method('GET')
+			->before($mustOwnParticipant);
+		
+		/**
+		 * Choix d'une religion
+		 * Accessible uniquement au proprietaire du personnage
+		 */
+		$controllers->match('/{participant}/religion/add','LarpManager\Controllers\ParticipantController::religionAddAction')
+			->assert('participant', '\d+')
+			->convert('participant', 'converter.participant:convert')
+			->bind("participant.religion.add")
+			->method('GET|POST')
+			->before($mustOwnParticipant);
+		
+		/**
+		 * Choix d'une origine
+		 * Accessible uniquements'il n'a pas déjà choisi d'origine
+		 */
+		$controllers->match('/{participant}/origine','LarpManager\Controllers\ParticipantController::origineAction')
+			->assert('participant', '\d+')
+			->convert('participant', 'converter.participant:convert')
+			->bind("participant.origine")
+			->method('GET|POST')
+			->before($mustOwnParticipant);
+	
+			
+		/**
+		 * Ajout d'une compétence au personnage
+		 * Accessible uniquement au proprietaire du personnage
+		 */
+		$controllers->match('/{participant}/competence/add','LarpManager\Controllers\ParticipantController::competenceAddAction')
+			->assert('participant', '\d+')
+			->convert('participant', 'converter.participant:convert')
+			->bind("participant.competence.add")
+			->method('GET|POST')
+			->before($mustOwnParticipant);
+		
+		/**
+		 * Détail d'une prière
+		 */
+		$controllers->match('/{participant}/priere/{priere}/detail', 'LarpManager\Controllers\ParticipantController::priereDetailAction')
+			->assert('participant', '\d+')
+			->convert('participant', 'converter.participant:convert')
+			->assert('priere', '\d+')
+			->convert('priere', 'converter.priere:convert')
+			->bind("participant.priere.detail")
+			->method('GET')
+			->before($mustOwnParticipant);
+			
+		/**
+		 * Obtenir le document lié à une prière
+		 */
+		$controllers->match('/{participant}/priere/{priere}/document', 'LarpManager\Controllers\ParticipantController::priereDocumentAction')
+			->assert('participant', '\d+')
+			->convert('participant', 'converter.participant:convert')
+			->assert('priere', '\d+')
+			->convert('priere', 'converter.priere:convert')
+			->bind("participant.priere.document")
+			->method('GET')
+			->before($mustOwnParticipant);
+			
+		/**
+		 * Détail d'une potion
+		 */
+		$controllers->match('/{participant}/potion/{potion}/detail', 'LarpManager\Controllers\ParticipantController::potionDetailAction')
+			->assert('participant', '\d+')
+			->convert('participant', 'converter.participant:convert')
+			->assert('potion', '\d+')
+			->convert('potion', 'converter.potion:convert')
+			->bind("participant.potion.detail")
+			->method('GET')
+			->before($mustOwnParticipant);
+
+		/**
+		 * Obtenir le document lié à une potion
+		 */
+		$controllers->match('/{participant}/potion/{potion}/document', 'LarpManager\Controllers\ParticipantController::potionDocumentAction')
+			->assert('participant', '\d+')
+			->convert('participant', 'converter.participant:convert')
+			->assert('potion', '\d+')
+			->convert('potion', 'converter.potion:convert')
+			->bind("participant.potion.document")
+			->method('GET')
+			->before($mustOwnParticipant);
+		
+		/**
+		 * Détail d'un sort
+		 */
+		$controllers->match('/{participant}/sort/{sort}/detail', 'LarpManager\Controllers\ParticipantController::sortDetailAction')
+			->assert('participant', '\d+')
+			->convert('participant', 'converter.participant:convert')
+			->assert('sort', '\d+')
+			->convert('sort', 'converter.sort:convert')
+			->bind("participant.sort.detail")
+			->method('GET')
+			->before($mustOwnParticipant);
+			
+		/**
+		 * Obtenir le document lié à un sort
+		 */
+		$controllers->match('/{participant}/sort/{sort}/document', 'LarpManager\Controllers\ParticipantController::sortDocumentAction')
+			->assert('participant', '\d+')
+			->convert('participant', 'converter.participant:convert')
+			->assert('sort', '\d+')
+			->convert('sort', 'converter.sort:convert')
+			->bind("participant.sort.document")
+			->method('GET')
+			->before($mustOwnParticipant);
+			
+		/**
+		 * Page de présentation de la magie, domaine et sortilèges
+		 */
+		$controllers->match('/{participant}/magie','LarpManager\Controllers\ParticipantController::magieAction')
+			->assert('participant', '\d+')
+			->convert('participant', 'converter.participant:convert')
+			->bind('participant.magie')
+			->method('GET')
+			->before($mustOwnParticipant);
+		
+		/**
+		 * Liste des classes pour les joueurs
+		 */
+		$controllers->match('/{participant}/classe/list','LarpManager\Controllers\ParticipantController::classeListAction')
+			->assert('participant', '\d+')
+			->convert('participant', 'converter.participant:convert')
+			->bind("participant.classe.list")
+			->method('GET')
+			->before($mustOwnParticipant);
+			
+		/**
+		 * Liste des compétences pour les joueurs
+		 */
+		$controllers->match('/{participant}/competence/list','LarpManager\Controllers\ParticipantController::competenceListAction')
+			->assert('participant', '\d+')
+			->convert('participant', 'converter.participant:convert')
+			->bind("participant.competence.list")
+			->method('GET')
+			->before($mustOwnParticipant);
+			
+		/**
+		 * Détail d'une compétence
+		 */
+		$controllers->match('/{participant}/competence/{competence}/detail','LarpManager\Controllers\ParticipantController::competenceDetailAction')
+			->assert('participant', '\d+')
+			->convert('participant', 'converter.participant:convert')
+			->assert('competence', '\d+')
+			->convert('competence', 'converter.competence:convert')
+			->bind("participant.competence.detail")
+			->method('GET')
+			->before($mustOwnParticipant);
+			
+		/**
+		 * Obtenir le document lié à une compétence
+		 */
+		$controllers->match('/{participant}/competence/{competence}/document','LarpManager\Controllers\ParticipantController::competenceDocumentAction')
+			->assert('participant', '\d+')
+			->convert('participant', 'converter.participant:convert')
+			->assert('competence', '\d+')
+			->convert('competence', 'converter.competence:convert')
+			->bind("participant.competence.document")
+			->method('GET')
+			->before($mustOwnParticipant);
+			
+		/**
+		 * Détail du personnage
+		 */
+		$controllers->match('/{participant}/personnage','LarpManager\Controllers\ParticipantController::personnageAction')
+			->assert('participant', '\d+')
+			->convert('participant', 'converter.participant:convert')
+			->bind("participant.personnage")
+			->method('GET')
+			->before($mustOwnParticipant);
+			
+			
 			
 			
 		/**

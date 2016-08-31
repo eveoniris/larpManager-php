@@ -80,15 +80,9 @@ class CompetenceControllerProvider implements ControllerProviderInterface
 		$controllers->match('{competence}/document/{document}','LarpManager\Controllers\CompetenceController::getDocumentAction')
 			->bind("competence.document")
 			->convert('competence', 'converter.competence:convert')
-			->method('GET');
-		
-		/**
-		 * Liste des compétences pour les joueurs
-		 */
-		$controllers->match('/list','LarpManager\Controllers\CompetenceController::listAction')
-			->bind("competence.list")
-			->method('GET');
-
+			->method('GET')
+			->before($mustBeOrga);
+				
 		/**
 		 * Liste des personnages ayant cette compétence
 		 */

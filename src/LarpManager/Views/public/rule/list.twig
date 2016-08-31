@@ -6,6 +6,7 @@
 
 	<ol class="breadcrumb">
 		<li><a href="{{ path('homepage') }}">Page d'accueil</a></li>
+		<li><a href="{{ path('participant.index', {'participant' : participant.id}) }}">{{ participant.gn.label }}</a></li>
 		<li class="active">Règles</li>
 	</ol>
 	
@@ -17,15 +18,11 @@
 		
 		<div class="list-group">
 			{% for regle in regles %}
-				<div class="list-group-item">
-					<h5 class="list-group-item-heading">{{ regle.label }}
-						<div class="pull-right">
-							<small><a target="_blank" href="{{ path('rules.get',{'rule': regle.url}) }}"><i class="fa fa-download"></i> Téléchargez le fichier</a></small>
-						</div>
-					</h5>
+				<a class="list-group-item" href="{{ path('participant.regle.detail', {'participant': participant.id, 'rule': regle.id}) }}">
+					<h5 class="list-group-item-heading">{{ regle.label }}</h5>
 					<p class="list-group-item-text">{{ regle.description|markdown }}</p>
-				</div>
-		{% endfor %}
+				</a>
+			{% endfor %}
 		</div>
 	</div>
 	

@@ -4,29 +4,26 @@
 
 {% block content %}
 
-	<div class="container-fluid">
-	
-		<ol class="breadcrumb">
-			<li>Navigation :</li>
-			<li><a href="{{ path('homepage')  }}">Accueil</a></li>
-			<li><a href="{{ path('groupeSecondaire.list')  }}">Groupes secondaires</a></li>
-			<li class="active">Postuler</li>
-		</ol>
-	
-		<div class="well bs-component">
-			<form action="{{ path('groupeSecondaire.postuler',{'groupe': groupeSecondaire.id}) }}" method="POST" {{ form_enctype(form) }} novalidate>
-				<fieldset>
-					<legend>Postuler à {{ groupeSecondaire.label}}</legend>
-					<h6>Remarque</h6>
-					<p>Seul votre surnom sera transmis au responsable du groupe secondaire<p>
-					<p>Dans le cas de groupes religieux, la liste de vos religions (ainsi que votre ferveur) sera transmis au responsable du groupe secondaire</p>
-					
-					{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
-					{{ form(form) }}
-				</fieldset>
-			</form>
-		</div>
+	<ol class="breadcrumb">
+		<li>Navigation :</li>
+		<li><a href="{{ path('homepage')  }}">Accueil</a></li>
+		<li><a href="{{ path('participant.index', {'participant' : participant.id}) }}">{{ participant.gn.label }}</a></li>
+		<li><a href="{{ path('participant.groupeSecondaire.list', {'participant' : participant.id})  }}">Groupes secondaires</a></li>
+		<li class="active">Postuler</li>
+	</ol>
 
+	<div class="well well-sm">
+		<form action="{{ path('participant.groupeSecondaire.postuler',{'participant' : participant.id, 'groupeSecondaire': groupeSecondaire.id}) }}" method="POST" {{ form_enctype(form) }} novalidate>
+			<fieldset>
+				<legend>Postuler à {{ groupeSecondaire.label}}</legend>
+				<h6>Remarque</h6>
+				<p>Seul votre surnom sera transmis au responsable du groupe secondaire<p>
+				<p>Dans le cas de groupes religieux, la liste de vos religions (ainsi que votre ferveur) sera transmis au responsable du groupe secondaire</p>
+				
+				{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+				{{ form(form) }}
+			</fieldset>
+		</form>
 	</div>
 
 {% endblock content %}

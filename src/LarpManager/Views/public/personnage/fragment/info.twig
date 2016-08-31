@@ -1,0 +1,56 @@
+{# informations générales #}
+<div class="header">
+	<h5>Informations</h5>
+</div>
+
+<div class="row">
+	<div class="col-sm-6">
+		<ul class="list-group">
+			<li class="list-group-item">
+				<strong>Numéro :</strong> {{ personnage.id }}
+			</li>
+			<li class="list-group-item">
+				<strong>Nom :</strong> {{ personnage.nom }}
+			</li>
+			<li class="list-group-item">
+				<strong>Surnom :</strong> {{ personnage.surnom }}
+			</li>
+			<li class="list-group-item">
+				<strong>Classe :</strong> {{ personnage.classeName }}
+			</li>
+			<li class="list-group-item">
+				<strong>Age :</strong> {{ personnage.age }}
+			</li>
+			<li class="list-group-item">
+				<strong>Genre :</strong> {{ personnage.genre }}
+			</li>
+			<li class="list-group-item">
+				{% if personnage.intrigue %}
+					Participe aux intrigues
+				{% else %}
+					Ne participe pas aux intrigues
+				{% endif %}
+			</li>
+			<li class="list-group-item">
+				<strong>Expérience :</strong> {{ personnage.xp|default(0) }}
+			</li>
+			<li class="list-group-item">
+				<strong>Renommée :</strong> {{ personnage.renomme|default(0) }}
+			</li>
+			{# <li class="list-group-item">
+				<strong>Titre :</strong> {{ app['personnage.manager'].titre(personnage)|default('Aucun') }}
+			</li> #}
+		</ul>
+	</div>
+	
+	{# Illustration de la classe #}
+	<div class="col-sm-6">
+		<div class="pull-right">
+			{% if personnage.genre == 'Masculin' %}
+				<img width="216" height="300" alt="{{ personnage.classe.labelMasculin }}" src="{{ app.request.basepath }}/img/{{ personnage.classe.imageM }}" />
+			{% else %}
+				<img width="216" height="200" alt="{{ personnage.classe.labelFeminin }}" src="{{ app.request.basepath }}/img/{{ personnage.classe.imageF }}" />
+			{% endif %}
+		</div>
+	</div>
+</div>

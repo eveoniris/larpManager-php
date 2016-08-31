@@ -1,0 +1,76 @@
+{% if personnage.hasCompetence('Magie') %}
+	<div class="header">
+		<h5>Magie</h5>
+	</div>
+		
+	{% if personnage.hasTrigger('MAGIE APPRENTI') %}
+		<blockquote>
+			<p>Votre compétence Magie au niveau apprenti vous permet de choisir un domaine de magie.</p>
+			<p>Les sorts que vous lancez dans ce domaine coûteront moins cher que les autres en mana.</p>
+			<a href="{{ path('personnage.magie.domaine', {'personnage': personnage.id}) }}">Choisir un domaine de magie</a>
+		</blockquote>
+	{% endif %}
+	
+	{% if personnage.hasTrigger('MAGIE EXPERT') %}
+		<blockquote>
+			<p>Votre compétence Magie au niveau expert vous permet de choisir un domaine de magie.</p>
+			<p>Les sorts que vous lancez dans ce domaine coûteront moins cher que les autres en mana.</p>
+			<a href="{{ path('personnage.magie.domaine', {'personnage': personnage.id}) }}">Choisir un domaine de magie</a>
+		</blockquote>
+	{% endif %}
+	
+	{% if personnage.hasTrigger('MAGIE APPRENTI SORT') %}
+		<blockquote>
+			<p>Votre compétence Magie au niveau apprenti vous permet de choisir un nouveau sortilège.</p>
+			<a href="{{ path('personnage.magie.sort', {'personnage': personnage.id, 'niveau' : 1}) }}">Choisir un sortilège</a>
+		</blockquote>
+	{% endif %}
+	
+	{% if personnage.hasTrigger('MAGIE INITIE SORT') %}
+		<blockquote>
+			<p>Votre compétence Magie au niveau initié vous permet de choisir un nouveau sortilège.</p>
+			<a href="{{ path('personnage.magie.sort', {'personnage': personnage.id,'niveau': 2}) }}">Choisir un sortilège</a>
+		</blockquote>
+	{% endif %}
+	
+	{% if personnage.hasTrigger('MAGIE EXPERT SORT') %}
+		<blockquote>
+			<p>Votre compétence Magie au niveau expert vous permet de choisir un nouveau sortilège.</p>
+			<a href="{{ path('personnage.magie.sort', {'personnage': personnage.id, 'niveau' : 3}) }}">Choisir un sortilège</a>
+		</blockquote>
+	{% endif %}
+	
+	{% if personnage.hasTrigger('MAGIE MAITRE SORT') %}
+		<blockquote>
+			<p>Votre compétence Magie au niveau maître vous permet de choisir un nouveau sortilège.</p>
+			<a href="{{ path('personnage.magie.sort', {'personnage': personnage.id, 'niveau' : 4}) }}">Choisir un sortilège</a>
+		</blockquote>
+	{% endif %}
+	
+	
+	<h6>Liste de vos domaines de Magie</h6>
+	<div class="list-group">
+	{% for domaine in personnage.domaines %}
+		<div class="list-group-item">
+			<div class="list-group-item-heading"><strong>{{ domaine.label|markdown }}</strong></div>
+			<div class="list-group-item-text">{{ domaine.description|markdown }}</div>
+		</div>
+	{% endfor %}
+	</div>
+	
+	<h6>Liste de vos sortilèges</h6>
+	<div class="list-group">
+		{% for sort in personnage.sorts %}
+			<a class="list-group-item" href="{{ path('participant.sort.detail', {'participant': participant.id, 'sort': sort.id}) }}">
+				{{ sort.label }} - {{ sort.domaine.label }} Niveau {{ sort.niveau }} (
+				{% if sort.domaine in personnage.domaines %} 
+					{{ sort.niveau }}
+				{% else %} 
+					{{ sort.niveau * 2 }}
+				{% endif %}
+				Mana)
+			</a>
+		{% endfor %}
+	</div>
+	
+{% endif %}

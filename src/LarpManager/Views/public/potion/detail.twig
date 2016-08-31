@@ -1,0 +1,29 @@
+{% extends "layout.twig" %}
+
+{% block title %}Potion {{ potion.label }} - Niveau {{ potion.niveau }}{% endblock title %}
+
+{% block content %}
+
+<ol class="breadcrumb">
+	<li><a href="{{ path('homepage')  }}">Accueil</a></li>
+	<li><a href="{{ path('participant.index', {'participant' : participant.id}) }}">{{ participant.gn.label }}</a></li>
+	<li><a href="{{ path('participant.personnage', {'participant' : participant.id}) }}">{{ participant.personnage.nom }} {{ participant.personnage.surnom }}</a></li>
+	<li class="active">{{ potion.label }} - Niveau {{ potion.niveau }}</li>
+</ol>
+
+
+<div class="well well-sm">
+	<div class="header">
+		<h5>{{ potion.label }} - Niveau {{ potion.niveau }}</h5>
+	</div>
+		
+	{{ potion.description|markdown }}
+	
+	<object type="application/pdf" width="100%" height="1200px" >
+		<param name="src" value="{{ path('participant.potion.document',{'participant': participant.id, 'potion' :potion.id}) }}" />
+	 
+		<p>It appears your Web browser is not configured to display PDF files. No worries, just {{ path('participant.potion.document',{'participant': participant.id, 'potion' :potion.id}) }}">click here to download the PDF file.</a></p>
+	</object>
+
+</div>
+{% endblock content %}

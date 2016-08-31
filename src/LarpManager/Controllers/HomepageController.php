@@ -164,21 +164,6 @@ class HomepageController
 	}
 	
 	/**
-	 * Page listant les règles à télécharger
-	 * 
-	 * @param unknown $request
-	 * @param unknown $app
-	 */
-	public function rulesAction(Request $request, Application $app)
-	{
-		$regles = $app['orm.em']->getRepository('LarpManager\Entities\Rule')->findAll();
-		
-		return $app['twig']->render('public/rules.twig', array(
-				'regles' => $regles,
-		));
-	}
-	
-	/**
 	 * Page de gestion des règles
 	 * 
 	 * @param Request $request

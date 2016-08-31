@@ -96,44 +96,12 @@ class HomepageControllerProvider implements ControllerProviderInterface
 					->bind('rules.admin.delete')
 					->before($mustBeScenariste);		
 		
-		/** Page de téléchargement des règles */
-		$controllers->match('/rules','LarpManager\Controllers\HomepageController::rulesAction')
-					->method('GET')
-					->bind('rules')
-					->before($mustBeUser);
-		
-		/** Récupére un fichier de règle */
-		$controllers->match('/rules/{rule}','LarpManager\Controllers\HomepageController::getRuleAction')
-					->method('GET')
-					->bind('rules.get')
-					->before($mustBeUser);
-		
 		/** Récupére un blason */
 		$controllers->match('/blasons/{blason}','LarpManager\Controllers\HomepageController::getBlasonAction')
 					->method('GET')
 					->bind('blason.get')
 					->before($mustBeUser);					
-		
-		/** Affichage de la cartographie du monde de conan */
-		$controllers->match('/world','LarpManager\Controllers\HomepageController::worldAction')
-					->method('GET')
-					->bind('world');
-		
-		/** Affichage de la cartographie du monde de conan */
-		$controllers->match('/world/countries.json','LarpManager\Controllers\HomepageController::countriesAction')
-					->method('GET')
-					->bind('world.countries.json');
-		
-		/** Affichage de la cartographie du monde de conan */
-		$controllers->match('/world/regions.json','LarpManager\Controllers\HomepageController::regionsAction')
-					->method('GET')
-					->bind('world.regions.json');					
-					
-		/** Affichage de la cartographie du monde de conan */
-		$controllers->match('/world/fiefs.json','LarpManager\Controllers\HomepageController::fiefsAction')
-					->method('GET')
-					->bind('world.fiefs.json');					
-		
+						
 		/** Mise a jour d'une geographie */
 		$controllers->match('/world/countries/{territoire}/update','LarpManager\Controllers\HomepageController::updateCountryGeomAction')
 					->method('POST')

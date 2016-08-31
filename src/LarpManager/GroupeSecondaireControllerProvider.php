@@ -54,23 +54,7 @@ class GroupeSecondaireControllerProvider implements ControllerProviderInterface
 				throw new AccessDeniedException();
 			}
 		};
-		
-		/**
-		 * Vérifie que l'utilisateur est membre du groupe
-		 */
-		$mustBeMembre = function(Request $request) use ($app) {
-			if (!$app['security.authorization_checker']->isGranted('GROUPE_SECONDAIRE_MEMBER', $request->get('groupe'))) {
-				throw new AccessDeniedException();
-			}
-		};
-		
-		/**
-		 * Liste des groupes secondaires
-		 */
-		$controllers->match('/','LarpManager\Controllers\GroupeSecondaireController::accueilAction')
-			->bind("groupeSecondaire")
-			->method('GET');
-				
+								
 		/**
 		 * Liste des groupes secondaires (pour les orgas)
 		 */		
@@ -176,22 +160,6 @@ class GroupeSecondaireControllerProvider implements ControllerProviderInterface
 			->method('GET|POST')
 			->convert('groupe', 'converter.secondaryGroup:convert')
 			->before($mustBeOrga);
-							
-		/**
-		 * Liste des groupes secondaires (pour les joueurs)
-		 */
-		$controllers->match('/list','LarpManager\Controllers\GroupeSecondaireController::listAction')
-			->bind("groupeSecondaire.list")
-			->method('GET');
-					
-		/**
-		 * Postuler à un groupe secondaire
-		 */
-		$controllers->match('/{groupe}/postuler','LarpManager\Controllers\GroupeSecondaireController::postulerAction')
-			->assert('groupe', '\d+')
-			->bind("groupeSecondaire.postuler")
-			->convert('groupe', 'converter.secondaryGroup:convert')
-			->method('GET|POST');
 
 		/**
 		 * Rejeter la demande d'un postulant
@@ -240,18 +208,6 @@ class GroupeSecondaireControllerProvider implements ControllerProviderInterface
 			->convert('groupe', 'converter.secondaryGroup:convert')
 			->convert('postulant', 'converter.postulant:convert')
 			->before($mustBeResponsable);			
-
-			
-		/**
-		 * Detail d'un groupe secondaire à destination des membres de ce groupe
-		 */
-		$controllers->match('/{groupe}/joueur','LarpManager\Controllers\GroupeSecondaireController::joueurAction')
-			->assert('groupe', '\d+')
-			->bind("groupeSecondaire.joueur")
-			->method('GET')
-			->convert('groupe', 'converter.secondaryGroup:convert')
-			->before($mustBeMembre);
-
 			
 		return $controllers;
 	}

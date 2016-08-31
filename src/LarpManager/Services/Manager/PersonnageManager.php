@@ -3,6 +3,8 @@
 namespace LarpManager\Services\Manager;
 
 use Silex\Application;
+use Doctrine\Common\Collections\ArrayCollection;
+
 
 use LarpManager\Entities\Personnage;
 use LarpManager\Entities\CompetenceFamily;
@@ -104,36 +106,7 @@ class PersonnageManager
 	
 		return $result;
 	}
-	
-	/**
-	 * Fourni le score de pugilat du personnage
-	 *
-	 * @param Personnage $personnage
-	 */
-	public function pugilat(Personnage $personnage)
-	{
-		$pugilat = $personnage->getCompetencePugilat('Agilité')
-		+ $personnage->getCompetencePugilat('Armes à distance')
-		+ $personnage->getCompetencePugilat('Armes à 1 main')
-		+ $personnage->getCompetencePugilat('Armes à 2 mains')
-		+ $personnage->getCompetencePugilat('Armes d\'hast')
-		+ $personnage->getCompetencePugilat('Armure')
-		+ $personnage->getCompetencePugilat('Attaque sournoise')
-		+ $personnage->getCompetencePugilat('Protection')
-		+ $personnage->getCompetencePugilat('Résistance')
-		+ $personnage->getCompetencePugilat('Sauvagerie')
-		+ $personnage->getCompetencePugilat('Stratégie')
-		+ $personnage->getCompetencePugilat('Survie');
-	
-		// armurerie au niveau initié double le score de pugilat
-		if ( $personnage->getCompetenceNiveau('Armurerie') >= 2 )
-		{
-			$pugilat = $pugilat * 2;
-		}
-		return $pugilat;
-	
-	}
-	
+		
 	/**
 	 * Indique si un personnage connait une famille de competence
 	 *

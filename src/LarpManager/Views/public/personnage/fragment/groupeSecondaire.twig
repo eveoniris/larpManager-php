@@ -1,0 +1,26 @@
+{# Groupes secondaires #}
+<div class="header">
+	<h5>Groupes secondaires</h5>
+</div>
+
+<div class="row">
+	<div class="col-sm-6">
+		<div class="list-group">
+			{% for groupeSecondaire in personnage.secondaryGroups %}
+				
+					<a class="list-group-item" href="{{ path('participant.groupeSecondaire.detail', {'participant': participant.id, 'groupeSecondaire':groupeSecondaire.id}) }}">{{ groupeSecondaire.label }}</a>
+				
+			{% endfor %}
+		</div>
+	</div>
+
+	<div class="col-sm-6">
+		{% if personnage.postulants|length > 0 %}
+			<ul class="list-group">
+				{% for postulant in personnage.postulants %}
+					<li class="list-group-item">Votre candidature au groupe {{ postulant.secondaryGroup.label }} est en attente de validation.</li>
+				{% endfor %}
+			</ul>
+		{% endif %}
+	</div>
+</div>

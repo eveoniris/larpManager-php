@@ -20,9 +20,9 @@
 			<ul class="list-group">
 				<li class="list-group-item">
 				{% if participant.groupe %}
-					<a href="">Votre groupe</a>
+					<a href=""><i class="fa fa-users"></i> Votre groupe</a>
 				{% else %}
-					<a href="{{ path('groupe') }}">Rejoindre un groupe</a>
+					<a href="{{ path('participant.groupe.join', {'participant': participant.id}) }}"><i class="fa fa-users"></i> Rejoindre un groupe</a>
 				{% endif %}
 				</li>
 				
@@ -30,7 +30,7 @@
 				
 				<li class="list-group-item">
 					{% if participant.personnage %}
-						<a href="{{ path('personnage.detail', {'personnage': participant.personnage.id}) }}">
+						<a href="{{ path('participant.personnage', {'participant': participant.id}) }}"><i class="fa fa-user" aria-hidden="true"></i>&nbsp;
     						{{ participant.personnage.nom }} {{ participant.personnage.surnom }}&nbsp;--&nbsp;{{ participant.personnage.classeName }}
     					</a>
 					{% else %}
@@ -47,28 +47,26 @@
 				<a href="{{ path('participant.personnageSecondaire', {'participant': participant.id}) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Modifier</a>
 				</li>
 				
-				<li class="list-group-item">Groupe secondaire</li>
-				<li class="list-group-item">Background</li>
+				<li class="list-group-item"><a href="{{ path('participant.background', {'participant': participant.id}) }}"><i class="fa fa-book" aria-hidden="true"></i> Background</a></li>
 			</ul>
 			
 			<div class="header">
 				<h5>Règles</h5>
 			</div>
 			<ul class="list-group">
-				<li class="list-group-item"><a href="{{ path('classe.list') }}">Les classes</a></li>
-				<li class="list-group-item"><a href="{{ path('competence.list') }}">Les compétences</a></li>
-				<li class="list-group-item"><a href="{{ path('rules') }}">Les règles</a></li>
-				<li class="list-group-item"><a href="{{ path('personnageSecondaire.list') }}">Les personnages secondaires</a></li>
+				<li class="list-group-item"><a href="{{ path('participant.classe.list', {'participant': participant.id}) }}">Les classes</a></li>
+				<li class="list-group-item"><a href="{{ path('participant.competence.list', {'participant': participant.id}) }}">Les compétences</a></li>
+				<li class="list-group-item"><a href="{{ path('participant.regle.list', {'participant': participant.id}) }}">Les règles</a></li>
 			</ul>
 			
 			<div class="header">
 				<h5>Univers</h5>
 			</div>
 			<ul class="list-group">
-				<li class="list-group-item"><a href="{{ path('world') }}">La carte</a></li>
-				<li class="list-group-item"><a href="{{ path('groupe') }}">Les groupes</a></li>
-				<li class="list-group-item"><a href="{{ path('groupeSecondaire.list') }}">Les groupes secondaires</a></li>
-				<li class="list-group-item"><a href="{{ path('religion.list') }}">Les religions</a></li>
+				<li class="list-group-item"><a href="{{ path('participant.world', {'participant': participant.id}) }}">La carte</a></li>
+				<li class="list-group-item"><a href="{{ path('participant.groupe.list', {'participant': participant.id}) }}">Les groupes</a></li>
+				<li class="list-group-item"><a href="{{ path('participant.groupeSecondaire.list', {'participant': participant.id}) }}">Les groupes secondaires</a></li>
+				<li class="list-group-item"><a href="{{ path('participant.religion.list', {'participant': participant.id}) }}">Les religions</a></li>
 			</ul>			
 			
 			<div class="header">
@@ -97,14 +95,14 @@
 				<div class="panel-heading">Rappel !</div>
 				<div class="panel-body">
 					{% if not participant.billet %}
-						<p class="text-danger"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i>Vous n'avez pas de billet. Vous devez impérativement avoir un Billet pour pouvoir rejoindre un groupe.</p>
+						<p class="text-danger"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i>Vous n'avez pas de billet. Vous devez impérativement avoir un Billet pour pouvoir participer à {{ participant.gn.label }}.</p>
 						<div class="clearfix">
 							<div class="pull-right">
 								<a class="btn btn-primary btn-lg" href="{{ path('gn.billetterie', {'gn': participant.gn.id}) }}">Billetterie</a>
 							</div>
 						</div>
 					{% endif %}
-					{% if not participant.groupe %}<p class="text-danger"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i>Vous n'êtes pas dans un groupe. Vous devez impérativement entrer dans un groupe pour pouvoir créer un personnage.</p>{% endif %}
+					{% if not participant.groupe %}<p class="text-danger"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Vous n'êtes pas dans un groupe. Vous devez impérativement entrer dans un groupe pour pouvoir créer un personnage ou modifier votre ancien personnage. Contactez le chef de groupe que vous voulez rejoindre, il vous fournira le code necessaire pour rejoindre son groupe.</p>{% endif %}
 					{% if not participant.personnage %}<p class="text-danger"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i>Vous n'avez pas encore de personnage. Vous devez impérativement vous créer un personnage.</p>{% endif %}
 					{% if not participant.personnageSecondaire %}<p class="text-danger"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i>Vous n'avez pas encore de personnage secondaire. Vous devez impérativement choisir un personnage secondaire.</p>{% endif %}
 				</div>

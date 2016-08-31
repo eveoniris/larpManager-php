@@ -28,7 +28,6 @@ use LarpManager\Entities\Background;
 use LarpManager\Form\BackgroundForm;
 use LarpManager\Form\BackgroundFindForm;
 use LarpManager\Form\BackgroundDeleteForm;
-use Doctrine\Common\Collections\ArrayCollection;
 
 
 /**
@@ -38,57 +37,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  *
  */
 class BackgroundController
-{
-	/**
-	 * Liste des background pour le joueur
-	 * 
-	 * @param Request $request
-	 * @param Application $app
-	 */
-	public function joueurAction(Request $request, Application $app)
-	{
-		// l'utilisateur doit avoir un personnage
-		$personnage = $app['user']->getPersonnage();
-		if ( ! $personnage )
-		{
-			$app['session']->getFlashBag()->add('error','Désolé, pas de personnage, pas de background.');
-			return $app->redirect($app['url_generator']->generate('homepage'),301);
-		}	
-		
-		$backsGroupe = new ArrayCollection();
-		$backsJoueur = new ArrayCollection();
-		
-		// recherche les backgrounds liés au personnage (visibilité == OWNER)
-		$backsJoueur = $personnage->getBackgrounds('OWNER');
-		
-		// recherche les backgrounds liés au groupe (visibilité == PUBLIC)
-		$backsGroupe = new ArrayCollection(array_merge(
-			$personnage->getGroupe()->getBacks('PUBLIC')->toArray(),
-			$backsGroupe->toArray()
-		));
-		
-		// recherche les backgrounds liés au groupe (visibilité == GROUP_MEMBER)
-		$backsGroupe = new ArrayCollection(array_merge(
-			$personnage->getGroupe()->getBacks('GROUPE_MEMBER')->toArray(),
-			$backsGroupe->toArray()
-		));
-		
-		// recherche les backgrounds liés au groupe (visibilité == GROUP_OWNER)
-		if ( $app['user'] == $personnage->getGroupe()->getUserRelatedByResponsableId() )
-		{
-			$backsGroupe = new ArrayCollection(array_merge(
-				$personnage->getGroupe()->getBacks('GROUPE_OWNER')->toArray(),
-				$backsGroupe->toArray()
-			));
-		}
-		
-		return $app['twig']->render('public/background.twig', array(
-				'backsJoueur' => $backsJoueur,
-				'backsGroupe' => $backsGroupe,
-				'personnage' => $personnage,
-		));	
-	}
-	
+{	
 	/**
 	 * Présentation des backgrounds
 	 *

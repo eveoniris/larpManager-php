@@ -41,24 +41,7 @@ use LarpManager\Form\SphereDeleteForm;
  */
 class MagieController
 {
-	
-	/**
-	 * Découverte de la magie, des domaines et sortilèges
-	 * 
-	 * @param Request $request
-	 * @param Application $app
-	 */
-	public function indexAction(Request $request, Application $app)
-	{
-		$domaines = $app['orm.em']->getRepository('\LarpManager\Entities\Domaine')->findAll();
-		$personnage = $app['user']->getPersonnage();
 		
-		return $app['twig']->render('public/magie/index.twig', array(
-				'domaines' => $domaines,
-				'personnage' => $personnage,
-		));
-	}
-	
 	/**
 	 * Liste des sphere
 	 *
@@ -385,7 +368,7 @@ class MagieController
 	
 		$file = __DIR__.'/../../../private/doc/'.$document;
 	
-		$stream = function () use ($file) {
+		/*$stream = function () use ($file) {
 			readfile($file);
 		};
 	
@@ -393,7 +376,10 @@ class MagieController
 				'Content-Type' => 'text/pdf',
 				'Content-length' => filesize($file),
 				'Content-Disposition' => 'attachment; filename="'.$priere->getLabel().'.pdf"'
-		));
+		));*/
+		
+		return $app->sendFile($file);
+		
 	}
 	
 	/**

@@ -37,7 +37,6 @@ class ReligionControllerProvider implements ControllerProviderInterface
 	 * Initialise les routes pour les religions
 	 * Routes :
 	 * 	- religion
-	 *  - religion.list
 	 * 	- religion.add
 	 *  - religion.update
 	 *  - religion.detail
@@ -94,13 +93,6 @@ class ReligionControllerProvider implements ControllerProviderInterface
 			->bind("religion.mail")
 			->method('GET')
 			->before($mustBeOrga);
-		
-		/**
-		 * Liste des religions (joueur)
-		 */
-		$controllers->match('/list','LarpManager\Controllers\ReligionController::listAction')
-			->bind("religion.list")
-			->method('GET');
 		
 		/**
 		 * Liste des personnages ayant cette religion

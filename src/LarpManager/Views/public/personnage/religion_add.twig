@@ -3,32 +3,56 @@
 {% block title %}{{ personnage.publicName }}{% endblock title %}
 
 {% block content %}
-<div class="container-fluid">
 
 	<ol class="breadcrumb">
 		<li><a href="{{ path('homepage')  }}">Accueil</a></li>
-		<li><a href="{{ path('personnage')  }}">Votre personnage</a></li>
+		<li><a href="{{ path('participant.index', {'participant' : participant.id}) }}">{{ participant.gn.label }}</a></li>
+		<li><a href="{{ path('participant.personnage', {'participant': participant.id}) }}">{{ personnage.nom }} {{ personnage.surnom }}</a></li>
 		<li class="active">Choix d'une religion</li>
 	</ol>
-	
-	<div class="well bs-component">
-		<form action="{{ path('personnage.religion.add',{'personnage':personnage.id}) }}" method="POST" {{ form_enctype(form) }}>
-			<fieldset>
-				<legend>{{ personnage.publicName }} - <small>Choix d'une religion</small></legend>
-				<p class="text-warning">Attention ! une fois votre religion choisie, vous ne pourrez plus revenir sur votre choix.</p>
-				<p class="list-group-item-text">
-					Vous pouvez choisir autant de religions que vous voulez. Attention toutefois, les règles suivantes s'appliquent :
-					<ul>
-						<li>Vous ne pouvez avoir qu'une seule religion au niveau "Fervent"</li>
-						<li>Si vous choisissez une religion au niveau "Fanatique", vous perdez toutes vos autres religions (un Fanatique n'a qu'une seule religion).</li>
-					</ul>
-				</p>
-				{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
-	
-				{{ form_row(form.religion) }}
-				{{ form_row(form.religionLevel) }}
-				{{ form_rest(form) }}
-			</fieldset>
-		</form>
+		
+	<div class="row">
+		<div class="col-md-4">
+			<div class="well well-sm">
+				<form action="{{ path('participant.religion.add',{'participant':participant.id}) }}" method="POST" {{ form_enctype(form) }}>
+					<fieldset>
+						<legend>{{ personnage.publicName }} - <small>Choix d'une religion</small></legend>
+						<p class="text-warning">Attention ! une fois votre religion choisie, vous ne pourrez plus revenir sur votre choix.</p>
+						<p class="list-group-item-text">
+							Vous pouvez choisir autant de religions que vous voulez. Attention toutefois, les règles suivantes s'appliquent :
+							<ul>
+								<li>Vous ne pouvez avoir qu'une seule religion au niveau "Fervent"</li>
+								<li>Si vous choisissez une religion au niveau "Fanatique", vous perdez toutes vos autres religions (un Fanatique n'a qu'une seule religion).</li>
+							</ul>
+						</p>
+						{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+			
+						{{ form_row(form.religion) }}
+						{{ form_row(form.religionLevel) }}
+						{{ form_rest(form) }}
+					</fieldset>
+				</form>
+			</div>
+		</div>
+		
+		<div class="col-md-8">
+			<div class="list-group">
+				{% for religion in religions %}
+					<div class="list-group-item">
+						<h5 class="list-group-item-heading header">{{ religion.label }}</h5>
+						<div class="rows clearfix">
+							<div class="col-md-2">
+								{% if religion.blason %}
+				      				<img width="160" src="{{ path('blason.get', {'blason' : religion.blason }) }}" />
+				      			{% endif %}
+						    </div>
+						    <div class="col-md-10">
+								<p class="list-group-item-text">{{ religion.description|markdown }}</p>
+							</div>
+						</div>
+					</div>
+				{% endfor %}
+			</div>
+		</div>
 	</div>
 {% endblock content %}

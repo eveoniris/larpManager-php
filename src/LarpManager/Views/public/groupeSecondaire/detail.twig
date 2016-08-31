@@ -6,6 +6,8 @@
 
 <ol class="breadcrumb">
 	<li><a href="{{ path('homepage')  }}">Accueil</a></li>
+	<li><a href="{{ path('participant.index', {'participant' : participant.id}) }}">{{ participant.gn.label }}</a></li>
+	<li><a href="{{ path('participant.personnage', {'participant' : participant.id}) }}">{{ participant.personnage.nom }} {{ participant.personnage.surnom }}</a></li>
 	<li class="active">{{ groupeSecondaire.label }}</li>
 </ol>
 
@@ -81,7 +83,7 @@
 				<div class="list-group-item-heading">
 					{% if groupeSecondaire.responsable %}
 						<strong>{{ groupeSecondaire.responsable.publicName }}</strong>
-						&nbsp;<a href="{{ path('user.message.new', {'from_id': app.user.id, 'to_id': groupeSecondaire.responsable.participant.user.id }) }}"><i class="fa fa-pencil-square-o"></i>Envoyer un message</a>
+						&nbsp;<a href="{{ path('user.message.new', {'from_id': participant.personnage.id, 'to_id': groupeSecondaire.responsable.id }) }}"><i class="fa fa-pencil-square-o"></i>Envoyer un message</a>
 					{% else %}
 						<strong>Ce groupe ne dispose pas encore de responsable</strong>
 					{% endif %}
@@ -98,7 +100,7 @@
 			<div class="list-group-item">
 				<div class="list-group-item-heading">
 					<strong>{{ membre.personnage.publicName }}</strong>
-					{% if groupeSecondaire.responsable %}&nbsp;<a href="{{ path('user.message.new', {'from_id': app.user.id, 'to_id': membre.personnage.participant.user.id }) }}"><i class="fa fa-pencil-square-o"></i>Envoyer un message</a>{% endif %}
+					{% if groupeSecondaire.responsable %}&nbsp;<a href="{{ path('user.message.new', {'from_id': participant.personnage.id, 'to_id': membre.personnage.id }) }}"><i class="fa fa-pencil-square-o"></i>Envoyer un message</a>{% endif %}
 				</div>
 			</div>
 		{% endfor %}
@@ -111,8 +113,8 @@
 		<div class="row">
 		{% for membre in groupeSecondaire.membres %}
 			<div class="col-xs-6 col-md-3">
-				{% if membre.personnage.participant.user.trombineUrl %}
-					<img width="160" src="{{ path('trombine.get', {'trombine' : membre.personnage.participant.user.trombineUrl }) }}" />
+				{% if membre.personnage.trombineUrl %}
+					<img width="160" src="{{ path('personnage.trombine', {'personnage' : membre.personnage.id }) }}" />
 					<div class="caption">
 						{{ membre.personnage.publicName }}
 					</div>

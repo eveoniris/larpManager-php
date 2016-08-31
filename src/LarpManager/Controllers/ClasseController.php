@@ -60,19 +60,6 @@ class ClasseController
 	}
 	
 	/**
-	 * Liste des classes pour le joueur
-	 * 
-	 * @param Request $request
-	 * @param Application $app
-	 */
-	public function listAction(Request $request, Application $app)
-	{
-		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Classe');
-		$classes = $repo->findAllOrderedByLabel();
-		return $app['twig']->render('public/classe/list.twig', array('classes' => $classes));
-	}
-	
-	/**
 	 * Ajout d'une classe
 	 * @param Request $request
 	 * @param Application $app
