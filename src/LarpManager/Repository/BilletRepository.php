@@ -21,29 +21,16 @@
 namespace LarpManager\Repository;
 
 use Doctrine\ORM\EntityRepository;
-use LarpManager\Entities\Gn;
 
 /**
- * LarpManager\Repository\UserHasBilletRepository
+ * LarpManager\Repository\BilletRepository
  *  
  * @author kevin
  */
-class UserHasBilletRepository extends EntityRepository
+class BilletRepository extends EntityRepository
 {
-	
-
-	/**
-	 * Fourni la liste de tous les utilisateurs ayant un billet pour ce GN
-	 * 
-	 * @param Gn $gn
-	 */
-	public function findAllByGn(Gn $gn)
+	public function findAll()
 	{
-		$userHasBillets = $this->getEntityManager()
-					->createQuery('SELECT uhb FROM LarpManager\Entities\UserHasBillet uhb LEFT JOIN uhb.billet b LEFT JOIN b.gn gn LEFT JOIN uhb.user u LEFT JOIN u.etatCivil ec WHERE gn.id = :gnId ORDER BY ec.nom ASC, ec.prenom ASC')
-					->setParameter('gnId',$gn->getId())
-					->getResult();
-		
-		return $userHasBillets;
+		return $this->findBy(array(), array('gn' => 'ASC'));
 	}
 }

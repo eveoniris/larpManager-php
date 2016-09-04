@@ -34,9 +34,14 @@ use LarpManager\Form\ParticipantPersonnageSecondaireForm;
 use LarpManager\Form\GroupeInscriptionForm;
 use LarpManager\Form\GroupeSecondairePostulerForm;
 use LarpManager\Form\PersonnageOriginForm;
+use LarpManager\Form\GroupePlaceAvailableForm;
+use LarpManager\Form\ParticipantBilletForm;
+use LarpManager\Form\ParticipantRestaurationForm;
+use LarpManager\Form\ParticipantGroupeForm;
 
 
 use LarpManager\Entities\Participant;
+use LarpManager\Entities\ParticipantHasRestauration;
 use LarpManager\Entities\SecondaryGroup;
 use LarpManager\Entities\Priere;
 use LarpManager\Entities\Potion;
@@ -53,6 +58,9 @@ use LarpManager\Entities\Rule;
  */
 class ParticipantController
 {
+	
+
+	
 	/**
 	 * Interface Joueur d'un jeu
 	 *
@@ -65,6 +73,128 @@ class ParticipantController
 		return $app['twig']->render('public/participant/index.twig', array(
 				'gn' => $participant->getGn(),
 				'participant' => $participant,
+		));
+	}
+	
+	/**
+	 * Affecte un participant à un groupe
+	 * 
+	 * @param Application $app
+	 * @param Request $request
+	 * @param Participant $participant
+	 */
+	public function groupeAction(Application $app, Request $request, Participant $participant)
+	{
+		$form = $app['form.factory']->createBuilder(new ParticipantGroupeForm(), $participant)
+			->add('save','submit', array('label' => 'Sauvegarder'))
+			->getForm();
+		
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$participant = $form->getData();
+			$app['orm.em']->persist($participant);
+			$app['orm.em']->flush();
+		
+			$app['session']->getFlashBag()->add('success', 'Vos modifications ont été enregistré.');
+			return $app->redirect($app['url_generator']->generate('gn.participants', array('gn' => $participant->getGn()->getId())),301);
+		}
+		
+		return $app['twig']->render('admin/participant/groupe.twig', array(
+				'participant' => $participant,
+				'form' => $form->createView(),
+		));
+	}
+	
+	/**
+	 * Ajout d'un billet à un utilisateur. L'utilisateur doit participer au même jeu que celui du billet qui lui est affecté
+	 *
+	 * @param Application $app
+	 * @param Request $request
+	 * @param User $user
+	 */
+	public function billetAction(Application $app, Request $request, Participant $participant)
+	{
+		$form = $app['form.factory']->createBuilder(new ParticipantBilletForm(), $participant)
+			->add('save','submit', array('label' => 'Sauvegarder'))
+			->getForm();
+	
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$participant = $form->getData();
+			$participant->setBilletDate(new \Datetime('NOW'));
+			$app['orm.em']->persist($participant);
+			$app['orm.em']->flush();
+				
+			$app['session']->getFlashBag()->add('success', 'Vos modifications ont été enregistré.');
+			return $app->redirect($app['url_generator']->generate('gn.participants', array('gn' => $participant->getGn()->getId())),301);
+		}
+		
+		return $app['twig']->render('admin/participant/billet.twig', array(
+				'participant' => $participant,
+				'form' => $form->createView(),
+		));
+	}
+	
+	/**
+	 * Choix du lieu de restauration d'un utilisateur
+	 *
+	 * @param Application $app
+	 * @param Request $request
+	 * @param User $user
+	 */
+	public function restaurationAction(Application $app, Request $request, Participant $participant)
+	{
+		$originalParticipantHasRestaurations = new ArrayCollection();
+		
+		/**
+		 *  Crée un tableau contenant les objets ParticipantHasRestauration du participant
+		 */
+		foreach ($participant->getParticipantHasRestaurations() as $participantHasRestauration)
+		{
+			$originalParticipantHasRestaurations->add($participantHasRestauration);
+		}
+		
+		$form = $app['form.factory']->createBuilder(new ParticipantRestaurationForm(),  $participant)
+			->add('save','submit', array('label' => 'Sauvegarder'))
+			->getForm();
+	
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$participant = $form->getData();
+			
+			/**
+			 * Pour toutes les restaurations du participant
+			 */
+			foreach ($participant->getParticipantHasRestaurations() as $participantHasRestauration)
+			{
+				$participantHasRestauration->setParticipant($participant);
+			}
+			
+			/**
+			 *  supprime la relation entre participantHasRestauration et le participant
+			 */
+			foreach ($originalParticipantHasRestaurations as $participantHasRestauration) {
+				if ($participant->getParticipantHasRestaurations()->contains($participantHasRestauration) == false) {
+					$app['orm.em']->remove($participantHasRestauration);
+				}
+			}
+
+			$app['orm.em']->persist($participant);
+			$app['orm.em']->flush();
+	
+			$app['session']->getFlashBag()->add('success', 'Vos modifications ont été enregistrés.');
+			return $app->redirect($app['url_generator']->generate('gn.participants', array('gn' => $participant->getGn()->getId())),301);
+		}
+		
+		return $app['twig']->render('admin/participant/restauration.twig', array(
+				'participant' => $participant,
+				'form' => $form->createView(),
 		));
 	}
 	
@@ -200,6 +330,50 @@ class ParticipantController
 	}
 	
 	/**
+	 * Permet au chef de groupe de modifier le nombre de place disponible
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Groupe $groupe
+	 */
+	public function groupePlaceAvailableAction(Request $request, Application $app, Participant $participant,  Groupe $groupe)
+	{
+		if ( ! $participant->getBillet() )
+		{
+			$app['session']->getFlashBag()->add('error','Désolé, vous devez obtenir un billet avant.');
+			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+		}
+		
+		if ( $participant->getUser() != $groupe->getResponsable() )
+		{
+			$app['session']->getFlashBag()->add('error','Désolé, cette action est réservé au chef de groupe.');
+			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+		}
+		
+		$form = $app['form.factory']->createBuilder(new GroupePlaceAvailableForm(), $groupe)
+			->add('submit','submit', array('label' => 'Enregistrer'))
+			->getForm();
+	
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$groupe = $form->getData();
+			$app['orm.em']->persist($groupe);
+			$app['orm.em']->flush();
+	
+			$app['session']->getFlashBag()->add('success', 'Vos modifications ont été enregistré.');
+			return $app->redirect($app['url_generator']->generate('participant.groupe.detail', array('participant' => $participant->getId())));
+		}
+	
+		return $app['twig']->render('public/groupe/placeAvailable', array(
+				'form' => $form->createView(),
+				'groupe' => $groupe,
+				'participant' => $participant,
+		));
+	}
+	
+	/**
 	 * Choix du personnage secondaire par un utilisateur
 	 *
 	 * @param Request $request
@@ -247,8 +421,8 @@ class ParticipantController
 		$personnage = $participant->getPersonnage();
 		if ( ! $personnage )
 		{
-			$app['session']->getFlashBag()->add('error','Désolé, pas de personnage, pas de background.');
-			return $app->redirect($app['url_generator']->generate('homepage'),301);
+			$app['session']->getFlashBag()->add('error','Désolé, Vous devez faire votre personnage pour pouvoir consulter votre background.');
+			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
 		}
 	
 		$backsGroupe = new ArrayCollection();

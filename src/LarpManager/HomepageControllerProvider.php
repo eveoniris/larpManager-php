@@ -100,8 +100,28 @@ class HomepageControllerProvider implements ControllerProviderInterface
 		$controllers->match('/blasons/{blason}','LarpManager\Controllers\HomepageController::getBlasonAction')
 					->method('GET')
 					->bind('blason.get')
-					->before($mustBeUser);					
+					->before($mustBeUser);
+					
+		/** Affichage de la cartographie du monde de conan */
+		$controllers->match('/world','LarpManager\Controllers\ParticipantController::worldAction')
+					->method('GET')
+					->bind('world');
+					
+		/** Affichage de la cartographie du monde de conan */
+		$controllers->match('/world/countries.json','LarpManager\Controllers\ParticipantController::countriesAction')
+					->method('GET')
+					->bind('world.countries.json');
 						
+		/** Affichage de la cartographie du monde de conan */
+		$controllers->match('/world/regions.json','LarpManager\Controllers\ParticipantController::regionsAction')
+					->method('GET')
+					->bind('world.regions.json');
+					
+		/** Affichage de la cartographie du monde de conan */
+		$controllers->match('/world/fiefs.json','LarpManager\Controllers\ParticipantController::fiefsAction')
+					->method('GET')
+					->bind('world.fiefs.json');
+											
 		/** Mise a jour d'une geographie */
 		$controllers->match('/world/countries/{territoire}/update','LarpManager\Controllers\HomepageController::updateCountryGeomAction')
 					->method('POST')

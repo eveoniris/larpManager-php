@@ -17,6 +17,7 @@ use LarpManager\Services\Manager\FedegnManager;
 use LarpManager\Services\Converter\AgeConverter;
 use LarpManager\Services\Converter\AllianceConverter;
 use LarpManager\Services\Converter\AnnonceConverter;
+use LarpManager\Services\Converter\AppelationConverter;
 use LarpManager\Services\Converter\BackgroundConverter;
 use LarpManager\Services\Converter\BilletConverter;
 use LarpManager\Services\Converter\ClasseConverter;
@@ -83,6 +84,7 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 			return $voters;
 		});
 				
+		
 		// manager
 		$app['larp.manager'] = $app->share(function($app) {
 			$larpManagerManager = new LarpManagerManager($app);
@@ -111,10 +113,20 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 		$app['converter.age'] = $app->share(function($app) {
 			return new AgeConverter($app['orm.em']);
 		});
+
+		// alliance converter
+		$app['converter.alliance'] = $app->share(function($app) {
+			return new AllianceConverter($app['orm.em']);
+		});
 		
-		// age converter
+		// annonce converter
 		$app['converter.annonce'] = $app->share(function($app) {
 			return new AnnonceConverter($app['orm.em']);
+		});
+		
+		// Appelation converter
+		$app['converter.appelation'] = $app->share(function($app) {
+			return new AppelationConverter($app['orm.em']);
 		});
 		
 		// classe converter
@@ -181,12 +193,7 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 		$app['converter.membre'] = $app->share(function($app) {
 			return new MembreConverter($app['orm.em']);
 		});
-		
-		// alliance converter
-		$app['converter.alliance'] = $app->share(function($app) {
-			return new AllianceConverter($app['orm.em']);
-		});
-			
+					
 		// enemy converter
 		$app['converter.enemy'] = $app->share(function($app) {
 			return new EnemyConverter($app['orm.em']);

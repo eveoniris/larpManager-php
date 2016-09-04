@@ -130,7 +130,12 @@
 					<td>{{ personnage.classe }}</td>
 					<td>{{ personnage.renomme|default(0) }}</td>
 					<td>{{ personnage.groupe }}</td>
-					<td>{{ personnage.participant }}</td>
+					<td>
+						{% for participant in personnage.participants %}
+							<strong>{{ participant.gn.label }}</strong>&nbsp;
+							{{ participant.user.etatCivil.nom }} {{ participant.user.etatCivil.prenom }}<br />
+						{% endfor %}
+					</td>
 					<td>
 						<a href="{{ path('personnage.admin.xp', {'personnage': personnage.id}) }}">Points d'expériences</a>
 					</td>

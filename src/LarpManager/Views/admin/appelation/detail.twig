@@ -33,7 +33,7 @@
     				<p class="list-group-item-text">
 						<ul>
 						{% for appelation in appelation.appelations %}
-							<li><a href="{{ path('appelation.detail',{'index': appelation.id}) }}">{{ appelation.labelTree }}</a></li>
+							<li><a href="{{ path('appelation.detail',{'appelation': appelation.id}) }}">{{ appelation.labelTree }}</a></li>
 						{% endfor %}
 						</ul>
 					</p>
@@ -41,7 +41,7 @@
 				
 				<div class="list-group-item">
   					<div class="btn-group" role="group" aria-label="...">
-  						<a  class="btn btn-primary" role="button" href="{{ path('appelation.update', {index : appelation.id}) }}">Modifier</a>
+  						<a  class="btn btn-primary" role="button" href="{{ path('appelation.update', {'appelation' : appelation.id}) }}">Modifier</a>
 					</div>
   				</div>
 			</div>

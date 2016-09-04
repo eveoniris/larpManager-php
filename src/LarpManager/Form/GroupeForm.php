@@ -58,6 +58,10 @@ class GroupeForm extends AbstractType
 				))
 				->add('description','textarea', array(
 						'required' => false,
+						'attr' => array(
+							'class' => 'tinymce',
+							'row' => 9,
+						),
 				))
 				->add('materiel','textarea', array(
 						'required' => false,

@@ -53,6 +53,7 @@ class GroupeControllerProvider implements ControllerProviderInterface
 	 *  - groupe.requestPeace
 	 *  - groupe.acceptPeace
 	 *  - groupe.refusePeace
+	 *  - groupe.placeAvailable
 	 *
 	 * @param Application $app
 	 * @return Controllers $controllers
@@ -109,7 +110,7 @@ class GroupeControllerProvider implements ControllerProviderInterface
 			->bind("groupe.personnage.add")
 			->method('GET|POST')
 			->before($mustBeMember);
-							
+								
 		/**
 		 * Demander une alliance
 		 */

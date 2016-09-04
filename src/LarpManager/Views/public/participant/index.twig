@@ -20,7 +20,7 @@
 			<ul class="list-group">
 				<li class="list-group-item">
 				{% if participant.groupe %}
-					<a href=""><i class="fa fa-users"></i> Votre groupe</a>
+					<a href="{{ path('participant.groupe.detail', {'participant': participant.id, 'groupe': participant.groupe.id}) }}"><i class="fa fa-users"></i> Votre groupe</a>
 				{% else %}
 					<a href="{{ path('participant.groupe.join', {'participant': participant.id}) }}"><i class="fa fa-users"></i> Rejoindre un groupe</a>
 				{% endif %}
@@ -63,7 +63,7 @@
 				<h5>Univers</h5>
 			</div>
 			<ul class="list-group">
-				<li class="list-group-item"><a href="{{ path('participant.world', {'participant': participant.id}) }}">La carte</a></li>
+				<li class="list-group-item"><a href="{{ path('world') }}">La carte</a></li>
 				<li class="list-group-item"><a href="{{ path('participant.groupe.list', {'participant': participant.id}) }}">Les groupes</a></li>
 				<li class="list-group-item"><a href="{{ path('participant.groupeSecondaire.list', {'participant': participant.id}) }}">Les groupes secondaires</a></li>
 				<li class="list-group-item"><a href="{{ path('participant.religion.list', {'participant': participant.id}) }}">Les religions</a></li>

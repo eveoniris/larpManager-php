@@ -43,21 +43,21 @@ class Restauration extends BaseRestauration
 	public function getUserByGn()
 	{
 		$result = new ArrayCollection();
-		foreach ( $this->getUserHasRestaurations() as $userHasRestauration)
+		foreach ( $this->getParticipantHasRestaurations() as $participantHasRestauration)
 		{
-			if ( $result->containsKey($userHasRestauration->getGn()->getId()) )
+			if ( $result->containsKey($participantHasRestauration->getParticipant()->getGn()->getId()) )
 			{
-				$gn = $result->get($userHasRestauration->getGn()->getId());
+				$gn = $result->get($participantHasRestauration->getParticipant()->getGn()->getId());
 				$gn['count']++;
-				$gn['users'][] = $userHasRestauration->getUser();
-				$result[$userHasRestauration->getGn()->getId()] = $gn;
+				$gn['users'][] = $participantHasRestauration->getParticipant()->getUser();
+				$result[$participantHasRestauration->getParticipant()->getGn()->getId()] = $gn;
 			}
 			else
 			{
-				$result[$userHasRestauration->getGn()->getId()] = array(
-						'gn' => $userHasRestauration->getGn(),
+				$result[$participantHasRestauration->getParticipant()->getGn()->getId()] = array(
+						'gn' => $participantHasRestauration->getParticipant()->getGn(),
 						'count' => 1,
-						'users' => array($userHasRestauration->getUser()),
+						'users' => array($participantHasRestauration->getParticipant()->getUser()),
 				);
 			}
 		}
@@ -70,15 +70,15 @@ class Restauration extends BaseRestauration
 	public function getRestrictionByGn()
 	{
 		$result = new ArrayCollection();
-		foreach ( $this->getUserHasRestaurations() as $userHasRestauration)
+		foreach ( $this->getParticipantHasRestaurations() as $participantHasRestauration)
 		{
-			if ( $userHasRestauration->getUser()->getRestrictions()->count() > 0);
+			if ( $participantHasRestauration->getParticipant()->getUser()->getRestrictions()->count() > 0);
 			{
-				if ( $result->containsKey($userHasRestauration->getGn()->getId()) )
+				if ( $result->containsKey($participantHasRestauration->getParticipant()->getGn()->getId()) )
 				{
-					$gn = $result->get($userHasRestauration->getGn()->getId());
+					$gn = $result->get($participantHasRestauration->getParticipant()->getGn()->getId());
 					
-					foreach ( $userHasRestauration->getUser()->getRestrictions() as $restriction)
+					foreach ( $participantHasRestauration->getParticipant()->getUser()->getRestrictions() as $restriction)
 					{
 						if ( ! $gn['restrictions']->containsKey($restriction->getId()))
 						{
@@ -89,24 +89,24 @@ class Restauration extends BaseRestauration
 						}
 						else
 						{
-							$restriction = $gn['restrictions']->get($restriction->getId());
-							$restriction['count']++;
-							$gn['restrictions'][$restriction->getId()] = $restriction;
+							$r = $gn['restrictions']->get($restriction->getId());
+							$r['count']++;
+							$gn['restrictions'][$restriction->getId()] = $r;
 						}
 					}
 					
-					$result[$userHasRestauration->getGn()->getId()] = $gn;
+					$result[$participantHasRestauration->getParticipant()->getGn()->getId()] = $gn;
 				}
 				else
 				{
-					$result[$userHasRestauration->getGn()->getId()] = array(
-						'gn' => $userHasRestauration->getGn(),
+					$result[$participantHasRestauration->getParticipant()->getGn()->getId()] = array(
+						'gn' => $participantHasRestauration->getParticipant()->getGn(),
 						'restrictions' => new ArrayCollection(),
 					);
 					
-					foreach ( $userHasRestauration->getUser()->getRestrictions() as $restriction)
+					foreach ( $participantHasRestauration->getParticipant()->getUser()->getRestrictions() as $restriction)
 					{
-						$result[$userHasRestauration->getGn()->getId()]['restrictions'][$restriction->getId()] = array(
+						$result[$participantHasRestauration->getParticipant()->getGn()->getId()]['restrictions'][$restriction->getId()] = array(
 								'restriction' => $restriction,
 								'count' => 1,
 							);

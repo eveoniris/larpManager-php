@@ -24,6 +24,7 @@
 					<th>Nom</th>
 					<th>Description</th>
 					<th>GN</th>
+					<th>FédéGN</th>
 					<th>Quantité</th>
 					<th />
 				</tr>
@@ -34,7 +35,14 @@
 					<td>{{ billet.label }}</td>
 					<td>{{ billet.description|markdown }}</td>
 					<td>{{ billet.gn }}</td>
-					<td>{{ billet.users|length }}</td>
+					<td>
+						{% if billet.fedegn %}
+							<span class="text-success">Oui</span>
+						{% else %}
+							<span class="text-error">Non</span>
+						{% endif %}
+					</td>
+					<td>{{ billet.participants|length }}</td>
 					<td>
 						<div class="btn-toolbar pull-right" role="toolbar" aria-label="...">
 							<div class="btn-group" role="group" aria-label="...">

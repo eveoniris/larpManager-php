@@ -289,18 +289,18 @@ class HomepageController
 	
 	/**
 	 * Affiche une carte du monde
-	 * 
+	 *
 	 * @param Request $request
 	 * @param Application $app
 	 */
 	public function worldAction(Request $request, Application $app)
-	{	
-		return $app['twig']->render('public/world.twig');		
+	{
+		return $app['twig']->render('public/world.twig');
 	}
 	
 	/**
 	 * Fourni la liste des pays, leur geographie et leur description
-	 * 
+	 *
 	 * @param Request $request
 	 * @param Application $app
 	 */
@@ -308,7 +308,7 @@ class HomepageController
 	{
 		$repoTerritoire = $app['orm.em']->getRepository('LarpManager\Entities\Territoire');
 		$territoires = $repoTerritoire->findRoot();
-		
+	
 		$countries = array();
 		foreach ( $territoires as $territoire)
 		{
@@ -318,15 +318,15 @@ class HomepageController
 					'name' => $territoire->getNom(),
 					'color' => $territoire->getColor(),
 					'description' => strip_tags($territoire->getDescription())
-				);
+			);
 		}
-		
+	
 		return $app->json($countries);
 	}
 	
 	/**
 	 * Fourni la liste des régions
-	 * 
+	 *
 	 * @param Request $request
 	 * @param Application $app
 	 */
@@ -334,7 +334,7 @@ class HomepageController
 	{
 		$repoTerritoire = $app['orm.em']->getRepository('LarpManager\Entities\Territoire');
 		$territoires = $repoTerritoire->findRegions();
-		
+	
 		$regions = array();
 		foreach ( $territoires as $territoire)
 		{
@@ -346,13 +346,13 @@ class HomepageController
 					'description' => strip_tags($territoire->getDescription())
 			);
 		}
-		
+	
 		return $app->json($regions);
 	}
 	
 	/**
 	 * Fourni la liste des fiefs
-	 * 
+	 *
 	 * @param Request $request
 	 * @param Application $app
 	 */
@@ -360,7 +360,7 @@ class HomepageController
 	{
 		$repoTerritoire = $app['orm.em']->getRepository('LarpManager\Entities\Territoire');
 		$territoires = $repoTerritoire->findFiefs();
-		
+	
 		$fiefs = array();
 		foreach ( $territoires as $territoire)
 		{
@@ -372,9 +372,9 @@ class HomepageController
 					'description' => strip_tags($territoire->getDescription())
 			);
 		}
-		
+	
 		return $app->json($fiefs);
-	}
+	}	
 
 	/**
 	 * Met à jour la geographie d'un pays

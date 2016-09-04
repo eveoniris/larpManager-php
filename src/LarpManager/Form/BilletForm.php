@@ -52,6 +52,15 @@ class BilletForm extends AbstractType
 					'class' => 'LarpManager\Entities\Gn',
 					'property' => 'label',
 				))
+				->add('fedegn', 'choice', array(
+					'label' => 'A transmettre à la Fédégn',
+					'required' => true,
+					'choices' => array(
+							true => 'Oui',
+							false => 'Non',
+					),
+					'expanded' => true,
+				))
 				->add('description','textarea', array(
 					'required' => true,
 					'label' => 'Description',

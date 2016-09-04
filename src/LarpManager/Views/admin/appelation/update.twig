@@ -6,7 +6,7 @@
 			<div class="col-xs-12 col-md-8">
 				{{ include("appelation/fragment/form.twig",{
 					'legend': 'Modification d\'une appelation',
-					'action': path('appelation.update',{'index': appelation.id}),
+					'action': path('appelation.update',{'appelation': appelation.id}),
 					'form' : form}) }}
 			</div>
 		</div>

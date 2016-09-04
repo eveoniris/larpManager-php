@@ -12,8 +12,8 @@
 			{{ age.label }}
 			<small>( <a href="{{ path('age.perso', {'age': age.id}) }}">{{ age.personnages|length }} personnages</a>)</small>
 			<div class="pull-right btn-group" role="group" aria-label="...">
-				<a href="{{ path('age.detail', {index: age.id}) }}" class="btn btn-primary" role="button">Voir</a>
-			    <a href="{{ path('age.update.view', {index: age.id}) }}" class="btn btn-default" role="button">Modifier</a>
+				<a href="{{ path('age.detail', {'age': age.id}) }}" class="btn btn-primary" role="button">Voir</a>
+			    <a href="{{ path('age.update.view', {'age': age.id}) }}" class="btn btn-default" role="button">Modifier</a>
 			</div>
 		</h4>
 		

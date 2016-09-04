@@ -41,9 +41,9 @@ class GnControllerProvider implements ControllerProviderInterface
 	 * 	- gn.add
 	 *  - gn.update
 	 *  - gn.detail
-	 *  - gn.vente
-	 *  - gn.fedegn
 	 *  - gn.billetterie
+	 *  - gn.participants
+	 *  - gn.fedegn
 	 *
 	 * @param Application $app
 	 * @return Controllers $controllers
@@ -104,19 +104,18 @@ class GnControllerProvider implements ControllerProviderInterface
 			->convert('gn', 'converter.gn:convert')
 			->bind("gn.detail")
 			->before($mustBeAdmin);
-			
+
 		/**
-		 * Voir les ventes d'un GN
+		 * Liste des participants à un gn
 		 */
-		$controllers->match('/{gn}/vente','LarpManager\Controllers\GnController::venteAction')
+		$controllers->match('/{gn}/participants', 'LarpManager\Controllers\GnController::participantsAction')
 			->assert('gn', '\d+')
 			->convert('gn', 'converter.gn:convert')
-			->bind("gn.vente")
-			->method('GET')
+			->bind("gn.participants")
 			->before($mustBeAdmin);
 			
 		/**
-		 * Voir les données necessaire pour la FédéGN
+		 * Modifier un gn
 		 */
 		$controllers->match('/{gn}/fedegn','LarpManager\Controllers\GnController::fedegnAction')
 			->assert('gn', '\d+')

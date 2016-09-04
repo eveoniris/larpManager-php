@@ -34,13 +34,9 @@ use LarpManager\Form\MessageForm;
 use LarpManager\Form\NewMessageForm;
 use LarpManager\Form\RestrictionForm;
 use LarpManager\Form\UserRestrictionForm;
-use LarpManager\Form\UserBilletForm;
-use LarpManager\Form\UserRestaurationForm;
 
 use LarpManager\Entities\Restriction;
 use LarpManager\Entities\User;
-use LarpManager\Entities\UserHasRestauration;
-use LarpManager\Entities\UserHasBillet;
 use LarpManager\Entities\Gn;
 use LarpManager\Entities\Participant;
 
@@ -94,72 +90,7 @@ class UserController
 		return $password;
 	}
 	
-	/**
-	 * Gestion des billets d'un utilisateur
-	 * 
-	 * @param Application $app
-	 * @param Request $request
-	 * @param User $user
-	 */
-	public function billetAction(Application $app, Request $request, User $user)
-	{
-		$userHasBillet = new UserHasBillet();
-		
-		$form = $app['form.factory']->createBuilder(new UserBilletForm(), $userHasBillet)
-			->add('save','submit', array('label' => 'Sauvegarder'))
-			->getForm();
-		
-		$form->handleRequest($request);
-			
-		if ( $form->isValid() )
-		{
-			$userHasBillet = $form->getData();
-			$user->addUserHasBillet($userHasBillet);
-			$app['orm.em']->persist($user);
-			$app['orm.em']->flush();
-			
-			$app['session']->getFlashBag()->add('success', 'Vos modifications ont été enregistré.');
-			return $app->redirect($app['url_generator']->generate('user.admin.list'),301);
-		}
-		return $app['twig']->render('admin/user/billet.twig', array(
-				'user' => $user,
-				'form' => $form->createView(),
-		));
-	}
-	
-	/**
-	 * Choix du lieu de restauration d'un utilisateur
-	 * 
-	 * @param Application $app
-	 * @param Request $request
-	 * @param User $user
-	 */
-	public function restaurationAction(Application $app, Request $request, User $user)
-	{ 
-		$userHasRestauration = new UserHasRestauration();
-		
-		
-		$form = $app['form.factory']->createBuilder(new UserRestaurationForm(), $userHasRestauration)
-			->add('save','submit', array('label' => 'Sauvegarder'))
-			->getForm();
-		
-		$form->handleRequest($request);
-			
-		if ( $form->isValid() )
-		{
-			$userHasRestauration = $form->getData();
-			$user->addUserHasRestauration($userHasRestauration);
-			$app['orm.em']->persist($user);
-			$app['orm.em']->flush();
-				
-			$app['session']->getFlashBag()->add('success', 'Vos modifications ont été enregistré.');
-			return $app->redirect($app['url_generator']->generate('user.admin.list'),301);
-		}
-		return $app['twig']->render('admin/user/restauration.twig', array(
-				'user' => $user,
-				'form' => $form->createView(),
-		));
-	}
+
 	
 	/**
 	 * Choix des restrictions alimentaires par l'utilisateur

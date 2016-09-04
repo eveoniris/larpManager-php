@@ -109,18 +109,14 @@
 						{%  if not user.etatCivil %}
 							<span class="text-warning">Etat-civil non renseigné</span>
 						{% else %}
-							<a href=" ">									
-								{{ user.etatCivil.nom }} {{ user.etatCivil.prenom }}
-							</a>									
+							{{ user.etatCivil.nom }} {{ user.etatCivil.prenom }}									
 						{% endif %}
 					</td>
 					<td>{{ user.roles|join(', ') }}</td>
 					<td>
 						<div class="btn-toolbar pull-right" role="toolbar" aria-label="...">
 							<div class="btn-group" role="group" aria-label="...">
-								<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Voir l\'état civil" href="{{ path('etatCivil.detail', {'etatCivil':user.etatCivil.id}) }}"><i class="fa fa-user"></i></a>
-								<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Ajouter un billet" href="{{ path('user.billet',{'user':user.id}) }}"><i class="fa fa-ticket"></i></a>
-								<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Choisir le lieu de restauration" href="{{ path('user.restauration',{'user':user.id}) }}"><i class="fa fa-coffee"></i></a>
+								<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Voir l'état civil" href="{{ path('etatCivil.detail', {'etatCivil':user.etatCivil.id}) }}"><i class="fa fa-user"></i></a>
 							</div>
 						</div>
 					</td>

@@ -41,6 +41,7 @@ class AnnonceForm extends AbstractType
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
 		$builder->add('title','text', array(
+					'label' => 'Titre',
 					'required' => true,	
 				))
 				->add('archive','choice', array(

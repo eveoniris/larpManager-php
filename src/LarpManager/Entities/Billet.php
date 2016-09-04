@@ -35,7 +35,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 /**
  * LarpManager\Entities\Billet
  *
- * @Entity()
+ * @Entity(repositoryClass="LarpManager\Repository\BilletRepository")
  */
 class Billet extends BaseBillet
 {
@@ -46,6 +46,15 @@ class Billet extends BaseBillet
 	{
 		$this->setCreationDate(new \Datetime('NOW'));
 		$this->setUpdateDate(new \Datetime('NOW'));
+		$this->setFedegn(false);
+	}
+	
+	/**
+	 * To string
+	 */
+	public function __toString()
+	{ 
+		return $this->getGn()->getLabel(). ' - ' . $this->getLabel();
 	}
 	
 	/**
@@ -55,9 +64,9 @@ class Billet extends BaseBillet
 	{
 		$result = new ArrayCollection();
 		
-		foreach ( $this->getUserHasBillets() as $userHasBillet)
+		foreach ( $this->getParticipants() as $participant)
 		{
-			$result[] = $userHasBillet->getUser();
+			$result[] = $participant->getUser();
 		}
 		
 		return $result;
@@ -70,7 +79,7 @@ class Billet extends BaseBillet
 	 */
 	public function setCreateur(User $user)
 	{
-		$this->setUserRelatedByCreateurId($user);
+		$this->setUser($user);
 		return $this;
 	}
 	
@@ -79,7 +88,7 @@ class Billet extends BaseBillet
 	 */
 	public function getCreateur()
 	{
-		return $this->getUserRelatedByCreateurId();
+		return $this->getUser();
 	}
 	
 	/**

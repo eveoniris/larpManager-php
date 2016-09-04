@@ -51,7 +51,16 @@ class BilletController
 	 */
 	public function addAction(Request $request, Application $app)
 	{
-		$form = $app['form.factory']->createBuilder(new BilletForm(), new Billet())
+		$billet = new Billet();
+		$gnId = $request->get('gn');
+		
+		if ( $gnId )
+		{
+			$gn = $app['orm.em']->getRepository('LarpManager\Entities\Gn')->find($gnId);
+			$billet->setGn($gn);
+		}
+		
+		$form = $app['form.factory']->createBuilder(new BilletForm(), $billet)
 			->add('submit', 'submit', array('label' => 'Valider'))
 			->getForm();
 
@@ -156,9 +165,9 @@ class BilletController
 	 * @param Application $app
 	 * @param Billet $billet
 	 */
-	public function userAction(Request $request, Application $app, Billet $billet)
+	public function participantsAction(Request $request, Application $app, Billet $billet)
 	{
-		return $app['twig']->render('admin\billet\user.twig', array(
+		return $app['twig']->render('admin\billet\participants.twig', array(
 				'billet' => $billet,
 		));
 	}

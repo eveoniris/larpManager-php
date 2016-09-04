@@ -45,11 +45,11 @@ class AnnonceConverter
     }
 
     /**
-     * Fourni une alliance à partir de son identifiant
+     * Fourni une annonce à partir de son identifiant
      * 
      * @param unknown $id
      * @throws NotFoundHttpException
-     * @return LarpManager\Entities\GroupeAllie
+     * @return LarpManager\Entities\Annonce
      */
     public function convert($id)
     {

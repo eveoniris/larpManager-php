@@ -40,7 +40,10 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 	 *  - participant.update : Mise à jour des informations joueur par un utilisateur
 	 *  - participant.detail : Détail des informations joueur
 	 *  - participant.xp : modification des XP pour un joueur
+	 *  - participant.billet
+	 *  - participant.restauration
 	 *  - participant.background
+	 *  - participant.groupe
 	 *  - participant.groupeSecondaire.list
 	 *  - participant.groupeSecondaire.detail
 	 *  - participant.personnage
@@ -68,6 +71,15 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 		$controllers = $app['controllers_factory'];
 		
 		/**
+		 * Vérifie que l'utilisateur dispose du role ADMIN
+		 */
+		$mustBeAdmin = function(Request $request) use ($app) {
+			if (!$app['security.authorization_checker']->isGranted('ROLE_ADMIN')) {
+				throw new AccessDeniedException();
+			}
+		};
+		
+		/**
 		 * Vérifie que l'utilisateur participe à ce gn
 		 */
 		$mustOwnParticipant = function(Request $request) use ($app) {
@@ -79,6 +91,36 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 			}
 		};
 		
+		/**
+		 * Ajoute un billet à un utilisateur
+		 */
+		$controllers->get('/{participant}/billet', 'LarpManager\Controllers\ParticipantController::billetAction')
+			->assert('participant', '\d+')
+			->convert('participant', 'converter.participant:convert')
+			->method('GET|POST')
+			->bind('participant.billet')
+			->before($mustBeAdmin);
+		
+		/**
+		 * Ajoute une restauration à un utilisateur
+		 */
+		$controllers->get('/{participant}/restauration', 'LarpManager\Controllers\ParticipantController::restaurationAction')
+			->assert('participant', '\d+')
+			->convert('participant', 'converter.participant:convert')
+			->method('GET|POST')
+			->bind('participant.restauration')
+			->before($mustBeAdmin);
+
+		/**
+		 * Affecte le participant à un groupe
+		 */
+		$controllers->get('/{participant}/groupe', 'LarpManager\Controllers\ParticipantController::groupeAction')
+			->assert('participant', '\d+')
+			->convert('participant', 'converter.participant:convert')
+			->method('GET|POST')
+			->bind('participant.groupe')
+			->before($mustBeAdmin);
+			
 		/**
 		 * Page de contrôle d'un joueur
 		 */
@@ -117,38 +159,6 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 			->bind('participant.regle.document')
 			->before($mustOwnParticipant);
 				
-		/** Affichage de la cartographie du monde de conan */
-		$controllers->match('/{participant}/world','LarpManager\Controllers\ParticipantController::worldAction')
-			->assert('participant', '\d+')
-			->convert('participant', 'converter.participant:convert')
-			->method('GET')
-			->bind('participant.world')
-			->before($mustOwnParticipant);
-
-		/** Affichage de la cartographie du monde de conan */
-		$controllers->match('/{participant}/world/countries.json','LarpManager\Controllers\ParticipantController::countriesAction')
-			->assert('participant', '\d+')
-			->convert('participant', 'converter.participant:convert')
-			->method('GET')
-			->bind('participant.world.countries.json')
-			->before($mustOwnParticipant);
-			
-		/** Affichage de la cartographie du monde de conan */
-		$controllers->match('/{participant}/world/regions.json','LarpManager\Controllers\ParticipantController::regionsAction')
-			->assert('participant', '\d+')
-			->convert('participant', 'converter.participant:convert')
-			->method('GET')
-			->bind('participant.world.regions.json')
-			->before($mustOwnParticipant);
-				
-		/** Affichage de la cartographie du monde de conan */
-		$controllers->match('/{participant}/world/fiefs.json','LarpManager\Controllers\ParticipantController::fiefsAction')
-			->assert('participant', '\d+')
-			->convert('participant', 'converter.participant:convert')
-			->method('GET')
-			->bind('participant.world.fiefs.json')
-			->before($mustOwnParticipant);
-			
 		/**
 		 * Liste des groupes
 		 */
@@ -158,6 +168,7 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 			->bind("participant.groupe.list")
 			->method('GET')
 			->before($mustOwnParticipant);
+			
 			
 		/**
 		 * Rejoindre un groupe
@@ -179,6 +190,18 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 			->convert('groupe', 'converter.groupe:convert')
 			->bind("participant.groupe.detail")
 			->method('GET')
+			->before($mustOwnParticipant);
+
+		/**
+		 * Gestion des places disponibles dans un groupe
+		 */
+		$controllers->match('/{participant}/groupe/{groupe}/placeAvailable','LarpManager\Controllers\ParticipantController::groupePlaceAvailableAction')
+			->assert('participant', '\d+')
+			->convert('participant', 'converter.participant:convert')
+			->assert('groupe', '\d+')
+			->convert('groupe', 'converter.groupe:convert')
+			->bind("participant.groupe.placeAvailable")
+			->method('GET|POST')
 			->before($mustOwnParticipant);
 			
 		/**

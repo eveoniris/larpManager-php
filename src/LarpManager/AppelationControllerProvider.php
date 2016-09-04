@@ -45,21 +45,35 @@ class AppelationControllerProvider implements ControllerProviderInterface
 	{
 		$controllers = $app['controllers_factory'];
 		
+		/**
+		 * Liste des appelations
+		 */
 		$controllers->match('/','LarpManager\Controllers\AppelationController::indexAction')
 			->bind("appelation")
 			->method('GET');
 		
+		/**
+		 * Ajouter une appelation
+		 */
 		$controllers->match('/add','LarpManager\Controllers\AppelationController::addAction')
 			->bind("appelation.add")
 			->method('GET|POST');
 		
-		$controllers->match('/{index}/update','LarpManager\Controllers\AppelationController::updateAction')
-			->assert('index', '\d+')
+		/**
+		 * Mise à jour d'une appelation
+		 */
+		$controllers->match('/{appelation}/update','LarpManager\Controllers\AppelationController::updateAction')
+			->assert('appelation', '\d+')
+			->convert('appelation', 'converter.appelation:convert')
 			->bind("appelation.update")
 			->method('GET|POST');
 		
-		$controllers->match('/{index}','LarpManager\Controllers\AppelationController::detailAction')
-			->assert('index', '\d+')
+		/**
+		 * Détail d'une appelation
+		 */
+		$controllers->match('/{appelation}','LarpManager\Controllers\AppelationController::detailAction')
+			->assert('appelation', '\d+')
+			->convert('appelation', 'converter.appelation:convert')
 			->bind("appelation.detail")
 			->method('GET');
 					

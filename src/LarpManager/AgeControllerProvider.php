@@ -26,6 +26,8 @@ use Silex\ControllerProviderInterface;
 /**
  * LarpManager\AgeControllerProvider
  * 
+ * Role de base : ROLE_REGLE
+ * 
  * @author kevin
  */
 class AgeControllerProvider implements ControllerProviderInterface
@@ -65,24 +67,28 @@ class AgeControllerProvider implements ControllerProviderInterface
 		// liste des perso par age
 		$controllers->match('/{age}/perso','LarpManager\Controllers\AgeController::persoAction')
 			->bind("age.perso")
+			->assert('age', '\d+')
 			->convert('age', 'converter.age:convert')
 			->method('GET');
 		
 		// formulaire de modification d'un age
-		$controllers->match('/{index}/update','LarpManager\Controllers\AgeController::updateViewAction')
-			->assert('index', '\d+')
+		$controllers->match('/{age}/update','LarpManager\Controllers\AgeController::updateViewAction')
+			->assert('age', '\d+')
+			->convert('age', 'converter.age:convert')
 			->bind("age.update.view")
 			->method('GET');
 		
 		// traitement d'une requête de modification d'un age
-		$controllers->match('/{index}/update','LarpManager\Controllers\AgeController::updatePostAction')
-			->assert('index', '\d+')
+		$controllers->match('/{age}/update','LarpManager\Controllers\AgeController::updatePostAction')
+			->assert('age', '\d+')
+			->convert('age', 'converter.age:convert')
 			->bind("age.update.post")
 			->method('POST');
 		
 		// Affichage du détail d'un age
-		$controllers->match('/{index}','LarpManager\Controllers\AgeController::detailAction')
-			->assert('index', '\d+')
+		$controllers->match('/{age}','LarpManager\Controllers\AgeController::detailAction')
+			->assert('age', '\d+')
+			->convert('age', 'converter.age:convert')
 			->bind("age.detail")
 			->method('GET');
 		

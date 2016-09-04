@@ -11,8 +11,8 @@
 		<h4 class="list-group-item-heading">
 			{{ appelation.label }} 
 			<div class="btn-group pull-right" role="group" aria-label="...">
-				<a href="{{ path('appelation.detail', {index: appelation.id}) }}" class="btn btn-primary" role="button">Détail</a>
-			    <a href="{{ path('appelation.update', {index: appelation.id}) }}" class="btn btn-default" role="button">Modifier</a>
+				<a href="{{ path('appelation.detail', {'appelation': appelation.id}) }}" class="btn btn-primary" role="button">Détail</a>
+			    <a href="{{ path('appelation.update', {'appelation': appelation.id}) }}" class="btn btn-default" role="button">Modifier</a>
 			</div>
 		</h4>
 		<p class="list-group-item-text">		

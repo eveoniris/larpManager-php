@@ -24,6 +24,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Silex\Application;
 
 use LarpManager\Form\GnForm;
+use LarpManager\Form\ParticipantFindForm;
 use LarpManager\Entities\Gn;
 use JasonGrimes\Paginator;
 
@@ -134,6 +135,123 @@ class GnController
 			return $app['twig']->render('public/gn/detail.twig', array('gn' => $gn));
 		}	
 	}
+		
+	/**
+	 * Liste des participants à un jeu
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Gn $gn
+	 */
+	public function participantsAction(Request $request, Application $app, Gn $gn)
+	{
+		$order_by = $request->get('order_by') ?: 'ec.nom';
+		$order_dir = $request->get('order_dir') == 'DESC' ? 'DESC' : 'ASC';
+		$limit = (int)($request->get('limit') ?: 50);
+		$page = (int)($request->get('page') ?: 1);
+		$offset = ($page - 1) * $limit;
+
+		// nombre de participant au total
+		$qbTotal = $app['orm.em']->createQueryBuilder();
+		$qbTotal->select('COUNT(p.id)')
+			->from('\LarpManager\Entities\Participant', 'p')
+			->join('p.gn', 'gn')
+			->join('p.user', 'u')
+			->join('u.etatCivil', 'ec')
+			->where('gn.id = :gnId')
+			->setParameter('gnId', $gn->getId());
+		
+		// liste des participants à afficher
+		$qb = $app['orm.em']->createQueryBuilder();
+		$qb->select('p')
+			->from('\LarpManager\Entities\Participant', 'p')
+			->join('p.gn', 'gn')
+			->join('p.user', 'u')
+			->join('u.etatCivil', 'ec')
+			->where('gn.id = :gnId')
+			->setParameter('gnId', $gn->getId())
+			->orderBy($order_by, $order_dir)
+			->setMaxResults($limit)
+			->setFirstResult($offset);
+		
+		$form = $app['form.factory']->createBuilder(new ParticipantFindForm())->getForm();
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
+		{
+			$data = $form->getData();
+			
+			switch ( $data['type'] )
+			{
+				case 'nom' :
+					$qb->andWhere("ec.nom LIKE :value");
+					$qbTotal->andWhere("ec.nom LIKE :value");
+					break;
+				case 'email' :
+					$qb->andWhere("u.email LIKE :value");
+					$qbTotal->andWhere("u.email LIKE :value");
+					break;
+			}
+			$qb->setParameter('value','%'.$data['value'].'%');
+			$qbTotal->setParameter('value', '%'.$data['value'].'%');
+		}
+				
+		$participants = $qb->getQuery()->getResult();
+		$count =  $qbTotal->getQuery()->getSingleScalarResult();
+						
+		$paginator = new Paginator($count, $limit, $page,
+				$app['url_generator']->generate('gn.participants', array('gn' => $gn->getId())) . '?page=(:num)&limit=' . $limit . '&order_by=' . $order_by . '&order_dir=' . $order_dir
+				);
+		
+		return $app['twig']->render('admin/gn/participants.twig', array(
+				'gn' => $gn,
+				'participants' => $participants,
+				'paginator' => $paginator,
+				'form' => $form->createView(),
+		));
+		
+	}
+	
+	/**
+	 * Génére le fichier à envoyer à la FédéGN
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Gn $gn
+	 */
+	public function fedegnAction(Request $request, Application $app, Gn $gn)
+	{
+		$participants = $gn->getParticipantsFedeGn();
+
+		header("Content-Type: text/csv");
+		header("Content-Disposition: attachment; filename=eveoniris_fedegn_".date("Ymd").".csv");
+		header("Pragma: no-cache");
+		header("Expires: 0");
+			
+		$output = fopen("php://output", "w");
+		
+		// header
+		fputcsv($output,
+			array(
+			'Nom',
+			'Prénom',
+			'Email',
+			'Date de naissance'), ';');
+			
+		foreach ( $participants as $participant)
+		{
+			$line = array();
+			$line[] = utf8_decode($participant->getUser()->getEtatCivil()->getNom());
+			$line[] = utf8_decode($participant->getUser()->getEtatCivil()->getPrenom());
+			$line[] = utf8_decode($participant->getUser()->getEmail());
+			$line[] = utf8_decode($participant->getUser()->getEtatCivil()->getDateNaissance()->format('Y-m-d'));
+			fputcsv($output, $line, ';');
+		}
+		
+		fclose($output);
+		exit();
+	}
+	
 	
 	/**
 	 * Met à jour un gn
@@ -176,37 +294,7 @@ class GnController
 				'form' => $form->createView(),
 		));
 	}
-	
-	/**
-	 * Détail des ventes et participation au Gn
-	 * 
-	 * @param Request $request
-	 * @param Application $app
-	 * @param Gn $gn
-	 */
-	public function venteAction(Request $request, Application $app, Gn $gn)
-	{
-		return $app['twig']->render('admin/gn/vente.twig', array(
-				'gn' => $gn,
-		));
-	}
 
-	/**
-	 * Présente les listes necessaires pour la FédéGN
-	 *  
-	 * @param Request $request
-	 * @param Application $app
-	 * @param Gn $gn
-	 */
-	public function fedegnAction(Request $request, Application $app, Gn $gn)
-	{
-		$participantHasBillets = $app['orm.em']->getRepository('LarpManager\Entities\ParticipantHasBillet')->findAllByGn($gn);
-		
-		return $app['twig']->render('admin/gn/fedegn.twig', array(
-				'gn' => $gn,
-				'participantHasBillets' => $participantHasBillets,
-		));
-	}
 	
 	/**
 	 * Affiche la billetterie d'un GN

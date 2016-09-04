@@ -22,7 +22,9 @@ namespace LarpManager\Controllers;
 
 use Symfony\Component\HttpFoundation\Request;
 use Silex\Application;
+
 use LarpManager\Form\AgeForm;
+use LarpManager\Entities\Age;
 
 /**
  * LarpManager\Controllers\AgeController
@@ -44,7 +46,7 @@ class AgeController
 		$ages =  $app['orm.em']->getRepository('\LarpManager\Entities\Age')
 					->findAllOrderedByLabel();
 		
-		$view = $app['twig']->render('age/index.twig', array('ages' => $ages));
+		$view = $app['twig']->render('admin/age/index.twig', array('ages' => $ages));
 		return $view;
 	}
 	
@@ -54,10 +56,8 @@ class AgeController
 	 * @param Request $request
 	 * @param Application $app
 	 */
-	public function persoAction(Request $request, Application $app)
-	{
-		$age = $request->get('age');
-			
+	public function persoAction(Request $request, Application $app, Age $age)
+	{			
 		return $app['twig']->render('admin/age/perso.twig', array('age' => $age));
 	}
 	
@@ -69,21 +69,9 @@ class AgeController
 	 * @return View $view
 	 * @throws LarpManager\Exception\ObjectNotFoundException
 	 */
-	public function detailAction(Request $request, Application $app)
-	{
-		$id = $request->get('index');
-	
-		$age = $app['orm.em']->getRepository('\LarpManager\Entities\Age')->find($id);
-	
-		/**
-		 * Si l'age n'existe pas, renvoyer vers une page d'erreur
-		 */
-		if ( ! $age )
-		{
-			throw new LarpManager\Exception\ObjectNotFoundException();
-		}
-	
-		return $app['twig']->render('age/detail.twig', array('age' => $age));
+	public function detailAction(Request $request, Application $app, Age $age)
+	{	
+		return $app['twig']->render('admin/age/detail.twig', array('age' => $age));
 	}
 	
 	
@@ -95,15 +83,13 @@ class AgeController
 	 * @return View $view
 	 */
 	public function addViewAction(Request $request, Application $app)
-	{
-		$age = new \LarpManager\Entities\Age();
-		
-		$form = $app['form.factory']->createBuilder(new AgeForm(), $age)
+	{		
+		$form = $app['form.factory']->createBuilder(new AgeForm(), new Age())
 			->add('save','submit', array('label' => "Sauvegarder"))
 			->add('save_continue','submit', array('label' => "Sauvegarder & continuer"))
 			->getForm();
 		
-		return $app['twig']->render('age/add.twig', array(
+		return $app['twig']->render('admin/age/add.twig', array(
 			'form' => $form->createView(),
 		));
 	}
@@ -117,10 +103,8 @@ class AgeController
 	 * @throws LarpManager\Exception\RequestInvalid
 	 */
 	public function addPostAction(Request $request, Application $app)
-	{		
-		$age = new \LarpManager\Entities\Age();
-		
-		$form = $app['form.factory']->createBuilder(new AgeForm(), $age)
+	{				
+		$form = $app['form.factory']->createBuilder(new AgeForm(), new Age())
 			->add('save','submit', array('label' => "Sauvegarder"))
 			->add('save_continue','submit', array('label' => "Sauvegarder & continuer"))
 			->getForm();
@@ -162,20 +146,8 @@ class AgeController
 	 * @return View $view
 	 * @throws LarpManager\Exception\ObjectNotFoundException
 	 */
-	public function updateViewAction(Request $request, Application $app)
+	public function updateViewAction(Request $request, Application $app, Age $age)
 	{
-		$id = $request->get('index');
-		
-		$age = $app['orm.em']->getRepository('\LarpManager\Entities\Age')->find($id);
-		
-		/**
-		 * Si l'age n'existe pas, renvoyer vers une page d'erreur
-		 */
-		if ( ! $age )
-		{
-			throw new LarpManager\Exception\ObjectNotFoundException();
-		}
-		
 		$form = $app['form.factory']->createBuilder(new AgeForm(), $age)
 			->add('update','submit', array('label' => "Sauvegarder"))
 			->add('delete','button', array(
@@ -189,7 +161,7 @@ class AgeController
 			))
 			->getForm();
 		
-		return $app['twig']->render('age/update.twig', array(
+		return $app['twig']->render('admin/age/update.twig', array(
 				'age' => $age,
 				'form' => $form->createView(),
 		));
@@ -204,20 +176,8 @@ class AgeController
 	 * @throws LarpManager\Exception\RequestInvalid
 	 * @throws LarpManager\Exception\ObjectNotFoundException
 	 */
-	public function updatePostAction(Request $request, Application $app)
+	public function updatePostAction(Request $request, Application $app, Age $age)
 	{
-		$id = $request->get('index');
-	
-		$age = $app['orm.em']->getRepository('\LarpManager\Entities\Age')->find($id);
-		
-		/**
-		 * Si l'age n'existe pas, renvoyer vers une page d'erreur
-		 */
-		if ( ! $age )
-		{
-			throw new LarpManager\Exception\ObjectNotFoundException();
-		}
-	
 		$form = $app['form.factory']->createBuilder(new AgeForm(), $age)
 			->add('update','submit', array('label' => "Sauvegarder"))
 			->add('delete','button', array(

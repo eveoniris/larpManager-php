@@ -113,7 +113,9 @@ $app->register(new HttpFragmentServiceProvider());
 
 // Twig
 $app->register(new TwigServiceProvider(), array(
-    'twig.path' => __DIR__.'/../src/LarpManager/Views',
+    'twig.path' => array(
+    	__DIR__.'/../src/LarpManager/Views'
+    ),
     'twig.options'    => array(
         'cache' => __DIR__ . '/../cache/',
     ),

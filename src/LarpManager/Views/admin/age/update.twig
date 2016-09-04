@@ -8,9 +8,9 @@
 		<div class="row">
 			<div class="col-xs-12 col-md-8">
 				<a href="{{ path("age") }}">Retour à la liste des ages</a>
-				{{ include("age/fragment/form.twig",{
+				{{ include("admin/age/fragment/form.twig",{
 					'legend': 'Modification d\'un age',
-					'action': path('age.update.post',{'index':age.id}),
+					'action': path('age.update.post',{'age':age.id}),
 					'form' : form}) }}
 			</div>
 		</div>

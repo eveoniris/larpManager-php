@@ -52,8 +52,7 @@ use LarpManager\Entities\Document;
  * liste des pays, + nbr de noble qu'il dispose
  */
 class GroupeController
-{
-	
+{	
 	/**
 	 * fourni le tableau de quête pour tous les groupes
 	 * @param Request $request
@@ -1677,7 +1676,7 @@ class GroupeController
 		$originalTerritoires = new ArrayCollection();
 
 		/**
-		 *  Crée un tableau contenant les objets GroupeClasse courants de la base de données
+		 *  Crée un tableau contenant les objets GroupeClasse du groupe
 		 */
 		foreach ($groupe->getGroupeClasses() as $groupeClasse) 
 		{

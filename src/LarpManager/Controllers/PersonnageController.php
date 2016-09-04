@@ -431,8 +431,7 @@ class PersonnageController
 		$offset = ($page - 1) * $limit;
 		$criteria = array();
 		
-		$form = $app['form.factory']->createBuilder(new PersonnageFindForm())
-			->getForm();
+		$form = $app['form.factory']->createBuilder(new PersonnageFindForm())->getForm();
 		
 		$form->handleRequest($request);
 			

@@ -82,8 +82,8 @@ class BilletControllerProvider implements ControllerProviderInterface
 		/**
 		 * Liste des utilisateurs ayant ce billet
 		 */
-		$controllers->match('/{billet}/user','LarpManager\Controllers\BilletController::userAction')
-			->bind("billet.user")
+		$controllers->match('/{billet}/participants','LarpManager\Controllers\BilletController::participantsAction')
+			->bind("billet.participants")
 			->convert('billet', 'converter.billet:convert')
 			->method('GET');
 			

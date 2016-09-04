@@ -18,4 +18,8 @@ use LarpManager\Entities\BaseParticipantHasRestauration;
  */
 class ParticipantHasRestauration extends BaseParticipantHasRestauration
 {
+	public function __construct()
+	{
+		$this->setDate(new \Datetime('NOW'));	
+	}
 }

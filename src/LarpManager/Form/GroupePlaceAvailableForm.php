@@ -17,56 +17,53 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace LarpManager\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
- * LarpManager\Form\UserBilletForm
+ * LarpManager\Form\GroupePlaceAvailableForm
  *
  * @author kevin
  *
  */
-class UserBilletForm extends AbstractType
+class GroupePlaceAvailableForm extends AbstractType
 {
 	/**
 	 * Construction du formulaire
-	 *
+	 * 
 	 * @param FormBuilderInterface $builder
 	 * @param array $options
 	 */
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
-		$builder->add('billet','entity', array(
-				'label' => 'Choisissez le billet a donner à cet utilisateur',
-				'multiple' => false,
-				'expanded' => true,
-				'required' => true,
-				'class' => 'LarpManager\Entities\Billet',
-				'property' => 'fullLabel',
-		));
+		$builder->add('placeAvailable','integer', array(
+					'label' => "Indiquez içi le nombre de personnes recherché pour compléter votre groupe",
+					'required' => true,	
+				));
 	}
-
-
+	
 	/**
-	 * Définition de l'entité concerné
+	 * Définition de l'entité conercné
 	 *
 	 * @param OptionsResolverInterface $resolver
 	 */
 	public function setDefaultOptions(OptionsResolverInterface $resolver)
 	{
 		$resolver->setDefaults(array(
-		 	'class' => 'LarpManager\Entities\UserHasBillet',
-		 ));
+				'data_class' => '\LarpManager\Entities\Groupe',
+		));
 	}
-
+	
+		
 	/**
-	 * Nom du formulaire
+	 * Nom du formulaire 
+	 * @return string
 	 */
 	public function getName()
 	{
-		return 'userBillet';
+		return 'groupePlaceAvailable';
 	}
-} 
+}

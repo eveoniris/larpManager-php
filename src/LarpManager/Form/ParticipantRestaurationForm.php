@@ -23,13 +23,15 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
+use LarpManager\Form\Type\ParticipantHasRestaurationType;
+
 /**
- * LarpManager\Form\UserRestaurationForm
+ * LarpManager\Form\ParticipantRestaurationForm
  *
  * @author kevin
  *
  */
-class UserRestaurationForm extends AbstractType
+class ParticipantRestaurationForm extends AbstractType
 {
 	/**
 	 * Construction du formulaire
@@ -39,22 +41,14 @@ class UserRestaurationForm extends AbstractType
 	 */
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
-		$builder->add('restauration','entity', array(
-					'label' => 'Choisissez le lieu de restauration de cet utilisateur',
-					'multiple' => false,
-					'expanded' => true,
-					'required' => true,
-					'class' => 'LarpManager\Entities\Restauration',
-					'property' => 'label',
-				))
-				->add('gn','entity', array(
-					'label' => 'Choisissez le GN concerné',
-					'multiple' => false,
-					'expanded' => true,
-					'required' => true,
-					'class' => 'LarpManager\Entities\Gn',
-					'property' => 'label',
-				));
+		$builder->add('participantHasRestaurations', 'collection', array(
+				'label' => "Lieux de restauration",
+				'required' => false,
+				'allow_add' => true,
+				'allow_delete' => true,
+				'by_reference' => false,
+				'type' => new ParticipantHasRestaurationType()
+		));
 	}
 
 
@@ -66,7 +60,7 @@ class UserRestaurationForm extends AbstractType
 	public function setDefaultOptions(OptionsResolverInterface $resolver)
 	{
 		$resolver->setDefaults(array(
-		 	'class' => 'LarpManager\Entities\UserHasRestauration',
+		 	'class' => 'LarpManager\Entities\Participant',
 		 ));
 	}
 
@@ -75,6 +69,6 @@ class UserRestaurationForm extends AbstractType
 	 */
 	public function getName()
 	{
-		return 'userRestauration';
+		return 'participantRestauration';
 	}
 } 

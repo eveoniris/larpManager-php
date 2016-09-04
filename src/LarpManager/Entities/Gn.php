@@ -43,6 +43,24 @@ class Gn extends BaseGn
 	}
 	
 	/**
+	 * Fourni la liste des tous les participants pour la FédéGN
+	 */
+	public function getParticipantsFedeGn()
+	{
+		$participants = new ArrayCollection();
+		
+		foreach ($this->getBillets() as $billet)
+		{
+			if ( $billet->getFedegn() == true )
+			{
+				$participants = new ArrayCollection(array_merge($participants->toArray(), $billet->getParticipants()->toArray()));
+			}
+		}
+		
+		return $participants;
+	}
+	
+	/**
 	 * Indique si le jeu est passé ou pas
 	 * 
 	 * @return boolean

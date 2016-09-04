@@ -47,8 +47,6 @@ class UserControllerProvider implements ControllerProviderInterface
 	 *  - user.register
 	 *  - user.forgot-password
 	 *  - user.login_check
-	 *  - user.billetterie
-	 *  - user.restauration
 	 *  - user.gn
 	 *  - user.gn.detail
 	 *  - user.gn.participe
@@ -92,27 +90,7 @@ class UserControllerProvider implements ControllerProviderInterface
 		$controllers->get('/messagerie', 'LarpManager\Controllers\UserController::viewSelfMessagerieAction')
 			->bind('user.messagerie')
 			->before($mustBeUser);
-			
-		/**
-		 * Ajoute un billet à un utilisateur
-		 */
-		$controllers->get('/{user}/billet', 'LarpManager\Controllers\UserController::billetAction')
-			->assert('user', '\d+')
-			->convert('user', 'converter.user:convert')
-			->method('GET|POST')
-			->bind('user.billet')
-			->before($mustBeAdmin);
-		
-		/**
-		 * Ajoute un billet à un utilisateur
-		 */
-		$controllers->get('/{user}/restauration', 'LarpManager\Controllers\UserController::restaurationAction')
-			->assert('user', '\d+')
-			->convert('user', 'converter.user:convert')
-			->method('GET|POST')
-			->bind('user.restauration')
-			->before($mustBeAdmin);
-			
+						
 		/**
 		 * Restrictions alimentaires
 		 */
