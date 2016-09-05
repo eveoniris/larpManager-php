@@ -39,6 +39,7 @@ use LarpManager\Entities\Restriction;
 use LarpManager\Entities\User;
 use LarpManager\Entities\Gn;
 use LarpManager\Entities\Participant;
+use LarpManager\Entities\Message;
 
 use LarpManager\Repository\ParticipantRepository;
 
@@ -479,89 +480,7 @@ class UserController
 		));
 	}
 	
-	/**
-	 * Envoi d'un nouveau message
-	 * 
-	 * @param Request $request
-	 * @param Application $app
-	 * @throws NotFoundHttpException
-	 */
-	public function newMessageAction(Request $request, Application $app, $id)
-	{
-		$user = $app['user.manager']->getUser($id);
-		
-		if (!$user) {
-			throw new NotFoundHttpException('No user was found with that ID.');
-		}
-		
-		if (!$user->isEnabled() && !$app['security']->isGranted('ROLE_ADMIN')) {
-			throw new NotFoundHttpException('That user is disabled (pending email confirmation).');
-		}
-		
-		$reponse = new \LarpManager\Entities\Message();
-		
-		$reponse->setUserRelatedByAuteur($app['user']);
-		$reponse->setCreationDate(new \Datetime('NOW'));
-		$reponse->setUpdateDate(new \Datetime('NOW'));
-		
-		$form = $app['form.factory']->createBuilder(new NewMessageForm(), $reponse)
-			->add('envoyer','submit', array('label' => "Envoyer votre message"))
-			->getForm();
-		
-		$form->handleRequest($request);
-			
-		if ( $form->isValid() )
-		{
-			$reponse = $form->getData();
-		
-			$app['orm.em']->persist($reponse);
-			$app['orm.em']->flush();
-		
-			$app['user.mailer']->sendNewMessage($reponse);
-		
-			$app['session']->getFlashBag()->add('success', 'Votre message a été envoyé au joueur concerné.');
-			return $app->redirect($app['url_generator']->generate('user.messagerie.view', array('id' => $user->getId())),301);
-		}
-		
-		return $app['twig']->render('public/user/messagerie.twig', array(
-				'user' => $user,
-				'form' => $form->createView(),
-		));
-	}
 	
-	/**
-	 * Archiver un message
-	 * 
-	 * @param Application $app
-	 * @param Request $request
-	 * @throws NotFoundHttpException
-	 * @throws AccessDeniedException
-	 */
-	public function messageArchiveAction(Application $app, Request $request)
-	{
-		$userId = $request->get('id');
-		$messageId = $request->get('message');
-		
-		$user = $app['user.manager']->getUser($userId);
-		
-		if (!$user) {
-			throw new NotFoundHttpException('No user was found with that ID.');
-		}
-		
-		$message = $app['orm.em']->find('\LarpManager\Entities\Message',$messageId);
-		
-		if ( $message->getUserRelatedByDestinataire() != $user )
-		{
-			throw new AccessDeniedException();
-		}
-		
-		$message->setLu(true);
-		$app['orm.em']->persist($message);
-		$app['orm.em']->flush();
-		
-		
-		return $app->redirect($app['url_generator']->generate('user.messagerie.view', array('id' => $app['user']->getId())));
-	}
 	
 	/**
 	 * Répondre à un message
@@ -763,9 +682,7 @@ class UserController
 		$type= null;
 		$value = null;
 
-		$form = $app['form.factory']->createBuilder(new UserFindForm())
-			->add('find','submit', array('label' => 'Rechercher'))
-			->getForm();
+		$form = $app['form.factory']->createBuilder(new UserFindForm())->getForm();
 		
 		$form->handleRequest($request);
 				

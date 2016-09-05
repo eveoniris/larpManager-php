@@ -1,8 +1,16 @@
 {% for  annonce in annonces%}
 	<div class="panel panel-conan">
-		<div class="panel-heading">{{ annonce.title }}</div>
+		<div class="panel-heading">
+			<div class="pull-right">
+				<small>publié le {{ annonce.updateDate|date('Y-m-d') }}</small>
+			</div>
+			{{ annonce.title }}
+		</div>
 		<div class="panel-body">
 			{{ annonce.text|markdown }}
+			{% if is_granted('ROLE_REDACTEUR', app.user) %}
+				<a class="btn btn-primary" href="{{ path('annonce.update', {'annonce': annonce.id}) }}"><i class="fa fa-pencil"></i></a>
+			{% endif %}
 		</div>
 	</div>
 {% endfor %}

@@ -59,7 +59,7 @@ class HomepageController
 		}
 		
 		$repoAnnonce = $app['orm.em']->getRepository('LarpManager\Entities\Annonce');
-		$annonces = $repoAnnonce->findBy(array('archive' => false, 'gn' => null));
+		$annonces = $repoAnnonce->findBy(array('archive' => false, 'gn' => null),array('update_date' => 'DESC'));
 		
 		$personnage = $app['personnage.manager']->getCurrentPersonnage();
 		

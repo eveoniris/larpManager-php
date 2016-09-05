@@ -58,9 +58,6 @@ use LarpManager\Entities\Rule;
  */
 class ParticipantController
 {
-	
-
-	
 	/**
 	 * Interface Joueur d'un jeu
 	 *

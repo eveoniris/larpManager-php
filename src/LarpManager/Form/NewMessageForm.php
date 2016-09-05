@@ -49,7 +49,17 @@ class NewMessageForm extends AbstractType
 					'required' => true,
 					'label' => 'Destinataire',
 					'class' => 'LarpManager\Entities\User',
-					'property' => 'personnagePublicName',
+					'property' => 'userName',
+					'attr' => array(
+						'class'	=> 'selectpicker',
+						'data-live-search' => "true",
+						'placeholder' => 'Destinataire',
+					),
+					'query_builder' => function($er) {
+						$qb = $er->createQueryBuilder('u');
+						$qb->orderBy('u.username', 'ASC');
+						return $qb;
+					},
 				))
 				->add('text','textarea', array(
 					'required' => true,

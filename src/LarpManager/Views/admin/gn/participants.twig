@@ -12,9 +12,11 @@
 	</ol>
 
 <div class="well well-sm">
+
 	<div class="header">
 		<h5>Liste des participants à {{ gn.label }}</h5>
 	</div>
+	
 	<ul class="list-group">
 		<li class="list-group-item">	
 			<div class="btn-toolbar" role="toolbar" aria-label="...">
@@ -106,6 +108,9 @@
 			{% endfor %}
 		</tbody>
 	</table>
+	
+	{{ paginator|raw }}	
+
 </div>
 
 {% endblock content %}

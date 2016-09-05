@@ -272,17 +272,9 @@ class AdminController
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\User');
 		
 		$usersWithoutEtatCivil = $repo->findWithoutEtatCivil();
-		$usersWithoutTrombine = $repo->findWithoutTrombine();
-		$usersWithoutGroup = $repo->findWithoutGroup();
-		$usersWithoutPersonnage = $repo->findWithoutPersonnage();
-		$usersWithoutSecondaryPersonnage = $repo->findWithoutSecondaryPersonnage();
 		
 		return $app['twig']->render('admin/rappels.twig', array(
 				'usersWithoutEtatCivil' => $usersWithoutEtatCivil,
-				'usersWithoutTrombine' =>  $usersWithoutTrombine,
-				'usersWithoutGroup' =>  $usersWithoutGroup,
-				'usersWithoutPersonnage' =>  $usersWithoutPersonnage,
-				'usersWithoutSecondaryPersonnage' =>  $usersWithoutSecondaryPersonnage,
 		));
 	}
 }

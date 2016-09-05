@@ -34,25 +34,19 @@
 			</li>	
 					
 			{# Menus reservé aux admins #}
-			{% if is_granted('ROLE_SCENARISTE', app.user) %}
+			{% if is_granted('ROLE_ADMIN', app.user) %}
 				<li class="dropdown">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Admin<span class="caret"></span></a>
 					<ul class="dropdown-menu">
-						<li><a href="{{ path('annonce.list') }}">Annonces</a></li>
 						<li><a href="{{ path('gn.list') }}">Grandeurs natures</a></li>
 						<li><a href="{{ path('billet.list') }}">Billets</a></li>
 						<li><a href="{{ path('user.admin.list') }}">Utilisateurs</a></li>
 						<li><a href="{{ path('restriction.list') }}">Restrictions alimentaires</a></li>
 						<li><a href="{{ path('restauration.list') }}">Lieux de restauration</a></li>
-						<li><a href="{{ path('groupe.admin.list') }}">Liste des groupes</a></li>
-						<li><a href="{{ path('groupeSecondaire.admin.list') }}">Liste des groupes secondaires</a></li>
 						<li><a href="{{ path('right.admin.list') }}">Liste des droits</a></li>
 						<li><a href="{{ path('statistique') }}">Statistiques</a></li>
 						<li><a href="{{ path('admin') }}">Administration</a></li>
-						<li><a href="{{ path('trombinoscope') }}">Trombinoscope</a></li>
-						<li><a href="{{ path('trombinoscope.perso') }}">Selection</a></li>
-						<li><a href="{{ path('admin.rappels') }}">rappels</a></li>
-						<li><a href="{{ path('rules.admin') }}">Règles</a></li>
+						<li><a href="{{ path('admin.rappels') }}">Rappels</a></li>
 					</ul>
 				</li>
 			{% endif %}
@@ -73,6 +67,10 @@
 				<li class="dropdown">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Scénario<span class="caret"></span></a>
 					<ul class="dropdown-menu">
+						<li><a href="{{ path('groupe.admin.list') }}">Liste des groupes</a></li>
+						<li><a href="{{ path('groupeSecondaire.admin.list') }}">Liste des groupes secondaires</a></li>
+						<li><a href="{{ path('trombinoscope') }}">Trombinoscope</a></li>
+						<li><a href="{{ path('trombinoscope.perso') }}">Selection</a></li>
 						<li><a href="{{ path('appelation') }}">Appelations</a></li>
 						<li><a href="{{ path('titre.admin.list') }}">Titres</a></li>
 						<li><a href="{{ path('langue') }}">Langues</a></li>
@@ -95,6 +93,7 @@
 				<li class="dropdown">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Règles<span class="caret"></span></a>
 					<ul class="dropdown-menu">
+						<li><a href="{{ path('rules.admin') }}">Règles</a></li>
 						<li><a href="{{ path('competence.family') }}">Famille de compétences</a></li>
 						<li><a href="{{ path('level') }}">Niveaux</a></li>
 						<li><a href="{{ path('competence') }}">Compétences</a></li>
@@ -125,6 +124,19 @@
 						<li><a href="{{ path('stock_proprietaire_index') }}">Proprietaires</a></li>
 						<li><a href="{{ path('stock_objet_list',{'page':1}) }}">Objets</a></li>
 						<li><a href="{{ path('stock_objet_export') }}">Exporter</a></li>
+					</ul>
+				</li>
+			{% endif %}
+			
+			{# Notifications #}
+			{% if is_granted('ROLE_USER', app.user) %}
+				<li class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+						<i class="fa fa-exclamation-circle" aria-hidden="true"></i> ({{ app.user.notifications|length }})<span class="caret"></span></a>
+					<ul class="dropdown-menu">
+						{% for notification in app.user.notifications %}
+							<li><a href="{{ path('notification.remove', {'notification': notification.id}) }}">{{ notification.text }}</a></li>
+						{% endfor %}
 					</ul>
 				</li>
 			{% endif %}

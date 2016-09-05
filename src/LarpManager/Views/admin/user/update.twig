@@ -64,11 +64,9 @@
 	                    <span class="text-muted" style="font-weight: normal;">(Admin-only)</span>
 	                </label>
 	                <div class="col-sm-8">
-	                    <select class="form-control" multiple id="input-roles" name="roles[]">
-	                        {% for role in available_roles %}
-	                            <option value="{{ role.label }}" {% if user.hasRole(role.label) %}selected{% endif %}>{{ role.label }}</option>
-	                        {% endfor %}
-	                    </select>
+	                	{% for role in available_roles %}
+	                		<label class="control-label"><input name="roles[]" type="checkbox" value="{{ role.label }}" {% if user.hasRole(role.label) %}checked{% endif %}>&nbsp;{{ role.label }}</label><br />
+	                	{% endfor %}
 	                </div>
 	            </div>
 	        {% endif %}

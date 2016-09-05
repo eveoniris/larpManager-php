@@ -1,5 +1,23 @@
 <?php
 
+/**
+ * LarpManager - A Live Action Role Playing Manager
+ * Copyright (C) 2016 Kevin Polez
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+ 
 namespace LarpManager\Services;
 
 use Silex\Application;
@@ -33,6 +51,8 @@ use LarpManager\Services\Converter\GroupeConverter;
 use LarpManager\Services\Converter\IngredientConverter;
 use LarpManager\Services\Converter\LieuConverter;
 use LarpManager\Services\Converter\MembreConverter;
+use LarpManager\Services\Converter\MessageConverter;
+use LarpManager\Services\Converter\NotificationConverter;
 use LarpManager\Services\Converter\ParticipantConverter;
 use LarpManager\Services\Converter\PersonnageBackgroundConverter;
 use LarpManager\Services\Converter\PersonnageConverter;
@@ -56,7 +76,6 @@ use LarpManager\Services\Converter\TitreConverter;
 use LarpManager\Services\Converter\TokenConverter;
 use LarpManager\Services\Converter\TriggerConverter;
 use LarpManager\Services\Converter\UserConverter;
-use LarpManager\Services\Converter\UserHasBilletConverter;
 
 /**
  * LarpManager\LarpManagerServiceProvider
@@ -179,6 +198,11 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 			return new GroupeConverter($app['orm.em']);
 		});
 		
+		// notification converter
+		$app['converter.notification'] = $app->share(function($app) {
+			return new NotificationConverter($app['orm.em']);
+		});
+		
 		// secondaryGroup converter
 		$app['converter.secondaryGroup'] = $app->share(function($app) {
 			return new SecondaryGroupConverter($app['orm.em']);
@@ -192,6 +216,11 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 		// membre converter
 		$app['converter.membre'] = $app->share(function($app) {
 			return new MembreConverter($app['orm.em']);
+		});
+		
+		// message converter
+		$app['converter.message'] = $app->share(function($app) {
+			return new MessageConverter($app['orm.em']);
 		});
 					
 		// enemy converter

@@ -13,6 +13,7 @@
             <link rel="stylesheet" href="{{ app.request.basepath }}/font-awesome-4.6.3/css/font-awesome.min.css" />
             <link rel="stylesheet" href="{{ app.request.basepath }}/css/bootstrap.min.css" />
             <link rel="stylesheet" href="{{ app.request.basepath }}/css/cyborg_bootstrap.min.css" />
+            <link rel="stylesheet" href="{{ app.request.basepath }}/bootstrap-select-1.11.0/css/bootstrap-select.min.css" />
             <link rel="stylesheet" href="{{ app.request.basepath }}/Pnotify/css/pnotify.custom.min.css" />
             
             <link rel="stylesheet" href="{{ app.request.basepath }}/css/style.css" />
@@ -75,6 +76,8 @@
         <script src="{{ app.request.basepath }}/js/jquery-1.11.3.min.js"></script>
         <script src="{{ app.request.basepath }}/js/bootstrap.min.js"></script>
         <script src="{{ app.request.basepath }}/Pnotify/js/pnotify.custom.min.js"></script>
+        <script src="{{ app.request.basepath }}/bootstrap-select-1.11.0/js/bootstrap-select.min.js"></script>
+        <script src="{{ app.request.basepath }}/bootstrap-select-1.11.0/js/i18n/defaults-fr_FR.min.js"></script>
         
         {# active pnotify #}
         <script  type="text/javascript">
@@ -97,6 +100,7 @@
         		    title: $(notice).attr('title'),
         		    text: $(notice).text(),
         		    type: 'success',
+        		    delay:2000,
         		});
         		$(notice).remove();
             }
@@ -107,6 +111,7 @@
         		    title: $(notice).attr('title'),
         		    text: $(notice).text(),
         		    type: 'warning',
+        		    delay:2000,
         		});
         		$(notice).remove();
             }

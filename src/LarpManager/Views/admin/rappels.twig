@@ -6,30 +6,10 @@
 
 <ul class="list-group" id="haut">
 	<li class="list-group-item"><a href="#usersWithoutEtatCivil">Liste des utilisateurs sans etat-civil ({{ usersWithoutEtatCivil|length }})</a></li>
-	<li class="list-group-item"><a href="#usersWithoutTrombine">Liste des utilisateurs sans trombine ({{ usersWithoutTrombine|length }})</a></li>
-	<li class="list-group-item"><a href="#usersWithoutGroup">Liste des utilisateurs sans groupes ({{ usersWithoutGroup|length }})</a></li>
-	<li class="list-group-item"><a href="#usersWithoutPersonnage">Liste des utilisateurs sans personnage ({{ usersWithoutPersonnage|length }})</a></li>
-	<li class="list-group-item"><a href="#usersWithoutSecondaryPersonnage">Liste des utilisateurs sans personnage secondaires ({{ usersWithoutSecondaryPersonnage|length }})</a></li>
 </ul>
 <ul class="list-group">
 	<li class="list-group-item" id="usersWithoutEtatCivil"><strong>Liste des utilisateurs sans etat-civil :</strong><br />
 		{% for user in usersWithoutEtatCivil %}<code>{{ user.email }}</code><br />{% endfor %}
-		<a id="haut">Revenir en haut</a>
-	</li>
-	<li class="list-group-item" id="usersWithoutTrombine"><strong>Liste des utilisateurs sans trombine :</strong><br />
-		{% for user in usersWithoutTrombine %}<code>{{ user.email }}</code><br />{% endfor %}
-		<a id="haut">Revenir en haut</a>
-	</li>
-	<li class="list-group-item" id="usersWithoutGroup"><strong>Liste des utilisateurs sans groupes :</strong><br />
-		{% for user in usersWithoutGroup %}<code>{{ user.email }}</code><br />{% endfor %}
-		<a id="haut">Revenir en haut</a>
-	</li>
-	<li class="list-group-item" id="usersWithoutPersonnage"><strong>Liste des utilisateurs sans personnage :</strong><br />
-		{% for user in usersWithoutPersonnage %}<code>{{ user.email }}</code><br />{% endfor %}
-		<a id="haut">Revenir en haut</a>
-	</li>
-	<li class="list-group-item" id="usersWithoutSecondaryPersonnage"><strong>Liste des utilisateurs sans personnages secondaires :</strong><br />
-		{% for user in usersWithoutSecondaryPersonnage %}<code>{{ user.email }}</code><br />{% endfor %}
 		<a id="haut">Revenir en haut</a>
 	</li>
 </ul>

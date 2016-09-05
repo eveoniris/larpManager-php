@@ -7,6 +7,11 @@
 	<div class="row">
 		<div class="col-md-3">
 			<div class="well well-sm">				
+				{# si l'utilisateur est scénariste, lui afficher les liens la gestion des annonces #}
+				{% if is_granted('ROLE_REDACTEUR', app.user) %}
+					{% include 'homepage/fragment/redacteur.twig' with {'user': user} %}
+				{% endif %}
+			
 				{# si l'utilisateur est scénariste, lui afficher les liens vers les groupes dont il a la responsabilité #}
 				{% if is_granted('ROLE_SCENARISTE', app.user) %}
 					{% include 'homepage/fragment/scenariste.twig' with {'user': user} %}
@@ -61,9 +66,40 @@
 				{% endfor %}
 			{% endif %}
 			
+			{# affichage des messages non lus #}
+			{% include 'homepage/fragment/messages.twig' with {'user': app.user} %}
+						
 			{# affichage des annonces #}
 			{% include 'homepage/fragment/annonces.twig' with {'annonces': annonces} %}
 			
 		</div>		
 	</div>	
 {% endblock content %}
+
+{% block javascript %}
+
+{# ajax message.archiver #}
+<script>
+	$(document).ready(function() {
+		$('a.message_archiver').on('click', function() {
+			$(this).html('<i class="fa fa-spinner fa-spin fa-fw"></i>');
+			var url = $(this).attr('href')
+			var target = $(this).closest('div.panel-default');
+			
+			$.get(url).done(function(data) {
+
+				
+				$(target).hide('slow', function(){ $(target).remove(); });
+				
+				new PNotify({
+        		    title: 'Message archivé',
+        		    text: 'Votre message est archivé',
+        		    type: 'success',
+        		});
+			});
+			return false;
+		});
+	});
+</script>
+
+{% endblock javascript %}

@@ -1,0 +1,31 @@
+{% extends "layout.twig" %}
+
+{% block title %}Nouveau message{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage')  }}">Accueil</a></li>
+		<li class="active">Nouveau message</li>
+	</ol>
+
+	<div class="well well-sm">
+		<form action="{{ path('message.new') }}" 
+				method="POST" {{ form_enctype(form) }}
+				novalidate >
+		{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}				
+			<fieldset>
+				<legend>Envoi d'un message</legend>
+				
+				{{ form_label(form.title) }}
+				{{ form_widget(form.title) }}
+							
+				{{ form_label(form.userRelatedByDestinataire) }}
+				{{ form_widget(form.userRelatedByDestinataire) }}
+				
+				{{ form_rest(form) }}
+			</fieldset>
+		</form>
+	</div>
+
+{% endblock %}

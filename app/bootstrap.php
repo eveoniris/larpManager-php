@@ -37,6 +37,7 @@ use Nicl\Silex\MarkdownServiceProvider;
 
 use LarpManager\Services\UserServiceProvider;
 use LarpManager\Services\LarpManagerServiceProvider;
+use LarpManager\Services\NotifyServiceProvider;
 use LarpManager\Services\SnappyServiceProvider;
 use LarpManager\Services\Regexp;
 
@@ -193,6 +194,9 @@ else
 	// LarpManager service provider
 	$app->register(new LarpManagerServiceProvider());
 	
+	// Notify service provider
+	$app->register(new NotifyServiceProvider());
+	
 	// Define firewall
 	$app['security.firewalls'] = array(
 		'public_area' => array(
@@ -211,7 +215,7 @@ else
 			   }),
 		),
 		'secured_area' => array(	// le reste necessite d'être connecté
-			'pattern' => '^/[annonce|restriction|statistique|billet|etatCivil|restauration|stock|droit|forum|groupe|gn|personnage|territoire|appelation|langue|ressource|religion|age|genre|level|competence|competenceFamily]/.*$',
+			'pattern' => '^/[annonce|restriction|message|notification|statistique|billet|etatCivil|restauration|stock|droit|forum|groupe|gn|personnage|territoire|appelation|langue|ressource|religion|age|genre|level|competence|competenceFamily]/.*$',
 			'anonymous' => false,
 			'remember_me' => array(),
 			'form' => array(
@@ -256,6 +260,8 @@ else
 	$app->mount('/personnageSecondaire', new LarpManager\PersonnageSecondaireControllerProvider());
 	$app->mount('/age', new LarpManager\AgeControllerProvider());
 	$app->mount('/magie', new LarpManager\MagieControllerProvider());
+	$app->mount('/message', new LarpManager\MessageControllerProvider());
+	$app->mount('/notification', new LarpManager\NotificationControllerProvider());
 	$app->mount('/genre', new LarpManager\GenreControllerProvider());
 	$app->mount('/gn', new LarpManager\GnControllerProvider());
 	$app->mount('/participant', new LarpManager\ParticipantControllerProvider());
@@ -284,18 +290,19 @@ else
 		'ROLE_USER' => array('ROLE_USER'),
 		'ROLE_ORGA' => array('ROLE_ORGA'),
 		'ROLE_CARTOGRAPHE' => array('ROLE_USER', 'ROLE_CARTOGRAPHE'),
+		'ROLE_REDACTEUR' => array('ROLE_USER', 'ROLE_REDACTEUR'),
 		'ROLE_STOCK' => array('ROLE_USER', 'ROLE_ORGA', 'ROLE_STOCK'),
 		'ROLE_SCENARISTE' => array('ROLE_USER', 'ROLE_ORGA', 'ROLE_SCENARISTE', 'ROLE_CARTOGRAPHE'),
 		'ROLE_REGLE' => array('ROLE_USER', 'ROLE_ORGA', 'ROLE_REGLE'),
 		'ROLE_MODERATOR' => array('ROLE_USER', 'ROLE_ORGA', 'ROLE_MODERATOR'), 
-		'ROLE_ADMIN' => array('ROLE_USER', 'ROLE_ORGA', 'ROLE_STOCK','ROLE_SCENARISTE','ROLE_REGLE','ROLE_MODERATOR','ROLE_CARTOGRAPHE'),
+		'ROLE_ADMIN' => array('ROLE_USER', 'ROLE_ORGA', 'ROLE_STOCK','ROLE_SCENARISTE','ROLE_REGLE','ROLE_MODERATOR','ROLE_CARTOGRAPHE', 'ROLE_REDACTEUR'),
 	);
 	
 	/**
 	 * Gestion des droits d'accés
 	 */
 	$app['security.access_rules'] = array(
-		array('^/annonce/.*$', 'ROLE_ADMIN'),
+		array('^/annonce/.*$', 'ROLE_REDACTEUR'),
 		array('^/droit/.*$', 'ROLE_ADMIN'),
 		array('^/admin/.*$', 'ROLE_ADMIN'),
 		array('^/restriction/.*$', 'ROLE_ADMIN'),
@@ -305,6 +312,7 @@ else
 		array('^/gn/.*$', 'ROLE_USER'),
 		array('^/trombinoscope/.*$', 'ROLE_SCENARISTE'),
 		array('^/pnj/.*$', 'ROLE_USER'),
+		array('^/message/.*$', 'ROLE_USER'),
 		array('^/groupe/.*$', 'ROLE_USER'),
 		array('^/groupeSecondaire/.*$', 'ROLE_USER'),
 		array('^/competence/.*$', 'ROLE_USER'),
@@ -313,6 +321,7 @@ else
 		array('^/personnage/.*$', 'ROLE_USER'),
 		array('^/personnageSecondaire/.*$', 'ROLE_ADMIN'),
 		array('^/joueur/.*$', 'ROLE_USER'),
+		array('^/notification/.*$', 'ROLE_USER'),
 		array('^/territoire/.*$', 'ROLE_USER'),
 		array('^/religion/.*$', 'ROLE_USER'),
 		array('^/groupeSecondaireType/.*$', 'ROLE_SCENARISTE'),

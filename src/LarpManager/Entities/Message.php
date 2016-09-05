@@ -36,4 +36,9 @@ use LarpManager\Entities\BaseMessage;
  */
 class Message extends BaseMessage
 {
+	public function __construct()
+	{
+		$this->setCreationDate(new \Datetime('NOW'));
+		$this->setUpdateDate(new \Datetime('NOW'));
+	}
 }
