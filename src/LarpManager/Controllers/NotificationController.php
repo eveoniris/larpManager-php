@@ -22,6 +22,7 @@ namespace LarpManager\Controllers;
 
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 use LarpManager\Form\NewMessageForm;
 use LarpManager\Entities\User;
@@ -35,6 +36,13 @@ use LarpManager\Entities\Notification;
  */
 class NotificationController
 {
+	/**
+	 * Supprime une notification
+	 * 
+	 * @param Application $app
+	 * @param Request $request
+	 * @param Notification $notification
+	 */
 	public function removeAction(Application $app, Request $request, Notification $notification)
 	{
 		if ( $notification->getUser() != $app['user'])
@@ -46,4 +54,30 @@ class NotificationController
 		$app['orm.em']->flush();
 		return $app->redirect($app['url_generator']->generate('homepage'),301);
 	}
+	
+	/**
+	 * Fourni la liste des notifications
+	 * 
+	 * @param Application $app
+	 * @param Request $request
+	 */
+	public function listAction(Application $app, Request $request)
+	{
+		
+		$qb = $app['orm.em']->createQueryBuilder();
+		$qb->from('LarpManager\Entities\Notification','n');
+		$qb->select('n');
+		$qb->join('n.user','u');
+		$qb->where('u.id = :userId');
+		$qb->setParameter('userId',$app['user']->getId());
+		$notifications = $qb->getQuery()->getArrayResult();
+		foreach ( $notifications as $key => $value)
+		{
+			$value['url'] = $app['url_generator']->generate('notification.remove', array('notification' => $value['id']));
+			$notifications[$key] = $value;
+		}
+		
+		return new JsonResponse($notifications);
+	}
+			
 }

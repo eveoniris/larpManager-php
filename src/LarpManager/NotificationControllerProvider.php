@@ -53,6 +53,10 @@ class NotificationControllerProvider implements ControllerProviderInterface
 			->convert('notification', 'converter.notification:convert')
 			->bind("notification.remove")
 			->method('GET');
+			
+		$controllers->match('/', 'LarpManager\Controllers\NotificationController::listAction')
+			->bind("notification.list")
+			->method('GET');
 		
 		return $controllers;
 	}

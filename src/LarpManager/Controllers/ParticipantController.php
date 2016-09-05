@@ -126,6 +126,8 @@ class ParticipantController
 			$app['orm.em']->persist($participant);
 			$app['orm.em']->flush();
 				
+			$app['notify']->newBillet($participant->getUser(), $participant->getBillet());
+			
 			$app['session']->getFlashBag()->add('success', 'Vos modifications ont été enregistré.');
 			return $app->redirect($app['url_generator']->generate('gn.participants', array('gn' => $participant->getGn()->getId())),301);
 		}

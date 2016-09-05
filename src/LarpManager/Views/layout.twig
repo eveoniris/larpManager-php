@@ -157,6 +157,63 @@
 				link_assume_external_targets: true
 			});
 		</script>
+		
+		{# si l'utilisateur est connecté, vérifier ses notifications réguliérement et mettre à jour le menu #}
+		{% if is_granted('ROLE_USER', app.user) %}
+		<script>
+			$(document).ready(function() {
+				var notifications = [];
+				var tid = setInterval(notification, 10000);
+				function notification() {
+					var url = '{{ path('notification.list') }}';
+					$.get(url).done(function(data) {
+						notification_count = $('#notifications-count').html();
+						for(var key in data) {
+							notification = data[key];
+							if ( notifications.indexOf(notification.id) == -1 )
+							{
+								notifications.push(notification.id);
+
+								new PNotify({
+				        		    title: '',
+				        		    text: notification.text,
+				        		    type: 'success',
+				        		    delay: 2000,
+				        		    addclass: "stack-bottomleft"
+				        		});
+								notification_count++;
+								
+								// add notification in notifications-list
+								$('ul#notifications_list').append('<li><a href="'+notification.url+'" class="notification_remove">' +notification.text+ '<a></li>');
+								
+							}
+						}
+
+						$('#notifications-count').html(notification_count);
+					});
+				}
+				function abortTimer() {
+				  clearInterval(tid);
+				}
+
+				// appel une premiere fois le systéme de notification
+				notification();
+
+				$('ul#notifications_list').on('click','a.notification_remove', function(event) {
+					
+					var url = $(this).attr('href');
+					$.get(url).done(function(data) {});
+					event.stopPropagation();
+					$(this).remove();
+					notification_count = $('#notifications-count').html();
+					notification_count-=1;
+					$('#notifications-count').html(notification_count);
+					
+					return false;
+				});
+			});
+		</script>
+		{% endif %}
 				
 					        	
     	{% block javascript %}	

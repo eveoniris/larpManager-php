@@ -1165,21 +1165,30 @@ class GroupeController
 		$limit = (int)($request->get('limit') ?: 50);
 		$page = (int)($request->get('page') ?: 1);
 		$offset = ($page - 1) * $limit;
+		$type= null;
+		$value = null;
 		
-		$form = $app['form.factory']->createBuilder(new GroupFindForm())
-			->add('find','submit', array('label' => 'Rechercher'))
-			->getForm();
+		$form = $app['form.factory']->createBuilder(new GroupFindForm())->getForm();
 		
-		$criteria = array();
-		
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$data = $form->getData();
+			$type = $data['type'];
+			$value = $data['search'];
+		}
+				
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Groupe');
-		$groupes = $repo->findBy(
-				$criteria,
-				array( $order_by => $order_dir),
+		
+		$groupes = $repo->findList(
+				$type,
+				$value,
+				array( 'by' =>  $order_by, 'dir' => $order_dir),
 				$limit,
 				$offset);
 		
-		$numResults = $repo->findCount($criteria);
+		$numResults = $repo->findCount($type, $value);
 		
 		$paginator = new Paginator($numResults, $limit, $page,
 				$app['url_generator']->generate('groupe.admin.list') . '?page=(:num)&limit=' . $limit . '&order_by=' . $order_by . '&order_dir=' . $order_dir

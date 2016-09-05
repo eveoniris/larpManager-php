@@ -51,21 +51,68 @@ class GroupeRepository extends EntityRepository
 	}
 	
 	/**
+	 * Recherche d'une liste de groupe
+	 * 
+	 * @param unknown $type
+	 * @param unknown $value
+	 * @param array $order
+	 * @param unknown $limit
+	 * @param unknown $offset
+	 */
+	public function findList($type, $value, array $order = array(), $limit, $offset)
+	{
+		$qb = $this->getEntityManager()->createQueryBuilder();
+		
+		$qb->select('g');
+		$qb->from('LarpManager\Entities\Groupe','g');		
+		if ( $type && $value)
+		{
+			switch ($type){
+				case 'numero':
+					$qb->andWhere('g.numero = :value');
+					$qb->setParameter('value', $value);
+					break;
+				case 'nom':
+					$qb->andWhere('g.nom LIKE :value');
+					$qb->setParameter('value', '%'.$value.'%');
+					break;
+			}
+				
+		}
+			
+		$qb->setFirstResult($offset);
+		$qb->setMaxResults($limit);
+		$qb->orderBy('g.'.$order['by'], $order['dir']);
+		
+		return $qb->getQuery()->getResult();
+	}
+	
+	/**
 	 * Trouve les annonces correspondant aux critères de recherche
 	 *
 	 * @param array $criteria
 	 * @param array $options
 	 */
-	public function findCount(array $criteria = array())
+	public function findCount($type, $value)
 	{
 		$qb = $this->getEntityManager()->createQueryBuilder();
 	
 		$qb->select($qb->expr()->count('g'));
 		$qb->from('LarpManager\Entities\Groupe','g');
 	
-		foreach ( $criteria as $criter )
+		if ( $type && $value)
 		{
-			$qb->addWhere($criter);
+			switch ($type){
+				case 'numero':
+					$qb->andWhere('g.numero = :value');
+					$qb->setParameter('value', $value);
+					break;
+				case 'nom':
+					$qb->andWhere('g.nom LIKE :value');
+					$qb->setParameter('value', '%'.$value.'%');
+					break;
+			}
+				
 		}
 	
 		return $qb->getQuery()->getSingleScalarResult();

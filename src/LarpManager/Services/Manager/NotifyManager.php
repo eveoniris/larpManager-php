@@ -25,6 +25,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 use LarpManager\Entities\User;
 use LarpManager\Entities\Message;
+use LarpManager\Entities\Billet;
 use LarpManager\Entities\Notification;
 
 class NotifyManager
@@ -70,7 +71,34 @@ class NotifyManager
 					'message' => $message,
 					'messagerieUrl' => $url),
 				$this->fromAddress, 
-				$message->getUserRelatedByDestinataire()->getEmail()
+				$user->getEmail()
+			);
+	}
+	
+	/**
+	 * Notification "nouveau Billet"
+	 * 
+	 * @param User $user
+	 * @param Billet $billet
+	 */
+	public function newBillet(User $user, Billet $billet)
+	{
+		$notification = new Notification();
+		$notification->setText('Vous avez reçu un nouveau billet : '.$billet->getGn()->getLabel().' '.$billet->getLabel());
+		$notification->setUser($user);
+		
+		$this->app['orm.em']->persist($notification);
+		$this->app['orm.em']->flush();
+		
+		$url = $this->app['url_generator']->generate('homepage');
+		
+		$this->sendMessage(
+				'user/email/newBillet.twig',
+				array(
+						'billet' => $billet,
+						'messagerieUrl' => $url),
+				$this->fromAddress,
+				$user->getEmail()
 			);
 	}
 	

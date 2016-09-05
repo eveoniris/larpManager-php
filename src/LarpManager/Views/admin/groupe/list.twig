@@ -11,33 +11,50 @@
 
 	<div class="well well-sm">
 	
-		<ul class="list-group">
-			<li class="list-group-item">
-				{% if paginator.totalItems == 1 %}
-		        	<strong>1</strong> groupe trouvé.
-		    	{% else %}
-		        	<strong>{{ paginator.totalItems }}</strong> groupes trouvés.
-		    	{% endif %}
+		<div class="header">
+			<h5>Liste des groupes</h5>
+		</div>
 		
-		    	Montre <strong>{{ paginator.currentPageFirstItem }} - {{ paginator.currentPageLastItem }}</strong>.
-		   	</li>
-		   	<li class="list-group-item">
+		<ul class="list-group">
+			<li class="list-group-item">	
+				<div class="btn-toolbar" role="toolbar" aria-label="...">
+					<form class="form-inline" action="{{ path('groupe.admin.list') }}" method="POST" {{ form_enctype(form) }}>
+						{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}				
+						<div class="form-group">
+							<div class="input-group">
+								{{ form_widget(form.search) }}
+							</div>
+							<div class="input-group">					
+								{{ form_widget(form.type) }}
+								<div class="input-group-btn">
+									<button type="submit" class="btn btn-default" data-toggle="tooltup" data-placement="top" title="Lancer la recherche"><i class="fa fa-search"></i></button>
+									<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Reset" href="{{ path('groupe.admin.list') }}"><i class="fa fa-refresh"></i></a>
+								</div>
+							</div>
+						</div>
+						{{ form_rest(form) }}
+			   		</form>
+				</div>
+			</li>
+			<li class="list-group-item">
 		   		<a href="{{ path('groupe.add') }}">Ajouter un groupe</a>
-		   	</li>
-		   	<li class="list-group-item">
-		   		<div class="list-group-item"><h6>Rechercher</h6></div>
-		   		
-		   		<form class="form" action="{{ path('groupe.admin.list') }}" method="POST" {{ form_enctype(form) }}>
-					{% form_theme form 'Form/bootstrap_3_horizontal_layout.html.twig' %}
-					{{ form(form) }}
-		   		</form>
-		   		<a href="{{ path('groupe.admin.list') }}">Reset</a>
-		   	</li>
-		</ul>
-		 
-		{{ paginator|raw }}
-		 
-		<table class="table table-striped table-bordered table-condensed table-hover">
+		   	</li>		 
+			<li class="list-group-item">
+			    {% if paginator.totalItems == 1 %}
+			        <strong>1</strong> groupe trouvé.
+			    {% else %}
+			        <strong>{{ paginator.totalItems }}</strong> groupes trouvés.
+			    {% endif %}
+			
+			    Montre <strong>{{ paginator.currentPageFirstItem }} - {{ paginator.currentPageLastItem }}</strong>.
+			</li>
+	    </ul>
+	    
+	    {{ paginator|raw }}
+
+
+		   	
+		<table class="table table-striped table-bordered table-condensed">
 			<thead>
 				<tr>
 					<th>

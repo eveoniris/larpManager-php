@@ -47,7 +47,7 @@ class GroupFindForm extends AbstractType
 						'required' => true,
 						'choices' => array(
 							'numero' => 'Numéro',
-							'group_name' => 'Nom du groupe',
+							'nom' => 'Nom du groupe',
 						)
 				));
 	}

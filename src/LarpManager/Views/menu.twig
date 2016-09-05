@@ -132,34 +132,11 @@
 			{% if is_granted('ROLE_USER', app.user) %}
 				<li class="dropdown">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-						<i class="fa fa-exclamation-circle" aria-hidden="true"></i> ({{ app.user.notifications|length }})<span class="caret"></span></a>
-					<ul class="dropdown-menu">
-						{% for notification in app.user.notifications %}
-							<li><a href="{{ path('notification.remove', {'notification': notification.id}) }}">{{ notification.text }}</a></li>
-						{% endfor %}
-					</ul>
+						<i class="fa fa-exclamation-circle" aria-hidden="true"></i> (<span id="notifications-count">0</span>)<span class="caret"></span></a>
+					<ul class="dropdown-menu" id="notifications_list"></ul>
 				</li>
 			{% endif %}
-			
-			{# Menus reservé aux utilisateurs 
-			{% if is_granted('ROLE_USER', app.user) %}
-				<li class="dropdown">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Joueur<span class="caret"></span></a>
-					<ul class="dropdown-menu">
-						<li><a href="{{ path('competence.list') }}">Les compétences</a></li>
-						<li><a href="{{ path('classe.list') }}">Les classes</a></li>
-						<li><a href="{{ path('groupeSecondaire.list') }}">Les groupes secondaires</a></li>
-						<li><a href="{{ path('religion.list') }}">Les religions</a></li>
-						<li><a href="{{ path('world') }}">Carte</a></li>
-						<li><a href="{{ path('rules') }}">Règles</a></li>
-						
-					</ul
-				</li>
-			{% endif %}
-			
-			
-			#}
-						
+									
 			{% if is_granted('ADMIN_USER', app.user) %}
 			<li class="dropdown">
 				<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Larp</a>
