@@ -83,7 +83,6 @@ class HomepageControllerProvider implements ControllerProviderInterface
 					->bind('newUser.step4')
 					->before($mustBeUser);
 					
-					
 		/** Page de gestion des règles */
 		$controllers->match('/rules/admin','LarpManager\Controllers\HomepageController::rulesAdminAction')
 					->method('GET|POST')

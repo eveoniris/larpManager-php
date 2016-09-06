@@ -59,6 +59,7 @@ class NotifyManager
 		$notification = new Notification();
 		$notification->setText('Vous avez reçu un nouveau message de '.$message->getUserRelatedByAuteur()->getUserName());
 		$notification->setUser($user);
+		$notification->setUrl($this->app['url_generator']->generate('messagerie'));
 		
 		$this->app['orm.em']->persist($notification);
 		$this->app['orm.em']->flush();

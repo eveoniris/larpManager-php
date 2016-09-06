@@ -48,11 +48,10 @@ class MessageControllerProvider implements ControllerProviderInterface
 		/**
 		 * Vue de la messagerie d'un utilisateur
 		 */
-		$controllers->match('/', 'LarpManager\Controllers\MessageController::viewMessagerieAction')
+		$controllers->match('/', 'LarpManager\Controllers\MessageController::messagerieAction')
 			->bind('messagerie')
 			->method('GET');
-		
-			
+
 		/**
 		 * Archiver un message
 		 */
@@ -61,40 +60,30 @@ class MessageControllerProvider implements ControllerProviderInterface
 			->assert('message', '\d+')
 			->convert('message', 'converter.message:convert')
 			->method('GET');
+			
+		/**
+		 * Répondre à un message
+		 */
+		$controllers->match('/{message}/response', 'LarpManager\Controllers\MessageController::messageResponseAction')
+			->bind('message.response')
+			->assert('message', '\d+')
+			->convert('message', 'converter.message:convert')
+			->method('GET|POST');
 		
 		/**
 		 * Nouveau message
 		 */
-		$controllers->match('/new', 'LarpManager\Controllers\MessageController::messageNewAction')
+		$controllers->match('/new', 'LarpManager\Controllers\MessageController::newAction')
 			->bind('message.new')
 			->method('GET|POST');
 			
 		/**
 		 * Liste des messages archivés
 		 */
-		$controllers->match('/archives', 'LarpManager\Controllers\MessageController::messageArchiverAction')
+		$controllers->match('/archives', 'LarpManager\Controllers\MessageController::archiveAction')
 			->bind('message.archives')
-			->method('GET|POST')
-			->before(function(Request $request) use ($app) {
-				if (!$app['security.authorization_checker']->isGranted('VIEW_USER_ID', $request->get('id'))) {
-					throw new AccessDeniedException();
-				}
-			});
+			->method('GET|POST');
 				
-		/**
-		 * Répondre à un message
-		 */
-		$controllers->match('/{id}/messagerie/{message}/response', 'LarpManager\Controllers\MessageController::messageResponseAction')
-			->bind('user.messagerie.message.response')
-			->assert('id', '\d+')
-			->assert('message', '\d+')
-			->method('GET|POST')
-			->before(function(Request $request) use ($app) {
-				if (!$app['security.authorization_checker']->isGranted('VIEW_USER_ID', $request->get('id'))) {
-					throw new AccessDeniedException();
-				}
-			});
-			
 		return $controllers;
 	}
 }

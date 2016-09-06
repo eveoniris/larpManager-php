@@ -178,13 +178,13 @@
 				        		    title: '',
 				        		    text: notification.text,
 				        		    type: 'success',
-				        		    delay: 2000,
-				        		    addclass: "stack-bottomleft"
+				        		    delay: 2000
 				        		});
+				        		
 								notification_count++;
 								
 								// add notification in notifications-list
-								$('ul#notifications_list').append('<li><a href="'+notification.url+'" class="notification_remove">' +notification.text+ '<a></li>');
+								$('ul#notifications_list').append('<li><a href="'+notification.url+'" delete="'+notification.url_delete+'" class="notification_remove">' +notification.text+ '<a></li>');
 								
 							}
 						}
@@ -199,17 +199,18 @@
 				// appel une premiere fois le systéme de notification
 				notification();
 
+				// retire la notification
 				$('ul#notifications_list').on('click','a.notification_remove', function(event) {
 					
-					var url = $(this).attr('href');
+					var url = $(this).attr('delete');
 					$.get(url).done(function(data) {});
-					event.stopPropagation();
-					$(this).remove();
+					//event.stopPropagation();
+					/*$(this).remove();
 					notification_count = $('#notifications-count').html();
 					notification_count-=1;
-					$('#notifications-count').html(notification_count);
+					$('#notifications-count').html(notification_count);*/
 					
-					return false;
+					return true;
 				});
 			});
 		</script>

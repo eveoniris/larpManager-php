@@ -47,16 +47,16 @@ class NotificationController
 	{
 		if ( $notification->getUser() != $app['user'])
 		{
-			return $app->redirect($app['url_generator']->generate('homepage'),301);
+			return false;
 		}
 		
 		$app['orm.em']->remove($notification);
 		$app['orm.em']->flush();
-		return $app->redirect($app['url_generator']->generate('homepage'),301);
+		return true;
 	}
 	
 	/**
-	 * Fourni la liste des notifications
+	 * Fourni la liste des notifications de l'utilisateur courant
 	 * 
 	 * @param Application $app
 	 * @param Request $request
@@ -73,7 +73,7 @@ class NotificationController
 		$notifications = $qb->getQuery()->getArrayResult();
 		foreach ( $notifications as $key => $value)
 		{
-			$value['url'] = $app['url_generator']->generate('notification.remove', array('notification' => $value['id']));
+			$value['url_delete'] = $app['url_generator']->generate('notification.remove', array('notification' => $value['id']));
 			$notifications[$key] = $value;
 		}
 		

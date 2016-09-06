@@ -1,0 +1,76 @@
+{% extends "layout.twig" %}
+
+{% block title %}Messagerie{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path('messagerie') }}">Messagerie</a></li>
+		<li class="active">Archives</li>
+	</ol>
+			
+	<div class="well">
+		<div class="panel panel-conan">
+			<div class="panel-heading">
+				Messages archivés
+			</div>
+			<div class="panel-body">
+			
+				<div class="panel panel-group"  id="accordion" role="tablist" aria-multiselectable="true">
+					{% for message in user.messageRelatedByDestinataires if message.lu %}
+						<div class="panel panel-default">
+							<div class="panel-heading" role="tab" id="heading{{ loop.index }}">
+								<h4 class="panel-title">
+									<a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse{{ loop.index }}" aria-expanded="true" aria-controls="collapse{{ loop.index }}">
+										{{ message.userRelatedByAuteur.userName }} -- {{ message.creationDate|date('Y-m-d H:i:s') }} -- <strong>{{ message.title }}</strong>
+									</a>
+								</h4>
+							</div>
+							<div id="collapse{{ loop.index }}" class="panel-collapse collapse " role="tabpanel" aria-labelledby="heading{{ loop.index }}">
+								<div class="panel-body">
+									{{ message.text|markdown }}
+								</div>
+							</div>
+						</div>
+					{% else %}
+						Aucun message non lu.
+					{% endfor %}
+				</div>
+				
+			</div>
+		</div>
+	</div>
+
+	
+{% endblock content %}
+
+{% block javascript %}
+
+{# ajax message.archiver #}
+<script>
+	$(document).ready(function() {
+		$('a.message_archiver').on('click', function() {
+			$(this).html('<i class="fa fa-spinner fa-spin fa-fw"></i>');
+			var url = $(this).attr('href');
+			var target = $(this).closest('div.panel-default');
+			
+			$.get(url).done(function(data) {
+
+				$(target).hide('slow', function(){ $(target).remove(); });
+				
+				new PNotify({
+        		    title: 'Message archivé',
+        		    text: 'Votre message est archivé',
+        		    type: 'success',
+        		    delay: 2000,
+        		    addclass: "stack-bottomleft",
+        	        stack: stack_bottomleft
+        		});
+			});
+			return false;
+		});
+	});
+</script>
+
+{% endblock javascript %}

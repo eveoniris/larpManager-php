@@ -85,13 +85,6 @@ class UserControllerProvider implements ControllerProviderInterface
 			->before($mustBeUser);
 		
 		/**
-		 * Affichage de la messagie de l'utilisateur 
-		 */
-		$controllers->get('/messagerie', 'LarpManager\Controllers\UserController::viewSelfMessagerieAction')
-			->bind('user.messagerie')
-			->before($mustBeUser);
-						
-		/**
 		 * Restrictions alimentaires
 		 */
 		$controllers->match('/restriction','LarpManager\Controllers\UserController::restrictionAction')
@@ -167,7 +160,10 @@ class UserControllerProvider implements ControllerProviderInterface
 					throw new AccessDeniedException();
 				}
 			});
-			
+		
+		/**
+		 * Modification d'un utilisateur
+		 */
 		$controllers->match('/{id}/edit', 'LarpManager\Controllers\UserController::editAction')
 			->bind('user.edit')
 			->assert('id', '\d+')

@@ -65,9 +65,6 @@
 					{% endif %}
 				{% endfor %}
 			{% endif %}
-			
-			{# affichage des messages non lus #}
-			{% include 'homepage/fragment/messages.twig' with {'user': app.user} %}
 						
 			{# affichage des annonces #}
 			{% include 'homepage/fragment/annonces.twig' with {'annonces': annonces} %}
@@ -75,33 +72,3 @@
 		</div>		
 	</div>	
 {% endblock content %}
-
-{% block javascript %}
-
-{# ajax message.archiver #}
-<script>
-	$(document).ready(function() {
-		$('a.message_archiver').on('click', function() {
-			$(this).html('<i class="fa fa-spinner fa-spin fa-fw"></i>');
-			var url = $(this).attr('href');
-			var target = $(this).closest('div.panel-default');
-			
-			$.get(url).done(function(data) {
-
-				$(target).hide('slow', function(){ $(target).remove(); });
-				
-				new PNotify({
-        		    title: 'Message archivé',
-        		    text: 'Votre message est archivé',
-        		    type: 'success',
-        		    delay: 2000,
-        		    addclass: "stack-bottomleft",
-        	        stack: stack_bottomleft
-        		});
-			});
-			return false;
-		});
-	});
-</script>
-
-{% endblock javascript %}

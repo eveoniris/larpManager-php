@@ -1,0 +1,42 @@
+{% extends "layout.twig" %}
+
+{% block title %}Répondre à un message{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage')  }}">Accueil</a></li>
+		<li><a href="{{ path('messagerie') }}">Messagerie</a></li>
+		<li class="active">Répondre à un message</li>
+	</ol>
+
+	<div class="row">
+		<div class="col-md-6">
+			<div class="well well-sm">
+				<form action="{{ path('message.new') }}" 
+						method="POST" {{ form_enctype(form) }}
+						novalidate >
+				{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}				
+					<fieldset>
+						<legend>Répondre à un message</legend>
+						
+						{{ form_label(form.title) }}
+						{{ form_widget(form.title) }}
+									
+						{{ form_label(form.userRelatedByDestinataire) }}
+						{{ form_widget(form.userRelatedByDestinataire) }}
+						
+						{{ form_rest(form) }}
+					</fieldset>
+				</form>
+			</div>
+
+		</div>
+		<div class="col-md-6">
+			<div class="panel panel-conan">
+					<div class="panel-heading">{{ message.userRelatedByAuteur.userName }} -- {{ message.creationDate|date('Y-m-d H:i:s') }} -- <strong>{{ message.title }}</strong></div>
+					<div class="panel-body">{{ message.text|markdown }}</div>
+			<div>
+		</div>
+	</div>
+{% endblock %}

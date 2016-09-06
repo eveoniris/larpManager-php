@@ -43,7 +43,9 @@ class NewMessageForm extends AbstractType
 		$builder->add('title','text', array(
 					'required' => true,	
 					'label' => 'Titre',
-					'data' => 'Nouveau message'
+					'attr' => array(
+						'placeholder' => 'Nouveau message',
+					),
 				))
 				->add('userRelatedByDestinataire','entity', array(
 					'required' => true,
