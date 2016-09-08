@@ -9,7 +9,7 @@
 		<div class="row">
 			<div class="col-xs-12 col-md-8">
 				<a href="{{ path("competence.family") }}">Retour à la liste des familles de compétence</a>
-				{{ include("competenceFamily/fragment/form.twig",{
+				{{ include("admin/competenceFamily/fragment/form.twig",{
 					'legend': 'Modification d\'une famille de compétence',
 					'action': path('competence.family.update',{'index': competenceFamily.id}), 
 					'form' : form}) }}
@@ -18,21 +18,3 @@
 	</div>
 		
 {% endblock content %}
-
-{% block javascript %}
-
-	{{ parent() }}
-
-	{# inclusion du plugin tinymce pour la saisie du post #}   
-	<script src="{{ app.request.basepath }}/js/tinymce/tinymce.min.js"></script>
-
-	<script type="text/javascript">
-		tinyMCE.init({
-				mode: "textareas",
-				theme: "modern",
-				plugins : "spellchecker,insertdatetime,preview", 
-		});
-		
-	</script>
-
-{% endblock javascript %}

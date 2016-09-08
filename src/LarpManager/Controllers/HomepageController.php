@@ -60,13 +60,10 @@ class HomepageController
 		
 		$repoAnnonce = $app['orm.em']->getRepository('LarpManager\Entities\Annonce');
 		$annonces = $repoAnnonce->findBy(array('archive' => false, 'gn' => null),array('update_date' => 'DESC'));
-		
-		$personnage = $app['personnage.manager']->getCurrentPersonnage();
-		
+				
 		return $app['twig']->render('homepage/index.twig', array(
 				'annonces' => $annonces,
 				'user' => $app['user'],
-				'personnage' => $personnage,
 		));
 	}
 	
@@ -161,106 +158,6 @@ class HomepageController
 	public function newUserStep4Action(Request $request, Application $app)
 	{
 		return $app['twig']->render('public/newUser/step4.twig');
-	}
-	
-	/**
-	 * Page de gestion des règles
-	 * 
-	 * @param Request $request
-	 * @param Application $app
-	 */
-	public function rulesAdminAction(Request $request, Application $app)
-	{
-		$form = $app['form.factory']->createBuilder(new RuleForm(), array())
-			->add('envoyer','submit', array('label' => 'Envoyer'))
-			->getForm();
-		
-		$form->handleRequest($request);
-				
-		if ( $form->isValid() )
-		{
-			$data = $form->getData();
-			$files = $request->files->get($form->getName());
-			
-			$path = __DIR__.'/../../../private/rules/';
-			$filename = $files['rule']->getClientOriginalName();
-			$extension = $files['rule']->guessExtension();
-			
-			if (!$extension || ! in_array($extension, array('pdf'))) {
-				$app['session']->getFlashBag()->add('error','Désolé, votre fichier ne semble pas valide (vérifiez le format de votre fichier)');
-				return $app->redirect($app['url_generator']->generate('rules.admin'),301);
-			}
-			
-			$ruleFilename = hash('md5',$app['user']->getUsername().$filename . time()).'.'.$extension;
-				
-			
-			$files['rule']->move($path, $filename);
-			
-			$rule = new \LarpManager\Entities\Rule();
-			$rule->setLabel($data['label']);
-			$rule->setDescription($data['description']);
-			$rule->setUrl($filename);
-			
-			$app['orm.em']->persist($rule);
-			$app['orm.em']->flush();
-				
-			$app['session']->getFlashBag()->add('success','Votre fichier a été enregistrée');				
-		}
-		
-		$regles = $app['orm.em']->getRepository('LarpManager\Entities\Rule')->findAll();
-		
-		return $app['twig']->render('admin/rules/index.twig', array(
-				'form' => $form->createView(),
-				'regles' => $regles,
-		));
-		
-	}
-	
-	/**
-	 * Supression d'un fichier de règle
-	 * 
-	 * @param Request $request
-	 * @param Application $app
-	 */
-	public function rulesAdminDeleteAction(Request $request, Application $app)
-	{
-		$ruleId = $request->get('rule');
-		$rule = $app['orm.em']->getRepository('LarpManager\Entities\Rule')->find($ruleId);
-		
-		if ( ! $rule )
-		{
-			$app['session']->getFlashBag()->add('error','impossible de supprimer le fichier ' . $filename);
-		}
-		else 
-		{
-			$app['orm.em']->remove($rule);
-			$app['orm.em']->flush();
-		}
-		
-		$filename = __DIR__.'/../../../private/rules/'.$rule->getUrl();
-		
-		if ( file_exists($filename)) 
-		{
-			unlink($filename);
-		}
-		else
-		{
-			$app['session']->getFlashBag()->add('error','impossible de supprimer le fichier ' . $filename);
-		}
-
-		return $app->redirect($app['url_generator']->generate('rules.admin'),301);
-	}		
-	/**
-	 * Télécharger une règle
-	 * 
-	 * @param Request $request
-	 * @param Application $app
-	 */
-	public function getRuleAction(Request $request, Application $app)
-	{
-		$rule = $request->get('rule');
-		$filename = __DIR__.'/../../../private/rules/'.$rule;
-		return $app->sendFile($filename);
 	}
 	
 	/**

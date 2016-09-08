@@ -25,7 +25,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Silex\Application;
 use Doctrine\Common\Collections\ArrayCollection;
 use JasonGrimes\Paginator;
-use LarpManager\Form\GroupeForm;
+use LarpManager\Form\Groupe\GroupeForm;
 use LarpManager\Form\PersonnageForm;
 use LarpManager\Form\GroupFindForm;
 use LarpManager\Form\BackgroundForm;
@@ -40,8 +40,10 @@ use LarpManager\Form\AcceptPeaceForm;
 use LarpManager\Form\RefusePeaceForm;
 use LarpManager\Form\CancelRequestedPeaceForm;
 use LarpManager\Form\GroupeDocumentForm;
+use LarpManager\Form\GroupeScenaristeForm;
 
 use LarpManager\Entities\Groupe;
+use LarpManager\Entities\GroupeGn;
 use LarpManager\Entities\Document;
 
 
@@ -52,7 +54,38 @@ use LarpManager\Entities\Document;
  * liste des pays, + nbr de noble qu'il dispose
  */
 class GroupeController
-{	
+{		
+	/**
+	 * Choix du scenariste
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Groupe $groupe
+	 */
+	public function scenaristeAction(Request $request, Application $app, Groupe $groupe)
+	{
+		$form = $app['form.factory']->createBuilder(new GroupeScenaristeForm(), $groupe)
+			->add('submit','submit', array('label' => 'Enregistrer'))
+			->getForm();
+		
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$groupe = $form->getData();
+			$app['orm.em']->persist($groupe);
+			$app['orm.em']->flush();
+				
+			$app['session']->getFlashBag()->add('success', 'Le groupe a été sauvegardé.');
+			return $app->redirect($app['url_generator']->generate('groupe.detail', array('index' => $groupe->getId())));
+		}
+		
+		return $app['twig']->render('admin/groupe/scenariste.twig', array(
+				'groupe' => $groupe,
+				'form' => $form->createView(),
+		));
+	}
+		
 	/**
 	 * fourni le tableau de quête pour tous les groupes
 	 * @param Request $request

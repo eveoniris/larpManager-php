@@ -57,6 +57,7 @@ class NotificationController
 	
 	/**
 	 * Fourni la liste des notifications de l'utilisateur courant
+	 * On en profite pour stocker ses informations de connection
 	 * 
 	 * @param Application $app
 	 * @param Request $request
@@ -71,13 +72,25 @@ class NotificationController
 		$qb->where('u.id = :userId');
 		$qb->setParameter('userId',$app['user']->getId());
 		$notifications = $qb->getQuery()->getArrayResult();
+		
 		foreach ( $notifications as $key => $value)
 		{
 			$value['url_delete'] = $app['url_generator']->generate('notification.remove', array('notification' => $value['id']));
 			$notifications[$key] = $value;
 		}
 		
-		return new JsonResponse($notifications);
+		
+		
+		$app['user']->setLastConnectionDate(new \Datetime('NOW'));
+		$app['orm.em']->persist($app['user']);
+		$app['orm.em']->flush();
+		
+		$lastConnected = $app['orm.em']->getRepository('LarpManager\Entities\User')->lastConnected();
+		
+		return new JsonResponse(array(
+				'notifications' => $notifications,
+				'lastConnected' => $lastConnected	
+		));
 	}
 			
 }

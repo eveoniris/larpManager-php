@@ -45,5 +45,10 @@ class EtatCivil extends BaseEtatCivil
 		$this->setCreationDate(new \Datetime('NOW'));
 		$this->setUpdateDate(new \Datetime('NOW'));
 	}
+	
+	public function __toString()
+	{
+		return $this->getNom(). ' ' . $this->getPrenom();
+	}
 		
 }

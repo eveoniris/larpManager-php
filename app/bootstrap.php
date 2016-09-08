@@ -160,6 +160,7 @@ $app->register(new UrlGeneratorServiceProvider());
 // Sessions
 $app->register(new SessionServiceProvider());
 
+
 // PDF
 $app['snappy.pdf_options'] = array(
 	'viewport-size' => "1024x768",
@@ -215,7 +216,7 @@ else
 			   }),
 		),
 		'secured_area' => array(	// le reste necessite d'être connecté
-			'pattern' => '^/[annonce|restriction|message|notification|statistique|billet|etatCivil|restauration|stock|droit|forum|groupe|gn|personnage|territoire|appelation|langue|ressource|religion|age|genre|level|competence|competenceFamily]/.*$',
+			'pattern' => '^/[annonce|restriction|rule|message|notification|statistique|billet|etatCivil|restauration|stock|droit|forum|groupe|gn|groupeGn|personnage|territoire|appelation|langue|ressource|religion|age|genre|level|competence|competenceFamily]/.*$',
 			'anonymous' => false,
 			'remember_me' => array(),
 			'form' => array(
@@ -243,6 +244,7 @@ else
 	$app->mount('/stock/localisation', new LarpManager\StockLocalisationControllerProvider());
 	$app->mount('/stock/rangement', new LarpManager\StockRangementControllerProvider());
 	$app->mount('/groupe', new LarpManager\GroupeControllerProvider());
+	$app->mount('/groupeGn', new LarpManager\GroupeGnControllerProvider());
 	$app->mount('/groupeSecondaire', new LarpManager\GroupeSecondaireControllerProvider());
 	$app->mount('/groupeSecondaireType', new LarpManager\GroupeSecondaireTypeControllerProvider());
 	$app->mount('/territoire', new LarpManager\TerritoireControllerProvider());
@@ -281,6 +283,7 @@ else
 	$app->mount('/restauration', new LarpManager\RestaurationControllerProvider());
 	$app->mount('/billet', new LarpManager\BilletControllerProvider());
 	$app->mount('/etatCivil', new LarpManager\EtatCivilControllerProvider());
+	$app->mount('/rule', new LarpManager\RuleControllerProvider());
 		
 
 	/**
@@ -309,6 +312,7 @@ else
 		array('^/billet/.*$', 'ROLE_ADMIN'),
 		array('^/etatCivil/.*$', 'ROLE_ADMIN'),
 		array('^/restauration/.*$', 'ROLE_ADMIN'),
+		array('^/groupeGn/.*$', 'ROLE_ADMIN'),
 		array('^/gn/.*$', 'ROLE_USER'),
 		array('^/trombinoscope/.*$', 'ROLE_SCENARISTE'),
 		array('^/pnj/.*$', 'ROLE_USER'),
@@ -342,6 +346,7 @@ else
 		array('^/level/.*$', 'ROLE_REGLE'),
 		array('^/token/.*$', 'ROLE_REGLE'),
 		array('^/stock/.*$', 'ROLE_STOCK'),
+		array('^/rule/.*$', 'ROLE_REGLE'),
 
 	);
 }

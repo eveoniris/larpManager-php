@@ -1,0 +1,18 @@
+{% extends "layout.twig" %}
+
+{% block title %}Famille de compétence{% endblock title %}
+
+{% block content %}
+
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-xs-12 col-md-8">
+				{{ include("admin/competenceFamily/fragment/form.twig",{
+					'legend': 'Ajout d\'une famille de compétence',
+					'action': path('competence.family.add'), 
+					'form' : form}) }}
+			</div>
+		</div>
+	</div>
+	
+{% endblock content %}

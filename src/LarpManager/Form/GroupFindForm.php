@@ -42,6 +42,9 @@ class GroupFindForm extends AbstractType
 	{
 		$builder->add('search','text', array(
 						'required' => true,
+						'attr' => array(
+							'placeholder' => 'Votre recherche',
+						)
 				))
 				->add('type', 'choice', array(
 						'required' => true,

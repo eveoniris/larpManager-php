@@ -93,7 +93,7 @@
 				<li class="dropdown">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Règles<span class="caret"></span></a>
 					<ul class="dropdown-menu">
-						<li><a href="{{ path('rules.admin') }}">Règles</a></li>
+						<li><a href="{{ path('rules') }}">Règles</a></li>
 						<li><a href="{{ path('competence.family') }}">Famille de compétences</a></li>
 						<li><a href="{{ path('level') }}">Niveaux</a></li>
 						<li><a href="{{ path('competence') }}">Compétences</a></li>
@@ -134,6 +134,14 @@
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
 						<i class="fa fa-exclamation-circle" aria-hidden="true"></i> (<span id="notifications-count">0</span>)<span class="caret"></span></a>
 					<ul class="dropdown-menu" id="notifications_list"></ul>
+				</li>
+			{% endif %}
+			
+			{% if is_granted('ROLE_USER', app.user) %}
+				<li class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+						<i class="fa fa-users" aria-hidden="true"></i> (<span id="lastConnected-count">0</span>)<span class="caret"></span></a>
+					<ul class="dropdown-menu" id="lastConnected_list"></ul>
 				</li>
 			{% endif %}
 									

@@ -95,6 +95,11 @@ class User extends BaseUser implements AdvancedUserInterface, \Serializable
 		return $futurEvents;
 	}
 	
+	/**
+	 * Fourni les informations de participation à un jeu
+	 * 
+	 * @param Gn $gn
+	 */
 	public function getParticipant(Gn $gn)
 	{
 		foreach ( $this->getParticipants() as $participant )
@@ -160,7 +165,8 @@ class User extends BaseUser implements AdvancedUserInterface, \Serializable
 	 * @param Gn $gn
 	 * @return boolean
 	 */
-	public function takePart(Gn $gn) {
+	public function takePart(Gn $gn) 
+	{
 		foreach ( $this->getParticipants() as $participant )
 		{
 			if ( $participant->getGn() == $gn )
@@ -168,6 +174,16 @@ class User extends BaseUser implements AdvancedUserInterface, \Serializable
 		}
 		
 		return false;
+	}
+	
+	/**
+	 * Indique si l'utilisateur est membre d'un groupe
+	 * 
+	 * @param Groupe $groupe
+	 */
+	public function isMemberOf(Groupe $groupe)
+	{
+		return $this->getGroupes()->contains($groupe);
 	}
 	
 	/**

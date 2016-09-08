@@ -44,7 +44,11 @@ class GenreForm extends AbstractType
 					'required' => true,	
 				))
 				->add('description','textarea', array(
-					'required' => false,	
+					'required' => false,
+					'attr' => array(
+							'class'=>'tinymce',
+							'row' => 9,
+					)
 				));
 	}
 	

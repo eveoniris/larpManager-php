@@ -45,6 +45,10 @@ class CompetenceFamilyForm extends AbstractType
 				))
 				->add('description','textarea', array(
 					'required' => false,	
+					'attr' => array(
+							'class' => 'tinymce',
+							'row' => 9,
+					)
 				));
 	}
 	

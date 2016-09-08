@@ -31,6 +31,18 @@ use LarpManager\Entities\User;
 class UserRepository extends EntityRepository
 {
 	/**
+	 * Fourni la liste des derniers utilisateurs connectés
+	 */
+	public function lastConnected()
+	{
+		$query = $this->getEntityManager()
+			->createQuery('SELECT u FROM LarpManager\Entities\User u WHERE u.lastConnectionDate > CURRENT_TIMESTAMP() - 720 ORDER BY u.lastConnectionDate DESC');
+		
+		$users = $query->getArrayResult();
+		return $users;		
+	}
+	
+	/**
 	 * Utilisateurs sans etat-civil
 	 */
 	public function findWithoutEtatCivil()

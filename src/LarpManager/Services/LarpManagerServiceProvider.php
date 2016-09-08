@@ -48,6 +48,7 @@ use LarpManager\Services\Converter\EtatCivilConverter;
 use LarpManager\Services\Converter\EventConverter;
 use LarpManager\Services\Converter\GnConverter;
 use LarpManager\Services\Converter\GroupeConverter;
+use LarpManager\Services\Converter\GroupeGnConverter;
 use LarpManager\Services\Converter\IngredientConverter;
 use LarpManager\Services\Converter\LieuConverter;
 use LarpManager\Services\Converter\MembreConverter;
@@ -103,7 +104,6 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 			return $voters;
 		});
 				
-		
 		// manager
 		$app['larp.manager'] = $app->share(function($app) {
 			$larpManagerManager = new LarpManagerManager($app);
@@ -196,6 +196,11 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 		// groupe converter
 		$app['converter.groupe'] = $app->share(function($app) {
 			return new GroupeConverter($app['orm.em']);
+		});
+		
+		// groupeGn converter
+		$app['converter.groupeGn'] = $app->share(function($app) {
+			return new GroupeGnConverter($app['orm.em']);
 		});
 		
 		// notification converter

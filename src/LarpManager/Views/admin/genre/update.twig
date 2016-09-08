@@ -10,7 +10,7 @@
 		<div class="row">
 			<div class="col-xs-12 col-md-8">
 				<a href="{{ path("genre") }}">Retour à la liste des genres</a>
-				{{ include("genre/fragment/form.twig",{
+				{{ include("admin/genre/fragment/form.twig",{
 					'legend': 'Modification d\'un genre',
 					'action': path('genre.update',{'index':genre.id}), 
 					'form' : form}) }}

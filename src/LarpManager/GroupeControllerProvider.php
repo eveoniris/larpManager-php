@@ -53,7 +53,7 @@ class GroupeControllerProvider implements ControllerProviderInterface
 	 *  - groupe.requestPeace
 	 *  - groupe.acceptPeace
 	 *  - groupe.refusePeace
-	 *  - groupe.placeAvailable
+	 *  - groupe.scenariste
 	 *
 	 * @param Application $app
 	 * @return Controllers $controllers
@@ -253,10 +253,21 @@ class GroupeControllerProvider implements ControllerProviderInterface
 			->before($mustBeScenariste);
 			
 		/**
+		 * Choisir le scenariste
+		 */
+		$controllers->match('/admin/{groupe}/scenariste','LarpManager\Controllers\GroupeController::scenaristeAction')
+			->bind("groupe.scenariste")
+			->assert('groupe', '\d+')
+			->convert('groupe', 'converter.groupe:convert')
+			->method('GET|POST')
+			->before($mustBeScenariste);
+			
+		/**
 		 * Ratacher un groupe à un pays
 		 */
 		$controllers->match('/admin/{groupe}/pays','LarpManager\Controllers\GroupeController::adminPaysAction')
 			->bind("groupe.admin.pays.update")
+			->assert('groupe', '\d+')
 			->convert('groupe', 'converter.groupe:convert')
 			->method('GET|POST')
 			->before($mustBeScenariste);
@@ -312,14 +323,6 @@ class GroupeControllerProvider implements ControllerProviderInterface
 			->bind("groupe.add")
 			->method('GET|POST')
 			->before($mustBeScenariste);
-
-		/**
-		 * Modification des places disponibles (Admin uniquement)
-		 */
-		$controllers->match('/place','LarpManager\Controllers\GroupeController::placeAction')
-			->bind("groupe.place")
-			->method('GET|POST')
-			->before($mustBeAdmin);
 			
 		/**
 		 * Restauration des membres du groupe (Admin uniquement)

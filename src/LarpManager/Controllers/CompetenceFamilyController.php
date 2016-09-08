@@ -43,7 +43,7 @@ class CompetenceFamilyController
 	{
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\CompetenceFamily');
 		$competenceFamilies = $repo->findAllOrderedByLabel();
-		return $app['twig']->render('competenceFamily/index.twig', array('competenceFamilies' => $competenceFamilies));
+		return $app['twig']->render('admin/competenceFamily/index.twig', array('competenceFamilies' => $competenceFamilies));
 	}
 	
 	/**
@@ -82,7 +82,7 @@ class CompetenceFamilyController
 			}
 		}
 	
-		return $app['twig']->render('competenceFamily/add.twig', array(
+		return $app['twig']->render('admin/competenceFamily/add.twig', array(
 				'form' => $form->createView(),
 		));
 	}
@@ -127,7 +127,7 @@ class CompetenceFamilyController
 			return $app->redirect($app['url_generator']->generate('competence.family'));
 		}
 	
-		return $app['twig']->render('competenceFamily/update.twig', array(
+		return $app['twig']->render('admin/competenceFamily/update.twig', array(
 				'competenceFamily' => $competenceFamily,
 				'form' => $form->createView(),
 		));
@@ -147,7 +147,7 @@ class CompetenceFamilyController
 	
 		if ( $competenceFamily )
 		{
-			return $app['twig']->render('competenceFamily/detail.twig', array('competenceFamily' => $competenceFamily));
+			return $app['twig']->render('admin/competenceFamily/detail.twig', array('competenceFamily' => $competenceFamily));
 		}
 		else
 		{

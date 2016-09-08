@@ -81,19 +81,7 @@ class HomepageControllerProvider implements ControllerProviderInterface
 		$controllers->match('/newUser/step4','LarpManager\Controllers\HomepageController::newUserStep4Action')
 					->method('GET')
 					->bind('newUser.step4')
-					->before($mustBeUser);
-					
-		/** Page de gestion des règles */
-		$controllers->match('/rules/admin','LarpManager\Controllers\HomepageController::rulesAdminAction')
-					->method('GET|POST')
-					->bind('rules.admin')
-					->before($mustBeScenariste);
-		
-		/** Page de gestion des règles */
-		$controllers->match('/rules/admin/{rule}/delete','LarpManager\Controllers\HomepageController::rulesAdminDeleteAction')
-					->method('GET')
-					->bind('rules.admin.delete')
-					->before($mustBeScenariste);		
+					->before($mustBeUser);	
 		
 		/** Récupére un blason */
 		$controllers->match('/blasons/{blason}','LarpManager\Controllers\HomepageController::getBlasonAction')

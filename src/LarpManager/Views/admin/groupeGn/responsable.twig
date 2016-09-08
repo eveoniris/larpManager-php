@@ -1,0 +1,24 @@
+{% extends "layout.twig" %}
+
+{% block title %}Groupes{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path("groupe.admin.list") }}">Liste des groupes</a></li>
+		<li><a href="{{ path("groupe.detail", {'index': groupe.id}) }}">{{ groupe.nom }}</a></li>
+		<li class="active">Choix du responsable</li>
+	</ol>
+	
+	<div class="well well-sm">
+		<blockquote>Le responsable du groupe {{ groupe.nom }} pour le jeu {{ groupeGn.gn.label }} doit être choisi parmi les participants au jeu et membres du groupe.
+		Si le groupe est vide, ajoutez d'abord votre utilisateur au groupe avant de le nommer responsable de celui-ci.
+		</blockquote>
+		
+		<form action="{{ path('groupeGn.responsable',{'groupe': groupe.id, 'groupeGn': groupeGn.id}) }}" method="POST">
+			{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+			{{ form(form) }}
+		</form>
+	</div>
+{% endblock %}

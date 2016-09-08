@@ -77,7 +77,7 @@
         <script src="{{ app.request.basepath }}/js/bootstrap.min.js"></script>
         <script src="{{ app.request.basepath }}/Pnotify/js/pnotify.custom.min.js"></script>
         <script src="{{ app.request.basepath }}/bootstrap-select-1.11.0/js/bootstrap-select.min.js"></script>
-        <script src="{{ app.request.basepath }}/bootstrap-select-1.11.0/js/i18n/defaults-fr_FR.min.js"></script>
+        <script src="{{ app.request.basepath }}/bootstrap-select-1.11.0/js/i18n/defaults-fr_FR.min.js"></script>        
         
         {# active pnotify #}
         <script  type="text/javascript">
@@ -162,14 +162,19 @@
 		{% if is_granted('ROLE_USER', app.user) %}
 		<script>
 			$(document).ready(function() {
+				
 				var notifications = [];
+				var lastConnecteds = [];
 				var tid = setInterval(notification, 10000);
+				
 				function notification() {
 					var url = '{{ path('notification.list') }}';
 					$.get(url).done(function(data) {
+
+						// mise à jour de la liste des notifications
 						notification_count = $('#notifications-count').html();
-						for(var key in data) {
-							notification = data[key];
+						for(var key in data.notifications) {
+							notification = data.notifications[key];
 							if ( notifications.indexOf(notification.id) == -1 )
 							{
 								notifications.push(notification.id);
@@ -190,6 +195,22 @@
 						}
 
 						$('#notifications-count').html(notification_count);
+
+
+						// mise à jour de la liste des utilisateurs connecté
+						lastConnected = $('#lastConnected-count').html();
+						for(var key in data.lastConnected) {
+							user = data.lastConnected[key];
+							
+							if ( lastConnecteds.indexOf(user.id) == -1 )
+							{
+								lastConnecteds.push(user.id);
+								lastConnected++;
+								$('ul#lastConnected_list').append('<li><a href="">' +user.username+ '<a></li>');
+							}
+						}
+						$('#lastConnected-count').html(lastConnected);
+						
 					});
 				}
 				function abortTimer() {
@@ -215,7 +236,6 @@
 			});
 		</script>
 		{% endif %}
-				
 					        	
     	{% block javascript %}	
 		{% endblock javascript %}

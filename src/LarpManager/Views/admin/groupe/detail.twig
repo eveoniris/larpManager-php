@@ -67,27 +67,12 @@
 	  									</button>
 										
 										<ul class="dropdown-menu">
-											{% if groupe.lock %}
-												<li><a href="{{ path('groupe.unlock', {'groupe' : groupe.id}) }}"><i class="fa fa-unlock fa-fw"></i> Ouvrir</a></li>
-											{% else %}
-												<li><a href="{{ path('groupe.lock', {'groupe' : groupe.id}) }}"><i class="fa fa-lock fa-fw"></i> Fermer</a></li>
-											{% endif %}
-											{% if groupe.free %}
-												<li><a href="{{ path('groupe.unvailable', {'groupe' : groupe.id}) }}">Rendre indisponible</a></li>
-											{% else %}
-												<li><a href="{{ path('groupe.available', {'groupe' : groupe.id}) }}">Rendre disponible</a></li>
-											{% endif %}
-											<li role="separator" class="divider"></li>
-											<li><a href="">Choisir le scénariste</a></li>
-											<li><a href="">Choisir le responsable</a></li>
-											<li role="separator" class="divider"></li>
 											<li><a href=""><i class="fa fa-pencil"></i> Modifier la description</a></li>
 											<li><a href="{{ path('groupe.admin.pays.update', {'groupe': groupe.id}) }}"><i class="fa fa-pencil"></i> Modifier le pays</a></li>
 											<li><a href="{{ path('groupe.territoire.add', {'groupe': groupe.id}) }}"><i class="fa fa-plus"></i> Ajouter un territoire</a></li>
 											<li><a href="{{ path('groupe.quete',{'groupe': groupe.id}) }}">Générer une quête commerciale</a></li>
 											<li><a href="">Type de jeu</a></li>
 											<li role="separator" class="divider"></li>
-											<li><a href="{{ path('groupe.place', {'index':groupe.id}) }}">Modifier le nombre de place</a></li>
 											<li><a href="{{ path('groupe.admin.participant.add', {'groupe': groupe.id}) }}">Ajouter un utilisateur</a></li>
 											<li><a href="">Modifier le code</a></li>
 											<li><a href="">Modifier la composition du groupe</a></li>
@@ -99,18 +84,17 @@
 								</div>
 							
 							</li>
+							
+							<li class="list-group-item">
+								<a href="{{ path('groupeGn.list', {'groupe': groupe.id}) }}">Sessions de jeu</a>
+							</li>
 							<li class="list-group-item">
 								{% if groupe.lock %}
 									Le groupe est <strong class="text-warning">fermé</strong>.
+									<a data-toggle="tooltip" data-placement="top" title="Ouvrir le groupe" href="{{ path('groupe.unlock', {'groupe' : groupe.id}) }}"><i class="fa fa-pencil"></i></a>
 								{% else %}
 									Le groupe est <strong class="text-success">ouvert</strong>.
-								{% endif  %}
-							</li>
-							<li class="list-group-item">
-								{% if groupe.free %}
-									Le groupe est <strong class="text-success">disponible</strong>.
-								{% else %}
-									Le groupe est <strong class="text-warning">réservé</strong>.
+									<a data-toggle="tooltip" data-placement="top" title="Fermer le groupe" href="{{ path('groupe.lock', {'groupe' : groupe.id}) }}"><i class="fa fa-pencil"></i></a>
 								{% endif  %}
 							</li>
 							<li class="list-group-item">
@@ -125,57 +109,15 @@
 		    						{% endif %}
 		    						&nbsp;{{ groupe.scenariste.email }}
 		    					{% endif %}
+		    					
+		    					<a data-toggle="tooltup" data-placement="top" title="Choisir le scénariste" href="{{ path('groupe.scenariste', {'groupe': groupe.id}) }}"><i class="fa fa-pencil"></i></a>
 							</li>
-							
-							<li class="list-group-item">
-								<strong>Responsable : </strong>
-						
-								{% if not groupe.responsable %}
-									<span class="fa fa-exclamation-triangle" aria-hidden="true"></span>
-			    					Attention, ce groupe n'a pas de responsable.
-								{% else %}
-									{% if groupe.responsable.etatCivil %}
-										{{ groupe.responsable.etatCivil.nom }} {{ groupe.responsable.etatCivil.prenom }}
-									{% endif %}
-									&nbsp;{{ groupe.responsable.email }}
-								{% endif %}
-							</li>
-							
-							<li class="list-group-item">
-								<strong>places disponibles : </strong>
-								{{ groupe.classeOpen - groupe.participants|length}}
-							</li>
-							
-							<li class="list-group-item">
-								<strong>Code : </strong>
-								{{ groupe.code }}
-							</li>
-							
-							
-							<li class="list-group-item">
-		    					<strong>Jeu stratégique : </strong>
-    				
-    							{% if groupe.jeuStrategique %}
-    								<span class="text-success">participe.</span>
-		    					{% else %}
-    								<span class="text-warning">ne participe pas.</span>
-    							{% endif %}
-		    				</li>
-	    			
-	    					<li class="list-group-item">
-    							<strong>Jeu maritime : </strong>
-			    				
-			    				{% if groupe.jeuMaritime %}
-					    			<span class="text-success">participe.</span>
-					    		{% else %}
-			    					<span class="text-warning">ne participe pas.</span>
-			    				{% endif %}
-					    	</li>
-							
+												
 						</ul>						
 					</div>
 				</div>
 			</div>			
 	
-			
+	<ul>
+
 {% endblock %}

@@ -1,12 +1,13 @@
 <h6><i class="fa fa-circle"></i> Description <small>(Visible par tous)</small></h6>
-						<div class="white-box">
-							{% if not groupe.description %}
-	    						<i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
-	    						Attention, ce groupe n'a pas de description.
-	    					{% else %}
-	    						{{ groupe.description|markdown }}
-	    					{% endif %}
-    					</div>
+
+<div class="white-box">
+	{% if not groupe.description %}
+		<i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+    	Attention, ce groupe n'a pas de description.
+    {% else %}
+    	{{ groupe.description|markdown }}
+    {% endif %}
+</div>
     											
 						<h6><i class="fa fa-circle"></i> Territoires</h6>
 						<div class="white-box">
@@ -120,8 +121,7 @@
     						{% endfor %}
     						</ul>
     					</div>  
-    			
-	    			
+    				    			
 	    				<h6><i class="fa fa-circle"></i> Composition du groupe</h6>
 	    				
 	    				<div class="white-box">

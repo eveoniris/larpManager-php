@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace LarpManager\Form;
+namespace LarpManager\Form\Groupe;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -28,7 +28,7 @@ use Doctrine\ORM\EntityRepository;
 use LarpManager\Form\Type\ClasseType;
 
 /**
- * LarpManager\Form\GroupeForm
+ * LarpManager\Form\Groupe\GroupeForm
  *
  * @author kevin
  *
@@ -79,9 +79,6 @@ class GroupeForm extends AbstractType
 						},
 						'property' => 'nom',
 				))
-				->add('code','text', array(
-						'required' => false,
-				))
 				->add('scenariste','entity', array(
 						'label' => 'Scénariste',
 						'required' => false, 
@@ -94,21 +91,6 @@ class GroupeForm extends AbstractType
 									$qb->expr()->like('u.rights', $qb->expr()->literal('%ROLE_ADMIN%'))));
 							return $qb;
 						}
-				))
-				->add('jeuStrategique','checkbox', array(
-						'label' => "Participe au jeu stratégique ?",
-						'required' => false,
-				))
-				->add('jeuMaritime','checkbox', array(
-						'label' => "Participe au jeu maritime ?",
-						'required' => false,
-				))
-				->add('gns', 'entity', array(
-						'label' => 'GNs auquel ce groupe participe',
-						'multiple' => true,
-						'required' => false,
-						'class' => 'LarpManager\Entities\Gn',
-						'property' => 'label',
 				))
 				->add('groupeClasses', 'collection', array(
 						'label' => "Composition",

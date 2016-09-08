@@ -42,9 +42,8 @@ class GenreController
 	 */
 	public function indexAction(Request $request, Application $app)
 	{
-		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Genre');
-		$genres = $repo->findAll();
-		return $app['twig']->render('genre/index.twig', array('genres' => $genres));
+		$genres = $app['orm.em']->getRepository('\LarpManager\Entities\Genre')->findAll();
+		return $app['twig']->render('admin/genre/index.twig', array('genres' => $genres));
 	}
 	
 	/**
@@ -83,7 +82,7 @@ class GenreController
 			}
 		}
 	
-		return $app['twig']->render('genre/add.twig', array(
+		return $app['twig']->render('admin/genre/add.twig', array(
 				'form' => $form->createView(),
 		));
 	}
@@ -102,7 +101,7 @@ class GenreController
 	
 		if ( $genre )
 		{
-			return $app['twig']->render('genre/detail.twig', array('genre' => $genre));
+			return $app['twig']->render('admin/genre/detail.twig', array('genre' => $genre));
 		}
 		else
 		{
@@ -151,7 +150,7 @@ class GenreController
 			return $app->redirect($app['url_generator']->generate('genre'));
 		}
 	
-		return $app['twig']->render('genre/update.twig', array(
+		return $app['twig']->render('admin/genre/update.twig', array(
 				'genre' => $genre,
 				'form' => $form->createView(),
 		));
