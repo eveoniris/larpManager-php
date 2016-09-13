@@ -26,6 +26,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use LarpManager\Entities\User;
 use LarpManager\Entities\Message;
 use LarpManager\Entities\Billet;
+use LarpManager\Entities\GroupeGn;
 use LarpManager\Entities\Notification;
 
 class NotifyManager
@@ -101,6 +102,60 @@ class NotifyManager
 				$this->fromAddress,
 				$user->getEmail()
 			);
+	}
+	
+	/**
+	 * Notification désigner comme responsable
+	 * 
+	 * @param User $user
+	 * @param GroupeGn $groupeGn
+	 */
+	public function newResponsable($user, $groupeGn)
+	{
+		$notification = new Notification();
+		$notification->setText('Vous avez été désigné responsable du groupe : '.$groupeGn->getGroupe()->getNom());
+		$notification->setUser($user);
+		
+		$this->app['orm.em']->persist($notification);
+		$this->app['orm.em']->flush();
+		
+		$url = $this->app['url_generator']->generate('homepage');
+		
+		$this->sendMessage(
+				'user/email/newResponsable.twig',
+				array(
+						'groupeGn' => $groupeGn,
+						'messagerieUrl' => $url),
+				$this->fromAddress,
+				$user->getEmail()
+				);
+	}
+	
+	/**
+	 * Notification désigner comme nouveau membre d'un groupe
+	 *
+	 * @param User $user
+	 * @param GroupeGn $groupeGn
+	 */
+	public function newMembre($user, $groupeGn)
+	{
+		$notification = new Notification();
+		$notification->setText('Vous avez été ajouté au groupe : '.$groupeGn->getGroupe()->getNom());
+		$notification->setUser($user);
+	
+		$this->app['orm.em']->persist($notification);
+		$this->app['orm.em']->flush();
+	
+		$url = $this->app['url_generator']->generate('homepage');
+	
+		$this->sendMessage(
+				'user/email/newMembre.twig',
+				array(
+						'groupeGn' => $groupeGn,
+						'messagerieUrl' => $url),
+				$this->fromAddress,
+				$user->getEmail()
+				);
 	}
 	
 	/**

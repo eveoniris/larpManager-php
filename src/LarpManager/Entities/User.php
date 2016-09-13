@@ -204,10 +204,17 @@ class User extends BaseUser implements AdvancedUserInterface, \Serializable
 	/**
 	 * TODO Fourni la liste de tous les posts qu'un utilisateur n'a pas lu
 	 */
-	public function newPosts()
+	public function newPosts(Topic $topic)
 	{
-		// construit la liste des posts déjà vue
 		$newPosts = new ArrayCollection();
+		foreach( $topic->getPosts() as $post)
+		{
+			if ( ! $this->alreadyView($post))
+			{
+				$newPosts[] = $post;
+			}
+		}
+		
 		return $newPosts;		
 	}
 	

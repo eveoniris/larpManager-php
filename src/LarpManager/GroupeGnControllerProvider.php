@@ -29,7 +29,8 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
  * LarpManager\GroupeGnControllerProvider
  * 
  * @author kevin
- *
+ * 
+ * Role de base : ROLE_USER
  */
 class GroupeGnControllerProvider implements ControllerProviderInterface
 {
@@ -38,22 +39,51 @@ class GroupeGnControllerProvider implements ControllerProviderInterface
 		$controllers = $app['controllers_factory'];
 		
 		/**
-		 * Ajoute le groupe à un jeu
+		 * Vérifie que l'utilisateur dispose du role ADMIN
+		 */
+		$mustBeAdmin = function(Request $request) use ($app) {
+			if (!$app['security.authorization_checker']->isGranted('ROLE_ADMIN')) {
+				throw new AccessDeniedException();
+			}
+		};
+		
+		/**
+		 * Vérifie que l'utilisateur est responsable de ce groupe pour cette session de jeu
+		 */
+		$mustBeResponsable = function(Request $request) use ($app) {
+			if (!$app['security.authorization_checker']->isGranted('GROUPE_RESPONSABLE', $request->get('groupeGn'))) {
+				throw new AccessDeniedException();
+			}
+		};
+		
+		/**
+		 * Vérifie que l'utilisateur dispose d'un billet pour cette session de jeu
+		 */
+		$mustHaveBillet = function(Request $request) use ($app) {
+			if (!$app['security.authorization_checker']->isGranted('GROUPE_BILLET', $request->get('groupeGn'))) {
+				throw new AccessDeniedException();
+			}
+		};
+		
+		/**
+		 * Liste des sessions de jeu d'un groupe
 		 */
 		$controllers->match('/{groupe}','LarpManager\Controllers\GroupeGnController::listAction')
 			->assert('groupe', '\d+')
 			->convert('groupe', 'converter.groupe:convert')
 			->bind("groupeGn.list")
-			->method('GET');
+			->method('GET')
+			->before($mustBeAdmin);
 		
 		/**
-		 * Ajoute le groupe à un jeu
+		 * Ajoute le groupe à une session de jeu
 		 */
 		$controllers->match('/{groupe}/jeu/add','LarpManager\Controllers\GroupeGnController::addAction')
 			->assert('groupe', '\d+')
 			->convert('groupe', 'converter.groupe:convert')
 			->bind("groupeGn.add")
-			->method('GET|POST');
+			->method('GET|POST')
+			->before($mustBeAdmin);
 		
 		/**
 		 * Modifie la participation d'un groupe à un jeu
@@ -64,7 +94,8 @@ class GroupeGnControllerProvider implements ControllerProviderInterface
 			->assert('groupeGn', '\d+')
 			->convert('groupeGn', 'converter.groupeGn:convert')
 			->bind("groupeGn.update")
-			->method('GET|POST');
+			->method('GET|POST')
+			->before($mustBeAdmin);
 		
 		/**
 		 * Modifie le responsable d'un groupe
@@ -75,7 +106,8 @@ class GroupeGnControllerProvider implements ControllerProviderInterface
 			->assert('groupeGn', '\d+')
 			->convert('groupeGn', 'converter.groupeGn:convert')
 			->bind("groupeGn.responsable")
-			->method('GET|POST');
+			->method('GET|POST')
+			->before($mustBeAdmin);
 
 		/**
 		 * Ajoute un participant du groupe
@@ -84,7 +116,8 @@ class GroupeGnControllerProvider implements ControllerProviderInterface
 			->assert('groupeGn', '\d+')
 			->convert('groupeGn', 'converter.groupeGn:convert')
 			->bind("groupeGn.participants.add")
-			->method('GET|POST');
+			->method('GET|POST')
+			->before($mustBeAdmin);
 			
 		/**
 		 * Retire un participant du groupe
@@ -95,7 +128,31 @@ class GroupeGnControllerProvider implements ControllerProviderInterface
 			->assert('participant', '\d+')
 			->convert('participant', 'converter.participant:convert')
 			->bind("groupeGn.participants.remove")
-			->method('GET|POST');
+			->method('GET|POST')
+			->before($mustBeAdmin);
+		
+			
+		/**
+		 * détail d'un groupe
+		 */
+		$controllers->match('/{groupeGn}/groupe','LarpManager\Controllers\GroupeGnController::groupeAction')
+			->assert('groupeGn', '\d+')
+			->convert('groupeGn', 'converter.groupeGn:convert')
+			->bind("groupeGn.groupe")
+			->method('GET')
+			->before($mustHaveBillet);
+			
+		/**
+		 * Modifie le nombre de place recherché par le chef de groupe
+		 */
+		$controllers->match('/{groupeGn}/placeAvailable','LarpManager\Controllers\GroupeGnController::placeAvailableAction')
+			->assert('groupeGn', '\d+')
+			->convert('groupeGn', 'converter.groupeGn:convert')
+			->bind("groupeGn.placeAvailable")
+			->method('GET|POST')
+			->before($mustBeResponsable)
+			->before($mustHaveBillet);		
+			
 			
 		return $controllers;
 	}

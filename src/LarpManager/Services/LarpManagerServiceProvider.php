@@ -100,7 +100,7 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 					break;
 				}
 			}
-			$voters[] = new LarpManagerVoter($roleHierarchyVoter);
+			$voters[] = new LarpManagerVoter($roleHierarchyVoter, $app);
 			return $voters;
 		});
 				

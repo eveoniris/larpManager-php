@@ -18,31 +18,38 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace LarpManager\Form;
+namespace LarpManager\Form\Groupe;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Doctrine\ORM\EntityRepository;
+
 
 /**
- * LarpManager\Form\GroupePlaceAvailableForm
+ * LarpManager\Form\Groupe\GroupeDescriptionForm
  *
  * @author kevin
  *
  */
-class GroupePlaceAvailableForm extends AbstractType
+class GroupeDescriptionForm extends AbstractType
 {
 	/**
-	 * Construction du formulaire
-	 * 
+	 * Contruction du formulaire
+	 *
 	 * @param FormBuilderInterface $builder
 	 * @param array $options
 	 */
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
-		$builder->add('placeAvailable','integer', array(
-					'label' => "Indiquez içi le nombre de personnes recherché pour compléter votre groupe",
-					'required' => true,	
-				));
+		$builder->add('description','textarea', array(
+				'label' => 'Description du groupe',
+				'required' => false,
+				'attr' => array(
+						'class' => 'tinymce',
+						'row' => 9,
+				),
+			));
 	}
 	
 	/**
@@ -57,13 +64,13 @@ class GroupePlaceAvailableForm extends AbstractType
 		));
 	}
 	
-		
 	/**
-	 * Nom du formulaire 
-	 * @return string
+	 * Nom du formulaire
 	 */
 	public function getName()
 	{
-		return 'groupePlaceAvailable';
+		return 'groupeDescription';
 	}
+	
+	
 }

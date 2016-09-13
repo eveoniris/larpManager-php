@@ -112,40 +112,28 @@
 						{% endif %}
 						</a>
 					</th>
-
-					<th>
-						{% if app.request.get('order_dir') == 'ASC' and app.request.get('order_by') == 'classe_open' %}
-							<a href="{{ path('groupe.admin.list', {'order_by': 'classe_open', 'order_dir': 'DESC'}) }}">
-						{%  else %}
-							<a href="{{ path('groupe.admin.list', {'order_by': 'classe_open', 'order_dir': 'ASC'}) }}">
-						{% endif %}
-							Places ouvertes
-						{% if app.request.get('order_by') == 'classe_open'  %}
-							{% if app.request.get('order_dir') == 'ASC' %}
-								<span class="caret"></span>
-							{%else%}
-								<span class="dropup">
-    								<span class="caret"></span>
-								</span>
-							{% endif %}
-						{% endif %}
-						
-					</th>
 					<th>Statut</th>
 					<th>Scénariste</th>
-					<th>Chef de groupe</th>
+					<th />
 				</tr>
 			</thead>
 			<tbody>
 			{% for groupe in groupes %}
 				<tr>
 					<td>{% if groupe.pj %}PJ{%else%}PNJ{% endif %}</td>
-					<td><a href="{{ path('groupe.update', {'index':groupe.id}) }}">{{ groupe.numero }}</a></td>
-					<td><a href="{{ path('groupe.detail', {'index':groupe.id}) }}">{{ groupe.nom }}</a></td>
-					<td>{{ groupe.classeOpen }}{% if is_granted('ROLE_ADMIN') %}&nbsp;(<a href=" {{ path('groupe.place', {'index':groupe.id}) }}">Modifier</a>){% endif %} </td>
+					<td>{{ groupe.numero }}</td>
+					<td>{{ groupe.nom }}</td>
 					<td>{% if groupe.lock %}<span class="text-danger">Verrouillé</span>{% else %}Ouvert{% endif %}</td>
 					<td>{% if groupe.scenariste %}{{ groupe.scenariste.username }} {% else %}pas de scénariste{% endif %}</td>
-					<td>{% if groupe.responsable %}{{ groupe.responsable.username }}{% else %}pas de scénariste{% endif %}</td>
+					<td>
+					<td>
+						<div class="btn-toolbar pull-right" role="toolbar" aria-label="...">
+							<div class="btn-group" role="group" aria-label="...">
+								<a class="btn btn-primary" href="{{ path('groupe.detail', {'index':groupe.id}) }}"><i class="fa fa-eye"></i></a>
+								<a class="btn btn-danger" href="{{ path('groupe.update', {'index':groupe.id}) }}"><i class="fa fa-pencil"></i></a>
+							</div>
+						</div>
+					</td>
 				</tr>
 			{% endfor %}
 			</tbody>

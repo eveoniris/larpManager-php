@@ -1,25 +1,37 @@
 {# detail du groupe #}
 		
-{% if app.user.isResponsable(groupe) %}
+{% if participant.isResponsable(groupe) %}
 	<blockquote>
-		Vous êtes responsable de ce groupe. Le code du groupe est : <strong>{{ groupe.code }}</strong>
-	</blockquote>
+		<ul class="list-group">
+			<li class="list-group-item">Vous êtes responsable de ce groupe.</li>
+			<li class="list-group-item">Le code du groupe est : <strong>{{ groupe.code }}</strong>.</li>
+			<li class="list-group-item">Vous recherchez {{ groupeGn.placeAvailable|default(0) }} joueur(s) supplémentaire(s).
+				<a href="{{ path('groupeGn.placeAvailable', {'groupeGn': groupeGn.id}) }}"><i class="fa fa-pencil"></i></a>
+			</li>
+		</ul>
+	</blockquote>	
 {% endif %}
 		
 <div class="header">
 	<h5>Description</h5>
 </div>
-		
-{{ groupe.description|markdown }}
+
+{% if groupe.description %}		
+	{{ groupe.description|markdown }}
+{% else %}
+	Ce groupe n'a pas de description.
+{% endif %}
 
 		
 <div class="header">
 	<h5>Pays</h5>
-	{% if groupe.territoire %}
-		<h6>{{ groupe.territoire.nom }}&nbsp;<a href="{{ path('territoire.detail', {'territoire': groupe.territoire.id}) }}">Plus d'informations</a></h6>
-		{{ groupe.territoire.description|markdown }}
-	{% endif %}
 </div>
+
+{% if groupe.territoire %}
+	<h6>{{ groupe.territoire.nom }}&nbsp;<a href="{{ path('territoire.detail', {'territoire': groupe.territoire.id}) }}">Plus d'informations</a></h6>
+	{{ groupe.territoire.description|markdown }}
+{% endif %}
+
 		
 <div class="header">
 	<h5>Territoire(s) contrôlé(s)</h5>
@@ -27,12 +39,20 @@
 		
 {% for territoire in groupe.territoires %}
 	<h6>{{ territoire.nom }}&nbsp;<a href="{{ path('territoire.detail', {'territoire': territoire.id}) }}">Plus d'informations</a></h6>
-	{{ territoire.description|markdown }}
+	{% if territoire.description %}
+		{{ territoire.description|markdown }}
+	{% else %}
+		Ce territoire n'a pas de description.
+	{% endif %}
 	
-	<div class="text-muted">
-		<strong>Secret</strong>
-		{{ territoire.descriptionSecrete|markdown }}
-	</div>
+	<h6>Description secrete</h6>
+	<p>(accessible uniquement aux membres d'un groupe contrôlant ce territoire)</p>
+		{% if territoire.descriptionSecrete %}
+			{{ territoire.descriptionSecrete|markdown }}
+		{% else %}
+			Ce territoire ne dispose pas de description secrete.
+		{% endif %}
+	
 {% endfor %}
 						
 		<div class="header">
@@ -40,7 +60,7 @@
 		</div>
 		
 		<blockquote>
-		{% if app.user.isResponsable(groupe) %}
+		{% if participant.isResponsable(groupe) %}
 			<p>Vous disposez de <strong>{{ groupe.alliances|length }}</strong> alliance(s) sur un maximum de <strong>3</strong>.</p>
 			<p>Vous pouvez choisir <strong>{{ groupe.ennemies|length - groupe.alliances|length }}</strong> allié(s) supplémentaire(s).</p>
 			<p>Votre nombre d'ennemis doit toujours être supérieur à votre nombre d'alliés. Pour augmenter le nombe d'alliance possible (jusqu'à un maximum de 3), choisissez plus d'ennemis</p>
@@ -71,7 +91,7 @@
 		{% endfor %}
 		</ul>
 		
-		{% if app.user.isResponsable(groupe) %}
+		{% if participant.isResponsable(groupe) %}
 		
 			{% if groupe.waitingAlliances|length > 0 %}
 				<div class="header">
@@ -113,7 +133,7 @@
 		</div>
 		
 		<blockquote>
-		{% if app.user.isResponsable(groupe) %}
+		{% if participant.isResponsable(groupe) %}
 			<p>Vous disposez de <strong>{{ groupe.ennemies|length }}</strong> ennemi(s) sur un maximum de <strong>5</strong>.</p>
 			<p>Si vous avez 3 ennemis ou plus, vous ne pouvez plus faire de Déclaration de guerre (mais vous pouvez toujours en recevoir)</p>
 			<p>Etre l’ennemi d’un groupe ne signifie pas que vous devez tuer à vue ses membres, simplement que vous avez un différent important à régler avec lui. Le but est de générer du jeu, pas de l’appauvrir en générant des massacres.</p>
@@ -138,10 +158,12 @@
 					</div>
 				</div>
 			</li>	
+		{% else %}
+			Vous n'avez aucun ennemis.
 		{% endfor %}
 		</ul>
 		
-		{% if app.user.isResponsable(groupe) %}
+		{% if participant.isResponsable(groupe) %}
 		
 			{% if groupe.waitingPeace|length > 0 %}
 				<div class="header">
@@ -196,7 +218,7 @@
 			{% endif %}
 		{% endif %}
 		
-		{% if app.user.isResponsable(groupe) %}
+		{% if participant.isResponsable(groupe) %}
 			<a class="btn btn-success" href="{{ path('groupe.requestAlliance', {'groupe': groupe.id}) }}">Demander une alliance</a>
 			<a class="btn btn-danger" href="{{ path('groupe.declareWar', {'groupe': groupe.id}) }}">Choisir un ennemi</a>
 		{% endif %}

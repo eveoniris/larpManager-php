@@ -41,6 +41,7 @@ class GroupeControllerProvider implements ControllerProviderInterface
 	 * 	- groupe.add
 	 *  - groupe.update
 	 *  - groupe.detail
+	 *  - groupe.description  
 	 *  - groupe.gestion
 	 *  - groupe.joueur
 	 *  - groupe.place
@@ -251,45 +252,7 @@ class GroupeControllerProvider implements ControllerProviderInterface
 			->bind("groupe.admin.list")
 			->method('GET|POST')
 			->before($mustBeScenariste);
-			
-		/**
-		 * Choisir le scenariste
-		 */
-		$controllers->match('/admin/{groupe}/scenariste','LarpManager\Controllers\GroupeController::scenaristeAction')
-			->bind("groupe.scenariste")
-			->assert('groupe', '\d+')
-			->convert('groupe', 'converter.groupe:convert')
-			->method('GET|POST')
-			->before($mustBeScenariste);
-			
-		/**
-		 * Ratacher un groupe à un pays
-		 */
-		$controllers->match('/admin/{groupe}/pays','LarpManager\Controllers\GroupeController::adminPaysAction')
-			->bind("groupe.admin.pays.update")
-			->assert('groupe', '\d+')
-			->convert('groupe', 'converter.groupe:convert')
-			->method('GET|POST')
-			->before($mustBeScenariste);
-			
-		/**
-		 * Retirer un participant du groupe
-		 */
-		$controllers->match('/admin/{groupe}/participant/{participant}/remove','LarpManager\Controllers\GroupeController::adminParticipantRemoveAction')
-			->bind("groupe.admin.participant.remove")
-			->convert('groupe', 'converter.groupe:convert')
-			->method('GET|POST')
-			->before($mustBeScenariste);
-			
-		/**
-		 * Retirer un participant du groupe
-		 */
-		$controllers->match('/admin/{groupe}/participant/add','LarpManager\Controllers\GroupeController::adminParticipantAddAction')
-			->bind("groupe.admin.participant.add")
-			->convert('groupe', 'converter.groupe:convert')
-			->method('GET|POST')
-			->before($mustBeScenariste);
-		
+								
 		/**
 		 * Gestion des documents lié au groupe
 		 */
@@ -314,7 +277,7 @@ class GroupeControllerProvider implements ControllerProviderInterface
 			->assert('index', '\d+')
 			->bind("groupe.detail")
 			->method('GET')
-			->before($mustBeScenariste);			
+			->before($mustBeMember);			
 		
 		/**
 		 *  Ajout d'un groupe (Scénariste uniquement)
@@ -467,9 +430,10 @@ class GroupeControllerProvider implements ControllerProviderInterface
 		 */
 		$controllers->match('/{groupe}/territoire/{territoire}/remove','LarpManager\Controllers\GroupeController::territoireRemoveAction')
 			->assert('groupe', '\d+')
-			->bind("groupe.territoire.remove")
 			->convert('groupe', 'converter.groupe:convert')
+			->assert('territoire', '\d+')
 			->convert('territoire', 'converter.territoire:convert')
+			->bind("groupe.territoire.remove")
 			->method('GET|POST')
 			->before($mustBeScenariste);
 			
@@ -497,6 +461,36 @@ class GroupeControllerProvider implements ControllerProviderInterface
 		$controllers->match('/{index}/background/update','LarpManager\Controllers\GroupeController::updateBackgroundAction')
 			->assert('index', '\d+')
 			->bind("groupe.background.update")
+			->method('GET|POST')
+			->before($mustBeScenariste);
+			
+		/**
+		 *  Modification de la description du groupe
+		 */
+		$controllers->match('/{groupe}/description','LarpManager\Controllers\GroupeController::descriptionAction')
+			->assert('groupe', '\d+')
+			->convert('groupe', 'converter.groupe:convert')
+			->bind("groupe.description")
+			->method('GET|POST')
+			->before($mustBeScenariste);
+		
+		/**
+		 * Choisir le scenariste
+		 */
+		$controllers->match('/{groupe}/scenariste','LarpManager\Controllers\GroupeController::scenaristeAction')
+			->bind("groupe.scenariste")
+			->assert('groupe', '\d+')
+			->convert('groupe', 'converter.groupe:convert')
+			->method('GET|POST')
+			->before($mustBeScenariste);
+			
+		/**
+		 * Ratacher un groupe à un pays
+		 */
+		$controllers->match('/{groupe}/pays','LarpManager\Controllers\GroupeController::paysAction')
+			->bind("groupe.pays")
+			->assert('groupe', '\d+')
+			->convert('groupe', 'converter.groupe:convert')
 			->method('GET|POST')
 			->before($mustBeScenariste);
 			

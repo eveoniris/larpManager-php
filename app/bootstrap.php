@@ -312,7 +312,7 @@ else
 		array('^/billet/.*$', 'ROLE_ADMIN'),
 		array('^/etatCivil/.*$', 'ROLE_ADMIN'),
 		array('^/restauration/.*$', 'ROLE_ADMIN'),
-		array('^/groupeGn/.*$', 'ROLE_ADMIN'),
+		array('^/groupeGn/.*$', 'ROLE_USER'),
 		array('^/gn/.*$', 'ROLE_USER'),
 		array('^/trombinoscope/.*$', 'ROLE_SCENARISTE'),
 		array('^/pnj/.*$', 'ROLE_USER'),

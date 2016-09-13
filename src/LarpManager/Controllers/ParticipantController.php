@@ -34,7 +34,6 @@ use LarpManager\Form\ParticipantPersonnageSecondaireForm;
 use LarpManager\Form\GroupeInscriptionForm;
 use LarpManager\Form\GroupeSecondairePostulerForm;
 use LarpManager\Form\PersonnageOriginForm;
-use LarpManager\Form\GroupePlaceAvailableForm;
 use LarpManager\Form\ParticipantBilletForm;
 use LarpManager\Form\ParticipantRestaurationForm;
 use LarpManager\Form\ParticipantGroupeForm;
@@ -67,9 +66,12 @@ class ParticipantController
 	 */
 	public function indexAction(Application $app, Request $request, Participant $participant)
 	{
+		$groupeGn = $participant->getSession();
+		
 		return $app['twig']->render('public/participant/index.twig', array(
 				'gn' => $participant->getGn(),
 				'participant' => $participant,
+				'groupeGn' => $groupeGn,
 		));
 	}
 	
@@ -266,23 +268,6 @@ class ParticipantController
 	}
 	
 	/**
-	 * Liste des groupes
-	 * 
-	 * @param Request $request
-	 * @param Application $app
-	 * @param Participant $participant
-	 */
-	public function groupeListAction(Request $request, Application $app, Participant $participant)
-	{
-		$groupes = $app['orm.em']->getRepository('LarpManager\Entities\Groupe')->findAllPj();
-	
-		return $app['twig']->render('public/groupe/list.twig', array(
-				'groupes' => $groupes,
-				'participant' => $participant,
-		));
-	}
-	
-	/**
 	 * Rejoindre un groupe
 	 *
 	 * @param Request $request
@@ -303,6 +288,22 @@ class ParticipantController
 				
 		if ( $form->isValid() )
 		{
+				$data = $form->getData();
+				$code = $data['code'];
+				$groupe = $app['orm.em']->getRepository('\LarpManager\Entities\Groupe')->findOneByCode($code);
+				if ( $groupe )
+				{
+					$participant->setGroupe($groupe);
+					$app['orm.em']->persist($participant);
+					$app['orm.em']->flush();
+					
+					$app['session']->getFlashBag()->add('success','Vous avez rejoint le groupe.');
+				}
+				else
+				{
+					$app['session']->getFlashBag()->add('error','Le code ne correspond à aucun groupe, rapprochez vous de votre chef de groupe.');
+				}
+				return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
 				
 		}
 		
@@ -312,65 +313,6 @@ class ParticipantController
 		));
 	}
 	
-	/**
-	 * Détail d'un groupe
-	 * 
-	 * @param Request $request
-	 * @param Application $app
-	 * @param Participant $participant
-	 * @param Groupe $groupe
-	 */
-	public function groupeDetailAction(Request $request, Application $app, Participant $participant, Groupe $groupe)
-	{
-		return $app['twig']->render('public/groupe/detail.twig', array(
-				'groupe' => $groupe,
-				'participant' => $participant,
-		));
-	}
-	
-	/**
-	 * Permet au chef de groupe de modifier le nombre de place disponible
-	 *
-	 * @param Request $request
-	 * @param Application $app
-	 * @param Groupe $groupe
-	 */
-	public function groupePlaceAvailableAction(Request $request, Application $app, Participant $participant,  Groupe $groupe)
-	{
-		if ( ! $participant->getBillet() )
-		{
-			$app['session']->getFlashBag()->add('error','Désolé, vous devez obtenir un billet avant.');
-			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
-		}
-		
-		if ( $participant->getUser() != $groupe->getResponsable() )
-		{
-			$app['session']->getFlashBag()->add('error','Désolé, cette action est réservé au chef de groupe.');
-			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
-		}
-		
-		$form = $app['form.factory']->createBuilder(new GroupePlaceAvailableForm(), $groupe)
-			->add('submit','submit', array('label' => 'Enregistrer'))
-			->getForm();
-	
-		$form->handleRequest($request);
-			
-		if ( $form->isValid() )
-		{
-			$groupe = $form->getData();
-			$app['orm.em']->persist($groupe);
-			$app['orm.em']->flush();
-	
-			$app['session']->getFlashBag()->add('success', 'Vos modifications ont été enregistré.');
-			return $app->redirect($app['url_generator']->generate('participant.groupe.detail', array('participant' => $participant->getId())));
-		}
-	
-		return $app['twig']->render('public/groupe/placeAvailable', array(
-				'form' => $form->createView(),
-				'groupe' => $groupe,
-				'participant' => $participant,
-		));
-	}
 	
 	/**
 	 * Choix du personnage secondaire par un utilisateur

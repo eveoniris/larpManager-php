@@ -346,7 +346,6 @@ class Personnage extends BasePersonnage
 	public function getIdentity()
 	{
 		$groupe = $this->getGroupe();
-		$participant = $this->getParticipant();
 		
 		$identity = $this->getNom().' '.$this->getSurnom().' (';
 		if ( $groupe ) $identity .= $groupe->getNom();

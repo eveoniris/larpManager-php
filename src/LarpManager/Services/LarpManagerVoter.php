@@ -5,6 +5,7 @@ namespace LarpManager\Services;
 use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\RoleHierarchyVoter;
+use Silex\Application;
 
 use LarpManager\Entities\User;
 
@@ -18,14 +19,17 @@ class LarpManagerVoter implements VoterInterface
 	/** @var RoleHierarchyVoter */
 	protected $roleHierarchyVoter;
 	
+	protected $app;
+	
 	/**
 	 * Constructeur
 	 * 
 	 * @param RoleHierarchyVoter $roleHierarchyVoter
 	 */
-	public function __construct(RoleHierarchyVoter $roleHierarchyVoter)
+	public function __construct(RoleHierarchyVoter $roleHierarchyVoter, Application $app)
 	{
 		$this->roleHierarchyVoter = $roleHierarchyVoter;
+		$this->app = $app;
 	}
 	
 	/**
@@ -40,10 +44,11 @@ class LarpManagerVoter implements VoterInterface
 		return in_array($attribute, array(
 				'POST_OWNER',
 				'MODERATOR',
-				'GROUPE_MEMBER',
 				'TERRITOIRE_MEMBER',
 				'GN_PARTICIPANT',
+				'GROUPE_MEMBER',
 				'GROUPE_RESPONSABLE',
+				'GROUPE_BILLET',
 				'GROUPE_SECONDAIRE_MEMBER',
 				'GROUPE_SECONDAIRE_RESPONSABLE',
 				'JOUEUR_OWNER',
@@ -81,8 +86,12 @@ class LarpManagerVoter implements VoterInterface
 			}
 			
 			if ($attribute == 'GROUPE_RESPONSABLE') {
-				$groupeId = $object;
-				return $this->isResponsableOf($user, $groupeId) ? VoterInterface::ACCESS_GRANTED : VoterInterface::ACCESS_DENIED;
+				$groupeGnId = $object;
+				return $this->isResponsableOf($user, $groupeGnId) ? VoterInterface::ACCESS_GRANTED : VoterInterface::ACCESS_DENIED;
+			}
+			if ($attribute == 'GROUPE_BILLET') {
+				$groupeGnId = $object;
+				return $this->hasBillet($user, $groupeGnId) ? VoterInterface::ACCESS_GRANTED : VoterInterface::ACCESS_DENIED;
 			}
 			if ($attribute == 'GROUPE_MEMBER') {
 				$groupeId = $object;
@@ -257,11 +266,11 @@ class LarpManagerVoter implements VoterInterface
 	{
 		if ($this->hasRole($token, 'ROLE_SCENARISTE')) return true;
 		
-		if ( $user->getGroupes() )
+		foreach ( $user->getParticipants() as $participant)
 		{
-			foreach ( $user->getGroupes() as $groupe)
+			if ( $participant->getGroupe() )
 			{
-				if ( $groupe->getId() == $groupeId ) return true;
+				if ( $participant->getGroupe()->getId() == $groupeId ) return true;
 			}
 		}
 		return false;
@@ -277,33 +286,31 @@ class LarpManagerVoter implements VoterInterface
 	{
 		if ($this->hasRole($token, 'ROLE_SCENARISTE')) return true;
 		
-		if ( $user->getGroupes() )
+		foreach ( $user->getParticipants() as $participant)
 		{
-			foreach ( $user->getGroupes() as $groupe)
+			if ( $participant->getGroupe() )
 			{
-				if ( $groupe->getTerritoires() )
+				$groupe = $participant->getGroupe();
+				foreach ($groupe->getTerritoires() as $territoire)
 				{
-					foreach ($groupe->getTerritoires() as $territoire)
+					if ( $territoire->getId() == $territoireId)
 					{
-					
-						if ( $territoire->getId() == $territoireId) 
+						return true;
+					}
+					else if ( $territoire->getTerritoire() )
+					{
+						foreach ( $territoire->getAncestors() as $ancestor )
 						{
-							return true;
-						}
-						else if ( $territoire->getTerritoire() )
-						{
-							foreach ( $territoire->getAncestors() as $ancestor )
+							if ( $ancestor->getId() == $territoireId )
 							{
-								if ( $ancestor->getId() == $territoireId )
-								{
-									return true;
-								}
+								return true;
 							}
 						}
 					}
 				}
 			}
 		}
+		
 		return false;
 	}
 	
@@ -318,17 +325,15 @@ class LarpManagerVoter implements VoterInterface
 	{
 		if ($this->hasRole($token, 'ROLE_SCENARISTE')) return true;
 		
-		$personnage = $user->getPersonnage();
-		if ( $personnage )
+		foreach ( $user->getPersonnages() as $personnage )
 		{
 			foreach ( $personnage->getMembres() as $groupeMember )
 			{
 				$groupe = $groupeMember->getSecondaryGroup();
-				if ( $groupe instanceof \LarpManager\Entities\SecondaryGroup
-						&& $groupe->getId() == $groupeSecondaireId)
-					return true;
+				if ( $groupe && $groupe->getId() == $groupeSecondaireId ) return true;
 			}
 		}
+		
 		return false;
 	}
 	
@@ -339,33 +344,33 @@ class LarpManagerVoter implements VoterInterface
 	 */
 	protected function isInsideOf($user, $territoireId)
 	{
-		if ( $user->getGroupes() )
+		foreach ( $user->getParticipants() as $participant)
 		{
-			foreach ( $user->getGroupes() as $groupe)
+			$groupe = $participant->getGroupe();
+			
+			if ( $groupe->getTerritoires() )
 			{
-				if ( $groupe->getTerritoires() )
+				foreach ($groupe->getTerritoires() as $territoire)
 				{
-					foreach ($groupe->getTerritoires() as $territoire)
+						
+					if ( $territoire->getId() == $territoireId)
 					{
-					
-						if ( $territoire->getId() == $territoireId) 
+						return true;
+					}
+					else if ( $territoire->getTerritoire() )
+					{
+						foreach ( $territoire->getAncestors() as $ancestor )
 						{
-							return true;
-						}
-						else if ( $territoire->getTerritoire() )
-						{
-							foreach ( $territoire->getAncestors() as $ancestor )
+							if ( $ancestor->getId() == $territoireId )
 							{
-								if ( $ancestor->getId() == $territoireId )
-								{
-									return true;
-								}
+								return true;
 							}
 						}
 					}
 				}
 			}
 		}
+		
 		return false;
 	}
 	
@@ -387,18 +392,40 @@ class LarpManagerVoter implements VoterInterface
 	}
 	
 	/**
+	 * Vérifie si un utilisateur a un billet pour une session de jeu
+	 * 
+	 * @param unknown $user
+	 * @param unknown $groupeGnId
+	 */
+	protected function hasBillet($user, $groupeGnId)
+	{
+		$groupeGn = $this->app['converter.groupeGn']->convert($groupeGnId);
+		
+		foreach ( $user->getParticipants() as $participant )
+		{
+			
+			if ($participant->getGn() == $groupeGn->getGn() )
+			{
+				if ( $participant->getBillet() ) return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
 	 * Test si un utilisateur est responsable d'un groupe
 	 * 
 	 * @param unknown $user
 	 * @param unknown $groupeId
 	 */
-	protected function isResponsableOf($user, $groupeId)
+	protected function isResponsableOf($user, $groupeGnId)
 	{
-		foreach( $user->getGroupeResponsable() as $groupe)
+		foreach ( $user->getParticipants() as $participant )
 		{
-			if ( $groupe instanceof \LarpManager\Entities\Groupe
-				&& $groupe->getId() == $groupeId)
-				return true;
+			foreach ( $participant->getGroupeGns() as $session )
+			{
+				if ( $session->getId() == $groupeGnId ) return true;				
+			}
 		}
 		return false;
 	}
@@ -411,15 +438,10 @@ class LarpManagerVoter implements VoterInterface
 	 */
 	protected function isMemberOf($user, $groupeId)
 	{
-		
-		if ( $user->getGroupes() )
+		foreach ( $user->getParticipants() as $participant )
 		{
-			foreach ( $user->getGroupes() as $groupe )
-			{
-				if ( $groupe->getId() == $groupeId)	return true;
-			}
-		}
-					
+			if ( $participant->getGroupe() && $participant->getGroupe()->getId() == $groupeId)	return true;
+		}				
 		return false;
 	}
 	

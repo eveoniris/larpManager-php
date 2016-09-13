@@ -133,6 +133,14 @@ class GnControllerProvider implements ControllerProviderInterface
 			->bind('gn.billetterie')
 			->method('GET');
 			
+		/**
+		 * Liste des groupes prévu sur un jeu
+		 */
+		$controllers->match('/{gn}/groupes','LarpManager\Controllers\GnController::groupesAction')
+			->assert('gn', '\d+')
+			->convert('gn', 'converter.gn:convert')
+			->bind("gn.groupes")
+			->method('GET');
 			
 		return $controllers;
 	}

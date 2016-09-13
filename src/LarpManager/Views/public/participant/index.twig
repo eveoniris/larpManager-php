@@ -19,15 +19,13 @@
 			
 			<ul class="list-group">
 				<li class="list-group-item">
-				{% if participant.groupe %}
-					<a href="{{ path('participant.groupe.detail', {'participant': participant.id, 'groupe': participant.groupe.id}) }}"><i class="fa fa-users"></i> Votre groupe</a>
+				{% if groupeGn %}
+					<a href="{{ path('groupeGn.groupe', {'groupeGn': groupeGn.id}) }}"><i class="fa fa-users"></i> Votre groupe</a>
 				{% else %}
 					<a href="{{ path('participant.groupe.join', {'participant': participant.id}) }}"><i class="fa fa-users"></i> Rejoindre un groupe</a>
 				{% endif %}
 				</li>
-				
-				
-				
+
 				<li class="list-group-item">
 					{% if participant.personnage %}
 						<a href="{{ path('participant.personnage', {'participant': participant.id}) }}"><i class="fa fa-user" aria-hidden="true"></i>&nbsp;
@@ -64,7 +62,7 @@
 			</div>
 			<ul class="list-group">
 				<li class="list-group-item"><a href="{{ path('world') }}">La carte</a></li>
-				<li class="list-group-item"><a href="{{ path('participant.groupe.list', {'participant': participant.id}) }}">Les groupes</a></li>
+				<li class="list-group-item"><a href="{{ path('gn.groupes', {'gn': participant.gn.id}) }}">Les groupes</a></li>
 				<li class="list-group-item"><a href="{{ path('participant.groupeSecondaire.list', {'participant': participant.id}) }}">Les groupes secondaires</a></li>
 				<li class="list-group-item"><a href="{{ path('participant.religion.list', {'participant': participant.id}) }}">Les religions</a></li>
 			</ul>			
@@ -109,7 +107,22 @@
 			</div>
 		{% endif %}
 		
-		
+		{% for  annonce in gn.annonces%}
+			<div class="panel panel-conan">
+				<div class="panel-heading">
+					<div class="pull-right">
+						<small>publié le {{ annonce.updateDate|date('Y-m-d') }}</small>
+					</div>
+					{{ annonce.title }}
+				</div>
+				<div class="panel-body">
+					{{ annonce.text|markdown }}
+					{% if is_granted('ROLE_REDACTEUR', app.user) %}
+						<a class="btn btn-primary" href="{{ path('annonce.update', {'annonce': annonce.id}) }}"><i class="fa fa-pencil"></i></a>
+					{% endif %}
+				</div>
+			</div>
+		{% endfor %}
 		
 		<div class="panel panel-conan">
 			<div class="panel-heading">
@@ -136,30 +149,102 @@
 				
 		<div class="panel panel-conan">
 			<div class="panel-heading">
-				Dernières réponses forum
+				Forums
 			</div>
 			<div class="panel-body">
-				Liste des dernières réponses sur le forum
+				<div class="row">
+					<div class="col-md-4">
+						<ul class="list-group">
+							<li class="list-group-item">
+								<a href="{{ path('forum') }}">
+									<i class="fa fa-comment"></i>
+									Forum
+								</a>
+							</li>
+							
+							{% set groupe = participant.groupe %}
+							{% if groupe %}
+								{% if groupe.topic %}
+									{% set count = app.user.newPosts(groupe.topic)|length %}
+									<li class="list-group-item">
+										<a href="{{ path('forum.topic', {'index': groupe.topic.id}) }}">
+											{% if count > 0 %}<strong>{% endif %}
+											<i class="fa fa-comment"></i> Forum du groupe "{{ groupe.nom }}"
+											({{ count }})
+											{% if count > 0 %}</strong>{% endif %}
+										</a>
+									</li>
+								{% endif %}
+							{% endif %}
+						</ul>
+					</div>
+					
+					<div class="col-md-4">
+						<ul>
+							{% if groupe %}
+								{% for territoire in  groupe.territoires %}
+									{% if territoire.topic %}
+										{% set count = app.user.newPosts(territoire.topic)|length %}
+										<li class="list-group-item">
+											<a href="{{ path('forum.topic', {'index': territoire.topic.id}) }}">
+												{% if count > 0 %}<strong>{% endif %}
+												<i class="fa fa-comment"></i> Forum du territoire "{{ territoire.nom }}"
+												({{ count }})
+												{% if count > 0 %}</strong>{% endif %}
+											</a>
+										</li>
+									{% endif %}
+									{% for ancestor in territoire.getAncestors %}
+										{% if ancestor.topic %}
+											{% set count = app.user.newPosts(ancestor.topic)|length %}
+											<li class="list-group-item">
+												<a href="{{ path('forum.topic', {'index': ancestor.topic.id}) }}">
+													{% if count > 0 %}<strong>{% endif %}
+													<i class="fa fa-comment"></i> Forum du territoire "{{ ancestor.nom }}"
+													({{ count }})
+													{% if count > 0 %}</strong>{% endif %}
+												</a>
+											</li>
+										{% endif %}
+									{% endfor %}
+								{% endfor %}
+							{% endif %}
+						</ul>
+					</div>
+					
+					<div class="col-md-4">
+						<ul>
+							{% if participant.personnage %}
+								
+								{% for personnageReligion in participant.personnage.personnagesReligions %}
+									<li class="list-group-item">
+										{% set count = app.user.newPosts(personnageReligion.religion.topic)|length %}
+										<a href="{{ path('forum.topic',{'index': personnageReligion.religion.topic.id }) }}">
+											{% if count > 0 %}<strong>{% endif %}
+											<i class="fa fa-comment"></i> Forum de la religion "{{ personnageReligion.religion.label }}"
+											({{ count }})
+											{% if count > 0 %}</strong>{% endif %}
+										</a>
+									</li>
+								{% endfor %}
+								{% for membre in participant.personnage.membres %}
+									<li class="list-group-item">
+										{%  set count = app.user.newPosts(membre.secondaryGroup.topic)|length %}
+										<a href="{{ path('forum.topic',{'index': membre.secondaryGroup.topic.id}) }}">
+											{% if count > 0 %}<strong>{% endif %}
+											<i class="fa fa-comment"></i> Forum du groupe secondaire "{{ membre.secondaryGroup.label }}"
+											({{ count }})
+											{% if count > 0 %}</strong>{% endif %}
+										</a>
+									</li>
+								{% endfor %}
+								
+							{% endif %}
+						</ul>
+					</div>
+				</div>
 			</div>
 		</div>
-		
-		{% for  annonce in gn.annonces%}
-			<div class="panel panel-conan">
-				<div class="panel-heading">
-					<div class="pull-right">
-						<small>publié le {{ annonce.updateDate|date('Y-m-d') }}</small>
-					</div>
-					{{ annonce.title }}
-				</div>
-				<div class="panel-body">
-					{{ annonce.text|markdown }}
-					{% if is_granted('ROLE_REDACTEUR', app.user) %}
-						<a class="btn btn-primary" href="{{ path('annonce.update', {'annonce': annonce.id}) }}"><i class="fa fa-pencil"></i></a>
-					{% endif %}
-				</div>
-			</div>
-		{% endfor %}
-
 	</div>
 </div>
 

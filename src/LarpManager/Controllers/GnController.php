@@ -312,4 +312,28 @@ class GnController
 				'groupes' => $groupes,
 		));
 	}
+	
+
+	/**
+	 * Liste des groupes prévu sur le jeu
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Participant $participant
+	 */
+	public function groupesAction(Request $request, Application $app, Gn $gn)
+	{
+		$groupeGns = $gn->getGroupeGns();
+		$participant = $app['user']->getParticipant($gn);
+		if ( ! $participant )
+		{
+			$app['session']->getFlashBag()->add('error', 'Vous devez participer à ce jeu pour voir la liste des groupes');
+			return $app->redirect($app['url_generator']->generate('homepage'));
+		}
+
+		return $app['twig']->render('public/gn/groupes.twig', array(
+				'groupeGns' => $groupeGns,
+				'participant' => $participant,
+		));
+	}
 }

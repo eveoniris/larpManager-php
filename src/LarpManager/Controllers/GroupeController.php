@@ -25,7 +25,11 @@ use Symfony\Component\HttpFoundation\Response;
 use Silex\Application;
 use Doctrine\Common\Collections\ArrayCollection;
 use JasonGrimes\Paginator;
+
 use LarpManager\Form\Groupe\GroupeForm;
+use LarpManager\Form\Groupe\GroupeDescriptionForm;
+use LarpManager\Form\Groupe\GroupeScenaristeForm;
+
 use LarpManager\Form\PersonnageForm;
 use LarpManager\Form\GroupFindForm;
 use LarpManager\Form\BackgroundForm;
@@ -40,7 +44,7 @@ use LarpManager\Form\AcceptPeaceForm;
 use LarpManager\Form\RefusePeaceForm;
 use LarpManager\Form\CancelRequestedPeaceForm;
 use LarpManager\Form\GroupeDocumentForm;
-use LarpManager\Form\GroupeScenaristeForm;
+
 
 use LarpManager\Entities\Groupe;
 use LarpManager\Entities\GroupeGn;
@@ -51,10 +55,40 @@ use LarpManager\Entities\Document;
  * LarpManager\Controllers\GroupeController
  *
  * @author kevin
- * liste des pays, + nbr de noble qu'il dispose
  */
 class GroupeController
 {		
+	/**
+	 * Modification de la description du groupe
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Groupe $groupe
+	 */
+	public function descriptionAction(Request $request, Application $app, Groupe $groupe)
+	{
+		$form = $app['form.factory']->createBuilder(new GroupeDescriptionForm(), $groupe)
+			->add('submit','submit', array('label' => 'Enregistrer'))
+			->getForm();
+		
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$groupe = $form->getData();
+			$app['orm.em']->persist($groupe);
+			$app['orm.em']->flush();
+		
+			$app['session']->getFlashBag()->add('success', 'La description du groupe a été sauvegardé.');
+			return $app->redirect($app['url_generator']->generate('groupe.detail', array('index' => $groupe->getId())));
+		}
+		
+		return $app['twig']->render('admin/groupe/description.twig', array(
+				'groupe' => $groupe,
+				'form' => $form->createView(),
+		));
+	}
+	
 	/**
 	 * Choix du scenariste
 	 * 
@@ -338,7 +372,7 @@ class GroupeController
 	 * @param Request $request
 	 * @param Application $app
 	 */
-	public function adminPaysAction(Request $request, Application $app)
+	public function paysAction(Request $request, Application $app)
 	{
 		$groupe = $request->get('groupe');
 		

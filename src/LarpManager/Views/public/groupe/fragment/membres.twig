@@ -1,48 +1,57 @@
-<h6><i class="fa fa-circle"></i> Membres du groupe</h6>
-
-{% if app.user.isResponsable(groupe) %}
-	<a href="{{ path('participant.groupe.placeAvailable', {'participant': participant.id, 'groupe': groupe.id}) }}">Indiquez le nombre de joueurs qui vous manque pour compléter votre groupe.</a>
-	Cette information sera reprise dans la liste des groupes pour aiguiller les nouveaux joueurs vers les groupes cherchant à se compléter.
-{% endif %}
-
-<ul class="media-list">
-	{% for participant in groupe.participants %}
-		<li class="media">
-    		<div class="media-left">
-    			{% if participant.personnage %}
-    				<a href="{{ path('personnage.admin.detail', {'personnage': participant.personnage.id}) }}">
-	    			{% if participant.personnage.trombineUrl %}
-						<img class="media-object" height="96" width="96" src="{{ path('personnage.trombine', {'personnage' : participant.personnage.id }) }}" />
-					{% else %}
-						<img class="media-object" height="96" width="96" src="{{ app.request.basepath }}/img/no_trombine.png" />
-					{% endif %}
-					</a>
-				{% else %}
-					<img class="media-object" height="96" width="96" src="{{ app.request.basepath }}/img/no_trombine.png" />
-				{% endif %}
-    		</div>
-    		<div class="media-body">
-    			<h6>
-    				{% if participant.user.etatCivil %}
-						{{ participant.user.etatCivil.nom }} {{ participant.user.etatCivil.prenom }}
-					{% else %}
-						N'a pas encore rempli ses informations administratives
-					{% endif %}
-					-- {{ participant.user.email }}
-				</h6>
-		
-				<p>
-					{% if participant.personnage %}
-						{{ participant.personnage.nom }} {{ participant.personnage.surnom }}</a>
-						-- {{ participant.personnage.classeName }}
-					{% else %}
-						N'a pas encore créé son personnage
-					{% endif %}
-				</p>
-				<p>
-					{{ participant.gn.label }}
-				</p>
-    		</div>
-    	</li>
+<div class="row">   	
+	{% for session in groupe.groupeGns if session.gn == participant.gn %}
+	<div class="col-md-4">
+		<h6><i class="fa fa-circle"></i> {{ session.gn }}</h6>
+	
+		<ul class="media-list">
+			{% for joueur in groupe.participants if joueur.gn == session.gn %}
+				<li class="media">
+		    		<div class="media-left">
+		    			{% if joueur.personnage %}
+		    				<a href="{{ path('personnage.admin.detail', {'personnage': joueur.personnage.id}) }}">
+			    			{% if joueur.personnage.trombineUrl %}
+								<img class="media-object" height="96" width="96" src="{{ path('personnage.trombine', {'personnage' : joueur.personnage.id }) }}" />
+							{% else %}
+								<img class="media-object" height="96" width="96" src="{{ app.request.basepath }}/img/no_trombine.png" />
+							{% endif %}
+							</a>
+						{% else %}
+							<img class="media-object" height="96" width="96" src="{{ app.request.basepath }}/img/no_trombine.png" />
+						{% endif %}
+		    		</div>
+		    		<div class="media-body">
+		    			<h6>
+		    				{% if joueur.user.etatCivil %}
+								{{ joueur.user.etatCivil }}
+							{% else %}
+								N'a pas encore rempli ses informations administratives
+							{% endif %}
+							-- {{ joueur.user.email }}
+						</h6>
+				
+						<p>
+							{% if joueur.personnage %}
+								{{ joueur.personnage.nom }} {{ joueur.personnage.surnom }}</a>
+								-- {{ joueur.personnage.classeName }}
+							{% else %}
+								N'a pas encore créé son personnage
+							{% endif %}
+						</p>
+						
+						{% if joueur.isResponsable(groupe) %}
+							<p>Chef de groupe</p>
+						{% endif %}
+						
+						{% if participant.isResponsable(groupe) %}
+							{{ joueur.billet|default('N\'a pas encore de billet') }}
+						{% endif %}
+						<div>
+							<a href="{{ path('message.new', {'to': joueur.user.id }) }}"><i class="fa fa-pencil-square-o"></i> Message privé</a>
+						</div>
+					</div>
+		    	</li>
+			{% endfor %}
+		</ul>
+	</div>
 	{% endfor %}
-</ul>
+</div>

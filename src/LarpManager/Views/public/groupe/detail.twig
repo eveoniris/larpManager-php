@@ -12,22 +12,15 @@
 	
 	<div class="well well-sm">
 
-		<div>
-			<!-- Nav tabs -->
-			<ul class="nav nav-tabs" role="tablist">
-	    		<li role="presentation" class="active"><a href="#detail" aria-controls="detail" role="tab" data-toggle="tab">Détail</a></li>
-	    		<li role="presentation"><a href="#membres" aria-controls="membres" role="tab" data-toggle="tab">Membres</a></li>
-	    	</ul>
-	    	
-	    	<!-- Tab panes -->
-			<div class="tab-content">
-				<div role="tabpanel" class="tab-pane active" id="detail">
-					{% include 'public/groupe/fragment/detail.twig' with {'groupe': groupe} %}
-				</div>
-				<div role="tabpanel" class="tab-pane" id="membres">
-					{% include 'public/groupe/fragment/membres.twig' with {'participant': participant, 'groupe': groupe} %}
-				</div>
+		<div class="row">
+			<div class="col-md-6">
+				{% include 'public/groupe/fragment/detail.twig' with {'groupe': groupe} %}
+			</div>
+			<div class="col-md-6">
+				{% include 'public/groupe/fragment/membres.twig' with {'participant': participant, 'groupe': groupe} %}
 			</div>
 		</div>
+		
 	</div>
+	
 {% endblock content %}

@@ -49,13 +49,13 @@
 		        	
 		        	{% if participant.groupe %}
 		        		<div>
-		        			Membre du groupe <a href="{{ path('groupe.detail',{'index':user.participant.groupe.id})  }}">{{ participant.groupe.nom }}</a>
+		        			Membre du groupe <a href="{{ path('groupe.detail',{'index':participant.groupe.id})  }}">{{ participant.groupe.nom }}</a>
 		        		</div>
 		        	{% endif %}
 		        
 		        	{% if participant.personnage %}
 		        		<div>
-							Personnage : <a href="{{ path('personnage.admin.detail',{'personnage':user.participant.personnage.id}) }}">{{ participant.personnage.publicName }}</a>
+							Personnage : <a href="{{ path('personnage.admin.detail',{'personnage': participant.personnage.id}) }}">{{ participant.personnage.publicName }}</a>
 						</div>	        		
 		        	{% endif %}
 		        </div>
@@ -65,6 +65,9 @@
 	        {% if is_granted('EDIT_USER', user) %}
 	            <div>
 	                <a href="{{ path('user.edit', {'id': user.id}) }}"><span class="glyphicon glyphicon-edit" style="margin-right: 5px;"></span>Modifier</a>
+	            </div>
+	            <div>
+	                <a href="{{ path('user.personnageDefault', {'user': user.id}) }}"><span class="glyphicon glyphicon-edit" style="margin-right: 5px;"></span>Choisir mon personnage par défaut</a>
 	            </div>
 	        {% endif %}
     	</div>

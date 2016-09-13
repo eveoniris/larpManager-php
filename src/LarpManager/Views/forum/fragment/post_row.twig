@@ -21,15 +21,9 @@
 					Joueur
 				{% endif %}
 			</div>
-				
-			{% if post.user.personnage %}
-			{% set perso = post.user.personnage %}
-				<div>{{ perso.nom }}, {{ perso.surnom }}</div>
-				{% if perso.groupe %}<div>{{ perso.groupe.nom }}</div>{% endif %}
-			{% endif %}
-			
+							
 			<div>
-				<a href="{{ path('user.message.new', {'from_id': app.user.id, 'to_id': post.user.id }) }}"><i class="fa fa-pencil-square-o"></i>Message privé</a>
+				<a href="{{ path('message.new', {'to': post.user.id }) }}"><i class="fa fa-pencil-square-o"></i> Message privé</a>
 			</div>
 		</div>
 	</div>

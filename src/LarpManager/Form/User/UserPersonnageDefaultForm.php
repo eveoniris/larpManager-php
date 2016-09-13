@@ -18,58 +18,57 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace LarpManager\Form;
+namespace LarpManager\Form\User;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Doctrine\ORM\EntityRepository;
 
-
 /**
- * LarpManager\Form\GroupeScenaristeForm
+ * LarpManager\Form\User\UserPersonnageDefaultForm
  *
  * @author kevin
  *
  */
-class GroupeScenaristeForm extends AbstractType
+class UserPersonnageDefaultForm extends AbstractType
 {
 	/**
-	 * Contruction du formulaire
-	 *
+	 * Construction du formulaire
+	 * 
 	 * @param FormBuilderInterface $builder
 	 * @param array $options
 	 */
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
-	
-	
-		$builder->add('scenariste','entity', array(
-				'label' => 'Scénariste',
-				'required' => false,
-				'class' => 'LarpManager\Entities\User',
-				'property' => 'etatCivil',
-				'query_builder' => function(EntityRepository $er) {
-					$qb = $er->createQueryBuilder('u');
-					$qb->join('u.etatCivil', 'ec');
-					$qb->where($qb->expr()->orX(
-							$qb->expr()->like('u.rights', $qb->expr()->literal('%ROLE_SCENARISTE%')),
-							$qb->expr()->like('u.rights', $qb->expr()->literal('%ROLE_ADMIN%'))));
-					$qb->orderBy('ec.nom', 'ASC');
-					return $qb;
-				}
-			));
+		$builder->add('personnageRelatedByPersonnageId','entity', array(
+					'required' => false,
+					'label' => 'Choisissez votre personnage par défaut. Ce personnage sera utilisé pour signer vos messages',
+					'multiple' => false,
+					'expanded' => true,
+					'class' => 'LarpManager\Entities\Personnage',
+					'property' => 'identity',
+					'placeholder' => 'Aucun',
+					'empty_data'  => null,
+					'query_builder' => function(EntityRepository $er) use ($options) {
+						return $er->createQueryBuilder('p')
+							->join('p.users', 'u')
+							->where('u.id = :userId')
+							->setParameter('userId', $options['user_id']);
+					},
+				));
 	}
 	
 	/**
-	 * Définition de l'entité conercné
-	 *
-	 * @param OptionsResolverInterface $resolver
+	 * Définition de l'entité concerné
+	 * 
+	 * @param OptionsResolver $resolver
 	 */
-	public function setDefaultOptions(OptionsResolverInterface $resolver)
+	public function configureOptions(OptionsResolver $resolver)
 	{
 		$resolver->setDefaults(array(
-				'data_class' => '\LarpManager\Entities\Groupe',
+				'data_class' => 'LarpManager\Entities\User',
+				'user_id' => null,
 		));
 	}
 	
@@ -78,8 +77,6 @@ class GroupeScenaristeForm extends AbstractType
 	 */
 	public function getName()
 	{
-		return 'groupeScenariste';
+		return 'userPersonnageDefault';
 	}
-	
-	
 }

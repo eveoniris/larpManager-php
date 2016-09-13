@@ -135,7 +135,16 @@ class UserControllerProvider implements ControllerProviderInterface
 			->bind('user.gn.participe')
 			->method('GET|POST')
 			->before($mustBeUser);
-						
+
+		/**
+		 * Personnage par défaut d'un utilisateur
+		 */
+		$controllers->match('/personnageDefault', 'LarpManager\Controllers\UserController::personnageDefaultAction')
+			->bind('user.personnageDefault')
+			->method('GET|POST')
+			->before($mustBeUser);
+				
+			
 		/**
 		 * Vue d'un utilisateur
 		 */

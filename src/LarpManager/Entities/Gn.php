@@ -43,6 +43,21 @@ class Gn extends BaseGn
 	}
 	
 	/**
+	 * Fourni la liste des groupes prévu sur un jeu
+	 */
+	public function getGroupes()
+	{
+		$groupes = new ArrayCollection();
+		
+		foreach ($this->getGroupeGns() as $groupeGn)
+		{
+			$groupes[] = $groupeGn->getGroupe();
+		}
+		
+		return $groupes;
+	}
+	
+	/**
 	 * Fourni la liste des tous les participants pour la FédéGN
 	 */
 	public function getParticipantsFedeGn()

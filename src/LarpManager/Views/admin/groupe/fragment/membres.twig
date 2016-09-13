@@ -1,46 +1,57 @@
-<h6><i class="fa fa-circle"></i> Membres du groupe</h6>
-<ul class="media-list">
-	{% for participant in groupe.participants %}
-		<li class="media">
-    		<div class="media-left">
-    			{% if participant.personnage %}
-    				<a href="{{ path('personnage.admin.detail', {'personnage': participant.personnage.id}) }}">
-	    			{% if participant.personnage.trombineUrl %}
-						<img class="media-object" height="96" width="96" src="{{ path('personnage.trombine', {'personnage' : participant.personnage.id }) }}" />
-					{% else %}
-						<img class="media-object" height="96" width="96" src="{{ app.request.basepath }}/img/no_trombine.png" />
-					{% endif %}
-					</a>
-				{% else %}
-					<img class="media-object" height="96" width="96" src="{{ app.request.basepath }}/img/no_trombine.png" />
-				{% endif %}
-    		</div>
-    		<div class="media-body">
-    			<h6>
-    				{% if participant.user.etatCivil %}
-						{{ participant.user.etatCivil.nom }} {{ participant.user.etatCivil.prenom }}
-					{% else %}
-						N'a pas encore rempli ses informations administratives
-					{% endif %}
-					-- {{ participant.user.email }}
-				</h6>
-		
-				<p>
-					{% if participant.personnage %}
-						{{ participant.personnage.nom }} {{ participant.personnage.surnom }}</a>
-						-- {{ participant.personnage.classeName }}
-					{% else %}
-						N'a pas encore créé son personnage
-					{% endif %}
-				</p>
-				<p>
-					{{ participant.gn.label }}
-				</p>
-				<p>
-					<a href="{{ path('groupe.admin.participant.remove', {'groupe': groupe.id, 'participant': participant.id}) }}">
-						<i class="fa fa-remove"></i> Retirer du groupe</a>
-				</p>
-    		</div>
-    	</li>
+<div class="row">   	
+	{% for session in groupe.groupeGns %}
+		<div class="col-md-4">
+	   		<h6><i class="fa fa-circle"></i> {{ session.gn }}</h6>
+	   		<ul class="media-list">
+			{% for participant in groupe.participants if participant.gn == session.gn %}
+				<li class="media">
+		    		<div class="media-left">
+		    			{% if participant.personnage %}
+		    				<a href="{{ path('personnage.admin.detail', {'personnage': participant.personnage.id}) }}">
+			    			{% if participant.personnage.trombineUrl %}
+								<img class="media-object" height="96" width="96" src="{{ path('personnage.trombine', {'personnage' : participant.personnage.id }) }}" />
+							{% else %}
+								<img class="media-object" height="96" width="96" src="{{ app.request.basepath }}/img/no_trombine.png" />
+							{% endif %}
+							</a>
+						{% else %}
+							<img class="media-object" height="96" width="96" src="{{ app.request.basepath }}/img/no_trombine.png" />
+						{% endif %}
+		    		</div>
+		    		<div class="media-body">
+		    			<h6>
+		    				{% if participant.user.etatCivil %}
+								{{ participant.user.etatCivil.nom }} {{ participant.user.etatCivil.prenom }}
+							{% else %}
+								N'a pas encore rempli ses informations administratives
+							{% endif %}
+							-- {{ participant.user.email }}
+						</h6>
+				
+						<p>
+							{% if participant.personnage %}
+								{{ participant.personnage.nom }} {{ participant.personnage.surnom }}</a>
+								-- {{ participant.personnage.classeName }}
+							{% else %}
+								N'a pas encore créé son personnage
+							{% endif %}
+						</p>
+						<p>
+							{% if participant.billet %}
+								<span class="text-success">{{ participant.billet }}</span>
+							{% else %}
+								<span class="text-danger">Ce joueur n'a pas encore de billet.</span>
+							{% endif %}
+						</p>
+						<p>
+							{% if session in participant.groupeGns %}
+								<span class="text-success">Chef de groupe</span>
+							{% endif %}
+						</p>		
+		    		</div>
+		    	</li>
+			{% endfor %}
+			</ul>
+		</div>
 	{% endfor %}
-</ul>
+</div>

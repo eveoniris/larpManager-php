@@ -157,18 +157,7 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 			->convert('rule', 'converter.rule:convert')
 			->method('GET')
 			->bind('participant.regle.document')
-			->before($mustOwnParticipant);
-				
-		/**
-		 * Liste des groupes
-		 */
-		$controllers->match('/{participant}/groupe/list','LarpManager\Controllers\ParticipantController::groupeListAction')
-			->assert('participant', '\d+')
-			->convert('participant', 'converter.participant:convert')
-			->bind("participant.groupe.list")
-			->method('GET')
-			->before($mustOwnParticipant);
-			
+			->before($mustOwnParticipant);			
 			
 		/**
 		 * Rejoindre un groupe
@@ -179,31 +168,7 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 			->bind("participant.groupe.join")
 			->method('GET|POST')
 			->before($mustOwnParticipant);
-			
-		/**
-		 * détail d'un groupe
-		 */
-		$controllers->match('/{participant}/groupe/{groupe}','LarpManager\Controllers\ParticipantController::groupeDetailAction')
-			->assert('participant', '\d+')
-			->convert('participant', 'converter.participant:convert')
-			->assert('groupe', '\d+')
-			->convert('groupe', 'converter.groupe:convert')
-			->bind("participant.groupe.detail")
-			->method('GET')
-			->before($mustOwnParticipant);
-
-		/**
-		 * Gestion des places disponibles dans un groupe
-		 */
-		$controllers->match('/{participant}/groupe/{groupe}/placeAvailable','LarpManager\Controllers\ParticipantController::groupePlaceAvailableAction')
-			->assert('participant', '\d+')
-			->convert('participant', 'converter.participant:convert')
-			->assert('groupe', '\d+')
-			->convert('groupe', 'converter.groupe:convert')
-			->bind("participant.groupe.placeAvailable")
-			->method('GET|POST')
-			->before($mustOwnParticipant);
-			
+						
 		/**
 		 * Affecte un personnage secondaire à un participant
 		 */

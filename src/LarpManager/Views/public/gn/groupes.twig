@@ -18,21 +18,21 @@
 		<blockquote>Les places disponibles representent le nombre de joueurs recherchés par le chef de groupe pour compléter son groupe.</blockquote>
 		
 		<div class="list-group">
-			{% for groupe in groupes %}
+			{% for session in groupeGns %}
 				<div class="list-group-item">
 					<div class="list-group-item-heading">
-						<h5>#{{ groupe.numero }} - {{ groupe.nom }}</h5>
+						<h5>#{{ session.groupe.numero }} - {{ session.groupe.nom }}</h5>
 					</div>
-					<div class="list-group-item-text">{{ groupe.description|markdown }}</div>
-					<div class="list-group-item-text">Chef de groupe : {{ groupe.responsable.email }}</div>
+					<div class="list-group-item-text">{{ session.groupe.description|markdown }}</div>
+					<div class="list-group-item-text">Chef de groupe : {{ session.groupe.responsable.email }}</div>
 					<div class="list-group-item-text">
-						{% if groupe.placeAvailable
-						 and groupe.placeAvailable > 0 %}
+						{% if session.placeAvailable
+						 and session.placeAvailable > 0 %}
 						 	<span class="text-success">
 						{% else %}
 							<span class="text-danger">
 						{% endif %}
-							Places disponibles : {{ groupe.placeAvailable|default(0) }}
+							Places disponibles : {{ session.placeAvailable|default(0) }}
 						</span>
 						
 					</div>

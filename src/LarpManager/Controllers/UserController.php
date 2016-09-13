@@ -34,6 +34,7 @@ use LarpManager\Form\MessageForm;
 use LarpManager\Form\NewMessageForm;
 use LarpManager\Form\RestrictionForm;
 use LarpManager\Form\UserRestrictionForm;
+use LarpManager\Form\User\UserPersonnageDefaultForm;
 
 use LarpManager\Entities\Restriction;
 use LarpManager\Entities\User;
@@ -91,6 +92,36 @@ class UserController
 		return $password;
 	}
 	
+	/**
+	 * Choix du personnage par défaut de l'utilisateur
+	 * 
+	 * @param Application $app
+	 * @param Request $request
+	 */
+	public function personnageDefaultAction(Application $app, Request $request)
+	{
+		$user = $app['user'];
+		
+		$form = $app['form.factory']->createBuilder(new UserPersonnageDefaultForm(), $app['user'], array('user_id' => $user->getId()))
+			->add('save','submit', array('label' => "Sauvegarder"))
+			->getForm();
+		
+		$form->handleRequest($request);
+				
+		if ( $form->isValid() )
+		{
+			$user = $form->getData();
+			
+			$app['orm.em']->persist($user);
+			$app['orm.em']->flush();
+			
+			$app['session']->getFlashBag()->add('success', 'Vos informations ont été enregistrées.');
+			return $app->redirect($app['url_generator']->generate('homepage'),301);
+		}
+		return $app['twig']->render('public/user/personnageDefault.twig', array(
+				'form' => $form->createView(),
+		));
+	}
 
 	
 	/**

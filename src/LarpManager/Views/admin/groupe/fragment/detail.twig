@@ -1,138 +1,181 @@
-<h6><i class="fa fa-circle"></i> Description <small>(Visible par tous)</small></h6>
 
-<div class="white-box">
-	{% if not groupe.description %}
-		<i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
-    	Attention, ce groupe n'a pas de description.
-    {% else %}
-    	{{ groupe.description|markdown }}
-    {% endif %}
-</div>
-    											
-						<h6><i class="fa fa-circle"></i> Territoires</h6>
-						<div class="white-box">
-							<strong>Pays : </strong>
-							<div class="btn-group">
-							{% if groupe.territoire %}
-		    					<a href="{{ path('territoire.admin.detail', {'territoire': groupe.territoire.id}) }}">{{ groupe.territoire.nom }}</a>
-		    				{% else %}
-		    					Ce groupe n'est pas rataché à un pays.
-		    				{% endif %}
-		    				</div>
-		    				
-		    				<br />
-		    				
-		    				<strong>Territoire(s) constrollé(s) : </strong>
-		    				
-		    				{% for territoire in groupe.territoires %}
-			    					<a href="{{ path('territoire.admin.detail', {'territoire': territoire.id}) }}">{{ territoire.nom }}</a>
-		    						&nbsp;<a href="{{ path('groupe.territoire.remove', {'groupe': groupe.id, 'territoire': territoire.id}) }}"><i class="fa fa-times" aria-hidden="true"></i></a>
-									,&nbsp;
-	    					{% endfor %}
-	    					</ul>
-    					</div>
-
-						<h6><i class="fa fa-circle"></i> Economie</h6>
+<div class="row">
+	<div class="col-md-6">
+		<h6><i class="fa fa-circle"></i> Description <small>(Visible par tous)</small></h6>
+		
+		<div class="white-box">
+			{% if not groupe.description %}
+				<i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+		    	Attention, ce groupe n'a pas de description.
+		    {% else %}
+		    	{{ groupe.description|markdown }}
+		    {% endif %}
+		    
+		    <a href="{{ path('groupe.description', {'groupe': groupe.id}) }}"><i class="fa fa-pencil"></i> Modifier la description</a>
+		</div>
+		
+		
+		<h6><i class="fa fa-circle"></i> Economie</h6>
 						
-						<div class="white-box">
-							<strong>Richesse : </strong>
-							<ul>
-		    				{% for territoire in groupe.territoires %}   				
-			    				<li>
-			    					<strong>{{ territoire.tresor|default(0) }} PA</strong> fourni par <strong>{{ territoire.nom }}</strong>
-			    				</li>
-		    				{% endfor %}
-		    				</ul>
+		<div class="white-box">
+			<strong>Richesse : </strong>
+			<ul>
+			    {% for territoire in groupe.territoires %}   				
+					<li><strong>{{ territoire.tresor|default(0) }} PA</strong> fourni par <strong>{{ territoire.nom }}</strong></li>
+			    {% endfor %}
+		    </ul>
 		    				
-		    				<strong>Ressources : </strong>
-		    				<ul>
-			    			{% for territoire in groupe.territoires %}
-			    				{% for ressource in territoire.exportations %}
-				    				<li>
-				    					<strong>{{ ressource.label }}</strong> fourni par <strong>{{ territoire.nom }}</strong>
-				    				</li>
-		    					{% endfor %}
-		    				{% endfor %}
-		    				</ul>
+		    <strong>Ressources : </strong>
+		    <ul>
+				{% for territoire in groupe.territoires %}
+			    	{% for ressource in territoire.exportations %}
+				    	<li><strong>{{ ressource.label }}</strong> fourni par <strong>{{ territoire.nom }}</strong></li>
+		    		{% endfor %}
+		    	{% endfor %}
+		    </ul>
 		    				
-		    				<strong>Ingrédients : </strong>
-		    				{% if groupe.ingredients|length == 0 %}
-		    					Aucun ingrédient n'est fourni par les territoires contrôlé par ce groupe
-		    				{% endif %}
-		    				<ul>
-			    			{% for territoire in groupe.territoires %}
-			    				{% for ingredient in territoire.ingredients %}
-			    					<li>
-				    					<strong>{{ ingredient.label }}</strong> fourni par <strong>{{ territoire.nom }}</strong>
-				    				</li>
-				    			{% endfor %}
-			    			{% endfor %}
-			    			</ul>
-			    		</div>
+		    <strong>Ingrédients : </strong>
+		    {% if groupe.ingredients|length == 0 %}
+		    	Aucun ingrédient n'est fourni par les territoires contrôlé par ce groupe
+		    {% endif %}
+		    <ul>
+				{% for territoire in groupe.territoires %}
+			    	{% for ingredient in territoire.ingredients %}
+			    		<li><strong>{{ ingredient.label }}</strong> fourni par <strong>{{ territoire.nom }}</strong></li>
+				    {% endfor %}
+			   	{% endfor %}
+			</ul>
+			<a href="{{ path('groupe.quete',{'groupe': groupe.id}) }}"><i class="fa fa-balance-scale" aria-hidden="true"></i> Générer une quête commerciale</a>
+		</div>
+		
+		<h6><i class="fa fa-circle"></i> Composition du groupe</h6>
+    				
+    	<div class="white-box">
+    		{% if groupe.classes|length == 0 %}
+    			<i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Attention, ce groupe n'a pas de classes définies.
+    		{% else %}
+    			<ul>
+    				{% for classe in groupe.classes %}
+    					<li>{{ classe }}</li>
+    				{% endfor %}
+    			</ul>
+    		{% endif %}
+	    					
+	    	<a href=""><i class="fa fa-pencil"></i> Modifier la composition du groupe</a>
+    	</div>
+		
+	</div>
+	<div class="col-md-6">
+    											
+		<h6><i class="fa fa-circle"></i> Territoires</h6>
+		
+		<div class="white-box">
+			<p>
+				<strong>Pays : </strong>
+			
+				{% if groupe.territoire %}
+					<a href="{{ path('territoire.admin.detail', {'territoire': groupe.territoire.id}) }}">{{ groupe.territoire.nom }}</a>
+				{% else %}
+					Ce groupe n'est pas rataché à un pays.
+				{% endif %}
+				<br />
+						    				
+				<strong>Territoire(s) constrollé(s) : </strong>
+				    				
+				{% for territoire in groupe.territoires %}
+					<a href="{{ path('territoire.admin.detail', {'territoire': territoire.id}) }}">{{ territoire.nom }}</a>
+					&nbsp;<a href="{{ path('groupe.territoire.remove', {'groupe': groupe.id, 'territoire': territoire.id}) }}"><i class="fa fa-times" aria-hidden="true"></i></a>
+					,&nbsp;
+				{% endfor %}
+			</p>
+			<a href="{{ path('groupe.pays', {'groupe': groupe.id}) }}"><i class="fa fa-pencil"></i> Modifier le pays</a><br />
+			<a href="{{ path('groupe.territoire.add', {'groupe': groupe.id}) }}"><i class="fa fa-plus"></i> Ajouter un territoire</a>
+		</div>
+		
+		<h6><i class="fa fa-circle"></i> Diplomatie</h6>
+	    				
+	    <div class="white-box">
+	    				
+		    <strong>Alliés</strong>
+		    <ul>
+				{% for alliance in groupe.alliances %}
+	    			<li>
+	    				{% if alliance.groupe == groupe %}
+							{{ alliance.requestedGroupe }}
+						{% else %}
+							{{ alliance.groupe }}
+						{% endif %}
+					</li>
+	    		{% endfor %}
+	    						
+	    						
+	    		{% for alliance in groupe.waitingAlliances %}
+		    		<li>
+						{% if alliance.groupe == groupe %}
+							Vous avez demandé une alliance avec <strong>{{ alliance.requestedGroupe }}</strong>.
+						{% else %}
+							Sollicité pour une alliance par <strong>{{ alliance.groupe }}</strong>.
+						{% endif %}
+				   </li>
+	    		{% endfor %}
+	    	</ul>
+	
 	    			
-	    				<h6><i class="fa fa-circle"></i> Diplomatie</h6>
+			<strong>Ennemis</strong>
+			<ul>
+	    		{% for ennemi in groupe.ennemies %}
+	    			<li>
+			    		{% if ennemi.groupe == groupe %}
+							Vous avez déclaré la guerre à <strong>{{ ennemi.requestedGroupe }}</strong>.
+						{% else %}
+							<strong>{{ ennemi.groupe }}</strong> vous a déclaré la guerre.
+						{% endif %}
+					</li>
+	    		{% endfor %}
+	    		{% for war in groupe.waitingPeace %}
+	    			<li>
+			    		{% if war.groupe == groupe %}
+			    			Vous avez demandé la paix avec <strong>{{ war.requestedGroupe }}</strong>.
+			    		{% else %}
+			    			<strong>{{ war.groupe }}</strong> propose la paix.
+			    		{% endif %}
+			    	</li>
+	    		{% endfor %}
+	    	</ul>
+    	</div>
+    	
+    	<h6><i class="fa fa-circle"></i> Jeux</h6>
 	    				
-	    				<div class="white-box">
-	    				
-	    			    	<strong>Alliés</strong>
-	    			    	<ul>
-							{% for alliance in groupe.alliances %}
-	    						<li>
-			    					{% if alliance.groupe == groupe %}
-										{{ alliance.requestedGroupe }}
-									{% else %}
-										{{ alliance.groupe }}
-									{% endif %}
-								</li>
-    						{% endfor %}
-    						
-    						
-    						{% for alliance in groupe.waitingAlliances %}
-	    						<li>
-			    					{% if alliance.groupe == groupe %}
-			    						Vous avez demandé une alliance avec <strong>{{ alliance.requestedGroupe }}</strong>.
-			    					{% else %}
-			    						Sollicité pour une alliance par <strong>{{ alliance.groupe }}</strong>.
-			    					{% endif %}
-			    				</li>
-    						{% endfor %}
-    						</ul>
+	    <div class="white-box">
+	    	<strong>{% if groupe.pj %}Groupe de PJ{% else %}Groupe de PNJ{% endif %}</strong><br />
+	    	<strong>Participe à : </strong>
+	    	<ul>
+	    	{% for session in groupe.groupeGns %}
+	    		 <li>{{ session.gn }}</li>
+	    	{% endfor %}
+	    	</ul>
+	    	<a href="{{ path('groupeGn.list', {'groupe': groupe.id}) }}">Gestion des sessions de jeu</a><br />
+	    	{% if groupe.lock %}
+				Le groupe est <strong class="text-warning">fermé</strong>.
+				<a data-toggle="tooltip" data-placement="top" title="Ouvrir le groupe" href="{{ path('groupe.unlock', {'groupe' : groupe.id}) }}"><i class="fa fa-pencil"></i></a>
+			{% else %}
+				Le groupe est <strong class="text-success">ouvert</strong>.
+				<a data-toggle="tooltip" data-placement="top" title="Fermer le groupe" href="{{ path('groupe.lock', {'groupe' : groupe.id}) }}"><i class="fa fa-pencil"></i></a>
+			{% endif  %}<br />
+			<strong>Scénariste : </strong>
+				{% if not groupe.scenariste %}
+					<span class="fa fa-exclamation-triangle" aria-hidden="true"></span>&nbsp;Attention, ce groupe n'a pas de scénariste.
+				{% else %}
+		    		{{ groupe.scenariste.etatCivil }}&nbsp;{{ groupe.scenariste.email }}
+		    	{% endif %}
+				<a data-toggle="tooltup" data-placement="top" title="Choisir le scénariste" href="{{ path('groupe.scenariste', {'groupe': groupe.id}) }}"><i class="fa fa-pencil"></i></a>
+	    </div>
+		
+		
+	</div>
+</div>
 
-    			
-							<strong>Ennemis</strong>
-							<ul>
-    						{% for ennemi in groupe.ennemies %}
-    							<li>
-		    						{% if ennemi.groupe == groupe %}
-										Vous avez déclaré la guerre à <strong>{{ ennemi.requestedGroupe }}</strong>.
-									{% else %}
-										<strong>{{ ennemi.groupe }}</strong> vous a déclaré la guerre.
-									{% endif %}
-								</li>
-    						{% endfor %}
-    						{% for war in groupe.waitingPeace %}
-    							<li>
-		    						{% if war.groupe == groupe %}
-		    							Vous avez demandé la paix avec <strong>{{ war.requestedGroupe }}</strong>.
-		    						{% else %}
-		    							<strong>{{ war.groupe }}</strong> propose la paix.
-		    						{% endif %}
-		    					</li>
-    						{% endfor %}
-    						</ul>
-    					</div>  
-    				    			
-	    				<h6><i class="fa fa-circle"></i> Composition du groupe</h6>
+						
+	    			
 	    				
-	    				<div class="white-box">
-	    					{% if groupe.classes|length == 0 %}
-	    					<i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
-		    					Attention, ce groupe n'a pas de classes définies.
-	    					{% else %}
-	    						<ul>
-	    						{% for classe in groupe.classes %}
-	    							<li>{{ classe }}</li>
-	    						{% endfor %}
-	    						</ul>
-	    					{% endif %}
-    					</div>
+    				    			

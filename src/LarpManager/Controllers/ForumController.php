@@ -149,6 +149,15 @@ class ForumController
 			$post->setUser($app['user']);
 			$post->addWatchingUser($app['user']);
 			
+			// ajout de la signature
+			$personnage = $app['user']->getPersonnageRelatedByPersonnageId();
+			if ( $personnage )
+			{
+				$text = $post->getText();
+				$text .= '<address><strong>Envoyé par</strong><br />'.$personnage->getNom().' '.$personnage->getSurnom().'<address>';
+				$post->setText($text);
+			}
+			
 			$app['orm.em']->persist($post);
 			$app['orm.em']->flush();
 			
@@ -234,6 +243,16 @@ class ForumController
 			$post = $form->getData();
 			$post->setPost($postToResponse);
 			$post->setUser($app['user']);
+			
+			// ajout de la signature
+			$personnage = $app['user']->getPersonnageRelatedByPersonnageId();
+			if ( $personnage )
+			{
+				$text = $post->getText();
+				$text .= '<address><strong>Envoyé par</strong><br />'.$personnage->getNom().' '.$personnage->getSurnom().'<address>';
+				$post->setText($text);
+			}
+			
 			$postToResponse->addWatchingUser($app['user']);
 			$app['orm.em']->persist($postToResponse);
 			$app['orm.em']->persist($post);

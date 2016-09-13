@@ -26,6 +26,7 @@ use Silex\Application;
 
 use LarpManager\Form\GroupeGn\GroupeGnForm;
 use LarpManager\Form\GroupeGn\GroupeGnResponsableForm;
+use LarpManager\Form\GroupeGn\GroupeGnPlaceAvailableForm;
 
 use LarpManager\Repository\ParticipantRepository;
 
@@ -177,6 +178,8 @@ class GroupeGnController
 			$groupeGn = $form->getData();
 			$app['orm.em']->persist($groupeGn);
 			$app['orm.em']->flush();
+			
+			$app['notify']->newResponsable($groupeGn->getResponsable()->getUser(), $groupeGn);
 				
 			$app['session']->getFlashBag()->add('success', 'Le responsable du groupe a été enregistré.');
 			return $app->redirect($app['url_generator']->generate('groupeGn.list', array('groupe' => $groupeGn->getGroupe()->getId())));
@@ -233,6 +236,8 @@ class GroupeGnController
 			$app['orm.em']->persist($data['participant']);
 			$app['orm.em']->flush();
 			
+			$app['notify']->newMembre($data['participant']->getUser(), $groupeGn);
+			
 			$app['session']->getFlashBag()->add('success', 'Le joueur a été ajouté à cette session.');
 			return $app->redirect($app['url_generator']->generate('groupeGn.list', array('groupe' => $groupeGn->getGroupe()->getId())));
 		}
@@ -282,4 +287,59 @@ class GroupeGnController
 		));
 	}
 
+	/**
+	 * Permet au chef de groupe de modifier le nombre de place disponible
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Groupe $groupe
+	 */
+	public function placeAvailableAction(Request $request, Application $app, GroupeGn $groupeGn)
+	{
+		$participant = $app['user']->getParticipant($groupeGn->getGn());
+		
+		$form = $app['form.factory']->createBuilder(new GroupeGnPlaceAvailableForm(), $groupeGn)
+			->add('submit','submit', array('label' => 'Enregistrer'))
+			->getForm();
+	
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$groupeGn = $form->getData();
+			$app['orm.em']->persist($groupeGn);
+			$app['orm.em']->flush();
+	
+			$app['session']->getFlashBag()->add('success', 'Vos modifications ont été enregistré.');
+			return $app->redirect($app['url_generator']->generate('groupeGn.groupe', array('groupeGn' => $groupeGn->getId())));
+		}
+	
+		return $app['twig']->render('public/groupeGn/placeAvailable.twig', array(
+				'form' => $form->createView(),
+				'groupe' => $groupeGn->getGroupe(),
+				'participant' => $participant,
+				'groupeGn' => $groupeGn,
+		));
+	}
+	
+	/**
+	 * Détail d'un groupe
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Participant $participant
+	 * @param Groupe $groupe
+	 */
+	public function groupeAction(Request $request, Application $app, GroupeGn $groupeGn)
+	{
+		$participant = $app['user']->getParticipant($groupeGn->getGn());
+		
+		return $app['twig']->render('public/groupe/detail.twig', array(
+				'groupe' => $groupeGn->getGroupe(),
+				'participant' => $participant,
+				'groupeGn' => $groupeGn, 
+		));
+	}
+	
+	
 }

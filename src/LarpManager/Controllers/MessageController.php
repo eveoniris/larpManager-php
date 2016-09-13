@@ -74,7 +74,14 @@ class MessageController
 	{
 		$message = new Message();
 		$message->setUserRelatedByAuteur($app['user']);
-	
+		
+		$to_id = $request->get('to');
+		if ( $to_id )
+		{
+			$to = $app['converter.user']->convert($to_id);
+			$message->setUserRelatedByDestinataire($to);
+		}
+			
 		$form = $app['form.factory']->createBuilder(new NewMessageForm(), $message)
 			->add('envoyer','submit', array('label' => "Envoyer votre message"))
 			->getForm();
@@ -85,6 +92,15 @@ class MessageController
 		{
 			$message = $form->getData();
 				
+			// ajout de la signature
+			$personnage = $app['user']->getPersonnageRelatedByPersonnageId();
+			if ( $personnage )
+			{
+				$text = $message->getText();
+				$text .= '<address><strong>Envoyé par</strong><br />'.$personnage->getNom().' '.$personnage->getSurnom().'<address>';
+				$message->setText($text);
+			}
+			
 			$app['orm.em']->persist($message);
 			$app['orm.em']->flush();
 				
@@ -150,6 +166,15 @@ class MessageController
 		{
 			$message = $form->getData();
 		
+			// ajout de la signature
+			$personnage = $app['user']->getPersonnageRelatedByPersonnageId();
+			if ( $personnage )
+			{
+				$text = $message->getText();
+				$text .= '<address><strong>Envoyé par</strong><br />'.$personnage->getNom().' '.$personnage->getSurnom().'<address>';
+				$message->setText($text);
+			}
+			
 			$app['orm.em']->persist($message);
 			$app['orm.em']->flush();
 		

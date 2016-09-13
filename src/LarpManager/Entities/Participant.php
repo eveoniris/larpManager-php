@@ -50,6 +50,19 @@ class Participant extends BaseParticipant
 	}
 	
 	/**
+	 * Vérifie si le joueur est responsable du groupe
+	 * @param Groupe $groupe
+	 */
+	public function isResponsable(Groupe $groupe)
+	{
+		foreach ( $groupe->getGroupeGns() as $session)
+		{
+			if ( $this->getGroupeGns()->contains($session)) return true;
+		}
+		return false;
+	}
+	
+	/**
 	 * Retire un participant d'un groupe
 	 * @param Groupe $groupe
 	 */
@@ -58,6 +71,18 @@ class Participant extends BaseParticipant
 		$groupe->removeParticipant($this);
 		$this->setGroupe(null);
 	}	
+	
+	/**
+	 * Fourni la session de jeu auquel participe l'utilisateur
+	 */
+	public function getSession()
+	{
+		foreach ( $this->getGroupe()->getGroupeGns() as $session)
+		{
+			if ( $session->getGn() == $this->getGn()) return $session;
+		}
+		return null;
+	}
 	
 	public function getUserIdentity()
 	{
