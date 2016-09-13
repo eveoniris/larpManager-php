@@ -35,10 +35,14 @@
 								<div class="col-md-4">														
 				  					<ul class="list-group">
 										<li class="list-group-item"><a href="{{ path('user.gn.detail', {'gn': gn.id}) }}"><i class="fa fa-eye" aria-hidden="true"></i>&nbsp;Plus d'informations</a></li>
-										{% if app.user.takePart(gn) %}
-											<li class="list-group-item"><span class="text-success">Vous participez à ce jeu</span></li>
+										{% if gn.isPast %}
+											<li class="list-group-item"><span class="text-danger">Le jeu est terminé.</span></li>
 										{% else %}
-											<li class="list-group-item"><a href="{{ path('user.gn.participe', {'gn': gn.id}) }}"><i class="fa fa-check" aria-hidden="true"></i>&nbsp;Participer !</a></li>
+											{% if app.user.takePart(gn) %}
+												<li class="list-group-item"><span class="text-success">Vous participez à ce jeu</span></li>
+											{% else %}
+												<li class="list-group-item"><a href="{{ path('user.gn.participe', {'gn': gn.id}) }}"><i class="fa fa-check" aria-hidden="true"></i>&nbsp;Participer !</a></li>
+											{% endif %}
 										{% endif %}
 									</ul>
 								</div>
