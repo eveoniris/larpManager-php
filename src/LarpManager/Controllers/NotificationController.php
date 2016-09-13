@@ -86,6 +86,11 @@ class NotificationController
 		$app['orm.em']->flush();
 		
 		$lastConnected = $app['orm.em']->getRepository('LarpManager\Entities\User')->lastConnected();
+		foreach ( $lastConnected as $key => $value)
+		{
+			$value['url'] = $app['url_generator']->generate('user.view', array('id' => $value['id']));
+			$lastConnected[$key] = $value;
+		}
 		
 		return new JsonResponse(array(
 				'notifications' => $notifications,

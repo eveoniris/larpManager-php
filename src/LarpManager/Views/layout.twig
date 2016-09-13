@@ -206,7 +206,7 @@
 							{
 								lastConnecteds.push(user.id);
 								lastConnected++;
-								$('ul#lastConnected_list').append('<li><a href="">' +user.username+ '<a></li>');
+								$('ul#lastConnected_list').append('<li><a href="'+user.url+'">' +user.username+ '<a></li>');
 							}
 						}
 						$('#lastConnected-count').html(lastConnected);

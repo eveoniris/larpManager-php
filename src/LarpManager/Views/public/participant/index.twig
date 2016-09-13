@@ -37,13 +37,22 @@
 				</li>
 
 				<li class="list-group-item">
-				{% if participant.personnageSecondaire %}
- 					Personnage secondaire :&nbsp;<strong>{{ participant.personnageSecondaire.classe.label }}</strong>
- 				{% else %}
- 					Vous n'avez pas de personne secondaire.
-				{% endif %}
-				<a href="{{ path('participant.personnageSecondaire', {'participant': participant.id}) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Modifier</a>
+					{% if participant.personnageSecondaire %}
+	 					Personnage secondaire :&nbsp;<strong>{{ participant.personnageSecondaire.classe.label }}</strong>
+	 				{% else %}
+	 					Vous n'avez pas de personne secondaire.
+					{% endif %}
+					<a href="{{ path('participant.personnageSecondaire', {'participant': participant.id}) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Modifier</a>
 				</li>
+				
+				{% if participant.personnage %}
+					{% for membre in participant.personnage.membres %}
+						<li class="list-group-item"><a href="{{ path('participant.groupeSecondaire.detail', {'participant': participant.id, 'groupeSecondaire': membre.secondaryGroup.id}) }}">{{ membre.secondaryGroup }}</a></li>
+					{% endfor %}
+					{% for postulant in participant.personnage.postulants %}
+						<li class="list-group-item">{{ postulant.secondaryGroup }} -- En attente</li>
+					{% endfor %}
+				{% endif %}
 				
 				<li class="list-group-item"><a href="{{ path('participant.background', {'participant': participant.id}) }}"><i class="fa fa-book" aria-hidden="true"></i> Background</a></li>
 			</ul>
@@ -78,6 +87,7 @@
 			&nbsp;/&nbsp;{{ billet.label }} 
 		</li>
 	{% endfor %}
+	<li class="list-group-item"><a href=" {{ path('gn.billetterie', {'gn': participant.gn.id }) }}">Billetterie</a></li>
 </ul>
 
 

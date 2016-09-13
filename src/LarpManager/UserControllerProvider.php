@@ -143,8 +143,7 @@ class UserControllerProvider implements ControllerProviderInterface
 			->bind('user.personnageDefault')
 			->method('GET|POST')
 			->before($mustBeUser);
-				
-			
+							
 		/**
 		 * Vue d'un utilisateur
 		 */
@@ -152,11 +151,17 @@ class UserControllerProvider implements ControllerProviderInterface
 			->bind('user.view')
 			->assert('id', '\d+')
 			->method('GET')
-			->before(function(Request $request) use ($app) {
-				if (!$app['security.authorization_checker']->isGranted('VIEW_USER_ID', $request->get('id'))) {
-					throw new AccessDeniedException();
-				}				
-			});
+			->before($mustBeUser);
+
+		/**
+		 * Envoyer un coeur
+		 */
+		$controllers->match('/{user}/like', 'LarpManager\Controllers\UserController::likeAction')
+			->bind('user.like')
+			->assert('user', '\d+')
+			->convert('user', 'converter.user:convert')
+			->method('GET')
+			->before($mustBeUser);
 			
 		/**
 		 * Ajout d'un utilisateur

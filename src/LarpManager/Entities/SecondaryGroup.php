@@ -36,6 +36,12 @@ use LarpManager\Entities\BaseSecondaryGroup;
  */
 class SecondaryGroup extends BaseSecondaryGroup
 {
+	
+	public function __toString()
+	{
+		return $this->getLabel();	
+	}
+	
 	/**
 	 * Fourni le personnage responsable du groupe
 	 */

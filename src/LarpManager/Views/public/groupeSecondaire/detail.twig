@@ -83,7 +83,7 @@
 				<div class="list-group-item-heading">
 					{% if groupeSecondaire.responsable %}
 						<strong>{{ groupeSecondaire.responsable.publicName }}</strong>
-						&nbsp;<a href="{{ path('user.message.new', {'from_id': participant.personnage.id, 'to_id': groupeSecondaire.responsable.id }) }}"><i class="fa fa-pencil-square-o"></i>Envoyer un message</a>
+						&nbsp;<a href="{{ path('message.new', {'to': groupeSecondaire.responsable.userRelatedByUserId.id }) }}"><i class="fa fa-pencil-square-o"></i>Envoyer un message</a>
 					{% else %}
 						<strong>Ce groupe ne dispose pas encore de responsable</strong>
 					{% endif %}
@@ -100,7 +100,7 @@
 			<div class="list-group-item">
 				<div class="list-group-item-heading">
 					<strong>{{ membre.personnage.publicName }}</strong>
-					{% if groupeSecondaire.responsable %}&nbsp;<a href="{{ path('user.message.new', {'from_id': participant.personnage.id, 'to_id': membre.personnage.id }) }}"><i class="fa fa-pencil-square-o"></i>Envoyer un message</a>{% endif %}
+					{% if groupeSecondaire.responsable %}&nbsp;<a href="{{ path('message.new', {'to': membre.personnage.userRelatedByUserId.id }) }}"><i class="fa fa-pencil-square-o"></i>Envoyer un message</a>{% endif %}
 				</div>
 			</div>
 		{% endfor %}

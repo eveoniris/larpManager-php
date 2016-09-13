@@ -402,9 +402,27 @@ class UserController
 			throw new NotFoundHttpException('That user is disabled (pending email confirmation).');
 		}
 	
-		return $app['twig']->render('admin/user/detail.twig', array(
+		return $app['twig']->render('public/user/detail.twig', array(
 				'user' => $user
 		));
+	}
+	
+	public function likeAction(Application $app, Request $request, User $user)
+	{
+		if ( $user == $app['user'])
+		{
+			$app['session']->getFlashBag()->add('error', 'Désolé ... Avez vous vraiment cru que cela allait fonctionner ? un peu de patience !');				
+		}
+		else
+		{
+			$user->addCoeur();
+			$app['orm.em']->persist($user);
+			$app['orm.em']->flush();
+			$app['notify']->coeur($app['user'],$user);
+			$app['session']->getFlashBag()->add('success', 'Votre coeur a été envoyé !');
+		}
+		return $app->redirect($app['url_generator']->generate('user.view', array('id' => $user->getId())));
+		
 	}
 	
 	/**

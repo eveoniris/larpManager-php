@@ -1,0 +1,94 @@
+{% extends "layout.twig"  %}
+
+{% block title %}{{ user.displayName }}{% endblock %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		{% if is_granted('ROLE_ADMIN', app.user) %}<li><a href="{{ path('user.admin.list') }}">Liste des utilisateurs</a></li>{% endif %}
+		<li class="active">Détail d'un utilisateur</li>
+	</ol>
+	
+	<div class="well well-sm">
+	
+		<div class="row">
+			<div class="col-md-6">
+
+				<div class="header">
+			        <h5>{{ user.displayName }}</h5>
+		        </div>
+	        
+		        <div class="text-muted">
+		            Registered {{ user.creationDate|date('F j, Y') }}
+		        </div>
+		        <div class="text-muted">
+		        	{{ user.coeur|default(0) }} coeur(s) reçu(s).
+		        </div>
+	        
+				{% if is_granted('ROLE_ADMIN', app.user) %}
+			        {% if not user.isEnabled %}
+			            <div style="margin-bottom: 5px;">
+			                <span class="label label-danger">Pending email confirmation</span>
+			                <span class="text-muted">(visible to admins only)</span>
+			            </div>
+			        {% endif %}
+			        <div class="text-muted">
+	                	{{ user.email }}
+	            	</div>
+			    {% endif %}
+			    
+			    <div>
+		         	<a href="{{ path('message.new', {'to': user.id}) }}"><i class="fa fa-envelope"></i> Envoyer un message</a>
+		         </div>
+		         <div>
+		         	<a href="{{ path('user.like', {'user': user.id}) }}"><i class="fa fa-heart" aria-hidden="true"></i> Envoyer un coeur</a>
+		         </div>
+				    
+			</div>
+			
+			<div class="col-md-6">
+			
+			{% if is_granted('EDIT_USER', user) %}
+			    
+		        <h6>Participations</h6>
+		        
+		        <div class="list-group">
+		        {% for participant in user.participants %}
+			        <div class="list-group-item">
+			        	<div>
+			        		Participe à {{ participant.gn.label }}
+			        	</div>
+			        	
+			        	{% if participant.groupe %}
+			        		<div>
+			        			Membre du groupe <a href="{{ path('groupe.detail',{'index':participant.groupe.id})  }}">{{ participant.groupe.nom }}</a>
+			        		</div>
+			        	{% endif %}
+			        
+			        	{% if participant.personnage %}
+			        		<div>
+								Personnage : <a href="{{ path('personnage.admin.detail',{'personnage': participant.personnage.id}) }}">{{ participant.personnage.publicName }}</a>
+							</div>	        		
+			        	{% endif %}
+			        </div>
+		        {% endfor %}
+		        </div>
+
+	            <div>
+	                <a href="{{ path('user.edit', {'id': user.id}) }}"><span class="glyphicon glyphicon-edit" style="margin-right: 5px;"></span>Modifier</a>
+	            </div>
+	            <div>
+	                <a href="{{ path('user.personnageDefault', {'user': user.id}) }}"><span class="glyphicon glyphicon-edit" style="margin-right: 5px;"></span>Choisir mon personnage par défaut</a>
+	            </div>
+	        {% endif %}
+	        
+	        </div>
+	   </div>
+	   
+	        
+	         
+</div>
+
+
+{% endblock %}

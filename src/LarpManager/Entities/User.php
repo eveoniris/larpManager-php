@@ -60,6 +60,17 @@ class User extends BaseUser implements AdvancedUserInterface, \Serializable
 	}
 		
 	/**
+	 * Ajoute un coeur
+	 */
+	public function addCoeur()
+	{
+		$coeur = $this->getCoeur();
+		$coeur += 1;
+		$this->setCoeur($coeur);
+		return $this;
+	}
+	
+	/**
 	 * Recherche si l'utilisateur à un événement futur de prévu
 	 */
 	public function hasFuturEvent()

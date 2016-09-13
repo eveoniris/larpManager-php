@@ -65,6 +65,40 @@ class Groupe extends BaseGroupe
 	}
 	
 	/**
+	 * Fourni les informations pour une session de jeu
+	 * 
+	 * @param Gn $gn
+	 */
+	public function getGroupeGn(Gn $gn)
+	{
+		foreach ( $this->getGroupeGns() as $groupeGn)
+		{
+			if ( $groupeGn->getGn() == $gn )
+			{
+				return $groupeGn;
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Fourni les informations pour une session de jeu
+	 *
+	 * @param Gn $gn
+	 */
+	public function getGroupeGnById($gnId)
+	{
+		foreach ( $this->getGroupeGns() as $groupeGn)
+		{
+			if ( $groupeGn->getGn()->getId() == $gnId )
+			{
+				return $groupeGn;
+			}
+		}
+		return null;
+	}
+	
+	/**
 	 * Toutes les importations du groupe
 	 */
 	public function getImportations()

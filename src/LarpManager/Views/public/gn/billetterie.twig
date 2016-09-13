@@ -32,12 +32,21 @@
 					</tr>
 				</thead>
 				<tbody>
-					{% for groupe in groupes %}
+					{% for groupeGn in gn.groupeGns %}
+						{% set oldGroupeGn = groupeGn.groupe.groupeGnById(1) %}
 						<tr>
-							<td>{{ groupe.numero }}</td>
-							<td>{{ groupe.nom }}</td>
-							<td>{% if groupe.free %}<span class="text-success">Libre</span>{% else %}<span class="text-danger">Reservé</span>{% endif %}</td>
-							<td>{{ groupe.responsable.etatCivil.nom }} {{ groupe.responsable.etatCivil.prenom }} - {{ groupe.responsable.email }}</td>
+							<td>{{ groupeGn.groupe.numero }}</td>
+							<td>{{ groupeGn.groupe.nom }}</td>
+							<td>
+								{% if groupeGn.free %}<span class="text-success">Libre</span>{% else %}<span class="text-danger">Reservé</span>{% endif %}</td>
+							<td>
+								{%if oldGroupeGn %}
+									{{ oldGroupeGn.responsable.user.etatCivil }} - {{ oldGroupeGn.responsable.user.email }}
+								{% else %}
+									Nouveau groupe.
+								{% endif %}
+							</td>
+									
 						</tr>
 					{% endfor %}
 				</tbody>

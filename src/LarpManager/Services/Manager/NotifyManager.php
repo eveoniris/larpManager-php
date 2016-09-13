@@ -49,6 +49,24 @@ class NotifyManager
 	}
 	
 	/**
+	 * Génére une notification coeur
+	 * 
+	 * @param User $userTo
+	 * @param User $userFrom
+	 */
+	public function coeur(User $userTo, User $userFrom)
+	{
+		$notification = new Notification();
+		$notification->setText('Vous avez reçu un coeur de '.$userTo->getUserName());
+		$notification->setUser($userFrom);
+		$notification->setUrl($this->app['url_generator']->generate('user.view', array('id' => $userTo->getId())));
+		
+		$this->app['orm.em']->persist($notification);
+		$this->app['orm.em']->flush();
+	}
+			
+	
+	/**
 	 * Gestion de la notification "Nouveau Message"
 	 * - envoi d'un mail de notification
 	 * - creation de la notification
