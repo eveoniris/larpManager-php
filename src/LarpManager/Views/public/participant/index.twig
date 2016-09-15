@@ -20,7 +20,7 @@
 			<ul class="list-group">
 				<li class="list-group-item">
 				{% if groupeGn %}
-					<a href="{{ path('groupeGn.groupe', {'groupeGn': groupeGn.id}) }}"><i class="fa fa-users"></i> Votre groupe</a>
+					<a href="{{ path('groupeGn.groupe', {'groupeGn': groupeGn.id}) }}"><i class="fa fa-users"></i> Votre groupe {{ groupeGn.groupe.nom }}</a>
 				{% else %}
 					<a href="{{ path('participant.groupe.join', {'participant': participant.id}) }}"><i class="fa fa-users"></i> Rejoindre un groupe</a>
 				{% endif %}
@@ -32,7 +32,7 @@
     						{{ participant.personnage.nom }} {{ participant.personnage.surnom }}&nbsp;--&nbsp;{{ participant.personnage.classeName }}
     					</a>
 					{% else %}
-						Vous n'avez pas de personnage
+						<a href="{{ path('participant.personnage.new', {'participant': participant.id}) }}"><i class="fa fa-plus" aria-hidden="true"></i> Créer un personnage</a>
 					{% endif %}
 				</li>
 
@@ -96,7 +96,7 @@
 	<div class="col-md-9">
 	
 		{% if not participant.billet 
-			or not participant.groupe
+			or not participant.groupeGn
 			or not participant.personnage
 			or not participant.personnageSecondaire %}
 			<div class="panel panel-conan">
@@ -110,7 +110,9 @@
 							</div>
 						</div>
 					{% endif %}
-					{% if not participant.groupe %}<p class="text-danger"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Vous n'êtes pas dans un groupe. Vous devez impérativement entrer dans un groupe pour pouvoir créer un personnage ou modifier votre ancien personnage. Contactez le chef de groupe que vous voulez rejoindre, il vous fournira le code necessaire pour rejoindre son groupe.</p>{% endif %}
+					{% if not participant.groupeGn %}
+						<p class="text-danger"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Vous n'êtes pas dans un groupe. Vous devez impérativement entrer dans un groupe pour pouvoir créer un personnage ou modifier votre ancien personnage. Contactez le responsable d'un groupe que vous voulez rejoindre, il vous fournira le code necessaire pour rejoindre son groupe. <a href="{{ path('gn.groupes', {'gn': participant.gn.id}) }}">Liste des groupes</a></p>
+					{% endif %}
 					{% if not participant.personnage %}<p class="text-danger"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i>Vous n'avez pas encore de personnage. Vous devez impérativement vous créer un personnage.</p>{% endif %}
 					{% if not participant.personnageSecondaire %}<p class="text-danger"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i>Vous n'avez pas encore de personnage secondaire. Vous devez impérativement choisir un personnage secondaire.</p>{% endif %}
 				</div>
@@ -172,18 +174,21 @@
 								</a>
 							</li>
 							
-							{% set groupe = participant.groupe %}
-							{% if groupe %}
-								{% if groupe.topic %}
-									{% set count = app.user.newPosts(groupe.topic)|length %}
-									<li class="list-group-item">
-										<a href="{{ path('forum.topic', {'index': groupe.topic.id}) }}">
-											{% if count > 0 %}<strong>{% endif %}
-											<i class="fa fa-comment"></i> Forum du groupe "{{ groupe.nom }}"
-											({{ count }})
-											{% if count > 0 %}</strong>{% endif %}
-										</a>
-									</li>
+							{% set groupeGn = participant.groupeGn %}
+							{% if groupeGn %}
+								{% set groupe = groupeGn.groupe %}
+								{% if groupe %}
+									{% if groupe.topic %}
+										{% set count = app.user.newPosts(groupe.topic)|length %}
+										<li class="list-group-item">
+											<a href="{{ path('forum.topic', {'index': groupe.topic.id}) }}">
+												{% if count > 0 %}<strong>{% endif %}
+												<i class="fa fa-comment"></i> Forum du groupe "{{ groupe.nom }}"
+												({{ count }})
+												{% if count > 0 %}</strong>{% endif %}
+											</a>
+										</li>
+									{% endif %}
 								{% endif %}
 							{% endif %}
 						</ul>
@@ -191,33 +196,36 @@
 					
 					<div class="col-md-4">
 						<ul>
-							{% if groupe %}
-								{% for territoire in  groupe.territoires %}
-									{% if territoire.topic %}
-										{% set count = app.user.newPosts(territoire.topic)|length %}
-										<li class="list-group-item">
-											<a href="{{ path('forum.topic', {'index': territoire.topic.id}) }}">
-												{% if count > 0 %}<strong>{% endif %}
-												<i class="fa fa-comment"></i> Forum du territoire "{{ territoire.nom }}"
-												({{ count }})
-												{% if count > 0 %}</strong>{% endif %}
-											</a>
-										</li>
-									{% endif %}
-									{% for ancestor in territoire.getAncestors %}
-										{% if ancestor.topic %}
-											{% set count = app.user.newPosts(ancestor.topic)|length %}
+							{% if groupeGn %}
+								{% set groupe = groupeGn.groupe %}
+								{% if groupe %}
+									{% for territoire in  groupe.territoires %}
+										{% if territoire.topic %}
+											{% set count = app.user.newPosts(territoire.topic)|length %}
 											<li class="list-group-item">
-												<a href="{{ path('forum.topic', {'index': ancestor.topic.id}) }}">
+												<a href="{{ path('forum.topic', {'index': territoire.topic.id}) }}">
 													{% if count > 0 %}<strong>{% endif %}
-													<i class="fa fa-comment"></i> Forum du territoire "{{ ancestor.nom }}"
+													<i class="fa fa-comment"></i> Forum du territoire "{{ territoire.nom }}"
 													({{ count }})
 													{% if count > 0 %}</strong>{% endif %}
 												</a>
 											</li>
 										{% endif %}
+										{% for ancestor in territoire.getAncestors %}
+											{% if ancestor.topic %}
+												{% set count = app.user.newPosts(ancestor.topic)|length %}
+												<li class="list-group-item">
+													<a href="{{ path('forum.topic', {'index': ancestor.topic.id}) }}">
+														{% if count > 0 %}<strong>{% endif %}
+														<i class="fa fa-comment"></i> Forum du territoire "{{ ancestor.nom }}"
+														({{ count }})
+														{% if count > 0 %}</strong>{% endif %}
+													</a>
+												</li>
+											{% endif %}
+										{% endfor %}
 									{% endfor %}
-								{% endfor %}
+								{% endif %}
 							{% endif %}
 						</ul>
 					</div>

@@ -41,7 +41,7 @@ class UserPersonnageDefaultForm extends AbstractType
 	 */
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
-		$builder->add('personnageRelatedByPersonnageId','entity', array(
+		$builder->add('personnage','entity', array(
 					'required' => false,
 					'label' => 'Choisissez votre personnage par défaut. Ce personnage sera utilisé pour signer vos messages',
 					'multiple' => false,
@@ -52,7 +52,7 @@ class UserPersonnageDefaultForm extends AbstractType
 					'empty_data'  => null,
 					'query_builder' => function(EntityRepository $er) use ($options) {
 						return $er->createQueryBuilder('p')
-							->join('p.users', 'u')
+							->join('p.user', 'u')
 							->where('u.id = :userId')
 							->setParameter('userId', $options['user_id']);
 					},

@@ -29,15 +29,18 @@ use LarpManager\Form\JoueurForm;
 use LarpManager\Form\FindJoueurForm;
 use LarpManager\Form\RestaurationForm;
 use LarpManager\Form\JoueurXpForm;
-use LarpManager\Form\PersonnageReligionForm;
+
 use LarpManager\Form\ParticipantPersonnageSecondaireForm;
 use LarpManager\Form\GroupeInscriptionForm;
 use LarpManager\Form\GroupeSecondairePostulerForm;
-use LarpManager\Form\PersonnageOriginForm;
 use LarpManager\Form\ParticipantBilletForm;
 use LarpManager\Form\ParticipantRestaurationForm;
-use LarpManager\Form\ParticipantGroupeForm;
 
+use LarpManager\Form\Participant\ParticipantGroupeForm;
+
+use LarpManager\Form\Personnage\PersonnageForm;
+use LarpManager\Form\Personnage\PersonnageReligionForm;
+use LarpManager\Form\Personnage\PersonnageOriginForm;
 
 use LarpManager\Entities\Participant;
 use LarpManager\Entities\ParticipantHasRestauration;
@@ -84,7 +87,7 @@ class ParticipantController
 	 */
 	public function groupeAction(Application $app, Request $request, Participant $participant)
 	{
-		$form = $app['form.factory']->createBuilder(new ParticipantGroupeForm(), $participant)
+		$form = $app['form.factory']->createBuilder(new ParticipantGroupeForm(), $participant, array('gnId' => $participant->getGn()->getId()))
 			->add('save','submit', array('label' => 'Sauvegarder'))
 			->getForm();
 		
@@ -222,6 +225,138 @@ class ParticipantController
 	}
 	
 	/**
+	 * Création d'un nouveau personnage. L'utilisateur doit être dans un groupe et son billet doit être valide
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function personnageNewAction(Request $request, Application $app, Participant $participant)
+	{
+		$groupeGn = $participant->getGroupeGn();
+		
+		if ( ! $groupeGn )
+		{
+			$app['session']->getFlashBag()->add('error','Désolé, vous devez rejoindre un groupe avant de pouvoir créer votre personnage.');
+			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+		}
+		
+		if ( ! $participant->getBillet() )
+		{
+			$app['session']->getFlashBag()->add('error','Désolé, vous devez avoir un billet avant de pouvoir créer votre personnage.');
+			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+		}
+
+		if ( $groupeGn->getGroupe()->getLock() == true)
+		{
+			$app['session']->getFlashBag()->add('error','Désolé, ce groupe est fermé. La création de personnage est temporairement désactivé.');
+			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+		}
+	
+		if ( $participant->getPersonnage() )
+		{
+			$app['session']->getFlashBag()->add('error','Désolé, vous disposez déjà d\'un personnage.');
+			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+		}
+		
+		if (  ! $groupe->hasEnoughClasse() )
+		{
+			$app['session']->getFlashBag()->add('error','Désolé, ce groupe ne contient plus de classes disponibles');
+			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+		}
+	
+		$personnage = new \LarpManager\Entities\Personnage();
+	
+		// j'ajoute içi certain champs du formulaires (les classes)
+		// car j'ai besoin des informations du groupe pour les alimenter
+		$form = $app['form.factory']->createBuilder(new PersonnageForm(), $personnage)
+			->add('classe','entity', array(
+				'label' =>  'Classes disponibles',
+				'property' => 'label',
+				'class' => 'LarpManager\Entities\Classe',
+				'choices' => array_unique($groupe->getAvailableClasses()),
+			))
+			->add('save','submit', array('label' => 'Valider mon personnage'))
+			->getForm();
+			
+		$form->handleRequest($request);
+	
+		if ( $form->isValid() )
+		{
+			$personnage = $form->getData();
+			
+			$personnage->setUserRelatedByUserId($app['user']);
+			$participant->setPersonnage($personnage);
+	
+			// Ajout des points d'expérience gagné à la création d'un personnage
+			$personnage->setXp($participant->getGn()->getXpCreation());
+				
+			// historique
+			$historique = new \LarpManager\Entities\ExperienceGain();
+			$historique->setExplanation("Création de votre personnage");
+			$historique->setOperationDate(new \Datetime('NOW'));
+			$historique->setPersonnage($personnage);
+			$historique->setXpGain($participant->getGn()->getXpCreation());
+			$app['orm.em']->persist($historique);
+					
+			// ajout des compétences acquises à la création
+			foreach ($personnage->getClasse()->getCompetenceFamilyCreations() as $competenceFamily)
+			{
+				$firstCompetence = $competenceFamily->getFirstCompetence();
+				if ( $firstCompetence )
+				{
+					$personnage->addCompetence($firstCompetence);
+					$firstCompetence->addPersonnage($personnage);
+					$app['orm.em']->persist($firstCompetence);
+				}
+			}
+	
+			// Ajout des points d'expérience gagné grace à l'age
+			$xpAgeBonus = $personnage->getAge()->getBonus();
+			if ( $xpAgeBonus )
+			{
+				$personnage->addXp($xpAgeBonus);
+				$historique = new \LarpManager\Entities\ExperienceGain();
+				$historique->setExplanation("Bonus lié à l'age");
+				$historique->setOperationDate(new \Datetime('NOW'));
+				$historique->setPersonnage($personnage);
+				$historique->setXpGain($xpAgeBonus);
+				$app['orm.em']->persist($historique);
+			}
+	
+			// Ajout de la langue en fonction de l'origine du personnage
+			$langue = $personnage->getOrigine()->getLangue();
+			if ( $langue )
+			{
+				$personnageLangue = new \LarpManager\Entities\PersonnageLangues();
+				$personnageLangue->setPersonnage($personnage);
+				$personnageLangue->setLangue($langue);
+				$personnageLangue->setSource('ORIGINE');
+				$app['orm.em']->persist($personnageLangue);
+			}
+	
+			$app['orm.em']->persist($personnage);
+			$app['orm.em']->persist($participant);
+			$app['orm.em']->flush();
+	
+	
+			$app['session']->getFlashBag()->add('success','Votre personnage a été sauvegardé.');
+			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+		}
+	
+		$ages = $app['orm.em']->getRepository('LarpManager\Entities\Age')->findAllOnCreation();
+		$territoires = $app['orm.em']->getRepository('LarpManager\Entities\Territoire')->findRoot();
+		
+		return $app['twig']->render('public/participant/personnage_new.twig', array(
+				'form' => $form->createView(),
+				'classes' => array_unique($groupe->getAvailableClasses()),
+				'groupe' => $groupe,
+				'participant' => $participant,
+				'ages' => $ages,
+				'territoires' => $territoires,
+		));
+	}
+	
+	/**
 	 * Page listant les règles à télécharger
 	 *
 	 * @param Request $request
@@ -275,11 +410,13 @@ class ParticipantController
 	 */
 	public function groupeJoinAction(Request $request, Application $app, Participant $participant)
 	{
+		// il faut un billet pour rejoindre un groupe
 		if ( ! $participant->getBillet() )
 		{
 			$app['session']->getFlashBag()->add('error','Désolé, vous devez obtenir un billet avant de pouvoir rejoindre un groupe');
 			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
 		}
+				
 		$form = $app['form.factory']->createBuilder(new GroupeInscriptionForm(), array())
 			->add('subscribe','submit', array('label' => 'S\'inscrire'))
 			->getForm();
@@ -291,20 +428,36 @@ class ParticipantController
 				$data = $form->getData();
 				$code = $data['code'];
 				$groupe = $app['orm.em']->getRepository('\LarpManager\Entities\Groupe')->findOneByCode($code);
-				if ( $groupe )
-				{
-					$participant->setGroupe($groupe);
-					$app['orm.em']->persist($participant);
-					$app['orm.em']->flush();
-					
-					$app['session']->getFlashBag()->add('success','Vous avez rejoint le groupe.');
-				}
-				else
-				{
-					$app['session']->getFlashBag()->add('error','Le code ne correspond à aucun groupe, rapprochez vous de votre chef de groupe.');
-				}
-				return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
 				
+				if ( ! $groupe )
+				{
+					$app['session']->getFlashBag()->add('error','Désolé, le code que vous utilisez ne correspond à aucun groupe');
+					return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+				}
+				
+				$groupeGn = $groupe->getGroupeGn($participant->getGn());
+				if ( ! $groupeGn )
+				{
+					$app['session']->getFlashBag()->add('error','Le code correspond à un groupe qui ne participe pas à cette session de jeu.');
+					return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+				}
+				
+				// il faut que le groupe ai un responsable pour le rejoindre
+				if ( ! $groupeGn->getResponsable() )
+				{
+					$app['session']->getFlashBag()->add('error','Le groupe n\'a pas encore de responsable, vous ne pouvez pas le rejoindre pour le moment.');
+					return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+				}
+					
+				$participant->setGroupeGn($groupeGn);
+				$app['orm.em']->persist($participant);
+				$app['orm.em']->flush();
+					
+				// envoyer une notification au chef de groupe et au scénariste
+				$app['notify']->joinGroupe($participant, $groupeGn);
+						
+				$app['session']->getFlashBag()->add('success','Vous avez rejoint le groupe.');
+				return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);				
 		}
 		
 		return $app['twig']->render('public/groupe/join.twig', array(
@@ -374,21 +527,21 @@ class ParticipantController
 	
 		// recherche les backgrounds liés au groupe (visibilité == PUBLIC)
 		$backsGroupe = new ArrayCollection(array_merge(
-			$personnage->getGroupe()->getBacks('PUBLIC')->toArray(),
+			$participant->getGroupe()->getBacks('PUBLIC')->toArray(),
 			$backsGroupe->toArray()
 		));
 	
 		// recherche les backgrounds liés au groupe (visibilité == GROUP_MEMBER)
 		$backsGroupe = new ArrayCollection(array_merge(
-			$personnage->getGroupe()->getBacks('GROUPE_MEMBER')->toArray(),
+			$participant->getGroupe()->getBacks('GROUPE_MEMBER')->toArray(),
 			$backsGroupe->toArray()
 		));
 	
 		// recherche les backgrounds liés au groupe (visibilité == GROUP_OWNER)
-		if ( $app['user'] == $personnage->getGroupe()->getUserRelatedByResponsableId() )
+		if ( $app['user'] == $participant->getGroupe()->getUserRelatedByResponsableId() )
 		{
 			$backsGroupe = new ArrayCollection(array_merge(
-					$personnage->getGroupe()->getBacks('GROUPE_OWNER')->toArray(),
+					$participant->getGroupe()->getBacks('GROUPE_OWNER')->toArray(),
 					$backsGroupe->toArray()
 					));
 		}
@@ -487,7 +640,7 @@ class ParticipantController
 		}
 		
 	
-		if ( $personnage->getGroupe()->getLock() == true)
+		if ( $participant->getGroupe()->getLock() == true)
 		{
 			$app['session']->getFlashBag()->add('error','Désolé, il n\'est plus possible de modifier ce personnage. Le groupe est verouillé. Contacter votre scénariste si vous pensez que cela est une erreur');
 			return $app->redirect($app['url_generator']->generate('participant.personnage', array('participant' => $participant->getId())),301);

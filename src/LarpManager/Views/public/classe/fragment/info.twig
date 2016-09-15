@@ -1,0 +1,30 @@
+<div class="header">
+	<h5>Liste des classes</h5>
+</div>
+
+<blockquote>
+	Votre classe vous permet de dépenser moins de points d'expériences dans certaines compétences. Les compétences qui ne sont pas liés à votre classe sont accessibles mais vous n'obtiendrez pas de bonus dessus. 
+</blockquote>
+
+<div class="list-group">
+	{% for classe in classes %}
+		<div class="list-group-item">
+			<div class="list-group-item-heading"><h6>{{ classe.label }}</h6></div>
+			<div class="list-group-item-text">{{ classe.description|markdown }}</div>
+			<div class="list-group-item-text">
+				<strong>Compétences acquises à la création du personnage :</strong>
+				{% for competenceFamily in classe.competenceFamilyCreations %}
+					{% if loop.index != 1 %}&nbsp;<i class="fa fa-ellipsis-h"></i>&nbsp;{% endif %}
+					<span data-toggle="tooltip" data-placement="top" title="{{ competenceFamily.descriptionRaw }}">{{ competenceFamily.label }}</span>
+				{% endfor %}
+			</div>
+			<div class="list-group-item-text">
+				<strong>Compétences favorites :</strong>
+				{% for competenceFamily in classe.competenceFamilyFavorites %}
+					{% if loop.index != 1 %}&nbsp;<i class="fa fa-ellipsis-h"></i>&nbsp;{% endif %}
+	    			<span data-toggle="tooltip" data-placement="top" title="{{ competenceFamily.descriptionRaw }}">{{ competenceFamily.label }}</span>
+	    		{% endfor %}
+    		</div>
+		</div>
+	{% endfor %}
+</div>

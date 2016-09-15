@@ -79,6 +79,14 @@ class Personnage extends BasePersonnage
 	}
 	
 	/**
+	 * Fourni l'origine du personnage
+	 */
+	public function getOrigine()
+	{
+		return $this->getTerritoire();
+	}
+	
+	/**
 	 * Détermine si du matériel est necessaire pour ce personnage
 	 */
 	public function hasMateriel()

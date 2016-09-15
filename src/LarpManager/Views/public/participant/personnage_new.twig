@@ -1,0 +1,48 @@
+{% extends "layout.twig" %}
+
+{% block title %}{{ groupe.nom }}{% endblock title %}
+
+{% block content %}
+
+<div class="well well-sm">
+	<div class="row">
+		<div class="col-md-4">
+			<form action="{{ path('participant.personnage.new', {'participant': participant.id}) }}" method="POST" {{ form_enctype(form) }}>
+				<fieldset>
+					<legend>{{ groupe.nom }} - <small>Création d'un personnage</small></legend>
+					{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+		
+					{{ form_row(form.nom) }}
+					{{ form_row(form.surnom) }}
+					{{ form_row(form.age) }}
+					{{ form_row(form.genre) }}
+					{{ form_row(form.territoire) }}
+					{{ form_row(form.intrigue) }}
+					{{ form_row(form.classe) }}
+					{{ form_rest(form) }}
+				</fieldset>
+			</form>
+		</div>
+		<div class="col-md-8">
+			<blockquote>
+				Lors de la création d'un personnage vous recevez {{ participant.gn.xpCreation }} points d'expériences qui vous serviront à obtenir des compétences.
+			</blockquote>
+			<div class="row">
+				<div class="col-md-6">
+					{{ include("public/age/fragment/info.twig", {'ages' : ages}) }}
+				</div>
+				<div class="col-md-6">
+					{{ include("public/classe/fragment/info.twig", {'classes' : classes}) }}
+				</div>
+			</div>
+			{{ include("public/territoire/fragment/info.twig", {'territoires' : territoires}) }}
+		</div>
+	</div>		
+</div>
+{% endblock content %}
+
+{% block javascript %}
+
+{{ parent() }}
+
+{%  endblock javascript %}

@@ -178,6 +178,16 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 			->bind('participant.personnageSecondaire')
 			->convert('participant', 'converter.participant:convert')
 			->before($mustOwnParticipant);
+			
+		/**
+		 * Création d'un personnage
+		 */
+		$controllers->match('/{participant}/personnage/new','LarpManager\Controllers\ParticipantController::personnageNewAction')
+			->assert('participant', '\d+')
+			->convert('participant', 'converter.participant:convert')
+			->bind("participant.personnage.new")
+			->method('GET|POST')
+			->before($mustOwnParticipant);
 		
 
 		/**

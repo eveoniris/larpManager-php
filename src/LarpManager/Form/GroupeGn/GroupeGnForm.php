@@ -66,10 +66,6 @@ class GroupeGnForm extends AbstractType
 				->add('jeuMaritime','checkbox', array(
 						'label' => "Participe au jeu maritime",
 						'required' => false,
-				))
-				->add('placeAvailable','integer', array(
-						'label' => 'Places disponibles',
-						'required' => false,
 				));
 	}
 	

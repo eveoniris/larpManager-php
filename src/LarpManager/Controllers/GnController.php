@@ -28,6 +28,9 @@ use LarpManager\Form\ParticipantFindForm;
 use LarpManager\Entities\Gn;
 use JasonGrimes\Paginator;
 
+use Doctrine\Common\Collections\ArrayCollection;
+
+
 /**
  * LarpManager\Controllers\GnController
  *
@@ -305,11 +308,17 @@ class GnController
 	 */
 	public function billetterieAction(Application $app, Request $request, Gn $gn)
 	{
-		$groupes = $app['orm.em']->getRepository('LarpManager\Entities\Groupe')->findAllPj();
+		$groupeGns = $gn->getGroupeGnsPj();
+		$iterator = $groupeGns->getIterator();
+		$iterator->uasort(function ($a, $b) {
+			return ($a->getGroupe()->getNumero() < $b->getGroupe()->getNumero()) ? -1 : 1;
+		});
+		$groupeGns = new ArrayCollection(iterator_to_array($iterator));
+		
 	
 		return $app['twig']->render('public/gn/billetterie.twig', array(
 				'gn' => $gn,
-				'groupes' => $groupes,
+				'groupeGns' => $groupeGns,
 		));
 	}
 	
@@ -324,6 +333,12 @@ class GnController
 	public function groupesAction(Request $request, Application $app, Gn $gn)
 	{
 		$groupeGns = $gn->getGroupeGns();
+		$iterator = $groupeGns->getIterator();
+		$iterator->uasort(function ($a, $b) {
+			return ($a->getGroupe()->getNumero() < $b->getGroupe()->getNumero()) ? -1 : 1;
+		});
+		$groupeGns = new ArrayCollection(iterator_to_array($iterator));
+		
 		$participant = $app['user']->getParticipant($gn);
 		if ( ! $participant )
 		{

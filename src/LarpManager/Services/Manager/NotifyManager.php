@@ -106,6 +106,8 @@ class NotifyManager
 		$notification = new Notification();
 		$notification->setText('Vous avez reçu un nouveau billet : '.$billet->getGn()->getLabel().' '.$billet->getLabel());
 		$notification->setUser($user);
+		$notification->setUrl($this->app['url_generator']->generate('user.gn.detail', array('gn' => $billet->getGn()->getId())));
+		
 		
 		$this->app['orm.em']->persist($notification);
 		$this->app['orm.em']->flush();
@@ -133,7 +135,8 @@ class NotifyManager
 		$notification = new Notification();
 		$notification->setText('Vous avez été désigné responsable du groupe : '.$groupeGn->getGroupe()->getNom());
 		$notification->setUser($user);
-		
+		$notification->setUrl($this->app['url_generator']->generate('groupeGn.groupe', array('groupeGn' => $groupeGn->getId())));
+				
 		$this->app['orm.em']->persist($notification);
 		$this->app['orm.em']->flush();
 		
@@ -160,6 +163,7 @@ class NotifyManager
 		$notification = new Notification();
 		$notification->setText('Vous avez été ajouté au groupe : '.$groupeGn->getGroupe()->getNom());
 		$notification->setUser($user);
+		$notification->setUrl($this->app['url_generator']->generate('groupeGn.groupe', array('groupeGn' => $groupeGn->getId())));
 	
 		$this->app['orm.em']->persist($notification);
 		$this->app['orm.em']->flush();
@@ -174,6 +178,32 @@ class NotifyManager
 				$this->fromAddress,
 				$user->getEmail()
 				);
+	}
+	
+	/**
+	 * Notification nouveau membre à destination du chef de groupe et du scénariste
+	 * 
+	 * @param unknown $participant
+	 * @param unknown $groupeGn
+	 */
+	public function joinGroupe($participant, $groupeGn)
+	{
+		$chef = $groupeGn->getResponsable()->getUser();
+		$scenariste = $groupeGn->getGroupe()->getScenariste();
+		
+		$notificationChef = new Notification();
+		$notificationChef->setText($participant->getUser() . ' a rejoint le groupe '.$groupeGn->getGroupe()->getNom());
+		$notificationChef->setUser($chef);
+		$notification->setUrl($this->app['url_generator']->generate('groupeGn.groupe', array('groupeGn' => $groupeGn->getId())));
+		$this->app['orm.em']->persist($notificationChef);
+		
+		$notificationScenariste = new Notification();
+		$notificationScenariste->setText($participant->getUser() . ' a rejoint le groupe '.$groupeGn->getGroupe()->getNom());
+		$notificationScenariste->setUser($scenariste);
+		$notification->setUrl($this->app['url_generator']->generate('groupeGn.groupe', array('groupeGn' => $groupeGn->getId())));
+		$this->app['orm.em']->persist($notificationScenariste);
+		
+		$this->app['orm.em']->flush();
 	}
 	
 	/**

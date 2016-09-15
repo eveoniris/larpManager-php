@@ -9,8 +9,8 @@
 		<li class="active">Mes personnage par défaut</li>
 	</ol>
 	
-	<div class="well bs-component">
-		<form action="{{ path('user.personnageDefault') }}" method="POST" {{ form_enctype(form) }}>
+	<div class="well well-sm">
+		<form action="{{ path('user.personnageDefault', {'user': user.id}) }}" method="POST" {{ form_enctype(form) }}>
 			<fieldset>
 				{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
 				{{ form(form) }}

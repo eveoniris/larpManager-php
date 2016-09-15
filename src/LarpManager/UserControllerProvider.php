@@ -139,7 +139,9 @@ class UserControllerProvider implements ControllerProviderInterface
 		/**
 		 * Personnage par défaut d'un utilisateur
 		 */
-		$controllers->match('/personnageDefault', 'LarpManager\Controllers\UserController::personnageDefaultAction')
+		$controllers->match('/{user}/personnageDefault', 'LarpManager\Controllers\UserController::personnageDefaultAction')
+			->assert('user', '\d+')
+			->convert('user', 'converter.user:convert')
 			->bind('user.personnageDefault')
 			->method('GET|POST')
 			->before($mustBeUser);

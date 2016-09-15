@@ -43,4 +43,16 @@ class AgeRepository extends EntityRepository
 		
 		return $ages;
 	}
+	
+	/**
+	 * Fourni tous les ages disponible à la création d'un personnage
+	 */
+	public function findAllOnCreation()
+	{
+		$ages = $this->getEntityManager()
+		->createQuery('SELECT a FROM LarpManager\Entities\Age a WHERE a.enableCreation = true ORDER BY a.label ASC')
+		->getResult();
+		
+		return $ages;
+	}
 }

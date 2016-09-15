@@ -266,25 +266,6 @@ class User extends BaseUser implements AdvancedUserInterface, \Serializable
 	}
 	
 	/**
-	 * Determine si l'utilisateur est responsable du groupe
-	 * 
-	 * @param LarpManager\Entities\Groupe $groupe
-	 */
-	public function isResponsable(\LarpManager\Entities\Groupe $groupe)
-	{
-		return $this == $groupe->getResponsable();
-	}
-		
-
-	/**
-	 * Fourni la liste des groupes dont l'utilisateur est le responsable
-	 */
-	public function getGroupeResponsable()
-	{
-		return $this->getGroupeRelatedByResponsableIds();
-	}
-	
-	/**
 	 * Fourni la liste des groupes dont l'utilisateur est le scénariste
 	 */
 	public function getGroupeScenariste()

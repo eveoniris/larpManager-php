@@ -60,9 +60,9 @@
 			        		Participe à {{ participant.gn.label }}
 			        	</div>
 			        	
-			        	{% if participant.groupe %}
+			        	{% if participant.groupeGn %}
 			        		<div>
-			        			Membre du groupe <a href="{{ path('groupe.detail',{'index':participant.groupe.id})  }}">{{ participant.groupe.nom }}</a>
+			        			Membre du groupe <a href="{{ path('groupe.detail',{'index':participant.groupeGn.groupe.id})  }}">{{ participant.groupeGn.groupe.nom }}</a>
 			        		</div>
 			        	{% endif %}
 			        

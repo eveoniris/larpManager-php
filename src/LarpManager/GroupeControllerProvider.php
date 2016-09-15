@@ -55,6 +55,7 @@ class GroupeControllerProvider implements ControllerProviderInterface
 	 *  - groupe.acceptPeace
 	 *  - groupe.refusePeace
 	 *  - groupe.scenariste
+	 *  - groupe.composition
 	 *
 	 * @param Application $app
 	 * @return Controllers $controllers
@@ -102,16 +103,7 @@ class GroupeControllerProvider implements ControllerProviderInterface
 				throw new AccessDeniedException();
 			}
 		};
-					
-		/**
-		 * Ajoute un nouveau personnage dans un groupe
-		 */
-		$controllers->match('/{index}/personnage/add','LarpManager\Controllers\GroupeController::personnageAddAction')
-			->assert('index', '\d+')
-			->bind("groupe.personnage.add")
-			->method('GET|POST')
-			->before($mustBeMember);
-								
+													
 		/**
 		 * Demander une alliance
 		 */
@@ -489,6 +481,16 @@ class GroupeControllerProvider implements ControllerProviderInterface
 		 */
 		$controllers->match('/{groupe}/pays','LarpManager\Controllers\GroupeController::paysAction')
 			->bind("groupe.pays")
+			->assert('groupe', '\d+')
+			->convert('groupe', 'converter.groupe:convert')
+			->method('GET|POST')
+			->before($mustBeScenariste);
+			
+		/**
+		 * Modifier la composition du groupe
+		 */
+		$controllers->match('/{groupe}/composition','LarpManager\Controllers\GroupeController::compositionAction')
+			->bind("groupe.composition")
 			->assert('groupe', '\d+')
 			->convert('groupe', 'converter.groupe:convert')
 			->method('GET|POST')

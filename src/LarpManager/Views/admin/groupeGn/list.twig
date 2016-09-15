@@ -28,6 +28,8 @@
 		    		<th>Code</th>
 		    		<th>Jeu stratégique</th>
 		    		<th>Jeu maritime</th>
+		    		<th>Nombre de joueurs maximum</th>
+		    		<th>Nombre de place disponible</th>
 		    		<th>Participants</th>
 		   		 	<th />
 		    	</tr>
@@ -45,9 +47,11 @@
 					<td>{{ groupeGn.code }}</td>
 					<td>{% if groupeGn.jeuStrategique %}Oui{% else %}Non{% endif %}</td>
 					<td>{% if groupeGn.jeuMaritime %}Oui{% else %}Non{% endif %}</td>
+					<td>{{ groupe.placeTotal|default(0) }}</td>
+					<td>{{ groupe.placeTotal - groupeGn.participants|length }}</td>
 					<td>
 						<ul>
-							{% for participant in groupe.participants if participant.gn == groupeGn.gn %}
+							{% for participant in groupeGn.participants %}
 								<li>{{ participant.user.etatCivil }}&nbsp;<a href="{{ path('groupeGn.participants.remove', {'groupeGn': groupeGn.id, 'participant': participant.id}) }}" data-toggle="tooltip" data-placement="top" title="Retirer sa participation"><i class="fa fa-remove"></i></a></li>
 							{% endfor %}
 						</ul>

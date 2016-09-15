@@ -18,20 +18,48 @@ use LarpManager\Entities\BaseGroupeGn;
  */
 class GroupeGn extends BaseGroupeGn
 {
+	/**
+	 * Défini le responsable de cette session de jeu
+	 * 
+	 * @param Participant $participant
+	 */
 	public function setResponsable(Participant $participant)
 	{
 		$this->setParticipant($participant);
 		return $this;
 	}
 	
+	/**
+	 * Fourni le responsable de cette session de jeu
+	 */
 	public function getResponsable()
 	{
 		return $this->getParticipant();
 	}
 	
+	/**
+	 * Supprime le responsable de cette session de jeu
+	 */
 	public function setResponsableNull()
 	{
 		return $this->setParticipant(null);		
+	}
+	
+	/**
+	 * Fourni la liste des personnages de cette session de jeu
+	 */
+	public function getPersonnages()
+	{
+		$personnages = new ArrayCollection();
+		
+		foreach ( $this->getParticipants() as $participant )
+		{
+			if ( $participant->getPersonnage() )
+			{
+				$personnages[] = $participant->getPersonnage();
+			}
+		}
+		return $personnages;
 	}
 	
 }

@@ -61,27 +61,22 @@ class Participant extends BaseParticipant
 		}
 		return false;
 	}
-	
-	/**
-	 * Retire un participant d'un groupe
-	 * @param Groupe $groupe
-	 */
-	public function removeGroupe(Groupe $groupe)
-	{
-		$groupe->removeParticipant($this);
-		$this->setGroupe(null);
-	}	
-	
+		
 	/**
 	 * Fourni la session de jeu auquel participe l'utilisateur
 	 */
 	public function getSession()
 	{
-		foreach ( $this->getGroupe()->getGroupeGns() as $session)
-		{
-			if ( $session->getGn() == $this->getGn()) return $session;
-		}
-		return null;
+		return $this->getGroupeGn();
+	}
+	
+	/**
+	 * Retire un participant d'un groupe
+	 */
+	public function setGroupeGnNull()
+	{
+		$this->setGroupeGn(null);
+		return $this;
 	}
 	
 	public function getUserIdentity()

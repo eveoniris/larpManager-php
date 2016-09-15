@@ -18,46 +18,50 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace LarpManager\Form;
+namespace LarpManager\Form\Groupe;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Doctrine\ORM\EntityRepository;
+
+use LarpManager\Form\Type\ClasseType;
 
 /**
- * LarpManager\Form\PersonnageReligionForm
+ * LarpManager\Form\Groupe\GroupeCompositionForm
  *
  * @author kevin
  *
  */
-class PersonnageReligionForm extends AbstractType
+class GroupeCompositionForm extends AbstractType
 {
 	/**
-	 * Construction du formulaire
+	 * Contruction du formulaire
 	 *
 	 * @param FormBuilderInterface $builder
 	 * @param array $options
 	 */
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
-		$builder->add('religionLevel', 'entity', array(
-					'required' => true,
-					'label' => 'Votre degré de fanatisme',
-					'class' => 'LarpManager\Entities\ReligionLevel',
-					'property' => 'label',
+		$builder->add('groupeClasses', 'collection', array(
+						'label' => "Composition",
+						'required' => false,
+						'allow_add' => true,
+						'allow_delete' => true,
+						'by_reference' => false,
+						'type' => new ClasseType()
 				));
 	}
 	
-
 	/**
-	 * Définition de l'entité concerné
+	 * Définition de l'entité conercné
 	 *
-	 * @param OptionsResolver $resolver
+	 * @param OptionsResolverInterface $resolver
 	 */
-	public function configureOptions(OptionsResolver $resolver)
+	public function setDefaultOptions(OptionsResolverInterface $resolver)
 	{
 		$resolver->setDefaults(array(
-				'data_class' => 'LarpManager\Entities\PersonnagesReligions',
+				'data_class' => '\LarpManager\Entities\Groupe',
 		));
 	}
 	
@@ -66,6 +70,8 @@ class PersonnageReligionForm extends AbstractType
 	 */
 	public function getName()
 	{
-		return 'personnageReligion';
+		return 'groupeComposition';
 	}
+	
+	
 }

@@ -61,7 +61,7 @@
     			</ul>
     		{% endif %}
 	    					
-	    	<a href=""><i class="fa fa-pencil"></i> Modifier la composition du groupe</a>
+	    	<a href="{{ path('groupe.composition', {'groupe': groupe.id}) }}"><i class="fa fa-pencil"></i> Modifier la composition du groupe</a>
     	</div>
 		
 	</div>
@@ -87,6 +87,11 @@
 					&nbsp;<a href="{{ path('groupe.territoire.remove', {'groupe': groupe.id, 'territoire': territoire.id}) }}"><i class="fa fa-times" aria-hidden="true"></i></a>
 					,&nbsp;
 				{% endfor %}
+				
+				<br />
+				<strong>Places totales : </strong>
+				{{ groupe.placeTotal|default(0) }} joueurs possibles dans ce groupe.	
+			
 			</p>
 			<a href="{{ path('groupe.pays', {'groupe': groupe.id}) }}"><i class="fa fa-pencil"></i> Modifier le pays</a><br />
 			<a href="{{ path('groupe.territoire.add', {'groupe': groupe.id}) }}"><i class="fa fa-plus"></i> Ajouter un territoire</a>

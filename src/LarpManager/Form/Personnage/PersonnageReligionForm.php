@@ -17,19 +17,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-namespace LarpManager\Form;
+
+namespace LarpManager\Form\Personnage;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * LarpManager\Form\ParticipantGroupeForm
+ * LarpManager\Form\Personnage\PersonnageReligionForm
  *
  * @author kevin
  *
  */
-class ParticipantGroupeForm extends AbstractType
+class PersonnageReligionForm extends AbstractType
 {
 	/**
 	 * Construction du formulaire
@@ -39,39 +40,32 @@ class ParticipantGroupeForm extends AbstractType
 	 */
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
-		$builder->add('groupe','entity', array(
-				'label' => 'Choisissez le groupe a affecter à cet utilisateur',
-				'multiple' => false,
-				'expanded' => true,
-				'required' => true,
-				'class' => 'LarpManager\Entities\Groupe',
-				'property' => 'nom',
-				'query_builder' => function(\LarpManager\Repository\GroupeRepository $er) {
-					$qb = $er->createQueryBuilder('g');
-					$qb->orderBy('g.nom', 'ASC');
-					return $qb;
-				}
-		));
+		$builder->add('religionLevel', 'entity', array(
+					'required' => true,
+					'label' => 'Votre degré de fanatisme',
+					'class' => 'LarpManager\Entities\ReligionLevel',
+					'property' => 'label',
+				));
 	}
-
+	
 
 	/**
 	 * Définition de l'entité concerné
 	 *
-	 * @param OptionsResolverInterface $resolver
+	 * @param OptionsResolver $resolver
 	 */
-	public function setDefaultOptions(OptionsResolverInterface $resolver)
+	public function configureOptions(OptionsResolver $resolver)
 	{
 		$resolver->setDefaults(array(
-		 	'class' => 'LarpManager\Entities\Participant',
-		 ));
+				'data_class' => 'LarpManager\Entities\PersonnagesReligions',
+		));
 	}
-
+	
 	/**
 	 * Nom du formulaire
 	 */
 	public function getName()
 	{
-		return 'participantGroupe';
+		return 'personnageReligion';
 	}
-} 
+}

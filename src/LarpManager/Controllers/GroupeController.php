@@ -29,8 +29,8 @@ use JasonGrimes\Paginator;
 use LarpManager\Form\Groupe\GroupeForm;
 use LarpManager\Form\Groupe\GroupeDescriptionForm;
 use LarpManager\Form\Groupe\GroupeScenaristeForm;
+use LarpManager\Form\Groupe\GroupeCompositionForm;
 
-use LarpManager\Form\PersonnageForm;
 use LarpManager\Form\GroupFindForm;
 use LarpManager\Form\BackgroundForm;
 use LarpManager\Form\RequestAllianceForm;
@@ -58,6 +58,66 @@ use LarpManager\Entities\Document;
  */
 class GroupeController
 {		
+	
+	/**
+	 * Modifier la composition du groupe
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Groupe $groupe
+	 */
+	public function compositionAction(Request $request, Application $app, Groupe $groupe)
+	{
+		$originalGroupeClasses = new ArrayCollection();
+		
+		/**
+		 *  Crée un tableau contenant les objets GroupeClasse du groupe
+		 */
+		foreach ($groupe->getGroupeClasses() as $groupeClasse)
+		{
+			$originalGroupeClasses->add($groupeClasse);
+		}
+		
+		$form = $app['form.factory']->createBuilder(new GroupeCompositionForm(), $groupe)
+			->add('submit','submit', array('label' => 'Enregistrer'))
+			->getForm();
+		
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$groupe = $form->getData();
+			
+			/**
+			 * Pour toutes les classes du groupe
+			 */
+			foreach ( $groupe->getGroupeClasses() as $groupeClasses)
+			{
+				$groupeClasses->setGroupe($groupe);
+			}
+			
+			/**
+			 *  supprime la relation entre le groupeClasse et le groupe
+			 */
+			foreach ($originalGroupeClasses as $groupeClasse) {
+				if ($groupe->getGroupeClasses()->contains($groupeClasse) == false) {
+					$app['orm.em']->remove($groupeClasse);
+				}
+			}
+			
+			$app['orm.em']->persist($groupe);
+			$app['orm.em']->flush();
+			
+			$app['session']->getFlashBag()->add('success', 'La composition du groupe a été sauvegardé.');
+			return $app->redirect($app['url_generator']->generate('groupe.detail', array('index' => $groupe->getId())));
+		}
+		
+		return $app['twig']->render('admin/groupe/composition.twig', array(
+				'groupe' => $groupe,
+				'form' => $form->createView(),
+		));
+	}
+	
 	/**
 	 * Modification de la description du groupe
 	 * 
@@ -1430,121 +1490,7 @@ class GroupeController
 	}
 	
 	
-	/**
-	 * Création d'un nouveau personnage dans un groupe
-	 *
-	 * @param Request $request
-	 * @param Application $app
-	 */
-	public function personnageAddAction(Request $request, Application $app)
-	{
-		$id = $request->get('index');
-		
-		$groupe = $app['orm.em']->find('\LarpManager\Entities\Groupe',$id);
-		$participant = $app['user']->getParticipantByGroupe($groupe);
-		
-		if ( $groupe->getLock() == true)
-		{
-			$app['session']->getFlashBag()->add('error','Désolé, ce groupe est fermé.');
-			return $app->redirect($app['url_generator']->generate('homepage',array('index'=>$id)),301);
-		}
-		
-		// si le joueur dispose déjà d'un personnage, refuser le personnage
-		if ( $participant->getPersonnage() )
-		{
-			$app['session']->getFlashBag()->add('error','Désolé, vous disposez déjà d\'un personnage.');
-			return $app->redirect($app['url_generator']->generate('homepage',array('index'=>$id)),301);
-		}
-	
-		// si le groupe n'a plus de place, refuser le personnage
-		if (  ! $groupe->hasEnoughPlace() )
-		{
-			$app['session']->getFlashBag()->add('error','Désolé, ce groupe ne contient plus de places disponibles');
-			return $app->redirect($app['url_generator']->generate('homepage',array('index'=>$id)),301);
-		}
-		
-		// si le groupe n'a plus de classe disponible, refuser le personnage
-		if (  ! $groupe->hasEnoughClasse() )
-		{
-			$app['session']->getFlashBag()->add('error','Désolé, ce groupe ne contient plus de classes disponibles');
-			return $app->redirect($app['url_generator']->generate('homepage',array('index'=>$id)),301);
-		}
-	
-		$personnage = new \LarpManager\Entities\Personnage();
-	
-		// j'ajoute içi certain champs du formulaires (les classes)
-		// car j'ai besoin des informations du groupe pour les alimenter
-		$form = $app['form.factory']->createBuilder(new PersonnageForm(), $personnage)
-			->add('classe','entity', array(
-				'label' =>  'Classes disponibles',
-				'property' => 'label',
-				'class' => 'LarpManager\Entities\Classe',
-				'choices' => array_unique($groupe->getAvailableClasses()),
-				))
-			->add('save','submit', array('label' => 'Valider mon personnage'))
-			->getForm();
-			
-		$form->handleRequest($request);
-		
-		if ( $form->isValid() )
-		{
-			$personnage = $form->getData();
-			$personnage->setGroupe($groupe);
-				
-			// Ajout des points d'expérience gagné à la création d'un personnage
-			$personnage->setXp($app['larp.manager']->getGnActif()->getXpCreation());
-			
-			// historique
-			$historique = new \LarpManager\Entities\ExperienceGain();
-			$historique->setExplanation("Création de votre personnage");
-			$historique->setOperationDate(new \Datetime('NOW'));
-			$historique->setPersonnage($personnage);
-			$historique->setXpGain($app['larp.manager']->getGnActif()->getXpCreation());
-			$app['orm.em']->persist($historique);
-				
-			$participant->setPersonnage($personnage);
-			
-			// ajout des compétences acquises à la création
-			foreach ($personnage->getClasse()->getCompetenceFamilyCreations() as $competenceFamily)
-			{
-				$firstCompetence = $competenceFamily->getFirstCompetence();
-				if ( $firstCompetence )
-				{
-					$personnage->addCompetence($firstCompetence);
-					$firstCompetence->addPersonnage($personnage);
-					$app['orm.em']->persist($firstCompetence);
-				}
-			}
-				
-			// Ajout des points d'expérience gagné grace à l'age
-			$xpAgeBonus = $personnage->getAge()->getBonus();
-			if ( $xpAgeBonus )
-			{
-				$personnage->addXp($xpAgeBonus);
-				$historique = new \LarpManager\Entities\ExperienceGain();
-				$historique->setExplanation("Bonus lié à l'age");
-				$historique->setOperationDate(new \Datetime('NOW'));
-				$historique->setPersonnage($personnage);
-				$historique->setXpGain($xpAgeBonus);
-				$app['orm.em']->persist($historique);
-			}
-				
-				
-			$app['orm.em']->persist($personnage);
-			$app['orm.em']->persist($participant);
-			$app['orm.em']->flush();
-	
-	
-			$app['session']->getFlashBag()->add('success','Votre personnage a été sauvegardé.');
-			return $app->redirect($app['url_generator']->generate('homepage'),301);
-		}
-	
-		return $app['twig']->render('groupe/personnage_add.twig', array(
-			'form' => $form->createView(),
-			'classes' => array_unique($groupe->getAvailableClasses()),
-			'groupe' => $groupe,
-		));
-	}
+
 	
 	/**
 	 * Modification du nombre de place disponibles dans un groupe
@@ -1759,13 +1705,6 @@ class GroupeController
 			$originalGroupeClasses->add($groupeClasse);
 		}
 		
-		/** 
-		 * Crée un tableau contenant les gns auquel ce groupe participe
-		 */
-		foreach ( $groupe->getGns() as $gn)
-		{
-			$originalGns->add($gn);
-		}
 		
 		/**
 		 * Crée un tableau contenant les territoires que ce groupe posséde
@@ -1775,25 +1714,9 @@ class GroupeController
 			$originalTerritoires->add($territoire);
 		}
 		
-		/**
-		 * Construit la tableau pour le choix du responsable
-		 * @var Array $choices
-		 */
-		$choices = array();
-		foreach ( $groupe->getParticipants() as $participant )
-		{
-			$choices[] = $participant->getUser();
-		}
+		
 		
 		$form = $app['form.factory']->createBuilder(new GroupeForm(), $groupe)
-			->add('responsable', 'entity', array(
-				'label' => 'Responsable',
-				'required' => false,
-				'property' => 'username',
-				'class' => 'LarpManager\Entities\User',
-				'choices' => $choices,
-				'empty_data'  => null,
-				))
 			->add('update','submit', array('label' => "Sauvegarder"))
 			->add('delete','submit', array('label' => "Supprimer"))
 			->getForm();
@@ -1820,22 +1743,7 @@ class GroupeController
 					$app['orm.em']->remove($groupeClasse);
 				}
 			}
-			
-			/**
-			 * Pour tous les gns du groupe
-			 */
-			foreach ( $groupe->getGns() as $gn )
-			{
-				if ( $gn->getGroupes()->contains($groupe) == false)
-					$gn->addGroupe($groupe);
-			}
-			
-			foreach ($originalGns as $gn)
-			{
-				if ( $groupe->getGns()->contains($gn) == false)
-					$gn->removeGroupe($groupe);
-			}
-			
+						
 			/**
 			 * Pour tous les territoire du groupe
 			 */

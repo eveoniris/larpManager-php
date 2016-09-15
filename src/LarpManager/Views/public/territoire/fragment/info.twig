@@ -1,0 +1,17 @@
+<div class="header">
+	<h5>Les pays d'origine</h5>
+</div>
+
+<blockquote>
+	Votre origine détermine votre langue natale. 
+</blockquote>
+
+<div class="list-group">
+	{% for territoire in territoires %}
+		<div class="list-group-item">
+			<div class="list-group-item-heading"><h6>{{ territoire.nom }}</h6></div>
+			<div class="list-group-item-text">Langue principale : <strong>{{ territoire.langue|default('Aucune') }}</strong></div>
+			<div class="list-group-item-text">{{ territoire.description|markdown }}</div>
+		</div>
+	{% endfor %}
+</div>

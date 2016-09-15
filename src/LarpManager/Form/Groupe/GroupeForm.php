@@ -63,9 +63,6 @@ class GroupeForm extends AbstractType
 							'row' => 9,
 						),
 				))
-				->add('materiel','textarea', array(
-						'required' => false,
-				))
 				->add('territoires','entity', array(
 						'label' => 'Territoire',
 						'required' => false,
@@ -91,14 +88,6 @@ class GroupeForm extends AbstractType
 									$qb->expr()->like('u.rights', $qb->expr()->literal('%ROLE_ADMIN%'))));
 							return $qb;
 						}
-				))
-				->add('groupeClasses', 'collection', array(
-						'label' => "Composition",
-						'required' => false,
-						'allow_add' => true,
-						'allow_delete' => true,
-						'by_reference' => false,
-						'type' => new ClasseType()
 				));
 	}
 

@@ -245,7 +245,7 @@ class ForumController
 			$post->setUser($app['user']);
 			
 			// ajout de la signature
-			$personnage = $app['user']->getPersonnageRelatedByPersonnageId();
+			$personnage = $app['user']->getPersonnage();
 			if ( $personnage )
 			{
 				$text = $post->getText();

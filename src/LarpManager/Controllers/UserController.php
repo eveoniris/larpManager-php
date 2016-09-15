@@ -98,10 +98,14 @@ class UserController
 	 * @param Application $app
 	 * @param Request $request
 	 */
-	public function personnageDefaultAction(Application $app, Request $request)
+	public function personnageDefaultAction(Application $app, Request $request, User $user)
 	{
-		$user = $app['user'];
-		
+		if ( ! $app['security.authorization_checker']->isGranted('ROLE_ADMIN') && ! $user == $app['user'])
+		{
+			$app['session']->getFlashBag()->add('error', 'Vous n\'avez pas les droits necessaires pour cette opération.');
+			return $app->redirect($app['url_generator']->generate('homepage'),301);
+		}
+
 		$form = $app['form.factory']->createBuilder(new UserPersonnageDefaultForm(), $app['user'], array('user_id' => $user->getId()))
 			->add('save','submit', array('label' => "Sauvegarder"))
 			->getForm();
@@ -120,6 +124,7 @@ class UserController
 		}
 		return $app['twig']->render('public/user/personnageDefault.twig', array(
 				'form' => $form->createView(),
+				'user' => $user,
 		));
 	}
 

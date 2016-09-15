@@ -149,17 +149,14 @@ class GroupeGnController
 				'required' => false,
 				'class' => 'LarpManager\Entities\Participant',
 				'property' => 'user.etatCivil',
-				'query_builder' => function(ParticipantRepository $er) use ($groupe, $groupeGn) {
+				'query_builder' => function(ParticipantRepository $er) use ($groupeGn) {
 					$qb = $er->createQueryBuilder('p');
 					$qb->join('p.user', 'u');
-					$qb->join('p.groupe', 'g');
-					$qb->join('p.gn', 'gn');
+					$qb->join('p.groupeGn', 'gg');
 					$qb->join('u.etatCivil', 'ec');
 					$qb->orderBy('ec.nom', 'ASC');
-					$qb->where('g.id = :groupeId');
-					$qb->andWhere('gn.id = :gnId');
-					$qb->setParameter('groupeId',$groupe->getId());
-					$qb->setParameter('gnId',$groupeGn->getGn()->getId());
+					$qb->where('gg.id = :groupeGnId');
+					$qb->setParameter('groupeGnId',$groupeGn->getId());
 					return $qb;
 				},
 				'attr' => array(
@@ -212,7 +209,7 @@ class GroupeGnController
 					$qb->join('p.user', 'u');
 					$qb->join('p.gn', 'gn');
 					$qb->join('u.etatCivil', 'ec');
-					$qb->where($qb->expr()->isNull('p.groupe'));
+					$qb->where($qb->expr()->isNull('p.groupeGn'));
 					$qb->andWhere('gn.id = :gnId');
 					$qb->setParameter('gnId',$groupeGn->getGn()->getId());
 					$qb->orderBy('ec.nom', 'ASC');
@@ -232,7 +229,7 @@ class GroupeGnController
 		if ( $form->isValid() )
 		{
 			$data = $form->getData();
-			$data['participant']->setGroupe($groupeGn->getGroupe());
+			$data['participant']->setGroupeGn($groupeGn);
 			$app['orm.em']->persist($data['participant']);
 			$app['orm.em']->flush();
 			
@@ -272,7 +269,7 @@ class GroupeGnController
 				$groupeGn->setResponsableNull();
 			}
 			
-			$participant->removeGroupe($groupeGn->getGroupe());
+			$participant->setGroupeGnNull();
 			$app['orm.em']->persist($participant);
 			$app['orm.em']->flush();
 				

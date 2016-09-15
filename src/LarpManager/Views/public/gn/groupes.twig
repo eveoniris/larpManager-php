@@ -15,7 +15,10 @@
 			<h5>Liste des groupes</h5>
 		</div>
 		
-		<blockquote>Les places disponibles representent le nombre de joueurs recherchés par le chef de groupe pour compléter son groupe.</blockquote>
+		<blockquote>
+			<p>Les places disponibles representent le nombre de joueurs recherchés par le chef de groupe pour compléter son groupe.</p>
+			<p>Pour rejoindre un groupe contactez le chef de groupe.</p>
+		</blockquote>
 		
 		<div class="list-group">
 			{% for session in groupeGns %}
@@ -24,7 +27,14 @@
 						<h5>#{{ session.groupe.numero }} - {{ session.groupe.nom }}</h5>
 					</div>
 					<div class="list-group-item-text">{{ session.groupe.description|markdown }}</div>
-					<div class="list-group-item-text">Chef de groupe : {{ session.groupe.responsable.email }}</div>
+					<div class="list-group-item-text">
+					Chef de groupe :
+						{% if session.responsable %} 
+							{{ session.responsable.user }}. <a href="{{ path('message.new', {'to': session.responsable.user.id }) }}">Envoyer un message</a>
+						{% else %}
+							Aucun.
+						{% endif %}
+					</div>
 					<div class="list-group-item-text">
 						{% if session.placeAvailable
 						 and session.placeAvailable > 0 %}

@@ -4,7 +4,7 @@
 		<h6><i class="fa fa-circle"></i> {{ session.gn }}</h6>
 	
 		<ul class="media-list">
-			{% for joueur in groupe.participants if joueur.gn == session.gn %}
+			{% for joueur in session.participants %}
 				<li class="media">
 		    		<div class="media-left">
 		    			{% if joueur.personnage %}

@@ -17,20 +17,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-namespace LarpManager\Form;
+namespace LarpManager\Form\Participant;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Doctrine\ORM\EntityRepository;
 
 /**
- * LarpManager\Form\PersonnageOriginForm
+ * LarpManager\Form\Participant\ParticipantGroupeForm
  *
  * @author kevin
  *
  */
-class PersonnageOriginForm extends AbstractType
+class ParticipantGroupeForm extends AbstractType
 {
 	/**
 	 * Construction du formulaire
@@ -40,38 +40,44 @@ class PersonnageOriginForm extends AbstractType
 	 */
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
-		$builder->add('territoire','entity', array(
-					'required' => true,
-					'label' => 'Votre origine',
-					'class' => 'LarpManager\Entities\Territoire',
-					'property' => 'nom',
-					'query_builder' => function(\LarpManager\Repository\TerritoireRepository $er) {
-						$qb = $er->createQueryBuilder('t');
-						$qb->andWhere('t.territoire IS NULL');
-						$qb->orderBy('t.nom', 'ASC');
-						return $qb;
-					}
-				));
+		$builder->add('groupeGn','entity', array(
+				'label' => 'Choisissez le groupe a affecter à cet utilisateur',
+				'multiple' => false,
+				'expanded' => true,
+				'required' => true,
+				'class' => 'LarpManager\Entities\GroupeGn',
+				'property' => 'groupe.nom',
+				'query_builder' => function(EntityRepository $er) use ($options) {
+					$qb = $er->createQueryBuilder('gg');
+					$qb->join('gg.groupe', 'g');
+					$qb->join('gg.gn', 'gn');
+					$qb->orderBy('g.nom', 'ASC');
+					$qb->where('gn.id = :gnId');
+					$qb->setParameter('gnId', $options['gnId']);
+					return $qb;
+				}
+		));
 	}
-	
+
 
 	/**
 	 * Définition de l'entité concerné
 	 *
-	 * @param OptionsResolver $resolver
+	 * @param OptionsResolverInterface $resolver
 	 */
-	public function configureOptions(OptionsResolver $resolver)
+	public function setDefaultOptions(OptionsResolverInterface $resolver)
 	{
 		$resolver->setDefaults(array(
-				'data_class' => 'LarpManager\Entities\Personnage',
-		));
+		 	'class' => 'LarpManager\Entities\Participant',
+			'gnId' => null,
+		 ));
 	}
-	
+
 	/**
 	 * Nom du formulaire
 	 */
 	public function getName()
 	{
-		return 'personnageOrigin';
+		return 'participantGroupe';
 	}
-}
+} 

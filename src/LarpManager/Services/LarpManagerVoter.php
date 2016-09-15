@@ -165,12 +165,16 @@ class LarpManagerVoter implements VoterInterface
 				break;
 			case 'CULTE' :
 				return $this->userCulteRight($topic->getObjectId(), $user, $token);
+				break;
 			case 'ORGA' :
 				return $this->hasRole($token, 'ROLE_ORGA') ? true: false;
+				break;
 			case 'SCENARISTE' :
 				return $this->hasRole($token, 'ROLE_SCENARISTE') ? true: false;
+				break;
 			default :
 				return true;
+				break;
 		}
 	}
 	
@@ -247,12 +251,8 @@ class LarpManagerVoter implements VoterInterface
 	{
 		if ($this->hasRole($token, 'ROLE_SCENARISTE')) return true;
 		
-		foreach ( $user->getGns() as $gn )
-		{
-			if ( $gn->getId() == $gnId) return true;
-		}
-
-		return false;
+		// TODO
+		return true;
 	}
 	
 	/**
@@ -268,9 +268,10 @@ class LarpManagerVoter implements VoterInterface
 		
 		foreach ( $user->getParticipants() as $participant)
 		{
-			if ( $participant->getGroupe() )
+			if ( $participant->getGroupeGn() )
 			{
-				if ( $participant->getGroupe()->getId() == $groupeId ) return true;
+				$groupe = $participant->getGroupeGn()->getGroupe();
+				if ( $groupe->getId() == $groupeId ) return true;
 			}
 		}
 		return false;
@@ -288,9 +289,9 @@ class LarpManagerVoter implements VoterInterface
 		
 		foreach ( $user->getParticipants() as $participant)
 		{
-			if ( $participant->getGroupe() )
+			if ( $participant->getGroupeGn() )
 			{
-				$groupe = $participant->getGroupe();
+				$groupe = $participant->getGroupeGn()->getGroupe();
 				foreach ($groupe->getTerritoires() as $territoire)
 				{
 					if ( $territoire->getId() == $territoireId)
@@ -346,24 +347,27 @@ class LarpManagerVoter implements VoterInterface
 	{
 		foreach ( $user->getParticipants() as $participant)
 		{
-			$groupe = $participant->getGroupe();
-			
-			if ( $groupe->getTerritoires() )
+			$groupeGn = $participant->getGroupeGn();
+			if ( $groupeGn )
 			{
-				foreach ($groupe->getTerritoires() as $territoire)
+				$groupe = $groupeGn->getGroupe();
+				if ( $groupe->getTerritoires() )
 				{
-						
-					if ( $territoire->getId() == $territoireId)
+					foreach ($groupe->getTerritoires() as $territoire)
 					{
-						return true;
-					}
-					else if ( $territoire->getTerritoire() )
-					{
-						foreach ( $territoire->getAncestors() as $ancestor )
+							
+						if ( $territoire->getId() == $territoireId)
 						{
-							if ( $ancestor->getId() == $territoireId )
+							return true;
+						}
+						else if ( $territoire->getTerritoire() )
+						{
+							foreach ( $territoire->getAncestors() as $ancestor )
 							{
-								return true;
+								if ( $ancestor->getId() == $territoireId )
+								{
+									return true;
+								}
 							}
 						}
 					}
@@ -422,9 +426,9 @@ class LarpManagerVoter implements VoterInterface
 	{
 		foreach ( $user->getParticipants() as $participant )
 		{
-			foreach ( $participant->getGroupeGns() as $session )
+			if ( $participant->getGroupeGn() )
 			{
-				if ( $session->getId() == $groupeGnId ) return true;				
+				if ( $participant->getGroupeGn()->getId() == $groupeGnId ) return true;				
 			}
 		}
 		return false;
@@ -440,7 +444,15 @@ class LarpManagerVoter implements VoterInterface
 	{
 		foreach ( $user->getParticipants() as $participant )
 		{
-			if ( $participant->getGroupe() && $participant->getGroupe()->getId() == $groupeId)	return true;
+			if ( $participant->getGroupeGn() )
+			{
+				$groupe = $participant->getGroupeGn()->getGroupe();
+				if ( $groupe()->getId() == $groupeId)
+				{
+					return true;
+				}
+			}
+			
 		}				
 		return false;
 	}
@@ -513,18 +525,22 @@ class LarpManagerVoter implements VoterInterface
 	 */
 	protected function isMemberOfTerritoire(User $user, $territoireId)
 	{
-		if ( $user->getPersonnage() )
+		foreach ( $user->getParticipants() as $participant )
 		{
-			$groupe = $user->getPersonnage()->getGroupe();
-			if ( $user->getPersonnage()->getGroupe() )
+			if ( $participant->getPersonnage() )
 			{
-				foreach ( $groupe->getTerritoire() as $territoire )
+				$groupeGn = $participant->getGroupeGn();
+				if ( $groupeGn->getGroupe() )
 				{
-					if ( $territoire->getId() == $territoireId ) return true;
-				}
-			}
-			
+					$groupe = $groupeGn->getGroupe();
+					foreach ( $groupe->getTerritoire() as $territoire )
+					{
+						if ( $territoire->getId() == $territoireId ) return true;
+					}
+				}	
+			}	
 		}
+		
 		return false;
 	}
 	

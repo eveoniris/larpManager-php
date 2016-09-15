@@ -5,8 +5,16 @@
 		<ul class="list-group">
 			<li class="list-group-item">Vous êtes responsable de ce groupe.</li>
 			<li class="list-group-item">Le code du groupe est : <strong>{{ groupe.code }}</strong>.</li>
+			<li class="list-group-item">Ce groupe peux accueillir <strong>{{ groupe.placeTotal|default(0) }}</strong> joueurs. {{ groupeGn.participants|length }} joueurs sont déjà inscrits.</li>
 			<li class="list-group-item">Vous recherchez {{ groupeGn.placeAvailable|default(0) }} joueur(s) supplémentaire(s).
 				<a href="{{ path('groupeGn.placeAvailable', {'groupeGn': groupeGn.id}) }}"><i class="fa fa-pencil"></i></a>
+			</li>
+			<li class="list-group-item">
+				{% if groupe.lock %}
+					Le groupe est verroullié, cela signifie que la création et la modification de personnage sont désactivés.
+				{% else %}
+					Le groupe est ouvert. Les joueurs peuvent créer et modifier leur personnage.
+				{% endif %}
 			</li>
 		</ul>
 	</blockquote>	
@@ -54,6 +62,38 @@
 		{% endif %}
 	
 {% endfor %}
+
+		<div class="header">
+			<h5>Economie</h5>
+		</div>
+
+		<strong>Richesse : </strong>
+		<ul>
+		    {% for territoire in groupe.territoires %}   				
+				<li><strong>{{ territoire.tresor|default(0) }} PA</strong> fourni par <strong>{{ territoire.nom }}</strong></li>
+		    {% endfor %}
+	    </ul>
+	    				
+	    <strong>Ressources : </strong>
+	    <ul>
+			{% for territoire in groupe.territoires %}
+		    	{% for ressource in territoire.exportations %}
+			    	<li><strong>{{ ressource.label }}</strong> fourni par <strong>{{ territoire.nom }}</strong></li>
+	    		{% endfor %}
+	    	{% endfor %}
+	    </ul>
+	    				
+	    <strong>Ingrédients : </strong>
+	    {% if groupe.ingredients|length == 0 %}
+	    	Aucun ingrédient n'est fourni par les territoires contrôlés par ce groupe
+	    {% endif %}
+	    <ul>
+			{% for territoire in groupe.territoires %}
+		    	{% for ingredient in territoire.ingredients %}
+		    		<li><strong>{{ ingredient.label }}</strong> fourni par <strong>{{ territoire.nom }}</strong></li>
+			    {% endfor %}
+		   	{% endfor %}
+		</ul>
 						
 		<div class="header">
 			<h5>Vos alliés</h5>
@@ -154,7 +194,7 @@
 						{% endif %}
 					</div>
 					<div class="col-md-4">
-						{% if app.user.isResponsable(groupe) %}<a href="{{ path('groupe.requestPeace', {'groupe': groupe.id, 'enemy': ennemi.id}) }}">Proposer de faire la paix</a>{% endif %}
+						{% if participant.isResponsable(groupe) %}<a href="{{ path('groupe.requestPeace', {'groupe': groupe.id, 'enemy': ennemi.id}) }}">Proposer de faire la paix</a>{% endif %}
 					</div>
 				</div>
 			</li>	

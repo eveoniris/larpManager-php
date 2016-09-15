@@ -1,0 +1,16 @@
+<div class="header">
+	<h5>Les ages</h5>
+</div>
+
+<blockquote>
+	Plus vous choisissez un personnage agé, et plus vous recevez de points d'expériences. Mais attention ! les personnages vieillissent de 5 ans entre chaque jeu et peuvent mourir de vieillesse. 
+</blockquote>
+<div class="list-group">
+	{% for age in ages %}
+		<div class="list-group-item">
+			<div class="list-group-item-heading"><h6>{{ age.label }}</h6></div>
+			<div class="list-group-item-text">{{ age.description|markdown }}</div>
+			<div class="list-group-item-text"><strong>{{ age.bonus|default(0) }}</strong> points d'expérience supplémentaire</div>
+		</div>
+	{% endfor %}
+</div>

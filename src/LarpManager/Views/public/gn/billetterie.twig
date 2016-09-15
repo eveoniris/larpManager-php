@@ -32,7 +32,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					{% for groupeGn in gn.groupeGns %}
+					{% for groupeGn in groupeGns %}
 						{% set oldGroupeGn = groupeGn.groupe.groupeGnById(1) %}
 						<tr>
 							<td>{{ groupeGn.groupe.numero }}</td>

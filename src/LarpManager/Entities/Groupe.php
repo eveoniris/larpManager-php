@@ -145,6 +145,11 @@ class Groupe extends BaseGroupe
 		return html_entity_decode(strip_tags($this->getMateriel()));
 	}
 	
+	/**
+	 * Fourni la liste des ressources necessaires à un groupe
+	 * 
+	 * @param unknown $rarete
+	 */
 	public function getRessourcesNeeded($rarete = null)
 	{
 		$ressources = new ArrayCollection();
@@ -475,6 +480,15 @@ class Groupe extends BaseGroupe
 	}
 	
 	/**
+	 * Fourni le nombre de place disponible pour un groupe
+	 * en fonction des territoires qu'il controle
+	 */
+	public function getPlaceTotal()
+	{
+		return 10 + ( 2 *  count($this->getTerritoires()));
+	}
+	
+	/**
 	 * Vérifie si le groupe dispose de suffisement de place disponible
 	 * 
 	 * @return boolean
@@ -498,12 +512,13 @@ class Groupe extends BaseGroupe
 	 * 
 	 * @return Collection LarpManager\Entities\Classe
 	 */
-	public function getAvailableClasses()
+	public function getAvailableClasses(Gn $gn)
 	{		
+		$groupeGn = $this->getGroupeGn($gn);
 		$groupeClasses = $this->getGroupeClasses();
 		$base = clone $groupeClasses;
 		
-		foreach ( $this->getPersonnages() as $personnage)
+		foreach ( $groupeGn->getPersonnages() as $personnage)
 		{
 			$id = $personnage->getClasse()->getId();
 			
@@ -526,29 +541,6 @@ class Groupe extends BaseGroupe
 
 		return $availableClasses;	
 	}			
-	
-	/**
-	 * Get User entity related by `responsable_id` (many to one).
-	 *
-	 * @return \LarpManager\Entities\User
-	 */
-	public function getResponsable()
-	{
-		return $this->getUserRelatedByResponsableId();
-	}
-	
-	/**
-	 * Set User entity related by `responsable_id` (many to one).
-	 * Le responsable est aussi membre du groupe
-	 *
-	 * @param \LarpManager\Entities\User $user
-	 * @return \LarpManager\Entities\Groupe
-	 */
-	public function setResponsable($user)
-	{
-		if ( $user) $user->addGroupeRelatedByResponsableId($this);
-		return $this->setUserRelatedByResponsableId($user);
-	}
 	
 	/**
 	 * Get User entity related by `scenariste_id` (many to one).
