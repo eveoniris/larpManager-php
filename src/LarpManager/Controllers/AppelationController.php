@@ -42,7 +42,7 @@ class AppelationController
 		$appelations = $app['orm.em']->getRepository('\LarpManager\Entities\Appelation')->findAll();
 		$appelations = $app['larp.manager']->sortAppelation($appelations);
 		
-		return $app['twig']->render('appelation/index.twig', array('appelations' => $appelations));
+		return $app['twig']->render('admin/appelation/index.twig', array('appelations' => $appelations));
 	}
 	
 	/**

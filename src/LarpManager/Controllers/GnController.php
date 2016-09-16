@@ -332,7 +332,7 @@ class GnController
 	 */
 	public function groupesAction(Request $request, Application $app, Gn $gn)
 	{
-		$groupeGns = $gn->getGroupeGns();
+		$groupeGns = $gn->getGroupeGnsPj();
 		$iterator = $groupeGns->getIterator();
 		$iterator->uasort(function ($a, $b) {
 			return ($a->getGroupe()->getNumero() < $b->getGroupe()->getNumero()) ? -1 : 1;

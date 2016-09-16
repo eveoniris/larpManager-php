@@ -8,13 +8,14 @@
 		<li><a href="{{ path('homepage') }}">Accueil</a></li>
 		<li><a href="{{ path("groupe.admin.list") }}">Liste des groupes</a></li>
 		<li><a href="{{ path("groupe.detail", {'index': groupe.id}) }}">{{ groupe.nom }}</a></li>
-		<li class="active">Lier le groupe à un pays</li>
+		<li class="active">Envelope</li>
 	</ol>
 	
 	<div class="well well-sm">
-		<form action="{{ path('groupe.pays',{'groupe': groupe.id}) }}" method="POST">
+		<form action="{{ path('groupe.envelope',{'groupe': groupe.id}) }}" method="POST" {{ form_enctype(form) }} novalidate>
 			{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
-			{{ form(form) }}
+			{{ form(form) }}			
+			
 		</form>
 	</div>
 {% endblock %}

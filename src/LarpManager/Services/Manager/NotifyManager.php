@@ -59,7 +59,7 @@ class NotifyManager
 		$notification = new Notification();
 		$notification->setText('Vous avez reçu un coeur de '.$userTo->getUserName());
 		$notification->setUser($userFrom);
-		$notification->setUrl($this->app['url_generator']->generate('user.view', array('id' => $userTo->getId())));
+		$notification->setUrl($this->app['url_generator']->generate('user.view', array('id' => $userTo->getId()), true));
 		
 		$this->app['orm.em']->persist($notification);
 		$this->app['orm.em']->flush();
@@ -78,12 +78,12 @@ class NotifyManager
 		$notification = new Notification();
 		$notification->setText('Vous avez reçu un nouveau message de '.$message->getUserRelatedByAuteur()->getUserName());
 		$notification->setUser($user);
-		$notification->setUrl($this->app['url_generator']->generate('messagerie'));
+		$notification->setUrl($this->app['url_generator']->generate('messagerie'),array(), true);
 		
 		$this->app['orm.em']->persist($notification);
 		$this->app['orm.em']->flush();
 
-		$url = $this->app['url_generator']->generate('homepage');
+		$url = $this->app['url_generator']->generate('homepage', array(), true);
 		
 		$this->sendMessage(
 				'user/email/newMessage.twig', 
@@ -106,13 +106,13 @@ class NotifyManager
 		$notification = new Notification();
 		$notification->setText('Vous avez reçu un nouveau billet : '.$billet->getGn()->getLabel().' '.$billet->getLabel());
 		$notification->setUser($user);
-		$notification->setUrl($this->app['url_generator']->generate('user.gn.detail', array('gn' => $billet->getGn()->getId())));
+		$notification->setUrl($this->app['url_generator']->generate('user.gn.detail', array('gn' => $billet->getGn()->getId()), true));
 		
 		
 		$this->app['orm.em']->persist($notification);
 		$this->app['orm.em']->flush();
 		
-		$url = $this->app['url_generator']->generate('homepage');
+		$url = $this->app['url_generator']->generate('homepage', array(), true);
 		
 		$this->sendMessage(
 				'user/email/newBillet.twig',
@@ -135,12 +135,12 @@ class NotifyManager
 		$notification = new Notification();
 		$notification->setText('Vous avez été désigné responsable du groupe : '.$groupeGn->getGroupe()->getNom());
 		$notification->setUser($user);
-		$notification->setUrl($this->app['url_generator']->generate('groupeGn.groupe', array('groupeGn' => $groupeGn->getId())));
+		$notification->setUrl($this->app['url_generator']->generate('groupeGn.groupe', array('groupeGn' => $groupeGn->getId()), true));
 				
 		$this->app['orm.em']->persist($notification);
 		$this->app['orm.em']->flush();
 		
-		$url = $this->app['url_generator']->generate('homepage');
+		$url = $this->app['url_generator']->generate('homepage', array(), true);
 		
 		$this->sendMessage(
 				'user/email/newResponsable.twig',
@@ -163,13 +163,13 @@ class NotifyManager
 		$notification = new Notification();
 		$notification->setText('Vous avez été ajouté au groupe : '.$groupeGn->getGroupe()->getNom());
 		$notification->setUser($user);
-		$notification->setUrl($this->app['url_generator']->generate('groupeGn.groupe', array('groupeGn' => $groupeGn->getId())));
+		$notification->setUrl($this->app['url_generator']->generate('groupeGn.groupe', array('groupeGn' => $groupeGn->getId()), true));
 	
 		$this->app['orm.em']->persist($notification);
 		$this->app['orm.em']->flush();
 	
-		$url = $this->app['url_generator']->generate('homepage');
-	
+		$url = $this->app['url_generator']->generate('homepage', array(), true);
+		
 		$this->sendMessage(
 				'user/email/newMembre.twig',
 				array(
@@ -194,13 +194,13 @@ class NotifyManager
 		$notificationChef = new Notification();
 		$notificationChef->setText($participant->getUser() . ' a rejoint le groupe '.$groupeGn->getGroupe()->getNom());
 		$notificationChef->setUser($chef);
-		$notification->setUrl($this->app['url_generator']->generate('groupeGn.groupe', array('groupeGn' => $groupeGn->getId())));
+		$notification->setUrl($this->app['url_generator']->generate('groupeGn.groupe', array('groupeGn' => $groupeGn->getId()), true));
 		$this->app['orm.em']->persist($notificationChef);
 		
 		$notificationScenariste = new Notification();
 		$notificationScenariste->setText($participant->getUser() . ' a rejoint le groupe '.$groupeGn->getGroupe()->getNom());
 		$notificationScenariste->setUser($scenariste);
-		$notification->setUrl($this->app['url_generator']->generate('groupeGn.groupe', array('groupeGn' => $groupeGn->getId())));
+		$notification->setUrl($this->app['url_generator']->generate('groupeGn.groupe', array('groupeGn' => $groupeGn->getId()), true));
 		$this->app['orm.em']->persist($notificationScenariste);
 		
 		$this->app['orm.em']->flush();

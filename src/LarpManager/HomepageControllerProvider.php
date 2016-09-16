@@ -90,22 +90,22 @@ class HomepageControllerProvider implements ControllerProviderInterface
 					->before($mustBeUser);
 					
 		/** Affichage de la cartographie du monde de conan */
-		$controllers->match('/world','LarpManager\Controllers\ParticipantController::worldAction')
+		$controllers->match('/world','LarpManager\Controllers\HomepageController::worldAction')
 					->method('GET')
 					->bind('world');
 					
 		/** Affichage de la cartographie du monde de conan */
-		$controllers->match('/world/countries.json','LarpManager\Controllers\ParticipantController::countriesAction')
+		$controllers->match('/world/countries.json','LarpManager\Controllers\HomepageController::countriesAction')
 					->method('GET')
 					->bind('world.countries.json');
 						
 		/** Affichage de la cartographie du monde de conan */
-		$controllers->match('/world/regions.json','LarpManager\Controllers\ParticipantController::regionsAction')
+		$controllers->match('/world/regions.json','LarpManager\Controllers\HomepageController::regionsAction')
 					->method('GET')
 					->bind('world.regions.json');
 					
 		/** Affichage de la cartographie du monde de conan */
-		$controllers->match('/world/fiefs.json','LarpManager\Controllers\ParticipantController::fiefsAction')
+		$controllers->match('/world/fiefs.json','LarpManager\Controllers\HomepageController::fiefsAction')
 					->method('GET')
 					->bind('world.fiefs.json');
 											

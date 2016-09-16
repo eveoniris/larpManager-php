@@ -9,9 +9,9 @@
 <ul class="list-group">
 	<li class="list-group-item">
 		{% if paginator.totalItems == 1 %}
-			<strong>1</strong> utilisateur trouvé.
+			<strong>1</strong> personnage trouvé.
 		{% else %}
-			<strong>{{ paginator.totalItems }}</strong> utilisateurs trouvés.
+			<strong>{{ paginator.totalItems }}</strong> personnages trouvés.
 		{% endif %}
 		
 		Montre <strong>{{ paginator.currentPageFirstItem }} - {{ paginator.currentPageLastItem }}</strong>.
@@ -26,18 +26,19 @@
 
 
 <div class="rows clearfix">
-	{% for user in users %}
+	{% for personnage in personnages %}
 		<div class="col-sm-4 col-md-3">
 			<div class="thumbnail">
 				<div style="width:160px;height:200px;" class="center-block">
-					{% if user.trombineUrl %}
-						<img width="160" height="200" src="{{ path('trombine.get', {'trombine' : user.trombineUrl }) }}" />
+					{% if personnage.trombineUrl %}
+						<img width="160" height="200" src="{{ path('personnage.trombine', {'personnage' : personnage.id }) }}" />
 					{% else %}
 						<img width="160" height="200" src="{{ app.request.basepath }}/img/no_trombine.png" />
 					{% endif %}
 				</div>
 				<div class="caption">
 					<h5>
+					{% set user = personnage.user %}
 					{% if user.etatCivil %}
 						<p>{{ user.etatCivil.nom }} {{ user.etatCivil.prenom }}</p>
 					{% else %}
@@ -50,19 +51,7 @@
 						<li class="list-group-item"><strong>Création du compte : </strong>{{ user.creationDate|date('Y-m-d') }}</li>
 						<li class="list-group-item">
 							<strong>Personnage : </strong><br />
-							{% if user.participant and user.participant.personnage %}
-								<a href="{{ path('personnage.admin.detail', {'personnage': user.participant.personnage.id}) }}">{{ user.participant.personnage.publicName }}</a>
-							{% else %}
-								<span class="text-warning">Pas de personnage</span>
-							{% endif %}	
-						</li>
-						<li class="list-group-item">
-							<strong>Groupe : </strong><br />
-							{% if user.participant and user.participant.groupe %}
-								<a href="{{ path('groupe.detail', {'index': user.participant.groupe.id}) }}">{{ user.participant.groupe.nom }}</a>
-							{% else %}
-								<span class="text-warning">Pas de groupe</span>
-							{% endif %}
+							<a href="{{ path('personnage.admin.detail', {'personnage': personnage.id}) }}">{{ personnage.publicName }}</a>	
 						</li>
 					</ul>
 				</div>

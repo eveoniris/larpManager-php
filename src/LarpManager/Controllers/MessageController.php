@@ -93,7 +93,7 @@ class MessageController
 			$message = $form->getData();
 				
 			// ajout de la signature
-			$personnage = $app['user']->getPersonnageRelatedByPersonnageId();
+			$personnage = $app['user']->getPersonnage();
 			if ( $personnage )
 			{
 				$text = $message->getText();

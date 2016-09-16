@@ -206,39 +206,17 @@ class UserController
 	public function gnParticipeAction(Application $app, Request $request, Gn $gn)
 	{
 		$form = $app['form.factory']->createBuilder()
-			->add('oldParticipant','entity', array(
-					'label' => 'Si vous êtes un ancien joueur, selectionnez le personnage avec lequel vous voulez participer',
-					'class' => 'LarpManager\Entities\Participant',
-					'property' => 'personnage',
-					'multiple' => false,
-					'expanded' => true,
-					'query_builder' => function(ParticipantRepository $er) use ($app) {
-						return $er->createQueryBuilder('p')
-							->join('p.user','u')
-							->where('u.id = :userId')
-							->setParameter('userId',$app['user']->getId());
-					},
-			))
 			->getForm();
 		
 		$form->handleRequest($request);
 		
 		if ( $form->isValid() )
 		{
-			$data = $form->getData();
-			$oldParticipant = $data['oldParticipant'];
 			
 			$participant = new Participant();
 			$participant->setUser($app['user']);
 			$participant->setGn($gn);
-			
-			if ($oldParticipant)
-			{
-				$participant->setGroupe($oldParticipant->getGroupe());
-				$participant->setPersonnage($oldParticipant->getPersonnage());
-				$participant->setPersonnageSecondaire($oldParticipant->getPersonnageSecondaire());
-			}
-			
+						
 			$app['orm.em']->persist($participant);
 			$app['orm.em']->flush();
 			

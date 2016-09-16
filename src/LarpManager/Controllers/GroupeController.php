@@ -30,6 +30,7 @@ use LarpManager\Form\Groupe\GroupeForm;
 use LarpManager\Form\Groupe\GroupeDescriptionForm;
 use LarpManager\Form\Groupe\GroupeScenaristeForm;
 use LarpManager\Form\Groupe\GroupeCompositionForm;
+use LarpManager\Form\Groupe\GroupeEnvelopeForm;
 
 use LarpManager\Form\GroupFindForm;
 use LarpManager\Form\BackgroundForm;
@@ -343,8 +344,25 @@ class GroupeController
 	 */
 	public function envelopeAction(Request $request, Application $app, Groupe $groupe)
 	{
+		$form = $app['form.factory']->createBuilder(new GroupeEnvelopeForm(), $groupe)
+			->add('submit','submit', array('label' => 'Enregistrer'))
+			->getForm();
+		
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$groupe = $form->getData();
+			$app['orm.em']->persist($groupe);
+			$app['orm.em']->flush();
+			
+			$app['session']->getFlashBag()->add('success', 'Le groupe a été sauvegardé.');
+			return $app->redirect($app['url_generator']->generate('groupe.detail', array('index' => $groupe->getId())));
+		}
+		
 		return $app['twig']->render('admin/groupe/envelope.twig', array(
 				'groupe' => $groupe,
+				'form' => $form->createView(),
 		));
 	}
 	

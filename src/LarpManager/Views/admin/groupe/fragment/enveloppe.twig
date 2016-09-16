@@ -11,4 +11,5 @@
 <h6><i class="fa fa-circle"></i> Objets de jeu</h6>
 
 {{ groupe.materiel|markdown }}
-		
+
+<a href="{{ path('groupe.envelope', {'groupe':groupe.id}) }}"><strong>Modifier le contenu</strong></a>

@@ -40,15 +40,15 @@ class TrombinoscopeController
 	 */
 	public function indexAction(Request $request, Application $app)
 	{				
-		$order_by = $request->get('order_by') ?: 'username';
+		$order_by = $request->get('order_by') ?: 'nom';
 		$order_dir = $request->get('order_dir') == 'DESC' ? 'DESC' : 'ASC';
 		$limit = (int)($request->get('limit') ?: 16);
 		$page = (int)($request->get('page') ?: 1);
 		$offset = ($page - 1) * $limit;
 		$criteria = array();
 		
-		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\User');
-		$users = $repo->findList(
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Personnage');
+		$personnages = $repo->findList(
 				$criteria,
 				array( 'by' =>  $order_by, 'dir' => $order_dir),
 				$limit,
@@ -61,7 +61,7 @@ class TrombinoscopeController
 				);
 					
 		return $app['twig']->render('admin/trombinoscope.twig', array(
-				'users' => $users,
+				'personnages' => $personnages,
 				'paginator' => $paginator,
 		));
 	}
