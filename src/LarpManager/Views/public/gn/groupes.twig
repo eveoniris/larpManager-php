@@ -24,7 +24,12 @@
 			{% for session in groupeGns %}
 				<div class="list-group-item">
 					<div class="list-group-item-heading">
-						<h5>#{{ session.groupe.numero }} - {{ session.groupe.nom }}</h5>
+						<h5>
+							#{{ session.groupe.numero }} - {{ session.groupe.nom }}
+							{% if session.groupe.territoire %}
+									&nbsp;<small>({{ session.groupe.territoire.nom }})</small>
+							{% endif %}
+						</h5>
 					</div>
 					<div class="list-group-item-text">{{ session.groupe.description|markdown }}</div>
 					<div class="list-group-item-text">
@@ -42,7 +47,7 @@
 						{% else %}
 							<span class="text-danger">
 						{% endif %}
-							Places disponibles : {{ session.placeAvailable|default(0) }}
+							joueurs/euses recherché-e-s : {{ session.placeAvailable|default(0) }} (mis à jour par le chef de groupe)
 						</span>
 						
 					</div>

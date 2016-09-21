@@ -104,7 +104,8 @@ class ForumControllerProvider implements ControllerProviderInterface
 		});			
 
 		/** Ajout d'un post */
-		$controllers->match('/post/add','LarpManager\Controllers\ForumController::postAddAction')
+		$controllers->match('/{index}/post/add','LarpManager\Controllers\ForumController::postAddAction')
+			->assert('index', '\d+')
 			->bind("forum.post.add")
 			->method('GET|POST')
 			->before(function(Request $request) use ($app) {

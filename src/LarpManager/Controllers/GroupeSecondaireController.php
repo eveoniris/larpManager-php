@@ -68,7 +68,7 @@ class GroupeSecondaireController
 		$numResults = $repo->findCount($criteria);
 		
 		$paginator = new Paginator($numResults, $limit, $page,
-				$app['url_generator']->generate('groupeSecondaire.list') . '?page=(:num)&limit=' . $limit . '&order_by=' . $order_by . '&order_dir=' . $order_dir
+				$app['url_generator']->generate('groupeSecondaire.admin.list') . '?page=(:num)&limit=' . $limit . '&order_by=' . $order_by . '&order_dir=' . $order_dir
 				);
 		
 		return $app['twig']->render('admin/groupeSecondaire/list.twig', array(

@@ -75,6 +75,7 @@ class BackgroundControllerProvider implements ControllerProviderInterface
 		 */
 		$controllers->match('/{background}/update','LarpManager\Controllers\BackgroundController::updateAction')
 			->bind("background.update")
+			->assert('background', '\d+')
 			->convert('background', 'converter.background:convert')
 			->method('GET|POST')
 			->before($mustBeScenariste);
@@ -84,6 +85,7 @@ class BackgroundControllerProvider implements ControllerProviderInterface
 		 */
 		$controllers->match('/{background}/detail','LarpManager\Controllers\BackgroundController::detailAction')
 			->bind("background.detail")
+			->assert('background', '\d+')
 			->convert('background', 'converter.background:convert')
 			->method('GET')
 			->before($mustBeScenariste);
@@ -93,6 +95,7 @@ class BackgroundControllerProvider implements ControllerProviderInterface
 		 */
 		$controllers->match('/{background}/delete','LarpManager\Controllers\BackgroundController::deleteAction')
 			->bind("background.delete")
+			->assert('background', '\d+')
 			->convert('background', 'converter.background:convert')
 			->method('GET|POST')
 			->before($mustBeScenariste);

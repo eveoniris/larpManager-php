@@ -150,7 +150,7 @@ class ForumController
 			$post->addWatchingUser($app['user']);
 			
 			// ajout de la signature
-			$personnage = $app['user']->getPersonnageRelatedByPersonnageId();
+			$personnage = $app['user']->getPersonnage();
 			if ( $personnage )
 			{
 				$text = $post->getText();

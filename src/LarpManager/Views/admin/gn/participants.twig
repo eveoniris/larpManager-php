@@ -90,7 +90,7 @@
 					</td>
 					<td>
 						{% if participant.groupeGn %}
-							{{ participant.groupeGn.groupe }}
+							<a href="{{ path('groupe.detail', {'index': participant.groupeGn.groupe.id}) }}">{{ participant.groupeGn.groupe }}</a>
 						{% else %}
 							<span class="text-danger">Aucun groupe</span>
 						{% endif %}

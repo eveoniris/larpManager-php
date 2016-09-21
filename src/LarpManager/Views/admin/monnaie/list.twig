@@ -1,0 +1,48 @@
+{% extends "layout.twig" %}
+
+{% block title %}Monnaie{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li class="active">Liste des monnaies</li>
+		
+	</ol>
+	
+	<div class="well well-sm">
+		<div class="btn-toolbar" role="toolbar" aria-label="...">
+			<div class="btn-group" role="group" aria-label="...">
+				<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Ajouter une monnaie" href="{{ path('monnaie.add') }}"><i class="fa fa-plus"></i></a>
+			</div>
+		</div>
+	</div>	
+	
+	<table class="table table-condensed table-striped table-bordered">
+		<thead>
+			<tr>
+				<th>Label</th>
+				<th>Description</th>
+				<th />
+			</tr>
+		</thead>
+		<tbody>
+			{% for monnaie in monnaies %}
+			<tr>
+				<td>{{ monnaie.label }}</td>
+				<td>{{ monnaie.description|markdown }}</td>
+				<td>
+					<div class="btn-toolbar pull-right" role="toolbar" aria-label="...">
+						<div class="btn-group" role="group" aria-label="...">
+							<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Modifier" href="{{ path('monnaie.update',{'monnaie':monnaie.id}) }}"><i class="fa fa-pencil"></i></a>
+							<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Détail" href="{{ path('monnaie.detail',{'monnaie':monnaie.id}) }}"><i class="fa fa-eye"></i></a>
+							<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Supprimer" href="{{ path('monnaie.delete',{'monnaie':monnaie.id}) }}"><i class="fa fa-eraser"></i></a>
+						</div>
+					</div>
+				</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	
+{% endblock %}

@@ -501,9 +501,9 @@ class Groupe extends BaseGroupe
 	/**
 	 * Vérifie si le groupe dispose de suffisement de classe disponible
 	 */
-	public function hasEnoughClasse()
+	public function hasEnoughClasse($gn)
 	{
-		return  ( count($this->getAvailableClasses()) > 0 );
+		return  ( count($this->getAvailableClasses($gn)) > 0 );
 	}
 	
 	/**

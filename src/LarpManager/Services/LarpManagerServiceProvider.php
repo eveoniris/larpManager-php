@@ -53,6 +53,7 @@ use LarpManager\Services\Converter\IngredientConverter;
 use LarpManager\Services\Converter\LieuConverter;
 use LarpManager\Services\Converter\MembreConverter;
 use LarpManager\Services\Converter\MessageConverter;
+use LarpManager\Services\Converter\MonnaieConverter;
 use LarpManager\Services\Converter\NotificationConverter;
 use LarpManager\Services\Converter\ParticipantConverter;
 use LarpManager\Services\Converter\PersonnageBackgroundConverter;
@@ -226,6 +227,11 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 		// message converter
 		$app['converter.message'] = $app->share(function($app) {
 			return new MessageConverter($app['orm.em']);
+		});
+		
+			// message converter
+		$app['converter.monnaie'] = $app->share(function($app) {
+			return new MonnaieConverter($app['orm.em']);
 		});
 					
 		// enemy converter

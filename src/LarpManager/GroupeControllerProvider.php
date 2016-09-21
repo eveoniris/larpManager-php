@@ -269,7 +269,7 @@ class GroupeControllerProvider implements ControllerProviderInterface
 			->assert('index', '\d+')
 			->bind("groupe.detail")
 			->method('GET')
-			->before($mustBeMember);			
+			->before($mustBeScenariste);			
 		
 		/**
 		 *  Ajout d'un groupe (Scénariste uniquement)

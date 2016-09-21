@@ -225,6 +225,80 @@ class ParticipantController
 	}
 	
 	/**
+	 * Reprendre un ancien personnage
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Participant $participant
+	 */
+	public function personnageOldAction(Request $request, Application $app, Participant $participant)
+	{
+		$groupeGn = $participant->getGroupeGn();
+		
+		if ( ! $groupeGn )
+		{
+			$app['session']->getFlashBag()->add('error','Désolé, vous devez rejoindre un groupe avant de pouvoir créer votre personnage.');
+			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+		}
+		
+		if ( ! $participant->getBillet() )
+		{
+			$app['session']->getFlashBag()->add('error','Désolé, vous devez avoir un billet avant de pouvoir créer votre personnage.');
+			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+		}
+		
+		if ( $groupeGn->getGroupe()->getLock() == true)
+		{
+			$app['session']->getFlashBag()->add('error','Désolé, ce groupe est fermé. La création de personnage est temporairement désactivé.');
+			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+		}
+		
+		if ( $participant->getPersonnage() )
+		{
+			$app['session']->getFlashBag()->add('error','Désolé, vous disposez déjà d\'un personnage.');
+			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+		}
+		
+		$groupe = $groupeGn->getGroupe();
+		$gn = $groupeGn->getGn();
+		
+		if (  ! $groupe->hasEnoughClasse($gn) )
+		{
+			$app['session']->getFlashBag()->add('error','Désolé, ce groupe ne contient plus de classes disponibles');
+			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+		}
+		
+		$form = $app['form.factory']->createBuilder()
+			->add('personnage','entity', array(
+					'label' =>  'Choisissez votre personnage',
+					'property' => 'nom',
+					'class' => 'LarpManager\Entities\Personnage',
+					'choices' => array_unique($participant->getUser()->getPersonnages()->toArray()),
+			))
+			->add('save','submit', array('label' => 'Valider'))
+			->getForm();
+			
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
+		{
+			$data = $form->getData();
+			$participant->setPersonnage($data['personnage']);
+			$app['orm.em']->persist($participant);
+			$app['orm.em']->flush();
+			
+			$app['session']->getFlashBag()->add('success','Votre personnage a été sauvegardé.');
+			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+		}
+		
+		return $app['twig']->render('public/participant/personnage_old.twig', array(
+				'form' => $form->createView(),
+				'groupe' => $groupe,
+				'participant' => $participant,
+		));
+	}
+	
+	/**
 	 * Création d'un nouveau personnage. L'utilisateur doit être dans un groupe et son billet doit être valide
 	 *
 	 * @param Request $request
@@ -257,6 +331,8 @@ class ParticipantController
 			$app['session']->getFlashBag()->add('error','Désolé, vous disposez déjà d\'un personnage.');
 			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
 		}
+		
+		$groupe = $groupeGn->getGroupe();
 		
 		if (  ! $groupe->hasEnoughClasse() )
 		{

@@ -24,7 +24,7 @@ use Silex\Application;
 use Silex\ControllerProviderInterface;
 
 /**
- * LarpManager\BackgroundControllerProvider
+ * LarpManager\BilletControllerProvider
  *
  * @author kevin
  *
@@ -60,6 +60,7 @@ class BilletControllerProvider implements ControllerProviderInterface
 		 */
 		$controllers->match('/{billet}/update','LarpManager\Controllers\BilletController::updateAction')
 			->bind("billet.update")
+			->assert('billet', '\d+')
 			->convert('billet', 'converter.billet:convert')
 			->method('GET|POST');
 
@@ -68,6 +69,7 @@ class BilletControllerProvider implements ControllerProviderInterface
 		 */
 		$controllers->match('/{billet}/detail','LarpManager\Controllers\BilletController::detailAction')
 			->bind("billet.detail")
+			->assert('billet', '\d+')
 			->convert('billet', 'converter.billet:convert')
 			->method('GET');
 			
@@ -76,6 +78,7 @@ class BilletControllerProvider implements ControllerProviderInterface
 		 */
 		$controllers->match('/{billet}/delete','LarpManager\Controllers\BilletController::deleteAction')
 			->bind("billet.delete")
+			->assert('billet', '\d+')
 			->convert('billet', 'converter.billet:convert')
 			->method('GET|POST');
 			
@@ -84,6 +87,7 @@ class BilletControllerProvider implements ControllerProviderInterface
 		 */
 		$controllers->match('/{billet}/participants','LarpManager\Controllers\BilletController::participantsAction')
 			->bind("billet.participants")
+			->assert('billet', '\d+')
 			->convert('billet', 'converter.billet:convert')
 			->method('GET');
 			

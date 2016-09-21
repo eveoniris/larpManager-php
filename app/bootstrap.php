@@ -216,7 +216,7 @@ else
 			   }),
 		),
 		'secured_area' => array(	// le reste necessite d'être connecté
-			'pattern' => '^/[annonce|restriction|rule|message|notification|statistique|billet|etatCivil|restauration|stock|droit|forum|groupe|gn|groupeGn|personnage|territoire|appelation|langue|ressource|religion|age|genre|level|competence|competenceFamily]/.*$',
+			'pattern' => '^/[annonce|restriction|monnaie|rule|message|notification|statistique|billet|etatCivil|restauration|stock|droit|forum|groupe|gn|groupeGn|personnage|territoire|appelation|langue|ressource|religion|age|genre|level|competence|competenceFamily]/.*$',
 			'anonymous' => false,
 			'remember_me' => array(),
 			'form' => array(
@@ -284,6 +284,7 @@ else
 	$app->mount('/billet', new LarpManager\BilletControllerProvider());
 	$app->mount('/etatCivil', new LarpManager\EtatCivilControllerProvider());
 	$app->mount('/rule', new LarpManager\RuleControllerProvider());
+	$app->mount('/monnaie', new LarpManager\MonnaieControllerProvider());
 		
 
 	/**
@@ -342,6 +343,7 @@ else
 		array('^/statistique/.*$', 'ROLE_SCENARISTE'),
 		array('^/document/.*$', 'ROLE_SCENARISTE'),
 		array('^/lieu/.*$', 'ROLE_SCENARISTE'),
+		array('^/monnaie/.*$', 'ROLE_SCENARISTE'),
 		array('^/competenceFamily/.*$', 'ROLE_REGLE'),
 		array('^/level/.*$', 'ROLE_REGLE'),
 		array('^/token/.*$', 'ROLE_REGLE'),

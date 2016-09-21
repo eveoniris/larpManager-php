@@ -509,6 +509,11 @@ class GroupeController
 					'property' => 'nomComplet',
 					'label' => 'choisissez le territoire',
 					'expanded' => true,
+					'query_builder' => function (\LarpManager\Repository\TerritoireRepository $er) {
+						$qb = $er->createQueryBuilder('t');
+						$qb->orderBy('t.nom', 'ASC');
+						return $qb;
+					}
 			))
 			->add('add','submit', array('label' => 'Ajouter le territoire'))->getForm();
 			

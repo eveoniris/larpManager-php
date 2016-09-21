@@ -15,13 +15,17 @@
 			Si vous voulez réserver un groupe, prennez une place "Réservation d'un groupe", et indiquez dans le formulaire le nom du groupe que vous voulez réserver. La place PJ du chef de groupe est comprise dans le tarif réservation de groupe.
 			Une fois votre paiement effectué, Eve-oniris recevra une notification et vous donnera les droits necessaire pour que vous puissiez administrer votre groupe.
 		</blockquote>
+		<blockquote>
+			Attention, le site HelloAsso qui nous permet de gérer les inscriptions en ligne va vous solliciter pour vous demander un don, en effet, sa prestation est gratuite et il compte sur la générosité des utilisateurs pour se rémunérer. Libre à vous d'accepter ou refuser, soyez-y simplement attentifs, il vous le proposera par défaut.
+			Votre inscription sera prise en compte du point de vue du paiement, mais une démarche humaine est nécessaire pour valider l'inscription sur larpmanager. Celle-ci sera effectuée dans les 3 jours maximum après le paiement.
+		</blockquote>
 	
 	
 	<div class="row">
-		<div class="col-md-6">	
+		<div class="col-md-7">
 			{{ gn.billetterie|raw }}
 		</div>
-		<div class="col-md-6">
+		<div class="col-md-5">
 			<table class="table table-stripped table-condensed">
 				<thead>
 					<tr>
@@ -29,6 +33,7 @@
 						<th>Groupe</th>
 						<th>Statut</th>
 						<th>Chef de groupe opus 2</th>
+						<th>Pays</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -41,12 +46,18 @@
 								{% if groupeGn.free %}<span class="text-success">Libre</span>{% else %}<span class="text-danger">Reservé</span>{% endif %}</td>
 							<td>
 								{%if oldGroupeGn %}
-									{{ oldGroupeGn.responsable.user.etatCivil }} - {{ oldGroupeGn.responsable.user.email }}
+									{{ oldGroupeGn.responsable.user.etatCivil.prenom }} - {{ oldGroupeGn.responsable.user.email }}
 								{% else %}
 									Nouveau groupe.
 								{% endif %}
 							</td>
-									
+							<td>
+								{% if groupeGn.groupe.territoire %}
+									{{ groupeGn.groupe.territoire.nom }}
+								{% else %}
+									Rataché à aucun pays.
+								{% endif %}
+							</td>		
 						</tr>
 					{% endfor %}
 				</tbody>

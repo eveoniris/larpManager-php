@@ -10,6 +10,7 @@
 namespace LarpManager\Entities;
 
 use LarpManager\Entities\BaseGroupeGn;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * LarpManager\Entities\GroupeGn

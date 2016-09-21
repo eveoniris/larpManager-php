@@ -32,7 +32,8 @@
     						{{ participant.personnage.nom }} {{ participant.personnage.surnom }}&nbsp;--&nbsp;{{ participant.personnage.classeName }}
     					</a>
 					{% else %}
-						<a href="{{ path('participant.personnage.new', {'participant': participant.id}) }}"><i class="fa fa-plus" aria-hidden="true"></i> Créer un personnage</a>
+						<a href="{{ path('participant.personnage.new', {'participant': participant.id}) }}"><i class="fa fa-plus" aria-hidden="true"></i> Créer un personnage</a>&nbsp;/&nbsp;
+						<a href="{{ path('participant.personnage.old', {'participant': participant.id}) }}"><i class="fa fa-plus" aria-hidden="true"></i> Reprendre un personnage</a>
 					{% endif %}
 				</li>
 
@@ -87,7 +88,10 @@
 			&nbsp;/&nbsp;{{ billet.label }} 
 		</li>
 	{% endfor %}
-	<li class="list-group-item"><a href=" {{ path('gn.billetterie', {'gn': participant.gn.id }) }}">Billetterie</a></li>
+	<li class="list-group-item">
+		<i class="fa fa-shopping-basket" aria-hidden="true"></i>&nbsp;
+		<a href=" {{ path('gn.billetterie', {'gn': participant.gn.id }) }}">Billetterie</a>
+	</li>
 </ul>
 
 

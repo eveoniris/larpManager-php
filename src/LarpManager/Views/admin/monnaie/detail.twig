@@ -1,0 +1,25 @@
+{% extends "layout.twig" %}
+
+{% block title %}Monnaie{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path('monnaie') }}">Liste des monnaies</a></li>
+		<li class="active">{{ monnaie.label }}</li>
+	</ol>
+	
+	
+		
+	<div class="well well-sm">
+		<h4>{{ monnaie.label }}</h4>
+		<div class="list-group">
+			<div class="list-group-item">
+				Description : {{ monnaie.description|markdown }}
+			</div>
+		</div>
+	</div>
+	
+	
+{% endblock %}

@@ -188,7 +188,16 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 			->bind("participant.personnage.new")
 			->method('GET|POST')
 			->before($mustOwnParticipant);
-		
+			
+		/**
+		 * Reprendre un personnage
+		 */
+		$controllers->match('/{participant}/personnage/old','LarpManager\Controllers\ParticipantController::personnageOldAction')
+			->assert('participant', '\d+')
+			->convert('participant', 'converter.participant:convert')
+			->bind("participant.personnage.old")
+			->method('GET|POST')
+			->before($mustOwnParticipant);		
 
 		/**
 		 * Affiche les background d'un utilisateur
