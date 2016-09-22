@@ -115,6 +115,15 @@ class GnControllerProvider implements ControllerProviderInterface
 			->before($mustBeAdmin);
 			
 		/**
+		 * Liste des groupes réservés
+		 */
+		$controllers->match('/{gn}/groupesReserves', 'LarpManager\Controllers\GnController::groupesReservesAction')
+			->assert('gn', '\d+')
+			->convert('gn', 'converter.gn:convert')
+			->bind("gn.groupesReserves")
+			->before($mustBeAdmin);
+			
+		/**
 		 * Modifier un gn
 		 */
 		$controllers->match('/{gn}/fedegn','LarpManager\Controllers\GnController::fedegnAction')

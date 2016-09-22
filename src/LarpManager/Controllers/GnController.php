@@ -351,4 +351,27 @@ class GnController
 				'participant' => $participant,
 		));
 	}
+	
+	/**
+	 * Liste des groupes réservés
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Participant $participant
+	 */
+	public function groupesReservesAction(Request $request, Application $app, Gn $gn)
+	{
+		$groupes = $gn->getGroupesReserves();
+		$iterator = $groupes->getIterator();
+		$iterator->uasort(function ($a, $b) {
+			return ($a->getNumero() < $b->getNumero()) ? -1 : 1;
+		});
+		
+		$groupes = new ArrayCollection(iterator_to_array($iterator));
+	
+		return $app['twig']->render('admin/gn/groupes.twig', array(
+			'groupes' => $groupes,
+			'gn' => $gn,
+		));
+	}
 }

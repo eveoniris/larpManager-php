@@ -1,0 +1,54 @@
+{% extends "layout.twig" %}
+
+{% block title %}Grandeur nature{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path("gn.list") }}">Liste des grandeur nature</a></li>
+		<li><a href="{{ path('gn.detail', {'gn':gn.id}) }}">{{ gn.label }}</a></li>
+		<li class="active">Liste des groupes réservés</li>
+	</ol>
+	
+	<div class="well well-sm">
+
+		<div class="header">
+			<h5>Liste des groupes réservés pour {{ gn.label }} ({{ groupes|length }})</h5>
+		</div>
+		
+		<table class="table table-condensed table-striped table-bordered">
+			<thead>
+				<tr>
+					<th>Groupe</th>
+					<th>Responsable</th>
+					<th>Scénariste</th>
+					<th />
+				</tr>
+			</thead>
+			<tbody>
+				{% for groupe in groupes %}
+					{% set groupeGn = groupe.groupeGn(gn) %}
+					<tr>
+						<td><a href="{{ path('groupe.detail', {'index': groupe.id}) }}">#{{groupe.numero}} {{ groupe.nom }}</a></td>
+						<td>
+							{% if groupeGn.responsable %}
+								{{ groupeGn.responsable.user.etatCivil }}
+							{% else %}
+								<span class="text-danger">Aucun responsable</span>
+							{% endif %}
+						</td>
+						<td>
+							{% if groupe.scenariste %}
+								{{ groupe.scenariste.etatCivil }}
+							{% else %}
+								<span class="text-danger">Aucun scénariste</span>
+							{% endif %}
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+	
+{% endblock content %}

@@ -73,6 +73,22 @@ class Gn extends BaseGn
 	}
 	
 	/**
+	 * Fourni la liste des groupes réservés sur le jeu
+	 */
+	public function getGroupesReserves()
+	{
+		$groupes = new ArrayCollection();
+	
+		foreach ($this->getGroupeGns() as $groupeGn)
+		{
+			if ( ! $groupeGn->getFree() )
+				$groupes[] = $groupeGn->getGroupe();
+		}
+	
+		return $groupes;
+	}
+	
+	/**
 	 * Fourni la liste des tous les participants pour la FédéGN
 	 */
 	public function getParticipantsFedeGn()
