@@ -1,0 +1,56 @@
+{% extends "layout.twig" %}
+
+{% block title %}Qualité{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li class="active">Liste des qualités</li>
+		
+	</ol>
+	
+	<div class="well well-sm">
+		<div class="btn-toolbar" role="toolbar" aria-label="...">
+			<div class="btn-group" role="group" aria-label="...">
+				<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Ajouter une qualité" href="{{ path('quality.add') }}"><i class="fa fa-plus"></i></a>
+			</div>
+		</div>
+	</div>	
+	
+	<table class="table table-condensed table-striped table-bordered">
+		<thead>
+			<tr>
+				<th>Label</th>
+				<th>Numéro</th>
+				<th>Valeur</th>
+				<th />
+			</tr>
+		</thead>
+		<tbody>
+			{% for quality in qualities %}
+			<tr>
+				<td>{{ quality.label }}</td>
+				<td>{{ quality.numero }}</td>
+				<td>
+					<ul>
+					{% for qualityValeur in quality.qualityValeurs %}
+						<li>{{ qualityValeur.nombre }} {{ qualityValeur.monnaie.label }}</li>
+					{% endfor %}
+					</ul>
+				</td>
+				<td>
+					<div class="btn-toolbar pull-right" role="toolbar" aria-label="...">
+						<div class="btn-group" role="group" aria-label="...">
+							<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Modifier" href="{{ path('quality.update',{'quality':quality.id}) }}"><i class="fa fa-pencil"></i></a>
+							<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Détail" href="{{ path('quality.detail',{'quality':quality.id}) }}"><i class="fa fa-eye"></i></a>
+							<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Supprimer" href="{{ path('quality.delete',{'quality':quality.id}) }}"><i class="fa fa-eraser"></i></a>
+						</div>
+					</div>
+				</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	
+{% endblock %}

@@ -50,7 +50,6 @@ class Groupe extends BaseGroupe
 	{		
 		$this->setClasseOpen(0);
 		$this->setLock(false);
-		$this->setFree(true);
 		parent::__construct();
 	}
 	

@@ -18,14 +18,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace LarpManager\Form;
+namespace LarpManager\Form\Classe;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * LarpManager\Form\ClasseForm
+ * LarpManager\Form\Classe\ClasseForm
  *
  * @author kevin
  *
@@ -54,11 +54,26 @@ class ClasseForm extends AbstractType
 					'label' => 'Adresse de l\'image utilisé pour représenté cette classe',
 					'required' => true,
 				))
+				->add('creation','choice', array(
+						'required' => true,
+						'expanded' => true,
+						'choices' => array(
+							true => 'Oui',
+							false => 'Non'
+						),
+						'label' => 'Disponible lors de la création d\'un nouveau personnage',
+						'attr' => array(
+							'help' => 'Choisissez si cette classe sera disponible ou pas lors de la création d\'un nouveau personnage',
+						)
+				))
 				->add('description','textarea', array(
-					'required' => false,)
-				)
+					'required' => false,
+					'attr' => array(
+						'class' => 'tinymce',			
+					),
+				))
 				->add('competenceFamilyFavorites','entity', array(
-					'label' => "Famille de compétences favorites (n'oubliez pas de cochez aussi la/les compétences acquises à la création)",
+					'label' => "Famille de compétences favorites (n'oubliez pas de cocher aussi la/les compétences acquises à la création)",
 					'required' => false,
 					'property' => 'label',
 					'multiple' => true,

@@ -1,0 +1,25 @@
+{% extends "layout.twig" %}
+
+{% block title %}Qualité{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path('quality') }}">Liste des qualité</a></li>
+		<li class="active">{{ quality.label }}</li>
+	</ol>
+	
+	
+		
+	<div class="well well-sm">
+		<h4>{{ quality.label }}</h4>
+		<div class="list-group">
+			<div class="list-group-item">
+				Numéro : {{ quality.numero }}
+			</div>
+		</div>
+	</div>
+	
+	
+{% endblock %}

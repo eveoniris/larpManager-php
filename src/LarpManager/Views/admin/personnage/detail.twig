@@ -48,8 +48,8 @@
 					</p>
 					<p class="list-group-item-text">
 						<strong>Joueur :</strong>
-							{% if personnage.participant %} 
-								<a href="{{path('user.view',{'id': personnage.participant.user.id}) }}"> {{ personnage.participant.user.etatCivil.nom }} {{ personnage.participant.user.etatCivil.prenom }}</a>
+							{% if personnage.user %} 
+								<a href="{{path('user.view',{'id': personnage.user.id}) }}"> {{ personnage.user.etatCivil.nom }} {{ personnage.user.etatCivil.prenom }}</a>
 							{% else %}
 								Ce personnage n'est pas lié à un joueur
 							{% endif %}

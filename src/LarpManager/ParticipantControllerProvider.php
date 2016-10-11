@@ -47,6 +47,7 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 	 *  - participant.groupeSecondaire.list
 	 *  - participant.groupeSecondaire.detail
 	 *  - participant.personnage
+	 *  - participant.personnage.remove
 	 *  - participant.priere.detail
 	 *  - participant.priere.document
 	 *  - participant.potion.detail
@@ -75,6 +76,15 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 		 */
 		$mustBeAdmin = function(Request $request) use ($app) {
 			if (!$app['security.authorization_checker']->isGranted('ROLE_ADMIN')) {
+				throw new AccessDeniedException();
+			}
+		};
+		
+		/**
+		 * Vérifie que l'utilisateur dispose du role SCENARISTE
+		 */
+		$mustBeScenariste = function(Request $request) use ($app) {
+			if (!$app['security.authorization_checker']->isGranted('ROLE_SCENARISTE')) {
 				throw new AccessDeniedException();
 			}
 		};
@@ -178,6 +188,18 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 			->bind('participant.personnageSecondaire')
 			->convert('participant', 'converter.participant:convert')
 			->before($mustOwnParticipant);
+		
+		/**
+		 * Retire un personnage à un participant
+		 */
+		$controllers->match('/{participant}/personnage/{personnage}/remove','LarpManager\Controllers\ParticipantController::personnageRemoveAction')
+			->assert('participant', '\d+')
+			->assert('personnage', '\d+')
+			->convert('participant', 'converter.participant:convert')
+			->convert('personnage', 'converter.personnage:convert')
+			->bind("participant.personnage.remove")
+			->method('GET|POST')
+			->before($mustBeScenariste);
 			
 		/**
 		 * Création d'un personnage

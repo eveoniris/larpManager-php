@@ -45,11 +45,11 @@ class AgeConverter
     }
 
     /**
-     * Fourni une alliance à partir de son identifiant
+     * Fourni un age à partir de son identifiant
      * 
      * @param unknown $id
      * @throws NotFoundHttpException
-     * @return LarpManager\Entities\GroupeEnemy
+     * @return LarpManager\Entities\Age
      */
     public function convert($id)
     {

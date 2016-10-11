@@ -42,21 +42,21 @@ class MonnaieControllerProvider implements ControllerProviderInterface
 		$controllers = $app['controllers_factory'];
 	
 		/**
-		 * Liste tous les billets
+		 * Liste toutes les monnaies
 		 */
 		$controllers->match('/','LarpManager\Controllers\MonnaieController::listAction')
 			->bind("monnaie")
 			->method('GET');
 			
 		/**
-		 * Ajoute un billet
+		 * Ajoute une monnaie
 		 */
 		$controllers->match('/add','LarpManager\Controllers\MonnaieController::addAction')
 			->bind("monnaie.add")
 			->method('GET|POST');
 			
 		/**
-		 * Ajoute un billet
+		 * Met à jour une monnaie
 		 */
 		$controllers->match('/{monnaie}/update','LarpManager\Controllers\MonnaieController::updateAction')
 			->bind("monnaie.update")

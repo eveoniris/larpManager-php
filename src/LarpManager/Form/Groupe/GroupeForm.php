@@ -63,19 +63,6 @@ class GroupeForm extends AbstractType
 							'row' => 9,
 						),
 				))
-				->add('territoires','entity', array(
-						'label' => 'Territoire',
-						'required' => false,
-						'multiple' => true,
-						'expanded' => false,
-						'class' => 'LarpManager\Entities\Territoire',
-						'query_builder' => function(EntityRepository $er) {
-							$qb = $er->createQueryBuilder('u');
-							$qb->orderBy('u.nom', 'ASC');
-							return $qb;
-						},
-						'property' => 'nom',
-				))
 				->add('scenariste','entity', array(
 						'label' => 'Scénariste',
 						'required' => false, 

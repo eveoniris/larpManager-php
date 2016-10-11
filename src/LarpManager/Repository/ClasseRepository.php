@@ -41,4 +41,16 @@ class ClasseRepository extends EntityRepository
 		
 		return $classes;
 	}
+	
+	/**
+	 * Trouve toutes les classes disponibles à la création d'un personnage
+	 */
+	public function findAllCreation()
+	{
+		$classes = $this->getEntityManager()
+			->createQuery('SELECT c FROM LarpManager\Entities\Classe c WHERE c.creation = true ORDER BY c.label_masculin ASC')
+			->getResult();
+		
+		return $classes;
+	}
 }

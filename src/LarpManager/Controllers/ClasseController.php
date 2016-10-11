@@ -22,7 +22,7 @@ namespace LarpManager\Controllers;
 
 use Symfony\Component\HttpFoundation\Request;
 use Silex\Application;
-use LarpManager\Form\ClasseForm;
+use LarpManager\Form\Classe\ClasseForm;
 
 /**
  * LarpManager\Controllers\ClasseController

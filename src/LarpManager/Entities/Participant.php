@@ -79,6 +79,15 @@ class Participant extends BaseParticipant
 		return $this;
 	}
 	
+	/**
+	 * Retire un personnage du participant
+	 */
+	public function setPersonnageNull()
+	{
+		$this->setPersonnage(null);
+		return $this;
+	}
+	
 	public function getUserIdentity()
 	{
 		return $this->getUser()->getDisplayName() .' '. $this->getUser()->getEmail();

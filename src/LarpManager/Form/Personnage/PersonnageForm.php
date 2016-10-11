@@ -73,6 +73,7 @@ class PersonnageForm extends AbstractType
 						'property' => 'label',
 						'query_builder' => function(\LarpManager\Repository\ClasseRepository $er) {
 							$qb = $er->createQueryBuilder('c');
+							$qb->where('c.creation is true');
 							$qb->orderBy('c.label_masculin', 'ASC');
 							return $qb;
 						}

@@ -27,22 +27,31 @@
 			<blockquote>
 				Lors de la création d'un personnage vous recevez {{ participant.gn.xpCreation }} points d'expériences qui vous serviront à obtenir des compétences.
 			</blockquote>
-			<div class="row">
-				<div class="col-md-6">
-					{{ include("public/age/fragment/info.twig", {'ages' : ages}) }}
-				</div>
-				<div class="col-md-6">
-					{{ include("public/classe/fragment/info.twig", {'classes' : classes}) }}
-				</div>
+			
+			<button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseAge" aria-expanded="false" aria-controls="collapseAge">
+  				Aide pour choisir l'age de votre personnage
+			</button>
+
+			<button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseClasse" aria-expanded="false" aria-controls="collapseClasse">
+  				Aide pour choisir la classe de votre personnage
+			</button>
+
+			<button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseOrigine" aria-expanded="false" aria-controls="collapseOrigine">
+  				Aide pour choisir l'origine de votre personnage
+			</button>
+
+			<div class="collapse" id="collapseAge">
+				{{ include("public/age/fragment/info.twig", {'ages' : ages}) }}
 			</div>
-			{{ include("public/territoire/fragment/info.twig", {'territoires' : territoires}) }}
+						
+			<div class="collapse" id="collapseClasse">
+				{{ include("public/classe/fragment/info.twig", {'classes' : classes}) }}
+			</div>
+						
+			<div class="collapse" id="collapseOrigine">
+				{{ include("public/territoire/fragment/info.twig", {'territoires' : territoires}) }}
+			</div>
 		</div>
 	</div>		
 </div>
 {% endblock content %}
-
-{% block javascript %}
-
-{{ parent() }}
-
-{%  endblock javascript %}

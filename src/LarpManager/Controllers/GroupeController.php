@@ -1627,14 +1627,6 @@ class GroupeController
 		$groupe = new \LarpManager\Entities\Groupe();
 		
 		$form = $app['form.factory']->createBuilder(new GroupeForm(), $groupe)
-			->add('responsable', 'entity', array(
-					'label' => 'Responsable',
-					'required' => false,
-					'property' => 'username',
-					'class' => 'LarpManager\Entities\User',
-					'choices' => $choices,
-					'empty_data'  => null,
-			))
 			->add('save','submit', array('label' => 'Sauvegarder et fermer'))
 			->add('save_continue','submit',array('label' => 'Sauvegarder et nouveau'))
 			->getForm();
@@ -1644,23 +1636,7 @@ class GroupeController
 		if ( $form->isValid() )
 		{
 			$groupe = $form->getData();
-			
-			/**
-			 * Pour toutes les classes du groupe
-			 */
-			foreach ( $groupe->getGroupeClasses() as $groupeClasses)
-			{
-				$groupeClasses->setGroupe($groupe);
-			}
-			
-			/**
-			 * Pour tous les gns du groupe
-			 */
-			foreach ( $groupe->getGns() as $gn )
-			{
-				$gn->addGroupe($groupe);
-			}
-			
+						
 			/**
 			 * Création des topics associés à ce groupe
 			 * un topic doit être créé par GN auquel ce groupe est inscrit

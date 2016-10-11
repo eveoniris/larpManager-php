@@ -44,6 +44,7 @@ use LarpManager\Form\Personnage\PersonnageOriginForm;
 
 use LarpManager\Entities\Participant;
 use LarpManager\Entities\ParticipantHasRestauration;
+use LarpManager\Entities\Personnage;
 use LarpManager\Entities\SecondaryGroup;
 use LarpManager\Entities\Priere;
 use LarpManager\Entities\Potion;
@@ -225,6 +226,43 @@ class ParticipantController
 	}
 	
 	/**
+	 * Retire un personnage à un participant
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Participant $participant
+	 * @param Personnage $personnage
+	 */
+	public function personnageRemoveAction(Request $request, Application $app, Participant $participant, Personnage $personnage)
+	{
+		$groupeGn = $participant->getGroupeGn();
+		$groupe = $groupeGn->getGroupe();
+		
+		$form = $app['form.factory']->createBuilder()
+			->add('save','submit', array('label' => 'Valider'))
+			->getForm();
+			
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
+		{
+			$participant->setPersonnageNull();
+			$app['orm.em']->persist($participant);
+			$app['orm.em']->flush();
+
+			$app['session']->getFlashBag()->add('success','Votre modification a été enregistrée');
+			return $app->redirect($app['url_generator']->generate('groupe.detail', array('index' => $groupe->getId())));
+		}
+		
+		return $app['twig']->render('admin/participant/personnage_remove.twig', array(
+				'form' => $form->createView(),
+				'groupe' => $groupe,
+				'participant' => $participant,
+				'personnage' => $personnage,
+		));
+	}
+	
+	/**
 	 * Reprendre un ancien personnage
 	 * 
 	 * @param Request $request
@@ -261,13 +299,7 @@ class ParticipantController
 		
 		$groupe = $groupeGn->getGroupe();
 		$gn = $groupeGn->getGn();
-		
-		if (  ! $groupe->hasEnoughClasse($gn) )
-		{
-			$app['session']->getFlashBag()->add('error','Désolé, ce groupe ne contient plus de classes disponibles');
-			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
-		}
-		
+				
 		$form = $app['form.factory']->createBuilder()
 			->add('personnage','entity', array(
 					'label' =>  'Choisissez votre personnage',
@@ -334,13 +366,14 @@ class ParticipantController
 		
 		$groupe = $groupeGn->getGroupe();
 		
-		if (  ! $groupe->hasEnoughClasse() )
+		/*if (  ! $groupe->hasEnoughClasse($groupeGn->getGn()) )
 		{
 			$app['session']->getFlashBag()->add('error','Désolé, ce groupe ne contient plus de classes disponibles');
 			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
-		}
+		}*/
 	
 		$personnage = new \LarpManager\Entities\Personnage();
+		$classes = $app['orm.em']->getRepository('\LarpManager\Entities\Classe')->findAllCreation();
 	
 		// j'ajoute içi certain champs du formulaires (les classes)
 		// car j'ai besoin des informations du groupe pour les alimenter
@@ -349,7 +382,7 @@ class ParticipantController
 				'label' =>  'Classes disponibles',
 				'property' => 'label',
 				'class' => 'LarpManager\Entities\Classe',
-				'choices' => array_unique($groupe->getAvailableClasses()),
+				'choices' => array_unique($classes),
 			))
 			->add('save','submit', array('label' => 'Valider mon personnage'))
 			->getForm();
@@ -360,7 +393,7 @@ class ParticipantController
 		{
 			$personnage = $form->getData();
 			
-			$personnage->setUserRelatedByUserId($app['user']);
+			$personnage->setUser($app['user']);
 			$participant->setPersonnage($personnage);
 	
 			// Ajout des points d'expérience gagné à la création d'un personnage
@@ -424,7 +457,7 @@ class ParticipantController
 		
 		return $app['twig']->render('public/participant/personnage_new.twig', array(
 				'form' => $form->createView(),
-				'classes' => array_unique($groupe->getAvailableClasses()),
+				'classes' => array_unique($classes),
 				'groupe' => $groupe,
 				'participant' => $participant,
 				'ages' => $ages,

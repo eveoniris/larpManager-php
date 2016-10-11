@@ -1,0 +1,107 @@
+{% extends "layout.twig" %}
+
+{% block title %}Qualité{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path('quality') }}">Liste des qualités</a></li>
+		<li class="active">Mise à jour d'une qualité</li>
+	</ol>
+	
+	<div class="well well-sm">
+		<form class="form-inline" data-toggle="validator" action="{{ path('quality.update', {'quality': quality.id}) }}" method="POST" {{ form_enctype(form) }}  novalidate>
+			<fieldset>
+				<legend>Mise à jour d'une qualité</legend>
+				{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+				
+				{{ form_label(form.label) }}
+				{{ form_widget(form.label) }}
+				
+				{{ form_label(form.numero) }}
+				{{ form_widget(form.numero) }}
+				
+				<ul class="list-group qualityValeurs" data-prototype="{{ form_widget(form.qualityValeurs.vars.prototype)|e }}">
+					{% for qualityValeur in form.qualityValeurs %}
+				    	<li class="list-group-item">
+				    		<div class="form-group">
+								<div class="input-group">
+									{{ form_widget(qualityValeur.monnaie) }}
+								</div>
+								<div class="input-group">
+									{{ form_widget(qualityValeur.nombre) }}
+								</div>
+
+							</div>
+						</li>
+					{% endfor %}
+				</ul>
+				{{ form_rest(form) }}
+			</fieldset>
+		</form>
+	</div>
+	
+{% endblock %}
+
+{% block javascript %}
+<script>
+
+		function addQualityValeurForm(collectionHolder, $newLinkLi) {
+		    // Récupère l'élément ayant l'attribut data-prototype comme expliqué plus tôt
+		    var prototype = collectionHolder.attr('data-prototype');
+
+		    // Remplace '__name__' dans le HTML du prototype par un nombre basé sur
+		    // la longueur de la collection courante
+		    var newForm = prototype.replace(/__name__/g, collectionHolder.children().length);
+	
+		    // Affiche le formulaire dans la page dans un li, avant le lien "ajouter un tag"
+		    var $newFormLi = $('<li class="list-group-item"></li>').append(newForm);
+		    $newLinkLi.before($newFormLi);
+
+			 // ajoute un lien de suppression au nouveau formulaire
+		    addQualityValeurFormDeleteLink($newFormLi);
+		}
+
+		function addQualityValeurFormDeleteLink($qualityValeurFormLi) {
+		    var $removeFormA = $('<div class="input-group-btn"><a class="btn btn-default" href="#"><i class="fa fa-remove" aria-hidden="true"></i></a></div>');
+		    $('input',$qualityValeurFormLi).after($removeFormA);
+
+		    $removeFormA.on('click', function(e) {
+		        // empêche le lien de créer un « # » dans l'URL
+		        e.preventDefault();
+
+		        // supprime l'élément li pour le formulaire de tag
+		        $qualityValeurFormLi.remove();
+		    });
+		}
+		
+		// Récupère le div qui contient la collection de tags
+		var collectionHolder = $('ul.qualityValeurs');
+		
+		// ajoute un lien « add a tag »
+		var $addQualityValeurLink = $('<a href="#" class="add_qualityValeur_link">Ajouter une valeur</a>');
+		var $newLinkLi = $('<li class="list-group-item"></li>').append($addQualityValeurLink);
+		
+		jQuery(document).ready(function() {
+
+			// ajoute un lien de suppression à tous les éléments li de
+		    // formulaires de tag existants
+		    collectionHolder.find('li').each(function() {
+		        addQualityValeurFormDeleteLink($(this));
+		    });
+		    
+		    // ajoute l'ancre « ajouter un tag » et li à la balise ul
+		    collectionHolder.append($newLinkLi);
+		
+		    $addQualityValeurLink.on('click', function(e) {
+		        // empêche le lien de créer un « # » dans l'URL
+		        e.preventDefault();
+		
+		        // ajoute un nouveau formulaire tag (voir le prochain bloc de code)
+		        addQualityValeurForm(collectionHolder, $newLinkLi);
+		    });
+		});
+		
+</script>
+{% endblock javascript %}

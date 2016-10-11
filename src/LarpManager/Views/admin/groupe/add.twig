@@ -24,7 +24,6 @@
 							{{ form_row(form.nom) }}
 							{{ form_row(form.pj) }}
 							{{ form_row(form.description) }}
-							{{ form_row(form.territoires) }}
 						</div>
 					</div>
 
@@ -35,58 +34,8 @@
 						<div class="panel-body">
 							{{ form_row(form.numero) }}
 							{{ form_row(form.scenariste) }}
-							{{ form_row(form.materiel) }}
 						</div>
 					</div>
-
-					<div class="panel panel-default">
-						<div class="panel-heading">
-							<h6>Chef du groupe</h6>
-						</div>
-						<div class="panel-body">
-							<p>Vous devez choisir au moins un responsable du groupe. C'est ce joueur qui aura la charge d'inviter les autres membres du groupe en leur communiquant le code défini ci-dessous.</p>
-						</div>
-						<ul class="list-group">
-							<li class="list-group-item">
-								{{ form_row(form.responsable) }}
-							</li>
-							<li class="list-group-item">
-								{{ form_row(form.code) }}
-								<a href="#">Envoyer un mail avec le code au responsable</a>
-							</li>
-						</ul>
-					</div>
-
-					<div class="panel panel-default">
-						<div class="panel-heading">
-							<h6>Type de jeu</h6>
-						</div>
-						<div class="panel-body">
-							{{ form_row(form.jeuStrategique) }}
-							{{ form_row(form.jeuMaritime) }}
-						</div>
-					</div>
-
-					<div class="panel panel-default">
-						<div class="panel-heading">
-							<h6>Composition du groupe</h6>
-						</div>
-						<div class="panel-body">
-							<p>Composez votre groupe avec une ou plusieurs classes. Ces classes seront disponibles pour les joueurs.</p>
-						</div>
-						<ul class="list-group groupeClasses" data-prototype="{{ form_widget(form.groupeClasses.vars.prototype)|e }}">
-					    	{% for groupeClasse in form.groupeClasses %}
-					           	<li class="list-group-item">{{ form_widget(groupeClasse.classe) }}</li>
-					       	{% endfor %}
-						</ul>
-					</div>
-
-					<div class="panel panel-default">
-						<div class="panel-body">
-							{{ form_row(form.gns) }}
-						</div>
-					</div>
-					
 			
 			{{ form_rest(form) }}
 		</fieldset>

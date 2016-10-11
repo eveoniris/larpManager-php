@@ -114,6 +114,7 @@ class RestrictionController
 		if ( $form->isValid() )
 		{
 			$restriction = $form->getData();
+			$restriction->setAuteur($app['user']);
 				
 			$app['orm.em']->persist($restriction);
 			$app['orm.em']->flush();

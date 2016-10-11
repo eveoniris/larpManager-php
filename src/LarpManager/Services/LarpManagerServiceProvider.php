@@ -66,6 +66,7 @@ use LarpManager\Services\Converter\PersonnageTriggerConverter;
 use LarpManager\Services\Converter\PostulantConverter;
 use LarpManager\Services\Converter\PotionConverter;
 use LarpManager\Services\Converter\PriereConverter;
+use LarpManager\Services\Converter\QualityConverter;
 use LarpManager\Services\Converter\ReligionConverter;
 use LarpManager\Services\Converter\RestaurationConverter;
 use LarpManager\Services\Converter\RestrictionConverter;
@@ -287,6 +288,11 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 		// priere converter
 		$app['converter.priere'] = $app->share(function($app) {
 			return new PriereConverter($app['orm.em']);
+		});
+
+		// quality converter
+		$app['converter.quality'] = $app->share(function($app) {
+			return new QualityConverter($app['orm.em']);
 		});
 		
 		// titre converter
