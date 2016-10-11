@@ -1211,14 +1211,8 @@ class ParticipantController
 			// envoi d'un mail au chef du groupe secondaire
 			if ( $groupeSecondaire->getResponsable() )
 			{
-				$message = "Nouvelle candidature";
-				$message = \Swift_Message::newInstance()
-				->setSubject('[LarpManager] Nouvelle candidature')
-				->setFrom(array('noreply@eveoniris.com'))
-				->setTo(array($groupeSecondaire->getResponsable()->getParticipant()->getUser()->getEmail()))
-				->setBody($message);
-					
-				$app['mailer']->send($message);
+				// envoyer une notification au responsable
+				$app['notify']->joinGroupeSecondaire($groupeSecondaire->getResponsable(), $groupeSecondaire);
 			}
 				
 			$app['session']->getFlashBag()->add('success', 'Votre candidature a été enregistrée, et transmise au chef de groupe.');

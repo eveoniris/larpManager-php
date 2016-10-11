@@ -207,6 +207,17 @@ class NotifyManager
 	}
 	
 	/**
+	 * Demande d'un joueur pour rejoindre un groupe secondaire
+	 * 
+	 * @param unknown $responsable
+	 */
+	public function joinGroupeSecondaire($responsable, $groupeSecondaire)
+	{			
+		$url = $this->app['url_generator']->generate('homepage', array(), true);
+		$this->sendMessage('user/email/newCandidature.twig',array('groupeSecondaire' => $groupeSecondaire, 'url' => $url), array('noreply@eveoniris.com'), array($responsable->getUser()->getEmail()));
+	}
+	
+	/**
 	 * Envoi du message
 	 * 
 	 * @param unknown $templateName
