@@ -1721,6 +1721,12 @@ class ParticipantController
 					case 3:
 						$personnage->addRenomme(2);
 						break;
+					case 4:
+						$personnage->addRenomme(5);
+						break;
+					case 5:
+						$personnage->addRenomme(6);
+						break;
 				}
 			}
 				
