@@ -390,29 +390,7 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 			->method('GET|POST')
 			->convert('personnage', 'converter.personnage:convert')
 			->before($mustOwn);			
-						
-		/**
-		 * Formulaire d'ajout des langues gagnés grace à litterature initie
-		 * Accessible uniquement au proprietaire du personnage
-		 */
-		$controllers->match('/{personnage}/litterature/initie','LarpManager\Controllers\PersonnageController::litteratureInitieAction')
-			->assert('personnage', '\d+')
-			->bind("personnage.litterature.initie")
-			->method('GET|POST')
-			->convert('personnage', 'converter.personnage:convert')
-			->before($mustOwn);
-		
-		/**
-		 * Formulaire d'ajout des langues gagné grace à litterature expert
-		 * Accessible uniquement au proprietaire du personnage
-		 */
-		$controllers->match('/{personnage}/litterature/expert','LarpManager\Controllers\PersonnageController::litteratureExpertAction')
-			->assert('personnage', '\d+')
-			->bind("personnage.litterature.expert")
-			->method('GET|POST')
-			->convert('personnage', 'converter.personnage:convert')
-			->before($mustOwn);
-			
+									
 		/**
 		 * Retire la dernière compétence acquise par un personnage
 		 * Accessible uniquement aux orgas

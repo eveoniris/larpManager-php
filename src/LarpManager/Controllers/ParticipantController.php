@@ -1041,6 +1041,139 @@ class ParticipantController
 		));
 	}
 	
+	/**
+	 * Choix d'une nouvelle langue courante
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Participant $participant
+	 */
+	public function langueCouranteAction(Request $request, Application $app, Participant $participant)
+	{
+		$personnage = $participant->getPersonnage();
+		
+		if ( ! $personnage )
+		{
+			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créer un personnage !');
+			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+		}
+	
+		if ( ! $personnage->hasTrigger('LANGUE COURANTE') )
+		{
+			$app['session']->getFlashBag()->add('error','Désolé, vous ne pouvez pas choisir de langue courante supplémentaire.');
+			return $app->redirect($app['url_generator']->generate('participant.personnage', array('participant' => $participant->getId())),301);
+		}
+		
+		$availableLangues = $app['personnage.manager']->getAvailableLangues($personnage, 1);
+			
+		$form = $app['form.factory']->createBuilder()
+			->add('langue','entity', array(
+					'required' => true,
+					'label' => 'Choisissez votre nouvelle langue',
+					'multiple' => false,
+					'expanded' => true,
+					'class' => 'LarpManager\Entities\Langue',
+					'choices' => $availableLangues,
+					'choice_label' => 'fullDescription'
+			))
+			->add('save','submit', array('label' => 'Valider votre nouvelle langue'))
+			->getForm();
+	
+		$form->handleRequest($request);
+	
+		if ( $form->isValid() )
+		{
+			$data = $form->getData();
+			$langue = $data['langue'];
+	
+			$personnageLangue = new \LarpManager\Entities\PersonnageLangues();
+			$personnageLangue->setPersonnage($personnage);
+			$personnageLangue->setLangue($langue);
+			$personnageLangue->setSource('LITTERATURE');
+			$app['orm.em']->persist($personnageLangue);
+	
+			$trigger = $personnage->getTrigger('LANGUE COURANTE');
+			$app['orm.em']->remove($trigger);
+					
+			$app['orm.em']->flush();
+	
+			$app['session']->getFlashBag()->add('success','Vos modifications ont été enregistrées.');
+			return $app->redirect($app['url_generator']->generate('participant.personnage', array('participant' => $participant->getId())),301);
+		}
+	
+		return $app['twig']->render('personnage/langueCourante.twig', array(
+				'form' => $form->createView(),
+				'personnage' => $personnage,
+				'participant' => $participant,
+		));
+	}
+	
+	/**
+	 * Choix d'une nouvelle langue ancienne
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Participant $participant
+	 */
+	public function langueAncienneAction(Request $request, Application $app, Participant $participant)
+	{
+		$personnage = $participant->getPersonnage();
+	
+		if ( ! $personnage )
+		{
+			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créer un personnage !');
+			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+		}
+	
+		if ( ! $personnage->hasTrigger('LANGUE ANCIENNE') )
+		{
+			$app['session']->getFlashBag()->add('error','Désolé, vous ne pouvez pas choisir de langue ancienne supplémentaire.');
+			return $app->redirect($app['url_generator']->generate('participant.personnage', array('participant' => $participant->getId())),301);
+		}
+	
+		$availableLangues = $app['personnage.manager']->getAvailableLangues($personnage, 0);
+			
+		$form = $app['form.factory']->createBuilder()
+			->add('langue','entity', array(
+					'required' => true,
+					'label' => 'Choisissez votre nouvelle langue',
+					'multiple' => false,
+					'expanded' => true,
+					'class' => 'LarpManager\Entities\Langue',
+					'choices' => $availableLangues,
+					'choice_label' => 'fullDescription'
+			))
+			->add('save','submit', array('label' => 'Valider votre nouvelle langue'))
+			->getForm();
+	
+		$form->handleRequest($request);
+	
+		if ( $form->isValid() )
+		{
+			$data = $form->getData();
+			$langue = $data['langue'];
+	
+			$personnageLangue = new \LarpManager\Entities\PersonnageLangues();
+			$personnageLangue->setPersonnage($personnage);
+			$personnageLangue->setLangue($langue);
+			$personnageLangue->setSource('LITTERATURE');
+			$app['orm.em']->persist($personnageLangue);
+	
+			$trigger = $personnage->getTrigger('LANGUE ANCIENNE');
+			$app['orm.em']->remove($trigger);
+				
+			$app['orm.em']->flush();
+	
+			$app['session']->getFlashBag()->add('success','Vos modifications ont été enregistrées.');
+			return $app->redirect($app['url_generator']->generate('participant.personnage', array('participant' => $participant->getId())),301);
+		}
+	
+		return $app['twig']->render('personnage/langueAncienne.twig', array(
+				'form' => $form->createView(),
+				'personnage' => $personnage,
+				'participant' => $participant,
+		));
+	}
 	
 	/**
 	 * Detail d'un sort
@@ -1579,62 +1712,101 @@ class ParticipantController
 			{
 				switch ($competence->getLevel()->getId())
 				{
-					case 1: // le personnage obtient toutes les langues "très répandus"
-						$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Langue');
-						$langues = $repo->findAll();
-	
-						foreach ( $langues as $langue)
-						{
-							if ( $langue->getDiffusion() == 2 )
-							{
-								if ( ! $personnage->isKnownLanguage($langue) )
-								{
-									$personnageLangue = new \LarpManager\Entities\PersonnageLangues();
-									$personnageLangue->setPersonnage($personnage);
-									$personnageLangue->setLangue($langue);
-									$personnageLangue->setSource('LITTERATURE APPRENTI');
-										
-									$app['orm.em']->persist($personnageLangue);
-									$app['orm.em']->flush();
-								}
-							}
-						}
-						break;
-					case 2: // le personnage peux choisir trois languages supplémentaire (sauf parmi les anciens)
+					case 1: // 2 langues courantes supplémentaires de son choix
 						$trigger = new \LarpManager\Entities\PersonnageTrigger();
 						$trigger->setPersonnage($personnage);
-						$trigger->setTag('LITTERATURE INITIE');
+						$trigger->setTag('LANGUE COURANTE');
+						$trigger->setDone(false);
+						$app['orm.em']->persist($trigger);
+						$app['orm.em']->flush();
+						
+						$trigger = new \LarpManager\Entities\PersonnageTrigger();
+						$trigger->setPersonnage($personnage);
+						$trigger->setTag('LANGUE COURANTE');
+						$trigger->setDone(false);
+						$app['orm.em']->persist($trigger);
+						$app['orm.em']->flush();
+						
+						break;
+					case 2: //  Sait parler, lire et écrire trois autres langues vivantes de son choix.
+						$trigger = new \LarpManager\Entities\PersonnageTrigger();
+						$trigger->setPersonnage($personnage);
+						$trigger->setTag('LANGUE COURANTE');
+						$trigger->setDone(false);
+						$app['orm.em']->persist($trigger);
+						$app['orm.em']->flush();
+						
+						$trigger = new \LarpManager\Entities\PersonnageTrigger();
+						$trigger->setPersonnage($personnage);
+						$trigger->setTag('LANGUE COURANTE');
+						$trigger->setDone(false);
+						$app['orm.em']->persist($trigger);
+						$app['orm.em']->flush();
+						
+						$trigger = new \LarpManager\Entities\PersonnageTrigger();
+						$trigger->setPersonnage($personnage);
+						$trigger->setTag('LANGUE COURANTE');
 						$trigger->setDone(false);
 						$app['orm.em']->persist($trigger);
 						$app['orm.em']->flush();
 						break;
-					case 3: // le personnage peux choisir trois languages supplémentaire (dont un ancien)
+					case 3: // Sait parler, lire et écrire un langage ancien ainsi que trois autres langues vivantes de son choix.
 						$trigger = new \LarpManager\Entities\PersonnageTrigger();
 						$trigger->setPersonnage($personnage);
-						$trigger->setTag('LITTERATURE EXPERT');
+						$trigger->setTag('LANGUE COURANTE');
+						$trigger->setDone(false);
+						$app['orm.em']->persist($trigger);
+						$app['orm.em']->flush();
+						
+						$trigger = new \LarpManager\Entities\PersonnageTrigger();
+						$trigger->setPersonnage($personnage);
+						$trigger->setTag('LANGUE COURANTE');
+						$trigger->setDone(false);
+						$app['orm.em']->persist($trigger);
+						$app['orm.em']->flush();
+						
+						$trigger = new \LarpManager\Entities\PersonnageTrigger();
+						$trigger->setPersonnage($personnage);
+						$trigger->setTag('LANGUE COURANTE');
+						$trigger->setDone(false);
+						$app['orm.em']->persist($trigger);
+						$app['orm.em']->flush();
+						
+						$trigger = new \LarpManager\Entities\PersonnageTrigger();
+						$trigger->setPersonnage($personnage);
+						$trigger->setTag('LANGUE ANCIENNE');
 						$trigger->setDone(false);
 						$app['orm.em']->persist($trigger);
 						$app['orm.em']->flush();
 						break;
-					case 4: // le personnage obtient tous les languages courants
-						$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Langue');
-						$langues = $repo->findAll();
-	
-						foreach ( $langues as $langue)
-						{
-							if ( $langue->getDiffusion() > 0 )
-							{
-								if ( ! $personnage->isKnownLanguage($langue) )
-								{
-									$personnageLangue = new \LarpManager\Entities\PersonnageLangues();
-									$personnageLangue->setPersonnage($personnage);
-									$personnageLangue->setLangue($langue);
-									$personnageLangue->setSource('LITTERATURE MAITRE');
-	
-									$app['orm.em']->persist($personnageLangue);
-								}
-							}
-						}
+					case 4: // Sait parler, lire et écrire un autre langage ancien ainsi que trois autres langues vivantes de son choix
+						$trigger = new \LarpManager\Entities\PersonnageTrigger();
+						$trigger->setPersonnage($personnage);
+						$trigger->setTag('LANGUE COURANTE');
+						$trigger->setDone(false);
+						$app['orm.em']->persist($trigger);
+						$app['orm.em']->flush();
+						
+						$trigger = new \LarpManager\Entities\PersonnageTrigger();
+						$trigger->setPersonnage($personnage);
+						$trigger->setTag('LANGUE COURANTE');
+						$trigger->setDone(false);
+						$app['orm.em']->persist($trigger);
+						$app['orm.em']->flush();
+						
+						$trigger = new \LarpManager\Entities\PersonnageTrigger();
+						$trigger->setPersonnage($personnage);
+						$trigger->setTag('LANGUE COURANTE');
+						$trigger->setDone(false);
+						$app['orm.em']->persist($trigger);
+						$app['orm.em']->flush();
+						
+						$trigger = new \LarpManager\Entities\PersonnageTrigger();
+						$trigger->setPersonnage($personnage);
+						$trigger->setTag('LANGUE ANCIENNE');
+						$trigger->setDone(false);
+						$app['orm.em']->persist($trigger);
+						$app['orm.em']->flush();
 						break;
 				}
 			}

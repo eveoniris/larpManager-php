@@ -228,7 +228,7 @@ class PersonnageManager
 	
 		foreach ( $langues as $langue)
 		{
-			if ( $langue->getDiffusion() >= $diffusion
+			if ( $langue->getDiffusion() == $diffusion
 					&& ! $personnage->isKnownLanguage($langue) )
 			{
 				$availableLangues[] = $langue;

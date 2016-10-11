@@ -458,6 +458,28 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 			->method('GET|POST')
 			->convert('participant', 'converter.participant:convert')
 			->before($mustOwnParticipant);
+
+		/**
+		 * Formulaire d'ajout des langues gagnés grace à litterature initie
+		 * Accessible uniquement au proprietaire du personnage
+		 */
+		$controllers->match('/{participant}/personnage/langueCourante','LarpManager\Controllers\ParticipantController::langueCouranteAction')
+			->assert('participant', '\d+')
+			->bind("participant.personnage.langueCourante")
+			->method('GET|POST')
+			->convert('participant', 'converter.participant:convert')
+			->before($mustOwnParticipant);
+			
+		/**
+		 * Formulaire d'ajout des langues gagnés grace à litterature initie
+		 * Accessible uniquement au proprietaire du personnage
+		 */
+		$controllers->match('/{participant}/personnage/langueAncienne','LarpManager\Controllers\ParticipantController::langueAncienneAction')
+			->assert('participant', '\d+')
+			->bind("participant.personnage.langueAncienne")
+			->method('GET|POST')
+			->convert('participant', 'converter.participant:convert')
+			->before($mustOwnParticipant);
 			
 		/**
 		 * Liste des joueurs

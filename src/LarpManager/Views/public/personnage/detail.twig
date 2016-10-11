@@ -22,13 +22,37 @@
 				
 			</div>
 		</div>
-	</div>
-	
-	
+	</div>	
 		
 		<div class="row">
 			<div class="col-sm-6">
-				<div class="well well-sm">		
+				<div class="well well-sm">
+					{% if personnage.personnageTriggers|length > 0 %}
+						<blockquote>Vos compétences vous permettent de choisir des connaissances supplémentaires</blockquote>
+						<ul class="list-group">
+						{% for trigger in personnage.personnageTriggers %}
+							{% if trigger.tag == 'LANGUE COURANTE' %}
+								<li class="list-group-item"><a href="{{ path('participant.personnage.langueCourante', {'participant': participant.id}) }}">Choisir une langue courante supplémentaire</a></li>
+							{% endif %}
+							{% if trigger.tag == 'LANGUE ANCIENNE' %}
+								<li class="list-group-item"><a href="{{ path('participant.personnage.langueAncienne', {'participant': participant.id}) }}">Choisir une langue ancienne supplémentaire</a></li>
+							{% endif %}
+							{% if trigger.tag == 'ALCHIMIE APPRENTI' %}
+								<li class="list-group-item"><a href="{{ path('participant.personnage.potion', {'niveau' : 1, 'participant' : participant.id}) }}">Choisir une nouvelle potion de niveau apprenti</a></li>
+							{% endif %}
+							{% if trigger.tag == 'ALCHIMIE INITIE' %}
+								<li class="list-group-item"><a href="{{ path('participant.personnage.potion', {'niveau' : 2, 'participant' : participant.id}) }}">Choisir une nouvelle potion de niveau innitié</a></li>
+							{% endif %}
+							{% if trigger.tag == 'ALCHIMIE EXPERT' %}
+								<li class="list-group-item"><a href="{{ path('participant.personnage.potion', {'niveau' : 3, 'participant' : participant.id}) }}">Choisir une nouvelle potion de niveau expert</a></li>
+							{% endif %}
+							{% if trigger.tag == 'ALCHIMIE MAITRE' %}
+								<li class="list-group-item"><a href="{{ path('participant.personnage.potion', {'niveau' : 4, 'participant' : participant.id}) }}">Choisir une nouvelle potion de niveau maitre</a></li>
+							{% endif %}
+						{% endfor %}	
+						</ul>
+					{% endif %}
+						
 					{% include 'public/personnage/fragment/info.twig' with {'personnage': personnage} %}
 					{% include 'public/personnage/fragment/origine.twig' with {'personnage': personnage, 'participant': participant} %}
 					{% include 'public/personnage/fragment/pugilat.twig' with {'personnage': personnage} %}
@@ -44,7 +68,7 @@
 					{% include 'public/personnage/fragment/priere.twig' with {'personnage': personnage, 'participant': participant} %}
 					{% include 'public/personnage/fragment/alchimie.twig' with {'personnage': personnage, 'participant': participant} %}
 					{% include 'public/personnage/fragment/magie.twig' with {'personnage': personnage, 'participant': participant} %}
-					{% include 'public/personnage/fragment/language.twig' with {'personnage': personnage} %}
+					{% include 'public/personnage/fragment/language.twig' with {'personnage': personnage, 'participant': participant} %}
 				</div>
 			</div>
 			
