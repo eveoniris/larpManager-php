@@ -636,21 +636,21 @@ class ParticipantController
 	
 		// recherche les backgrounds liés au groupe (visibilité == PUBLIC)
 		$backsGroupe = new ArrayCollection(array_merge(
-			$participant->getGroupe()->getBacks('PUBLIC')->toArray(),
+			$participant->getGroupeGn()->getGroupe()->getBacks('PUBLIC')->toArray(),
 			$backsGroupe->toArray()
 		));
 	
 		// recherche les backgrounds liés au groupe (visibilité == GROUP_MEMBER)
 		$backsGroupe = new ArrayCollection(array_merge(
-			$participant->getGroupe()->getBacks('GROUPE_MEMBER')->toArray(),
+			$participant->getGroupeGn()->getGroupe()->getBacks('GROUPE_MEMBER')->toArray(),
 			$backsGroupe->toArray()
 		));
 	
 		// recherche les backgrounds liés au groupe (visibilité == GROUP_OWNER)
-		if ( $app['user'] == $participant->getGroupe()->getUserRelatedByResponsableId() )
+		if ( $app['user'] == $participant->getGroupeGn()->getGroupe()->getUserRelatedByResponsableId() )
 		{
 			$backsGroupe = new ArrayCollection(array_merge(
-					$participant->getGroupe()->getBacks('GROUPE_OWNER')->toArray(),
+					$participant->getGroupeGn()->getGroupe()->getBacks('GROUPE_OWNER')->toArray(),
 					$backsGroupe->toArray()
 					));
 		}
@@ -747,9 +747,8 @@ class ParticipantController
 			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créer un personnage avant de choisir une religion !');
 			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
 		}
-		
-	
-		if ( $participant->getGroupe()->getLock() == true)
+				
+		if ( $participant->getGroupeGn()->getGroupe()->getLock() == true)
 		{
 			$app['session']->getFlashBag()->add('error','Désolé, il n\'est plus possible de modifier ce personnage. Le groupe est verouillé. Contacter votre scénariste si vous pensez que cela est une erreur');
 			return $app->redirect($app['url_generator']->generate('participant.personnage', array('participant' => $participant->getId())),301);
@@ -952,6 +951,97 @@ class ParticipantController
 		return $app->sendFile($file);
 	}
 
+	/**
+	 * Choix d'une nouvelle potion
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function potionAction(Request $request, Application $app, Participant $participant)
+	{
+		$personnage = $participant->getPersonnage();
+		
+		if ( ! $personnage )
+		{
+			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créer un personnage !');
+			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+		}
+		
+		$niveau = $request->get('niveau');
+	
+		if ( ! $personnage->hasTrigger('ALCHIMIE APPRENTI')
+				&& ! $personnage->hasTrigger('ALCHIMIE INITIE')
+				&& ! $personnage->hasTrigger('ALCHIMIE EXPERT')
+				&& ! $personnage->hasTrigger('ALCHIMIE MAITRE') )
+		{
+			$app['session']->getFlashBag()->add('error','Désolé, vous ne pouvez pas choisir de potions supplémentaires.');
+			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+		}
+	
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Potion');
+		$potions = $repo->findByNiveau($niveau);
+	
+		$form = $app['form.factory']->createBuilder()
+		->add('potions','entity', array(
+				'required' => true,
+				'label' => 'Choisissez votre potion',
+				'multiple' => false,
+				'expanded' => true,
+				'class' => 'LarpManager\Entities\Potion',
+				'choices' => $potions,
+				'choice_label' => 'fullLabel'
+		))
+		->add('save','submit', array('label' => 'Valider votre potion'))
+		->getForm();
+	
+		$form->handleRequest($request);
+	
+		if ( $form->isValid() )
+		{
+			$data = $form->getData();
+			$potion = $data['potions'];
+	
+			// Ajout de la potion au personnage
+			$personnage->addPotion($potion);
+			$app['orm.em']->persist($personnage);
+	
+			// suppression du trigger
+			switch( $niveau)
+			{
+				case 1:
+					$trigger = $personnage->getTrigger('ALCHIMIE APPRENTI');
+					$app['orm.em']->remove($trigger);
+					break;
+				case 2:
+					$trigger = $personnage->getTrigger('ALCHIMIE INITIE');
+					$app['orm.em']->remove($trigger);
+					break;
+				case  3:
+					$trigger = $personnage->getTrigger('ALCHIMIE EXPERT');
+					$app['orm.em']->remove($trigger);
+					break;
+				case  4:
+					$trigger = $personnage->getTrigger('ALCHIMIE MAITRE');
+					$app['orm.em']->remove($trigger);
+					break;
+			}
+	
+			$app['orm.em']->flush();
+	
+			$app['session']->getFlashBag()->add('success','Vos modifications ont été enregistrées.');
+			return $app->redirect($app['url_generator']->generate('participant.personnage', array('participant' => $participant->getId())),301);
+		}
+	
+		return $app['twig']->render('personnage/potion.twig', array(
+				'form' => $form->createView(),
+				'personnage' => $personnage,
+				'participant' => $participant,
+				'potions' => $potions,
+				'niveau' => $niveau,
+		));
+	}
+	
+	
 	/**
 	 * Detail d'un sort
 	 *
@@ -1274,7 +1364,7 @@ class ParticipantController
 			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
 		}
 		
-		if ( $personnage->getGroupe()->getLock() == true)
+		if ( $participant->getGroupeGn()->getGroupe()->getLock() == true)
 		{
 			$app['session']->getFlashBag()->add('error','Désolé, il n\'est plus possible de modifier ce personnage. Le groupe est verouillé. Contacter votre scénariste si vous pensez que cela est une erreur');
 			return $app->redirect($app['url_generator']->generate('participant.personnage', array('participant' => $participant->getId())),301);

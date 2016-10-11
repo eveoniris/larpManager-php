@@ -446,9 +446,18 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 			->bind("participant.personnage")
 			->method('GET')
 			->before($mustOwnParticipant);
-			
-			
-			
+		
+		/**
+		 * Formulaire de choix d'une nouvelle potion
+		 * Accessible uniquement au proprietaire du personnage
+		 */
+		$controllers->match('/{participant}/personnage/potion/{niveau}','LarpManager\Controllers\ParticipantController::potionAction')
+			->assert('niveau', '\d+')
+			->assert('participant', '\d+')
+			->bind("participant.personnage.potion")
+			->method('GET|POST')
+			->convert('participant', 'converter.participant:convert')
+			->before($mustOwnParticipant);
 			
 		/**
 		 * Liste des joueurs
