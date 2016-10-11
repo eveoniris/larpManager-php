@@ -366,30 +366,6 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 			->method('GET')
 			->convert('personnage', 'converter.personnage:convert')
 			->before($mustOwn);			
-		
-		
-		/**
-		 * Formulaire de choix du domaine de magie
-		 * Accessible uniquement au proprietaire du personnage
-		 */
-		$controllers->match('/{personnage}/magie/domaine','LarpManager\Controllers\PersonnageController::domaineMagieAction')
-			->assert('personnage', '\d+')
-			->bind("personnage.magie.domaine")
-			->method('GET|POST')
-			->convert('personnage', 'converter.personnage:convert')
-			->before($mustOwn);
-			
-		/**
-		 * Formulaire de choix d'un nouveau sort
-		 * Accessible uniquement au proprietaire du personnage
-		 */
-		$controllers->match('/{personnage}/magie/sort/{niveau}','LarpManager\Controllers\PersonnageController::sortAction')
-			->assert('personnage', '\d+')
-			->assert('niveau', '\d+')
-			->bind("personnage.magie.sort")
-			->method('GET|POST')
-			->convert('personnage', 'converter.personnage:convert')
-			->before($mustOwn);			
 									
 		/**
 		 * Retire la dernière compétence acquise par un personnage

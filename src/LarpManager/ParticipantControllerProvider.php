@@ -480,6 +480,30 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 			->method('GET|POST')
 			->convert('participant', 'converter.participant:convert')
 			->before($mustOwnParticipant);
+		
+
+		/**
+		 * Formulaire de choix du domaine de magie
+		 * Accessible uniquement au proprietaire du personnage
+		 */
+		$controllers->match('/{participant}/personnage/domaine','LarpManager\Controllers\ParticipantController::domaineMagieAction')
+			->assert('personnage', '\d+')
+			->bind("participant.personnage.domaine")
+			->method('GET|POST')
+			->convert('participant', 'converter.participant:convert')
+			->before($mustOwnParticipant);
+				
+		/**
+		 * Formulaire de choix d'un nouveau sort
+		 * Accessible uniquement au proprietaire du personnage
+		 */
+		$controllers->match('/{participant}/personnage/sort/{niveau}','LarpManager\Controllers\ParticipantController::sortAction')
+			->assert('participant', '\d+')
+			->assert('niveau', '\d+')
+			->bind("participant.personnage.sort")
+			->method('GET|POST')
+			->convert('participant', 'converter.participant:convert')
+			->before($mustOwnParticipant);
 			
 		/**
 		 * Liste des joueurs

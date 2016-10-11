@@ -172,6 +172,20 @@ class Personnage extends BasePersonnage
 	}
 	
 	/**
+	 * Vérifie si le personnage connait ce domaine de magie
+	 * 
+	 * @param Domaine $d
+	 */
+	public function isKnownDomaine(Domaine $d)
+	{
+		foreach ( $this->getDomaines() as $domaine)
+		{
+			if ( $domaine == $d ) return true;
+		}
+		return false;
+	}
+	
+	/**
 	 * Vérifie si le personnage connait cette competence
 	 * 
 	 * @param Competence $competence

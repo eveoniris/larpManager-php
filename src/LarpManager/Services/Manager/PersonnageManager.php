@@ -236,6 +236,50 @@ class PersonnageManager
 		}
 		return $availableLangues;
 	}
+
+	/**
+	 * Trouve tous les sorts non connus d'un personnage en fonction du niveau du sortilège
+	 * @param Personnage $personnage
+	 * @param unknown $diffusion
+	 */
+	public function getAvailableSorts(Personnage $personnage, $niveau)
+	{
+		$availableSorts = new ArrayCollection();
+	
+		$repo = $this->app['orm.em']->getRepository('\LarpManager\Entities\Sort');
+		$sorts = $repo->findByNiveau($niveau);
+			
+		foreach ( $sorts as $sort)
+		{
+			if ( ! $personnage->isKnownSort($sort) )
+			{
+				$availableSorts[] = $sort;
+			}
+		}
+		return $availableSorts;
+	}
+	
+	
+	/**
+	 * Trouve tous les domaines de magie non connus d'un personnage 
+	 * @param Personnage $personnage
+	 */
+	public function getAvailableDomaines(Personnage $personnage)
+	{
+		$availableDomaines = new ArrayCollection();
+	
+		$repo = $this->app['orm.em']->getRepository('\LarpManager\Entities\Domaine');
+		$domaines = $repo->findAll();
+	
+		foreach ( $domaines as $domaine)
+		{
+			if ( ! $personnage->isKnownDomaine($domaine) )
+			{
+				$availableDomaines[] = $domaine;
+			}
+		}
+		return $availableDomaines;
+	}
 	
 	/**
 	 * Récupére la liste de toutes les religions non connue du personnage
