@@ -179,14 +179,6 @@
 							if ( notifications.indexOf(notification.id) == -1 )
 							{
 								notifications.push(notification.id);
-
-								new PNotify({
-				        		    title: '',
-				        		    text: notification.text,
-				        		    type: 'success',
-				        		    delay: 2000
-				        		});
-				        		
 								notification_count++;
 								
 								// add notification in notifications-list
