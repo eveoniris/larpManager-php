@@ -62,13 +62,23 @@
 			        	
 			        	{% if participant.groupeGn %}
 			        		<div>
-			        			Membre du groupe <a href="{{ path('groupe.detail',{'index':participant.groupeGn.groupe.id})  }}">{{ participant.groupeGn.groupe.nom }}</a>
+			        			Membre du groupe 
+			        			{% if is_granted('ROLE_ORGA', app.user) %}
+			        				<a href="{{ path('groupe.detail',{'index':participant.groupeGn.groupe.id})  }}">{{ participant.groupeGn.groupe.nom }}</a>
+			        			{% else %}
+			        				<a href="{{ path('groupGn.groupe',{'groupeGn':participant.groupeGn.id})  }}">{{ participant.groupeGn.groupe.nom }}</a>
+			        			{% endif %}
 			        		</div>
 			        	{% endif %}
 			        
 			        	{% if participant.personnage %}
 			        		<div>
-								Personnage : <a href="{{ path('personnage.admin.detail',{'personnage': participant.personnage.id}) }}">{{ participant.personnage.publicName }}</a>
+								Personnage : 
+								{% if is_granted('ROLE_ORGA', app.user) %}
+									<a href="{{ path('personnage.admin.detail',{'personnage': participant.personnage.id}) }}">{{ participant.personnage.publicName }}</a>
+								{% else %}
+									<a href="{{ path('participant.personnage',{'participant': participant.id}) }}">{{ participant.personnage.publicName }}</a>
+								{% endif %}
 							</div>	        		
 			        	{% endif %}
 			        </div>

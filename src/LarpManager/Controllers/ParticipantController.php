@@ -536,7 +536,8 @@ class ParticipantController
 		{
 				$data = $form->getData();
 				$code = $data['code'];
-				$groupe = $app['orm.em']->getRepository('\LarpManager\Entities\Groupe')->findOneByCode($code);
+				$groupeGn = $app['orm.em']->getRepository('\LarpManager\Entities\GroupeGn')->findOneByCode($code);
+				$groupe = $groupeGn->getGroupe();
 				
 				if ( ! $groupe )
 				{

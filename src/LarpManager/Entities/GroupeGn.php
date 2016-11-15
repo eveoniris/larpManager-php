@@ -15,7 +15,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 /**
  * LarpManager\Entities\GroupeGn
  *
- * @Entity()
+ * @Entity(repositoryClass="LarpManager\Repository\GroupeGnRepository")
  */
 class GroupeGn extends BaseGroupeGn
 {

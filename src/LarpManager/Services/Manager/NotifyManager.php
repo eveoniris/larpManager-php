@@ -188,7 +188,7 @@ class NotifyManager
 	 */
 	public function joinGroupe($participant, $groupeGn)
 	{
-		$chef = $groupeGn->getResponsable()->getUser();
+		/*$chef = $groupeGn->getResponsable()->getUser();
 		$scenariste = $groupeGn->getGroupe()->getScenariste();
 		
 		$notificationChef = new Notification();
@@ -203,7 +203,7 @@ class NotifyManager
 		$notification->setUrl($this->app['url_generator']->generate('groupeGn.groupe', array('groupeGn' => $groupeGn->getId()), true));
 		$this->app['orm.em']->persist($notificationScenariste);
 		
-		$this->app['orm.em']->flush();
+		$this->app['orm.em']->flush();*/
 	}
 	
 	/**

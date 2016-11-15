@@ -4,7 +4,7 @@
 	<blockquote>
 		<ul class="list-group">
 			<li class="list-group-item">Vous êtes responsable de ce groupe.</li>
-			<li class="list-group-item">Le code du groupe est : <strong>{{ groupe.code }}</strong>.</li>
+			<li class="list-group-item">Le code du groupe est : <strong>{{ groupeGn.code }}</strong>.</li>
 			<li class="list-group-item">Ce groupe peux accueillir <strong>{{ groupe.placeTotal|default(0) }}</strong> joueurs. {{ groupeGn.participants|length }} joueurs sont déjà inscrits.</li>
 			<li class="list-group-item">Vous recherchez {{ groupeGn.placeAvailable|default(0) }} joueur(s) supplémentaire(s).
 				<a href="{{ path('groupeGn.placeAvailable', {'groupeGn': groupeGn.id}) }}"><i class="fa fa-pencil"></i></a>

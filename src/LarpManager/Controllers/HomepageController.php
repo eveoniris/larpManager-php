@@ -48,10 +48,13 @@ class HomepageController
 	 */
 	public function indexAction(Request $request, Application $app) 
 	{	
+
 		if ( ! $app['user'] )
 		{
 			return $this->notConnectedIndexAction($request, $app);
 		}
+		
+		$app['user'] = $app['user.manager']->refreshUser($app['user']);
 		
 		if ( ! $app['user']->getEtatCivil() )
 		{
@@ -75,6 +78,16 @@ class HomepageController
 	 */
 	public function newUserStep1Action(Request $request, Application $app)
 	{
+		if ( $app['user']->getEtatCivil() )
+		{
+			$repoAnnonce = $app['orm.em']->getRepository('LarpManager\Entities\Annonce');
+			$annonces = $repoAnnonce->findBy(array('archive' => false, 'gn' => null),array('update_date' => 'DESC'));
+			
+			return $app['twig']->render('homepage/index.twig', array(
+					'annonces' => $annonces,
+					'user' => $app['user'],
+			));
+		}
 		return $app['twig']->render('public/newUser/step1.twig', array());
 	}
 	
