@@ -138,6 +138,39 @@ class GnController
 			return $app['twig']->render('public/gn/detail.twig', array('gn' => $gn));
 		}	
 	}
+	
+	/**
+	 * Liste des participants à un jeu n'ayant pas encore de billets
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Gn $gn
+	 */
+	public function participantsWithoutBilletAction(Request $request, Application $app, Gn $gn)
+	{
+		$participants = $gn->getParticipantsWithoutBillet();
+		
+		return $app['twig']->render('admin/gn/participantswithoutbillet.twig', array(
+				'gn' => $gn,
+				'participants' => $participants,
+		));
+	}
+	
+	/**
+	 * Liste des participants à un jeu ayant un billet mais pas encore de groupe
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Gn $gn
+	 */
+	public function participantsWithoutGroupAction(Request $request, Application $app, Gn $gn)
+	{
+		$participants = $gn->getParticipantsWithoutGroup();
+		
+		return $app['twig']->render('admin/gn/participantswithoutgroup.twig', array(
+				'gn' => $gn,
+				'participants' => $participants,
+		));
+	}
 		
 	/**
 	 * Liste des participants à un jeu

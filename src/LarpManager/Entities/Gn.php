@@ -107,6 +107,42 @@ class Gn extends BaseGn
 	}
 	
 	/**
+	 * Fourni la liste de tous les participants à un GN mais n'ayant pas encore acheté de billets
+	 */
+	public function getParticipantsWithoutBillet()
+	{
+		$participants = new ArrayCollection();
+		
+		foreach( $this->getParticipants() as $participant)
+		{
+			if ( ! $participant->getBillet() )
+			{
+				$participants[] = $participant;
+			}
+		}
+		
+		return $participants;
+	}
+	
+	/**
+	 * Fourni la liste de tous les participants à un GN ayant un billet mais n'étant pas encore dans un groupe
+	 */
+	public function getParticipantsWithoutGroup()
+	{
+		$participants = new ArrayCollection();
+		
+		foreach( $this->getParticipants() as $participant)
+		{
+			if ( $participant->getBillet() && ! $participant->getGroupeGn() )
+			{
+				$participants[] = $participant;
+			}
+		}
+		
+		return $participants;
+	}
+	
+	/**
 	 * Indique si le jeu est passé ou pas
 	 * 
 	 * @return boolean

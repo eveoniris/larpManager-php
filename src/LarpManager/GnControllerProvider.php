@@ -115,6 +115,24 @@ class GnControllerProvider implements ControllerProviderInterface
 			->before($mustBeAdmin);
 			
 		/**
+		 * Liste des participants à un gn n'ayant pas encore de billet
+		 */
+		$controllers->match('/{gn}/participants/withoutbillet', 'LarpManager\Controllers\GnController::participantsWithoutBilletAction')
+			->assert('gn', '\d+')
+			->convert('gn', 'converter.gn:convert')
+			->bind("gn.participants.withoutbillet")
+			->before($mustBeAdmin);
+			
+		/**
+		 * Liste des participants à un gn ayant un billet mais n'ayant pas encore de groupe
+		 */
+		$controllers->match('/{gn}/participants/withoutgroup', 'LarpManager\Controllers\GnController::participantsWithoutGroupAction')
+			->assert('gn', '\d+')
+			->convert('gn', 'converter.gn:convert')
+			->bind("gn.participants.withoutgroup")
+			->before($mustBeAdmin);
+			
+		/**
 		 * Liste des groupes réservés
 		 */
 		$controllers->match('/{gn}/groupesReserves', 'LarpManager\Controllers\GnController::groupesReservesAction')
