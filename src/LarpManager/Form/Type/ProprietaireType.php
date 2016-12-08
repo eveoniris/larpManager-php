@@ -35,9 +35,9 @@ class ProprietaireType extends AbstractType
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
 		$builder->add('nom','text')
-				->add('adresse','text')
-				->add('mail','text')
-				->add('tel','text');
+				->add('adresse','text', array('required' => false))
+				->add('mail','text', array('required' => false))
+				->add('tel','text', array('required' => false));
 	}
 
 	public function setDefaultOptions(OptionsResolverInterface $resolver)

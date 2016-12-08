@@ -35,7 +35,7 @@ class LocalisationType extends AbstractType
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
 		$builder->add('label','text')
-				->add('precision','textarea');
+				->add('precision','textarea', array('required' => false));
 	}
 
 	public function setDefaultOptions(OptionsResolverInterface $resolver)

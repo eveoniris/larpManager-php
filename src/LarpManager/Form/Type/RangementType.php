@@ -36,7 +36,7 @@ class RangementType extends AbstractType
 	{
 		$builder->add('label','text', array('attr' => array('help' => 'Les trois premières lettres (avec le numéro de l\'objet) servirons à créer le code identifiant un objet')))
 				->add('localisation','entity', array('required' => false, 'class' => 'LarpManager\Entities\Localisation', 'property' => 'label'))
-				->add('precision','textarea', array('attr' => array('help'  => '')));
+				->add('precision','textarea', array('required' => false, 'attr' => array('help'  => '')));
 	}
 
 	public function setDefaultOptions(OptionsResolverInterface $resolver)
