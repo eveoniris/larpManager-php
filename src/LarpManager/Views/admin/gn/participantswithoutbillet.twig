@@ -17,6 +17,8 @@
 		<h5>Liste des participants à {{ gn.label }} n'ayant pas encore de billets</h5>
 	</div>
 		
+	<a href="{{  path('gn.participants.withoutbillet.csv', {'gn': gn.id}) }}">Télécharger cette liste au format CSV</a>
+	
 	<table class="table table-condensed table-striped table-bordered">
 		<thead>
 			<tr>

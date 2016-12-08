@@ -171,6 +171,81 @@ class GnController
 				'participants' => $participants,
 		));
 	}
+	
+	/**
+	 * Liste des participants à un jeu ayant un billet mais pas encore de groupe au format CSV
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Gn $gn
+	 */
+	public function participantsWithoutGroupCSVAction(Request $request, Application $app, Gn $gn)
+	{
+		$participants = $gn->getParticipantsWithoutGroup();
+		
+		header("Content-Type: text/csv");
+		header("Content-Disposition: attachment; filename=eveoniris_participants_sans_groupe_".date("Ymd").".csv");
+		header("Pragma: no-cache");
+		header("Expires: 0");
+			
+		$output = fopen("php://output", "w");
+		
+		// header
+		fputcsv($output,
+		array(
+		'Nom',
+		'Prénom',
+		'Email'), ';');
+			
+		foreach ( $participants as $participant)
+		{
+			$line = array();
+			$line[] = utf8_decode($participant->getUser()->getEtatCivil()->getNom());
+			$line[] = utf8_decode($participant->getUser()->getEtatCivil()->getPrenom());
+			$line[] = utf8_decode($participant->getUser()->getEmail());
+			fputcsv($output, $line, ';');
+		}
+		
+		fclose($output);
+		exit();
+	}
+	
+	/**
+	 * Liste des participants à un jeu n'ayant pas encore de billets au format CSV
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Gn $gn
+	 */
+	public function participantsWithoutBilletCSVAction(Request $request, Application $app, Gn $gn)
+	{
+		$participants = $gn->getParticipantsWithoutBillet();
+	
+		header("Content-Type: text/csv");
+		header("Content-Disposition: attachment; filename=eveoniris_participants_sans_billet_".date("Ymd").".csv");
+		header("Pragma: no-cache");
+		header("Expires: 0");
+			
+		$output = fopen("php://output", "w");
+		
+		// header
+		fputcsv($output,
+		array(
+		'Nom',
+		'Prénom',
+		'Email'), ';');
+			
+		foreach ( $participants as $participant)
+		{
+			$line = array();
+			$line[] = utf8_decode($participant->getUser()->getEtatCivil()->getNom());
+			$line[] = utf8_decode($participant->getUser()->getEtatCivil()->getPrenom());
+			$line[] = utf8_decode($participant->getUser()->getEmail());
+			fputcsv($output, $line, ';');
+		}
+		
+		fclose($output);
+		exit();
+	}
 		
 	/**
 	 * Liste des participants à un jeu
