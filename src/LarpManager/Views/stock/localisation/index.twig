@@ -2,6 +2,8 @@
 
 {% block content %}
 
+<div class="well well-sm">
+
 	<div class="page-header">
 		<h1>Liste des localisation</h1>
 	</div>
@@ -26,4 +28,6 @@
 	
 	{{ include("stock/localisation/list.twig", {'localisations' : localisations}) }}
 	
+</div>
+
 {% endblock %}

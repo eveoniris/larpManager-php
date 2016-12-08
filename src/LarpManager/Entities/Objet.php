@@ -101,7 +101,7 @@ class Objet extends BaseObjet
 	 * @return \LarpManager\Entities\User
 	 */
 	public function getResponsable() {
-		return $this->getUserRelatedByResponsableId();
+		return $this->getUser();
 	}
 	
 	/**
@@ -111,25 +111,6 @@ class Objet extends BaseObjet
 	 * @return \LarpManager\Entities\Objet
 	 */
 	function setResponsable(User $user = null) {
-		return $this->setUserRelatedByResponsableId($user);
-	}
-	
-	/**
-	 * Get User entity related by `createur_id` (many to one).
-	 *
-	 * @return \LarpManager\Entities\Users
-	 */
-	function getCreateur() {
-		return $this->getUserRelatedByCreateurId();
-	}
-
-	/**
-	 * Set User entity related by `createur_id` (many to one).
-	 *
-	 * @param \LarpManager\Entities\Users $users
-	 * @return \LarpManager\Entities\Objet
-	 */
-	function setCreateur(User $user = null) {
-		return $this->setUsersRelatedByCreateurId($user);
+		return $this->setUser($user);
 	}
 }

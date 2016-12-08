@@ -2,22 +2,19 @@
 
 {% block content %}
 
-<div class="page-header">
-<h1>
-	Gestion du stock
-	<small>
-		( {{ objet_count }} objets en stock )
-	</small>
-</h1>
-</div>
-
-
-
-<div class="container-fluid">
+<ol class="breadcrumb">
+	<li><a href="{{ path('homepage') }}">Accueil</a></li>
+	<li class="active">Gestion du stock</li>
+</ol>
+	
+<div class="well well-sm">
 
 <div class="row">
 
 	<div class="col-xs-12 col-md-8">
+	
+		<h3>{{ objet_count }} objets en stock</h3>
+		
 		{% if objet_without_proprio_count != 0 
 			or objet_without_responsable_count != 0 
 			or objet_without_rangement_count != 0 

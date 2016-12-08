@@ -49,7 +49,7 @@ class StockController
 		
 		$qb = $repo->createQueryBuilder('o');
 		$qb->select('COUNT(o)');
-		$qb->where('o.userRelatedByResponsableId IS NULL');
+		$qb->where('o.user IS NULL');
 		$objet_without_responsable_count = $qb->getQuery()->getSingleScalarResult();
 		
 		$qb = $repo->createQueryBuilder('o');
