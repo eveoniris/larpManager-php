@@ -44,6 +44,7 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 	 *  - participant.restauration
 	 *  - participant.background
 	 *  - participant.groupe
+	 *  - participant.remove
 	 *  - participant.groupeSecondaire.list
 	 *  - participant.groupeSecondaire.detail
 	 *  - participant.personnage
@@ -121,6 +122,17 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 			->bind('participant.restauration')
 			->before($mustBeAdmin);
 
+
+		/**
+		 * Retire le participant
+		 */
+		$controllers->get('/{participant}/remove', 'LarpManager\Controllers\ParticipantController::removeAction')
+			->assert('participant', '\d+')
+			->convert('participant', 'converter.participant:convert')
+			->method('GET|POST')
+			->bind('participant.remove')
+			->before($mustBeAdmin);
+			
 		/**
 		 * Affecte le participant à un groupe
 		 */

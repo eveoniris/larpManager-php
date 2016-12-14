@@ -33,10 +33,11 @@ use LarpManager\Form\JoueurXpForm;
 use LarpManager\Form\ParticipantPersonnageSecondaireForm;
 use LarpManager\Form\GroupeInscriptionForm;
 use LarpManager\Form\GroupeSecondairePostulerForm;
+
 use LarpManager\Form\ParticipantBilletForm;
 use LarpManager\Form\ParticipantRestaurationForm;
-
 use LarpManager\Form\Participant\ParticipantGroupeForm;
+use LarpManager\Form\Participant\ParticipantRemoveForm;
 
 use LarpManager\Form\Personnage\PersonnageForm;
 use LarpManager\Form\Personnage\PersonnageReligionForm;
@@ -105,6 +106,60 @@ class ParticipantController
 		}
 		
 		return $app['twig']->render('admin/participant/groupe.twig', array(
+				'participant' => $participant,
+				'form' => $form->createView(),
+		));
+	}
+	
+	/**
+	 * Retire la participation de l'utilisateur à un jeu
+	 * 
+	 * @param Application $app
+	 * @param Request $request
+	 * @param Participant $participant
+	 */
+	public function removeAction(Application $app, Request $request, Participant $participant)
+	{
+		$form = $app['form.factory']->createBuilder(new ParticipantRemoveForm(), $participant, array('gnId' => $participant->getGn()->getId()))
+			->add('save','submit', array('label' => 'Oui, retirer la participation de cet utilisateur'))
+			->getForm();
+		
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$participant = $form->getData();
+			
+			// si l'utilisateur est responsable d'un ou de plusieurs groupes, il faut mettre à jour ces groupes
+			if ( $participant->getGroupeGns() )
+			{
+				$groupeGns = $participant->getGroupeGns();
+				foreach ( $groupeGns as $groupeGn)
+				{
+					$groupeGn->setResponsableNull();
+					$app['orm.em']->persist($groupeGn);
+				}
+				
+			}
+						
+			// on retire toutes les restauration liés à cet utilisateur.
+			if ( $participant->getParticipantHasRestaurations() )
+			{
+				$participantHasRestaurations = $participant->getParticipantHasRestaurations();
+				foreach ( $participantHasRestaurations as $restauration)
+				{
+					$app['orm.em']->remove($restauration);
+				}
+			}
+			
+			$app['orm.em']->remove($participant);
+			$app['orm.em']->flush();
+		
+			$app['session']->getFlashBag()->add('success', 'Vos modifications ont été enregistré.');
+			return $app->redirect($app['url_generator']->generate('gn.participants', array('gn' => $participant->getGn()->getId())),301);
+		}
+		
+		return $app['twig']->render('admin/participant/remove.twig', array(
 				'participant' => $participant,
 				'form' => $form->createView(),
 		));

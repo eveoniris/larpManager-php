@@ -101,6 +101,7 @@
 								<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Ajouter à un groupe" href="{{ path('participant.groupe',{'participant':participant.id}) }}"><i class="fa fa-users"></i></a>
 								<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Choisir le billet" href="{{ path('participant.billet',{'participant':participant.id}) }}"><i class="fa fa-ticket"></i></a>
 								<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="ajouter un lieu de restauration" href="{{ path('participant.restauration',{'participant':participant.id}) }}"><i class="fa fa-coffee"></i></a>
+								<a class="btn btn-danger" data-toggle="tooltip" data-placement="top" title="Retirer le participant" href="{{ path('participant.remove',{'participant':participant.id}) }}"><i class="fa fa-close"></i></a>
 							</div>
 						</div>
 					</td>
