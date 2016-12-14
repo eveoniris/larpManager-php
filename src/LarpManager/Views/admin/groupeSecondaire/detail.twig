@@ -35,7 +35,12 @@
 					</div>
 					<div class="list-group-item-text">
 					{% if groupeSecondaire.responsable %}
-						{{ groupeSecondaire.responsable }}
+						<ul>
+						<li>Personnage : {{ groupeSecondaire.responsable }}</li>
+						{% if groupeSecondaire.responsable.user %}
+						<li>Joueur : <a href="{{ path('user.view', {'id' : groupeSecondaire.responsable.user.id}) }}">{{ groupeSecondaire.responsable.user.username }}</a></li>
+						{% endif %}
+						</ul>
 					{%  else %}
 						<p class="text-warning">Attention, ce groupe n'a pas de responsable !</p>
 					{% endif %}
@@ -56,7 +61,7 @@
 						<a href="{{ path('personnage.admin.detail', {'personnage':postulant.personnage.id}) }}">{{ postulant.personnage.nom }}&nbsp;{{ postulant.personnage.surnom }}</a>
 					</h6>
 					{% if postulant.personnage.groupe %}<p class="list-group-item-text">Groupe : <a href="{{ path('groupe.detail', {'index': postulant.personnage.groupe.id}) }}">{{ postulant.personnage.groupe.nom }}</a></p>{% endif %}
-					{% if postulant.personnage.participant %}<p class="list-group-item-text">Utilisateur : <a href="{{ path('user.view', {'id': postulant.personnage.participant.user.id}) }}">{{ postulant.personnage.participant.user.username }}</a></p>{% endif %}
+					{% if postulant.personnage.user %}<p class="list-group-item-text">Utilisateur : <a href="{{ path('user.view', {'id': postulant.personnage.user.id}) }}">{{ postulant.personnage.user.username }}</a></p>{% endif %}
 					<p class="list-group-item-text">Date de la demande : {{ postulant.date|date('Y-m-d') }}</p>
 					<p class="list-group-item-text">{{ postulant.explanation|markdown }}</p>
 					<p class="list-group-item-text"><a href="{{ path('groupeSecondaire.admin.postulant.accept', {'groupe': groupeSecondaire.id,'postulant': postulant.id}) }}">Accepter cette candidature</a></p>

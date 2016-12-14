@@ -65,6 +65,19 @@
 					{% endif %}
 				{% endfor %}
 			{% endif %}
+			
+			{# affichage des événements #}
+			{% for participant in user.futurEvents %}
+				<div class="well well-sm">
+					<div class="header">
+						<h5>Vos jeux</h5>
+					</div>
+					
+					<div class="list-group">
+						<a class="list-group-item"  href="{{ path('participant.index', {'participant': participant.id}) }}">{{ participant.gn.label }} -- page de gestion</a>
+					</div>
+				</div>
+			{% endfor %}
 						
 			{# affichage des annonces #}
 			{% include 'homepage/fragment/annonces.twig' with {'annonces': annonces} %}
