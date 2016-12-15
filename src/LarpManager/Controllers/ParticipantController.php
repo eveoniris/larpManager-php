@@ -43,6 +43,8 @@ use LarpManager\Form\Personnage\PersonnageForm;
 use LarpManager\Form\Personnage\PersonnageReligionForm;
 use LarpManager\Form\Personnage\PersonnageOriginForm;
 
+use LarpManager\Form\TrombineForm;
+
 use LarpManager\Entities\Participant;
 use LarpManager\Entities\ParticipantHasRestauration;
 use LarpManager\Entities\Personnage;
@@ -277,6 +279,54 @@ class ParticipantController
 		return $app['twig']->render('public/personnage/detail.twig', array(
 				'personnage' => $personnage,
 				'participant' => $participant,
+		));
+	}
+	
+	/**
+	 * Modification de la photo lié à un personnage
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function personnageTrombineAction(Request $request, Application $app, Participant $participant, Personnage $personnage)
+	{
+		$form = $app['form.factory']->createBuilder(new TrombineForm(), array())
+		->add('envoyer','submit', array('label' => 'Envoyer'))
+		->getForm();
+	
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$files = $request->files->get($form->getName());
+	
+			$path = __DIR__.'/../../../private/img/';
+			$filename = $files['trombine']->getClientOriginalName();
+			$extension = $files['trombine']->guessExtension();
+	
+			if (!$extension || ! in_array($extension, array('png', 'jpg', 'jpeg','bmp'))) {
+				$app['session']->getFlashBag()->add('error','Désolé, votre image ne semble pas valide (vérifiez le format de votre image)');
+				return $app->redirect($app['url_generator']->generate('participant.personnage.trombine', array('participant' => $participant->getId(), 'personnage' => $personnage->getId())),301);
+			}
+	
+			$trombineFilename = hash('md5',$app['user']->getUsername().$filename . time()).'.'.$extension;
+	
+			$image = $app['imagine']->open($files['trombine']->getPathname());
+			$image->resize($image->getSize()->widen( 160 ));
+			$image->save($path. $trombineFilename);
+	
+			$personnage->setTrombineUrl($trombineFilename);
+			$app['orm.em']->persist($personnage);
+			$app['orm.em']->flush();
+	
+			$app['session']->getFlashBag()->add('success','Votre photo a été enregistrée');
+			return $app->redirect($app['url_generator']->generate('participant.personnage', array('participant' => $participant->getId())),301);
+		}
+	
+		return $app['twig']->render('public/personnage/trombine.twig', array(
+				'participant' => $participant,
+				'personnage' => $personnage,
+				'form' => $form->createView()
 		));
 	}
 	

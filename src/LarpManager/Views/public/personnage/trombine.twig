@@ -6,7 +6,9 @@
 
 	<ol class="breadcrumb">
 		<li><a href="{{ path('homepage') }}">Page d'accueil</a></li>
-		<li class="active">Trombine</li>
+		<li><a href="{{ path('participant.index', {'participant' : participant.id}) }}">{{ participant.gn.label }}</a></li>
+		<li><a href="{{ path('participant.personnage', {'participant' : participant.id}) }}">{{ personnage.nom }} {{ personnage.surnom }}</a>
+		<li class="active">Mise à jour de votre photo</li>
 	</ol>
 	
 	<div class="well bs-component">
@@ -16,14 +18,14 @@
 		<div class="header"><h5>Votre trombine</h5></div>
 
 		{% if app.user.trombineUrl %}		
-			<img src="{{ path('trombine.get', {'trombine' : app.user.trombineUrl }) }}" />
+			<img src="{{ path('personnage.trombine', {'personnage' : personnage.id }) }}" />
 		{% else %}
-			Aucune photo.
+			<img src="{{ app.request.basepath }}/img/no_trombine.png" />
 		{% endif %}
 		
-		<div class="header"><h5>Modifier votre trombine</h5></div>
+		<div class="header"><h5>Modifier votre photo</h5></div>
 		
-		<form action="{{ path('trombine') }}" method="POST" {{ form_enctype(form) }}>
+		<form action="{{ path('participant.personnage.trombine', {'participant': participant.id, 'personnage': personnage.id}) }}" method="POST" {{ form_enctype(form) }}>
 			
 				
 				{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}

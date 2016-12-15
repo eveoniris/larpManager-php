@@ -45,7 +45,7 @@ use LarpManager\Form\PersonnageBackgroundForm;
 use LarpManager\Form\PersonnageStatutForm;
 use LarpManager\Form\PersonnageDeleteForm;
 use LarpManager\Form\PersonnageXpForm;
-use LarpManager\Form\TrombineForm;
+
 
 /**
  * LarpManager\Controllers\PersonnageController
@@ -81,53 +81,7 @@ class PersonnageController
 		$app['personnage.manager']->resetCurrentPersonnage();
 		return $app->redirect($app['url_generator']->generate('homepage'),301);
 	}
-	
-	/**
-	 * Modification de la photo
-	 *
-	 * @param Request $request
-	 * @param Application $app
-	 */
-	public function trombineAction(Request $request, Application $app, Personnage $personnage)
-	{
-		$form = $app['form.factory']->createBuilder(new TrombineForm(), array())
-			->add('envoyer','submit', array('label' => 'Envoyer'))
-			->getForm();
-	
-		$form->handleRequest($request);
-			
-		if ( $form->isValid() )
-		{
-			$files = $request->files->get($form->getName());
-	
-			$path = __DIR__.'/../../../private/img/';
-			$filename = $files['trombine']->getClientOriginalName();
-			$extension = $files['trombine']->guessExtension();
-				
-			if (!$extension || ! in_array($extension, array('png', 'jpg', 'jpeg','bmp'))) {
-				$app['session']->getFlashBag()->add('error','Désolé, votre image ne semble pas valide (vérifiez le format de votre image)');
-				return $app->redirect($app['url_generator']->generate('trombine'),301);
-			}
-	
-			$trombineFilename = hash('md5',$app['user']->getUsername().$filename . time()).'.'.$extension;
-				
-			$image = $app['imagine']->open($files['trombine']->getPathname());
-			$image->resize($image->getSize()->widen( 160 ));
-			$image->save($path. $trombineFilename);
-	
-			$personnage->setTrombineUrl($trombineFilename);
-			$app['orm.em']->persist($personnage);
-			$app['orm.em']->flush();
-				
-			$app['session']->getFlashBag()->add('success','Votre photo a été enregistrée');
-			return $app->redirect($app['url_generator']->generate('personnage.detail', array('personnage' => $personnage->getId())),301);
-		}
-	
-		return $app['twig']->render('public/personnage/trombine.twig', array(
-				'form' => $form->createView()
-		));
-	}
-	
+		
 	/**
 	 * Obtenir une image protégée
 	 *

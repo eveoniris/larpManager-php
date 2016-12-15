@@ -45,6 +45,7 @@
 	
 	{# Illustration de la classe #}
 	<div class="col-sm-6">
+		
 		<div class="pull-right">
 			{% if personnage.genre == 'Masculin' %}
 				<img width="216" height="300" alt="{{ personnage.classe.labelMasculin }}" src="{{ app.request.basepath }}/img/{{ personnage.classe.imageM }}" />
@@ -52,5 +53,6 @@
 				<img width="216" height="200" alt="{{ personnage.classe.labelFeminin }}" src="{{ app.request.basepath }}/img/{{ personnage.classe.imageF }}" />
 			{% endif %}
 		</div>
+
 	</div>
 </div>

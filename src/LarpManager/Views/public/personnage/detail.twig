@@ -78,6 +78,19 @@
 			
 			<div class="col-sm-6">
 				<div class="well well-sm">
+					 <div class="thumbnail">
+			  			{% if participant.personnage.trombineUrl %}
+							<img class="media-object" src="{{ path('personnage.trombine', {'personnage' : participant.personnage.id }) }}" />
+						{% else %}
+							<img class="media-object" src="{{ app.request.basepath }}/img/no_trombine.png" />
+						{% endif %}
+						<div class="caption">
+			        		<h3>Votre photo</h3>
+			        		<p>Si ce n'est pas déjà fait, Téléversez votre photo. Elle sera utilisé pour les différents trombinoscope des groupes auquels vous appartenez afin que les autres joueurs puissent vous reconnaitre.</p>
+							<p><a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Modifier votre photo" href="{{ path('participant.personnage.trombine', {'participant': participant.id, 'personnage': participant.personnage.id}) }}"><i class="fa fa-camera" aria-hidden="true"></i></a></p>
+						</div>
+					</div>
+				
 					{% include 'public/personnage/fragment/groupeSecondaire.twig' with {'personnage': personnage, 'participant': participant} %}
 					{% include 'public/personnage/fragment/religion.twig' with {'personnage': personnage, 'participant': participant} %}
 					{% include 'public/personnage/fragment/priere.twig' with {'personnage': personnage, 'participant': participant} %}

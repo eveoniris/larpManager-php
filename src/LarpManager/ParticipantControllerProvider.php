@@ -49,6 +49,7 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 	 *  - participant.groupeSecondaire.detail
 	 *  - participant.personnage
 	 *  - participant.personnage.remove
+	 *  - participant.personnage.trombine
 	 *  - participant.priere.detail
 	 *  - participant.priere.document
 	 *  - participant.potion.detail
@@ -214,6 +215,18 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 			->before($mustBeScenariste);
 			
 		/**
+		 * Modifie la photo lié à un personnage
+		 */
+		$controllers->match('/{participant}/personnage/{personnage}/trombine','LarpManager\Controllers\ParticipantController::personnageTrombineAction')
+			->assert('participant', '\d+')
+			->assert('personnage', '\d+')
+			->convert('participant', 'converter.participant:convert')
+			->convert('personnage', 'converter.personnage:convert')
+			->bind("participant.personnage.trombine")
+			->method('GET|POST')
+			->before($mustBeScenariste);
+			
+		/**
 		 * Création d'un personnage
 		 */
 		$controllers->match('/{participant}/personnage/new','LarpManager\Controllers\ParticipantController::personnageNewAction')
@@ -232,7 +245,7 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 			->bind("participant.personnage.old")
 			->method('GET|POST')
 			->before($mustOwnParticipant);		
-
+			
 		/**
 		 * Affiche les background d'un utilisateur
 		 */

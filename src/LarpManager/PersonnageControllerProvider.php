@@ -412,14 +412,6 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 			->convert('personnage', 'converter.personnage:convert')
 			->convert('background', 'converter.personnageBackground:convert')
 			->before($mustBeOrga);			
-
-		/** Affichage de la page trombine */
-		$controllers->match('/{personnage}/trombine/update','LarpManager\Controllers\PersonnageController::trombineAction')
-			->assert('personnage', '\d+')
-			->bind('personnage.trombine.update')
-			->method('GET|POST')
-			->convert('personnage', 'converter.personnage:convert')
-			->before($mustOwn);
 			
 		/** Récupére une trombine */
 		$controllers->match('/{personnage}/trombine','LarpManager\Controllers\PersonnageController::getTrombineAction')
