@@ -18,18 +18,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace LarpManager\Form;
+namespace LarpManager\Form\User;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Doctrine\ORM\EntityRepository;
 
 /**
- * LarpManager\Form\UserForm
+ * LarpManager\Form\User\UserNewForm
  *
  * @author kevin
  *
  */
-class UserForm extends AbstractType
+class UserNewForm extends AbstractType
 {
 	/**
 	 * Construction du formulaire
@@ -39,21 +41,42 @@ class UserForm extends AbstractType
 	 */
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
-		$builder->add('email','email', array(
-					'label' => 'Adresse email',
+		$builder->add('email','text', array(
+					'label' => 'Adresse mail',
 					'required' => true
 				))
-				->add('name','text', array(
-					'label' => 'Nom ou pseudo',
+				->add('username','text', array(
+					'label' => 'Nom d\'utilisateur',
 					'required' => true
+				))
+				->add('gn','entity', array(
+					'label' => 'Jeu auquel le nouvel utilisateur participe',
+					'required' => false,
+					'multiple' => false,
+					'expanded' => true,
+					'class' => 'LarpManager\Entities\Gn',
+					'property' => 'label',
+				))
+				->add('billet','entity', array(
+					'label' => 'Choisissez le billet a donner à cet utilisateur',
+					'multiple' => false,
+					'expanded' => true,
+					'required' => false,
+					'class' => 'LarpManager\Entities\Billet',
+					'property' => 'fullLabel',
+					'query_builder' => function( $er) {
+						$qb = $er->createQueryBuilder('b');
+						$qb->orderBy('b.gn', 'ASC');
+						return $qb;
+					},
 				));
 	}
-	
+		
 	/**
 	 * Nom du formulaire
-	 */	
+	 */
 	public function getName()
 	{
-		return 'user';
+		return 'userNew';
 	}
 }

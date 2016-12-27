@@ -48,6 +48,7 @@ class User extends BaseUser implements AdvancedUserInterface, \Serializable
 	{
 		$this->salt = base_convert(sha1(uniqid(mt_rand(), true)), 16, 36);
 		$this->email = $email;
+		$this->setCreationDate(new \Datetime('NOW'));
 		parent::__construct();
 	}
 	

@@ -26,7 +26,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Exception\DisabledException;
 use InvalidArgumentException;
-use LarpManager\Form\UserForm;
+
 use LarpManager\Form\UserPersonnageSecondaireForm;
 use LarpManager\Form\UserFindForm;
 use LarpManager\Form\EtatCivilForm;
@@ -35,6 +35,7 @@ use LarpManager\Form\NewMessageForm;
 use LarpManager\Form\RestrictionForm;
 use LarpManager\Form\UserRestrictionForm;
 use LarpManager\Form\User\UserPersonnageDefaultForm;
+use LarpManager\Form\User\UserNewForm;
 
 use LarpManager\Entities\Restriction;
 use LarpManager\Entities\User;
@@ -90,6 +91,62 @@ class UserController
 		}
 	
 		return $password;
+	}
+	
+	/**
+	 * Création d'un nouvel utilisateur
+	 * 
+	 * @param Application $app
+	 * @param Request $request
+	 */
+	public function adminNewAction(Application $app, Request $request)
+	{				
+		$form = $app['form.factory']->createBuilder(new UserNewForm(), array())
+			->add('save','submit', array('label' => "Créer l'utilisateur"))
+			->getForm();
+		
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
+		{
+			$data = $form->getData();
+			
+			$plainPassword = $this->generatePassword();
+			
+			$user = $app['user.manager']->createUser(
+					$data['email'],
+					$plainPassword,
+					$data['username'],
+					array('ROLE_USER'));
+				
+			$user->setIsEnabled(true);
+			$app['orm.em']->persist($user);
+			
+			
+			if ( $data['gn'] )
+			{
+				$participant = new Participant();
+				$participant->setUser($user);
+				$participant->setGn($data['gn']);
+				
+				if ( $data['billet'] )
+				{
+					$participant->setBillet($data['billet']);
+				}	
+					
+				$app['orm.em']->persist($participant);
+			}
+			
+			$app['orm.em']->flush();
+			
+			$app['notify']->newUser($user, $plainPassword);
+			
+			$app['session']->getFlashBag()->add('success', 'L\'utilisateur a été ajouté.');
+			return $app->redirect($app['url_generator']->generate('homepage'),301);
+		}
+		return $app['twig']->render('admin/user/new.twig', array(
+				'form' => $form->createView()
+		));
 	}
 	
 	/**
@@ -406,42 +463,6 @@ class UserController
 		}
 		return $app->redirect($app['url_generator']->generate('user.view', array('id' => $user->getId())));
 		
-	}
-	
-	/**
-	 * Ajoute un utilisateur (mot de passe généré aléatoirement)
-	 * @param Application $app
-	 * @param Request $request
-	 */
-	public function addAction(Application $app, Request $request)
-	{
-		$form = $app['form.factory']->createBuilder(new UserForm(), array())
-			->add('save','submit', array('label' => "Créer l'utilisateur"))
-			->getForm();
-		
-		$form->handleRequest($request);
-			
-		if ($request->isMethod('POST'))
-		{
-			$password = $this->generatePassword();
-			$data = $form->getData();
-			
-			$user = $app['user.manager']->createUser(
-					$data['email'],
-					$password,
-					$data['name'],
-					array('ROLE_USER'));
-			
-			$app['user.manager']->insert($user);
-			
-			$app['session']->getFlashBag()->set('alert', 'L\'utilisateur a été créé. TEMPORAIRE : son mot de passe est '.$password);
-			
-			return $app->redirect($app['url_generator']->generate('user.admin.list'));
-		}
-		
-		return $app['twig']->render('user/add.twig', array(
-				'form' => $form->createView(),
-		));
 	}
 		
 	/**

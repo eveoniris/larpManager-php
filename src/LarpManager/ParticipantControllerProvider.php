@@ -113,6 +113,16 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 		};
 		
 		/**
+		 * Crée une participation pour un utilisateur
+		 */
+		$controllers->get('/new/{user}', 'LarpManager\Controllers\ParticipantController::newAction')
+			->assert('user', '\d+')
+			->convert('user', 'converter.user:convert')
+			->method('GET|POST')
+			->bind('participant.new')
+			->before($mustBeAdmin);
+		
+		/**
 		 * Ajoute un billet à un utilisateur
 		 */
 		$controllers->get('/{participant}/billet', 'LarpManager\Controllers\ParticipantController::billetAction')

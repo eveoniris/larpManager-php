@@ -1,0 +1,32 @@
+{% extends "layout.twig"  %}
+
+{% block title %}Liste des utilisateurs{% endblock %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path('user.admin.list') }}">Liste des utilisateurs</a></li>
+		<li class="active">Créer un utilisateur</li>
+	</ol>
+	
+	<div class="well well-sm">
+	
+		<div class="header">
+			<h5>Créer un utilisateur</h5>
+		</div>
+		
+		<div class="alert alert-info" role="alert">
+			L'utilisateur recevra automatiquement un mail avec toute les informations necessaire à sa connexion à LarpManager.
+			Vous pouvez aussi choisir le jeu auquel participe cet utilisateur ainsi que les billets qu'il dispose.
+		</div>
+		
+		<form action="{{ path('user.admin.new') }}" method="POST" {{ form_enctype(form) }}>
+			<fieldset>
+					{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+					{{ form(form) }}
+			</fieldset>
+		</form>
+		
+	</div>
+{% endblock %}

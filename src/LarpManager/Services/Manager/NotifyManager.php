@@ -181,6 +181,26 @@ class NotifyManager
 	}
 	
 	/**
+	 * Envoi d'un mail de création de compte
+	 * 
+	 * @param unknown $user
+	 * @param unknown $password
+	 */
+	public function newUser($user, $plainPassword)
+	{
+		$url = $this->app['url_generator']->generate('homepage', array(), true);
+		
+		$this->sendMessage(
+				'user/email/newUser.twig',
+				array(
+						'plainPassword' => $plainPassword,
+						'url' => $url),
+				$this->fromAddress,
+				$user->getEmail()
+				);
+	}
+	
+	/**
 	 * Notification nouveau membre à destination du chef de groupe et du scénariste
 	 * 
 	 * @param unknown $participant

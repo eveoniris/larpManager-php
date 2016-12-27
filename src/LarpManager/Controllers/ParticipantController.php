@@ -36,6 +36,7 @@ use LarpManager\Form\GroupeSecondairePostulerForm;
 
 use LarpManager\Form\ParticipantBilletForm;
 use LarpManager\Form\ParticipantRestaurationForm;
+use LarpManager\Form\Participant\ParticipantNewForm;
 use LarpManager\Form\Participant\ParticipantGroupeForm;
 use LarpManager\Form\Participant\ParticipantRemoveForm;
 
@@ -45,6 +46,7 @@ use LarpManager\Form\Personnage\PersonnageOriginForm;
 
 use LarpManager\Form\TrombineForm;
 
+use LarpManager\Entities\User;
 use LarpManager\Entities\Participant;
 use LarpManager\Entities\ParticipantHasRestauration;
 use LarpManager\Entities\Personnage;
@@ -81,6 +83,35 @@ class ParticipantController
 				'gn' => $participant->getGn(),
 				'participant' => $participant,
 				'groupeGn' => $groupeGn,
+		));
+	}
+	
+	public function newAction(Application $app, Request $request, User $user)
+	{
+		$participant = new Participant();
+		$participant->setUser($user);
+		
+		$form = $app['form.factory']->createBuilder(new ParticipantNewForm(), $participant)
+			->add('save','submit', array('label' => 'Sauvegarder'))
+			->getForm();
+		
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
+		{
+			$participant = $form->getData();
+						
+			$app['orm.em']->persist($participant);
+			$app['orm.em']->flush();
+			
+			$app['session']->getFlashBag()->add('success', 'Vos modifications ont été enregistré.');
+			return $app->redirect($app['url_generator']->generate('user.admin.list', array()),301);
+		}
+		
+		return $app['twig']->render('admin/participant/new.twig', array(
+				'participant' => $participant,
+				'user' => $user,
+				'form' => $form->createView(),
 		));
 	}
 	

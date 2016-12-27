@@ -30,11 +30,14 @@
 								<div class="input-group-btn">
 									<button type="submit" class="btn btn-default" data-toggle="tooltup" data-placement="top" title="Lancer la recherche"><i class="fa fa-search"></i></button>
 									<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Reset" href="{{ path('user.admin.list') }}"><i class="fa fa-refresh"></i></a>
+									<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Ajouter un utilisateur" href="{{ path('user.admin.new') }}"><i class="fa fa-plus"></i></a>
 								</div>
 							</div>
 						</div>
 						{{ form_rest(form) }}
 			   		</form>
+			   		
+			   		
 				</div>
 			</li>
 			
@@ -113,6 +116,7 @@
 					</th>
 					<th>Etat-civil</th>
 					<th>Droits</th>
+					<th>Participations</th>
 					<th />
 				</tr>
 			</thead>
@@ -135,10 +139,18 @@
 						{% endfor %}
 					</td>
 					<td>
+						{% for participant in user.participants %}
+							{{ participant.gn.label }}<br />
+						{% else %}
+							aucune participation.
+						{% endfor %}
+					</td>
+					<td>
 						<div class="btn-toolbar pull-right" role="toolbar" aria-label="...">
 							<div class="btn-group" role="group" aria-label="...">
+								<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Ajouter une participation" href="{{ path('participant.new',{'user':user.id}) }}"><i class="fa fa-bookmark"></i></a>
 								<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Détail" href="{{ path('user.view',{'id':user.id}) }}"><i class="fa fa-eye"></i></a>
-								<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Voir l'état civil" href="{{ path('etatCivil.detail', {'etatCivil':user.etatCivil.id}) }}"><i class="fa fa-user"></i></a>
+								{% if user.etatCivil %}<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Voir l'état civil" href="{{ path('etatCivil.detail', {'etatCivil':user.etatCivil.id}) }}"><i class="fa fa-user"></i></a>{% endif %}
 								<a class="btn btn-danger" data-toggle="tooltip" data-placement="top" title="Modifier" href="{{ path('user.edit',{'id':user.id}) }}"><i class="fa fa-pencil"></i></a>
 							</div>
 						</div>

@@ -89,8 +89,7 @@ class UserRepository extends EntityRepository
 	
 		$qb->select('u');
 		$qb->from('LarpManager\Entities\User','u');
-		$qb->join('u.etatCivil','ec');
-		
+
 		if ( $type && $value)
 		{
 			switch ($type){
@@ -99,6 +98,7 @@ class UserRepository extends EntityRepository
 					$qb->setParameter('value', '%'.$value.'%');
 					break;
 				case 'nom':
+					$qb->join('u.etatCivil','ec');
 					$qb->andWhere('ec.nom LIKE :value');
 					$qb->setParameter('value', '%'.$value.'%');
 					break;

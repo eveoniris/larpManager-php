@@ -1,0 +1,50 @@
+{#
+Template for an email message sent to notifie about a new post.
+Variables passed to this template:
+    user: The SimpleUser\User instance.
+    postUrl : Url 
+#}
+
+{# The subject line. #}
+{%- block subject -%}{%- autoescape false -%}
+	EveOniris - Votre compte LarpManager a été créé
+{%- endautoescape -%}{%- endblock -%}
+
+{# The plain text message. #}
+{%- block body_text -%}{%- autoescape false -%}
+
+Bonjour, votre compte LarpManager est maintenant ACTIF.
+
+Nous vous invitons à vous rendre sur le site {{ url }} afin de :
+
+- Rejoindre un groupe de joueur
+- Créer votre personnage
+
+Ces opérations sont obligatoires pour participer aux jeux Eve-oniris.
+
+Votre mot de passe est : {{ plainPassword }}
+
+!! CHANGEZ LE LORS DE VOTRE PREMIERE CONNEXION !!
+
+{%- endautoescape -%}{%- endblock -%}
+
+{# The HTML message. Optional. #}
+{%- block body_html -%}
+
+    <h3>Bonjour, votre compte LarpManager est maintenant ACTIF.</h3>
+    
+    <p>
+        Nous vous invitons à vous rendre sur le site <a href="{{ url }}">LarpManager</a> afin de :
+		<ul>
+			<li>Rejoindre un groupe de joueur</li>
+			<li>Créer votre personnage</li>
+		</ul>
+		
+		Ces opérations sont obligatoires pour participer aux jeux Eve-oniris.
+
+		Votre mot de passe est : {{ plainPassword }}
+
+		<strong>!! CHANGEZ LE LORS DE VOTRE PREMIERE CONNEXION !!</strong>
+    </p>
+
+{%- endblock -%}

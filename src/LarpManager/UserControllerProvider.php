@@ -199,6 +199,14 @@ class UserControllerProvider implements ControllerProviderInterface
 			->before($mustBeAdmin);
 			
 		/**
+		 * Création d'un nouvel utilisateur (admin uniquement)
+		 */
+		$controllers->match('/admin/new', 'LarpManager\Controllers\UserController::adminNewAction')
+			->bind('user.admin.new')
+			->method('GET|POST')
+			->before($mustBeAdmin);
+			
+		/**
 		 * Gestion des droits
 		 */
 		$controllers->match('/right', 'LarpManager\Controllers\UserController::rightAction')
