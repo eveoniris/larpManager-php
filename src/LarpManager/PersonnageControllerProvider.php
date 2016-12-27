@@ -211,12 +211,13 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 		/**
 		 * Suppression d'un jeton (orga)
 		 */
-		$controllers->match('/admin/{personnage}/token/delete/{personnageToken}','LarpManager\Controllers\PersonnageController::adminTokenDeleteAction')
+		$controllers->match('/admin/{personnage}/token/delete/{personnageHasToken}','LarpManager\Controllers\PersonnageController::adminTokenDeleteAction')
 			->assert('personnage', '\d+')
+			->assert('personnageHasToken', '\d+')
 			->bind("personnage.admin.token.delete")
 			->method('GET')
 			->convert('personnage', 'converter.personnage:convert')
-			->convert('personnageToken', 'converter.personnageToken:convert')
+			->convert('personnageHasToken', 'converter.personnageToken:convert')
 			->before($mustBeOrga);
 			
 			

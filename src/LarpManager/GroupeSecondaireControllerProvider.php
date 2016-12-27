@@ -45,16 +45,7 @@ class GroupeSecondaireControllerProvider implements ControllerProviderInterface
 				throw new AccessDeniedException();
 			}
 		};
-		
-		/**
-		 * Vérifie que l'utilisateur est le responsable du groupe
-		 */
-		$mustBeResponsable = function(Request $request) use ($app) {
-			if (!$app['security.authorization_checker']->isGranted('GROUPE_SECONDAIRE_RESPONSABLE', $request->get('groupe'))) {
-				throw new AccessDeniedException();
-			}
-		};
-								
+										
 		/**
 		 * Liste des groupes secondaires (pour les orgas)
 		 */		
@@ -159,55 +150,7 @@ class GroupeSecondaireControllerProvider implements ControllerProviderInterface
 			->bind("groupeSecondaire.admin.reponse")
 			->method('GET|POST')
 			->convert('groupe', 'converter.secondaryGroup:convert')
-			->before($mustBeOrga);
-
-		/**
-		 * Rejeter la demande d'un postulant
-		 */
-		$controllers->match('/{groupe}/gestion/postulant/{postulant}/reject','LarpManager\Controllers\GroupeSecondaireController::gestionRejectAction')
-			->assert('groupe', '\d+')
-			->assert('postulant', '\d+')
-			->bind("groupeSecondaire.gestion.reject")
-			->method('GET|POST')
-			->convert('groupe', 'converter.secondaryGroup:convert')
-			->convert('postulant', 'converter.postulant:convert')
-			->before($mustBeResponsable);
-		
-		/**
-		 * Accepter la demande d'un postulant
-		 */
-		$controllers->match('/{groupe}/gestion/postulant/{postulant}/accept','LarpManager\Controllers\GroupeSecondaireController::gestionAcceptAction')
-			->assert('groupe', '\d+')
-			->assert('postulant', '\d+')
-			->bind("groupeSecondaire.gestion.accept")
-			->method('GET|POST')
-			->convert('groupe', 'converter.secondaryGroup:convert')
-			->convert('postulant', 'converter.postulant:convert')
-			->before($mustBeResponsable);
-			
-		/**
-		 * Mettre en attente la demande d'un postulant
-		 */
-		$controllers->match('/{groupe}/gestion/postulant/{postulant}/wait','LarpManager\Controllers\GroupeSecondaireController::gestionWaitAction')
-			->assert('groupe', '\d+')
-			->assert('postulant', '\d+')
-			->bind("groupeSecondaire.gestion.wait")
-			->method('GET|POST')
-			->convert('groupe', 'converter.secondaryGroup:convert')
-			->convert('postulant', 'converter.postulant:convert')
-			->before($mustBeResponsable);
-			
-		/**
-		 * Répondre à un postulant
-		 */
-		$controllers->match('/{groupe}/gestion/postulant/{postulant}/response','LarpManager\Controllers\GroupeSecondaireController::gestionResponseAction')
-			->assert('groupe', '\d+')
-			->assert('postulant', '\d+')
-			->bind("groupeSecondaire.gestion.response")
-			->method('GET|POST')
-			->convert('groupe', 'converter.secondaryGroup:convert')
-			->convert('postulant', 'converter.postulant:convert')
-			->before($mustBeResponsable);			
+			->before($mustBeOrga);		
 			
 		return $controllers;
 	}

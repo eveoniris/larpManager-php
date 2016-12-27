@@ -49,11 +49,11 @@ class PersonnageTokenConverter
      * 
      * @param unknown $id
      * @throws NotFoundHttpException
-     * @return LarpManager\Entities\Personnage
+     * @return LarpManager\Entities\PersonnageHasToken
      */
     public function convert($id)
     {
-    	$personnageToken = $this->em->find('\LarpManager\Entities\PersonnageToken',(int) $id);
+    	$personnageToken = $this->em->find('\LarpManager\Entities\PersonnageHasToken',(int) $id);
     	
         if (null === $personnageToken) {
             throw new NotFoundHttpException(sprintf('PersonnnageToken %d n\'existe pas', $id));

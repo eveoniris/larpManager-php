@@ -88,8 +88,14 @@ else
  
 
 $app->register(new HttpCacheServiceProvider(), array(
-		'http_cache.cache_dir' => __DIR__.'/../cache/',
+		'http_cache.cache_dir' => __DIR__.'/../cache/http/',
 		'http_cache.esi'       => null,
+		'http_cache.options'   => array(
+			'default_ttl' => 0,
+			'private_headers' => 'Cache-Control:no-cache',
+			'allow_reload' => true,
+			'allow_revalidate' => true,
+			),
 ));
 
 // Formulaires
@@ -118,7 +124,7 @@ $app->register(new TwigServiceProvider(), array(
     	__DIR__.'/../src/LarpManager/Views'
     ),
     'twig.options'    => array(
-        'cache' => __DIR__ . '/../cache/',
+        'cache' => __DIR__ . '/../cache/twig/',
     ),
 ));
 
@@ -167,8 +173,8 @@ $app['snappy.pdf_options'] = array(
 	'page-size' => 'A4',
 );
 
-$app['snappy.image_binary'] = __DIR__."/../vendor/wemersonjanuario/wkhtmltopdf-windows/bin/64bit/wkhtmltoimage.exe";
-$app['snappy.pdf_binary'] = __DIR__."/../vendor/wemersonjanuario/wkhtmltopdf-windows/bin/64bit/wkhtmltopdf.exe";
+//$app['snappy.image_binary'] = __DIR__."/../vendor/wemersonjanuario/wkhtmltopdf-windows/bin/64bit/wkhtmltoimage.exe";
+//$app['snappy.pdf_binary'] = __DIR__."/../vendor/wemersonjanuario/wkhtmltopdf-windows/bin/64bit/wkhtmltopdf.exe";
 $app->register(new SnappyServiceProvider());
 
 /**

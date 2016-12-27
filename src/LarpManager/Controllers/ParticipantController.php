@@ -48,7 +48,9 @@ use LarpManager\Form\TrombineForm;
 use LarpManager\Entities\Participant;
 use LarpManager\Entities\ParticipantHasRestauration;
 use LarpManager\Entities\Personnage;
+use LarpManager\Entities\Message;
 use LarpManager\Entities\SecondaryGroup;
+use LarpManager\Entities\Postulant;
 use LarpManager\Entities\Priere;
 use LarpManager\Entities\Potion;
 use LarpManager\Entities\Sort;
@@ -1742,6 +1744,162 @@ class ParticipantController
 		));
 	}
 	
+	
+	
+	/**
+	 * Accepter une candidature à un groupe secondaire
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function groupeSecondaireAcceptAction(Request $request, Application $app, Participant $participant, SecondaryGroup $groupeSecondaire, Postulant $postulant)
+	{
+		$form = $app['form.factory']->createBuilder()
+			->add('envoyer','submit', array('label' => "Accepter le postulant"))
+			->getForm();
+	
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$personnage = $postulant->getPersonnage();
+				
+			$membre = new \LarpManager\Entities\Membre();
+			$membre->setPersonnage($personnage);
+			$membre->setSecondaryGroup($groupeSecondaire);
+			$membre->setSecret(false);
+	
+			$app['orm.em']->persist($membre);
+			$app['orm.em']->remove($postulant);
+			$app['orm.em']->flush();
+				
+			// envoyer une notification au nouveau membre
+			$app['notify']->acceptGroupeSecondaire($personnage->getUser(), $groupeSecondaire);
+				
+			$app['session']->getFlashBag()->add('success', 'Vous avez accepté la candidature. Un message a été envoyé au joueur concerné.');
+			return $app->redirect($app['url_generator']->generate('participant.groupeSecondaire.detail', array('participant', $participant->getId(), 'groupeSecondaire' => $groupeSecondaire->getId())),301);
+		}
+	
+		return $app['twig']->render('public/groupeSecondaire/gestion_accept.twig', array(
+				'groupeSecondaire' => $groupeSecondaire,
+				'postulant' => $postulant,
+				'participant' => $participant,
+				'form' => $form->createView(),
+		));
+	}
+	
+	/**
+	 * Accepter une candidature à un groupe secondaire
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function groupeSecondaireRejectAction(Request $request, Application $app, Participant $participant, SecondaryGroup $groupeSecondaire, Postulant $postulant)
+	{	
+		$form = $app['form.factory']->createBuilder()
+			->add('envoyer','submit', array('label' => "Refuser le postulant"))
+			->getForm();
+	
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$personnage = $postulant->getPersonnage();
+			$app['orm.em']->remove($postulant);
+			$app['orm.em']->flush();
+	
+			$app['notify']->rejectGroupeSecondaire($personnage->getUser(), $groupeSecondaire);
+	
+			$app['session']->getFlashBag()->add('success', 'Vous avez refusé la candidature. Un message a été envoyé au joueur concerné.');
+			return $app->redirect($app['url_generator']->generate('participant.groupeSecondaire.detail', array('participant', $participant->getId(), 'groupeSecondaire' => $groupeSecondaire->getId())),301);
+		}
+	
+	
+		return $app['twig']->render('public/groupeSecondaire/gestion_reject.twig', array(
+				'groupeSecondaire' => $groupeSecondaire,
+				'postulant' => $postulant,
+				'participant' => $participant,
+				'form' => $form->createView(),
+		));
+	}
+	
+	/**
+	 * Laisser la candidature dans les postulant
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function groupeSecondaireWaitAction(Request $request, Application $app, Participant $participant, SecondaryGroup $groupeSecondaire, Postulant $postulant)
+	{	
+		$form = $app['form.factory']->createBuilder()
+			->add('envoyer','submit', array('label' => "Laisser en attente"))
+			->getForm();
+	
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$personnage = $postulant->getPersonnage();
+			$postulant->setWaiting(true);
+			$app['orm.em']->persist($postulant);
+			$app['orm.em']->flush($postulant);
+				
+			$app['notify']->waitGroupeSecondaire($personnage->getUser(), $groupeSecondaire);
+	
+			$app['session']->getFlashBag()->add('success', 'La candidature reste en attente. Un message a été envoyé au joueur concerné.');
+			return $app->redirect($app['url_generator']->generate('participant.groupeSecondaire.detail', array('participant', $participant->getId(), 'groupeSecondaire' => $groupeSecondaire->getId())),301);
+		}
+	
+	
+		return $app['twig']->render('public/groupeSecondaire/gestion_wait.twig', array(
+				'groupeSecondaire' => $groupeSecondaire,
+				'postulant' => $postulant,
+				'participant' => $participant,
+				'form' => $form->createView(),
+		));
+	}
+	
+	/**
+	 * Répondre à un postulant
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function groupeSecondaireResponseAction(Request $request, Application $app, Participant $participant, SecondaryGroup $groupeSecondaire, Postulant $postulant)
+	{
+		$message = new Message();
+	
+		$message->setUserRelatedByAuteur($app['user']);
+		$message->setUserRelatedByDestinataire($postulant->getPersonnage()->getParticipant()->getUser());
+		$message->setCreationDate(new \Datetime('NOW'));
+		$message->setUpdateDate(new \Datetime('NOW'));
+	
+		$form = $app['form.factory']->createBuilder(new MessageForm(), $message)
+			->add('envoyer','submit', array('label' => "Envoyer votre réponse"))
+			->getForm();
+	
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$message = $form->getData();
+				
+			$app['orm.em']->persist($message);
+			$app['orm.em']->flush();
+				
+			$app['user.mailer']->sendNewMessage($message);
+	
+			$app['session']->getFlashBag()->add('success', 'Votre message a été envoyé au joueur concerné.');
+			return $app->redirect($app['url_generator']->generate('participant.groupeSecondaire.detail', array('participant', $participant->getId(), 'groupeSecondaire' => $groupeSecondaire->getId())),301);
+		}
+	
+	
+		return $app['twig']->render('public/groupeSecondaire/gestion_response.twig', array(
+				'groupeSecondaire' => $groupeSecondaire,
+				'postulant' => $postulant,
+				'form' => $form->createView(),
+		));
+	}
 	
 	/**
 	 * Ajoute une compétence au personnage

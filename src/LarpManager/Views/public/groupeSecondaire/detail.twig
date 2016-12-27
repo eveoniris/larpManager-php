@@ -58,16 +58,16 @@
 						{{ postulant.explanation|markdown }}
 					</div>
 					<a class="btn btn-primary" 
-						href="{{ path('groupeSecondaire.gestion.response', {'groupe': groupeSecondaire.id, 'postulant': postulant.id }) }}">
+						href="{{ path('participant.groupeSecondaire.response', {'participant': participant.id,'groupeSecondaire': groupeSecondaire.id, 'postulant': postulant.id }) }}">
 						Répondre</a>
 					<a class="btn btn-primary" 
-						href="{{ path('groupeSecondaire.gestion.accept', {'groupe': groupeSecondaire.id, 'postulant': postulant.id }) }}">
+						href="{{ path('participant.groupeSecondaire.accept', {'participant': participant.id, 'groupeSecondaire': groupeSecondaire.id, 'postulant': postulant.id }) }}">
 						Accepter</a>
 					<a class="btn btn-default" 
-						href="{{ path('groupeSecondaire.gestion.wait', {'groupe': groupeSecondaire.id, 'postulant': postulant.id }) }}">
+						href="{{ path('participant.groupeSecondaire.wait', {'participant': participant.id, 'groupeSecondaire': groupeSecondaire.id, 'postulant': postulant.id }) }}">
 						Mettre en attente</a>
 					<a class="btn btn-danger" 
-						href="{{ path('groupeSecondaire.gestion.reject', {'groupe': groupeSecondaire.id, 'postulant': postulant.id }) }}">
+						href="{{ path('participant.groupeSecondaire.reject', {'participant': participant.id, 'groupeSecondaire': groupeSecondaire.id, 'postulant': postulant.id }) }}">
 						Rejeter</a>
 				</div>
 			{% endfor %}

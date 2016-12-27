@@ -72,7 +72,7 @@
 						{% for personnageToken in personnage.personnageHasTokens %}
 							<p class="list-group-item-text">
 								{{ personnageToken.token.label }}
-								-- <a href="{{ path('personnage.admin.token.delete', {'personnage': personnage.id, 'personnageToken': personnageToken.id}) }}">Supprimer</a>
+								-- <a href="{{ path('personnage.admin.token.delete', {'personnage': personnage.id, 'personnageHasToken': personnageToken.id}) }}">Supprimer</a>
 							</p>
 						{% else %}
 							<p class="list-group-item-text">La liste est vide</p>

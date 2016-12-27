@@ -121,7 +121,9 @@
 						{% endif %}
 					</div>
 					<div class="col-md-4">
-						<a href="{{ path('groupe.breakAlliance', {'groupe': groupe.id, 'alliance': alliance.id}) }}">Rompre cette alliance</a>
+						{% if participant.isResponsable(groupe) %}
+							<a href="{{ path('groupe.breakAlliance', {'groupe': groupe.id, 'alliance': alliance.id}) }}">Rompre cette alliance</a>
+						{% endif %}
 					</div>
 				</div>
 			</li>

@@ -6,13 +6,15 @@
 
 	<ol class="breadcrumb">
 		<li><a href="{{ path('homepage') }}">Accueil</a></li>
-		<li><a href="{{ path("groupeSecondaire.joueur", {'groupe':groupeSecondaire.id}) }}">{{ groupeSecondaire.label }}</a></li>
+		<li><a href="{{ path('participant.index', {'participant' : participant.id}) }}">{{ participant.gn.label }}</a></li>
+		<li><a href="{{ path('participant.personnage', {'participant' : participant.id}) }}">{{ participant.personnage.nom }} {{ participant.personnage.surnom }}</a></li>
+		<li><a href="{{ path("participant.groupeSecondaire.detail", {'participant': participant.id, 'groupeSecondaire':groupeSecondaire.id}) }}">{{ groupeSecondaire.label }}</a></li>
 		<li class="active">Répondre à un postulant</li>
 	</ol>
 	
 		
 	<div class="well bs-component">
-		<form action="{{ path('groupeSecondaire.gestion.response', {'groupe': groupeSecondaire.id, 'postulant': postulant.id}) }}" method="POST" novalidate >
+		<form action="{{ path('participant.groupeSecondaire.response', {'participant': participant.id, 'groupeSecondaire': groupeSecondaire.id, 'postulant': postulant.id}) }}" method="POST" novalidate >
 			<fieldset>
 				<legend>Répondre à un postulant</legend>
 				

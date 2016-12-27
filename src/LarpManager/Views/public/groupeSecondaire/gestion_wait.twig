@@ -6,12 +6,14 @@
 
 	<ol class="breadcrumb">
 		<li><a href="{{ path('homepage') }}">Accueil</a></li>
-		<li><a href="{{ path("groupeSecondaire.joueur", {'groupe':groupeSecondaire.id}) }}">{{ groupeSecondaire.label }}</a></li>
+		<li><a href="{{ path('participant.index', {'participant' : participant.id}) }}">{{ participant.gn.label }}</a></li>
+		<li><a href="{{ path('participant.personnage', {'participant' : participant.id}) }}">{{ participant.personnage.nom }} {{ participant.personnage.surnom }}</a></li>
+		<li><a href="{{ path("participant.groupeSecondaire.detail", {'participant': participant.id, 'groupeSecondaire':groupeSecondaire.id}) }}">{{ groupeSecondaire.label }}</a></li>
 		<li class="active">Mise en attente d'un postulant</li>
 	</ol>
 	
 	<div class="well bs-component">
-		<form action="{{ path('groupeSecondaire.gestion.wait', {'groupe': groupeSecondaire.id, 'postulant': postulant.id}) }}" method="POST" {{ form_enctype(form) }}>
+		<form action="{{ path('participant.groupeSecondaire.wait', {'participant': participant.id, 'groupeSecondaire': groupeSecondaire.id, 'postulant': postulant.id}) }}" method="POST" {{ form_enctype(form) }}>
 			<fieldset>
 				<legend>Mise en attente d'un postulant</legend>
 				

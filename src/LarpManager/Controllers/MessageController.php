@@ -62,6 +62,19 @@ class MessageController
 		));
 	}
 	
+	/**
+	 * Affiche les messages envoyé par l'utilisateur
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function envoyeAction(Request $request, Application $app)
+	{
+		return $app['twig']->render('public/message/envoye.twig', array(
+				'user' => $app['user'],
+		));
+	}
+	
 	
 	/**
 	 * Nouveau message

@@ -26,7 +26,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Silex\Application;
 use JasonGrimes\Paginator;
 use LarpManager\Entities\Personnage;
-use LarpManager\Entities\PersonnageToken;
+use LarpManager\Entities\PersonnageHasToken;
 
 use LarpManager\Form\PersonnageFindForm;
 use LarpManager\Form\PersonnageForm;
@@ -666,6 +666,18 @@ class PersonnageController
 				$personnage->removePersonnageBackground($background);
 				$app['orm.em']->remove($background);
 			}
+			
+			foreach ($personnage->getPersonnageHasTokens() as $token)
+			{
+				$personnage->removePersonnageHasToken($token);
+				$app['orm.em']->remove($token);
+			}
+			
+			foreach ($personnage->getParticipants() as $participant)
+			{
+				$participant->setPersonnage();
+				$app['orm.em']->persist($participant);
+			}
 						
 			$app['orm.em']->remove($personnage);
 			$app['orm.em']->flush();
@@ -865,13 +877,13 @@ class PersonnageController
 	 * @param Request $request
 	 * @param Application $app
 	 * @param Personnage $personnage
-	 * @param PersonnageToken $personnageToken
+	 * @param PersonnageHasToken $personnageToken
 	 */
-	public function adminTokenDeleteAction(Request $request, Application $app, Personnage $personnage, PersonnageToken $personnageToken)
+	public function adminTokenDeleteAction(Request $request, Application $app, Personnage $personnage, PersonnageHasToken $personnageHasToken)
 	{
 		$personnage->removePersonnageHasToken($personnageHasToken);
 		$app['orm.em']->persist($personnage);
-		$app['orm.em']->remove($personnageToken);
+		$app['orm.em']->remove($personnageHasToken);
 		
 		$app['orm.em']->persist($personnage);
 		$app['orm.em']->flush();
@@ -883,7 +895,7 @@ class PersonnageController
 	/**
 	 * Ajoute un trigger 
 	 */
-	public function adminTriggerAddAction(Request $request, Application $app)
+	public function adminTriggerAddAction(Request $request, Application $app, Personnage $personnage)
 	{		
 		$trigger = new \LarpManager\Entities\PersonnageTrigger();
 		$trigger->setPersonnage($personnage);

@@ -466,8 +466,7 @@ class LarpManagerVoter implements VoterInterface
 	 */
 	protected function isGroupeSecondaireResponsableOf($user, $groupeSecondaireId)
 	{
-		$personnage = $user->getPersonnage();
-		if ( $personnage)
+		foreach ( $user->getPersonnages() as $personnage )
 		{
 			foreach( $personnage->getSecondaryGroupsAsChief() as $groupe)
 			{
@@ -487,8 +486,7 @@ class LarpManagerVoter implements VoterInterface
 	 */
 	protected function isGroupeSecondaireMemberOf($user, $groupeSecondaireId)
 	{
-		$personnage = $user->getPersonnage();
-		if ( $personnage )
+		foreach ( $user->getPersonnages() as $personnage )
 		{
 			foreach ( $personnage->getMembres() as $membre )
 			{

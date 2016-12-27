@@ -525,51 +525,6 @@ class Mailer
     	 
     	$this->sendMessage($this->newMessageTemplate, $context, $this->getFromEmail(), $message->getUserRelatedByDestinataire()->getEmail());    	
     }
-    		
-    /**
-     * Envoi du message de refus d'un groupe secondaire
-     * @param User $user
-     * @param GroupeSecondaire $groupeSecondaire
-     */
-    public function sendGroupeSecondaireRejectMessage(User $user, SecondaryGroup $groupeSecondaire)
-    {
-    	$context = array(
-    			'user' => $user,
-    			'groupeSecondaire' => $groupeSecondaire,
-    	);
-    	
-    	$this->sendMessage($this->groupeSecondaireRejectTemplate, $context, $this->getFromEmail(), $user->getEmail());
-    }
-    
-    /**
-     * Envoi du message d'acceptation d'un groupe secondaire
-     * @param User $user
-     * @param GroupeSecondaire $groupeSecondaire
-     */
-    public function sendGroupeSecondaireAcceptMessage(User $user, SecondaryGroup $groupeSecondaire)
-    {
-    	$context = array(
-    			'user' => $user,
-    			'groupeSecondaire' => $groupeSecondaire,
-    	);
-    	 
-    	$this->sendMessage($this->groupeSecondaireAcceptTemplate, $context, $this->getFromEmail(), $user->getEmail());
-    }
-    
-    /**
-     * Envoi du message mise en attente d'un groupe secondaire
-     * @param User $user
-     * @param GroupeSecondaire $groupeSecondaire
-     */
-    public function sendGroupeSecondaireWaitMessage(User $user, SecondaryGroup $groupeSecondaire)
-    {
-    	$context = array(
-    			'user' => $user,
-    			'groupeSecondaire' => $groupeSecondaire,
-    	);
-    
-    	$this->sendMessage($this->groupeSecondaireWaitTemplate, $context, $this->getFromEmail(), $user->getEmail());
-    }
     
     /**
      * Envoi du message de desabonnement d'un groupe secondaire

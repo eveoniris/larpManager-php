@@ -218,6 +218,39 @@ class NotifyManager
 	}
 	
 	/**
+	 * Demande d'un joueur pour rejoindre un groupe secondaire
+	 *
+	 * @param unknown $responsable
+	 */
+	public function acceptGroupeSecondaire($user, $groupeSecondaire)
+	{
+		$url = $this->app['url_generator']->generate('homepage', array(), true);
+		$this->sendMessage('user/email/groupeSecondaireAccept.twig',array('groupeSecondaire' => $groupeSecondaire, 'url' => $url), array('noreply@eveoniris.com'), array($user->getEmail()));
+	}
+	
+	/**
+	 * Demande d'un joueur pour rejoindre un groupe secondaire
+	 *
+	 * @param unknown $responsable
+	 */
+	public function rejectGroupeSecondaire($user, $groupeSecondaire)
+	{
+		$url = $this->app['url_generator']->generate('homepage', array(), true);
+		$this->sendMessage('user/email/groupeSecondaireReject.twig',array('groupeSecondaire' => $groupeSecondaire, 'url' => $url), array('noreply@eveoniris.com'), array($user->getEmail()));
+	}
+	
+	/**
+	 * Demande d'un joueur pour rejoindre un groupe secondaire
+	 *
+	 * @param unknown $responsable
+	 */
+	public function waitGroupeSecondaire($user, $groupeSecondaire)
+	{
+		$url = $this->app['url_generator']->generate('homepage', array(), true);
+		$this->sendMessage('user/email/groupeSecondaireWait.twig',array('groupeSecondaire' => $groupeSecondaire, 'url' => $url), array('noreply@eveoniris.com'), array($user->getEmail()));
+	}
+	
+	/**
 	 * Envoi du message
 	 * 
 	 * @param unknown $templateName

@@ -104,6 +104,15 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 		};
 		
 		/**
+		 * Vérifie que l'utilisateur est le responsable du groupe secondaire
+		 */
+		$mustBeResponsable = function(Request $request) use ($app) {
+			if (!$app['security.authorization_checker']->isGranted('GROUPE_SECONDAIRE_RESPONSABLE', $request->get('groupeSecondaire'))) {
+				throw new AccessDeniedException();
+			}
+		};
+		
+		/**
 		 * Ajoute un billet à un utilisateur
 		 */
 		$controllers->get('/{participant}/billet', 'LarpManager\Controllers\ParticipantController::billetAction')
@@ -224,7 +233,7 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 			->convert('personnage', 'converter.personnage:convert')
 			->bind("participant.personnage.trombine")
 			->method('GET|POST')
-			->before($mustBeScenariste);
+			->before($mustOwnParticipant);
 			
 		/**
 		 * Création d'un personnage
@@ -291,6 +300,65 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 			->bind("participant.groupeSecondaire.detail")
 			->method('GET')
 			->before($mustOwnParticipant);
+			
+		/**
+		 * Rejeter la demande d'un postulant
+		 */
+		$controllers->match('/{participant}/groupeSecondaire/{groupeSecondaire}/postulant/{postulant}/reject','LarpManager\Controllers\ParticipantController::groupeSecondaireRejectAction')
+			->assert('participant', '\d+')
+			->assert('groupeSecondaire', '\d+')
+			->assert('postulant', '\d+')
+			->bind("participant.groupeSecondaire.reject")
+			->method('GET|POST')
+			->convert('participant', 'converter.participant:convert')
+			->convert('groupeSecondaire', 'converter.secondaryGroup:convert')
+			->convert('postulant', 'converter.postulant:convert')
+			->before($mustBeResponsable);
+		
+		/**
+		 * Accepter la demande d'un postulant
+		 */
+		$controllers->match('/{participant}/groupeSecondaire/{groupeSecondaire}/postulant/{postulant}/accept','LarpManager\Controllers\ParticipantController::groupeSecondaireAcceptAction')
+			->assert('participant', '\d+')
+			->assert('groupeSecondaire', '\d+')
+			->assert('postulant', '\d+')
+			->bind("participant.groupeSecondaire.accept")
+			->method('GET|POST')
+			->convert('participant', 'converter.participant:convert')
+			->convert('groupeSecondaire', 'converter.secondaryGroup:convert')
+			->convert('postulant', 'converter.postulant:convert')
+			->before($mustBeResponsable);
+			
+		/**
+		 * Mettre en attente la demande d'un postulant
+		 */
+		$controllers->match('/{participant}/groupeSecondaire/{groupeSecondaire}/postulant/{postulant}/wait','LarpManager\Controllers\ParticipantController::groupeSecondaireWaitAction')
+			->assert('participant', '\d+')
+			->assert('groupeSecondaire', '\d+')
+			->assert('postulant', '\d+')
+			->bind("participant.groupeSecondaire.wait")
+			->method('GET|POST')
+			->convert('participant', 'converter.participant:convert')
+			->convert('groupeSecondaire', 'converter.secondaryGroup:convert')
+			->convert('postulant', 'converter.postulant:convert')
+			->before($mustBeResponsable);
+			
+		/**
+		 * Répondre à un postulant
+		 */
+		$controllers->match('/{participant}/groupeSecondaire/{groupeSecondaire}/postulant/{postulant}/response','LarpManager\Controllers\ParticipantController::groupeSecondaireResponseAction')
+			->assert('participant', '\d+')
+			->assert('groupeSecondaire', '\d+')
+			->assert('postulant', '\d+')
+			->bind("participant.groupeSecondaire.response")
+			->method('GET|POST')
+			->convert('participant', 'converter.participant:convert')
+			->convert('groupeSecondaire', 'converter.secondaryGroup:convert')
+			->convert('postulant', 'converter.postulant:convert')
+			->before($mustBeResponsable);
+
+			
+			
 			
 		/**
 		 * Liste des religions

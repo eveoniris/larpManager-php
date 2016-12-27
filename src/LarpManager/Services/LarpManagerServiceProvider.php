@@ -325,6 +325,11 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 			return new TokenConverter($app['orm.em']);
 		});
 		
+		// personnage token converter
+		$app['converter.personnageToken'] = $app->share(function($app) {
+			return new PersonnageTokenConverter($app['orm.em']);
+		});
+			
 		// Billet converter
 		$app['converter.billet'] = $app->share(function($app) {
 			return new BilletConverter($app['orm.em']);

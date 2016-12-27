@@ -83,6 +83,13 @@ class MessageControllerProvider implements ControllerProviderInterface
 		$controllers->match('/archives', 'LarpManager\Controllers\MessageController::archiveAction')
 			->bind('message.archives')
 			->method('GET|POST');
+			
+		/**
+		 * Liste des messages envoyés
+		 */
+		$controllers->match('/envoye', 'LarpManager\Controllers\MessageController::envoyeAction')
+			->bind('message.envoye')
+			->method('GET');
 				
 		return $controllers;
 	}
