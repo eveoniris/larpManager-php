@@ -1,0 +1,67 @@
+{% extends "layout.twig" %}
+
+{% block title %}Econnomie{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li class="active">Econnomie</li>
+	</ol>
+	
+	<div class="well well-sm">
+		<div class="alert alert-info">
+			Ces informations correspondent aux groupes participant au prochain jeu <strong>{{ gn.label }}</strong>.
+		</div>
+		
+		<h3>Masse monétaire</h3>
+		
+		prévue au début du jeu : <strong>{{ masseMonetaire }} PA</strong>
+		
+		<h3>Ressources disponibles :</h3>
+		
+		<ul>
+		{% for ressource in ressources %}
+			<li>
+				<strong>{{ ressource.label }}</strong> : {{ ressource.nombre }}
+				<p style="text-indent:20px;">
+					{% for territoire in ressource.territoires %}
+						<a href="{{ path('territoire.detail', {'territoire': territoire.id}) }}">{{ territoire.nom }}</a>,
+					{% endfor %}
+				</p>
+			</li>
+		{% endfor %}
+		</ul>
+		
+		<h3>Ingrédients disponibles :</h3>
+				
+		<ul>
+		{% for ingredient in ingredients %}
+			<li>
+				<strong>{{ ingredient.label }}</strong> : {{ ingredient.nombre }}
+				<p style="text-indent:20px;">
+					{% for territoire in ingredient.territoires %}
+						<a href="{{ path('territoire.detail', {'territoire': territoire.id}) }}">{{ territoire.nom }}</a>,
+					{% endfor %}
+				</p>
+			</li>
+		{% endfor %}
+		</ul>
+		
+		<h3>Constructions :</h3>
+		
+		<ul>
+		{% for construction in constructions %}
+			<li>
+				<strong>{{ construction.label }}</strong> : {{ construction.nombre }}
+				<p style="text-indent:20px;">
+					{% for territoire in construction.territoires %}
+						<a href="{{ path('territoire.detail', {'territoire': territoire.id}) }}">{{ territoire.nom }}</a>,
+					{% endfor %}
+				</p>
+			</li>
+		{% endfor %}
+		</ul>
+	</div>
+	
+{% endblock content %}

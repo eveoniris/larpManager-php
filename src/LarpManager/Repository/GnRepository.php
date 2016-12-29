@@ -30,7 +30,26 @@ use LarpManager\Entities\Gn;
  */
 class GnRepository extends EntityRepository
 {
-			
+	/**
+	 * Recherche le prochain GN (le plus proche de la date du jour)
+	 */
+	public function findNext()
+	{
+		$gns = $this->getEntityManager()
+			->createQuery('SELECT g FROM LarpManager\Entities\Gn g WHERE g.actif = true AND g.date_debut > CURRENT_DATE() ORDER BY g.date_debut ASC')
+			->getResult();
+		
+		return $gns[0];
+	}
+	
+	/**
+	 * Classe les gn par date (du plus proche au plus lointain)
+	 */		
+	public function findAll()
+	{
+		return $this->findBy(array(), array('date_debut' => 'ASC'));
+	}
+	
 	/**
 	 * Trouve les gns correspondant aux critères de recherche
 	 *

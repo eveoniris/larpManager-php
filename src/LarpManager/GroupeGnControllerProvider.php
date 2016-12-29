@@ -110,7 +110,7 @@ class GroupeGnControllerProvider implements ControllerProviderInterface
 			->before($mustBeAdmin);
 
 		/**
-		 * Ajoute un participant du groupe
+		 * Ajoute un participant du groupe (pour les admins)
 		 */
 		$controllers->match('/{groupeGn}/participants/add','LarpManager\Controllers\GroupeGnController::participantAddAction')
 			->assert('groupeGn', '\d+')
@@ -118,6 +118,17 @@ class GroupeGnControllerProvider implements ControllerProviderInterface
 			->bind("groupeGn.participants.add")
 			->method('GET|POST')
 			->before($mustBeAdmin);
+			
+		/**
+		 * Ajoute un participant du groupe (pour les chefs de groupes
+		 */
+		$controllers->match('/{groupeGn}/add','LarpManager\Controllers\GroupeGnController::joueurAddAction')
+			->assert('groupeGn', '\d+')
+			->convert('groupeGn', 'converter.groupeGn:convert')
+			->bind("groupeGn.joueur.add")
+			->method('GET|POST')
+			->before($mustBeResponsable)
+			->before($mustHaveBillet);
 			
 		/**
 		 * Retire un participant du groupe

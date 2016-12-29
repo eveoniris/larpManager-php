@@ -1,0 +1,29 @@
+{% extends "layout.twig" %}
+
+{% block title %}{{ groupeGn.groupe.nom }}{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Page d'accueil</a></li>
+		<li><a href="{{ path('participant.index', {'participant' : participant.id}) }}">{{ participant.gn.label }}</a></li>
+		<li><a href="{{ path('groupeGn.groupe', {'groupeGn' : groupeGn.id}) }}">{{ groupeGn.groupe.nom }}</a></li>
+		<li class="active">Ajouter un joueur à votre groupe</li>
+	</ol>
+	
+	<div class="well well-sm">
+		<div class="header">
+			<h5>Ajouter un joueur à votre groupe</h5>
+		</div>						
+						
+		<p>Cette action vous permet d'ajouter un joueur à votre groupe. Il n'aura donc pas de code à remplir pour rejoindre votre groupe.
+		Par contre <bold>il faut</bold> que ce joueur ai préalablement créé son compte sur LarpManager et ai indiqué vouloir participer à cette session de jeu.
+		</p>
+		
+		<form action="{{ path('groupeGn.joueur.add', {'groupeGn': groupeGn.id}) }}" method="POST" {{ form_enctype(form) }}>
+			{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+			{{ form(form) }}
+		</form>
+	</div>
+	
+{% endblock content %}

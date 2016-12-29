@@ -246,6 +246,69 @@ class GroupeGnController
 	}
 	
 	/**
+	 * Ajoute un participant à un groupe (pour les chefs de groupe)
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 * @param GroupeGn $groupeGn
+	 */
+	public function joueurAddAction(Request $request, Application $app, GroupeGn $groupeGn)
+	{
+		$participant = $app['user']->getParticipant($groupeGn->getGn());
+		
+		$form = $app['form.factory']->createBuilder()
+			->add('participant','entity', array(
+				'label' => 'Choisissez le nouveau membre de votre groupe',
+				'required' => false,
+				'class' => 'LarpManager\Entities\Participant',
+				'property' => 'user.username',
+				'query_builder' => function(ParticipantRepository $er) use ($groupeGn) {
+					$qb = $er->createQueryBuilder('p');
+					$qb->join('p.user', 'u');
+					$qb->join('p.gn', 'gn');
+					$qb->join('u.etatCivil', 'ec');
+					$qb->where($qb->expr()->isNull('p.groupeGn'));
+					$qb->andWhere('gn.id = :gnId');
+					$qb->setParameter('gnId',$groupeGn->getGn()->getId());
+					$qb->orderBy('u.username', 'ASC');
+					return $qb;
+				},
+				'attr' => array(
+						'class'	=> 'selectpicker',
+						'data-live-search' => 'true',
+						'placeholder' => 'Participant',
+				),
+				))
+				->add('submit','submit', array('label' => 'Ajouter le joueur choisi'))
+				->getForm();
+					
+		$form->handleRequest($request);
+	
+		if ( $form->isValid() )
+		{
+			$data = $form->getData();
+			if ($data['participant'])
+			{
+				$data['participant']->setGroupeGn($groupeGn);
+				$app['orm.em']->persist($data['participant']);
+				$app['orm.em']->flush();
+					
+				$app['notify']->newMembre($data['participant']->getUser(), $groupeGn);
+					
+				$app['session']->getFlashBag()->add('success', 'Le joueur a été ajouté à votre groupe.');
+			}
+			
+			return $app->redirect($app['url_generator']->generate('groupeGn.groupe', array('groupeGn' => $groupeGn->getId())));
+		}
+			
+		return $app['twig']->render('public/groupeGn/add.twig', array(
+					'groupeGn' => $groupeGn,
+					'participant' => $participant,
+					'form' => $form->createView(),
+				));
+	}
+	
+	/**
 	 * Retire un participant d'un groupe
 	 * 
 	 * @param Request $request

@@ -3,6 +3,10 @@
 	<div class="col-md-4">
 		<h6><i class="fa fa-circle"></i> {{ session.gn }}</h6>
 	
+		{% if participant.isResponsable(groupe) %}
+			<a href="{{ path('groupeGn.joueur.add', {'groupeGn': session.id}) }}">Ajouter des joueurs à votre groupe</a>
+		{% endif %}
+	
 		<ul class="media-list">
 			{% for joueur in session.participants %}
 				<li class="media">

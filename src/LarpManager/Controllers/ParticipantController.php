@@ -45,6 +45,7 @@ use LarpManager\Form\Personnage\PersonnageReligionForm;
 use LarpManager\Form\Personnage\PersonnageOriginForm;
 
 use LarpManager\Form\TrombineForm;
+use LarpManager\Form\MessageForm;
 
 use LarpManager\Entities\User;
 use LarpManager\Entities\Participant;
@@ -1808,7 +1809,7 @@ class ParticipantController
 			$app['notify']->acceptGroupeSecondaire($personnage->getUser(), $groupeSecondaire);
 				
 			$app['session']->getFlashBag()->add('success', 'Vous avez accepté la candidature. Un message a été envoyé au joueur concerné.');
-			return $app->redirect($app['url_generator']->generate('participant.groupeSecondaire.detail', array('participant', $participant->getId(), 'groupeSecondaire' => $groupeSecondaire->getId())),301);
+			return $app->redirect($app['url_generator']->generate('participant.groupeSecondaire.detail', array('participant' => $participant->getId(), 'groupeSecondaire' => $groupeSecondaire->getId())),301);
 		}
 	
 		return $app['twig']->render('public/groupeSecondaire/gestion_accept.twig', array(
@@ -1842,7 +1843,7 @@ class ParticipantController
 			$app['notify']->rejectGroupeSecondaire($personnage->getUser(), $groupeSecondaire);
 	
 			$app['session']->getFlashBag()->add('success', 'Vous avez refusé la candidature. Un message a été envoyé au joueur concerné.');
-			return $app->redirect($app['url_generator']->generate('participant.groupeSecondaire.detail', array('participant', $participant->getId(), 'groupeSecondaire' => $groupeSecondaire->getId())),301);
+			return $app->redirect($app['url_generator']->generate('participant.groupeSecondaire.detail', array('participant' => $participant->getId(), 'groupeSecondaire' => $groupeSecondaire->getId())),301);
 		}
 	
 	
@@ -1878,7 +1879,7 @@ class ParticipantController
 			$app['notify']->waitGroupeSecondaire($personnage->getUser(), $groupeSecondaire);
 	
 			$app['session']->getFlashBag()->add('success', 'La candidature reste en attente. Un message a été envoyé au joueur concerné.');
-			return $app->redirect($app['url_generator']->generate('participant.groupeSecondaire.detail', array('participant', $participant->getId(), 'groupeSecondaire' => $groupeSecondaire->getId())),301);
+			return $app->redirect($app['url_generator']->generate('participant.groupeSecondaire.detail', array('participant' => $participant->getId(), 'groupeSecondaire' => $groupeSecondaire->getId())),301);
 		}
 	
 	
@@ -1901,7 +1902,7 @@ class ParticipantController
 		$message = new Message();
 	
 		$message->setUserRelatedByAuteur($app['user']);
-		$message->setUserRelatedByDestinataire($postulant->getPersonnage()->getParticipant()->getUser());
+		$message->setUserRelatedByDestinataire($postulant->getPersonnage()->getUser());
 		$message->setCreationDate(new \Datetime('NOW'));
 		$message->setUpdateDate(new \Datetime('NOW'));
 	
@@ -1918,16 +1919,17 @@ class ParticipantController
 			$app['orm.em']->persist($message);
 			$app['orm.em']->flush();
 				
-			$app['user.mailer']->sendNewMessage($message);
+			$app['notify']->newMessage($postulant->getPersonnage()->getUser(), $message);
 	
 			$app['session']->getFlashBag()->add('success', 'Votre message a été envoyé au joueur concerné.');
-			return $app->redirect($app['url_generator']->generate('participant.groupeSecondaire.detail', array('participant', $participant->getId(), 'groupeSecondaire' => $groupeSecondaire->getId())),301);
+			return $app->redirect($app['url_generator']->generate('participant.groupeSecondaire.detail', array('participant' => $participant->getId(), 'groupeSecondaire' => $groupeSecondaire->getId())),301);
 		}
 	
 	
 		return $app['twig']->render('public/groupeSecondaire/gestion_response.twig', array(
 				'groupeSecondaire' => $groupeSecondaire,
 				'postulant' => $postulant,
+				'participant' => $participant,
 				'form' => $form->createView(),
 		));
 	}

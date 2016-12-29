@@ -92,7 +92,7 @@ $app->register(new HttpCacheServiceProvider(), array(
 		'http_cache.esi'       => null,
 		'http_cache.options'   => array(
 			'default_ttl' => 0,
-			'private_headers' => 'Cache-Control:no-cache',
+			//'private_headers' => array('Cache-Control:no-cache'),
 			'allow_reload' => true,
 			'allow_revalidate' => true,
 			),
@@ -222,7 +222,7 @@ else
 			   }),
 		),
 		'secured_area' => array(	// le reste necessite d'être connecté
-			'pattern' => '^/[annonce|restriction|monnaie|quality|rule|message|notification|statistique|billet|etatCivil|restauration|stock|droit|forum|groupe|gn|groupeGn|personnage|territoire|appelation|langue|ressource|religion|age|genre|level|competence|competenceFamily]/.*$',
+			'pattern' => '^/[annonce|restriction|econnomie|monnaie|quality|rule|message|notification|statistique|billet|etatCivil|restauration|stock|droit|forum|groupe|gn|groupeGn|personnage|territoire|appelation|langue|ressource|religion|age|genre|level|competence|competenceFamily]/.*$',
 			'anonymous' => false,
 			'remember_me' => array(),
 			'form' => array(
@@ -292,6 +292,7 @@ else
 	$app->mount('/rule', new LarpManager\RuleControllerProvider());
 	$app->mount('/monnaie', new LarpManager\MonnaieControllerProvider());
 	$app->mount('/quality', new LarpManager\QualityControllerProvider());
+	$app->mount('/econnomie', new LarpManager\EconnomieControllerProvider());
 		
 
 	/**
@@ -348,6 +349,7 @@ else
 		array('^/langue/.*$', 'ROLE_SCENARISTE'),
 		array('^/ressource/.*$', 'ROLE_SCENARISTE'),
 		array('^/statistique/.*$', 'ROLE_SCENARISTE'),
+		array('^/econnomie/.*$', 'ROLE_SCENARISTE'),
 		array('^/document/.*$', 'ROLE_SCENARISTE'),
 		array('^/lieu/.*$', 'ROLE_SCENARISTE'),
 		array('^/monnaie/.*$', 'ROLE_SCENARISTE'),
