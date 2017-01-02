@@ -227,7 +227,8 @@ class HomepageController
 					'geom' => $territoire->getGeojson(),
 					'name' => $territoire->getNom(),
 					'color' => $territoire->getColor(),
-					'description' => strip_tags($territoire->getDescription())
+					'description' => strip_tags($territoire->getDescription()),
+					'groupes' =>  array_values($territoire->getGroupesPj()),
 			);
 		}
 	
@@ -253,7 +254,8 @@ class HomepageController
 					'geom' => $territoire->getGeojson(),
 					'name' => $territoire->getNom(),
 					'color' => $territoire->getColor(),
-					'description' => strip_tags($territoire->getDescription())
+					'description' => strip_tags($territoire->getDescription()),
+					'groupes' =>  array_values($territoire->getGroupesPj()),
 			);
 		}
 	
@@ -279,7 +281,8 @@ class HomepageController
 					'geom' => $territoire->getGeojson(),
 					'name' => $territoire->getNom(),
 					'color' => $territoire->getColor(),
-					'description' => strip_tags($territoire->getDescription())
+					'description' => strip_tags($territoire->getDescription()),
+					'groupes' =>  array_values($territoire->getGroupesPj()),
 			);
 		}
 	
@@ -308,7 +311,8 @@ class HomepageController
 					'id' => $territoire->getId(),
 					'geom' => $territoire->getGeojson(),
 					'name' => $territoire->getNom(),
-					'description' => strip_tags($territoire->getDescription())
+					'description' => strip_tags($territoire->getDescription()),
+					'groupes' =>  array_values($territoire->getGroupesPj()),
 				);
 		return $app->json($country);
 	}

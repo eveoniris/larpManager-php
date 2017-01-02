@@ -453,4 +453,41 @@ class Territoire extends BaseTerritoire implements \JsonSerializable
 		$this->groupe = null;
 		return $this;
 	}
+	
+	/**
+	 * Fourni le nom de tous les groupes présents dans ce territoire
+	 */ 
+	public function getGroupes()
+	{
+		$groupes = array();
+		if ( $this->getGroupe() )
+		{
+			$groupes[] = $this->getGroupe()->getNom();
+		}
+		foreach ( $this->getTerritoires() as $territoire )
+		{
+			$groupes = array_merge($groupes,$territoire->getGroupes());
+		}
+	
+		return array_unique($groupes);
+	}
+	
+	/**
+	 * Fourni le nom de tous les groupes de PJ présents dans ce territoire
+	 */
+	public function getGroupesPj()
+	{
+		$groupes = array();
+		if ( $this->getGroupe() )
+		{
+			if ( $this->getGroupe()->getPj() )
+				$groupes[] = $this->getGroupe()->getNom();
+		}
+		foreach ( $this->getTerritoires() as $territoire )
+		{
+			$groupes = array_merge($groupes,$territoire->getGroupesPj());
+		}
+	
+		return array_unique($groupes);
+	}
 }

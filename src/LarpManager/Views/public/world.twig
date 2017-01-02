@@ -4,39 +4,43 @@
        
 {% block style %}
 
-		<meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>
-
 	    <link rel="stylesheet" href="{{ app.request.basepath }}/leaflet/leaflet.css" />
         <link rel="stylesheet" href="{{ app.request.basepath }}/leaflet/L.Control.MousePosition.css" />
         <link rel="stylesheet" href="{{ app.request.basepath }}/leaflet/leaflet.draw.css" />
         <link rel="stylesheet" href="{{ app.request.basepath }}/leaflet/Control.MiniMap.min.css" />
         
 		<style>		
-			html, body, #content {
-			    height: 100%;
-			    width: 100%;
-  				overflow: hidden;
-			}
-			
-			body {
-				padding-top: 50px;
-			}
-			
+
 			#map {
-				width: auto;
-  				height: 100%;
+				height: 800px;
+				width: 1200px;
+				
 			}
 			
-			.navbar {
-				margin-bottom:0px;
-				margin-top: -50px;
+			#aide {
+				font-style: italic;
+				color: green;
 			}
 			
-			#content {
-				padding: 0 0 0 0;
+			.mapbox {
+			    position: relative;
+			    float: left;
+			    padding-right : 10px;
+			}
+
+			.mapbox .overlay {
+			    position: absolute;
+			    top: 0;
+			    left: 0;
+			    z-index: 314159;
+			    pointer-events: none;
 			}
 			
-			.info, .territoire, .fief, .region, .itineraire, .route, .fortification {
+			.mapbox .overlay .btn {
+			    pointer-events: initial;
+			}
+												
+			.territoire, .fief, .region, .itineraire, .route, .fortification {
 				padding: 6px 8px;
 				font: 14px/16px Arial, Helvetica, sans-serif;
 				background: white;
@@ -46,13 +50,14 @@
 				width: 300px;
 			}
 			
+			.info  {
+				padding: 6px 8px;
+				font: 14px/16px Arial, Helvetica, sans-serif;
+			}
+			
 			.info h4, .territoire h4, .region h4, .fief h4, .itineraire h4, .route h4, .fortification h4 {
 				margin: 0 0 5px;
 				color: #777;
-			}
-			
-			.info {
-				width :500px;
 			}
 			
 			.geom {
@@ -87,7 +92,18 @@
 {% endblock %}
 
 {% block content %}
-		<div id="map"></div>
+<div class="well well-sm clearfix">
+	
+		<div class="mapbox">
+			<div class="row-fluid some" id="map"></div>
+		</div> 
+		<p id="aide">Cliquez sur l'un des éléments de la carte pour en afficher la description. Vous pouvez aussi choisir les calques a afficher (pays, régions ou fiefs) avec l'outil calque en haut à droite de la carte.</p>
+		<hr />
+		<p id="description"></p>
+		<div id="admin">
+		</div>		
+</div>
+
 {% endblock %}
 
 {% block javascript %}
@@ -152,10 +168,6 @@
 			// limites de la carte
 			mapBounds : null,	
 
-			// Panneau d'information
-			infoPanel : null,
-			infoPanelDiv: null,
-
 			// Panneau de sauvegarde d'une geometrie de territoire
 			saveTerritoirePanel : null,
 			saveTerritoirePanelDiv: null,
@@ -193,15 +205,16 @@
 					  maxZoom: this.mapMaxZoom,
 					  minZoom: this.mapMinZoom,
 					  crs: L.CRS.Simple,
-					  detectRetina: true
+					  detectRetina: true,
+					  infinite: false,
 					});
 			},
 			
 			// Création des limites de la carte
 			createMapBounds: function() {
 				this.mapBounds = new L.LatLngBounds(
-						this.map.unproject([0,11536], this.mapMaxZoom),
-						this.map.unproject([16384,0], this.mapMaxZoom)	    
+						this.map.unproject([1,11535], this.mapMaxZoom),
+						this.map.unproject([16383,1], this.mapMaxZoom)	    
 					);
 				this.map.setMaxBounds(this.mapBounds);
 
@@ -268,33 +281,31 @@
 			// Permet de lier des événements à une géométrie
 			onEachFeature: function(feature, layer) {
 			    if (feature.properties ) {
-				    var editLink = "{{ app.request.basepath }}/territoire/"+feature.properties.id+"/update";
-				    var editStrategieLink = "{{ app.request.basepath }}/territoire/"+feature.properties.id+"/updateStrategie";
-
-			        layer.bindPopup(
-					        '<strong>'+feature.properties.name+'</strong>' 
-					        {% if is_granted('ROLE_ORGA', app.user) %}
-					        	+'<br /><a href="'+editLink+'">Modifier</a>'
-					        	+'<br /><a href="'+editStrategieLink+'">Jeu stratégique</a>'
-					        {% endif %});
+				    
 			        layer.on({
 				        mouseover: cartographie.mouseOver,
-					    mouseout: cartographie.mouseOut
+					    mouseout: cartographie.mouseOut,
+					    click: cartographie.mouseClick,
 				    });
 			    }
+			},
+
+			// evenement click sur une geometrie
+			mouseClick: function(e) {
+				var layer = e.target;
+				cartographie.displayInfoPanel(layer.feature.properties);
 			},
 			
 			// evenement mouseover sur une geometrie
 			mouseOver: function(e) {
 				var layer = e.target;
-				//console.log(layer);
-				cartographie.displayInfoPanel(layer.feature.properties);
-				$(cartographie.infoPanelDiv).show();
+				layer.setStyle({ 'fillColor' : 'red'});
 			},
 			
 			// evenement mouseout sur une geometrie
 			mouseOut: function(e) {
-				$(cartographie.infoPanelDiv).hide();
+				var layer = e.target;
+				layer.setStyle({ 'fillColor' : layer.feature.properties.color});
 			},
 
 			// Creation des controles de dessins
@@ -464,22 +475,24 @@
 	            };
 			},
 
-			// Création du panneau d'information
-			createInfoPanel: function() {
-				this.infoPanel = L.control();
-				this.infoPanel.onAdd = function(map) {
-					cartographie.infoPanelDiv = L.DomUtil.create('div', 'info');
-					//cartographie.infoPanelDiv.innerHTML = '';
-					$(cartographie.infoPanelDiv).hide();
-					return cartographie.infoPanelDiv;
-				};
-			},
 
+			// Affichage des informations concernant le layer selectionné
 			displayInfoPanel: function(props)
 			{
+				var editLink = "{{ app.request.basepath }}/territoire/"+props.id+"/update";
+			    var editStrategieLink = "{{ app.request.basepath }}/territoire/"+props.id+"/updateStrategie";
+			    			     			        
 				if ( props && ! props.description ) props.description = 'Aucune description';
-				cartographie.infoPanelDiv.innerHTML = ('<h4>' + props.name + '</h4>'
-						+ '<p>' + props.description + '</p>');
+
+				var descriptionDiv = $('#description');
+				var adminDiv = $('#admin');
+				
+				$(descriptionDiv).html('<h4>'+props.name+'</h4><p>'+props.description+'</p>'+'<p><strong>Groupes : </strong>' + props.groupes.join(', '));
+
+				{% if is_granted('ROLE_ORGA', app.user) %}
+					$(adminDiv).html('<a href="'+editLink+'">Modifier</a>'
+					        		+'<br /><a href="'+editStrategieLink+'">Jeu stratégique</a>');
+				{% endif %}
 			},
 
 			// Création du pannel de sauvegarde d'une geometrie territoire
@@ -749,6 +762,7 @@
 						    	geom.properties.description = country.description;
 						    	geom.properties.color = country.color;
 						    	geom.properties.id = country.id;
+						    	geom.properties.groupes = country.groupes;
 						    	cartographie.countriesGeom.addData(geom);
 						    }
 						    
@@ -774,6 +788,7 @@
 						    	geom.properties.description = country.description;
 						    	geom.properties.color = country.color;
 						    	geom.properties.id = country.id;
+						    	geom.properties.groupes = country.groupes;
 						    	cartographie.regionsGeom.addData(geom);
 						    }
 						    
@@ -800,6 +815,7 @@
 						    	geom.properties.description = country.description;
 						    	geom.properties.color = country.color;
 						    	geom.properties.id = country.id;
+						    	geom.properties.groupes = country.groupes;
 						    	cartographie.fiefsGeom.addData(geom);
 						    }
 	
@@ -958,9 +974,8 @@
 				
 				{% if is_granted('ROLE_ORGA', app.user) %}
 					this.map.addControl(this.drawControl);
-				{% endif %}
+				{% endif %}		
 				
-				this.infoPanel.addTo(this.map);
 				this.saveTerritoirePanel.addTo(this.map);
 				this.saveRegionPanel.addTo(this.map);
 				this.saveFiefPanel.addTo(this.map);
@@ -983,7 +998,6 @@
 	cartographie.fitMap();
 	
 	cartographie.createGeomCollection();
-	cartographie.createInfoPanel();
 	cartographie.createDrawControl();
 	cartographie.createSaveTerritoirePanel();
 	cartographie.createSaveRegionPanel();

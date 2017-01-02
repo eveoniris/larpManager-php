@@ -31,7 +31,13 @@
 		<tbody>
 			{% for participant in participants %}
 				<tr>
-					<td>{{ participant.user.etatCivil.nom }} {{ participant.user.etatCivil.prenom }}</td>
+					<td>
+						{% if participant.user.etatCivil %}
+							{{ participant.user.etatCivil.nom }} {{ participant.user.etatCivil.prenom }}
+						{% else %}
+							Ce joueur n'a pas encore rempli son état-civil
+						{% endif %}
+					</td>
 					<td>{{ participant.user.email }}</td>
 					<td>{{ participant.billet }}</td>
 					<td>
