@@ -79,6 +79,24 @@
 				</div>
 			{% endfor %}
 						
+			{% if is_granted('ROLE_SCENARISTE', app.user) %}
+				<div class="well well-sm">
+					<div class="header">
+						<h5>Intrigues liées à vos groupes</h5>
+					</div>
+					<a href="{{ path('intrigue.list') }}">Liste de toutes les intrigues</a>
+					<div class="list-group">
+						{% for groupe in app.user.groupeScenariste %}
+							{% for intrigueHasGroupe in groupe.intrigueHasGroupes %}
+								<a class="list-group-item text-success" href="{{ path('intrigue.detail', {'intrigue': intrigueHasGroupe.intrigue.id}) }}">{{groupe.nom}} -- {{ intrigueHasGroupe.intrigue.titre }}</a>
+							{% else %}
+								<a class="list-group-item text-danger" href="{{ path('intrigue.add') }}">Attention, aucune intrigue ne concerne votre groupe {{ groupe.nom }}. Vous devriez peut-être en définir une.</a>
+							{% endfor %}
+						{% endfor %}
+					</div>
+				</div>
+			{% endif %}
+						
 			{# affichage des annonces #}
 			{% include 'homepage/fragment/annonces.twig' with {'annonces': annonces} %}
 			

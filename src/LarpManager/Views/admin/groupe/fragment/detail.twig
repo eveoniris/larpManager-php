@@ -176,7 +176,16 @@
 				<a data-toggle="tooltup" data-placement="top" title="Choisir le scénariste" href="{{ path('groupe.scenariste', {'groupe': groupe.id}) }}"><i class="fa fa-pencil"></i></a>
 	    </div>
 		
-		
+		<h6><i class="fa fa-circle"></i> Intrigues</h6>
+		<div class="white-box">
+			<ul>
+				{% for intrigueHasGroupe in groupe.intrigueHasGroupes %}
+					<li><a href="{{ path('intrigue.detail', {'intrigue': intrigueHasGroupe.intrigue.id}) }}">{{groupe.nom}} -- {{ intrigueHasGroupe.intrigue.titre }}</a></li>
+				{% else %}
+					<li><a href="{{ path('intrigue.add') }}">Attention, aucune intrigue ne concerne votre groupe {{ groupe.nom }}. Vous devriez peut-être en définir une.</a></li>
+				{% endfor %}
+			</ul>
+		</div>
 	</div>
 </div>
 
