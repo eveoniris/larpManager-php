@@ -39,6 +39,13 @@
 	    		</div>
 	    		
 	    		<div class="list-group-item">
+	    			<h4 class="list-group-item-heading">Statut</h4>
+	    			<ul>
+	    				<li>{{ territoire.statut|default('Normal') }}</li>
+	    			</ul>
+	    		</div>
+	    		
+	    		<div class="list-group-item">
 			    	<h4 class="list-group-item-heading">Constructions</h4>
 			    	<ul>
 			    		{% for construction in territoire.constructions %}

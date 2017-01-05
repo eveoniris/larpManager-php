@@ -66,6 +66,11 @@ class TerritoireForm extends AbstractType
 							'class' => 'tinymce',
 							'rows' => 10),
 				))
+				->add('statut','choice', array(
+					'label' => 'Statut',
+					'required' => false,
+					'choices' => array('Normal' => 'Normal', 'Désordre' => 'Désordre', 'Désolation' => 'Désolation')
+				))
 				->add('geojson', 'textarea', array(
 					'label' => 'GeoJSON',
 					'required' => false,

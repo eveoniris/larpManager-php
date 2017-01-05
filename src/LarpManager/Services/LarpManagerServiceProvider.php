@@ -50,6 +50,7 @@ use LarpManager\Services\Converter\GnConverter;
 use LarpManager\Services\Converter\GroupeConverter;
 use LarpManager\Services\Converter\GroupeGnConverter;
 use LarpManager\Services\Converter\IngredientConverter;
+use LarpManager\Services\Converter\IntrigueConverter;
 use LarpManager\Services\Converter\LieuConverter;
 use LarpManager\Services\Converter\MembreConverter;
 use LarpManager\Services\Converter\MessageConverter;
@@ -355,9 +356,14 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 			return new RestaurationConverter($app['orm.em']);
 		});
 
-		// Restauration converter
+		// Participant converter
 		$app['converter.participant'] = $app->share(function($app) {
 			return new ParticipantConverter($app['orm.em']);
+		});
+		
+		// Intrigue converter
+		$app['converter.intrigue'] = $app->share(function($app) {
+			return new IntrigueConverter($app['orm.em']);
 		});
 	}
 

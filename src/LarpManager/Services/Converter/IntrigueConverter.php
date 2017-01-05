@@ -24,9 +24,9 @@ use Doctrine\ORM\EntityManager;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
- * LarpManager\Services\Converter\Ingredient
+ * LarpManager\Services\Converter\Intrigue
  */
-class IngredientConverter
+class IntrigueConverter
 {
 	/**
 	 * 
@@ -49,16 +49,16 @@ class IngredientConverter
      * 
      * @param unknown $id
      * @throws NotFoundHttpException
-     * @return LarpManager\Entities\Ingredient
+     * @return LarpManager\Entities\Intrigue
      */
     public function convert($id)
     {
-    	$ingredient = $this->em->find('\LarpManager\Entities\Ingredient',(int) $id);
+    	$intrigue = $this->em->find('\LarpManager\Entities\Intrigue',(int) $id);
     	
-        if (null === $ingredient) {
-            throw new NotFoundHttpException(sprintf('L\'ingredient %d n\'existe pas', $id));
+        if (null === $intrigue) {
+            throw new NotFoundHttpException(sprintf('L\'intrigue %d n\'existe pas', $id));
         }
 
-        return $ingredient;
+        return $intrigue;
     }
 }

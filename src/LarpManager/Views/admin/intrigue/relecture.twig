@@ -1,0 +1,77 @@
+{% extends "layout.twig" %}
+
+{% block title %}Intrigues{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path('intrigue.list') }}">Liste des intrigues</a></li>
+		<li><a href="{{ path('intrigue.detail', {'intrigue': intrigue.id}) }}">{{ intrigue.titre }}</a></li>
+		<li class="active">Ajout d'une relecture</li>
+	</ol>
+	
+	<div class="well well-sm">
+		<div class="row">
+			<div class="col-md-8">
+			<h6><i class="fa fa-circle"></i>&nbsp;{{ intrigue.titre }}</h6>
+				<div class="white-box">
+					{{ intrigue.description|markdown }}
+				</div>
+				
+				<h6><i class="fa fa-circle"></i>&nbsp;Groupes concernés</h6>
+				<div class="white-box">
+					<ul>
+					{% for intrigueHasGroupe in intrigue.intrigueHasGroupes %}
+						<li>{{ intrigueHasGroupe.groupe.nom }}</li>
+					{% else %}
+						<li>Aucun</li>
+					{% endfor %}
+					</ul>
+				</div>
+				
+				<h6><i class="fa fa-circle"></i>&nbsp;Evénements</h6>
+				<div class="white-box">
+					<ul>
+					{% for intrigueHasEvenement in intrigue.intrigueHasEvenements %}
+						<li><strong>{{ intrigueHasEvenement.evenement.date }}</strong>&nbsp;:&nbsp;{{ intrigueHasEvenement.evenement.text }}</li>
+					{% else %}
+						<li>Aucun</li>
+					{% endfor %}
+					</ul>
+				</div>
+				
+				<h6><i class="fa fa-circle"></i>&nbsp;Objectifs</h6>
+				<div class="white-box">
+					<ul>
+					{% for intrigueHasObjectif in intrigue.intrigueHasObjectifs %}
+						<li>{{ intrigueHasObjectif.objectif.text }}</li>
+					{% else %}
+						<li>Aucun</li>
+					{% endfor %}
+					</ul>
+				</div>
+				
+				<h6><i class="fa fa-circle"></i>&nbsp;Intrigue</h6>
+				<div class="white-box">
+					{{ intrigue.text|markdown }}
+				</div>
+				
+				<h6><i class="fa fa-circle"></i>&nbsp;Résolution</h6>
+				<div class="white-box">
+					{{ intrigue.resolution|markdown }}
+				</div>
+			</div>
+			<div class="col-md-4">
+				<form action="{{ path('intrigue.relecture.add', {'intrigue': intrigue.id}) }}" method="POST" {{ form_enctype(form) }} novalidate>
+					<fieldset>
+						<legend>Ajout d'une relecture</legend>
+						{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+						{{ form(form) }}
+					</fieldset>
+				</form>
+			</div>
+		</div>
+	</div>
+	
+{% endblock content %}

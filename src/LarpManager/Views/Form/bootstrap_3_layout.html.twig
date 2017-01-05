@@ -184,7 +184,7 @@
         {{- form_widget(form) -}}
         {%  for attrname, attrvalue in attr %}
         	{% if attrname =='help'  %}
-        		<span class="help-block">{{ attrvalue }}</span>
+        		<p class="bg-info"><i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp;{{ attrvalue }}</p>
         	{% endif %}
         {%  endfor %}
         {{- form_errors(form) -}}

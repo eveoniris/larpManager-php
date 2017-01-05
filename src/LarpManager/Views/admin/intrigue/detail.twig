@@ -1,0 +1,84 @@
+{% extends "layout.twig" %}
+
+{% block title %}Intrigues{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path('intrigue.list') }}">Liste des intrigues</a></li>
+		<li class="active">Détail de {{ intrigue.titre }}</li>
+	</ol>
+	
+	<div class="well well-sm">
+		<div class="row">
+			<div class="col-md-6">
+				<a class="btn btn-default" href="{{ path('intrigue.update', {'intrigue':intrigue.id}) }}"><i class="fa fa-pencil"></i> Modifier l'intrigue</a>
+				<a class="btn btn-default" href="{{ path('intrigue.relecture.add', {'intrigue':intrigue.id}) }}"><i class="fa fa-pencil"></i> Ajouter une relecture</a>
+				<a class="btn btn-danger" href="{{ path('intrigue.delete', {'intrigue':intrigue.id}) }}"><i class="fa fa-close"></i> Supprimer l'intrigue</a>
+				
+				<h6><i class="fa fa-circle"></i>&nbsp;{{ intrigue.titre }}</h6>
+				<div class="white-box">
+					{{ intrigue.description|markdown }}
+				</div>
+				
+				<h6><i class="fa fa-circle"></i>&nbsp;Groupes concernés</h6>
+				<div class="white-box">
+					<ul>
+					{% for intrigueHasGroupe in intrigue.intrigueHasGroupes %}
+						<li>{{ intrigueHasGroupe.groupe.nom }}</li>
+					{% else %}
+						<li>Aucun</li>
+					{% endfor %}
+					</ul>
+				</div>
+				
+				<h6><i class="fa fa-circle"></i>&nbsp;Evénements</h6>
+				<div class="white-box">
+					<ul>
+					{% for intrigueHasEvenement in intrigue.intrigueHasEvenements %}
+						<li><strong>{{ intrigueHasEvenement.evenement.date }}</strong>&nbsp;:&nbsp;{{ intrigueHasEvenement.evenement.text }}</li>
+					{% else %}
+						<li>Aucun</li>
+					{% endfor %}
+					</ul>
+				</div>
+				
+				<h6><i class="fa fa-circle"></i>&nbsp;Objectifs</h6>
+				<div class="white-box">
+					<ul>
+					{% for intrigueHasObjectif in intrigue.intrigueHasObjectifs %}
+						<li>{{ intrigueHasObjectif.objectif.text }}</li>
+					{% else %}
+						<li>Aucun</li>
+					{% endfor %}
+					</ul>
+				</div>
+				
+				<h6><i class="fa fa-circle"></i>&nbsp;Intrigue</h6>
+				<div class="white-box">
+					{{ intrigue.text|markdown }}
+				</div>
+				
+				<h6><i class="fa fa-circle"></i>&nbsp;Résolution</h6>
+				<div class="white-box">
+					{{ intrigue.resolution|markdown }}
+				</div>
+			</div>
+			<div class="col-md-6">
+				<h4>Relectures</h4>
+				
+				
+				{% for relecture in intrigue.relectures %}
+					<div class="white-box">
+						<strong>{{ relecture.date|date('Y-m-d H:i:s') }} :</strong> <strong>{{ relecture.user.username }}</strong> a relu l'intrigue. Statut donné : <strong>{{ relecture.statut }}</strong>
+						{{ relecture.remarque|markdown }}
+					</div>
+				{% else %}
+					Aucune relectures n'a été faite.
+				{% endfor %}
+				</ul>
+			</div>
+		</div>
+	</div>
+{% endblock content %}

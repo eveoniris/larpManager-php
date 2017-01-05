@@ -1,0 +1,230 @@
+{% extends "layout.twig" %}
+
+{% block title %}Intrigues{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path('intrigue.list') }}">Liste des intrigues</a></li>
+		<li class="active">Modification de {{ intrigue.titre }}</li>
+	</ol>
+	<div class="well bs-component">
+		<form action="{{ path('intrigue.update', {'intrigue': intrigue.id}) }}" method="POST" {{ form_enctype(form) }} novalidate>
+			<fieldset>
+				<legend>Modification de {{ intrigue.titre }}</legend>
+				{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+				{{ form_start(form) }}
+		
+				{{ form_row(form.enregistrer) }}
+
+				<div class="row">
+					<div class="col-md-8">
+					{{ form_row(form.titre) }}
+					{{ form_row(form.description) }}
+					{{ form_row(form.text) }}
+					{{ form_row(form.resolution) }}
+					</div>
+					<div class="col-md-4">
+						<h4>{{ form_label(form.intrigueHasGroupes) }}</h4>
+						<p>Si votre intrigue concerne un groupe, veuillez l'ajouter dans la liste ci-dessous</p>
+						
+						<ul class="list-group intrigueHasGroupes" data-prototype="{{ form_widget(form.intrigueHasGroupes.vars.prototype)|e }}">
+							{% for intrigueHasGroupe in form.intrigueHasGroupes %}
+							 	<li class="list-group-item">{{ form_widget(intrigueHasGroupe.groupe) }}</li>
+							{% endfor %}
+						</ul>
+						
+						<hr />
+						
+						<h4>{{ form_label(form.intrigueHasEvenements) }}</h4>
+						<p>Si votre intrigue dépend d'un événement ayant eu lieu, veuillez l'ajouter dans la liste ci-dessous</p>
+						<ul class="list-group intrigueHasEvenements" data-prototype="{{ form_widget(form.intrigueHasEvenements.vars.prototype)|e }}">
+							{% for intrigueHasEvenement in form.intrigueHasEvenements %}
+								<li class="list-group-item">
+									<div class="evenement">
+										{{ form_widget(intrigueHasEvenement.evenement) }}
+									</div>
+								</li>
+							{% endfor %}
+						</ul>
+						
+						<hr />
+						
+						<h4>{{ form_label(form.intrigueHasObjectifs) }}</h4>
+						<p>Ajoutez içi les objectifs liés à votre intrigue</p>
+						<ul class="list-group intrigueHasObjectifs" data-prototype="{{ form_widget(form.intrigueHasObjectifs.vars.prototype)|e }}">
+							{% for intrigueHasObjectif in form.intrigueHasObjectifs %}
+								<li class="list-group-item">
+									<div class="objectif">
+										{{ form_widget(intrigueHasObjectif.objectif) }}
+									</div>
+								</li>
+							{% endfor %}
+						</ul>
+					</div>
+				{{ form_end(form) }}
+			</fieldset>
+		</form>
+	</div>
+	
+{% endblock content %}
+
+{% block javascript %}
+<script>
+
+		function addIntrigueHasObjectifForm(collectionHolder, $newObjectifLinkLi) {
+		    // Récupère l'élément ayant l'attribut data-prototype comme expliqué plus tôt
+		    var prototype = collectionHolder.attr('data-prototype');
+		
+		    // Remplace '__name__' dans le HTML du prototype par un nombre basé sur
+		    // la longueur de la collection courante
+		    var newForm = prototype.replace(/__name__/g, collectionHolder.children().length);
+		
+		    // Affiche le formulaire dans la page dans un li, avant le lien "ajouter un tag"
+		    var $newFormLi = $('<li class="list-group-item"></li>').append(newForm);
+		    $newObjectifLinkLi.before($newFormLi);
+		
+			 // ajoute un lien de suppression au nouveau formulaire
+		    addIntrigueHasObjectifFormDeleteLink($newFormLi);
+		}
+
+		function addIntrigueHasEvenementForm(collectionHolder, $newEvenementLinkLi) {
+		    // Récupère l'élément ayant l'attribut data-prototype comme expliqué plus tôt
+		    var prototype = collectionHolder.attr('data-prototype');
+		
+		    // Remplace '__name__' dans le HTML du prototype par un nombre basé sur
+		    // la longueur de la collection courante
+		    var newForm = prototype.replace(/__name__/g, collectionHolder.children().length);
+		
+		    // Affiche le formulaire dans la page dans un li, avant le lien "ajouter un tag"
+		    var $newFormLi = $('<li class="list-group-item"></li>').append(newForm);
+		    $newEvenementLinkLi.before($newFormLi);
+		
+			 // ajoute un lien de suppression au nouveau formulaire
+		    addIntrigueHasEvenementFormDeleteLink($newFormLi);
+		}
+
+		function addIntrigueHasGroupeForm(collectionHolder, $newGroupeLinkLi) {
+		    // Récupère l'élément ayant l'attribut data-prototype comme expliqué plus tôt
+		    var prototype = collectionHolder.attr('data-prototype');
+
+		    // Remplace '__name__' dans le HTML du prototype par un nombre basé sur
+		    // la longueur de la collection courante
+		    var newForm = prototype.replace(/__name__/g, collectionHolder.children().length);
+	
+		    // Affiche le formulaire dans la page dans un li, avant le lien "ajouter un tag"
+		    var $newFormLi = $('<li class="list-group-item"></li>').append(newForm);
+		    $newGroupeLinkLi.before($newFormLi);
+
+			 // ajoute un lien de suppression au nouveau formulaire
+		    addIntrigueHasGroupeFormDeleteLink($newFormLi);
+		}
+
+		function addIntrigueHasObjectifFormDeleteLink($intrigueHasObjectifFormLi) {
+		    var $removeFormA = $('<span class="input-group-btn"><a class="btn btn-link" href="#"><span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span> Retirer cet objectif</a></span>');
+		    $($intrigueHasObjectifFormLi).append($removeFormA);
+
+		    $removeFormA.on('click', function(e) {
+		        // empêche le lien de créer un « # » dans l'URL
+		        e.preventDefault();
+
+		        // supprime l'élément li pour le formulaire de tag
+		        $intrigueHasObjectifFormLi.remove();
+		    });
+		}
+
+		function addIntrigueHasEvenementFormDeleteLink($intrigueHasEvenementFormLi) {
+		    var $removeFormA = $('<span class="input-group-btn"><a class="btn btn-link" href="#"><span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span> Retirer cet événement</a></span>');
+		    $($intrigueHasEvenementFormLi).append($removeFormA);
+
+		    $removeFormA.on('click', function(e) {
+		        // empêche le lien de créer un « # » dans l'URL
+		        e.preventDefault();
+
+		        // supprime l'élément li pour le formulaire de tag
+		        $intrigueHasEvenementFormLi.remove();
+		    });
+		}
+		
+		function addIntrigueHasGroupeFormDeleteLink($intrigueHasGroupeFormLi) {
+		    var $removeFormA = $('<span class="input-group-btn"><a class="btn btn-link" href="#"><span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span></a></span>');
+		    $('select',$intrigueHasGroupeFormLi).wrap('<div class="input-group"></div>');
+		    $('select',$intrigueHasGroupeFormLi).after($removeFormA);
+
+		    $removeFormA.on('click', function(e) {
+		        // empêche le lien de créer un « # » dans l'URL
+		        e.preventDefault();
+
+		        // supprime l'élément li pour le formulaire de tag
+		        $intrigueHasGroupeFormLi.remove();
+		    });
+		}
+		
+		// Récupère le div qui contient la collection de tags
+		var collectionGroupeHolder = $('ul.intrigueHasGroupes');
+		var collectionEvenementHolder = $('ul.intrigueHasEvenements');
+		var collectionObjectifHolder = $('ul.intrigueHasObjectifs');
+		
+		// ajoute un lien « add a tag »
+		var $addIntrigueHasGroupeLink = $('<a href="#" class="add_intrigueHasGroupe_link">Ajouter un groupe</a>');
+		var $newGroupeLinkLi = $('<li class="list-group-item"></li>').append($addIntrigueHasGroupeLink);
+
+		var $addIntrigueHasEvenementLink = $('<a href="#" class="add_intrigueHasEvenement_link">Ajouter un événement</a>');
+		var $newEvenementLinkLi = $('<li class="list-group-item"></li>').append($addIntrigueHasEvenementLink);
+		
+		var $addIntrigueHasObjectifLink = $('<a href="#" class="add_intrigueHasObjectif_link">Ajouter un objectif</a>');
+		var $newObjectifLinkLi = $('<li class="list-group-item"></li>').append($addIntrigueHasObjectifLink);
+		
+		jQuery(document).ready(function() {
+
+			// ajoute un lien de suppression à tous les éléments li de
+		    // formulaires de tag existants
+		    collectionGroupeHolder.find('li').each(function() {
+		        addIntrigueHasGroupeFormDeleteLink($(this));
+		    });
+
+		    collectionEvenementHolder.find('li').each(function() {
+		        addIntrigueHasEvenementFormDeleteLink($(this));
+		    });
+
+		    collectionObjectifHolder.find('li').each(function() {
+		        addIntrigueHasObjectifFormDeleteLink($(this));
+		    });
+		    
+		    // ajoute l'ancre « ajouter un tag » et li à la balise ul
+		    collectionGroupeHolder.append($newGroupeLinkLi);
+		    collectionEvenementHolder.append($newEvenementLinkLi);
+		    collectionObjectifHolder.append($newObjectifLinkLi);
+		
+		    $addIntrigueHasGroupeLink.on('click', function(e) {
+		        // empêche le lien de créer un « # » dans l'URL
+		        e.preventDefault();
+		
+		        // ajoute un nouveau formulaire tag (voir le prochain bloc de code)
+		        addIntrigueHasGroupeForm(collectionGroupeHolder, $newGroupeLinkLi);
+		    });
+		    
+		    $addIntrigueHasEvenementLink.on('click', function(e) {
+		        // empêche le lien de créer un « # » dans l'URL
+		        e.preventDefault();
+		
+		        // ajoute un nouveau formulaire tag (voir le prochain bloc de code)
+		        addIntrigueHasEvenementForm(collectionEvenementHolder, $newEvenementLinkLi);
+		    });
+
+		    $addIntrigueHasObjectifLink.on('click', function(e) {
+		        // empêche le lien de créer un « # » dans l'URL
+		        e.preventDefault();
+		
+		        // ajoute un nouveau formulaire tag (voir le prochain bloc de code)
+		        addIntrigueHasObjectifForm(collectionObjectifHolder, $newObjectifLinkLi);
+		    });
+
+		    $("#intrigue_intrigueHasGroupes").parent().remove();
+		    $("#intrigue_intrigueHasEvenements").parent().remove();
+		    $("#intrigue_intrigueHasObjectifs").parent().remove();
+		});
+		
+</script>
+{% endblock javascript %}

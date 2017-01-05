@@ -1,0 +1,24 @@
+{% extends "layout.twig" %}
+
+{% block title %}Intrigues{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path('intrigue.list') }}">Liste des intrigues</a></li>
+		<li class="active">Suppression de {{ intrigue.titre }}</li>
+	</ol>
+	
+	<div class="well well-sm">
+		<form action="{{ path('intrigue.delete', {'intrigue': intrigue.id}) }}" method="POST" {{ form_enctype(form) }} novalidate>
+			<fieldset>
+				<legend>Suppression de {{ intrigue.titre }}</legend>
+				{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+				<strong>Attention ! vous allez supprimer définitivement cette intrigue. Etes vous sur de vous ?</strong>
+				{{ form(form) }}
+			</fieldset>
+		</form>
+	</div>
+	
+{% endblock content %}

@@ -56,6 +56,7 @@ class GroupeControllerProvider implements ControllerProviderInterface
 	 *  - groupe.refusePeace
 	 *  - groupe.scenariste
 	 *  - groupe.composition
+	 *  - groupe.intrigue
 	 *
 	 * @param Application $app
 	 * @return Controllers $controllers
