@@ -27,6 +27,8 @@ use LarpManager\Entities\User;
 use LarpManager\Entities\Message;
 use LarpManager\Entities\Billet;
 use LarpManager\Entities\GroupeGn;
+use LarpManager\Entities\Intrigue;
+use LarpManager\Entities\Groupe;
 use LarpManager\Entities\Notification;
 
 class NotifyManager
@@ -63,6 +65,71 @@ class NotifyManager
 		
 		$this->app['orm.em']->persist($notification);
 		$this->app['orm.em']->flush();
+	}
+	
+	/**
+	 * Envoi une notification "modification d'une intrigue" au scénariste s'occupant de ce groupe
+	 * 
+	 * @param Intrigue $intrigue
+	 * @param Groupe $groupe
+	 */
+	public function intrigue(Intrigue $intrigue, Groupe $groupe)
+	{
+		$user = $groupe->getScenariste();
+		if ( $user )
+		{
+			$url = $this->app['url_generator']->generate('intrigue.detail', array('intrigue' => $intrigue->getId()), true);
+			$notification = new Notification();
+			$notification->setText('Une intrigue concernant votre groupe '.$groupe->getNom().' vient d\'être édité');
+			$notification->setUser($user);
+			$notification->setUrl($url);
+			
+			$this->app['orm.em']->persist($notification);
+			$this->app['orm.em']->flush();
+			
+			// envoi de la notification mail
+			$this->sendMessage(
+					'user/email/intrigue.twig',
+					array(
+						'groupe' => $groupe,
+						'intrigue' => $intrigue,
+						'url' => $url),
+					$this->fromAddress,
+					$user->getEmail()
+					);
+		}
+	}
+	
+	/**
+	 * Envoi une notification "Ajout d'une relecture" au scénariste s'occupant de ce groupe
+	 * @param Intrigue $intrigue
+	 * @param Groupe $groupe
+	 */
+	public function relecture(Intrigue $intrigue, Groupe $groupe)
+	{
+		$user = $groupe->getScenariste();
+		if ( $user )
+		{
+			$url = $this->app['url_generator']->generate('intrigue.detail', array('intrigue' => $intrigue->getId()), true);
+			$notification = new Notification();
+			$notification->setText('Une intrigue concernant votre groupe '.$groupe->getNom().' vient d\'être relue');
+			$notification->setUser($user);
+			$notification->setUrl($url);
+				
+			$this->app['orm.em']->persist($notification);
+			$this->app['orm.em']->flush();
+				
+			// envoi de la notification mail
+			$this->sendMessage(
+				'user/email/relecture.twig',
+				array(
+					'groupe' => $groupe,
+					'intrigue' => $intrigue,
+					'url' => $url),
+				$this->fromAddress,
+				$user->getEmail()
+			);
+		}
 	}
 			
 	

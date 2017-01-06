@@ -69,6 +69,15 @@
 				<h4>Auteur</h4>
 				<p>Cette intrigue a été créé par <strong><a href="{{ path('user.view', {'id': intrigue.user.id}) }}">{{ intrigue.user.username }}</a></strong> le <strong>{{ intrigue.dateCreation|date('Y-m-d H:i:s') }}</strong></p>
 					
+				<h4>Modifications</h4>
+				<ul>
+					{% for modification in intrigue.intrigueHasModifications %}
+						<li>Modification par <a href="{{ path('user.view', {'id': intrigue.user.id}) }}">{{ modification.user.username }}</a> le <strong>{{ modification.date|date('Y-m-d H:i:s') }}</strong></li>
+					{% else %}
+						<li>Cette intrigue n'a pas encore été modifiée</li>
+					{% endfor %}
+				</ul>
+				
 				<h4>Relectures</h4>
 				{% for relecture in intrigue.relectures %}
 					<div class="white-box">

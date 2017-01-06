@@ -1,0 +1,36 @@
+{#
+Template for an email message sent to notifie about a new post.
+Variables passed to this template:
+    user: The SimpleUser\User instance.
+    postUrl : Url 
+#}
+
+{# The subject line. #}
+{%- block subject -%}{%- autoescape false -%}
+    Une intrigue concernant votre groupe vient d'être éditée.
+{%- endautoescape -%}{%- endblock -%}
+
+{# The plain text message. #}
+{%- block body_text -%}{%- autoescape false -%}
+
+L'intrigue {{ intrigue.titre }} fait référence à votre groupe {{ groupe.nom }}.
+Cette intrigue vient d'être éditée.
+
+Cliquez sur le lien ci-dessous pour accéder directement à l'intrigue :
+{{ url }}
+
+{%- endautoescape -%}{%- endblock -%}
+
+{# The HTML message. Optional. #}
+{%- block body_html -%}
+
+    <p>L'intrigue {{ intrigue.titre }} fait référence à votre groupe {{ groupe.nom }}.</p>
+    <p>Cette intrigue vient d'être éditée.</p>
+
+	<p>{{ intrigue.description|markdown }}</p>
+
+    <p>
+        <a href="{{ url }}"> Suivez ce lien pour accéder directement à l'intrigue</a>.
+    </p>
+
+{%- endblock -%}
