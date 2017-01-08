@@ -107,6 +107,47 @@
 						    </div>	
 						</div>
 						
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								Debriefings
+								<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Ajouter" href="{{ path('debriefing.add', {'groupe': groupe.id}) }}"><i class="fa fa-plus"></i></a>
+							</div>
+							<div class="panel-body">
+								<div class="list-group">
+									{% for debriefing in groupe.debriefings %}
+										<div class="list-group-item">
+											<div class="list-group-item-heading">
+												<h6>
+													{% if debriefing.gn %}
+														GN {{ debriefing.gn.label }} -&nbsp;
+													{% endif %}
+													<a href="{{ path('debriefing.detail', {'debriefing': debriefing.id})  }}">{{ debriefing.titre|default('Pas de titre') }}</a>
+												
+													<div class="btn-toolbar pull-right" role="toolbar" aria-label="...">
+														<div class="btn-group" role="group" aria-label="...">
+															<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Modifier" href="{{ path('debriefing.update', {'debriefing': debriefing.id}) }}"><i class="fa fa-pencil"></i></a>
+															<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Supprimer" href="{{ path('debriefing.delete', {'debriefing': debriefing.id}) }}"><i class="fa fa-eraser"></i></a>
+														</div>
+													</div>
+												</h6>
+											</div>
+											<p class="list-group-item-text text-warning">
+									    		{{ debriefing.visibility|explainVisibility }}
+									    	</p>
+									    	<p class="list-group-item-text">
+									    		Auteur : {{ debriefing.user.username }}
+									    	</p>
+									    	<p class="list-group-item-text">
+									    		Création  : {{ debriefing.creationDate|date('Y-m-d H:i:s') }}
+									    	</p>
+									    	<p class="list-group-item-text">
+									    		Dernière modification  : {{ debriefing.updateDate|date('Y-m-d H:i:s') }}
+									    	</p>
+								    	</div>
+							    	{% endfor %}
+							    </div>
+						    </div>	
+						</div>
 						
 						
 										

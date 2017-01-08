@@ -1,0 +1,119 @@
+{% extends "layout.twig" %}
+
+{% block title %}Debriefings{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li class="active">Liste des debriefings</li>
+	</ol>
+	
+	<div class="well well-sm">
+		{% if paginator.totalItems == 1 %}
+        	<strong>1</strong> debriefing trouvé.
+    	{% else %}
+        	<strong>{{ paginator.totalItems }}</strong> debriefings trouvés.
+    	{% endif %}
+
+    	Montre <strong>{{ paginator.currentPageFirstItem }} - {{ paginator.currentPageLastItem }}</strong>.
+    	
+		<div class="btn-toolbar" role="toolbar" aria-label="...">
+			<div class="btn-group" role="group" aria-label="...">
+				<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Ajouter un debriefing" href="{{ path('debriefing.add') }}"><i class="fa fa-plus"></i></a>
+			</div>
+			
+			<form class="form form-inline" action="{{ path('debriefing.list') }}" method="POST" {{ form_enctype(form) }}>
+				{% form_theme form 'Form/bootstrap_3_horizontal_layout.html.twig' %}
+				<div class="form-group">
+					<div class="input-group">
+						{{ form_widget(form.value) }}
+					</div>
+					<div class="input-group">					
+						{{ form_widget(form.type) }}
+						<div class="input-group-btn">
+							<button type="submit" class="btn btn-default" data-toggle="tooltup" data-placement="top" title="Lancer la recherche"><i class="fa fa-search"></i></button>
+							<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Reset" href="{{ path('debriefing.list') }}"><i class="fa fa-refresh"></i></a>
+						</div>
+					</div>
+				</div>						
+					
+				{{ form_rest(form) }}
+		   	</form>
+		</div>
+		
+		{{ paginator|raw }}
+		<table class="table table-striped table-bordered table-condensed table-hover">
+			<thead>
+				<tr>
+					<th>
+						{% if app.request.get('order_dir') == 'ASC' and app.request.get('order_by') == 'id' %}
+							<a href="{{ path('debriefing.list', {'order_by': 'id', 'order_dir': 'DESC'}) }}">
+						{%  else %}
+							<a href="{{ path('debriefing.list', {'order_by': 'id', 'order_dir': 'ASC'}) }}">
+						{% endif %}
+							#	
+						{% if app.request.get('order_by') == 'id'  %}
+							{% if app.request.get('order_dir') == 'ASC' %}
+								<span class="caret"></span>
+							{%else%}
+								<span class="dropup">
+	 									<span class="caret"></span>
+								</span>
+							{% endif %}
+						{% endif %}
+						</a>
+					</th>
+					<th>
+						{% if app.request.get('order_dir') == 'ASC' and app.request.get('order_by') == 'titre' %}
+							<a href="{{ path('debriefing.list', {'order_by': 'titre', 'order_dir': 'DESC'}) }}">
+						{%  else %}
+							<a href="{{ path('debriefing.list', {'order_by': 'titre', 'order_dir': 'ASC'}) }}">
+						{% endif %}
+							Titre	
+						{% if app.request.get('order_by') == 'titre'  %}
+							{% if app.request.get('order_dir') == 'ASC' %}
+								<span class="caret"></span>
+							{%else%}
+								<span class="dropup">
+	 									<span class="caret"></span>
+								</span>
+							{% endif %}
+						{% endif %}
+						</a>
+					</th>
+					<th>
+						Groupe
+					</th>
+					<th>
+						Création
+					</th>
+					<th>
+						Dernière modification
+					</th>
+					<th>
+						Auteur
+					</th>
+					<th>
+						Visibilité
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for debriefing in debriefings %}
+				<tr>
+					<td><a href="{{ path('debriefing.update', {'debriefing':debriefing.id}) }}">{{ debriefing.id }}</td>
+					<td><a href="{{ path('debriefing.detail', {'debriefing':debriefing.id}) }}">{{ debriefing.titre }}</td>
+					<td><a href="{{ path('groupe.detail', {'index': debriefing.groupe.id}) }}">{{ debriefing.groupe.nom }}</td>
+					<td>{{ debriefing.creationDate|date('Y-m-d') }}</td>
+					<td>{{ debriefing.updateDate|date('Y-m-d') }}</td>
+					<td>{{ debriefing.user.displayName }}</td>
+					<td>{{ debriefing.visibility|explainVisibility }}</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+		{{ paginator|raw }}
+	</div>
+	
+{% endblock content %}

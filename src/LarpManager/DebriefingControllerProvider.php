@@ -22,6 +22,8 @@ namespace LarpManager;
 
 use Silex\Application;
 use Silex\ControllerProviderInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
  * LarpManager\DebriefingControllerProvider
@@ -31,64 +33,72 @@ use Silex\ControllerProviderInterface;
  */
 class DebriefingControllerProvider implements ControllerProviderInterface
 {
+	/**
+	 * Initialise les routes pour le debriefing
+	 * 
+	 * @param Application $app
+	 */
 	public function connect(Application $app)
 	{
 		$controllers = $app['controllers_factory'];
 		
-		/**
-		 * Liste des debriefing
-		 */
-		$controllers->match('/','LarpManager\Controllers\DebriefingController::listAction')
-			->bind("debriefing.list")
-			->method('GET');
-
-		/**
-		 * Liste des debriefing
-		 */
-		$controllers->match('/print','LarpManager\Controllers\DebriefingController::printAction')
-			->bind("debriefing.print")
-			->method('GET');
-			
-		/**
-		 * Liste des debriefing
-		 */
-		$controllers->match('/download','LarpManager\Controllers\DebriefingController::downloadAction')
-			->bind("debriefing.download")
-			->method('GET');
+		$mustBeScenariste = function(Request $request) use ($app) {
+			if (!$app['security.authorization_checker']->isGranted('ROLE_SCENARISTE')) {
+				throw new AccessDeniedException();
+			}
+		};
+		
+		$mustBeUser = function(Request $request) use ($app) {
+			if ( ! $app['user'] ) {
+				throw new AccessDeniedException();
+			}
+		};
 		
 		/**
-		 * Ajout d'un debriefing
+		 * Liste tous les debriefing
+		 */
+		$controllers->match('/list','LarpManager\Controllers\DebriefingController::listAction')
+			->bind("debriefing.list")
+			->method('GET|POST')
+			->before($mustBeScenariste);
+			
+		/**
+		 * Ajoute un debriefing
 		 */
 		$controllers->match('/add','LarpManager\Controllers\DebriefingController::addAction')
 			->bind("debriefing.add")
-			->method('GET|POST');
-		
+			->method('GET|POST')
+			->before($mustBeScenariste);
+			
 		/**
-		 * Mise à jour d'un debriefing
+		 * Ajoute un debriefing
 		 */
 		$controllers->match('/{debriefing}/update','LarpManager\Controllers\DebriefingController::updateAction')
+			->bind("debriefing.update")
 			->assert('debriefing', '\d+')
 			->convert('debriefing', 'converter.debriefing:convert')
-			->bind("debriefing.update")
-			->method('GET|POST');
-		
+			->method('GET|POST')
+			->before($mustBeScenariste);
+
 		/**
 		 * Détail d'un debriefing
 		 */
-		$controllers->match('/{debriefing}','LarpManager\Controllers\DebriefingController::detailAction')
+		$controllers->match('/{debriefing}/detail','LarpManager\Controllers\DebriefingController::detailAction')
+			->bind("debriefing.detail")
 			->assert('debriefing', '\d+')
 			->convert('debriefing', 'converter.debriefing:convert')
-			->bind("debriefing.detail")
-			->method('GET');
-	
+			->method('GET')
+			->before($mustBeScenariste);
+			
 		/**
 		 * Suppression d'un debriefing
 		 */
 		$controllers->match('/{debriefing}/delete','LarpManager\Controllers\DebriefingController::deleteAction')
+			->bind("debriefing.delete")
 			->assert('debriefing', '\d+')
 			->convert('debriefing', 'converter.debriefing:convert')
-			->bind("debriefing.delete")
-			->method('GET|POST');
+			->method('GET|POST')
+			->before($mustBeScenariste);
 			
 		return $controllers;
 	}

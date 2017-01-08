@@ -81,7 +81,7 @@ class EconnomieController
 			$masseMonetaire += $territoire->getTresor();
 
 			// récupération des ressources
-			foreach ( $territoire->getImportations() as $ressource)
+			foreach ( $territoire->getExportations() as $ressource)
 			{
 				if ( $ressources->containsKey($ressource->getId()) )
 				{

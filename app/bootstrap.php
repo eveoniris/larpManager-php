@@ -222,7 +222,7 @@ else
 			   }),
 		),
 		'secured_area' => array(	// le reste necessite d'être connecté
-			'pattern' => '^/[annonce|intrigue|restriction|econnomie|monnaie|quality|rule|message|notification|statistique|billet|etatCivil|restauration|stock|droit|forum|groupe|gn|groupeGn|personnage|territoire|appelation|langue|ressource|religion|age|genre|level|competence|competenceFamily]/.*$',
+			'pattern' => '^/[annonce|debriefing|intrigue|question|restriction|econnomie|monnaie|quality|rule|message|notification|statistique|billet|etatCivil|restauration|stock|droit|forum|groupe|gn|groupeGn|personnage|territoire|appelation|langue|ressource|religion|age|genre|level|competence|competenceFamily]/.*$',
 			'anonymous' => false,
 			'remember_me' => array(),
 			'form' => array(
@@ -294,6 +294,7 @@ else
 	$app->mount('/quality', new LarpManager\QualityControllerProvider());
 	$app->mount('/econnomie', new LarpManager\EconnomieControllerProvider());
 	$app->mount('/intrigue', new LarpManager\IntrigueControllerProvider());
+	$app->mount('/question', new LarpManager\QuestionControllerProvider());
 		
 
 	/**
@@ -322,6 +323,7 @@ else
 		array('^/billet/.*$', 'ROLE_ADMIN'),
 		array('^/etatCivil/.*$', 'ROLE_ADMIN'),
 		array('^/restauration/.*$', 'ROLE_ADMIN'),
+		array('^/question/.*$', 'ROLE_ADMIN'),
 		array('^/groupeGn/.*$', 'ROLE_USER'),
 		array('^/gn/.*$', 'ROLE_USER'),
 		array('^/trombinoscope/.*$', 'ROLE_SCENARISTE'),
@@ -340,6 +342,7 @@ else
 		array('^/religion/.*$', 'ROLE_USER'),
 		array('^/groupeSecondaireType/.*$', 'ROLE_SCENARISTE'),
 		array('^/background/.*$', 'ROLE_USER'),
+		array('^/debriefing/.*$', 'ROLE_USER'),
 		array('^/age/.*$', 'ROLE_REGLE'),
 		array('^/magie/.*$', 'ROLE_USER'),
 		array('^/genre/.*$', 'ROLE_REGLE'),

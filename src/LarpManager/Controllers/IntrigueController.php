@@ -32,6 +32,7 @@ use LarpManager\Form\Intrigue\IntrigueDeleteForm;
 use LarpManager\Form\Intrigue\IntrigueRelectureForm;
 
 use LarpManager\Entities\Intrigue;
+use LarpManager\Entities\IntrigueHasModification;
 use LarpManager\Entities\Relecture;
 
 /**
@@ -151,6 +152,17 @@ class IntrigueController
 			$app['orm.em']->persist($intrigue);
 			$app['orm.em']->flush();
 			
+			/**
+			 * Envoyer une notification à tous les scénaristes des groupes concernés (hors utilisateur courant)
+			 */
+			foreach ($intrigue->getIntrigueHasGroupes() as $intrigueHasGroupe)
+			{
+				if ( $app['user']->getGroupeScenariste()->contains($intrigueHasGroupe->getGroupe()) == false)
+				{
+					$app['notify']->intrigue($intrigue, $intrigueHasGroupe->getGroupe());
+				}
+			}
+			
 			$app['session']->getFlashBag()->add('success', 'Votre intrigue a été ajouté.');
 			return $app->redirect($app['url_generator']->generate('intrigue.list'),301);
 		}
@@ -258,8 +270,49 @@ class IntrigueController
 				}
 			}
 			
+			/**
+			 * Création d'une ligne dans la liste des modifications de l'intrigue
+			 */
+			$modification = new IntrigueHasModification();
+			$modification->setUser($app['user']);
+			$modification->setIntrigue($intrigue);
+			$app['orm.em']->persist($modification);
 			$app['orm.em']->persist($intrigue);
 			$app['orm.em']->flush();
+			
+			/**
+			 * Envoyer une notification à tous les scénaristes des groupes concernés (hors utilisateur courant)
+			 */
+			foreach ($intrigue->getIntrigueHasGroupes() as $intrigueHasGroupe)
+			{
+				if ( $app['user']->getGroupeScenariste()->contains($intrigueHasGroupe->getGroupe()) == false)
+				{
+					$app['notify']->intrigue($intrigue, $intrigueHasGroupe->getGroupe());
+				}
+			}
+			
+			/**
+			 * Envoyer une notification à tous les utilisateurs ayant préalablement modifier cette intrigue (hors utilisateur courant, et hors scénariste d'un groupe concerné)
+			 */
+			foreach ($intrigue->getIntrigueHasModifications() as $modification)
+			{
+				if ( $modification->getUser() != $app['user'])
+				{
+					$sendNotification = true;
+					foreach ($intrigue->getIntrigueHasGroupes() as $intrigueHasGroupe)
+					{
+						if ( $modification->getUser()->getGroupeScenariste()->contains($intrigueHasGroupe->getGroupe()) == true)
+						{
+							$sendNotification = false;
+						}
+					}
+					
+					if ( $sendNotification )
+					{
+						$app['notify']->intrigue($intrigue, $intrigueHasGroupe->getGroupe());
+					}
+				}
+			}
 				
 			$app['session']->getFlashBag()->add('success', 'Votre intrigue a été modifiée.');
 			return $app->redirect($app['url_generator']->generate('intrigue.detail', array('intrigue' => $intrigue->getId())),301);
@@ -300,6 +353,13 @@ class IntrigueController
 		));
 	}
 	
+	/**
+	 * Ajout d'une relecture
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Intrigue $intrigue
+	 */
 	function relectureAddAction(Request $request, Application $app, Intrigue $intrigue)
 	{
 		$relecture = new Relecture();
@@ -316,6 +376,17 @@ class IntrigueController
 				
 			$app['orm.em']->persist($relecture);
 			$app['orm.em']->flush();
+			
+			/**
+			 * Envoyer une notification à tous les scénaristes des groupes concernés (hors utilisateur courant)
+			 */
+			foreach ($intrigue->getIntrigueHasGroupes() as $intrigueHasGroupe)
+			{
+				if ( $app['user']->getGroupeScenariste()->contains($intrigueHasGroupe->getGroupe()) == false)
+				{
+					$app['notify']->relecture($intrigue, $intrigueHasGroupe->getGroupe());
+				}
+			}
 				
 			$app['session']->getFlashBag()->add('success', 'Votre relecture a été enregistrée.');
 			return $app->redirect($app['url_generator']->generate('intrigue.detail', array('intrigue' => $intrigue->getId())),301);

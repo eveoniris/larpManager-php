@@ -41,6 +41,7 @@ use LarpManager\Services\Converter\BilletConverter;
 use LarpManager\Services\Converter\ClasseConverter;
 use LarpManager\Services\Converter\CompetenceConverter;
 use LarpManager\Services\Converter\ConstructionConverter;
+use LarpManager\Services\Converter\DebriefingConverter;
 use LarpManager\Services\Converter\DocumentConverter;
 use LarpManager\Services\Converter\DomaineConverter;
 use LarpManager\Services\Converter\EnemyConverter;
@@ -189,6 +190,11 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 		// background converter
 		$app['converter.background'] = $app->share(function($app) {
 			return new BackgroundConverter($app['orm.em']);
+		});
+		
+		// debriefing converter
+		$app['converter.debriefing'] = $app->share(function($app) {
+			return new DebriefingConverter($app['orm.em']);
 		});
 		
 		// personnageBackground converter
