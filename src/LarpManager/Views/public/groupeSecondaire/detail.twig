@@ -100,6 +100,14 @@
 			<div class="list-group-item">
 				<div class="list-group-item-heading">
 					<strong>{{ membre.personnage.publicName }}</strong>
+					&nbsp;
+					{% if membre.personnage.participeTo(participant.gn) %}
+						<span class="text-success">Inscrit à {{ participant.gn.label }}</span>
+					{% else %}
+						<span class="text-info">Pas encore inscrit à {{ participant.gn.label }}</span>
+					{% endif %}
+					
+					<br />
 					{% if groupeSecondaire.responsable %}&nbsp;<a href="{{ path('message.new', {'to': membre.personnage.user.id }) }}"><i class="fa fa-pencil-square-o"></i>Envoyer un message</a>{% endif %}
 				</div>
 			</div>

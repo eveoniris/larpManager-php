@@ -78,7 +78,7 @@ else
 	
 	$app->register(new Silex\Provider\MonologServiceProvider(), array(
 			'monolog.logfile' => __DIR__.'/../logs/development.log',
-			'monolog.level' => \Monolog\Logger::DEBUG
+			'monolog.level' => \Monolog\Logger::CRITICAL
 	));
 }
 
@@ -222,7 +222,7 @@ else
 			   }),
 		),
 		'secured_area' => array(	// le reste necessite d'être connecté
-			'pattern' => '^/[annonce|debriefing|intrigue|question|restriction|econnomie|monnaie|quality|rule|message|notification|statistique|billet|etatCivil|restauration|stock|droit|forum|groupe|gn|groupeGn|personnage|territoire|appelation|langue|ressource|religion|age|genre|level|competence|competenceFamily]/.*$',
+			'pattern' => '^/[annonce|debriefing|intrigue|rumeur|question|restriction|econnomie|monnaie|quality|rule|message|notification|statistique|billet|etatCivil|restauration|stock|droit|forum|groupe|gn|groupeGn|personnage|territoire|appelation|langue|ressource|religion|age|genre|level|competence|competenceFamily]/.*$',
 			'anonymous' => false,
 			'remember_me' => array(),
 			'form' => array(
@@ -294,7 +294,8 @@ else
 	$app->mount('/quality', new LarpManager\QualityControllerProvider());
 	$app->mount('/econnomie', new LarpManager\EconnomieControllerProvider());
 	$app->mount('/intrigue', new LarpManager\IntrigueControllerProvider());
-	$app->mount('/question', new LarpManager\QuestionControllerProvider());
+	$app->mount('/rumeur', new LarpManager\RumeurControllerProvider());
+	//$app->mount('/question', new LarpManager\QuestionControllerProvider());
 		
 
 	/**
@@ -359,6 +360,7 @@ else
 		array('^/monnaie/.*$', 'ROLE_SCENARISTE'),
 		array('^/quality/.*$', 'ROLE_SCENARISTE'),
 		array('^/intrigue/.*$', 'ROLE_SCENARISTE'),
+		array('^/rumeur/.*$', 'ROLE_SCENARISTE'),
 		array('^/competenceFamily/.*$', 'ROLE_REGLE'),
 		array('^/level/.*$', 'ROLE_REGLE'),
 		array('^/token/.*$', 'ROLE_REGLE'),

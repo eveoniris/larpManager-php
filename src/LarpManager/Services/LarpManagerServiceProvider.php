@@ -73,6 +73,7 @@ use LarpManager\Services\Converter\ReligionConverter;
 use LarpManager\Services\Converter\RestaurationConverter;
 use LarpManager\Services\Converter\RestrictionConverter;
 use LarpManager\Services\Converter\RuleConverter;
+use LarpManager\Services\Converter\RumeurConverter;
 use LarpManager\Services\Converter\SecondaryGroupConverter;
 use LarpManager\Services\Converter\SortConverter;
 use LarpManager\Services\Converter\SphereConverter;
@@ -285,6 +286,11 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 		// rule converter
 		$app['converter.rule'] = $app->share(function($app) {
 			return new RuleConverter($app['orm.em']);
+		});
+		
+		// rule converter
+		$app['converter.rumeur'] = $app->share(function($app) {
+			return new RumeurConverter($app['orm.em']);
 		});
 		
 		// sphere converter

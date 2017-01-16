@@ -1,0 +1,37 @@
+{% extends "layout.twig" %}
+
+{% block title %}Rumeurs{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path('rumeur.list') }}">Liste des rumeurs</a></li>
+		<li class="active">Détail d'une rumeur</li>
+	</ol>
+	
+	<div class="well well-sm">
+		<div class="row">
+			<div class="col-md-6">
+				<a class="btn btn-default" href="{{ path('rumeur.update', {'rumeur':rumeur.id}) }}"><i class="fa fa-pencil"></i> Modifier la rumeur</a>
+				<a class="btn btn-danger" href="{{ path('rumeur.delete', {'rumeur':rumeur.id}) }}"><i class="fa fa-close"></i> Supprimer la rumeur</a>
+				
+				<h6><i class="fa fa-circle"></i>&nbsp;Contenu de la rumeur</h6>
+				<div class="white-box">
+					{{ rumeur.text|markdown }}
+				</div>
+				
+				<h6><i class="fa fa-circle"></i>&nbsp;Territoire concerné</h6>
+				<div class="white-box">
+					{{ rumeur.territoire|default('Tous') }}
+				</div>
+				
+				<h6><i class="fa fa-circle"></i>&nbsp;GN : {{ rumeur.gn.label }}</h6>
+			</div>
+			<div class="col-md-6">
+				<h4>Auteur</h4>
+				<p>Cette rumeur a été créé par <strong><a href="{{ path('user.view', {'id': rumeur.user.id}) }}">{{ rumeur.user.username }}</a></strong> le <strong>{{ rumeur.creationDate|date('Y-m-d H:i:s') }}</strong></p>
+			</div>
+		</div>
+	</div>
+{% endblock content %}
