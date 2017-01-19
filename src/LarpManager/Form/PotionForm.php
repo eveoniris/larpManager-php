@@ -44,6 +44,10 @@ class PotionForm extends AbstractType
 					'required' => true,
 					'label' => 'Label',
 				))
+				->add('numero', 'text', array(
+					'required' => true,
+					'label' => 'Numéro', 
+				))
 				->add('niveau','choice', array(
 						'required' => true,
 						'choices' => array("1" => 1,"2" => 2, "3" => 3, "4" => 4),

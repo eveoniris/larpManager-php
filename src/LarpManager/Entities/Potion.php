@@ -38,6 +38,6 @@ class Potion extends BasePotion
 {
 	public function getFullLabel()
 	{
-		return $this->getLabel() .' - Niveau '. $this->getNiveau();
+		return $this->getNumero() .' - '. $this->getLabel() .' - Niveau '. $this->getNiveau();
 	}
 }

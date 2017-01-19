@@ -48,6 +48,26 @@ class Personnage extends BasePersonnage
 	}
 	
 	/**
+	 * Détermine si le personnage participe à un GN
+	 * 
+	 * @param Gn $gn
+	 */
+	public function participeTo(Gn $gn)
+	{
+		if ( $this->getUser() )
+		{
+			if ( $participant = $this->getUser()->getParticipant($gn))
+			{
+				if ( $participant->getBillet())
+				{
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	/**
 	 * Set Participant entity (one to one).
 	 *
 	 * @return \LarpManager\Entities\Personnage

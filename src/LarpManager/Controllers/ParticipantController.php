@@ -346,7 +346,7 @@ class ParticipantController
 			$app['orm.em']->persist($personnage);
 			$app['orm.em']->flush();
 			
-			$app['session']->getFlashBag()->add('success','Vos modifications ont été prisent en compte.');
+			$app['session']->getFlashBag()->add('success','Vos modifications ont été prises en compte.');
 			return $app->redirect($app['url_generator']->generate('participant.personnage', array('participant' => $participant->getId())),301);
 		}
 		
