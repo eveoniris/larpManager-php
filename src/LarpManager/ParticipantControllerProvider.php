@@ -50,6 +50,7 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 	 *  - participant.personnage
 	 *  - participant.personnage.remove
 	 *  - participant.personnage.trombine
+	 *  - participant.personnage.surnom.edit
 	 *  - participant.priere.detail
 	 *  - participant.priere.document
 	 *  - participant.potion.detail
@@ -604,6 +605,17 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 			->assert('participant', '\d+')
 			->assert('niveau', '\d+')
 			->bind("participant.personnage.sort")
+			->method('GET|POST')
+			->convert('participant', 'converter.participant:convert')
+			->before($mustOwnParticipant);
+			
+		/**
+		 * Modification de quelques informations
+		 * Accessible uniquement au proprietaire du personnage
+		 */
+		$controllers->match('/{participant}/personnage/edit','LarpManager\Controllers\ParticipantController::personnageEditAction')
+			->assert('participant', '\d+')
+			->bind("participant.personnage.edit")
 			->method('GET|POST')
 			->convert('participant', 'converter.participant:convert')
 			->before($mustOwnParticipant);

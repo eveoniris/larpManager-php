@@ -41,6 +41,7 @@ use LarpManager\Form\Participant\ParticipantGroupeForm;
 use LarpManager\Form\Participant\ParticipantRemoveForm;
 
 use LarpManager\Form\Personnage\PersonnageForm;
+use LarpManager\Form\Personnage\PersonnageEditForm;
 use LarpManager\Form\Personnage\PersonnageReligionForm;
 use LarpManager\Form\Personnage\PersonnageOriginForm;
 
@@ -313,6 +314,46 @@ class ParticipantController
 		return $app['twig']->render('public/personnage/detail.twig', array(
 				'personnage' => $personnage,
 				'participant' => $participant,
+		));
+	}
+	
+	/**
+	 * Modification de quelques informations concernant le personnage
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Participant $participant
+	 */
+	public function personnageEditAction(Request $request, Application $app, Participant $participant)
+	{
+		$personnage = $participant->getPersonnage();
+		
+		if ( ! $personnage )
+		{
+			$app['session']->getFlashBag()->add('error','Vous n\'avez pas encore de personnage.');
+			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+		}
+		
+		$form = $app['form.factory']->createBuilder(new PersonnageEditForm(), $personnage)
+			->add('save','submit', array('label' => 'Sauvegarder'))
+			->getForm();
+		
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
+		{
+			$personnage = $form->getData();
+			$app['orm.em']->persist($personnage);
+			$app['orm.em']->flush();
+			
+			$app['session']->getFlashBag()->add('success','Vos modifications ont été prisent en compte.');
+			return $app->redirect($app['url_generator']->generate('participant.personnage', array('participant' => $participant->getId())),301);
+		}
+		
+		return $app['twig']->render('public/personnage/edit.twig', array(
+			'form' => $form->createView(),
+			'personnage' => $personnage,
+			'participant' => $participant,
 		));
 	}
 	
