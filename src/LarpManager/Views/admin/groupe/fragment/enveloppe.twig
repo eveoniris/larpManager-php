@@ -1,28 +1,96 @@
 <h5>Enveloppe de groupe</h5>
 <blockquote>Cette liste correspond au matériel qui sera présent dans l'enveloppe de début de jeu remise au groupe</blockquote>
 
-<h6><i class="fa fa-circle"></i> Documents</h6>
-<a href=" {{ path('groupe.admin.documents', {'groupe': groupe.id}) }}">Modifier la liste de documents</a>
+<h6><i class="fa fa-circle"></i><strong>&nbsp;Richesse</strong>. <a href="{{ path('groupe.admin.richesse', {'groupe': groupe.id}) }}">Modifier la richesse</a></h6>
+<div class="white-box">
+<p>La richesse de votre groupe est composé des PA fournis par les territoires qu'il contrôle, ainsi de ce qui reste des enveloppes de retour du jeu précédent</p>  
+<ul>
+{% if groupe.hasRichesse %}
+	{% for territoire in groupe.territoires %}
+		<li><strong>{{ territoire.tresor|default(0) }} PA</strong> fourni par <strong>{{ territoire.nom }}</strong></li>
+	{% endfor %}
+{% else %}
+	<li>Aucune PA fourni par les territoires</li>
+{% endif %}
+	<li><strong>{{ groupe.richesse|default(0) }} PA</strong> supplémentaire</li>
+</ul>
+TOTAL : {{ groupe.richesseTotale|default(0) }} PA
+</div>
+
+<h6><i class="fa fa-circle"></i><strong>&nbsp;Ressources</strong>. <a href="{{ path('groupe.admin.ressources', {'groupe': groupe.id}) }}">Modifier les ressources</a></h6>
+<div class="white-box">
+<p>Les ressources de votre groupe sont composés des ressources fournis par les territoires qu'il contrôle, ainsi de ce qui reste des enveloppes de retour du jeu précédent</p>
+<ul>
+{% if groupe.hasRessource %}
+	{% for territoire in groupe.territoires %}
+		{% for ressource in territoire.exportations %}
+	    	<li><strong>{{ ressource.label }}</strong> fourni par <strong>{{ territoire.nom }}</strong></li>
+		{% endfor %}
+	{% endfor %}
+{% else %}
+	<li>Aucune ressource fourni par les territoire</li>
+{% endif %}
+
+{% for groupeHasRessource in groupe.groupeHasRessources %}
+	<li><strong>{{ groupeHasRessource.quantite }} {{ groupeHasRessource.ressource.label }}</strong></li>
+{% else %}
+	<li>Aucune ressource additionnelle</li>
+{% endfor %}
+</ul>	
+</div>
+
+<h6><i class="fa fa-circle"></i><strong>&nbsp;Ingrédients</strong>. <a href="{{ path('groupe.admin.ingredients', {'groupe': groupe.id}) }}">Modifier les ingrédients</a></h6>
+<div class="white-box">
+<p>Les ingrédients de votre groupe sont fournis par les territoires qu'il contrôle, ainsi de ce qui reste des enveloppes de retour du jeu précédent</p>
+<ul>
+{% if groupe.hasIngredient %}
+	{% for territoire in groupe.territoires %}
+		{% for ingredient in territoire.ingredients %}
+			<li><strong>{{ ingredient.label }}</strong> fourni par <strong>{{ territoire.nom }}</strong></li>
+	    {% endfor %}
+	{% endfor %}
+{% else %}
+	<li>Aucun ingrédient fourni par les territoires</li>
+{% endif %}
+
+{% for groupeHasIngredient in groupe.groupeHasIngredients %}
+	<li><strong>{{ groupeHasIngredient.quantite }} {{ groupeHasIngredient.ingredient.fullLabel }}</strong></li>
+{% else %}
+	<li>Aucun ingrédient additionnel</li>
+{% endfor %}
+</ul>
+</div>
+
+<h6><i class="fa fa-circle"></i><strong>&nbsp;Documents</strong>. <a href=" {{ path('groupe.admin.documents', {'groupe': groupe.id}) }}">Modifier la liste de documents</a></h6>
+<div class="white-box">
+<p>Vous pouvez ajoutez des documents dans l'enveloppe de groupe. Si le document que vous voulez ajouter n'existe pas encore, vous pouvez le créer vous-même. Remarque, il est important que tous les documents que vous voulez ajouter soit défini dans la liste des documents AVANT que l'impression des documents ne soit lancée.</p>
 <ul>
 {% for document in groupe.documents %}
 	<li><a href="{{ path('document.detail', {'document':document.id}) }}"><strong>{{ document.code }}</strong>&nbsp;{{ document.titre }}</a></li>
+{% else %}
+	<li>Aucun</li>
 {% endfor %}
 </ul>
+</div>
 
-<h6><i class="fa fa-circle"></i> Objets de jeu</h6>
-
+<h6><i class="fa fa-circle"></i><strong>&nbsp;Autre</strong>. <a href="{{ path('groupe.envelope', {'groupe':groupe.id}) }}"><strong>Modifier le contenu</strong></a></h6>
+<div class="white-box">
 {{ groupe.materiel|markdown }}
+</div>
 
-<a href="{{ path('groupe.envelope', {'groupe':groupe.id}) }}"><strong>Modifier le contenu</strong></a>
 
 <h5>Enveloppes des personnages</h5>
 
 {% for participant in groupe.nextSession.participants %}
 	{% if participant.personnage %}
-		<h6><strong>#{{ participant.personnage.id }}</strong> {{ participant.personnage.nom }}</h6>
-		<a href=" {{ path('groupe.personnage.documents', {'groupe': groupe.id, 'personnage': participant.personnage.id}) }}">Modifier la liste de documents</a>
-		{% for document in participant.personnage.documents %}
-			<li><a href="{{ path('document.detail', {'document':document.id}) }}"><strong>{{ document.code }}</strong>&nbsp;{{ document.titre }}</a></li>
-		{% endfor %}
+		<h6><i class="fa fa-circle"></i><strong>&nbsp;#{{ participant.personnage.id }}</strong> {{ participant.personnage.nom }}</h6>
+		<div class="white-box">
+			<a href=" {{ path('groupe.personnage.documents', {'groupe': groupe.id, 'personnage': participant.personnage.id}) }}">Modifier la liste de documents</a>
+			{% for document in participant.personnage.documents %}
+				<li><a href="{{ path('document.detail', {'document':document.id}) }}"><strong>{{ document.code }}</strong>&nbsp;{{ document.titre }}</a></li>
+			{% else %}
+				<li>Aucun</li>
+			{% endfor %}
+		</div>
 	{% endif %}
 {% endfor %}

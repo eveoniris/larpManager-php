@@ -252,6 +252,7 @@ class GroupeControllerProvider implements ControllerProviderInterface
 		 */
 		$controllers->match('/admin/{groupe}/documents','LarpManager\Controllers\GroupeController::adminDocumentAction')
 			->bind("groupe.admin.documents")
+			->assert('groupe', '\d+')
 			->convert('groupe', 'converter.groupe:convert')
 			->method('GET|POST')
 			->before($mustBeScenariste);
@@ -265,6 +266,36 @@ class GroupeControllerProvider implements ControllerProviderInterface
 			->assert('personnage', '\d+')
 			->convert('groupe', 'converter.groupe:convert')
 			->convert('personnage', 'converter.personnage:convert')
+			->method('GET|POST')
+			->before($mustBeScenariste);
+
+		/**
+		 * Gestion de la richesse d'un groupe
+		 */
+		$controllers->match('/admin/{groupe}/richesse','LarpManager\Controllers\GroupeController::adminRichesseAction')
+			->bind("groupe.admin.richesse")
+			->assert('groupe', '\d+')
+			->convert('groupe', 'converter.groupe:convert')
+			->method('GET|POST')
+			->before($mustBeScenariste);
+
+		/**
+		 * Gestion des ressources liés au groupe
+		 */
+		$controllers->match('/admin/{groupe}/ressources','LarpManager\Controllers\GroupeController::adminRessourceAction')
+			->bind("groupe.admin.ressources")
+			->assert('groupe', '\d+')
+			->convert('groupe', 'converter.groupe:convert')
+			->method('GET|POST')
+			->before($mustBeScenariste);
+
+		/**
+		 * Gestion des ingredients liés au groupe
+		 */
+		$controllers->match('/admin/{groupe}/ingredients','LarpManager\Controllers\GroupeController::adminIngredientAction')
+			->bind("groupe.admin.ingredients")
+			->assert('groupe', '\d+')
+			->convert('groupe', 'converter.groupe:convert')
 			->method('GET|POST')
 			->before($mustBeScenariste);
 			

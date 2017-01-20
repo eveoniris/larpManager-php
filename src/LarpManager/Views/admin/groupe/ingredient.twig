@@ -1,0 +1,91 @@
+{% extends "layout.twig" %}
+
+{% block title %}Groupes{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path("groupe.admin.list") }}">Liste des groupes</a></li>
+		<li><a href="{{ path("groupe.detail", {'index': groupe.id}) }}">{{ groupe.nom }}</a></li>
+		<li class="active">Modifier les ingredients du groupe</li>
+	</ol>
+	
+	<div class="well well-sm">
+		<form action="{{ path('groupe.admin.ingredients',{'groupe': groupe.id}) }}" method="POST">
+			{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}		
+			{{ form_start(form) }}
+			<h4>{{ form_label(form.groupeHasIngredients) }}</h4>
+			<p>Ajoutez içi les ingredients additionnelles</p>
+			<ul class="list-group groupeHasIngredients" data-prototype="{{ form_widget(form.groupeHasIngredients.vars.prototype)|e }}">
+				{% for groupeHasIngredient in form.groupeHasIngredients %}
+					<li class="list-group-item">
+							<div class="ingredient">
+								{{ form_widget(groupeHasIngredient.quantite) }}
+								{{ form_widget(groupeHasIngredient.ingredient) }}
+							</div>
+					</li>
+				{% endfor %}
+			</ul>
+			{{ form_end(form) }}
+		</form>
+	</div>
+{% endblock %}
+
+{% block javascript %}
+<script>
+
+	function addGroupeHasIngredientForm(collectionHolder, $newIngredientLinkLi) {
+	    // Récupère l'élément ayant l'attribut data-prototype comme expliqué plus tôt
+	    var prototype = collectionHolder.attr('data-prototype');
+	
+	    // Remplace '__name__' dans le HTML du prototype par un nombre basé sur
+	    // la longueur de la collection courante
+	    var newForm = prototype.replace(/__name__/g, collectionHolder.children().length);
+	
+	    // Affiche le formulaire dans la page dans un li, avant le lien "ajouter un tag"
+	    var $newFormLi = $('<li class="list-group-item"></li>').append(newForm);
+	    $newIngredientLinkLi.before($newFormLi);
+	
+		 // ajoute un lien de suppression au nouveau formulaire
+	    addGroupeHasIngredientFormDeleteLink($newFormLi);
+	}
+	
+	function addGroupeHasIngredientFormDeleteLink($groupeHasIngredientFormLi) {
+	    var $removeFormA = $('<span class="input-group-btn"><a class="btn btn-link" href="#"><span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span></a></span>');
+	    $('select',$groupeHasIngredientFormLi).wrap('<div class="input-group"></div>');
+	    $('select',$groupeHasIngredientFormLi).after($removeFormA);
+	
+	    $removeFormA.on('click', function(e) {
+	        // empêche le lien de créer un « # » dans l'URL
+	        e.preventDefault();
+	
+	        // supprime l'élément li pour le formulaire de tag
+	        $groupeHasIngredientFormLi.remove();
+	    });
+	}
+
+	var collectionIngredientHolder = $('ul.groupeHasIngredients');
+	var $addGroupeHasIngredientLink = $('<a href="#" class="add_groupeHasIngredient_link">Ajouter un ingredient</a>');
+	var $newIngredientLinkLi = $('<li class="list-group-item"></li>').append($addGroupeHasIngredientLink);
+	
+	jQuery(document).ready(function() {
+		
+	    collectionIngredientHolder.find('li').each(function() {
+	        addGroupeHasIngredientFormDeleteLink($(this));
+	    });
+	
+	    collectionIngredientHolder.append($newIngredientLinkLi);
+	
+	    $addGroupeHasIngredientLink.on('click', function(e) {
+	        // empêche le lien de créer un « # » dans l'URL
+	        e.preventDefault();
+	
+	        // ajoute un nouveau formulaire tag (voir le prochain bloc de code)
+	        addGroupeHasIngredientForm(collectionIngredientHolder, $newIngredientLinkLi);
+	    });
+	    $("div#groupeIngredient_groupeHasIngredients").parent().remove();
+	});
+
+</script>
+{% endblock javascript %}

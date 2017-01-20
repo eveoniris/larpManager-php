@@ -40,6 +40,11 @@ class Ingredient extends BaseIngredient
 	{
 		return $this->getLabel();
 	}
+	
+	public function fullLabel()
+	{
+		return $this->getLabel() .' - Niveau '.  $this->getNiveau();
+	}
 			
 	
 }

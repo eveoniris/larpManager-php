@@ -76,6 +76,50 @@ class EconnomieController
 		}
 				
 		$masseMonetaire = 0;
+		
+		foreach ($groupes as $groupe)
+		{
+			//  les groupes doivent participer au prochain GN
+			if ( $groupe->getGroupeGnById($gn->getId())) {
+				if ( $groupe->getRichesse() )
+				{
+					$masseMonetaire += $groupe->getRichesse();
+				}
+				foreach ( $groupe->getGroupeHasRessources() as  $groupeHasRessource)
+				{
+					if ( $ressources->containsKey($groupeHasRessource->getRessource()->getId()) )
+					{
+						$value = $ressources->get($groupeHasRessource->getRessource()->getId());
+						$value['nombre'] += $groupeHasRessource->getQuantite();
+					}
+					else
+					{
+						$ressources->set($groupeHasRessource->getRessource()->getId(),array(
+								'label' => $groupeHasRessource->getRessource()->getLabel(),
+								'nombre' => $groupeHasRessource->getQuantite(),
+								'territoires' => array()
+						));
+					}
+				}
+				foreach ( $groupe->getGroupeHasIngredients() as  $groupeHasIngredient)
+				{
+					if ( $ingredients->containsKey($groupeHasIngredient->getIngredient()->getId()) )
+					{
+						$value = $ingredients->get($groupeHasIngredient->getIngredient()->getId());
+						$value['nombre'] += $groupeHasIngredient->getQuantite();
+					}
+					else
+					{
+						$ingredients->set($groupeHasIngredient->getIngredient()->getId(),array(
+								'label' => $groupeHasIngredient->getIngredient()->getLabel(),
+								'nombre' => $groupeHasIngredient->getQuantite(),
+								'territoires' => array()
+						));
+					}
+				}
+			}
+		}
+		
 		foreach ( $territoires as $territoire )
 		{
 			$masseMonetaire += $territoire->getTresor();

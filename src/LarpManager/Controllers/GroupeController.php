@@ -31,6 +31,9 @@ use LarpManager\Form\Groupe\GroupeDescriptionForm;
 use LarpManager\Form\Groupe\GroupeScenaristeForm;
 use LarpManager\Form\Groupe\GroupeCompositionForm;
 use LarpManager\Form\Groupe\GroupeEnvelopeForm;
+use LarpManager\Form\Groupe\GroupeRichesseForm;
+use LarpManager\Form\Groupe\GroupeRessourceForm;
+use LarpManager\Form\Groupe\GroupeIngredientForm;
 
 use LarpManager\Form\GroupFindForm;
 use LarpManager\Form\BackgroundForm;
@@ -305,6 +308,156 @@ class GroupeController
 				'px' => $quete['px'],
 				'recompenses' => $quete['recompenses'],
 			));
+	}
+	
+	/**
+	 * Modifie les ingredients du groupe
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Groupe $groupe
+	 */
+	public function adminIngredientAction(Request $request, Application $app, Groupe $groupe)
+	{
+		$originalGroupeHasIngredients = new ArrayCollection();
+		
+		/**
+		 *  Crée un tableau contenant les objets GroupeHasIngredient du groupe
+		 */
+		foreach ($groupe->getGroupeHasIngredients() as $groupeHasIngredient)
+		{
+			$originalGroupeHasIngredients->add($groupeHasIngredient);
+		}
+		
+		
+		$form = $app['form.factory']->createBuilder(new GroupeIngredientForm(), $groupe)
+			->add('submit','submit', array('label' => 'Enregistrer'))
+			->getForm();
+		
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$groupe = $form->getData();
+		
+			/**
+			 * Pour tous les ingredients
+			 */
+			foreach ($groupe->getGroupeHasIngredients() as $groupeHasIngredient)
+			{
+				$groupeHasIngredient->setGroupe($groupe);
+			}
+				
+			/**
+			 *  supprime la relation entre groupeHasIngredient et le groupe
+			 */
+			foreach ($originalGroupeHasIngredients as $groupeHasIngredient) {
+				if ($groupe->getGroupeHasIngredients()->contains($groupeHasIngredient) == false) {
+					$app['orm.em']->remove($groupeHasIngredient);
+				}
+			}
+						
+			$app['orm.em']->persist($groupe);
+			$app['orm.em']->flush();
+		
+			$app['session']->getFlashBag()->add('success', 'Votre groupe a été sauvegardé.');
+			return $app->redirect($app['url_generator']->generate('groupe.detail', array('index' => $groupe->getId())));
+		}
+		
+		return $app['twig']->render('admin/groupe/ingredient.twig', array(
+				'groupe' => $groupe,
+				'form' => $form->createView(),
+		));
+	}
+	
+	/**
+	 * Modifie les ressources du groupe
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function adminRessourceAction(Request $request, Application $app, Groupe $groupe)
+	{
+		$originalGroupeHasRessources = new ArrayCollection();
+		
+		/**
+		 *  Crée un tableau contenant les objets GroupeHasRessource du groupe
+		 */
+		foreach ($groupe->getGroupeHasRessources() as $groupeHasRessource)
+		{
+			$originalGroupeHasRessources->add($groupeHasRessource);
+		}
+		
+		
+		$form = $app['form.factory']->createBuilder(new GroupeRessourceForm(), $groupe)
+			->add('submit','submit', array('label' => 'Enregistrer'))
+			->getForm();
+	
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$groupe = $form->getData();	
+
+			/**
+			 * Pour toutes les ressources du groupe
+			 */
+			foreach ($groupe->getGroupeHasRessources() as $groupeHasRessource)
+			{
+				$groupeHasRessource->setGroupe($groupe);
+			}
+			
+			/**
+			 *  supprime la relation entre groupeHasRessource et le groupe
+			 */
+			foreach ($originalGroupeHasRessources as $groupeHasRessource) {
+				if ($groupe->getGroupeHasRessources()->contains($groupeHasRessource) == false) {
+					$app['orm.em']->remove($groupeHasRessource);
+				}
+			}
+				
+			
+			$app['orm.em']->persist($groupe);
+			$app['orm.em']->flush();
+	
+			$app['session']->getFlashBag()->add('success', 'Votre groupe a été sauvegardé.');
+			return $app->redirect($app['url_generator']->generate('groupe.detail', array('index' => $groupe->getId())));
+		}
+	
+		return $app['twig']->render('admin/groupe/ressource.twig', array(
+				'groupe' => $groupe,
+				'form' => $form->createView(),
+		));
+	}
+	
+	/**
+	 * Ajoute un document dans le matériel du groupe
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function adminRichesseAction(Request $request, Application $app, Groupe $groupe)
+	{
+		$form = $app['form.factory']->createBuilder(new GroupeRichesseForm(), $groupe)
+			->add('submit','submit', array('label' => 'Enregistrer'))
+			->getForm();
+	
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$groupe = $form->getData();
+			$app['orm.em']->persist($groupe);
+			$app['orm.em']->flush();
+				
+			$app['session']->getFlashBag()->add('success', 'Votre groupe a été sauvegardé.');
+			return $app->redirect($app['url_generator']->generate('groupe.detail', array('index' => $groupe->getId())));
+		}
+	
+		return $app['twig']->render('admin/groupe/richesse.twig', array(
+				'groupe' => $groupe,
+				'form' => $form->createView(),
+		));
 	}
 	
 	/**

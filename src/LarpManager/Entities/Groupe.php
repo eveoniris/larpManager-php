@@ -198,6 +198,19 @@ class Groupe extends BaseGroupe
 	}
 	
 	/**
+	 * Fourni la richesse totale du groupe (territoire + richesse perso)
+	 */
+	public function getRichesseTotale()
+	{
+		$richesse = $this->getRichesse();
+		foreach ($this->getTerritoires() as $territoire )
+		{
+			$richesse += $territoire->getTresor();
+		}
+		return $richesse;
+	}
+	
+	/**
 	 * Vérifie si un groupe dispose d'ingrédients
 	 */
 	public function hasIngredient()
