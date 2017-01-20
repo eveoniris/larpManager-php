@@ -19,7 +19,7 @@
 			<li class="list-group-item">
 				<div class="row">
 					<div class="col-md-8">
-						{{ potion.label }} - Niveau {{ potion.niveau }}
+						<strong>{{potion.numero}}</strong> : {{ potion.label }} - Niveau {{ potion.niveau }}
 						{{ potion.description|markdown }}
 						{% if potion.documentUrl %}
 							<a href="{{ path('magie.potion.document', {'potion': potion.id, 'document': potion.documentUrl}) }}">Télécharger le pdf associé</a>

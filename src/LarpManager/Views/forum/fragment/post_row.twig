@@ -1,66 +1,48 @@
-<div class="row">
-	<div class="col-xs-3 col-md-3">
-		<div style="background-color:#eee;padding-left:5px;">
-			{# auteur #}
-			<div>
-				{% if is_granted('ROLE_MODERATOR', app.user) %}
-					<a href="{{ path('user.view',{'id': post.user.id}) }}">{{ post.user.username }}</a>
-				{% else %}
-					<strong>{{ post.user.username }}</strong>
-				{% endif %}
-			</div>
-			
-			<div>
-				{% if post.user.hasRole('ROLE_ADMIN') %}
-					Admin
-				{% elseif post.user.hasRole('ROLE_SCENARISTE') %}
-					Scénariste
-				{% elseif post.user.hasRole('ROLE_ORGA') %}
-					Orga
-				{% elseif post.user.hasRole('ROLE_USER') %}
-					Joueur
-				{% endif %}
-			</div>
-							
-			<div>
-				<a href="{{ path('message.new', {'to': post.user.id }) }}"><i class="fa fa-pencil-square-o"></i> Message privé</a>
-			</div>
-		</div>
-	</div>
-	<div class="col-xs-5 col-md-5">
-		
-		
-		{# metadata #}
-		{% if post.creationDate != post.updateDate %}
-			<p>Mis à jour {{ post.updateDate|time_diff() }}</p>
+{# auteur #}
+<div>		
+	<a href="{{ path('user.view',{'id': post.user.id}) }}">{{ post.user.username }}</a>
+	
+	<a data-toggle="tooltip" 
+		data-placement="top" 
+		title="Envoyer un message privé"  
+		href="{{ path('message.new', {'to': post.user.id }) }}"><i class="fa fa-pencil-square-o"></i></a>
+
+	({% if post.user.hasRole('ROLE_ADMIN') %}
+		Admin
+	{% elseif post.user.hasRole('ROLE_SCENARISTE') %}
+		Scénariste
+	{% elseif post.user.hasRole('ROLE_ORGA') %}
+		Orga
+	{% elseif post.user.hasRole('ROLE_USER') %}
+		Joueur
+	{% endif %})
+	
+	<div class="pull-right">
+		{% if is_granted('POST_OWNER', post.id) %}
+			<a 	title="Editer"
+				data-toggle="tooltip" 
+				data-placement="left" 
+				class="btn btn-primary" 
+				href="{{ path('forum.post.update',{'index':post.id}) }}">
+				<i class="fa fa-pencil"></i>
+			</a>
 		{% endif %}
-		
-		{# texte #}
-		<p class="list-group-item-text">{{ post.text|markdown }}</p>
 	</div>
-		
-		<div class="col-xs-4 col-md-4">
-			<div class="pull-right">
-										 
-				{% if is_granted('POST_OWNER', post.id) %}
-					<a 	title="Editer"
-						data-toggle="tooltip" 
-						data-placement="left" 
-						class="btn btn-primary" 
-						href="{{ path('forum.post.update',{'index':post.id}) }}">
-						<i class="fa fa-pencil"></i>
-					</a>
-				{% endif %}
-				 
-				<br />
-				<p>
-					Créé {{ post.creationDate|time_diff() }}
-				{% if post.creationDate != post.updateDate %}
-					<br />Modifié {{ post.updateDate|time_diff() }}
-				{% endif %}
-				
-					<br />{{ post.views }} Vues.
-				</p>
-			</div>
-		</div>
-	</div>
+			
+	<p>
+		<small>
+			{% if post.creationDate != post.updateDate %}
+				{{ post.updateDate|time_diff() }}.
+			{% else %}
+				{{ post.creationDate|time_diff() }}.
+			{% endif %}
+			{{ post.views }} Vues.
+		</small>
+	</p>
+	
+			
+
+</div>
+									
+{# texte #}
+<p class="list-group-item-text">{{ post.text|markdown }}</p>

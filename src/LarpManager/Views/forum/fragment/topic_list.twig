@@ -2,51 +2,52 @@
 	{%  for topic in topics %}
 		{% if is_granted('TOPIC_RIGHT',topic) %}
 			<li class="list-group-item">
-				<div class="row">
-									
-					<div class="col-xs-8 col-md-8">
-						<h5 class="list-group-item-heading">
-							<a href="{{ path('forum.topic', {index: topic.id}) }}">
-								{{ topic.title }}
-							</a>
-						</h5>
-						<p class="list-group-item-text text-default">
-							{% if not topic.description %}
-								Pas de description
-							{% else %}
-								{{ topic.description|markdown }}
-							{% endif %}
-						</p>
-						
-						{% if is_granted('ROLE_ORGA', app.user) %}
-							<a 	title="Modifier le topic {{ topic.title }}"
-								data-toggle="tooltip" 
-								data-placement="right"
-								href="{{ path('forum.topic.update',{'index':topic.id}) }}">
-								<i class="fa fa-pencil"></i>
-							</a>
-						{% endif %}
-						
-					</div>
-					<div class="col-xs-1 col-md-1">
-						{# nombre de sujets #}
-						{{ topic.postCount }} Sujets
-					</div>
-					<div class="col-xs-3 col-md-3">
-						{# dernier message #}
-						
-						{% set lastPost = topic.lastPost(app) %}
-						{% if lastPost %}
-							Dernier message :
-							<a href="{{ path('forum.post',{'index':lastPost.ancestor.id}) }}">
-								{{ lastPost.title }}	
-							</a><br />
-							Par <a href="{{ path('user.view',{'id': lastPost.user.id}) }}">{{ lastPost.user.username }}</a><br />
-							{{ lastPost.creationDate|time_diff }}
-						{% endif %}
-					</div>
+				
+				{# titre du forum #}
+				<h5 class="list-group-item-heading">
+					<a href="{{ path('forum.topic', {index: topic.id}) }}">
+						{{ topic.title }}
+					</a>
 					
-				</div>
+					{# nombre de sujets #}
+					<small>
+						{{ topic.postCount }} Sujets.
+					</small>
+					
+					{% if is_granted('ROLE_ORGA', app.user) %}
+						<a 	class="pull-right"
+							title="Modifier le topic {{ topic.title }}"
+							data-toggle="tooltip" 
+							data-placement="right"
+							href="{{ path('forum.topic.update',{'index':topic.id}) }}">
+							<i class="fa fa-pencil"></i>
+						</a>
+					{% endif %}
+					
+				</h5>
+								
+				{# dernier message #}
+				<p>
+				<small>
+				{% set lastPost = topic.lastPost(app) %}
+				{% if lastPost %}
+					Dernier message :
+					<a href="{{ path('forum.post',{'index':lastPost.ancestor.id}) }}">
+						{{ lastPost.title }}	
+					</a> &nbsp;Par <a href="{{ path('user.view',{'id': lastPost.user.id}) }}">{{ lastPost.user.username }}</a>
+					{{ lastPost.creationDate|time_diff }}
+				{% endif %}
+				</small>
+				</p>
+				
+				{# description du forum #}
+				<p class="list-group-item-text text-default">
+					{% if not topic.description %}
+						Pas de description
+					{% else %}
+						{{ topic.description|markdown }}
+					{% endif %}
+				</p>
 			</li>
 		{% endif %}
 	{%  endfor %}

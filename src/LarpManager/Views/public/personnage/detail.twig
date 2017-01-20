@@ -16,7 +16,7 @@
 				<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Liste des groupes secondaire" href="{{ path('participant.groupeSecondaire.list', {'participant': participant.id}) }}"><i class="fa fa-user-secret" aria-hidden="true"></i></a>
 				<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Choisir une nouvelle religion" href="{{ path('participant.religion.add',{'participant': participant.id}) }}"><i class="fa fa-cloud" aria-hidden="true"></i></a>
 				<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Acheter une compétence" href="{{ path('participant.competence.add', {'participant': participant.id}) }}"><i class="fa fa-graduation-cap" aria-hidden="true"></i></a>
-				<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Mdofifier votre personnage" href="{{ path('participant.personnage.edit', {'participant': participant.id}) }}"><i class="fa fa-pencil" aria-hidden="true"></i></a>
+				<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Modifier votre personnage" href="{{ path('participant.personnage.edit', {'participant': participant.id}) }}"><i class="fa fa-pencil" aria-hidden="true"></i></a>
 				{% if personnage.hasCompetence('Magie') %}
 					<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Découvrir la magie" href="{{ path('participant.magie', {'participant': participant.id}) }}"><i class="fa fa-magic" aria-hidden="true"></i></a>
 				{% endif %}
