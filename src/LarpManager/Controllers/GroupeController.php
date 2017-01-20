@@ -45,11 +45,13 @@ use LarpManager\Form\AcceptPeaceForm;
 use LarpManager\Form\RefusePeaceForm;
 use LarpManager\Form\CancelRequestedPeaceForm;
 use LarpManager\Form\GroupeDocumentForm;
+use LarpManager\Form\PersonnageDocumentForm;
 
 
 use LarpManager\Entities\Groupe;
 use LarpManager\Entities\GroupeGn;
 use LarpManager\Entities\Document;
+use LarpManager\Entities\Personnage;
 
 
 /**
@@ -333,6 +335,38 @@ class GroupeController
 				'groupe' => $groupe,
 				'form' => $form->createView(),
 		)); 
+	}
+	
+	/**
+	 * Gestion des documents lié à un personnage
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Groupe $groupe
+	 * @param Personnage $personnage
+	 */
+	public function personnageDocumentAction(Request $request, Application $app, Groupe $groupe, Personnage $personnage)
+	{
+		$form = $app['form.factory']->createBuilder(new PersonnageDocumentForm(), $personnage)
+			->add('submit','submit', array('label' => 'Enregistrer'))
+			->getForm();
+		
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$personnage = $form->getData();
+			$app['orm.em']->persist($personnage);
+			$app['orm.em']->flush();
+				
+			$app['session']->getFlashBag()->add('success', 'Le document a été ajouté au personnage.');
+			return $app->redirect($app['url_generator']->generate('groupe.detail', array('index' => $groupe->getId())));
+		}
+		
+		return $app['twig']->render('admin/personnage/documents.twig', array(
+				'groupe' => $groupe,
+				'personnage' => $personnage,
+				'form' => $form->createView(),
+		));		
 	}
 	
 	/**

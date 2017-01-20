@@ -57,6 +57,7 @@ class GroupeControllerProvider implements ControllerProviderInterface
 	 *  - groupe.scenariste
 	 *  - groupe.composition
 	 *  - groupe.intrigue
+	 *  - groupe.personnage.document
 	 *
 	 * @param Application $app
 	 * @return Controllers $controllers
@@ -252,6 +253,18 @@ class GroupeControllerProvider implements ControllerProviderInterface
 		$controllers->match('/admin/{groupe}/documents','LarpManager\Controllers\GroupeController::adminDocumentAction')
 			->bind("groupe.admin.documents")
 			->convert('groupe', 'converter.groupe:convert')
+			->method('GET|POST')
+			->before($mustBeScenariste);
+			
+		/**
+		 * Gestion des documents lié à un personnage
+		 */
+		$controllers->match('/admin/{groupe}/{personnage}/documents','LarpManager\Controllers\GroupeController::personnageDocumentAction')
+			->bind("groupe.personnage.documents")
+			->assert('groupe', '\d+')
+			->assert('personnage', '\d+')
+			->convert('groupe', 'converter.groupe:convert')
+			->convert('personnage', 'converter.personnage:convert')
 			->method('GET|POST')
 			->before($mustBeScenariste);
 			

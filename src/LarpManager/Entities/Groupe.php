@@ -64,6 +64,14 @@ class Groupe extends BaseGroupe
 	}
 	
 	/**
+	 * Fourni la prochaine session de jeu
+	 */
+	public function getNextSession()
+	{
+		return $this->getGroupeGns()->last();
+	}
+	
+	/**
 	 * Fourni les informations pour une session de jeu
 	 * 
 	 * @param Gn $gn

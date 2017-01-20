@@ -1,3 +1,4 @@
+<h5>Enveloppe de groupe</h5>
 <blockquote>Cette liste correspond au matériel qui sera présent dans l'enveloppe de début de jeu remise au groupe</blockquote>
 
 <h6><i class="fa fa-circle"></i> Documents</h6>
@@ -13,3 +14,15 @@
 {{ groupe.materiel|markdown }}
 
 <a href="{{ path('groupe.envelope', {'groupe':groupe.id}) }}"><strong>Modifier le contenu</strong></a>
+
+<h5>Enveloppes des personnages</h5>
+
+{% for participant in groupe.nextSession.participants %}
+	{% if participant.personnage %}
+		<h6><strong>#{{ participant.personnage.id }}</strong> {{ participant.personnage.nom }}</h6>
+		<a href=" {{ path('groupe.personnage.documents', {'groupe': groupe.id, 'personnage': participant.personnage.id}) }}">Modifier la liste de documents</a>
+		{% for document in participant.personnage.documents %}
+			<li><a href="{{ path('document.detail', {'document':document.id}) }}"><strong>{{ document.code }}</strong>&nbsp;{{ document.titre }}</a></li>
+		{% endfor %}
+	{% endif %}
+{% endfor %}
