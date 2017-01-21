@@ -1,0 +1,47 @@
+{% extends "layout.twig" %}
+
+{% block title %}Stratégie{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li class="active">Stratégie</li>
+	</ol>
+
+	
+	<div class="well well-sm">
+		<div class="alert alert-info">
+			Ces informations correspondent aux groupes participant au prochain jeu <strong>{{ gn.label }}</strong>.
+		</div>
+			
+		<table class="table table-bordered table-striped">
+			<thead>
+				<tr>
+					<th>Nom</th>
+					<th>Territoire</th>
+					<th>Groupe</th>
+					<th>Défense</th>
+					<th>Constructions</th>
+			</thead>
+			<tbody>
+		{% for territoire in territoires %}
+			<tr>
+				<th>{{ territoire.nom }}</th>
+				<td>{{ territoire.root }}</td>
+				<td>
+					{% if territoire.groupe %}
+						{{ territoire.groupe.nom }}
+					{% else %}
+						Aucun groupe ne contrôle ce territoire
+					{% endif %}
+				</td>
+				<td>{{ territoire.defense }}</td>
+				<td>{{ territoire.constructions|join(',') }}</td>
+			</tr>
+		{% endfor %}
+			</tbody>
+		</table>
+	</div>
+	
+{% endblock content %}
