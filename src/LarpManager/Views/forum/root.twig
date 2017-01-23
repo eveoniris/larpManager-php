@@ -12,6 +12,14 @@
 
 <div class="panel">
 	<div class="panel-heading">
+		<h5>Nouveaux messages</h5>
+	</div>
+	{# liste des nouveaux posts #}
+	{{ include("forum/fragment/newPost_list.twig", {'posts' : newPosts}) }}
+</div>
+
+<div class="panel">
+	<div class="panel-heading">
 		{% if is_granted('ROLE_MODERATOR', app.user) %}
 			<div class="pull-right">
 				<a 	title="Ajouter un nouveau forum" 

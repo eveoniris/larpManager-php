@@ -13,6 +13,7 @@
 				{% endif %}
 			</span>
 			<a href="{{ path('forum.post',{'index':post.id}) }}">{{ post.title }}</a>
+			<small><span style="color:#000;">Publié dans <strong>{{ post.topic.title }}</strong></span></small>
 		</h6>
 		
 		par <a href="{{ path('user.view', {'id':post.user.id}) }}">{{ post.user.username }}</a>.
@@ -20,13 +21,7 @@
 		<small>
 		<strong>{{ post.views }}</strong> Vues.
 		<strong>{{ post.posts|length }}</strong> réponses.
-		</small><br/> 
-		
-		{% set lastPost = post.posts|last %}
-		{% if lastPost %}
-			<a href="{{ path('forum.post',{'index':post.ancestor.id}) ~ '#post_' ~ lastPost.id }}">Dernier message</a> par {{ lastPost.user.username }}
-			{{ lastPost.creationDate|time_diff }}
-		{% endif %} 
+		</small>
 
 	</li>
 	{%  endfor %}
