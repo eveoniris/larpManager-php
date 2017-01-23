@@ -49,73 +49,25 @@ class ForumController
 					->findAllRoot();
 		
 		// rechercher tous les nouveaux posts concernant l'utilisateur
-		// - forums principaux
-		// - forum de groupe
-		// - forum de territoire
-		// - forum de religion
-		// - forum de groupe secondaire
 		$newPosts = new ArrayCollection();
 		
-		// pour chacune des participations à un GN de l'utilisateur
-		foreach ( $app['user']->getParticipants() as $participant )
+		// pour chacun des topics :
+		$allTopics = $app['orm.em']->getRepository('\LarpManager\Entities\Topic')->findAll();
+		foreach( $allTopics as $topic )
 		{
-			$groupeGn = $participant->getGroupeGn();
-			if ( $groupeGn )
+			if ( $app['security.authorization_checker']->isGranted('TOPIC_RIGHT', $topic) )
 			{
-				if ( $groupeGn->getGn() )
-				{
-					$topicGn = $groupeGn->getGn()->getTopic(); // forum du GN
-					$newPosts = new ArrayCollection(array_merge($newPosts->toArray(), $app['user']->newPosts($topicGn)->toArray()));
-				}
-				if ( $groupeGn->getGroupe() )
-				{
-					$topicGroupe = $groupeGn->getGroupe()->getTopic(); // forum du groupe
-					$newPosts = new ArrayCollection(array_merge($newPosts->toArray(), $app['user']->newPosts($topicGroupe)->toArray()));
-					foreach ( $groupeGn->getGroupe()->getTerritoires() as $territoire )
-					{
-						if ( $territoire->getTopic() )
-						{
-							$topicTerritoire = $territoire->getTopic(); // forum du territoire
-							$newPosts = new ArrayCollection(array_merge($newPosts->toArray(), $app['user']->newPosts($topicTerritoire)->toArray()));
-						}
-						foreach ($territoire->getAncestors() as $ancestor ) // forum des territoires dépendants
-						{
-							if ( $ancestor->getTopic() )
-							{
-								$topicAncestor = $ancestor->getTopic(); // forum du territoire dépendant
-								$newPosts = new ArrayCollection(array_merge($newPosts->toArray(), $app['user']->newPosts($topicAncestor)->toArray()));
-							}	
-						}
-					}
-				}
+				$newPosts = new ArrayCollection(array_merge($newPosts->toArray(), $app['user']->newPosts($topic)->toArray()));
 			}
-			
-			$personnage = $participant->getPersonnage();
-			if ( $personnage )
-			{
-				foreach ( $personnage->getPersonnagesReligions() as $personnageReligion ) // toutes les religions du personnage
-				{
-					$religion = $personnageReligion->getReligion();
-					if ( $religion->getTopic() )
-					{
-						$topicReligion = $religion->getTopic();
-						$newPosts = new ArrayCollection(array_merge($newPosts->toArray(), $app['user']->newPosts($topicReligion)->toArray()));
-					}
-				}
-				
-				foreach ( $personnage->getMembres() as $membre) // tous les groupes secondaires du personnage
-				{
-					$secondaryGroup = $membre->getSecondaryGroup();
-					if ( $secondaryGroup->getTopic())
-					{
-						$topicSecondaryGroup = $secondaryGroup->getTopic();
-						$newPosts = new ArrayCollection(array_merge($newPosts->toArray(), $app['user']->newPosts($topicSecondaryGroup)->toArray()));
-					}
-				}
-			}
-			
 		}
 		
+		// classer les nouveaux post par ordre de publication
+		$iterator = $newPosts->getIterator();
+		$iterator->uasort(function ($first, $second) {
+			return $first->getUpdateDate() < $second->getUpdateDate() ? 1 : -1;
+		});
+		$newPosts = new ArrayCollection(iterator_to_array($iterator));
+
 		$view = $app['twig']->render('forum/root.twig', array(
 				'topics' => $topics,
 				'newPosts' => $newPosts,

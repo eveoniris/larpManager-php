@@ -10,35 +10,41 @@
 	<li class="active">Forum</li>
 </ol>
 
-<div class="panel">
-	<div class="panel-heading">
-		<h5>Nouveaux messages</h5>
-	</div>
-	{# liste des nouveaux posts #}
-	{{ include("forum/fragment/newPost_list.twig", {'posts' : newPosts}) }}
-</div>
+<div class="row">
+	<div class="col-md-6">
 
-<div class="panel">
-	<div class="panel-heading">
-		{% if is_granted('ROLE_MODERATOR', app.user) %}
-			<div class="pull-right">
-				<a 	title="Ajouter un nouveau forum" 
-					data-toggle="tooltip" 
-					data-placement="left" 
-					class="btn btn-primary" 
-					href="{{ path('forum.add') }}">
-					<i class="fa fa-plus"></i>
-				</a>
+		<div class="panel">
+			<div class="panel-heading">
+				{% if is_granted('ROLE_MODERATOR', app.user) %}
+					<div class="pull-right">
+						<a 	title="Ajouter un nouveau forum" 
+							data-toggle="tooltip" 
+							data-placement="left" 
+							class="btn btn-primary" 
+							href="{{ path('forum.add') }}">
+							<i class="fa fa-plus"></i>
+						</a>
+					</div>
+				{% endif %}
+				<h5>
+					Forum
+				</h5>
 			</div>
-		{% endif %}
-		<h5>
-			Forum
-		</h5>
+			
+			{# liste des topics #}
+			{{ include("forum/fragment/topic_list.twig", {'topics' : topics}) }}
+			
+		</div>
 	</div>
-	
-	{# liste des topics #}
-	{{ include("forum/fragment/topic_list.twig", {'topics' : topics}) }}
-	
+	<div class="col-md-6">
+		<div class="panel">
+			<div class="panel-heading">
+				<h5>Nouveaux messages</h5>
+			</div>
+			{# liste des nouveaux posts #}
+			{{ include("forum/fragment/newPost_list.twig", {'posts' : newPosts}) }}
+		</div>
+	</div>
 </div>
 
 
