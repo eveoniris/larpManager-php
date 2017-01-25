@@ -45,6 +45,16 @@ class GroupeSecondaireControllerProvider implements ControllerProviderInterface
 				throw new AccessDeniedException();
 			}
 		};
+		
+		/**
+		 * Vérifie que l'utilisateur dispose du role SCENARISTE
+		 * @var unknown
+		 */
+		$mustBeScenariste = function(Request $request) use ($app) {
+			if (!$app['security.authorization_checker']->isGranted('ROLE_SCENARISTE')) {
+				throw new AccessDeniedException();
+			}
+		};
 										
 		/**
 		 * Liste des groupes secondaires (pour les orgas)
@@ -64,6 +74,16 @@ class GroupeSecondaireControllerProvider implements ControllerProviderInterface
 			->convert('groupe', 'converter.secondaryGroup:convert')
 			->before($mustBeOrga);
 		
+		/**
+		 * Ajouter un membre (pour les orgas)
+		 */
+		$controllers->match('/admin/{groupeSecondaire}/newMembre','LarpManager\Controllers\GroupeSecondaireController::adminNewMembreAction')
+			->assert('groupeSecondaire', '\d+')
+			->bind("groupeSecondaire.admin.newMembre")
+			->method('GET|POST')
+			->convert('groupeSecondaire', 'converter.secondaryGroup:convert')
+			->before($mustBeScenariste);
+			
 		/**
 		 * Autorise l'accés aux secrets à un membre du groupe
 		 */

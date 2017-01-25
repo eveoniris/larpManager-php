@@ -1765,7 +1765,7 @@ class ParticipantController
 	public function groupeSecondaireListAction(Request $request, Application $app, Participant $participant)
 	{
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\SecondaryGroup');
-		$groupeSecondaires = $repo->findAll();
+		$groupeSecondaires = $repo->findAllPublic();
 	
 		return $app['twig']->render('public/groupeSecondaire/list.twig', array(
 				'groupeSecondaires' => $groupeSecondaires,

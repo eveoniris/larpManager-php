@@ -84,6 +84,9 @@
 					<th>
 						Type
 					</th>
+					<th>
+						Secret ?
+					</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -93,6 +96,7 @@
 					<td><a href="{{ path('groupeSecondaire.admin.detail', {'groupe':groupeSecondaire.id}) }}">{{ groupeSecondaire.label }}</td>
 					<td>{{ groupeSecondaire.description|markdown }}</td>
 					<td>{{ groupeSecondaire.secondaryGroupType.label }}</td>
+					<td>{% if groupeSecondaire.secret %}Secret{% else %} -- {% endif %}</td>
 				</tr>
 			{% endfor %}
 			</tbody>

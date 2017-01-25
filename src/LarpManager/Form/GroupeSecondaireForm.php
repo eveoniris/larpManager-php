@@ -74,6 +74,10 @@ class GroupeSecondaireForm extends AbstractType
 						'required' => true,
 						'class' => 'LarpManager\Entities\SecondaryGroupType',
 						'property' => 'label',
+				))
+				->add('secret','checkbox', array(
+						'label' => 'Cochez cette case pour rendre le groupe secret (visible uniquement par les joueurs membres)',
+						'required' => false,
 				));
 	}
 

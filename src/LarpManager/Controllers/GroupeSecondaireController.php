@@ -26,8 +26,13 @@ use JasonGrimes\Paginator;
 use LarpManager\Form\GroupeSecondaireForm;
 use LarpManager\Form\GroupeSecondairePostulerForm;
 use LarpManager\Form\SecondaryGroupFindForm;
-use LarpManager\Entities\Message;
 use LarpManager\Form\MessageForm;
+
+use LarpManager\Entities\Message;
+use LarpManager\Entities\SecondaryGroup;
+
+
+use LarpManager\Form\GroupeSecondaire\GroupeSecondaireNewMembreForm;
 
 /**
  * LarpManager\Controllers\GroupeSecondaireController
@@ -110,15 +115,16 @@ class GroupeSecondaireController
 			$topic->setUser($app['user']);
 			$topic->setTopic($app['larp.manager']->findTopic('TOPIC_GROUPE_SECONDAIRE'));
 			$app['orm.em']->persist($topic);
+			
+			$groupeSecondaire->setTopic($topic);		
 			$app['orm.em']->persist($groupeSecondaire);
 			$app['orm.em']->flush();
 			
 			// défini les droits d'accés à ce forum
 			// (les membres du groupe ont le droit d'accéder à ce forum)
-			$topic->setRight('GROUPE_SECONDAIRE_MEMBER');
 			$topic->setObjectId($groupeSecondaire->getId());
-			$groupeSecondaire->setTopic($topic);
-
+			$topic->setRight('GROUPE_SECONDAIRE_MEMBER');
+			
 			/**
 			 * Ajoute le responsable du groupe dans le groupe si il n'y est pas déjà
 			 */
@@ -240,6 +246,42 @@ class GroupeSecondaireController
 
 		return $app['twig']->render('admin/groupeSecondaire/detail.twig', array(
 				'groupeSecondaire' => $groupeSecondaire));
+	}
+	
+	/**
+	 * Ajoute un nouveau membre au groupe secondaire
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 * @param SecondaryGroup $groupeSecondaire
+	 */
+	public function adminNewMembreAction(Request $request, Application $app, SecondaryGroup $groupeSecondaire)
+	{
+		$form = $app['form.factory']->createBuilder(new GroupeSecondaireNewMembreForm())->getForm();
+		
+		$form->handleRequest($request);
+				
+		if ( $form->isValid() )
+		{
+			$personnage = $form['personnage']->getData();
+			//$personnage = $data['personnage'];
+			
+			$membre = new \LarpManager\Entities\Membre();
+			$membre->setPersonnage($personnage);
+			$membre->setSecondaryGroup($groupeSecondaire);
+			$membre->setSecret(false);
+			
+			$app['orm.em']->persist($membre);
+			$app['orm.em']->flush();
+			
+			$app['session']->getFlashBag()->add('success', 'le personnage a été ajouté au groupe secondaire.');
+			return $app->redirect($app['url_generator']->generate('groupeSecondaire.admin.detail', array('groupe' => $groupeSecondaire->getId())),301);
+		}
+		
+		return $app['twig']->render('admin/groupeSecondaire/newMembre.twig', array(
+				'form' => $form->createView(),
+				'groupeSecondaire' => $groupeSecondaire,
+			));
 	}
 	
 	/**

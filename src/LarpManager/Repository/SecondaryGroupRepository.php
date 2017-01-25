@@ -30,6 +30,17 @@ use LarpManager\Entities\SecondaryGroup;
  */
 class SecondaryGroupRepository extends EntityRepository
 {
+	/**
+	 * Trouve tous les groupes secondaire publics
+	 */
+	public function findAllPublic()
+	{
+		$groupes = $this->getEntityManager()
+			->createQuery('SELECT g FROM LarpManager\Entities\SecondaryGroup g WHERE g.secret = false or g.secret is null')
+			->getResult();
+	
+		return $groupes;
+	}
 	
 	/**
 	 * Trouve les groupes secondaires correspondant aux critères de recherche

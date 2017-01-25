@@ -41,6 +41,7 @@ class GroupeSecondairePostulerForm extends AbstractType
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
 		$builder->add('explanation','textarea', array(
+				'label' => "Explication (obligatoire)",
 				'required' => true,
 				'attr' => array(
 						'rows' => 9,
