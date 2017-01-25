@@ -123,48 +123,60 @@ class IntrigueController
 		if ( $form->isValid() )
 		{
 			$intrigue = $form->getData();
-			$intrigue->setUser($app['user']);
 			
-			/**
-			 * Pour tous les groupes de l'intrigue
-			 */
-			foreach ($intrigue->getIntrigueHasGroupes() as $intrigueHasGroupe)
+			if ( ! $intrigue->getDescription() )
 			{
-				$intrigueHasGroupe->setIntrigue($intrigue);
+				$app['session']->getFlashBag()->add('error', 'la description de votre intrigue est obligatoire.');
 			}
-			
-			/**
-			 * Pour tous les événements de l'intrigue
-			 */
-			foreach ($intrigue->getIntrigueHasEvenements() as $intrigueHasEvenement)
+			else if ( ! $intrigue->getText() )
 			{
-				$intrigueHasEvenement->setIntrigue($intrigue);
+				$app['session']->getFlashBag()->add('error', 'le texte de votre intrigue est obligatoire.');
 			}
-			
-			/**
-			 * Pour tous les objectifs de l'intrigue
-			 */
-			foreach ($intrigue->getIntrigueHasObjectifs() as $intrigueHasObjectif)
+			else
 			{
-				$intrigueHasObjectif->setIntrigue($intrigue);
-			}
-			
-			$app['orm.em']->persist($intrigue);
-			$app['orm.em']->flush();
-			
-			/**
-			 * Envoyer une notification à tous les scénaristes des groupes concernés (hors utilisateur courant)
-			 */
-			foreach ($intrigue->getIntrigueHasGroupes() as $intrigueHasGroupe)
-			{
-				if ( $app['user']->getGroupeScenariste()->contains($intrigueHasGroupe->getGroupe()) == false)
+				$intrigue->setUser($app['user']);
+				
+				/**
+				 * Pour tous les groupes de l'intrigue
+				 */
+				foreach ($intrigue->getIntrigueHasGroupes() as $intrigueHasGroupe)
 				{
-					$app['notify']->intrigue($intrigue, $intrigueHasGroupe->getGroupe());
+					$intrigueHasGroupe->setIntrigue($intrigue);
 				}
+				
+				/**
+				 * Pour tous les événements de l'intrigue
+				 */
+				foreach ($intrigue->getIntrigueHasEvenements() as $intrigueHasEvenement)
+				{
+					$intrigueHasEvenement->setIntrigue($intrigue);
+				}
+				
+				/**
+				 * Pour tous les objectifs de l'intrigue
+				 */
+				foreach ($intrigue->getIntrigueHasObjectifs() as $intrigueHasObjectif)
+				{
+					$intrigueHasObjectif->setIntrigue($intrigue);
+				}
+				
+				$app['orm.em']->persist($intrigue);
+				$app['orm.em']->flush();
+				
+				/**
+				 * Envoyer une notification à tous les scénaristes des groupes concernés (hors utilisateur courant)
+				 */
+				foreach ($intrigue->getIntrigueHasGroupes() as $intrigueHasGroupe)
+				{
+					if ( $app['user']->getGroupeScenariste()->contains($intrigueHasGroupe->getGroupe()) == false)
+					{
+						$app['notify']->intrigue($intrigue, $intrigueHasGroupe->getGroupe());
+					}
+				}
+				
+				$app['session']->getFlashBag()->add('success', 'Votre intrigue a été ajouté.');
+				return $app->redirect($app['url_generator']->generate('intrigue.list'),301);
 			}
-			
-			$app['session']->getFlashBag()->add('success', 'Votre intrigue a été ajouté.');
-			return $app->redirect($app['url_generator']->generate('intrigue.list'),301);
 		}
 		
 		return $app['twig']->render('admin/intrigue/add.twig', array(

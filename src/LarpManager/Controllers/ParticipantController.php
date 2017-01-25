@@ -1824,27 +1824,33 @@ class ParticipantController
 		if ( $form->isValid() )
 		{
 			$data = $form->getData();
-				
-			$postulant = new \LarpManager\Entities\Postulant();
-			$postulant->setPersonnage($personnage);
-			$postulant->setSecondaryGroup($groupeSecondaire);
-			$postulant->setExplanation($data['explanation']);
-			$postulant->setWaiting(false);
-	
-			$app['orm.em']->persist($postulant);
-			$app['orm.em']->flush();
-				
-				
-			// envoi d'un mail au chef du groupe secondaire
-			if ( $groupeSecondaire->getResponsable() )
-			{
-				// envoyer une notification au responsable
-				$app['notify']->joinGroupeSecondaire($groupeSecondaire->getResponsable(), $groupeSecondaire);
+			
+			if ( is_empty($data['explanation'])) {
+				$app['session']->getFlashBag()->add('error', 'Vos devez remplir le champ Explication.');
 			}
-				
-			$app['session']->getFlashBag()->add('success', 'Votre candidature a été enregistrée, et transmise au chef de groupe.');
-	
-			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+			else
+			{	
+				$postulant = new \LarpManager\Entities\Postulant();
+				$postulant->setPersonnage($personnage);
+				$postulant->setSecondaryGroup($groupeSecondaire);
+				$postulant->setExplanation($data['explanation']);
+				$postulant->setWaiting(false);
+		
+				$app['orm.em']->persist($postulant);
+				$app['orm.em']->flush();
+					
+					
+				// envoi d'un mail au chef du groupe secondaire
+				if ( $groupeSecondaire->getResponsable() )
+				{
+					// envoyer une notification au responsable
+					$app['notify']->joinGroupeSecondaire($groupeSecondaire->getResponsable(), $groupeSecondaire);
+				}
+					
+				$app['session']->getFlashBag()->add('success', 'Votre candidature a été enregistrée, et transmise au chef de groupe.');
+		
+				return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+			}
 		}
 	
 		return $app['twig']->render('public/groupeSecondaire/postuler.twig', array(
