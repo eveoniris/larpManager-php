@@ -39,7 +39,7 @@
 	<div class="col-md-6">
 		<div class="panel">
 			<div class="panel-heading">
-				<h5>Nouveaux messages</h5>
+				<h5>Messages non lus {{ newPosts|length }}</h5>
 			</div>
 			{# liste des nouveaux posts #}
 			{{ include("forum/fragment/newPost_list.twig", {'posts' : newPosts}) }}

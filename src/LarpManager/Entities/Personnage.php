@@ -428,6 +428,19 @@ class Personnage extends BasePersonnage
 	}
 	
 	/**
+	 * Indique si le personnage est Croyant dans une religion
+	 */
+	public function isKnownReligion($religion)
+	{
+		$personnagesReligions = $this->getPersonnagesReligions();
+		foreach ( $personnagesReligions as $personnageReligion )
+		{
+			if ( $personnageReligion->getReligion() == $religion ) return true;
+		}
+		return false;
+	}
+	
+	/**
 	 * Fourni la religion principale du personnage
 	 */
 	public function getMainReligion()

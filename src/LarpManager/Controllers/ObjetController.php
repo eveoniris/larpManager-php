@@ -18,34 +18,34 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
  
-namespace LarpManager;
+namespace LarpManager\Controllers;
+
+use Symfony\Component\HttpFoundation\Request;
+use Doctrine\Common\Collections\ArrayCollection;
 
 use Silex\Application;
-use Silex\ControllerProviderInterface;
 
 /**
- * LarpManager\TrombinoscopeControllerProvider
+ * LarpManager\Controllers\ObjetController
  *
  * @author kevin
+ *
  */
-class TrombinoscopeControllerProvider implements ControllerProviderInterface
+class ObjetController
 {
-
-	public function connect(Application $app)
+	/**
+	 * Présentation des objets de jeu
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function indexAction(Request $request, Application $app)
 	{
-		$controllers = $app['controllers_factory'];
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Objet');
+		$objets = $repo->findAll();
 		
-		/**
-		 * Page d'accueil de l'interface d'administration
-		 */		
-		$controllers->match('/','LarpManager\Controllers\TrombinoscopeController::indexAction')
-			->bind("trombinoscope")
-			->method('GET|POST');
-			
-		$controllers->match('/perso','LarpManager\Controllers\TrombinoscopeController::persoAction')
-			->bind("trombinoscope.perso")
-			->method('GET|POST');
-		
-		return $controllers;
+		return $app['twig']->render('admin/objet/index.twig', array(
+				'objets' => $objets,
+		));
 	}
 }

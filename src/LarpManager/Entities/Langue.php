@@ -84,4 +84,18 @@ class Langue extends BaseLangue
 	{
 		return $this->getTerritoires();
 	}
+	
+	/**
+	 * Fourni la catégorie de la langue
+	 */
+	public function getCategorie()
+	{
+		switch ( $this->getDiffusion() )
+		{
+			case 2: return 'Commune';
+			case 1: return 'Courante';
+			case 0: return 'Ancienne';
+			default : return 'Inconnue';
+		}
+	}
 }

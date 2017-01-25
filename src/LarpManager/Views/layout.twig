@@ -79,6 +79,7 @@
         <script src="{{ app.request.basepath }}/bootstrap-select-1.11.0/js/bootstrap-select.min.js"></script>
         <script src="{{ app.request.basepath }}/bootstrap-select-1.11.0/js/i18n/defaults-fr_FR.min.js"></script>        
         <script src="{{ app.request.basepath }}/bootstrap-validator/validator-0.11.5.min.js"></script>
+        <script src="{{ app.request.basepath }}/bootstrap-waterfall/bootstrap-waterfall.js"></script>
         
         {# active pnotify #}
         <script  type="text/javascript">
@@ -144,6 +145,13 @@
 	    	});
 		</script>
 		
+		{# Active bootstrap waterfall #}
+		<script>
+    		$(document).ready(function () {
+      			$('.waterfall').waterfall();
+    		});
+  		</script>
+  
 		{# editeur tinyMCE #}
 		<script src="{{ app.request.basepath }}/js/tinymce/tinymce.min.js"></script>
 	

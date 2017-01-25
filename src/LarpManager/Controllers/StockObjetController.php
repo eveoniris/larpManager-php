@@ -427,12 +427,49 @@ class StockObjetController
 		if ( ! $photo ) {
 			return null;
 		}
-
-		header("Content-Type: image/".$photo->getExtension());
-		$output = fopen("php://output", "w");
-		fputs($output, stream_get_contents($photo->getData()));
-		fclose($output);
-		exit();
+		
+		$file = $photo->getFilename();
+		$filename = __DIR__.'/../../../private/stock/'.$file;
+		
+		$stream = function () use ($filename) {
+			readfile($filename);
+		};
+		
+		return $app->stream($stream, 200, array(
+				'Content-Type' => 'image/jpeg',
+				'cache-control' => 'private'
+		));
+	}
+	
+	/**
+	 * Transforme la photo du format SQL à un fichier 
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function blobToFileAction(Request $request, Application $app)
+	{			
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Objet');
+		$objets = $repo->findAll();
+		
+		foreach ( $objets as $objet)
+		{
+			$photo = $objet->getPhoto();
+			
+			if ( ! $photo ) {
+				continue;
+			}
+			if ( $photo->getFilename() )
+			{
+				continue;
+			}
+			
+			$photo->blobToFile($app);
+			
+			$app['orm.em']->persist($photo);
+		}
+		$app['orm.em']->flush();
+		return $app->redirect($app['url_generator']->generate('stock_objet_index'),301);
 	}
 	
 	/**
@@ -470,7 +507,7 @@ class StockObjetController
 
 			if ( $objet->getPhoto() )
 			{
-				$objet->getPhoto()->upload();
+				$objet->getPhoto()->upload($app);
 				$app['orm.em']->persist($objet->getPhoto());
 			}
 			
@@ -536,7 +573,7 @@ class StockObjetController
 
 			if ( $objet->getPhoto() )
 			{
-				$objet->getPhoto()->upload();
+				$objet->getPhoto()->upload($app);
 				$app['orm.em']->persist($objet->getPhoto());
 			}
 				

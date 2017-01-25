@@ -24,6 +24,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Silex\Application;
 use JasonGrimes\Paginator;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use LarpManager\Form\Trombinoscope\TrombinoscopeForm;
+
 /**
  * LarpManager\Controllers\TrombinoscopeController
  *
@@ -40,29 +43,83 @@ class TrombinoscopeController
 	 */
 	public function indexAction(Request $request, Application $app)
 	{				
-		$order_by = $request->get('order_by') ?: 'nom';
-		$order_dir = $request->get('order_dir') == 'DESC' ? 'DESC' : 'ASC';
-		$limit = (int)($request->get('limit') ?: 16);
-		$page = (int)($request->get('page') ?: 1);
-		$offset = ($page - 1) * $limit;
-		$criteria = array();
+		$gnRepo = $app['orm.em']->getRepository('\LarpManager\Entities\Gn');
+		$gn = $gnRepo->findNext();
+			
+		$form = $app['form.factory']->createBuilder(new TrombinoscopeForm())->getForm();
 		
-		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Personnage');
-		$personnages = $repo->findList(
-				$criteria,
-				array( 'by' =>  $order_by, 'dir' => $order_dir),
-				$limit,
-				$offset);
+		$form->handleRequest($request);
 		
-		$numResults = $repo->findCount($criteria);
+		$renomme = 0;
+		$territoire = null;
+		$competence = null;
+		$classe = null;
+		$religion = null;
+		$language = null;
+		$groupe = null;
 		
-		$paginator = new Paginator($numResults, $limit, $page,
-				$app['url_generator']->generate('trombinoscope') . '?page=(:num)&limit=' . $limit . '&order_by=' . $order_by . '&order_dir=' . $order_dir
-				);
-					
+		if ( $form->isValid() )
+		{
+			$data = $form->getData();
+			
+			if ( $data['renomme'] )
+			{
+				$renomme = $data['renomme'];
+			}
+			if ( $data['territoire'])
+			{
+				$territoire = $data['territoire'];
+			}
+			if ( $data['classe'])
+			{
+				$classe = $data['classe'];
+			}
+				
+			if ( $data['competence'])
+			{
+				$competence = $data['competence'];
+			}
+			
+			if ( $data['religion'])
+			{
+				$religion = $data['religion'];
+			}
+			
+			if ( $data['language'])
+			{
+				$language = $data['language'];
+			}
+			
+			if ( $data['groupe'])
+			{
+				$groupe = $data['groupe'];
+			}
+		}
+		$participants = new ArrayCollection();
+		foreach ( $gn->getParticipants() as $participant)
+		{
+			if ( $participant->getPersonnage() 
+				&& $participant->getPersonnage()->getRenomme() >= $renomme
+				&& ( ! $territoire || ($participant->getGroupeGn() && $territoire == $participant->getGroupeGn()->getGroupe()->getTerritoire() ) )
+				&& ( ! $classe || ($participant->getPersonnage()->getClasse() == $classe) )
+				&& ( ! $competence || ( $participant->getPersonnage()->isKnownCompetence($competence)  ) ) 
+				&& ( ! $religion || ( $participant->getPersonnage()->isKnownReligion($religion)  ) ) 
+				&& ( ! $language || ( $participant->getPersonnage()->isKnownLanguage($language)  ) ) 
+				&& ( ! $groupe || ( $participant->getGroupeGn() && $groupe ==  $participant->getGroupeGn()->getGroupe() ) ) )
+				$participants[] = $participant;
+		}
+		
 		return $app['twig']->render('admin/trombinoscope.twig', array(
-				'personnages' => $personnages,
-				'paginator' => $paginator,
+				'gn' => $gn,
+				'participants' => $participants,
+				'form' => $form->createView(),
+				'renomme' => $renomme,
+				'territoire' => $territoire,
+				'classe' => $classe,
+				'competence' => $competence,
+				'religion' => $religion,
+				'language' => $language,
+				'groupe' => $groupe,
 		));
 	}
 	

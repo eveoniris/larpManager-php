@@ -17,35 +17,36 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 namespace LarpManager;
 
 use Silex\Application;
 use Silex\ControllerProviderInterface;
 
 /**
- * LarpManager\TrombinoscopeControllerProvider
- *
+ * LarpManager\ObjetControllerProvider
+ * 
  * @author kevin
+ *
  */
-class TrombinoscopeControllerProvider implements ControllerProviderInterface
+class ObjetControllerProvider implements ControllerProviderInterface
 {
-
+	/**
+	 * Initialise les routes pour l'éconnomie
+	 * Routes :
+	 * 	- objet
+	 *
+	 * @param Application $app
+	 * @return Controllers $controllers
+	 */
 	public function connect(Application $app)
 	{
 		$controllers = $app['controllers_factory'];
 		
-		/**
-		 * Page d'accueil de l'interface d'administration
-		 */		
-		$controllers->match('/','LarpManager\Controllers\TrombinoscopeController::indexAction')
-			->bind("trombinoscope")
-			->method('GET|POST');
-			
-		$controllers->match('/perso','LarpManager\Controllers\TrombinoscopeController::persoAction')
-			->bind("trombinoscope.perso")
-			->method('GET|POST');
-		
+		$controllers->match('/','LarpManager\Controllers\ObjetController::indexAction')
+			->bind("objet")
+			->method('GET');
+					
 		return $controllers;
 	}
 }

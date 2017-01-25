@@ -32,6 +32,9 @@
 						<blockquote>Vos compétences vous permettent de choisir des connaissances supplémentaires</blockquote>
 						<ul class="list-group">
 						{% for trigger in personnage.personnageTriggers %}
+							{% if trigger.tag == 'LANGUE COMMUNE' %}
+								<li class="list-group-item"><a href="{{ path('participant.personnage.langueCommune', {'participant': participant.id}) }}">Choisir une langue commune supplémentaire</a></li>
+							{% endif %}								
 							{% if trigger.tag == 'LANGUE COURANTE' %}
 								<li class="list-group-item"><a href="{{ path('participant.personnage.langueCourante', {'participant': participant.id}) }}">Choisir une langue courante supplémentaire</a></li>
 							{% endif %}

@@ -44,28 +44,56 @@ class Photo extends BasePhoto
 	/**
 	 * Upload file on database
 	 */
-	public function upload()
+	public function upload($app)
 	{
 		// la propriété « file » peut être vide si le champ n'est pas requis
 		if (null === $this->file) {
 			return;
 		}
-			
-		// create a unique filename
-		$date = new \Datetime('NOW');
-		$hash = hash('sha1',$this->file->getClientOriginalName().$date->format('Y-m-d H:i:s'));
-		$hash .= '.'.$this->file->guessExtension();
 		
+		$path = __DIR__.'/../../../private/stock/';
+		$filename = $this->file->getClientOriginalName();
+		$extension = $this->file->guessExtension();
+		
+		// create a unique filename
+		$photoFilename = hash('md5',$app['user']->getUsername().$filename . time()).'.'.$extension;
 		
 		$this->setExtension($this->file->guessExtension());
-		$stream = fopen($this->file->getRealPath(),'rb');
-		$this->setData(stream_get_contents($stream));
 		
-		$this->setCreationDate($date);
+		$image = $app['imagine']->open($this->file->getPathname());
+		$image->resize($image->getSize()->widen( 480 ));
+		$image->save($path. $photoFilename);
+				
+		$this->setCreationDate(new \Datetime('NOW'));
 		$this->setName($this->file->getClientOriginalName());
-		$this->setRealName($hash);
+		$this->setRealName($photoFilename);
+		$this->setFilename($photoFilename);
 	
 		// « nettoie » la propriété « file » comme vous n'en aurez plus besoin
 		$this->file = null;
+	}
+	
+	/**
+	 * Transfert une photo du format sql blob à un ficher (en redimenssionnant la photo)
+	 * 
+	 * @param unknown $app
+	 */
+	public function blobToFile($app)
+	{
+		if (null === $this->getData() ) {
+			return;
+		}
+		
+		$path = __DIR__.'/../../../private/stock/';
+		$filename = $this->getName();
+		$extension = $this->getExtension();
+		
+		$photoFilename = hash('md5',$app['user']->getUsername().$filename . time()).'.'.$extension;
+		
+		$image = $app['imagine']->read($this->getData());
+		$image->resize($image->getSize()->widen( 480 ));
+		$image->save($path. $photoFilename);
+		
+		$this->setFilename($photoFilename);
 	}
 }

@@ -16,7 +16,7 @@
 			<small><span style="color:#000;">Publié dans <strong>{{ post.topic.title }}</strong></span></small>
 		</h6>
 		
-		par <a href="{{ path('user.view', {'id':post.user.id}) }}">{{ post.user.username }}</a>.
+		par <a href="{{ path('user.view', {'id':post.user.id}) }}">{{ post.user.username }}</a> {{ post.creationDate|time_diff }}.
 		{# nombre de vues #}
 		<small>
 		<strong>{{ post.views }}</strong> Vues.

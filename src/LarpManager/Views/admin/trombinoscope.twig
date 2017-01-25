@@ -2,65 +2,103 @@
 
 {% block title %}Trombinoscope{% endblock title %}
 
+{% block style %}
+<style>
+ul, li {
+  
+  list-style: none;
+}
+
+a {
+
+  text-decoration: none;
+}
+
+.waterfall .pin {
+  width: 160px;
+  height: auto;
+  margin: 0 0 10px 20px;
+}
+
+.waterfall .pin a {
+  width: 100%;
+  height: 100%;
+}
+
+.waterfall.gallery .pin {
+  width: 180px;
+}
+</style>
+{% endblock style %}
+
 {% block content %}
 
 <div class="well well-sm">
-
-<ul class="list-group">
-	<li class="list-group-item">
-		{% if paginator.totalItems == 1 %}
-			<strong>1</strong> personnage trouvé.
-		{% else %}
-			<strong>{{ paginator.totalItems }}</strong> personnages trouvés.
-		{% endif %}
+	<div class="header"><h5>Personnages participants à {{ gn.label }}</h5></div>
+	<a class="btn btn-primary" role="button" data-toggle="collapse" href="#filtres" aria-expanded="false" aria-controls="filtres">
+  		Filtres ...
+	</a>
+	<div class="collapse" id="filtres">
 		
-		Montre <strong>{{ paginator.currentPageFirstItem }} - {{ paginator.currentPageLastItem }}</strong>.
-	</li>
-	<li class="list-group-item">
-		{{ paginator|raw }}
-	</li>
-</ul>
+			<form action="{{ path('trombinoscope') }}" method="POST" {{ form_enctype(form) }}>
+				{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+				<div class="row" style="overflow:visible">
+					<div class="col-md-6">
+						{{ form_row(form.renomme) }}
+						{{ form_row(form.territoire) }}
+						{{ form_row(form.classe) }}
+						{{ form_row(form.competence) }}
+					</div>
+					<div class="col-md-6">
+						{{ form_row(form.religion) }}
+						{{ form_row(form.language) }}
+						{{ form_row(form.groupe) }}
+					</div>
+				</div>			
+				{{ form_rest(form) }}	
+			</form>
+		
+	</div>
 	
-
-
-
-
-<div class="rows clearfix">
-	{% for personnage in personnages %}
-		<div class="col-sm-4 col-md-3">
-			<div class="thumbnail">
-				<div style="width:160px;height:200px;" class="center-block">
-					{% if personnage.trombineUrl %}
-						<img width="160" height="200" src="{{ path('personnage.trombine', {'personnage' : personnage.id }) }}" />
-					{% else %}
-						<img width="160" height="200" src="{{ app.request.basepath }}/img/no_trombine.png" />
-					{% endif %}
-				</div>
-				<div class="caption">
-					<h5>
-					{% set user = personnage.user %}
-					{% if user.etatCivil %}
-						<p>{{ user.etatCivil.nom }} {{ user.etatCivil.prenom }}</p>
-					{% else %}
-						<p class="text-warning">Etat civil non rempli.</p>
-					{% endif %}
-						<small>{{ user.username }}</small>
-					</h5>
-					<ul class="list-group">
-						<li class="list-group-item"><strong>Email : </strong><br />{{ user.email }}</li>
-						<li class="list-group-item"><strong>Création du compte : </strong>{{ user.creationDate|date('Y-m-d') }}</li>
-						<li class="list-group-item">
-							<strong>Personnage : </strong><br />
-							<a href="{{ path('personnage.admin.detail', {'personnage': personnage.id}) }}">{{ personnage.publicName }}</a>	
-						</li>
-					</ul>
-				</div>
-			</div>
-		</div>
-	{% endfor %}
-</div>
-
-{{ paginator|raw }}
-
+	<h6>{{ participants|length }} personnage(s) trouvé(s).</h6>
+	{%  if renomme or territoire or competence or classe or religion or language or groupe %}
+	Filtres actifs :
+		<ul>
+			{% if renomme %}<li>Renomme >= {{ renomme }}</li>{% endif %}
+			{% if territoire %}<li>Territoire : {{ territoire }}</li>{% endif %}
+			{% if competence %}<li>Competence : {{ competence }}</li>{% endif %}
+			{% if classe %}<li>Classe : {{ classe }}</li>{% endif %}
+			{% if religion %}<li>Religion : {{ religion }}</li>{% endif %}
+			{% if language %}<li>Language : {{ language }}</li>{% endif %}
+			{% if groupe %}<li>Groupe : {{ groupe }}</li>{% endif %}
+		</ul>
+	{% endif %}
+	<ul class="waterfall center-block">
+    	{% for participant in participants %}
+    		<li class="pin">
+    			<ul class="list-group">
+    				<li class="list-group-item">
+    					<center><h5>{{ participant.personnage.nom }}</h5></center>
+    					<a href="{{ path('personnage.admin.detail', {'personnage': participant.personnage.id}) }}">
+	    					{% if participant.personnage.trombineUrl %}
+			  					<img src="{{ path('personnage.trombine', {'personnage' : participant.personnage.id }) }}" alt="{{ participant.personnage.nom }}" />
+			  				{% else %}
+			  					<img width="160" height="200" src="{{ app.request.basepath }}/img/no_trombine.png" />
+			  				{% endif %}
+		  				</a>
+		  			</li>
+		  			<li class="list-group-item">
+						{% if participant.groupeGn %}
+							Groupe : <a href="{{ path('groupe.detail', {'index': participant.groupeGn.groupe.id} ) }}">{{ participant.groupeGn.groupe.nom }}</a>
+						{% else %}
+							Aucun groupe
+						{% endif %}
+						<br />
+						Joué par <a href="{{ path('user.view', {'id': participant.user.id}) }}">{{ participant.user.username }}</a>
+		  			</li>
+	  			</ul>
+	    	</li>
+  		{% endfor %}
+  	</ul>
 </div>
 {% endblock content %}

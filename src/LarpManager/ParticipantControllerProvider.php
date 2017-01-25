@@ -567,6 +567,18 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 		 * Formulaire d'ajout des langues gagnés grace à litterature initie
 		 * Accessible uniquement au proprietaire du personnage
 		 */
+		$controllers->match('/{participant}/personnage/langueCommune','LarpManager\Controllers\ParticipantController::langueCommuneAction')
+			->assert('participant', '\d+')
+			->bind("participant.personnage.langueCommune")
+			->method('GET|POST')
+			->convert('participant', 'converter.participant:convert')
+			->before($mustOwnParticipant);
+				
+			
+		/**
+		 * Formulaire d'ajout des langues gagnés grace à litterature initie
+		 * Accessible uniquement au proprietaire du personnage
+		 */
 		$controllers->match('/{participant}/personnage/langueCourante','LarpManager\Controllers\ParticipantController::langueCouranteAction')
 			->assert('participant', '\d+')
 			->bind("participant.personnage.langueCourante")

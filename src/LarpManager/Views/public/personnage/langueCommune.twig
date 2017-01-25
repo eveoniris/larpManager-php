@@ -14,9 +14,9 @@
 	</ol>
 	
 	<div class="well bs-component">
-	<form action="{{ path('participant.personnage.langueAncienne',{'participant':participant.id}) }}" method="POST" {{ form_enctype(form) }}>
+	<form action="{{ path('participant.personnage.langueCommune',{'participant':participant.id}) }}" method="POST" {{ form_enctype(form) }}>
 		<fieldset>
-			<blockquote>Votre compétence vous permet de choisir une nouvelle langue.</blockquote>
+			<blockquote>Votre compétence vous permet de choisir une nouvelle langue commune.</blockquote>
 
 			{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
 			

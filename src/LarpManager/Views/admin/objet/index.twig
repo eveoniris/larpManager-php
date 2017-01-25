@@ -1,0 +1,60 @@
+{% extends "layout.twig" %}
+
+{% block title %}Economie{% endblock title %}
+
+{% block style %}
+<style>
+ul, li {
+  
+  list-style: none;
+}
+
+a {
+
+  text-decoration: none;
+}
+
+.waterfall .pin {
+  width: 480px;
+  height: auto;
+  margin: 0 0 10px 20px;
+}
+
+.waterfall .pin a {
+  width: 100%;
+  height: 100%;
+}
+
+.waterfall.gallery .pin {
+  width: 180px;
+}
+</style>
+
+{% endblock style %}
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li class="active">Objets</li>
+	</ol>
+	
+	<div class="well well-sm">
+
+		 	<ul class="waterfall center-block">
+	    		{% for objet in objets if objet.photo %}
+		    		<li class="pin">
+		    			<ul class="list-group">
+		    				<li class="list-group-item">
+				  				<img src="{{ path('stock_objet_photo',{index: objet.id}) }}" alt="{{ objet.photo.name }}" />
+				  			</li>
+				  			<li class="list-group-item">
+								<strong>{{ objet.nom }}</strong>
+								<p>{{ objet.description }}</p>
+				  			</li>
+			  			</ul>
+			    	</li>
+	  			{% endfor %}
+	  		</ul>
+	  </div>
+	
+{% endblock content %}
