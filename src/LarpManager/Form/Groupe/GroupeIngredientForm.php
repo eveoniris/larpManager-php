@@ -50,6 +50,14 @@ class GroupeIngredientForm extends AbstractType
 				'allow_delete' => true,
 				'by_reference' => false,
 				'type' => new GroupeHasIngredientType()
+			))
+			->add('random','integer', array(
+					'mapped' => false,
+					'label' => 'X ingrédients choisis au hasard',
+					'required' => false,
+					'attr' => array(
+							'help' => 'Indiquez combien d\'ingrédient il faut ajouter à ce groupe.'
+					),
 			));
 	}
 		

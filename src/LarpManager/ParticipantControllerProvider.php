@@ -65,6 +65,15 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 	 *  - participant.regle.list
 	 *  - participant.regle.detail
 	 *  - participant.regle.document
+	 *  - groupe.requestAlliance
+	 *  - groupe.cancelRequestedAlliance
+	 *  - groupe.acceptAlliance
+	 *  - groupe.refuseAlliance
+	 *  - groupe.breakAlliance
+	 *  - groupe.declareWar
+	 *  - groupe.requestPeace
+	 *  - groupe.acceptPeace
+	 *  - groupe.refusePeace
 	 *    
 	 * @param Application $app
 	 * @return Controllers $controllers
@@ -109,6 +118,15 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 		 */
 		$mustBeResponsable = function(Request $request) use ($app) {
 			if (!$app['security.authorization_checker']->isGranted('GROUPE_SECONDAIRE_RESPONSABLE', $request->get('groupeSecondaire'))) {
+				throw new AccessDeniedException();
+			}
+		};
+		
+		/**
+		 * Vérifie que l'utilisateur est responsable du groupe
+		 */
+		$mustBeGroupeResponsable = function(Request $request) use ($app) {
+			if (!$app['security.authorization_checker']->isGranted('GROUPE_RESPONSABLE', $request->get('groupe'))) {
 				throw new AccessDeniedException();
 			}
 		};
@@ -737,6 +755,145 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 					throw new AccessDeniedException();
 				}
 			});
+			
+			
+			/**
+			 * Demander une alliance
+			 */
+			$controllers->match('/{participant}/groupe/{groupe}/alliance/request','LarpManager\Controllers\ParticipantController::requestAllianceAction')
+				->assert('participant', '\d+')
+				->assert('groupe', '\d+')
+				->bind("groupe.requestAlliance")
+				->method('GET|POST')
+				->convert('groupe', 'converter.groupe:convert')
+				->convert('participant', 'converter.participant:convert')
+				->before($mustBeGroupeResponsable);
+				
+			/**
+			 * Annuler une demande d'alliance
+			 */
+			$controllers->match('/{participant}/groupe/{groupe}/alliance/{alliance}/cancel','LarpManager\Controllers\ParticipantController::cancelRequestedAllianceAction')
+				->assert('participant', '\d+')
+				->assert('groupe', '\d+')
+				->assert('alliance', '\d+')
+				->bind("groupe.cancelRequestedAlliance")
+				->method('GET|POST')
+				->convert('participant', 'converter.participant:convert')
+				->convert('groupe', 'converter.groupe:convert')
+				->convert('alliance', 'converter.alliance:convert')
+				->before($mustBeGroupeResponsable);
+				
+			/**
+			 * Accepter une alliance
+			 */
+			$controllers->match('/{participant}/groupe/{groupe}/alliance/{alliance}/accept','LarpManager\Controllers\ParticipantController::acceptAllianceAction')
+				->assert('participant', '\d+')
+				->assert('groupe', '\d+')
+				->assert('alliance', '\d+')
+				->bind("groupe.acceptAlliance")
+				->method('GET|POST')
+				->convert('participant', 'converter.participant:convert')
+				->convert('groupe', 'converter.groupe:convert')
+				->convert('alliance', 'converter.alliance:convert')
+				->before($mustBeGroupeResponsable);
+				
+			/**
+			 * Refuser une alliance
+			 */
+			$controllers->match('/{participant}/groupe/{groupe}/alliance/{alliance}/refuse','LarpManager\Controllers\ParticipantController::refuseAllianceAction')
+				->assert('participant', '\d+')
+				->assert('groupe', '\d+')
+				->assert('alliance', '\d+')
+				->bind("groupe.refuseAlliance")
+				->method('GET|POST')
+				->convert('participant', 'converter.participant:convert')
+				->convert('groupe', 'converter.groupe:convert')
+				->convert('alliance', 'converter.alliance:convert')
+				->before($mustBeGroupeResponsable);
+				
+			/**
+			 * Casser une alliance
+			 */
+			$controllers->match('/{participant}/groupe/{groupe}/alliance/{alliance}/break','LarpManager\Controllers\ParticipantController::breakAllianceAction')
+				->assert('participant', '\d+')
+				->assert('groupe', '\d+')
+				->assert('alliance', '\d+')
+				->bind("groupe.breakAlliance")
+				->method('GET|POST')
+				->convert('participant', 'converter.participant:convert')
+				->convert('groupe', 'converter.groupe:convert')
+				->convert('alliance', 'converter.alliance:convert')
+				->before($mustBeGroupeResponsable);
+				
+			/**
+			 * Déclarer la guerre
+			 */
+			$controllers->match('/{participant}/groupe/{groupe}/enemy/declareWar','LarpManager\Controllers\ParticipantController::declareWarAction')
+				->assert('participant', '\d+')
+				->assert('groupe', '\d+')
+				->bind("groupe.declareWar")
+				->method('GET|POST')
+				->convert('participant', 'converter.participant:convert')
+				->convert('groupe', 'converter.groupe:convert')
+				->before($mustBeGroupeResponsable);
+					
+				
+			/**
+			 * Demander la paix
+			 */
+			$controllers->match('/{participant}/groupe/{groupe}/peace/{enemy}/requestPeace','LarpManager\Controllers\ParticipantController::requestPeaceAction')
+				->assert('participant', '\d+')
+				->assert('groupe', '\d+')
+				->assert('enemy', '\d+')
+				->bind("groupe.requestPeace")
+				->method('GET|POST')
+				->convert('participant', 'converter.participant:convert')
+				->convert('groupe', 'converter.groupe:convert')
+				->convert('enemy', 'converter.enemy:convert')
+				->before($mustBeGroupeResponsable);
+				
+			/**
+			 * Accepter la paix
+			 */
+			$controllers->match('/{participant}/groupe/{groupe}/peace/{enemy}/acceptPeace','LarpManager\Controllers\ParticipantController::acceptPeaceAction')
+				->assert('participant', '\d+')
+				->assert('groupe', '\d+')
+				->assert('enemy', '\d+')
+				->bind("groupe.acceptPeace")
+				->method('GET|POST')
+				->convert('participant', 'converter.participant:convert')
+				->convert('groupe', 'converter.groupe:convert')
+				->convert('enemy', 'converter.enemy:convert')
+				->before($mustBeGroupeResponsable);
+				
+			/**
+			 * Refuser la paix
+			 */
+			$controllers->match('/{participant}/groupe/{groupe}/peace/{enemy}/refusePeace','LarpManager\Controllers\ParticipantController::refusePeaceAction')
+				->assert('participant', '\d+')
+				->assert('groupe', '\d+')
+				->assert('enemy', '\d+')
+				->bind("groupe.refusePeace")
+				->method('GET|POST')
+				->convert('participant', 'converter.participant:convert')
+				->convert('groupe', 'converter.groupe:convert')
+				->convert('enemy', 'converter.enemy:convert')
+				->before($mustBeGroupeResponsable);
+					
+			/**
+			 * Annuler une demande de paix
+			 */
+			$controllers->match('/{participant}/groupe/{groupe}/peace/{enemy}/cancel','LarpManager\Controllers\ParticipantController::cancelRequestedPeaceAction')
+				->assert('participant', '\d+')
+				->assert('groupe', '\d+')
+				->assert('enemy', '\d+')
+				->bind("groupe.cancelRequestedPeace")
+				->method('GET|POST')
+				->convert('participant', 'converter.participant:convert')
+				->convert('groupe', 'converter.groupe:convert')
+				->convert('enemy', 'converter.enemy:convert')
+				->before($mustBeGroupeResponsable);
+					
 
 		return $controllers;
 	}

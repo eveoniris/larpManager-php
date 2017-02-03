@@ -10,10 +10,6 @@ Le groupe {{ alliance.groupe.nom }} demande une alliance :
 
 {{ alliance.message }}
 
-Cliquez sur le lien ci-dessous pour accéder directement a la page de gestion de votre groupe :
-
-{{ path('groupe') }}
-
 {%- endautoescape -%}{%- endblock -%}
 
 {# The HTML message. Optional. #}
@@ -22,9 +18,5 @@ Cliquez sur le lien ci-dessous pour accéder directement a la page de gestion de
     <h3>Le groupe {{ alliance.groupe.nom }} demande une alliance</h3>
     
     <p>{{ alliance.message|markdown }}</p>
-
-    <p>
-        <a href="{{ path('groupe') }}"> Suivez ce lien pour accéder directement a la page de gestion de votre groupe</a>.
-    </p>
 
 {%- endblock -%}

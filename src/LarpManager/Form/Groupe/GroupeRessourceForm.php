@@ -43,7 +43,24 @@ class GroupeRessourceForm extends AbstractType
 	 */
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
-		$builder->add('groupeHasRessources', 'collection', array(
+		$builder
+			->add('randomCommun','integer', array(
+					'mapped' => false,
+					'label' => 'X ressources communes choisies au hasard',
+					'required' => false,
+					'attr' => array(
+							'help' => 'Indiquez combien de ressources COMMUNES il faut ajouter à ce groupe.'
+					),
+			))
+			->add('randomRare','integer', array(
+					'mapped' => false,
+					'label' => 'X ressources rares choisies au hasard',
+					'required' => false,
+					'attr' => array(
+							'help' => 'Indiquez combien de ressources RARES il faut ajouter à ce groupe.'
+					),
+			))
+			->add('groupeHasRessources', 'collection', array(
 				'label' => "Ressources",
 				'required' => false,
 				'allow_add' => true,

@@ -122,7 +122,7 @@
 					</div>
 					<div class="col-md-4">
 						{% if participant.isResponsable(groupe) %}
-							<a href="{{ path('groupe.breakAlliance', {'groupe': groupe.id, 'alliance': alliance.id}) }}">Rompre cette alliance</a>
+							<a href="{{ path('groupe.breakAlliance', {'participant': participant.id, 'groupe': groupe.id, 'alliance': alliance.id}) }}">Rompre cette alliance</a>
 						{% endif %}
 					</div>
 				</div>
@@ -149,7 +149,7 @@
 									Vous avez demandé une alliance avec <strong>{{ alliance.requestedGroupe }}</strong>.
 								</div>
 								<div class="col-md-4">
-									<a href="{{ path('groupe.cancelRequestedAlliance', {'groupe': groupe.id, 'alliance': alliance.id}) }}">Annuler la demande</a>
+									<a href="{{ path('groupe.cancelRequestedAlliance', {'participant': participant.id, 'groupe': groupe.id, 'alliance': alliance.id}) }}">Annuler la demande</a>
 								</div>
 							</div>
 						{% else %}
@@ -158,8 +158,8 @@
 									<strong>{{ alliance.groupe }}</strong> vous a demandé une alliance.
 								</div>
 								<div class="col-md-4">
-									<a href="{{ path('groupe.acceptAlliance', {'groupe': groupe.id, 'alliance': alliance.id}) }}">Accepter la demande</a>
-									<a href="{{ path('groupe.refuseAlliance', {'groupe': groupe.id, 'alliance': alliance.id}) }}">Refuser la demande</a>
+									<a href="{{ path('groupe.acceptAlliance', {'participant': participant.id, 'groupe': groupe.id, 'alliance': alliance.id}) }}">Accepter la demande</a>
+									<a href="{{ path('groupe.refuseAlliance', {'participant': participant.id, 'groupe': groupe.id, 'alliance': alliance.id}) }}">Refuser la demande</a>
 								</div>
 							</div>
 						{% endif %}
@@ -196,7 +196,7 @@
 						{% endif %}
 					</div>
 					<div class="col-md-4">
-						{% if participant.isResponsable(groupe) %}<a href="{{ path('groupe.requestPeace', {'groupe': groupe.id, 'enemy': ennemi.id}) }}">Proposer de faire la paix</a>{% endif %}
+						{% if participant.isResponsable(groupe) %}<a href="{{ path('groupe.requestPeace', {'participant': participant.id, 'groupe': groupe.id, 'enemy': ennemi.id}) }}">Proposer de faire la paix</a>{% endif %}
 					</div>
 				</div>
 			</li>	
@@ -221,7 +221,7 @@
 									Vous avez demandé la paix avec <strong>{{ war.requestedGroupe }}</strong>.
 								</div>
 								<div class="col-md-4">
-									<a href="{{ path('groupe.cancelRequestedPeace', {'groupe': groupe.id, 'enemy': war.id}) }}">Annuler la demande</a>
+									<a href="{{ path('groupe.cancelRequestedPeace', {'participant': participant.id, 'groupe': groupe.id, 'enemy': war.id}) }}">Annuler la demande</a>
 								</div>
 							</div>
 						{% else %}
@@ -230,8 +230,8 @@
 									<strong>{{ war.groupe }}</strong> propose la paix.
 								</div>
 								<div class="col-md-4">
-									<a href="{{ path('groupe.acceptPeace', {'groupe': groupe.id, 'enemy': war.id}) }}">Accepter la demande</a>
-									<a href="{{ path('groupe.refusePeace', {'groupe': groupe.id, 'enemy': war.id}) }}">Refuser la demande</a>
+									<a href="{{ path('groupe.acceptPeace', {'participant': participant.id, 'groupe': groupe.id, 'enemy': war.id}) }}">Accepter la demande</a>
+									<a href="{{ path('groupe.refusePeace', {'participant': participant.id, 'groupe': groupe.id, 'enemy': war.id}) }}">Refuser la demande</a>
 								</div>
 							</div>
 						{% endif %}
@@ -261,6 +261,6 @@
 		{% endif %}
 		
 		{% if participant.isResponsable(groupe) %}
-			<a class="btn btn-success" href="{{ path('groupe.requestAlliance', {'groupe': groupe.id}) }}">Demander une alliance</a>
-			<a class="btn btn-danger" href="{{ path('groupe.declareWar', {'groupe': groupe.id}) }}">Choisir un ennemi</a>
+			<a class="btn btn-success" href="{{ path('groupe.requestAlliance', {'participant': participant.id, 'groupe': groupe.id}) }}">Demander une alliance</a>
+			<a class="btn btn-danger" href="{{ path('groupe.declareWar', {'participant': participant.id, 'groupe': groupe.id}) }}">Choisir un ennemi</a>
 		{% endif %}

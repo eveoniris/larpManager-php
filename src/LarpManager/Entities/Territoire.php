@@ -505,4 +505,22 @@ class Territoire extends BaseTerritoire implements \JsonSerializable
 	
 		return array_unique($groupes);
 	}
+	
+	/**
+	 * Fourni l'indicateur d'ordre/désordre
+	 */
+	public function getStatutIndex()
+	{
+		switch ( $this->getStatut())
+		{
+			case 'Normal' :
+				return 0;
+			case 'Désordre' :
+				return 1;
+			case 'Désolation' :
+				return 2;
+			default :
+				return 0;
+		}
+	}
 }

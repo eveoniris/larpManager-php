@@ -320,7 +320,7 @@ class Mailer
     public function sendRequestAlliance(GroupeAllie $alliance)
     {
     	$requestedGroupe = $alliance->getRequestedGroupe();
-    	$responsable = $requestedGroupe->getResponsable();
+    	$responsable = $requestedGroupe->getUserRelatedByResponsableId();
     	if ( ! $responsable ) return;
     	
     	$context = array(
@@ -337,7 +337,7 @@ class Mailer
     public function sendCancelRequestedAlliance(GroupeAllie $alliance)
     {
     	$requestedGroupe = $alliance->getRequestedGroupe();
-    	$responsable = $requestedGroupe->getResponsable();
+    	$responsable = $requestedGroupe->getUserRelatedByResponsableId();
     	if ( ! $responsable ) return;
     	 
     	$context = array(
@@ -354,7 +354,7 @@ class Mailer
     public function sendDeclareWar(GroupeEnemy $war)
     {
     	$requestedGroupe = $war->getRequestedGroupe();
-    	$responsable = $requestedGroupe->getResponsable();
+    	$responsable = $requestedGroupe->getUserRelatedByResponsableId();
     	if ( ! $responsable ) return;
     	 
     	$context = array(
@@ -370,7 +370,7 @@ class Mailer
     public function sendAcceptAlliance(GroupeAllie $alliance)
     {
     	$groupe = $alliance->getGroupe();
-    	$responsable = $groupe->getResponsable();
+    	$responsable = $groupe->getUserRelatedByResponsableId();
     	if ( ! $responsable ) return;
     	 
     	$context = array(
@@ -386,7 +386,7 @@ class Mailer
     public function sendRefuseAlliance(GroupeAllie $alliance)
     {
     	$groupe = $alliance->getGroupe();
-    	$responsable = $groupe->getResponsable();
+    	$responsable = $groupe->getUserRelatedByResponsableId();
     	if ( ! $responsable ) return;
     
     	$context = array(
@@ -404,7 +404,7 @@ class Mailer
      */
     public function sendBreakAlliance(GroupeAllie $alliance, Groupe $groupe)
     {   	
-    	$responsable = $groupe->getResponsable();
+    	$responsable = $groupe->getUserRelatedByResponsableId();
     	if ( ! $responsable ) return;
     	
     	$context = array(
@@ -423,11 +423,11 @@ class Mailer
     {
     	if ( $war->getGroupe() == $groupe)
     	{
-    		$responsable = $war->getRequestedGroupe()->getResponsable();
+    		$responsable = $war->getRequestedGroupe()->getUserRelatedByResponsableId();
     	}
     	else
     	{
-    		$responsable = $war->getGroupe()->getResponsable();
+    		$responsable = $war->getGroupe()->getUserRelatedByResponsableId();
     	}
     	if ( ! $responsable ) return;
     	 
@@ -447,11 +447,11 @@ class Mailer
     {
         if ( $war->getGroupe() == $groupe)
     	{
-    		$responsable = $war->getRequestedGroupe()->getResponsable();
+    		$responsable = $war->getRequestedGroupe()->getUserRelatedByResponsableId();
     	}
     	else
     	{
-    		$responsable = $war->getGroupe()->getResponsable();
+    		$responsable = $war->getGroupe()->getUserRelatedByResponsableId();
     	}
     	if ( ! $responsable ) return;
     
@@ -471,11 +471,11 @@ class Mailer
     {
         if ( $war->getGroupe() == $groupe)
     	{
-    		$responsable = $war->getRequestedGroupe()->getResponsable();
+    		$responsable = $war->getRequestedGroupe()->getUserRelatedByResponsableId();
     	}
     	else
     	{
-    		$responsable = $war->getGroupe()->getResponsable();
+    		$responsable = $war->getGroupe()->getUserRelatedByResponsableId();
     	}
     	if ( ! $responsable ) return;
     
@@ -495,11 +495,11 @@ class Mailer
     {
         if ( $war->getGroupe() == $groupe)
     	{
-    		$responsable = $war->getRequestedGroupe()->getResponsable();
+    		$responsable = $war->getRequestedGroupe()->getUserRelatedByResponsableId();
     	}
     	else
     	{
-    		$responsable = $war->getGroupe()->getResponsable();
+    		$responsable = $war->getGroupe()->getUserRelatedByResponsableId();
     	}
     	if ( ! $responsable ) return;
     

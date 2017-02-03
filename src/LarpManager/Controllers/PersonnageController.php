@@ -1488,6 +1488,12 @@ class PersonnageController
 					case 3:
 						$personnage->removeRenomme(2);
 						break;
+					case 4:
+						$personnage->removeRenomme(5);
+						break;
+					case 5:
+						$personnage->removeRenomme(6);
+						break;
 				}
 			}
 			

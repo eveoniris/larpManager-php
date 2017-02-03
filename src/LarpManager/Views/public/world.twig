@@ -4,10 +4,11 @@
        
 {% block style %}
 
-	    <link rel="stylesheet" href="{{ app.request.basepath }}/leaflet/leaflet.css" />
+	    <link rel="stylesheet" href="{{ app.request.basepath }}/leaflet-1.0.3/leaflet.css" />
         <link rel="stylesheet" href="{{ app.request.basepath }}/leaflet/L.Control.MousePosition.css" />
-        <link rel="stylesheet" href="{{ app.request.basepath }}/leaflet/leaflet.draw.css" />
+        <link rel="stylesheet" href="{{ app.request.basepath }}/leaflet.draw/leaflet.draw.css" />
         <link rel="stylesheet" href="{{ app.request.basepath }}/leaflet/Control.MiniMap.min.css" />
+        <link rel="stylesheet" href="{{ app.request.basepath }}/leaflet-fullscreen/Control.FullScreen.css" />
         
 		<style>		
 
@@ -87,6 +88,9 @@
 				background-position: -120px -1px;
 			}
 
+			label {
+				margin-bottom: 0px;
+			}
 		</style>
 {% endblock %}
 
@@ -109,10 +113,25 @@
 
 
 
-<script src="{{ app.request.basepath }}/leaflet/leaflet.js"></script>
+<script src="{{ app.request.basepath }}/leaflet-1.0.3/leaflet.js"></script>
 <script src="{{ app.request.basepath }}/leaflet/L.Control.MousePosition.js"></script>
-<script src="{{ app.request.basepath }}/leaflet/leaflet.draw.js"></script>
+<script src="{{ app.request.basepath }}/leaflet-fullscreen/Control.FullScreen.js"></script>
+<script src="{{ app.request.basepath }}/leaflet-pattern/leaflet-pattern.js"></script>
+
+<script src="{{ app.request.basepath }}/leaflet.draw/Leaflet.draw.js"></script>
+<script src="{{ app.request.basepath }}/leaflet.draw/Leaflet.Draw.Event.js"></script>
+<script src="{{ app.request.basepath }}/leaflet.draw/Control.Draw.js"></script>
+<script src="{{ app.request.basepath }}/leaflet.draw/Toolbar.js"></script>
+<script src="{{ app.request.basepath }}/leaflet.draw/Tooltip.js"></script>
+<script src="{{ app.request.basepath }}/leaflet.draw/draw/handler/Draw.Feature.js"></script>
+<script src="{{ app.request.basepath }}/leaflet.draw/draw/handler/Draw.Marker.js"></script>
+<script src="{{ app.request.basepath }}/leaflet.draw/draw/handler/Draw.Polyline.js"></script>
+<script src="{{ app.request.basepath }}/leaflet.draw/draw/handler/Draw.Polygon.js"></script>
+<script src="{{ app.request.basepath }}/leaflet.draw/draw/DrawToolbar.js"></script>
+
 <script src="{{ app.request.basepath }}/leaflet/Control.MiniMap.min.js"></script>
+<script src="{{ app.request.basepath }}/leaflet/spin.min.js"></script>
+<script src="{{ app.request.basepath }}/leaflet/leaflet.spin.min.js"></script>
 <script src="{{ app.request.basepath }}/js/randomColor.min.js"></script>
 
 
@@ -143,6 +162,12 @@
 			// Liste des fiefs  	
 			fiefsList : Object(),
 
+			// Liste des groupes
+			groupeList : Object(),
+
+			// liste des langues
+			langueList : Object(),
+
 			// Collection des geometries des pays		
 			countriesGeom: null,
 
@@ -151,6 +176,13 @@
 
 			// Collection des geometries des fiefs
 			fiefsGeom: null,
+
+			// Collection des geometries des groupes
+			groupesGeom: null,
+
+			// Collection des geometries des langues
+			//languesGeom: null,
+			languesOverlay: Object(),
 
 			// Tilelayer de base
 			baseTileLayer: null,
@@ -197,6 +229,10 @@
 			// Collection des geometrie dessiné
 			drawnItems : null,
 
+			// icone particulieres
+			ownGroupIcon : null,
+
+			languagePattern : null,
 
 			// Création de la carte
 			createMap: function() {
@@ -207,6 +243,26 @@
 					  detectRetina: true,
 					  infinite: false,
 					});
+
+				this.map.createPane('labels');
+				this.map.getPane('labels').style.zIndex = 650;
+				this.map.getPane('labels').style.pointerEvents = 'none';
+				
+				this.map.spin(true);
+
+				this.ownGroupIcon = L.icon({
+					iconUrl: '{{ app.request.basepath }}/img/star_gold_48.png',
+					iconSize:     [48, 48], // size of the icon
+				    iconAnchor:   [24, 24], // point of the icon which will correspond to marker's location
+				    popupAnchor:  [-48, 96] // point from which the popup should open relative to the iconAnchor
+				});
+
+				this.languagePattern = new L.StripePattern({
+					'color': 'red',
+					'spaceWeight': 10,
+					'angle': 45,
+					'opacity': 1,
+					}); 
 			},
 			
 			// Création des limites de la carte
@@ -307,6 +363,65 @@
 				layer.setStyle({ 'fillColor' : layer.feature.properties.color});
 			},
 
+			// création du bouton fullscreen
+			// il est possible d'utiliser les événements enterFullscreen & exitFullscreen lié à l'objet map
+			// map.on('enterFullscreen', function(){});
+			createFullScreenControl: function() {
+				// create fullscreen control
+				var fsControl = new L.Control.FullScreen();
+				// add fullscreen control to the map
+				this.map.addControl(fsControl);
+			},
+
+			// Création du control calques
+			// permet de choisir quel calque est affiché
+			createCalquesControl: function() {
+				this.calquesControl = L.control({position: 'bottomright'});
+				this.calquesControl.onAdd = function (map) {
+					L.DomEvent.on
+					var div = L.DomUtil.create('div', 'leaflet-control-layers');
+					div.innerHTML +=
+						'';
+					return div;
+				};
+
+				this.calquesControl.onRemove = function (map) {
+				};
+			},
+
+			// Création de la légende désordre
+			createDesordreLegend: function() {
+				this.desordreLegend = L.control({position: 'bottomright'});
+				
+				this.desordreLegend.onAdd = function (map) {
+				    var div = L.DomUtil.create('div', 'leaflet-control-layers'), // create a div with a class "info"
+				    	grades = [0, 1, 2],
+			        	labels = ['Normal', 'Désordre','Désolation'];
+				    for (var i = 0; i < grades.length; i++) {
+				        div.innerHTML +=
+				            '<i style="color: #000;background-color:' + cartographie.getDesordreColor(grades[i]) + '">'+labels[i]+'</i><br/>';
+				    }
+				    return div;
+				};
+			},
+
+			// Création de la légende religion
+			createLangueLegend: function() {
+				this.langueLegend = L.control({position: 'bottomright'});
+				
+				this.langueLegend.onAdd = function (map) {
+				    var div = L.DomUtil.create('div', 'info legend'), // create a div with a class "info"
+				    	grades = [0, 1, 2],
+		        		labels = [];
+				    for (var i = 0; i < grades.length; i++) {
+				        div.innerHTML +=
+				            '<i style="background:' + cartographie.getDesordreColor(grades[i] + 1) + '"></i> ' +
+				            grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
+				    }
+				    return div;
+				};
+			},
+			
 			// Creation des controles de dessins
 			createDrawControl: function() {
 
@@ -424,6 +539,8 @@
 				this.countriesGeom = new L.geoJson(false, {style: this.territoireStyle, onEachFeature: this.onEachFeature});
 				this.regionsGeom = new L.geoJson(false, {style: this.regionStyle, onEachFeature: this.onEachFeature});
 				this.fiefsGeom = new L.geoJson(false, {style: this.fiefStyle, onEachFeature: this.onEachFeature});
+				this.groupesGeom = new L.layerGroup();
+				//this.languesGeom = new L.layerGroup();
 				this.routesGeom = new L.geoJson(false, {onEachFeature: this.onEachFeature});
 				this.fortificationsGeom = new L.geoJson(false, {onEachFeature: this.onEachFeature});
 				this.drawnItems = new L.FeatureGroup();
@@ -436,7 +553,7 @@
 				}
 				return {
 	                weight: 5,
-	                opacity: 1,
+	                opacity: 0,
 	                color: feature.properties.color,
 	                dashArray: '10',
 	                fillOpacity: 0.2,
@@ -473,6 +590,40 @@
 	                fillColor: feature.properties.color
 	            };
 			},
+
+			// style des langues
+			langueStyle: function(feature) {
+				feature.properties.color = randomColor({luminosity:'dark'});
+				return {
+	                weight: 2,
+	                opacity: 1,
+	                color: feature.properties.color,
+	                dashArray: '3',
+	                fillOpacity: 0.2,
+	                fillColor: feature.properties.color
+	            };
+			},
+
+			// Affecte une couleur en fonction du degres de désordre
+			getDesordreColor: function(d) {
+			    return d == 2 ? '#800026' :
+			           d == 1  ? '#F4A460' :
+			           d == 0  ? '#00B030' :
+			                      '#00B030';
+			},
+
+			// style des territoires (affichage du désordre)
+			desordreStyle: function(feature) {
+			    return {
+			        fillColor: this.getDesordreColor(feature.properties.desordre),
+			        weight: 2,
+			        opacity: 1,
+			        color: 'white',
+			        dashArray: '3',
+			        fillOpacity: 0.7
+			    };
+			},
+						
 
 
 			// Affichage des informations concernant le layer selectionné
@@ -685,7 +836,7 @@
 			displayItinerairePanel: function(layer)
 			{
 				var distance = this.distance(layer._latlngs);
-				distance = Math.round((distance / 1000)*100)/100;
+				distance = Math.round((distance / 2000)*100)/100;
 				var select = '<h4>Détail de votre itineraire</h4>';
 				select += '<strong>Distance :</strong><br /><span style="color:green">' + distance + ' Km'+'</span><br />';
 				select += '<label>Moyen de transport</label>'
@@ -762,13 +913,17 @@
 						    	geom.properties.color = country.color;
 						    	geom.properties.id = country.id;
 						    	geom.properties.groupes = country.groupes;
+						    	geom.properties.desordre = country.desordre;
 						    	cartographie.countriesGeom.addData(geom);
 						    }
 						    
 						    cartographie.countriesList[country.id] = country;
+						    cartographie.map.spin(false);
 					    });
 					}
-					}).error(function() {});
+					}).error(function() {
+						cartographie.map.spin(false);
+					});
 			},
 
 			// Chargement des pays
@@ -788,6 +943,7 @@
 						    	geom.properties.color = country.color;
 						    	geom.properties.id = country.id;
 						    	geom.properties.groupes = country.groupes;
+						    	geom.properties.desordre = country.desordre;
 						    	cartographie.regionsGeom.addData(geom);
 						    }
 						    
@@ -815,12 +971,77 @@
 						    	geom.properties.color = country.color;
 						    	geom.properties.id = country.id;
 						    	geom.properties.groupes = country.groupes;
+						    	geom.properties.desordre = country.desordre;
 						    	cartographie.fiefsGeom.addData(geom);
 						    }
 	
 						    cartographie.fiefsList[country.id] = country;
 					    });
 					}
+					}).error(function() {});
+			},
+
+			// Chargement des groupes
+			loadGroupes: function() {
+				$.ajax({
+					dataType: 'json',
+					url: 'world/groupes.json',
+					success: function(data) {
+						
+						$(data).each(function(key, groupe) {
+							// trouve le centre du territoire
+							
+							if ( groupe.geom != null )
+							{
+								geom = L.geoJson(JSON.parse(groupe.geom));
+								var bounds = geom.getBounds();
+								var latLng = bounds.getCenter();
+								if ( groupe.highlight == true )
+								{
+									marker = L.marker(latLng,{'icon':cartographie.ownGroupIcon}).bindTooltip(groupe.nom,{'pane':'labels'}).openTooltip();
+								}
+								else
+								{
+									marker = L.marker(latLng).bindTooltip(groupe.nom,{'pane':'labels'}).openTooltip();
+								}
+								cartographie.groupesGeom.addLayer(marker);
+							}
+							cartographie.groupeList[groupe.id] = groupe;
+							
+						});
+						
+					}
+				}).error(function() {});
+			},
+
+			loadLangues: function() {
+					$.ajax({
+						dataType: 'json',
+						url: 'world/langues.json',
+						success: function(data) {
+							$(data).each(function(key, langue) {
+								if ( langue.geomPrincipalCount > 0)
+								{							
+									color = randomColor({luminosity:'dark'});
+									geom = L.geoJSON(JSON.parse(langue.geomPrincipal), {
+										style: function(feature) {
+											return {
+												'weight': 0,
+								                'opacity': 0,
+												'color': color ,
+												'fillPattern': cartographie.languagePattern,
+											}
+										}
+									});
+									
+									cartographie.languesOverlay[langue.label] = geom;									
+								}
+								cartographie.langueList[langue.id] = langue;
+							});
+
+							L.control.layers(cartographie.languesOverlay).addTo(cartographie.map);
+							
+						}
 					}).error(function() {});
 			},
 
@@ -942,7 +1163,7 @@
 			// Applique les geometries et les layers sur la carte
 			applyOnMap: function() {
 				this.countriesGeom.addTo(this.map);
-				
+				this.groupesGeom.addTo(this.map);
 
 				// Options disponibles dans le controlLayer
 				var baseMaps = {
@@ -954,9 +1175,9 @@
 				var overlayMaps = {
 					"Pays" : this.countriesGeom,
 					"Regions" : this.regionsGeom,
-					"Fiefs" : this.fiefsGeom
+					"Fiefs" : this.fiefsGeom,
+					"Groupes" : this.groupesGeom,
 				};
-
 				
 				L.control.layers(
 					baseMaps, 
@@ -970,10 +1191,14 @@
 
 				this.map.addLayer(this.drawnItems);
 
+				//this.languagePattern.addTo(this.map);
 				
 				{% if is_granted('ROLE_ORGA', app.user) %}
 					this.map.addControl(this.drawControl);
-				{% endif %}		
+				{% endif %}
+
+				this.map.addControl(this.desordreLegend);
+				//this.map.addControl(this.langueLegend);
 				
 				this.saveTerritoirePanel.addTo(this.map);
 				this.saveRegionPanel.addTo(this.map);
@@ -982,12 +1207,14 @@
 				this.saveRoutePanel.addTo(this.map);
 				this.saveFortificationPanel.addTo(this.map);
 
-				this.map.on('draw:created', this.drawCreated);
-				this.map.on('draw:edited', this.drawEdited);
+				this.map.on(L.Draw.Event.CREATED, this.drawCreated);
+				this.map.on(L.Draw.Event.EDITED, this.drawEdited);
+				
 			}
 			
 	};
-
+	
+	
 	cartographie.createMap();
 	cartographie.createMapBounds();
 	cartographie.createWorkingTileLayer();
@@ -998,6 +1225,9 @@
 	
 	cartographie.createGeomCollection();
 	cartographie.createDrawControl();
+	cartographie.createDesordreLegend();
+	cartographie.createLangueLegend();
+	cartographie.createFullScreenControl();
 	cartographie.createSaveTerritoirePanel();
 	cartographie.createSaveRegionPanel();
 	cartographie.createSaveFiefPanel();
@@ -1007,6 +1237,8 @@
 	cartographie.loadCountries();
 	cartographie.loadRegions();
 	cartographie.loadFiefs();
+	cartographie.loadGroupes();
+	cartographie.loadLangues();
 	
 	cartographie.applyOnMap();
 

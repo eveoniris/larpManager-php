@@ -86,8 +86,8 @@ class LarpManagerVoter implements VoterInterface
 			}
 			
 			if ($attribute == 'GROUPE_RESPONSABLE') {
-				$groupeGnId = $object;
-				return $this->isResponsableOf($user, $groupeGnId) ? VoterInterface::ACCESS_GRANTED : VoterInterface::ACCESS_DENIED;
+				$groupeId = $object;
+				return $this->isResponsableOf($user, $groupeId) ? VoterInterface::ACCESS_GRANTED : VoterInterface::ACCESS_DENIED;
 			}
 			if ($attribute == 'GROUPE_BILLET') {
 				$groupeGnId = $object;
@@ -422,13 +422,17 @@ class LarpManagerVoter implements VoterInterface
 	 * @param unknown $user
 	 * @param unknown $groupeId
 	 */
-	protected function isResponsableOf($user, $groupeGnId)
+	protected function isResponsableOf($user, $groupeId)
 	{
 		foreach ( $user->getParticipants() as $participant )
 		{
 			if ( $participant->getGroupeGn() )
 			{
-				if ( $participant->getGroupeGn()->getId() == $groupeGnId ) return true;				
+				$groupe = $participant->getGroupeGn()->getGroupe();
+				if ( $groupe->getId() == $groupeId)
+				{
+					return true;
+				}
 			}
 		}
 		return false;

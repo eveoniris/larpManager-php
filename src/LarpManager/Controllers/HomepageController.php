@@ -229,6 +229,8 @@ class HomepageController
 					'color' => $territoire->getColor(),
 					'description' => strip_tags($territoire->getDescription()),
 					'groupes' =>  array_values($territoire->getGroupesPj()),
+					'desordre' => $territoire->getStatutIndex(),
+					'langue' => $territoire->getLanguePrincipale(),
 			);
 		}
 	
@@ -256,6 +258,8 @@ class HomepageController
 					'color' => $territoire->getColor(),
 					'description' => strip_tags($territoire->getDescription()),
 					'groupes' =>  array_values($territoire->getGroupesPj()),
+					'desordre' => $territoire->getStatutIndex(),
+					'langue' => $territoire->getLanguePrincipale(),
 			);
 		}
 	
@@ -283,11 +287,140 @@ class HomepageController
 					'color' => $territoire->getColor(),
 					'description' => strip_tags($territoire->getDescription()),
 					'groupes' =>  array_values($territoire->getGroupesPj()),
+					'desordre' => $territoire->getStatutIndex(),
+					'langue' => $territoire->getLanguePrincipale(),
 			);
 		}
 	
 		return $app->json($fiefs);
 	}	
+	
+	/**
+	 * Fourni la liste des langues
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function languesAction(Request $request, Application $app)
+	{
+		$langueList = $app['orm.em']->getRepository('\LarpManager\Entities\Langue')->findAll();
+		
+		$langues = array();
+		foreach ( $langueList as $langue)
+		{
+			if ( $langue->getDiffusion() == 0 ) continue; // ne pas transmettre aux joueurs la liste des langues anciennes
+			
+			// construction du geojson de la langue (utilisation en tant que langue principale)
+			$geojson = '{ "type": "FeatureCollection", "features": [';
+			
+			$first = true;
+			$geoJsonPrincipalCount = 0;
+			foreach ( $langue->getTerritoires() as $territoire )
+			{
+				$geom = $territoire->getGeojson();
+
+				if ( $geom )
+				{
+					if ( !$first) $geojson .=',';
+					$geojson .= $geom;
+					$first = false;
+					$geoJsonPrincipalCount++;
+				}
+			}
+			
+			$geojson .= ']}';
+			$geoJsonPrincipal = $geojson;
+			
+			// construction du geoJson de la langue (utilisation en tant que langue secondaire)
+			$geojson = '{ "type": "FeatureCollection", "features": [';
+			$first = true;
+			$geoJsonSecondaireCount = 0;
+			foreach ( $langue->getTerritoireSecondaires() as $territoire )
+			{
+				$geom = $territoire->getGeojson();
+			
+				if ( $geom )
+				{
+					if ( ! $first) $geojson .=',';
+					$geojson  .= $geom;
+					$first = false;
+					$geoJsonSecondaireCount++;
+				}
+			}
+				
+			$geojson .= ']}';
+			$geoJsonSecondaire = $geojson;
+			
+			$langues[] = array(
+					'id' => $langue->getId(),
+					'label' => $langue->getLabel(),
+					'description' => $langue->getDescription(),
+					'diffusion' => $langue->getDiffusion(),
+					'geomPrincipal' => $geoJsonPrincipal,
+					'geomSecondaire' => $geoJsonSecondaire,
+					'geomPrincipalCount' => $geoJsonPrincipalCount,
+					'geomSecondaireCount' => $geoJsonSecondaireCount,
+			);
+		}
+		return $app->json($langues);
+	}
+	
+	/**
+	 * Fourni la liste des groupes
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function groupesAction(Request $request, Application $app)
+	{
+		// recherche le prochain GN
+		$gnRepo = $app['orm.em']->getRepository('\LarpManager\Entities\Gn');
+		$gn = $gnRepo->findNext();
+		
+		$groupeGnList = $gn->getGroupeGns();
+
+		$groupes = array();
+		foreach ( $groupeGnList as $groupeGn)
+		{
+			$groupe = $groupeGn->getGroupe();
+			if ( $groupe->getPj() === true )
+			{	
+				$geom = null;
+				if ( $groupe->getTerritoires()->count() > 0 )
+				{
+					$territoire = $groupe->getTerritoires()->first();
+					$geom = $territoire->getGeojson();
+				}
+				
+				// mettre en surbrillance le groupe de l'utilisateur
+				$highlight = false;
+				if ( $app['user'])
+				{
+					foreach ($app['user']->getParticipants() as $participant)
+					{
+						if ( $participant->getGn() == $gn )
+						{
+							if ($participant->getGroupeGn() )
+							{
+								if ( $participant->getGroupeGn()->getGroupe() == $groupe )
+								{
+									$highlight = true;
+									break;
+								}
+							}
+						}
+					}
+				}
+				$groupes[] = array(
+						'id' => $groupe->getId(),
+						'nom' => $groupe->getNom(),
+						'geom' => $geom,
+						'highlight' => $highlight,
+					);
+			}
+		}
+		
+		return $app->json($groupes);
+	}
 
 	/**
 	 * Met à jour la geographie d'un pays

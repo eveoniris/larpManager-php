@@ -108,6 +108,16 @@ class HomepageControllerProvider implements ControllerProviderInterface
 		$controllers->match('/world/fiefs.json','LarpManager\Controllers\HomepageController::fiefsAction')
 					->method('GET')
 					->bind('world.fiefs.json');
+		
+		/** Affichage de la cartographie du monde de conan */
+		$controllers->match('/world/groupes.json','LarpManager\Controllers\HomepageController::groupesAction')
+					->method('GET')
+					->bind('world.groupes.json');
+					
+		/** Affichage de la cartographie du monde de conan */
+		$controllers->match('/world/langues.json','LarpManager\Controllers\HomepageController::languesAction')
+					->method('GET')
+					->bind('world.langues.json');
 											
 		/** Mise a jour d'une geographie */
 		$controllers->match('/world/countries/{territoire}/update','LarpManager\Controllers\HomepageController::updateCountryGeomAction')

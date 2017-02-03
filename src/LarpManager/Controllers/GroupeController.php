@@ -37,21 +37,13 @@ use LarpManager\Form\Groupe\GroupeIngredientForm;
 
 use LarpManager\Form\GroupFindForm;
 use LarpManager\Form\BackgroundForm;
-use LarpManager\Form\RequestAllianceForm;
-use LarpManager\Form\AcceptAllianceForm;
-use LarpManager\Form\CancelRequestedAllianceForm;
-use LarpManager\Form\RefuseAllianceForm;
-use LarpManager\Form\BreakAllianceForm;
-use LarpManager\Form\DeclareWarForm;
-use LarpManager\Form\RequestPeaceForm;
-use LarpManager\Form\AcceptPeaceForm;
-use LarpManager\Form\RefusePeaceForm;
-use LarpManager\Form\CancelRequestedPeaceForm;
 use LarpManager\Form\GroupeDocumentForm;
 use LarpManager\Form\PersonnageDocumentForm;
 
 
 use LarpManager\Entities\Groupe;
+use LarpManager\Entities\GroupeHasRessource;
+use LarpManager\Entities\GroupeHasIngredient;
 use LarpManager\Entities\GroupeGn;
 use LarpManager\Entities\Document;
 use LarpManager\Entities\Personnage;
@@ -356,6 +348,27 @@ class GroupeController
 					$app['orm.em']->remove($groupeHasIngredient);
 				}
 			}
+			
+			$random = $form['random']->getData();
+				
+			/**
+			 *  Gestion des ressources communes alloués au hasard
+			 */
+			if ( $random && $random > 0 )
+			{
+				$ingredients = $app['orm.em']->getRepository('LarpManager\Entities\Ingredient')->findAll();
+				shuffle( $ingredients );
+				$needs = new ArrayCollection(array_slice($ingredients,0,$random));
+			
+				foreach ( $needs as $ingredient )
+				{
+					$ghi = new GroupeHasIngredient();
+					$ghi->setIngredient($ingredient);
+					$ghi->setQuantite(1);
+					$ghi->setGroupe($groupe);
+					$app['orm.em']->persist($ghi);
+				}
+			}
 						
 			$app['orm.em']->persist($groupe);
 			$app['orm.em']->flush();
@@ -415,7 +428,48 @@ class GroupeController
 					$app['orm.em']->remove($groupeHasRessource);
 				}
 			}
+			
+			$randomCommun = $form['randomCommun']->getData();
+			
+			/**
+			 *  Gestion des ressources communes alloués au hasard
+			 */
+			if ( $randomCommun && $randomCommun > 0 )
+			{
+				$ressourceCommune = $app['orm.em']->getRepository('LarpManager\Entities\Ressource')->findCommun();
+				shuffle( $ressourceCommune );
+				$needs = new ArrayCollection(array_slice($ressourceCommune,0,$randomCommun));
 				
+				foreach ( $needs as $ressource )
+				{
+					$ghr = new GroupeHasRessource();
+					$ghr->setRessource($ressource);
+					$ghr->setQuantite(1);
+					$ghr->setGroupe($groupe);
+					$app['orm.em']->persist($ghr);
+				}
+			}	
+			
+			$randomRare = $form['randomRare']->getData();
+			
+			/**
+			 *  Gestion des ressources rares alloués au hasard
+			 */
+			if ( $randomRare && $randomRare > 0 )
+			{
+				$ressourceRare = $app['orm.em']->getRepository('LarpManager\Entities\Ressource')->findRare();
+				shuffle( $ressourceRare );
+				$needs = new ArrayCollection(array_slice($ressourceRare,0,$randomRare));
+			
+				foreach ( $needs as $ressource )
+				{
+					$ghr = new GroupeHasRessource();
+					$ghr->setRessource($ressource);
+					$ghr->setQuantite(1);
+					$ghr->setGroupe($groupe);
+					$app['orm.em']->persist($ghr);
+				}
+			}
 			
 			$app['orm.em']->persist($groupe);
 			$app['orm.em']->flush();
@@ -933,559 +987,6 @@ class GroupeController
 		));
 	}
 	
-	/**
-	 * Demander une nouvelle alliance
-	 * 
-	 * @param Request $request
-	 * @param Application $app
-	 */
-	public function requestAllianceAction(Request $request, Application $app)
-	{
-		$groupe = $request->get('groupe');
-	
-		if ( $groupe->getLock() == true)
-		{
-			$app['session']->getFlashBag()->add('error','Les relations diplomatiques entre pays sont actuellement gelées jusqu’au GN (pour que nous puissions avoir un état de la situation). Vous pourrez les modifier en jeu désormais (voir le jeu diplomatique)');
-			return $app->redirect($app['url_generator']->generate('homepage',array('index'=>$id)),301);
-		}			
-		
-		// un groupe ne peux pas avoir plus de 3 alliances
-		if ( $groupe->getAlliances()->count() >= 3 )
-		{
-			$app['session']->getFlashBag()->add('error', 'Désolé, vous avez déjà 3 alliances, ce qui est le maximum possible.');
-			return $app->redirect($app['url_generator']->generate('groupe'));
-		}
-		
-		// un groupe ne peux pas avoir plus d'alliances que d'ennemis
-		if ( $groupe->getEnnemies()->count() - $groupe->getAlliances()->count() <= 0 )
-		{
-			$app['session']->getFlashBag()->add('error', 'Désolé, vous n\'avez pas suffisement d\'ennemis pour pouvoir vous choisir un allié.');
-			return $app->redirect($app['url_generator']->generate('groupe'));
-		}
-		
-		$alliance = new \LarpManager\Entities\GroupeAllie();
-		$alliance->setGroupe($groupe);
-		
-		$form = $app['form.factory']->createBuilder(new RequestAllianceForm(), $alliance)
-			->add('send','submit', array('label' => 'Envoyer'))
-			->getForm();
-		
-		$form->handleRequest($request);
-		
-		if ($request->isMethod('POST')) {
-			
-			$alliance = $form->getData();
-			$alliance->setGroupeAccepted(true);
-			$alliance->setGroupeAllieAccepted(false);
-			
-			// vérification des conditions pour le groupe choisi
-			$requestedGroupe = $alliance->getRequestedGroupe();
-			if ( $requestedGroupe == $groupe)
-			{
-				$app['session']->getFlashBag()->add('error', 'Désolé, vous ne pouvez pas choisir votre propre groupe pour faire une alliance ...');
-				return $app->redirect($app['url_generator']->generate('groupe'));
-			}
-			
-			if ( $groupe->isAllyTo($requestedGroupe))
-			{
-				$app['session']->getFlashBag()->add('error', 'Désolé, vous êtes déjà allié avec ce groupe');
-				return $app->redirect($app['url_generator']->generate('groupe'));
-			}
-			
-			if ( $groupe->isEnemyTo($requestedGroupe))
-			{
-				$app['session']->getFlashBag()->add('error', 'Désolé, vous êtes ennemi avec ce groupe. Impossible de faire une alliance, faites d\'abord la paix !');
-				return $app->redirect($app['url_generator']->generate('groupe'));
-			}
-			
-			if ( $requestedGroupe->getAlliances()->count() >= 3 )
-			{
-				$app['session']->getFlashBag()->add('error', 'Désolé, le groupe demandé dispose déjà de 3 alliances, ce qui est le maximum possible.');
-				return $app->redirect($app['url_generator']->generate('groupe'));
-			}
-			
-			if ( $requestedGroupe->getEnnemies()->count() - $requestedGroupe->getAlliances()->count() <= 0 )
-			{
-				$app['session']->getFlashBag()->add('error', 'Désolé, le groupe demandé n\'a pas suffisement d\'ennemis pour pouvoir obtenir un allié supplémentaire.');
-				return $app->redirect($app['url_generator']->generate('groupe'));
-			}
-			
-			$app['orm.em']->persist($alliance);
-			$app['orm.em']->flush();
-			
-			$app['user.mailer']->sendRequestAlliance($alliance);
-			
-			$app['session']->getFlashBag()->add('success', 'Votre demande a été envoyé.');
-			return $app->redirect($app['url_generator']->generate('groupe'));
-		}
-		
-		return $app['twig']->render('public/groupe/requestAlliance.twig', array(
-				'groupe' => $groupe,
-				'form' => $form->createView()
-		));
-	}
-	
-	/**
-	 * Annuler une demande d'alliance
-	 * @param Request $request
-	 * @param Application $app
-	 */
-	public function cancelRequestedAllianceAction(Request $request, Application $app)
-	{
-		$groupe = $request->get('groupe');
-		$alliance = $request->get('alliance');
-		
-		if ( $groupe->getLock() == true)
-		{
-			$app['session']->getFlashBag()->add('error','Les relations diplomatiques entre pays sont actuellement gelées jusqu’au GN (pour que nous puissions avoir un état de la situation). Vous pourrez les modifier en jeu désormais (voir le jeu diplomatique)');
-			return $app->redirect($app['url_generator']->generate('homepage',array('index'=>$id)),301);
-		}
-		
-		$form = $app['form.factory']->createBuilder(new CancelRequestedAllianceForm(), $alliance)
-			->add('send','submit', array('label' => 'Oui, j\'annule ma demande'))
-			->getForm();
-		
-		$form->handleRequest($request);
-		
-		if ($request->isMethod('POST')) {
-			
-			$alliance = $form->getData();
-			
-			$app['orm.em']->remove($alliance);
-			$app['orm.em']->flush();
-			
-			$app['user.mailer']->sendCancelAlliance($alliance);
-			
-			$app['session']->getFlashBag()->add('success', 'Votre demande d\'alliance a été annulée.');
-			return $app->redirect($app['url_generator']->generate('groupe'));
-		}
-		
-		return $app['twig']->render('public/groupe/cancelAlliance.twig', array(
-				'alliance' => $alliance,
-				'groupe' => $groupe,
-				'form' => $form->createView()
-		));
-	}
-	
-	/**
-	 * Accepter une alliance
-	 * 
-	 * @param Request $request
-	 * @param Application $app
-	 */
-	public function acceptAllianceAction(Request $request, Application $app)
-	{
-		$groupe = $request->get('groupe');
-		$alliance = $request->get('alliance');
-		
-		if ( $groupe->getLock() == true)
-		{
-			$app['session']->getFlashBag()->add('error','Les relations diplomatiques entre pays sont actuellement gelées jusqu’au GN (pour que nous puissions avoir un état de la situation). Vous pourrez les modifier en jeu désormais (voir le jeu diplomatique)');
-			return $app->redirect($app['url_generator']->generate('homepage',array('index'=>$id)),301);
-		}
-		
-		$form = $app['form.factory']->createBuilder(new AcceptAllianceForm(), $alliance)
-			->add('send','submit', array('label' => 'Envoyer'))
-			->getForm();
-
-		$form->handleRequest($request);
-		
-		if ($request->isMethod('POST')) {
-		
-			$alliance = $form->getData();
-			
-			$alliance->setGroupeAllieAccepted(true);
-			$app['orm.em']->persist($alliance);
-			$app['orm.em']->flush();
-		
-			$app['user.mailer']->sendAcceptAlliance($alliance);
-		
-			$app['session']->getFlashBag()->add('success', 'Vous avez accepté la proposition d\'alliance.');
-			return $app->redirect($app['url_generator']->generate('groupe'));
-		}
-			
-		return $app['twig']->render('public/groupe/acceptAlliance.twig', array(
-				'alliance' => $alliance,
-				'groupe' => $groupe,
-				'form' => $form->createView()
-		));
-	}
-	
-	/**
-	 * Refuser une alliance
-	 * 
-	 * @param Request $request
-	 * @param Application $app
-	 */
-	public function refuseAllianceAction(Request $request, Application $app)
-	{
-		$groupe = $request->get('groupe');
-		$alliance = $request->get('alliance');
-		
-		if ( $groupe->getLock() == true)
-		{
-			$app['session']->getFlashBag()->add('error','Les relations diplomatiques entre pays sont actuellement gelées jusqu’au GN (pour que nous puissions avoir un état de la situation). Vous pourrez les modifier en jeu désormais (voir le jeu diplomatique)');
-			return $app->redirect($app['url_generator']->generate('homepage',array('index'=>$id)),301);
-		}
-		
-		$form = $app['form.factory']->createBuilder(new RefuseAllianceForm(), $alliance)
-			->add('send','submit', array('label' => 'Envoyer'))
-			->getForm();
-		
-		$form->handleRequest($request);
-		
-		if ($request->isMethod('POST')) {
-				
-			$alliance = $form->getData();
-				
-			$app['orm.em']->remove($alliance);
-			$app['orm.em']->flush();
-				
-			$app['user.mailer']->sendRefuseAlliance($alliance);
-				
-			$app['session']->getFlashBag()->add('success', 'Vous avez refusé la proposition d\'alliance.');
-			return $app->redirect($app['url_generator']->generate('groupe'));
-		}
-			
-		return $app['twig']->render('public/groupe/refuseAlliance.twig', array(
-				'alliance' => $alliance,
-				'groupe' => $groupe,
-				'form' => $form->createView()
-		));
-	}
-	
-	/**
-	 * Briser une alliance
-	 * 
-	 * @param Request $request
-	 * @param Application $app
-	 */
-	public function breakAllianceAction(Request $request, Application $app)
-	{
-		$groupe = $request->get('groupe');
-		$alliance = $request->get('alliance');
-		
-		if ( $groupe->getLock() == true)
-		{
-			$app['session']->getFlashBag()->add('error','Les relations diplomatiques entre pays sont actuellement gelées jusqu’au GN (pour que nous puissions avoir un état de la situation). Vous pourrez les modifier en jeu désormais (voir le jeu diplomatique)');
-			return $app->redirect($app['url_generator']->generate('homepage',array('index'=>$id)),301);
-		}
-		
-		$form = $app['form.factory']->createBuilder(new BreakAllianceForm(), $alliance)
-			->add('send','submit', array('label' => 'Envoyer'))
-			->getForm();
-
-		$form->handleRequest($request);
-		
-		if ($request->isMethod('POST')) {
-		
-			$alliance = $form->getData();
-						
-		
-			$app['orm.em']->remove($alliance);
-			$app['orm.em']->flush();
-		
-			if  ( $alliance->getGroupe() == $groupe )
-			{
-				$app['user.mailer']->sendBreakAlliance($alliance, $alliance->getRequestedGroupe());
-			}
-			else
-			{
-				$app['user.mailer']->sendBreakAlliance($alliance, $groupe);
-			}
-			
-		
-			$app['session']->getFlashBag()->add('success', 'Vous avez brisé une alliance.');
-			return $app->redirect($app['url_generator']->generate('groupe'));
-		}
-			
-		return $app['twig']->render('public/groupe/breakAlliance.twig', array(
-				'alliance' => $alliance,
-				'groupe' => $groupe,
-				'form' => $form->createView()
-		));
-	}
-	
-	/**
-	 * Déclarer la guerre
-	 * 
-	 * @param Request $request
-	 * @param Application $app
-	 */
-	public function declareWarAction(Request $request, Application $app)
-	{
-		$groupe = $request->get('groupe');
-		
-		if ( $groupe->getLock() == true)
-		{
-			$app['session']->getFlashBag()->add('error','Les relations diplomatiques entre pays sont actuellement gelées jusqu’au GN (pour que nous puissions avoir un état de la situation). Vous pourrez les modifier en jeu désormais (voir le jeu diplomatique)');
-			return $app->redirect($app['url_generator']->generate('homepage',array('index'=>$id)),301);
-		}
-		
-		// un groupe ne peux pas faire de déclaration de guerre si il a 3 ou plus ennemis
-		if ( $groupe->getEnnemies()->count() >= 3 )
-		{
-			$app['session']->getFlashBag()->add('error', 'Désolé, vous avez déjà 3 ennemis ou plus, impossible de faire une nouvelle déclaration de guerre .');
-			return $app->redirect($app['url_generator']->generate('groupe'));
-		}
-		
-		$war = new \LarpManager\Entities\GroupeEnemy();
-		$war->setGroupe($groupe);
-		$war->setGroupePeace(false);
-		$war->setGroupeEnemyPeace(false);
-		
-		$form = $app['form.factory']->createBuilder(new DeclareWarForm(), $war)
-			->add('send','submit', array('label' => 'Envoyer'))
-			->getForm();
-		
-		if ($request->isMethod('POST')) {
-			
-				$form->handleRequest($request);
-					
-				$war = $form->getData();
-				$war->setGroupePeace(false);
-				$war->setGroupeEnemyPeace(false);
-				
-				// vérification des conditions pour le groupe choisi
-				$requestedGroupe = $war->getRequestedGroupe();
-				if ( $requestedGroupe == $groupe)
-				{
-					$app['session']->getFlashBag()->add('error', 'Désolé, vous ne pouvez pas choisir votre propre groupe comme ennemi ...');
-					return $app->redirect($app['url_generator']->generate('groupe'));
-				}
-				
-				if ( $groupe->isEnemyTo($requestedGroupe))
-				{
-					$app['session']->getFlashBag()->add('error', 'Désolé, vous êtes déjà en guerre avec ce groupe');
-					return $app->redirect($app['url_generator']->generate('groupe'));
-				}
-					
-				if ( $requestedGroupe->getEnnemies()->count() >= 5 )
-				{
-					$app['session']->getFlashBag()->add('error', 'Désolé, le groupe demandé dispose déjà de 5 ennemis, ce qui est le maximum possible.');
-					return $app->redirect($app['url_generator']->generate('groupe'));
-				}
-				
-				if ( $groupe->isEnemyTo($requestedGroupe))
-				{
-					$app['session']->getFlashBag()->add('error', 'Désolé, vous êtes déjà allié avec ce groupe');
-					return $app->redirect($app['url_generator']->generate('groupe'));
-				}
-				
-				$app['orm.em']->persist($war);
-				$app['orm.em']->flush();
-					
-				$app['user.mailer']->sendDeclareWar($war);
-					
-				$app['session']->getFlashBag()->add('success', 'Votre déclaration de guerre vient d\'être envoyé.');
-				return $app->redirect($app['url_generator']->generate('groupe'));
-				
-		}
-			
-		return $app['twig']->render('public/groupe/declareWar.twig', array(
-				'groupe' => $groupe,
-				'form' => $form->createView()
-		));
-	}
-
-	/**
-	 * Demander la paix
-	 * 
-	 * @param Request $request
-	 * @param Application $app
-	 */
-	public function requestPeaceAction(Request $request, Application $app)
-	{
-		$groupe = $request->get('groupe');
-		$war = $request->get('enemy');
-		
-		if ( $groupe->getLock() == true)
-		{
-			$app['session']->getFlashBag()->add('error','Les relations diplomatiques entre pays sont actuellement gelées jusqu’au GN (pour que nous puissions avoir un état de la situation). Vous pourrez les modifier en jeu désormais (voir le jeu diplomatique)');
-			return $app->redirect($app['url_generator']->generate('homepage',array('index'=>$id)),301);
-		}
-		
-		$form = $app['form.factory']->createBuilder(new RequestPeaceForm(), $war)
-			->add('send','submit', array('label' => 'Envoyer'))
-			->getForm();
-		
-		if ($request->isMethod('POST')) {
-				
-			$form->handleRequest($request);
-			$war = $form->getData();
-			
-			if ( $groupe == $war->getGroupe() )
-			{
-				$war->setGroupePeace(true);
-			}
-			else
-			{
-				$war->setGroupeEnemyPeace(true);
-			}
-			
-			$app['orm.em']->persist($war);
-			$app['orm.em']->flush();
-			
-			$app['user.mailer']->sendRequestPeace($war, $groupe);
-			
-			$app['session']->getFlashBag()->add('success', 'Votre demande de paix vient d\'être envoyé.');
-			return $app->redirect($app['url_generator']->generate('groupe'));
-		}
-		
-		return $app['twig']->render('public/groupe/requestPeace.twig', array(
-				'war' => $war,
-				'groupe' => $groupe,
-				'form' => $form->createView()
-		));
-	}
-	
-	/**
-	 * Accepter la paix
-	 * 
-	 * @param Request $request
-	 * @param Application $app
-	 */
-	public function acceptPeaceAction(Request $request, Application $app)
-	{
-		$groupe = $request->get('groupe');
-		$war = $request->get('enemy');
-		
-	
-		if ( $groupe->getLock() == true)
-		{
-			$app['session']->getFlashBag()->add('error','Les relations diplomatiques entre pays sont actuellement gelées jusqu’au GN (pour que nous puissions avoir un état de la situation). Vous pourrez les modifier en jeu désormais (voir le jeu diplomatique)');
-			return $app->redirect($app['url_generator']->generate('homepage',array('index'=>$id)),301);
-		}
-		
-		$form = $app['form.factory']->createBuilder(new AcceptPeaceForm(), $war)
-			->add('send','submit', array('label' => 'Envoyer'))
-			->getForm();
-	
-		if ($request->isMethod('POST')) {
-		
-			$form->handleRequest($request);
-			$war = $form->getData();
-				
-			if ( $groupe == $war->getGroupe() )
-			{
-				$war->setGroupePeace(true);
-			}
-			else
-			{
-				$war->setGroupeEnemyPeace(true);
-			}
-			
-			$app['orm.em']->persist($war);
-			$app['orm.em']->flush();
-				
-			$app['user.mailer']->sendAcceptPeace($war, $groupe);
-			
-			$app['session']->getFlashBag()->add('success', 'Vous avez fait la paix !');
-			return $app->redirect($app['url_generator']->generate('groupe'));
-		}	
-			
-		return $app['twig']->render('public/groupe/acceptPeace.twig', array(
-				'war' => $war,
-				'groupe' => $groupe,
-				'form' => $form->createView()
-		));
-	}
-	
-	/**
-	 * Refuser la paix
-	 * 
-	 * @param Request $request
-	 * @param Application $app
-	 */
-	public function refusePeaceAction(Request $request, Application $app)
-	{
-		$groupe = $request->get('groupe');
-		$war = $request->get('enemy');
-		
-		if ( $groupe->getLock() == true)
-		{
-			$app['session']->getFlashBag()->add('error','Les relations diplomatiques entre pays sont actuellement gelées jusqu’au GN (pour que nous puissions avoir un état de la situation). Vous pourrez les modifier en jeu désormais (voir le jeu diplomatique)');
-			return $app->redirect($app['url_generator']->generate('homepage',array('index'=>$id)),301);
-		}
-		
-		$form = $app['form.factory']->createBuilder(new RefusePeaceForm(), $war)
-			->add('send','submit', array('label' => 'Envoyer'))
-			->getForm();
-		
-		if ($request->isMethod('POST')) {
-		
-			$form->handleRequest($request);
-			$war = $form->getData();
-		
-			$war->setGroupePeace(false);
-			$war->setGroupeEnemyPeace(false);
-
-			$app['orm.em']->persist($war);
-			$app['orm.em']->flush();
-		
-			$app['user.mailer']->sendRefusePeace($war, $groupe);
-			
-			$app['session']->getFlashBag()->add('success', 'Vous avez refusé la proposition de paix.');
-			return $app->redirect($app['url_generator']->generate('groupe'));
-		}
-			
-		return $app['twig']->render('public/groupe/refusePeace.twig', array(
-				'war' => $war,
-				'groupe' => $groupe,
-				'form' => $form->createView()
-		));
-	}
-	
-	/**
-	 * Annuler la demande de paix
-	 *
-	 * @param Request $request
-	 * @param Application $app
-	 */
-	public function cancelRequestedPeaceAction(Request $request, Application $app)
-	{
-		$groupe = $request->get('groupe');
-		$war = $request->get('enemy');
-	
-		if ( $groupe->getLock() == true)
-		{
-			$app['session']->getFlashBag()->add('error','Les relations diplomatiques entre pays sont actuellement gelées jusqu’au GN (pour que nous puissions avoir un état de la situation). Vous pourrez les modifier en jeu désormais (voir le jeu diplomatique)');
-			return $app->redirect($app['url_generator']->generate('homepage',array('index'=>$id)),301);
-		}
-		
-		$form = $app['form.factory']->createBuilder(new CancelRequestedPeaceForm(), $war)
-			->add('send','submit', array('label' => 'Envoyer'))
-			->getForm();
-	
-		if ($request->isMethod('POST')) {
-	
-			$form->handleRequest($request);
-			$war = $form->getData();
-	
-			if ( $groupe == $war->getGroupe() )
-			{
-				$war->setGroupePeace(false);
-			}
-			else
-			{
-				$war->setGroupeEnemyPeace(false);
-			}
-						
-			$app['orm.em']->persist($war);
-			$app['orm.em']->flush();
-	
-			$app['user.mailer']->sendRefusePeace($war, $groupe);
-				
-			$app['session']->getFlashBag()->add('success', 'Vous avez annulé votre proposition de paix.');
-			return $app->redirect($app['url_generator']->generate('groupe'));
-		}
-			
-		return $app['twig']->render('public/groupe/cancelPeace.twig', array(
-				'war' => $war,
-				'groupe' => $groupe,
-				'form' => $form->createView()
-		));
-	}
 	
 	
 	

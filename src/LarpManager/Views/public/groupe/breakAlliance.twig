@@ -6,13 +6,14 @@
 
 	<ol class="breadcrumb">
 		<li><a href="{{ path('homepage') }}">Page d'accueil</a></li>
-		<li><a href="{{ path('groupe') }}">Votre groupe</a></li>
+		<li><a href="{{ path('participant.index', {'participant' : participant.id}) }}">{{ participant.gn.label }}</a></li>
+		<li><a href="{{ path('groupeGn.groupe', {'groupeGn' : groupeGn.id}) }}">{{ groupe.nom }}</a></li>
 		<li class="active">Briser une alliance</li>
 	</ol>
 	
 	<div class="well bs-component">
 	
-		<form action="{{ path('groupe.breakAlliance', {'groupe': groupe.id, 'alliance': alliance.id}) }}" method="POST" {{ form_enctype(form) }} novalidate>
+		<form action="{{ path('groupe.breakAlliance', {'participant': participant.id, 'groupe': groupe.id, 'alliance': alliance.id}) }}" method="POST" {{ form_enctype(form) }} novalidate>
 			{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
 
 			<p>Vous allez briser alliance entre <strong>{{ alliance.groupe.nom }}</strong> et <strong>{{ alliance.requestedGroupe.nom }}</strong>.</p>
