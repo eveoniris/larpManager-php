@@ -1,35 +1,117 @@
 {% extends "layout.twig" %}
 
+{% block title %}Objets{% endblock title %}
+
+{% block style %}
+<style>
+ul, li {
+  
+  list-style: none;
+}
+
+a {
+
+  text-decoration: none;
+}
+
+.waterfall .pin {
+  width: 480px;
+  height: auto;
+  margin: 0 0 10px 20px;
+}
+
+.waterfall .pin a {
+  width: 100%;
+  height: 100%;
+}
+
+.waterfall.gallery .pin {
+  width: 180px;
+}
+</style>
+
+{% endblock style %}
 {% block content %}
 
-<div class="well well-sm">
-
-	<div class="page-header">
-		<h1>{{ titre }}</h1>
-	</div>
-
-	<form class="form-inline" action="{{ path(pagination.route, {'page':1}) }}" method="POST" {{ form_enctype(form) }}>
-		{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
-		{{ form(form) }}
-	</form>
-					
-	<div>		
-	{{ include("stock/objet/fragment/pagination.twig",{'pagination': pagination}) }}
-	</div>
-											
-	<div class="btn-group" role="group" aria-label="...">
-		<a href="{{ path(pagination.route, pagination.route_params|merge({'page': 1})) }}" class="btn btn-default"><span class="icon fa fa-refresh"></span></a>
-		<a href="{{ path('stock_objet_add') }}" class="btn btn-default"><span class="icon fa fa-plus"></span></a>
-		
-	</div>
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li class="active">Objets</li>
+	</ol>
 	
-	<div class="container-fluid">
-		<div class="row">
-			<div class="col-xs-12 ">
-				{{ include("stock/objet/fragment/list.twig",{'objets': objets, 'add': false}) }}
+	<div class="well well-sm">
+		<div class="clearfix">
+			<div class="pull-right">
+				Lister les objets par tags :
+				{% for tag in tags %}
+					<a href="{{ path('stock_objet_index', {'tag':tag.id}) }}">{{ tag.nom }}&nbsp;<span class="badge">{{ tag.objets|length }}</span></a>
+				{% endfor %}
+				<a href="{{ path('stock_objet_index', {'tag':-1}) }}">Objets sans tag&nbsp;<span class="badge">{{ objetsWithoutTagCount }}</span></a>
 			</div>
+			
+			<a href="{{ path('stock_objet_add') }}" class="btn btn-default">Créer un nouvel objet</a>
 		</div>
+		
+		<h5>
+		
+		{% if tag %}
+			Vous listez les objets correspondant au tag <strong>{{tag.nom }}</strong>&nbsp;<small>{{ objets|length }} objet(s)</small>
+		{% elseif tagId == -1 %}
+			Vous listez tous les objets sans tags&nbsp;<small>{{ objets|length }} objet(s)</small>
+		{% else %}
+			Vous listez tous les objets&nbsp;<small>{{ objets|length }} objet(s)</small>
+		{% endif %}
+		</h5>
+		Astuce : utiliez la molette de la sourie en bas de page pour charger les objets suivants 
 	</div>
 	
-</div>
+	<div class="well well-sm">
+			
+		 	<ul class="waterfall center-block">
+	    		{% for objet in objets %}
+		    		<li class="pin">
+		    			<ul class="list-group">
+		    				<li class="list-group-item">
+		    					<a href="{{ path('stock_objet_update', {'objet': objet.id}) }}">
+		    					{% if objet.photo %}
+				  					<img src="{{ path('stock_objet_photo',{'objet': objet.id}) }}" alt="{{ objet.photo.name }}" />
+				  				{% else %}
+				  					Modifier
+				  				{% endif %}
+				  				</a>
+				  			</li>
+				  			<li class="list-group-item">
+				  				{% for tag in objet.tags %}
+				  				 	<span class="badge">{{ tag }}</span>
+				  				{% endfor %}
+				  				<div class="btn-group" role="group" aria-label="...">
+				  					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      									Action
+      									<span class="caret"></span>
+    								</button>
+    								<ul class="dropdown-menu">
+    									<li><a href="{{ path('stock_objet_tag', {'objet': objet.id}) }}">Modifier les tags</a></li>
+    									<li><a href="{{ path('stock_objet_update', {'objet': objet.id}) }}">Modifier</a></li>
+					  					<li><a href="{{ path('stock_objet_clone', {'objet': objet.id}) }}">Cloner</a></li>
+					  					<li><a href="{{ path('stock_objet_delete', {'objet': objet.id}) }}">Supprimer</a></li>
+					  					<li><a href="#">Creer un objet de jeu</a></li>
+					  				</ul>
+					  			</div>
+				  			</li>
+				  			<li class="list-group-item">
+				  				{% for item in objet.items %}
+				  					{{ item.label }}
+				  				{% else %}
+				  					<span class="text-success">Cet objet n'est pas utilisé en jeu.</span>
+				  				{% endfor %}
+				  			</li>
+				  			<li class="list-group-item">
+								<strong>{{ objet.nom }}</strong>
+								<p>{{ objet.description }}</p>
+				  			</li>
+			  			</ul>
+			    	</li>
+	  			{% endfor %}
+	  		</ul>
+	  </div>
+	
 {% endblock content %}

@@ -18,11 +18,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace LarpManager\Form\Type;
+namespace LarpManager\Form\Stock;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+
+use LarpManager\Form\Type\ObjetCaracType;
+use LarpManager\Form\Type\PhotoType;
 
 /**
  * LarpManager\Form\Type\ObjetType
@@ -30,7 +33,7 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
  * @author kevin
  *
  */
-class ObjetType extends AbstractType
+class ObjetForm extends AbstractType
 {
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
@@ -51,7 +54,7 @@ class ObjetType extends AbstractType
 				->add('cout','integer', array('required' => false))
 				->add('nombre','integer', array('required' => false))
 				->add('budget','integer', array('required' => false))
-				->add('investissement','choice', array('choices' => array('false' =>'usage unique','true' => 'ré-utilisable')));	
+				->add('investissement','choice', array('choices' => array('true' => 'ré-utilisable','false' =>'usage unique')));	
 	}
 	
 	public function setDefaultOptions(OptionsResolverInterface $resolver)

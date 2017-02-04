@@ -1,0 +1,28 @@
+{% extends "layout.twig" %}
+
+{% block title %}Objet{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path('stock_objet_index') }}">Objets</a></li>
+		<li><a href="{{ path('stock_objet_detail', {'objet': objet.id}) }}">{{ objet.nom }}</a></li>
+		<li class="active">Suppression</li>
+	</ol>
+	
+	
+	<div class="well bs-component">
+		<form action="{{ path('stock_objet_delete', {'objet': objet.id}) }}" method="POST" {{ form_enctype(form) }}>
+			<fieldset>
+				<legend>Supression d'un objet</legend>
+					{{ objet.nom }}
+					{{ objet.code }}
+					{{ objet.description }}
+					{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+					{{ form(form) }}
+			</fieldset>
+		</form>
+	</div>
+				
+{% endblock content %}

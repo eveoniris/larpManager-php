@@ -20,8 +20,12 @@
 
 namespace LarpManager\Controllers;
 
-use LarpManager\Form\Type\ObjetType;
-use LarpManager\Form\SearchObjetForm;
+use LarpManager\Form\Stock\ObjetForm;
+use LarpManager\Form\Stock\ObjetDeleteForm;
+use LarpManager\Form\Stock\ObjetTagForm;
+
+use LarpManager\Entities\Objet;
+
 use Symfony\Component\HttpFoundation\Request;
 use Silex\Application;
 
@@ -32,78 +36,7 @@ use Silex\Application;
  *
  */
 class StockObjetController
-{
-	/** Nombre d'objet maximum présenté par page */
-	private $maxPerPage = 20;
-	
-	/**
-	 * Ajoute les contraintes liés à la recherche de l'utilisateur
-	 * 
-	 * @param QueryBuilder $qb
-	 * @param string $searchPhrase
-	 * @param string $searchType
-	 * @return QueryBuilder $qb
-	 */
-	private function addWhere($qb, $searchPhrase, $searchType) {
-		if ( $searchPhrase !== null ) {
-				
-			switch($searchType) {
-				case 'tag':
-					break;
-				case 'numero':
-					$qb->where("objet.numero LIKE :search");
-					break;
-				default:
-					$qb->where("objet.nom LIKE :search");
-					break;
-			}
-				
-			$qb->setParameter('search','%'.$searchPhrase.'%');
-		}
-		return $qb;
-	}
-
-	/**
-	 * Récupére les objets en utilisant les contraintes définies par l'utilisateur
-	 * 
-	 * @param Array $params
-	 */
-	private function getObjets(Array $params, Application $app)
-	{
-		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Objet');
-		
-		// recherche du nombre d'objet total
-		$qb = $repo->createQueryBuilder('objet')
-					->select('COUNT(objet)');
-		$qb = $this->addWhere($qb, $params['searchPhrase'], $params['searchType']);
-		$objetCount = $qb->getQuery()->getSingleScalarResult();
-
-		
-		// selection des objets
-		$qb = $repo->createQueryBuilder('objet');		
-		$qb = $this->addWhere($qb, $params['searchPhrase'], $params['searchType']); 
-		
-		// tri
-		if ( $params['sort'] ) {
-			foreach ( $params['sort'] as $sort => $order ) {
-				$qb->orderBy('objet.'.$sort, $order);
-			}
-		}
-
-		// pagination
-		if ( $params['rowCount'] != -1 ) {	
-			$qb->setFirstResult( ($params['current'] -1 )* $params['rowCount'] );
-			$qb->setMaxResults( $params['rowCount'] );
-		}
-		
-		$objets = $qb->getQuery()->getResult();
-		
-		return array(
-				'objets' => $objets,
-				'total' => $objetCount, 
-		);
-	}
-	
+{	
 	/**
 	 * Affiche la liste des objets
 	 * 
@@ -112,101 +45,50 @@ class StockObjetController
 	 */
 	public function indexAction(Request $request, Application $app)
 	{	
-		$params = array(
-				'searchPhrase' => null,
-				'searchType' => null,
-				'sort' => null,
-				'rowCount' => 20,
-				'current' => 1,
-		);
+		$repoTag = $app['orm.em']->getRepository('\LarpManager\Entities\Tag');
+		$tags = $repoTag->findAll();
 		
-		$form = $app['form.factory']->createBuilder(new SearchObjetForm(), array())
-				->add('search','submit', array('label' => 'Rechercher'))
-				->getForm();
+		$repoObjet = $app['orm.em']->getRepository('\LarpManager\Entities\Objet');
 		
-		$form->handleRequest($request);
+		$objetsWithoutTag = $repoObjet->findWithoutTag();
+		$objetsWithoutTagCount = 0;
+		if ( $objetsWithoutTag ) $objetsWithoutTagCount = $objetsWithoutTag->count(); 
 		
-		if ( $form->isValid() )
+			
+		$tagId = $request->get('tag');
+		$tag = null;
+		if ( $tagId )
 		{
-			$data = $form->getData();
-			$params['searchPhrase'] = $data["value"];
-			$params['searchType'] = $data["type"];
+			if ( $tagId == -1 ) // recherche les objets n'ayant pas de tag
+			{
+				$objets = $objetsWithoutTag;
+			}
+			else
+			{
+				$tag = $repoTag->find($tagId);
+				if ( $tag )
+				{
+					$objets = $repoObjet->findByTag($tag);
+				}
+				else
+				{
+					$objets = $repoObjet->findAll();
+				}
+			}
 		}
-		
-		$res = $this->getObjets($params, $app);
-		
-		$pagination = array(
-				'page' => 1,
-				'route' => 'stock_objet_list',
-				'pages_count' => ceil($res['total'] / $params['rowCount']),
-				'route_params' => array()
-		);
-		
-		return $app['twig']->render('stock/objet/index.twig', array(
-				'form' => $form->createView(),
-				'pagination' => $pagination,
-				'objets' => $res['objets']));
+		else {
+			$objets = $repoObjet->findAll();
+		}
+
+		return $app['twig']->render('stock/objet/list.twig', array(
+				'objets' => $objets,
+				'tags' => $tags,
+				'tag' => $tag,
+				'tagId' => $tagId,
+				'objetsWithoutTagCount' => $objetsWithoutTagCount,
+		));
 	}
 	
-	/**
-	 * Liste des tous les objets
-	 * 
-	 * @param Request $request
-	 * @param Application $app
-	 */
-	public function listAction(Request $request, Application $app)
-	{
-		$page = $request->get('page');
-		$searchPhrase = null;
-		$searchType = null;
-		
-		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Objet');
-		
-		// recherche de tout les objets en fonction de la pagination
-		$qb = $repo->createQueryBuilder('objet');
-		$qb->setFirstResult( ($page -1 )* $this->maxPerPage );
-		$qb->setMaxResults( $this->maxPerPage );
-
-		// traitement du formulaire de recherche
-		$form = $app['form.factory']->createBuilder(new SearchObjetForm(), array())
-				->add('search','submit', array('label' => 'Rechercher'))
-				->getForm();
-		
-		$form->handleRequest($request);
-		
-		if ( $form->isValid() )
-		{
-			$data = $form->getData();
-			$searchPhrase = $data["value"];
-			$searchType = $data["type"];
-			$qb = $this->addWhere($qb, $searchPhrase, $searchType);
-		}
-		
-		$objets = $qb->getQuery()->getResult();
-				
-		// recherche du nombre d'objet total
-		$qb = $repo->createQueryBuilder('objet')
-					->select('COUNT(objet)');
-					
-		if ( $searchPhrase && $searchType)
-		{
-			$qb = $this->addWhere($qb, $searchPhrase, $searchType);
-		}
-		$objetsCountTotal = $qb->getQuery()->getSingleScalarResult();
-				
-		$pagination = array(
-				'page' => $page,
-				'route' => 'stock_objet_list',
-				'pages_count' => ceil($objetsCountTotal /  $this->maxPerPage),
-				'route_params' => array()
-		);
-		
-		return $app['twig']->render('stock/objet/list.twig', array(
-				'titre' => 'Liste des objets',
-				'form' => $form->createView(),
-				'pagination' => $pagination,
-				'objets' => $objets));
-	}
 	
 	/**
 	 * Fourni la liste des objets sans proprietaire
@@ -216,57 +98,6 @@ class StockObjetController
 	 */
 	public function listWithoutProprioAction(Request $request, Application $app)
 	{
-		$page = $request->get('page');
-		$searchPhrase = null;
-		$searchType = null;
-		
-		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Objet');
-		
-		// recherche de tout les objets en fonction de la pagination
-		$qb = $repo->createQueryBuilder('objet')
-					->where('objet.proprietaire is null');
-		$qb->setFirstResult( ($page -1 )* $this->maxPerPage );
-		$qb->setMaxResults( $this->maxPerPage );
-		
-		// traitement du formulaire de recherche
-		$form = $app['form.factory']->createBuilder(new SearchObjetForm(), array())
-		->add('search','submit', array('label' => 'Rechercher'))
-		->getForm();
-		
-		$form->handleRequest($request);
-		
-		if ( $form->isValid() )
-		{
-			$data = $form->getData();
-			$searchPhrase = $data["value"];
-			$searchType = $data["type"];
-			$qb = $this->addWhere($qb, $searchPhrase, $searchType);
-		}
-		
-		$objets = $qb->getQuery()->getResult();
-				
-		// recherche du nombre d'objet total
-		$qb = $repo->createQueryBuilder('objet')
-					->where('objet.proprietaire is null')
-					->select('COUNT(objet)');
-		if ( $searchPhrase && $searchType)
-		{
-			$qb = $this->addWhere($qb, $searchPhrase, $searchType);
-		}
-		$objetsCountTotal = $qb->getQuery()->getSingleScalarResult();
-
-		$pagination = array(
-				'page' => $page,
-				'route' => 'stock_objet_list_without_proprio',
-				'pages_count' => ceil($objetsCountTotal /  $this->maxPerPage),
-				'route_params' => array()
-		);
-		
-		return $app['twig']->render('stock/objet/list.twig', array(
-				'objets' => $objets, 
-				'form' => $form->createView(),
-				'pagination' => $pagination,
-				'titre' => "Liste des objets sans propriétaires"));
 	}
 	
 	/**
@@ -276,59 +107,7 @@ class StockObjetController
 	 * @param Application $app
 	 */
 	public function listWithoutResponsableAction(Request $request, Application $app)
-	{
-		$page = $request->get('page');
-		$searchPhrase = null;
-		$searchType = null;
-		
-		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Objet');
-		
-		$qb = $repo->createQueryBuilder('objet')
-					->where('objet.userRelatedByResponsableId is null');
-		$qb->setFirstResult( ($page -1 )* $this->maxPerPage );
-		$qb->setMaxResults( $this->maxPerPage );
-		
-		// traitement du formulaire de recherche
-		$form = $app['form.factory']->createBuilder(new SearchObjetForm(), array())
-				->add('search','submit', array('label' => 'Rechercher'))
-				->getForm();
-		
-		$form->handleRequest($request);
-		
-		if ( $form->isValid() )
-		{
-			$data = $form->getData();
-			$searchPhrase = $data["value"];
-			$searchType = $data["type"];
-			$qb = $this->addWhere($qb, $searchPhrase, $searchType);
-		}
-		
-		$objets = $qb->getQuery()->getResult();
-		
-		// recherche du nombre d'objet total
-		$qb = $repo->createQueryBuilder('objet')
-					->where('objet.userRelatedByResponsableId is null')
-					->select('COUNT(objet)');
-				
-		if ( $searchPhrase && $searchType)
-		{
-			$qb = $this->addWhere($qb, $searchPhrase, $searchType);
-		}
-		$objetsCountTotal = $qb->getQuery()->getSingleScalarResult();
-		
-		$pagination = array(
-				'page' => $page,
-				'route' => 'stock_objet_list_without_responsable',
-				'pages_count' => ceil($objetsCountTotal /  $this->maxPerPage),
-				'route_params' => array()
-		);
-		
-		return $app['twig']->render('stock/objet/list.twig', array(
-				'objets' => $objets,
-				'form' => $form->createView(),
-				'pagination' => $pagination,
-				'titre' => "Liste des objets sans responsables"));
-	
+	{	
 	}
 	
 	/**
@@ -339,58 +118,6 @@ class StockObjetController
 	 */
 	public function listWithoutRangementAction(Request $request, Application $app)
 	{
-		$page = $request->get('page');
-		$searchPhrase = null;
-		$searchType = null;
-		
-		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Objet');
-		
-		$qb = $repo->createQueryBuilder('objet')
-					->where('objet.rangement is null');
-		$qb->setFirstResult( ($page -1 )* $this->maxPerPage );
-		$qb->setMaxResults( $this->maxPerPage );
-		
-		// traitement du formulaire de recherche
-		$form = $app['form.factory']->createBuilder(new SearchObjetForm(), array())
-				->add('search','submit', array('label' => 'Rechercher'))
-				->getForm();
-		
-		$form->handleRequest($request);
-		
-		if ( $form->isValid() )
-		{
-			$data = $form->getData();
-			$searchPhrase = $data["value"];
-			$searchType = $data["type"];
-			$qb = $this->addWhere($qb, $searchPhrase, $searchType);
-		}
-		
-		$objets = $qb->getQuery()->getResult();
-		
-		// recherche du nombre d'objet total
-		$qb = $repo->createQueryBuilder('objet')
-					->where('objet.rangement is null')
-					->select('COUNT(objet)');
-		
-		if ( $searchPhrase && $searchType) 
-		{
-			$qb = $this->addWhere($qb, $searchPhrase, $searchType);
-		}
-		
-		$objetsCountTotal = $qb->getQuery()->getSingleScalarResult();
-		
-		$pagination = array(
-				'page' => $page,
-				'route' => 'stock_objet_list_without_rangement',
-				'pages_count' => ceil($objetsCountTotal /  $this->maxPerPage),
-				'route_params' => array()
-		);
-		
-		return $app['twig']->render('stock/objet/list.twig', array(
-				'objets' => $objets,
-				'form' => $form->createView(),
-				'pagination' => $pagination,
-				'titre' => "Liste des objets sans rangements"));
 	}
 
 	/**
@@ -399,13 +126,8 @@ class StockObjetController
 	 * @param Request $request
 	 * @param Application $app
 	 */
-	public function detailAction(Request $request, Application $app)
-	{
-		$id = $request->get('index');
-			
-		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Objet');
-		$objet = $repo->find($id);
-	
+	public function detailAction(Request $request, Application $app, Objet $objet)
+	{	
 		return $app['twig']->render('stock/objet/detail.twig', array('objet' => $objet));
 	}
 	
@@ -415,13 +137,8 @@ class StockObjetController
 	 * @param Request $request
 	 * @param Application $app
 	 */
-	public function photoAction(Request $request, Application $app)
+	public function photoAction(Request $request, Application $app, Objet $objet)
 	{
-		$id = $request->get('index');
-			
-		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Objet');
-		$objet = $repo->find($id);
-		
 		$photo = $objet->getPhoto();
 		
 		if ( ! $photo ) {
@@ -442,37 +159,6 @@ class StockObjetController
 	}
 	
 	/**
-	 * Transforme la photo du format SQL à un fichier 
-	 * 
-	 * @param Request $request
-	 * @param Application $app
-	 */
-	public function blobToFileAction(Request $request, Application $app)
-	{			
-		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Objet');
-		$objets = $repo->findAll();
-		
-		foreach ( $objets as $objet)
-		{
-			$photo = $objet->getPhoto();
-			
-			if ( ! $photo ) {
-				continue;
-			}
-			if ( $photo->getFilename() )
-			{
-				continue;
-			}
-			
-			$photo->blobToFile($app);
-			
-			$app['orm.em']->persist($photo);
-		}
-		$app['orm.em']->flush();
-		return $app->redirect($app['url_generator']->generate('stock_objet_index'),301);
-	}
-	
-	/**
 	 * Ajoute un objet
 	 * 
 	 * @param Request $request
@@ -488,7 +174,7 @@ class StockObjetController
 		$etat = $repo->find(1);
 		if ( $etat ) $objet->setEtat($etat);
 		
-		$form = $app['form.factory']->createBuilder(new ObjetType(), $objet)
+		$form = $app['form.factory']->createBuilder(new ObjetForm(), $objet)
 				->add('save','submit', array('label' => 'Sauvegarder et fermer'))
 				->add('save_continue','submit',array('label' => 'Sauvegarder et nouveau'))
 				->add('save_clone','submit',array('label' => 'Sauvegarder et cloner'))
@@ -546,16 +232,17 @@ class StockObjetController
 	 * @param Request $request
 	 * @param Application $app
 	 */
-	public function cloneAction(Request $request, Application $app)
+	public function cloneAction(Request $request, Application $app, Objet $objet)
 	{
-		$id = $request->get('index');
-			
-		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Objet');
-		$objet = $repo->find($id);
-		
 		$newObjet = clone($objet);
 		
-		$form = $app['form.factory']->createBuilder(new ObjetType(), $newObjet)
+		$numero = $objet->getNumero();
+		if ( $numero)
+		{
+			$newObjet->setNumero($numero + 1 );
+		}
+		
+		$form = $app['form.factory']->createBuilder(new ObjetForm(), $newObjet)
 			->add('save','submit', array('label' => 'Sauvegarder et fermer'))
 			->add('save_clone','submit',array('label' => 'Sauvegarder et cloner'))
 			->getForm();
@@ -601,15 +288,9 @@ class StockObjetController
 	 * @param Request $request
 	 * @param Application $app
 	 */
-	public function updateAction(Request $request, Application $app)
+	public function updateAction(Request $request, Application $app, Objet $objet)
 	{
-		$id = $request->get('index');
-			
-		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Objet');
-		$objet = $repo->find($id);
-		
-		
-		$form = $form = $app['form.factory']->createBuilder(new ObjetType(), $objet)
+		$form = $form = $app['form.factory']->createBuilder(new ObjetForm(), $objet)
 				->add('update','submit', array('label' => "Sauvegarder et fermer"))
 				->add('delete','submit', array('label' => "Supprimer"))
 				->getForm();
@@ -650,6 +331,64 @@ class StockObjetController
 		}
 	
 		return $app['twig']->render('stock/objet/update.twig', array('objet' => $objet, 'form' => $form->createView()));
+	}
+	
+	/**
+	 * Suppression d'un objet
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Objet $objet
+	 */
+	public function deleteAction(Request $request, Application $app, Objet $objet)
+	{
+		$form = $app['form.factory']->createBuilder(new ObjetDeleteForm(), $objet)->getForm();
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
+		{
+			$objet = $form->getData();
+			
+			$app['orm.em']->remove($objet);
+			$app['orm.em']->flush();
+			
+			$app['session']->getFlashBag()->add('success', 'L\'objet a été supprimé');
+			return $app->redirect($app['url_generator']->generate('stock_objet_index'));
+		}
+		
+		return $app['twig']->render('stock/objet/delete.twig', array('objet' => $objet, 'form' => $form->createView()));
+	}
+	
+	/**
+	 * Modification des tags d'un objet
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Objet $objet
+	 */
+	public function tagAction(Request $request, Application $app, Objet $objet)
+	{
+		$form = $app['form.factory']->createBuilder(new ObjetTagForm(), $objet)->getForm();
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
+		{
+			$objet = $form->getData();
+			
+			$newTags = $form['news']->getData();
+			foreach ( $newTags as $tag )	
+			{
+				$objet->addTag($tag);
+				$app['orm.em']->persist($tag);
+			}
+			$app['orm.em']->persist($objet);
+			$app['orm.em']->flush();
+				
+			$app['session']->getFlashBag()->add('success', 'les tags ont été mis à jour');
+			return $app->redirect($app['url_generator']->generate('stock_objet_index'));
+		}
+		
+		return $app['twig']->render('stock/objet/tag.twig', array('objet' => $objet, 'form' => $form->createView()));
 	}
 	
 	/**

@@ -33,7 +33,7 @@ use JsonSerializable;
 /**
  * LarpManager\Entities\Objet
  *
- * @Entity()
+ * @Entity(repositoryClass="LarpManager\Repository\ObjetRepository")
  */
 class Objet extends BaseObjet
 {
@@ -55,7 +55,7 @@ class Objet extends BaseObjet
 			$this->objetCarac = $cloneObjetCarac;
 			$cloneObjetCarac->setObjet($this);
 		}
-		
+				
 		$photo = $this->getPhoto();
 		if ( $photo )
 		{

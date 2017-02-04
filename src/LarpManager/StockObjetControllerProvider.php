@@ -52,15 +52,13 @@ class StockObjetControllerProvider implements ControllerProviderInterface
 	{
 		$controllers = $app['controllers_factory'];
 
+		/**
+		 * Liste des objets
+		 */
 		$controllers->match('/','LarpManager\Controllers\StockObjetController::indexAction')
 			->bind("stock_objet_index")
 			->method('GET|POST');
-		
-		$controllers->match('/list/{page}','LarpManager\Controllers\StockObjetController::listAction')
-			->assert('page', '\d+')
-			->bind("stock_objet_list")
-			->method('GET|POST');
-		
+				
 		$controllers->match('/listWithoutProprio/{page}','LarpManager\Controllers\StockObjetController::listWithoutProprioAction')
 			->assert('page', '\d+')
 			->bind("stock_objet_list_without_proprio")
@@ -80,32 +78,65 @@ class StockObjetControllerProvider implements ControllerProviderInterface
 			->bind("stock_objet_export")
 			->method('GET');
 		
-		$controllers->match('/correction','LarpManager\Controllers\StockObjetController::blobToFileAction')
-			->bind("stock_objet_correction")
-			->method('GET');
-		
-		$controllers->match('/{index}','LarpManager\Controllers\StockObjetController::detailAction')
-			->assert('index', '\d+')
+		/**
+		 * Détail d'un objet
+		 */
+		$controllers->match('/{objet}','LarpManager\Controllers\StockObjetController::detailAction')
+			->assert('objet', '\d+')
+			->convert('objet', 'converter.objet:convert')
 			->bind("stock_objet_detail")
 			->method('GET');
 		
-		$controllers->match('/{index}/photo','LarpManager\Controllers\StockObjetController::photoAction')
-			->assert('index', '\d+')
+		/**
+		 * Récupérer la photo d'un objet
+		 */
+		$controllers->match('/{objet}/photo','LarpManager\Controllers\StockObjetController::photoAction')
+			->assert('objet', '\d+')
+			->convert('objet', 'converter.objet:convert')
 			->bind("stock_objet_photo")
 			->method('GET');
 		
+		/**
+		 * Ajout d'un objet
+		 */
 		$controllers->match('/add','LarpManager\Controllers\StockObjetController::addAction')
 			->bind("stock_objet_add")
 			->method('GET|POST');
 		
-		$controllers->match('/{index}/update','LarpManager\Controllers\StockObjetController::updateAction')
-			->assert('index', '\d+')
+		/**
+		 * Mise à jour d'un objet
+		 */
+		$controllers->match('/{objet}/update','LarpManager\Controllers\StockObjetController::updateAction')
+			->assert('objet', '\d+')
+			->convert('objet', 'converter.objet:convert')
 			->bind("stock_objet_update")
 			->method('GET|POST');
 		
-		$controllers->match('/{index}/clone','LarpManager\Controllers\StockObjetController::cloneAction')
-			->assert('index', '\d+')
+		/**
+		 * Clonage d'un objet
+		 */
+		$controllers->match('/{objet}/clone','LarpManager\Controllers\StockObjetController::cloneAction')
+			->assert('objet', '\d+')
+			->convert('objet', 'converter.objet:convert')
 			->bind("stock_objet_clone")
+			->method('GET|POST');
+		
+		/**
+		 * Suppression d'un objet
+		 */
+		$controllers->match('/{objet}/delete','LarpManager\Controllers\StockObjetController::deleteAction')
+			->assert('objet', '\d+')
+			->convert('objet', 'converter.objet:convert')
+			->bind("stock_objet_delete")
+			->method('GET|POST');
+		
+		/**
+		 * Gestion des tags d'un objet
+		 */
+		$controllers->match('/{objet}/tag','LarpManager\Controllers\StockObjetController::tagAction')
+			->assert('objet', '\d+')
+			->convert('objet', 'converter.objet:convert')
+			->bind("stock_objet_tag")
 			->method('GET|POST');
 		
 		return $controllers;

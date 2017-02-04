@@ -36,4 +36,8 @@ use LarpManager\Entities\BaseTag;
  */
 class Tag extends BaseTag
 {
+	public function __toString()
+	{
+		return $this->getNom();
+	}
 }

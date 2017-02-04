@@ -24,20 +24,20 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-use LarpManager\Form\Type\EvenementType;
+use LarpManager\Form\Type\TagType;
 
 /**
- * LarpManager\Form\Type\IntrigueHasEvenementType
+ * LarpManager\Form\Type\ObjetTagType
  *
  * @author kevin
  *
  */
-class IntrigueHasEvenementType extends AbstractType
+class ObjetTagType extends AbstractType
 {
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
-		$builder->add('evenement',EvenementType::class, array(
-					'label' => 'Ajouter un événement concerné par cette intrigue',
+		$builder->add('tag',TagType::class, array(
+					'label' => 'Ajouter un tag',
 					'required' => true,
 				));
 	}
@@ -45,12 +45,12 @@ class IntrigueHasEvenementType extends AbstractType
 	public function setDefaultOptions(OptionsResolverInterface $resolver)
 	{
 		$resolver->setDefaults(array(
-				'data_class' => '\LarpManager\Entities\IntrigueHasEvenement',
+				'data_class' => 'LarpManager\Entities\ObjetTag',
 		));
 	}
 
 	public function getName()
 	{
-		return 'intrigueHasEvenement';
+		return 'ObjetTag';
 	}
 }

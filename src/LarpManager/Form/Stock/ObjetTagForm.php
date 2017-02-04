@@ -17,40 +17,54 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
-namespace LarpManager\Form\Type;
+
+namespace LarpManager\Form\Stock;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-use LarpManager\Form\Type\EvenementType;
+use LarpManager\Form\Type\TagType;
 
 /**
- * LarpManager\Form\Type\IntrigueHasEvenementType
+ * LarpManager\Form\Type\ObjetTagForm
  *
  * @author kevin
  *
  */
-class IntrigueHasEvenementType extends AbstractType
+class ObjetTagForm extends AbstractType
 {
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
-		$builder->add('evenement',EvenementType::class, array(
-					'label' => 'Ajouter un événement concerné par cette intrigue',
-					'required' => true,
-				));
+		$builder->add('tags', 'entity',  array(
+					'label' => 'Choisissez les tags appliqués à cet objet',
+					'required' => false,
+					'multiple' => true,
+					'property' => 'nom',
+					'expanded' => true,
+					'class' => 'LarpManager\Entities\Tag'
+				))
+				->add('news', 'collection', array(
+					'label' => 'Ou créez-en de nouveaux',
+					'allow_add' => true,
+					'allow_delete' => true,
+					'by_reference' => false,
+					'type' => new TagType(),
+					'mapped' => false,
+				))
+				->add('valider','submit', array('label' => 'valider'));	
 	}
-
+	
 	public function setDefaultOptions(OptionsResolverInterface $resolver)
 	{
 		$resolver->setDefaults(array(
-				'data_class' => '\LarpManager\Entities\IntrigueHasEvenement',
+				'class' => 'LarpManager\Entities\Objet',
+				'cascade_validation' => true,
 		));
 	}
-
+	
 	public function getName()
 	{
-		return 'intrigueHasEvenement';
+		return 'objetTag';
 	}
 }

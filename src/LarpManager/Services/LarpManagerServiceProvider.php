@@ -57,6 +57,7 @@ use LarpManager\Services\Converter\MembreConverter;
 use LarpManager\Services\Converter\MessageConverter;
 use LarpManager\Services\Converter\MonnaieConverter;
 use LarpManager\Services\Converter\NotificationConverter;
+use LarpManager\Services\Converter\ObjetConverter;
 use LarpManager\Services\Converter\ParticipantConverter;
 use LarpManager\Services\Converter\PersonnageBackgroundConverter;
 use LarpManager\Services\Converter\PersonnageConverter;
@@ -238,7 +239,7 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 			return new MessageConverter($app['orm.em']);
 		});
 		
-			// message converter
+		// message converter
 		$app['converter.monnaie'] = $app->share(function($app) {
 			return new MonnaieConverter($app['orm.em']);
 		});
@@ -271,6 +272,11 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 		// domaine converter
 		$app['converter.domaine'] = $app->share(function($app) {
 			return new DomaineConverter($app['orm.em']);
+		});
+		
+		// objet converter
+		$app['converter.objet'] = $app->share(function($app) {
+			return new ObjetConverter($app['orm.em']);
 		});
 		
 		// sortilège converter

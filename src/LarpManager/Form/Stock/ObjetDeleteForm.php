@@ -17,40 +17,36 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
-namespace LarpManager\Form\Type;
+
+namespace LarpManager\Form\Stock;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-use LarpManager\Form\Type\EvenementType;
-
 /**
- * LarpManager\Form\Type\IntrigueHasEvenementType
+ * LarpManager\Form\Type\ObjetDelete
  *
  * @author kevin
  *
  */
-class IntrigueHasEvenementType extends AbstractType
+class ObjetDeleteForm extends AbstractType
 {
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
-		$builder->add('evenement',EvenementType::class, array(
-					'label' => 'Ajouter un événement concerné par cette intrigue',
-					'required' => true,
-				));
+		$builder->add('delete','submit', array('label' => "Supprimer"));
 	}
-
+	
 	public function setDefaultOptions(OptionsResolverInterface $resolver)
 	{
 		$resolver->setDefaults(array(
-				'data_class' => '\LarpManager\Entities\IntrigueHasEvenement',
+				'class' => 'LarpManager\Entities\Objet',
+				'cascade_validation' => true,
 		));
 	}
-
+	
 	public function getName()
 	{
-		return 'intrigueHasEvenement';
+		return 'objetDelete';
 	}
 }

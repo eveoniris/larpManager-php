@@ -14,9 +14,9 @@
 			{{ objet.nom }} : {{ objet.description }}.
 			
 			<div class="pull-right btn-group" role="group" aria-label="...">
-				<a href="{{ path('stock_objet_detail', {index: objet.id}) }}" class="btn btn-primary" role="button">Voir</a>
-			    <a href="{{ path('stock_objet_update', {index: objet.id}) }}" class="btn btn-default" role="button">Modifier</a>
-			    <a href="{{ path('stock_objet_clone', {index: objet.id}) }}" class="btn btn-default" role="button">Cloner</a>
+				<a href="{{ path('stock_objet_detail', {'objet': objet.id}) }}" class="btn btn-primary" role="button">Voir</a>
+			    <a href="{{ path('stock_objet_update', {'objet': objet.id}) }}" class="btn btn-default" role="button">Modifier</a>
+			    <a href="{{ path('stock_objet_clone', {'objet': objet.id}) }}" class="btn btn-default" role="button">Cloner</a>
 			</div>
 		</p>
 		<p class="list-group-item-text">

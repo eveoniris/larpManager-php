@@ -1,6 +1,6 @@
 {% extends "layout.twig" %}
 
-{% block title %}Economie{% endblock title %}
+{% block title %}Objets{% endblock title %}
 
 {% block style %}
 <style>
@@ -45,7 +45,7 @@ a {
 		    		<li class="pin">
 		    			<ul class="list-group">
 		    				<li class="list-group-item">
-				  				<img src="{{ path('stock_objet_photo',{index: objet.id}) }}" alt="{{ objet.photo.name }}" />
+				  				<img src="{{ path('stock_objet_photo',{'objet': objet.id}) }}" alt="{{ objet.photo.name }}" />
 				  			</li>
 				  			<li class="list-group-item">
 								<strong>{{ objet.nom }}</strong>
