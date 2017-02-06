@@ -14,8 +14,14 @@ use LarpManager\Entities\BaseItem;
 /**
  * LarpManager\Entities\Item
  *
- * @Entity()
+ * @Entity(repositoryClass="LarpManager\Repository\ItemRepository")
  */
 class Item extends BaseItem
 {
+	public function __construct()
+	{
+		$this->setDateCreation(new \Datetime('NOW'));
+		$this->setDateUpdate(new \Datetime('NOW'));
+		parent::__construct();
+	}
 }

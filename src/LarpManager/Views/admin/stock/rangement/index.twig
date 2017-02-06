@@ -5,28 +5,28 @@
 <div class="well well-sm">
 
 	<div class="page-header">
-		<h1>Liste des tags</h1>
+		<h1>Liste des rangements</h1>
 	</div>
 	
 	<div class="panel panel-info">
 		<div class="panel-heading">
 			<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
-			Qu'est-ce qu'un tag ?
+			Qu'est-ce qu'un rangement ?
 		</div>
-		<div class="panel-body">Les tags permettent de regrouper les objets afin d'avoir plus de faciliter à parcourir le stock d'objet. Voici quelques exemples de tags : Armes, décors, tentes, etc ...</div>
+		<div class="panel-body">Un rangement correspond à une étagère, un carton, un emplacement. Un rangement appartient à une localisation.</div>
 	</div>
 	
-	{% if tags|length == 0 %}
+	{% if rangements|length == 0 %}
 		<div class="panel panel-warning">
 			<div class="panel-heading">
 				<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
 				Attention !
 			</div>
-			<div class="panel-body">Aucun tag n'est défini ! Vous devez définir au moins un tag.</div>
+			<div class="panel-body">Aucun rangement n'est défini ! Vous devez définir au moins un rangement.</div>
 		</div>
 	{% endif %}
-
-	{{ include("stock/tag/list.twig", {'tags' : tags}) }}
 	
-</div>
+	{{ include("admin/stock/rangement/list.twig", {'rangements' : rangements}) }}
+
+</div>	
 {% endblock %}

@@ -5,16 +5,16 @@
 <div class="well well-sm">
 
 	<div class="page-header">
-		<h1>Modification d'un rangement</h1>
+		<h1>Ajout d'un objet</h1>
 	</div>
 
 	<div class="container-fluid">
 		<div class="row">
 			<div class="col-xs-12 col-md-8">
-				{{ include("stock/rangement/form.twig",{'action': path('stock_rangement_update', {index:rangement.id} ), 'form' : form}) }}
+				{{ include("admin/stock/objet/fragment/form.twig",{'action': path('stock_objet_add'), 'form' : form}) }}
 			</div>
 		</div>
 	</div>
 
 </div>	
-{%  endblock %}
+{% endblock content %}

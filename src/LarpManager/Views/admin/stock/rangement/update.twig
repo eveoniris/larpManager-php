@@ -5,17 +5,16 @@
 <div class="well well-sm">
 
 	<div class="page-header">
-		<h1>Ajout d'une localisation</h1>
+		<h1>Modification d'un rangement</h1>
 	</div>
 
 	<div class="container-fluid">
 		<div class="row">
 			<div class="col-xs-12 col-md-8">
-				{{ include("stock/localisation/form.twig",{'action': path('stock_localisation_add'), 'form' : form}) }}
+				{{ include("admin/stock/rangement/form.twig",{'action': path('stock_rangement_update', {index:rangement.id} ), 'form' : form}) }}
 			</div>
 		</div>
 	</div>
 
-</div>
-
-{% endblock %}
+</div>	
+{%  endblock %}

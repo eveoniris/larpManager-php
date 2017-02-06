@@ -3,16 +3,18 @@
 {% block content %}
 
 <div class="well well-sm">
+
 	<div class="page-header">
-		<h1>Modification d'un tag</h1>
+		<h1>Modification d'un état</h1>
 	</div>
 	
 	<div class="container-fluid">
 		<div class="row">
 			<div class="col-xs-12 col-md-8">
-				{{ include("stock/tag/form.twig",{'action': path('stock_tag_update', {index:tag.id} ), 'form' : form}) }}
+				{{ include("admin/stock/etat/form.twig",{'action': path('stock_etat_update', {index:etat.id} ), 'form' : form}) }}
 			</div>
 		</div>
 	</div>
-</div>
+
+</div>	
 {%  endblock %}

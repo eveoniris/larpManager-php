@@ -90,10 +90,10 @@ a {
     								</button>
     								<ul class="dropdown-menu">
     									<li><a href="{{ path('stock_objet_tag', {'objet': objet.id}) }}">Modifier les tags</a></li>
+    									<li><a href="{{ path('objet.new', {'objet': objet.id}) }}">Creer un objet de jeu</a></li>
     									<li><a href="{{ path('stock_objet_update', {'objet': objet.id}) }}">Modifier</a></li>
 					  					<li><a href="{{ path('stock_objet_clone', {'objet': objet.id}) }}">Cloner</a></li>
 					  					<li><a href="{{ path('stock_objet_delete', {'objet': objet.id}) }}">Supprimer</a></li>
-					  					<li><a href="#">Creer un objet de jeu</a></li>
 					  				</ul>
 					  			</div>
 				  			</li>

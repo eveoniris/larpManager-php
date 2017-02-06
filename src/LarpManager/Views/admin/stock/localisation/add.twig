@@ -5,16 +5,17 @@
 <div class="well well-sm">
 
 	<div class="page-header">
-		<h1>Ajout d'un proprietaire</h1>
+		<h1>Ajout d'une localisation</h1>
 	</div>
 
 	<div class="container-fluid">
 		<div class="row">
 			<div class="col-xs-12 col-md-8">
-				{{ include("stock/proprietaire/form.twig",{'action': path('stock_proprietaire_add'), 'form' : form}) }}
+				{{ include("admin/stock/localisation/form.twig",{'action': path('stock_localisation_add'), 'form' : form}) }}
 			</div>
 		</div>
 	</div>
-			
+
 </div>
+
 {% endblock %}

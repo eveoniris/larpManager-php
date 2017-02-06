@@ -25,6 +25,10 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 use Silex\Application;
 
+use LarpManager\Entities\Objet;
+use LarpManager\Entities\Item;
+use LarpManager\Form\Item\ItemForm;
+
 /**
  * LarpManager\Controllers\ObjetController
  *
@@ -41,11 +45,71 @@ class ObjetController
 	 */
 	public function indexAction(Request $request, Application $app)
 	{
-		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Objet');
-		$objets = $repo->findAll();
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Item');
+		$items = $repo->findAll();
 		
 		return $app['twig']->render('admin/objet/index.twig', array(
-				'objets' => $objets,
+				'items' => $items,
 		));
 	}
+	
+	/**
+	 * Création d'un nouvel objet de jeu
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Objet $objet
+	 */
+	public function newAction(Request $request, Application $app, Objet $objet)
+	{
+		$item = new Item();
+		$item->setObjet($objet);
+		
+		$form = $app['form.factory']->createBuilder(new ItemForm(), $item)->getForm();
+		
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
+		{
+			$item = $form->getData();
+			
+			// si le numéro est vide, générer un numéro en suivant l'ordre
+			$numero = $item->getNumero();
+			if ( ! $numero )
+			{
+				$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Item');
+				$numero = $repo->findNextNumero();
+				if ( ! $numero ) $numero = 0;
+				$item->setNumero($numero);
+			}
+			
+			// en fonction de l'identification choisie, choisir un numéro d'identification
+			$identification = $item->getIdentification();
+			switch ($identification){
+				case 1:
+					$identification = mt_rand(1,10);
+					$item->setIdentification($identification);
+				case 11:
+					$identification = mt_rand(11,20);
+					$item->setIdentification($identification);
+				case 81:
+					$identification = mt_rand(81,99);
+					$item->setIdentification($identification);
+			}
+
+			$app['orm.em']->persist($item);	
+			$app['orm.em']->flush();
+			
+			$app['session']->getFlashBag()->add('success', 'L\'objet de jeu a été créé');
+			return $app->redirect($app['url_generator']->generate('objet'),301);
+		}
+		
+		return $app['twig']->render('admin/objet/new.twig', array(
+			'objet' => $objet,
+			'item' => $item,
+			'form' => $form->createView(),
+		));
+	}
+	
+	
 }

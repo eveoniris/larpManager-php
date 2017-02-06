@@ -52,7 +52,7 @@ class StockObjetController
 		
 		$objetsWithoutTag = $repoObjet->findWithoutTag();
 		$objetsWithoutTagCount = 0;
-		if ( $objetsWithoutTag ) $objetsWithoutTagCount = $objetsWithoutTag->count(); 
+		if ( $objetsWithoutTag ) $objetsWithoutTagCount = count($objetsWithoutTag); 
 		
 			
 		$tagId = $request->get('tag');
@@ -80,7 +80,7 @@ class StockObjetController
 			$objets = $repoObjet->findAll();
 		}
 
-		return $app['twig']->render('stock/objet/list.twig', array(
+		return $app['twig']->render('admin/stock/objet/list.twig', array(
 				'objets' => $objets,
 				'tags' => $tags,
 				'tag' => $tag,
@@ -128,7 +128,7 @@ class StockObjetController
 	 */
 	public function detailAction(Request $request, Application $app, Objet $objet)
 	{	
-		return $app['twig']->render('stock/objet/detail.twig', array('objet' => $objet));
+		return $app['twig']->render('admin/stock/objet/detail.twig', array('objet' => $objet));
 	}
 	
 	/**
@@ -139,6 +139,7 @@ class StockObjetController
 	 */
 	public function photoAction(Request $request, Application $app, Objet $objet)
 	{
+		$miniature = $request->get('miniature');
 		$photo = $objet->getPhoto();
 		
 		if ( ! $photo ) {
@@ -148,10 +149,24 @@ class StockObjetController
 		$file = $photo->getFilename();
 		$filename = __DIR__.'/../../../private/stock/'.$file;
 		
-		$stream = function () use ($filename) {
-			readfile($filename);
-		};
-		
+		if ( $miniature ) {
+			$image = $app['imagine']->open($filename);
+			
+			$stream = function () use ($image) {
+				$size = new \Imagine\Image\Box(200, 200);
+				$thumbnail = $image->thumbnail($size);			
+				ob_start(null,0, PHP_OUTPUT_HANDLER_FLUSHABLE|PHP_OUTPUT_HANDLER_REMOVABLE);
+				echo $thumbnail->get('jpeg');
+				ob_end_flush();
+			};
+		}
+		else
+		{
+			$stream = function () use ($filename) {
+				readfile($filename);
+			};
+		}
+
 		return $app->stream($stream, 200, array(
 				'Content-Type' => 'image/jpeg',
 				'cache-control' => 'private'
@@ -223,7 +238,7 @@ class StockObjetController
 			
 		}
 	
-		return $app['twig']->render('stock/objet/add.twig', array('form' => $form->createView()));
+		return $app['twig']->render('admin/stock/objet/add.twig', array('form' => $form->createView()));
 	}
 	
 	/**
@@ -279,7 +294,7 @@ class StockObjetController
 			}
 		}
 		
-		return $app['twig']->render('stock/objet/clone.twig', array('objet' => $newObjet, 'form' => $form->createView()));
+		return $app['twig']->render('admin/stock/objet/clone.twig', array('objet' => $newObjet, 'form' => $form->createView()));
 	}
 	
 	/**
@@ -330,7 +345,7 @@ class StockObjetController
 			return $app->redirect($app['url_generator']->generate('stock_homepage'));
 		}
 	
-		return $app['twig']->render('stock/objet/update.twig', array('objet' => $objet, 'form' => $form->createView()));
+		return $app['twig']->render('admin/stock/objet/update.twig', array('objet' => $objet, 'form' => $form->createView()));
 	}
 	
 	/**
@@ -356,7 +371,7 @@ class StockObjetController
 			return $app->redirect($app['url_generator']->generate('stock_objet_index'));
 		}
 		
-		return $app['twig']->render('stock/objet/delete.twig', array('objet' => $objet, 'form' => $form->createView()));
+		return $app['twig']->render('admin/stock/objet/delete.twig', array('objet' => $objet, 'form' => $form->createView()));
 	}
 	
 	/**
@@ -388,7 +403,7 @@ class StockObjetController
 			return $app->redirect($app['url_generator']->generate('stock_objet_index'));
 		}
 		
-		return $app['twig']->render('stock/objet/tag.twig', array('objet' => $objet, 'form' => $form->createView()));
+		return $app['twig']->render('admin/stock/objet/tag.twig', array('objet' => $objet, 'form' => $form->createView()));
 	}
 	
 	/**

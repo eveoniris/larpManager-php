@@ -1,0 +1,42 @@
+{% extends "layout.twig"  %}
+
+{% block title %}Création d'un objet de jeu{% endblock %}
+
+{% block content %}
+    
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path('user.admin.list') }}">Liste des objet de jeu</a></li>
+		<li class="active">Créer un objet de jeu</li>
+	</ol>
+	
+	<div class="well well-sm">
+		<div class="row">
+			<div class="col-md-6">
+				<form action="{{ path('objet.new', {'objet': objet.id}) }}" method="POST" {{ form_enctype(form) }} novalidate>
+					{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+					{{ form(form) }}
+				</form>
+			</div>
+			<div class="col-md-6">
+			
+				{% if objet.photo %}
+        			<img src="{{ path('stock_objet_photo',{'objet': objet.id}) }}" alt="{{ objet.photo.name }}" class="img-responsive" />
+        		{% endif %}
+				<ul>
+					<li><b>Nom :</b> {{ objet.nom }}</li>
+					<li><b>Code :</b> {{ objet.code }}</li>
+					<li><b>Description :</b> {{ objet.description }}</li>
+					<li><b>Date de création :</b> {{ objet.creationDate|date('Y-m-d H:i:s') }}</li>
+				</ul>
+				<ul>
+					<li><b>Rangement :</b> {% if objet.rangement %}{{ objet.rangement.adresse }}{%  endif %}</li>
+					<li><b>Etat :</b> {% if objet.etat %}{{ objet.etat.label }}{%  endif %}</li>
+					<li><b>Proprietaire :</b> {% if objet.proprietaire %}{{ objet.proprietaire.nom }}{%  endif %}</li>
+					<li><b>Responsable :</b> {% if objet.responsable %}{{ objet.responsable.username }}{%  endif %}</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	
+{% endblock content %}

@@ -46,6 +46,12 @@ class ObjetControllerProvider implements ControllerProviderInterface
 		$controllers->match('/','LarpManager\Controllers\ObjetController::indexAction')
 			->bind("objet")
 			->method('GET');
+		
+		$controllers->match('/new/{objet}','LarpManager\Controllers\ObjetController::newAction')
+			->assert('objet', '\d+')
+			->convert('objet', 'converter.objet:convert')
+			->bind("objet.new")
+			->method('GET|POST');
 					
 		return $controllers;
 	}
