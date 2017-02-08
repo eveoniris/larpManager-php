@@ -1,0 +1,94 @@
+{% extends "layout.twig"  %}
+
+
+{% block style %}
+<style>
+.item
+{
+	color: #000;
+	font-weight: bold;
+	width : 200px;
+	padding : 5px 5px 5px 5px; 
+}
+
+.item-bleu
+{
+	background-color: DodgerBlue;
+}
+.item-orange
+{
+	background-color: orange;
+}
+
+.item-header
+{
+}
+.item-text
+{
+	text-align: center;
+}
+</style>
+{% endblock style %}
+
+{% block title %}Modification d'un objet de jeu{% endblock %}
+
+{% block content %}
+    
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path('user.admin.list') }}">Liste des objet de jeu</a></li>
+		<li class="active">{{ item.label }}</li>
+	</ol>
+	
+	<div class="well well-sm">
+	
+		<div class="page-header">
+			<h3>
+				Détail de {{ item.label }}
+				<div class="pull-right">
+					<a href="{{ path('item.update', {'item': item.id}) }}" class="btn btn-primary" role="button">Modifier</a>
+					<a href="{{ path('item.delete', {'item': item.id}) }}" class="btn btn-danger" role="button">Supprimer</a>
+				</div>
+			</h3>
+		</div>
+		
+		<div class="row">
+			<div class="col-md-6">
+				<div class="item {% if item.couleur == 'bleu' %}item-bleu{% else %}item-orange{% endif %}">
+					<div class="item-header">
+						{{ item.numero }}
+						<span class="pull-right">{{ item.quality.numero }}{{ item.identification }}</span>
+					</div>
+					<div class="item-text">
+						{{ item.description|markdown }}
+					</div>
+				</div>
+  				<img src="{{ path('stock_objet_photo',{'objet': item.objet.id, 'miniature': true}) }}" alt="{{ item.label }}" />
+  				
+  				{{ item.description|markdown }}
+  				{{ item.special|markdown }}
+  				
+			</div>
+			
+			<div class="col-md-6">
+			
+				<h5>Information du stock</h5>
+				
+				<ul>
+					<li><b>Nom :</b> {{ item.objet.nom }}</li>
+					<li><b>Code :</b> {{ item.objet.code }}</li>
+					<li><b>Description :</b> {{ item.objet.description }}</li>
+					<li><b>Date de création :</b> {{ item.objet.creationDate|date('Y-m-d H:i:s') }}</li>
+				</ul>
+				<ul>
+					<li><b>Rangement :</b> {% if item.objet.rangement %}{{ item.objet.rangement.adresse }}{%  endif %}</li>
+					<li><b>Etat :</b> {% if item.objet.etat %}{{ item.objet.etat.label }}{%  endif %}</li>
+					<li><b>Proprietaire :</b> {% if item.objet.proprietaire %}{{ item.objet.proprietaire.nom }}{%  endif %}</li>
+					<li><b>Responsable :</b> {% if item.objet.responsable %}{{ item.objet.responsable.username }}{%  endif %}</li>
+				</ul>
+			</div>
+			
+		</div>
+	</div>
+	
+{% endblock %}

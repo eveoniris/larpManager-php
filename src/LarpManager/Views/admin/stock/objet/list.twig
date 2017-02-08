@@ -15,7 +15,7 @@ a {
 }
 
 .waterfall .pin {
-  width: 480px;
+  width: 200px;
   height: auto;
   margin: 0 0 10px 20px;
 }
@@ -73,7 +73,7 @@ a {
 		    				<li class="list-group-item">
 		    					<a href="{{ path('stock_objet_update', {'objet': objet.id}) }}">
 		    					{% if objet.photo %}
-				  					<img src="{{ path('stock_objet_photo',{'objet': objet.id}) }}" alt="{{ objet.photo.name }}" />
+				  					<img src="{{ path('stock_objet_photo',{'objet': objet.id,'miniature': true}) }}" alt="{{ objet.photo.name }}" />
 				  				{% else %}
 				  					Modifier
 				  				{% endif %}
@@ -90,7 +90,7 @@ a {
     								</button>
     								<ul class="dropdown-menu">
     									<li><a href="{{ path('stock_objet_tag', {'objet': objet.id}) }}">Modifier les tags</a></li>
-    									<li><a href="{{ path('objet.new', {'objet': objet.id}) }}">Creer un objet de jeu</a></li>
+    									<li><a href="{{ path('item.new', {'objet': objet.id}) }}">Creer un objet de jeu</a></li>
     									<li><a href="{{ path('stock_objet_update', {'objet': objet.id}) }}">Modifier</a></li>
 					  					<li><a href="{{ path('stock_objet_clone', {'objet': objet.id}) }}">Cloner</a></li>
 					  					<li><a href="{{ path('stock_objet_delete', {'objet': objet.id}) }}">Supprimer</a></li>
@@ -99,7 +99,7 @@ a {
 				  			</li>
 				  			<li class="list-group-item">
 				  				{% for item in objet.items %}
-				  					{{ item.label }}
+				  					<span class="text-info">Objet de jeu : <strong>{{ item.numero }} - {{ item.label }}</strong></span> 
 				  				{% else %}
 				  					<span class="text-success">Cet objet n'est pas utilisé en jeu.</span>
 				  				{% endfor %}

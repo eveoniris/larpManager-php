@@ -133,6 +133,17 @@ class GroupeControllerProvider implements ControllerProviderInterface
 			->before($mustBeScenariste);
 			
 		/**
+		 * Gestion des objets lié au groupe
+		 */
+		$controllers->match('/admin/{groupe}/items','LarpManager\Controllers\GroupeController::adminItemAction')
+			->bind("groupe.admin.items")
+			->assert('groupe', '\d+')
+			->convert('groupe', 'converter.groupe:convert')
+			->method('GET|POST')
+			->before($mustBeScenariste);
+				
+			
+		/**
 		 * Gestion des documents lié à un personnage
 		 */
 		$controllers->match('/admin/{groupe}/{personnage}/documents','LarpManager\Controllers\GroupeController::personnageDocumentAction')
@@ -144,6 +155,19 @@ class GroupeControllerProvider implements ControllerProviderInterface
 			->method('GET|POST')
 			->before($mustBeScenariste);
 
+		/**
+		 * Gestion des objets lié à un personnage
+		 */
+		$controllers->match('/admin/{groupe}/{personnage}/items','LarpManager\Controllers\GroupeController::personnageItemAction')
+			->bind("groupe.personnage.items")
+			->assert('groupe', '\d+')
+			->assert('personnage', '\d+')
+			->convert('groupe', 'converter.groupe:convert')
+			->convert('personnage', 'converter.personnage:convert')
+			->method('GET|POST')
+			->before($mustBeScenariste);
+			
+			
 		/**
 		 * Gestion de la richesse d'un groupe
 		 */

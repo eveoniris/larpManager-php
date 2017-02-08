@@ -13,7 +13,7 @@
 	<div class="well well-sm">
 		<div class="row">
 			<div class="col-md-6">
-				<form action="{{ path('objet.new', {'objet': objet.id}) }}" method="POST" {{ form_enctype(form) }} novalidate>
+				<form action="{{ path('item.new', {'objet': objet.id}) }}" method="POST" {{ form_enctype(form) }} novalidate>
 					{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
 					{{ form(form) }}
 				</form>

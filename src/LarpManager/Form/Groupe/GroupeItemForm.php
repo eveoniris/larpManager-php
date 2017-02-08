@@ -18,57 +18,63 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace LarpManager\Form;
+namespace LarpManager\Form\Groupe;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Doctrine\ORM\EntityRepository;
+
+use LarpManager\Repository\ItemRepository;
+
 
 /**
- * LarpManager\Form\GroupFindForm
+ * LarpManager\Form\GroupeItemForm
  *
  * @author kevin
  *
  */
-class GroupFindForm extends AbstractType
+class GroupeItemForm extends AbstractType
 {
 	/**
 	 * Construction du formulaire
-	 *
+	 * 
 	 * @param FormBuilderInterface $builder
 	 * @param array $options
 	 */
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
-		$builder->add('search','text', array(
-						'required' => true,
-						'attr' => array(
-							'placeholder' => 'Votre recherche',
-						)
-				))
-				->add('type', 'choice', array(
-						'required' => true,
-						'choices' => array(
-							'numero' => 'Numéro',
-							'nom' => 'Nom du groupe',
-						)
+		$builder->add('items','entity', array(
+					'label' => "Choisissez les objets possédé par le groupe en début de jeu",
+					'multiple' => true,
+					'expanded' => true,
+					'required' => false,
+					'class' => 'LarpManager\Entities\Item',
+					'property' => 'label',
+					'query_builder' => function(ItemRepository $er) {
+						return $er->createQueryBuilder('i')->orderBy('i.numero', 'ASC');
+					},
 				));
 	}
-	
+		
 	/**
-	 * Définition de l'entité concernée
+	 * Définition de l'entité conercné
 	 *
-	 * @param OptionsResolver $resolver
+	 * @param OptionsResolverInterface $resolver
 	 */
-	public function configureOptions(OptionsResolver $resolver)
+	public function setDefaultOptions(OptionsResolverInterface $resolver)
 	{
+		$resolver->setDefaults(array(
+				'data_class' => '\LarpManager\Entities\Groupe',
+		));
 	}
 	
 	/**
-	 * Nom du formulaire
+	 * Nom du formulaire 
+	 * @return string
 	 */
 	public function getName()
 	{
-		return 'groupFind';
+		return 'groupeItem';
 	}
 }

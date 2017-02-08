@@ -34,11 +34,13 @@ use LarpManager\Form\Groupe\GroupeEnvelopeForm;
 use LarpManager\Form\Groupe\GroupeRichesseForm;
 use LarpManager\Form\Groupe\GroupeRessourceForm;
 use LarpManager\Form\Groupe\GroupeIngredientForm;
+use LarpManager\Form\Groupe\GroupFindForm;
+use LarpManager\Form\Groupe\GroupeDocumentForm;
+use LarpManager\Form\Groupe\GroupeItemForm;
 
-use LarpManager\Form\GroupFindForm;
 use LarpManager\Form\BackgroundForm;
-use LarpManager\Form\GroupeDocumentForm;
 use LarpManager\Form\PersonnageDocumentForm;
+use LarpManager\Form\PersonnageItemForm;
 
 
 use LarpManager\Entities\Groupe;
@@ -46,6 +48,7 @@ use LarpManager\Entities\GroupeHasRessource;
 use LarpManager\Entities\GroupeHasIngredient;
 use LarpManager\Entities\GroupeGn;
 use LarpManager\Entities\Document;
+use LarpManager\Entities\Item;
 use LarpManager\Entities\Personnage;
 
 
@@ -485,7 +488,7 @@ class GroupeController
 	}
 	
 	/**
-	 * Ajoute un document dans le matériel du groupe
+	 * AModifie la richesse du groupe
 	 *
 	 * @param Request $request
 	 * @param Application $app
@@ -545,6 +548,36 @@ class GroupeController
 	}
 	
 	/**
+	 * Gestion des objets du groupe
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function adminItemAction(Request $request, Application $app, Groupe $groupe)
+	{
+		$form = $app['form.factory']->createBuilder(new GroupeItemForm(), $groupe)
+			->add('submit','submit', array('label' => 'Enregistrer'))
+			->getForm();
+	
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$groupe = $form->getData();
+			$app['orm.em']->persist($groupe);
+			$app['orm.em']->flush();
+				
+			$app['session']->getFlashBag()->add('success', 'L\'objet a été ajouté au groupe.');
+			return $app->redirect($app['url_generator']->generate('groupe.detail', array('index' => $groupe->getId())));
+		}
+	
+		return $app['twig']->render('admin/groupe/items.twig', array(
+				'groupe' => $groupe,
+				'form' => $form->createView(),
+		));
+	}
+	
+	/**
 	 * Gestion des documents lié à un personnage
 	 * @param Request $request
 	 * @param Application $app
@@ -574,6 +607,38 @@ class GroupeController
 				'personnage' => $personnage,
 				'form' => $form->createView(),
 		));		
+	}
+	
+	/**
+	 * Gestion des objets lié à un personnage
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Groupe $groupe
+	 * @param Personnage $personnage
+	 */
+	public function personnageItemAction(Request $request, Application $app, Groupe $groupe, Personnage $personnage)
+	{
+		$form = $app['form.factory']->createBuilder(new PersonnageItemForm(), $personnage)
+			->add('submit','submit', array('label' => 'Enregistrer'))
+			->getForm();
+	
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$personnage = $form->getData();
+			$app['orm.em']->persist($personnage);
+			$app['orm.em']->flush();
+	
+			$app['session']->getFlashBag()->add('success', 'L\'objet a été ajouté au personnage.');
+			return $app->redirect($app['url_generator']->generate('groupe.detail', array('index' => $groupe->getId())));
+		}
+	
+		return $app['twig']->render('admin/personnage/items.twig', array(
+				'groupe' => $groupe,
+				'personnage' => $personnage,
+				'form' => $form->createView(),
+		));
 	}
 	
 	/**

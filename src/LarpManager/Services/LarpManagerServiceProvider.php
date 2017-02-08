@@ -52,6 +52,7 @@ use LarpManager\Services\Converter\GroupeConverter;
 use LarpManager\Services\Converter\GroupeGnConverter;
 use LarpManager\Services\Converter\IngredientConverter;
 use LarpManager\Services\Converter\IntrigueConverter;
+use LarpManager\Services\Converter\ItemConverter;
 use LarpManager\Services\Converter\LieuConverter;
 use LarpManager\Services\Converter\MembreConverter;
 use LarpManager\Services\Converter\MessageConverter;
@@ -126,6 +127,11 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 		$app['fedegn.manager'] = $app->share(function($app) {
 			$fedegnManager = new FedegnManager($app);
 			return $fedegnManager;
+		});
+		
+		// Item converter
+		$app['converter.item'] = $app->share(function($app) {
+			return new ItemConverter($app['orm.em']);
 		});
 		
 		// Personnage manager

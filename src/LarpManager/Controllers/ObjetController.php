@@ -28,6 +28,7 @@ use Silex\Application;
 use LarpManager\Entities\Objet;
 use LarpManager\Entities\Item;
 use LarpManager\Form\Item\ItemForm;
+use LarpManager\Form\Item\ItemDeleteForm;
 
 /**
  * LarpManager\Controllers\ObjetController
@@ -101,13 +102,113 @@ class ObjetController
 			$app['orm.em']->flush();
 			
 			$app['session']->getFlashBag()->add('success', 'L\'objet de jeu a été créé');
-			return $app->redirect($app['url_generator']->generate('objet'),301);
+			return $app->redirect($app['url_generator']->generate('items'),301);
 		}
 		
 		return $app['twig']->render('admin/objet/new.twig', array(
 			'objet' => $objet,
 			'item' => $item,
 			'form' => $form->createView(),
+		));
+	}
+	
+	/**
+	 * Détail d'un objet de jeu
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Item $item
+	 */
+	public function detailAction(Request $request, Application $app, Item $item) {
+		
+		return $app['twig']->render('admin/objet/detail.twig', array(
+				'item' => $item,
+		));
+	}
+	
+	/**
+	 * Mise à jour d'un objet de jeu
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Item $item
+	 */
+	public function updateAction(Request $request, Application $app, Item $item) {
+		
+		$form = $app['form.factory']->createBuilder(new ItemForm(), $item)->getForm();
+		
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
+		{
+			$app['orm.em']->persist($item);
+			$app['orm.em']->flush();
+				
+			$app['session']->getFlashBag()->add('success', 'L\'objet de jeu a été sauvegardé');
+			return $app->redirect($app['url_generator']->generate('items'),301);
+		}
+		
+		return $app['twig']->render('admin/objet/update.twig', array(
+				'item' => $item,
+				'form' => $form->createView(),
+		));
+	}
+	
+	/**
+	 * Suppression d'un objet de jeu
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Item $item
+	 */
+	public function deleteAction(Request $request, Application $app, Item $item) {
+		
+		$form = $app['form.factory']->createBuilder(new ItemDeleteForm(), $item)->getForm();
+		
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
+		{
+			$app['orm.em']->remove($item);
+			$app['orm.em']->flush();
+				
+			$app['session']->getFlashBag()->add('success', 'L\'objet de jeu a été supprimé');
+			return $app->redirect($app['url_generator']->generate('items'),301);
+			
+		}
+		
+		return $app['twig']->render('admin/objet/delete.twig', array(
+				'item' => $item,
+				'form' => $form->createView(),
+		));
+	}
+	
+	/**
+	 * Lier un objet de jeu à un groupe/personnage/lieu
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Item $item
+	 */
+	public function linkAction(Request $request, Application $app, Item $item) {
+		
+		$form = $app['form.factory']->createBuilder(new ItemLinkForm(), $item)->getForm();
+		
+		
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
+		{
+			$app['orm.em']->persist($item);
+			$app['orm.em']->flush();
+				
+			$app['session']->getFlashBag()->add('success', 'L\'objet de jeu a été créé');
+			return $app->redirect($app['url_generator']->generate('objet'),301);
+		}
+		
+		return $app['twig']->render('admin/objet/link.twig', array(
+				'item' => $item,
+				'form' => $form->createView(),
 		));
 	}
 	

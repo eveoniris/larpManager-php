@@ -43,16 +43,49 @@ class ObjetControllerProvider implements ControllerProviderInterface
 	{
 		$controllers = $app['controllers_factory'];
 		
+		/**
+		 * Liste des objets de jeu
+		 */
 		$controllers->match('/','LarpManager\Controllers\ObjetController::indexAction')
-			->bind("objet")
+			->bind("items")
 			->method('GET');
 		
+		/**
+		 * Création d'un objet de jeu
+		 */
 		$controllers->match('/new/{objet}','LarpManager\Controllers\ObjetController::newAction')
 			->assert('objet', '\d+')
 			->convert('objet', 'converter.objet:convert')
-			->bind("objet.new")
+			->bind("item.new")
+			->method('GET|POST');
+		
+		/**
+		 * Détail d'un objet de jeu
+		 */
+		$controllers->match('/{item}/detail','LarpManager\Controllers\ObjetController::detailAction')
+			->assert('item', '\d+')
+			->convert('item', 'converter.item:convert')
+			->bind("item.detail")
+			->method('GET');
+			
+		/**
+		 * Mise à jour d'un objet de jeu
+		 */
+		$controllers->match('/{item}/update','LarpManager\Controllers\ObjetController::updateAction')
+			->assert('item', '\d+')
+			->convert('item', 'converter.item:convert')
+			->bind("item.update")
 			->method('GET|POST');
 					
+		/**
+		 * Suppression d'un objet de jeu
+		 */
+		$controllers->match('/{item}/delete','LarpManager\Controllers\ObjetController::deleteAction')
+			->assert('item', '\d+')
+			->convert('item', 'converter.item:convert')
+			->bind("item.delete")
+			->method('GET|POST');
+			
 		return $controllers;
 	}
 }

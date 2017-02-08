@@ -430,4 +430,11 @@ $app['translator'] = $app->share($app->extend('translator', function($translator
 	return $translator;
 }));
 
+
+/**
+ * Chargement des modules additionels
+ */
+ 
+$loader = require_once __DIR__.'/../src/LarpManager/Modules/autoload.php';
+
 return $app;

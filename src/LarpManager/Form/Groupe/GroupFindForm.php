@@ -18,63 +18,57 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace LarpManager\Form;
+namespace LarpManager\Form\Groupe;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use Doctrine\ORM\EntityRepository;
-
-use LarpManager\Repository\DocumentRepository;
-
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * LarpManager\Form\GroupeDocumentForm
+ * LarpManager\Form\GroupFindForm
  *
  * @author kevin
  *
  */
-class GroupeDocumentForm extends AbstractType
+class GroupFindForm extends AbstractType
 {
 	/**
 	 * Construction du formulaire
-	 * 
+	 *
 	 * @param FormBuilderInterface $builder
 	 * @param array $options
 	 */
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
-		$builder->add('documents','entity', array(
-					'label' => "Choisissez les documents possédé par le groupe en début de jeu",
-					'multiple' => true,
-					'expanded' => true,
-					'required' => false,
-					'class' => 'LarpManager\Entities\Document',
-					'property' => 'identity',
-					'query_builder' => function(DocumentRepository $er) {
-						return $er->createQueryBuilder('d')->orderBy('d.code', 'ASC');
-					},
+		$builder->add('search','text', array(
+						'required' => true,
+						'attr' => array(
+							'placeholder' => 'Votre recherche',
+						)
+				))
+				->add('type', 'choice', array(
+						'required' => true,
+						'choices' => array(
+							'numero' => 'Numéro',
+							'nom' => 'Nom du groupe',
+						)
 				));
-	}
-		
-	/**
-	 * Définition de l'entité conercné
-	 *
-	 * @param OptionsResolverInterface $resolver
-	 */
-	public function setDefaultOptions(OptionsResolverInterface $resolver)
-	{
-		$resolver->setDefaults(array(
-				'data_class' => '\LarpManager\Entities\Groupe',
-		));
 	}
 	
 	/**
-	 * Nom du formulaire 
-	 * @return string
+	 * Définition de l'entité concernée
+	 *
+	 * @param OptionsResolver $resolver
+	 */
+	public function configureOptions(OptionsResolver $resolver)
+	{
+	}
+	
+	/**
+	 * Nom du formulaire
 	 */
 	public function getName()
 	{
-		return 'groupeDocument';
+		return 'groupFind';
 	}
 }
