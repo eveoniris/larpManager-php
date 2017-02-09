@@ -26,7 +26,17 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Silex\Application;
 use JasonGrimes\Paginator;
 use LarpManager\Entities\Personnage;
+use LarpManager\Entities\PersonnageRessource;
+use LarpManager\Entities\PersonnageIngredient;
 use LarpManager\Entities\PersonnageHasToken;
+
+use LarpManager\Form\Personnage\PersonnageIngredientForm;
+use LarpManager\Form\Personnage\PersonnageRessourceForm;
+use LarpManager\Form\Personnage\PersonnageRichesseForm;
+use LarpManager\Form\Personnage\PersonnageDocumentForm;
+use LarpManager\Form\Personnage\PersonnageItemForm;
+use LarpManager\Form\Personnage\PersonnageOriginForm;
+
 
 use LarpManager\Form\PersonnageFindForm;
 use LarpManager\Form\PersonnageForm;
@@ -1222,6 +1232,270 @@ class PersonnageController
 		return $app['twig']->render('admin/personnage/updatePotion.twig', array(
 				'form' => $form->createView(),
 				'personnage' => $personnage,
+		));
+	}
+	
+	/**
+	 * Modifie la liste des ingrédients
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function adminUpdateIngredientAction(Request $request, Application $app, Personnage $personnage)
+	{
+		$originalPersonnageIngredients = new ArrayCollection();
+		
+		/**
+		 *  Crée un tableau contenant les objets personnageIngredient du groupe
+		 */
+		foreach ($personnage->getPersonnageIngredients() as $personnageIngredient)
+		{
+			$originalPersonnageIngredients->add($personnageIngredient);
+		}
+		
+		$form = $app['form.factory']->createBuilder(new PersonnageIngredientForm(), $personnage)->getForm();
+	
+		$form->handleRequest($request);
+	
+		if ( $form->isValid() )
+		{
+			$personnage = $form->getData();
+			
+			/**
+			 * Pour tous les ingredients
+			 */
+			foreach ($personnage->getPersonnageIngredients() as $personnageIngredient)
+			{
+				$personnageIngredient->setPersonnage($personnage);
+			}
+			
+			/**
+			 *  supprime la relation entre personnageIngredient et le personnage
+			 */
+			foreach ($originalPersonnageIngredients as $personnageIngredient) {
+				if ($personnage->getPersonnageIngredients()->contains($personnageIngredient) == false) {
+					$app['orm.em']->remove($personnageIngredient);
+				}
+			}
+			
+			$random = $form['random']->getData();
+			
+			/**
+			 *  Gestion des ingrédients alloués au hasard
+			 */
+			if ( $random && $random > 0 )
+			{
+				$ingredients = $app['orm.em']->getRepository('LarpManager\Entities\Ingredient')->findAll();
+				shuffle( $ingredients );
+				$needs = new ArrayCollection(array_slice($ingredients,0,$random));
+					
+				foreach ( $needs as $ingredient )
+				{
+					$pi = new PersonnageIngredient();
+					$pi->setIngredient($ingredient);
+					$pi->setNombre(1);
+					$pi->setPersonnage($personnage);
+					$app['orm.em']->persist($pi);
+				}
+			}
+	
+			$app['orm.em']->persist($personnage);
+			$app['orm.em']->flush();
+	
+			$app['session']->getFlashBag()->add('success','Le personnage a été sauvegardé.');
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
+		}
+	
+		return $app['twig']->render('admin/personnage/ingredients.twig', array(
+				'form' => $form->createView(),
+				'personnage' => $personnage,
+		));
+	}
+	
+	/**
+	 * Modifie la liste des ressources
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function adminUpdateRessourceAction(Request $request, Application $app, Personnage $personnage)
+	{			
+		$originalPersonnageRessources = new ArrayCollection();
+		
+		/**
+		 *  Crée un tableau contenant les objets personnageIngredient du groupe
+		 */
+		foreach ($personnage->getPersonnageRessources() as $personnageRessource)
+		{
+			$originalPersonnageRessources->add($personnageRessource);
+		}
+		
+		$form = $app['form.factory']->createBuilder(new PersonnageRessourceForm(), $personnage)->getForm();
+	
+		$form->handleRequest($request);
+	
+		if ( $form->isValid() )
+		{
+			$personnage = $form->getData();
+	
+			/**
+			 * Pour toutes les ressources
+			 */
+			foreach ($personnage->getPersonnageRessources() as $personnageRessource)
+			{
+				$personnageRessource->setPersonnage($personnage);
+			}
+			
+			/**
+			 *  supprime la relation entre personnageRessource et le personnage
+			 */
+			foreach ($originalPersonnageRessources as $personnageRessource) {
+				if ($personnage->getPersonnageRessources()->contains($personnageRessource) == false) {
+					$app['orm.em']->remove($personnageRessource);
+				}
+			}
+			
+			$randomCommun = $form['randomCommun']->getData();
+				
+			/**
+			 *  Gestion des ressources communes alloués au hasard
+			 */
+			if ( $randomCommun && $randomCommun > 0 )
+			{
+				$ressourceCommune = $app['orm.em']->getRepository('LarpManager\Entities\Ressource')->findCommun();
+				shuffle( $ressourceCommune );
+				$needs = new ArrayCollection(array_slice($ressourceCommune,0,$randomCommun));
+			
+				foreach ( $needs as $ressource )
+				{
+					$pr = new PersonnageRessource();
+					$pr->setRessource($ressource);
+					$pr->setNombre(1);
+					$pr->setPersonnage($personnage);
+					$app['orm.em']->persist($pr);
+				}
+			}
+				
+			$randomRare = $form['randomRare']->getData();
+				
+			/**
+			 *  Gestion des ressources rares alloués au hasard
+			 */
+			if ( $randomRare && $randomRare > 0 )
+			{
+				$ressourceRare = $app['orm.em']->getRepository('LarpManager\Entities\Ressource')->findRare();
+				shuffle( $ressourceRare );
+				$needs = new ArrayCollection(array_slice($ressourceRare,0,$randomRare));
+					
+				foreach ( $needs as $ressource )
+				{
+					$pr = new PersonnageRessource();
+					$pr->setRessource($ressource);
+					$pr->setNombre(1);
+					$pr->setPersonnage($personnage);
+					$app['orm.em']->persist($pr);
+				}
+			}
+			
+			$app['orm.em']->persist($personnage);
+			$app['orm.em']->flush();
+	
+			$app['session']->getFlashBag()->add('success','Le personnage a été sauvegardé.');
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
+		}
+	
+		return $app['twig']->render('admin/personnage/ressources.twig', array(
+				'form' => $form->createView(),
+				'personnage' => $personnage,
+		));
+	}
+	
+	/**
+	 * Modifie la richesse
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function adminUpdateRichesseAction(Request $request, Application $app, Personnage $personnage)
+	{
+		$form = $app['form.factory']->createBuilder(new PersonnageRichesseForm(), $personnage)->getForm();
+	
+		$form->handleRequest($request);
+	
+		if ( $form->isValid() )
+		{
+			$personnage = $form->getData();
+	
+			$app['orm.em']->persist($personnage);
+			$app['orm.em']->flush();
+	
+			$app['session']->getFlashBag()->add('success','Le personnage a été sauvegardé.');
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
+		}
+	
+		return $app['twig']->render('admin/personnage/richesse.twig', array(
+				'form' => $form->createView(),
+				'personnage' => $personnage,
+		));
+	}
+	
+	/**
+	 * Gestion des documents lié à un personnage
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Personnage $personnage
+	 */
+	public function documentAction(Request $request, Application $app, Personnage $personnage)
+	{
+		$form = $app['form.factory']->createBuilder(new PersonnageDocumentForm(), $personnage)
+			->add('submit','submit', array('label' => 'Enregistrer'))
+			->getForm();
+	
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$personnage = $form->getData();
+			$app['orm.em']->persist($personnage);
+			$app['orm.em']->flush();
+	
+			$app['session']->getFlashBag()->add('success', 'Le document a été ajouté au personnage.');
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail', array('personnage' => $personnage->getId())),301);
+		}
+	
+		return $app['twig']->render('admin/personnage/documents.twig', array(
+				'personnage' => $personnage,
+				'form' => $form->createView(),
+		));
+	}
+	
+	/**
+	 * Gestion des objets lié à un personnage
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Personnage $personnage
+	 */
+	public function itemAction(Request $request, Application $app, Personnage $personnage)
+	{
+		$form = $app['form.factory']->createBuilder(new PersonnageItemForm(), $personnage)
+			->add('submit','submit', array('label' => 'Enregistrer'))
+			->getForm();
+	
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$personnage = $form->getData();
+			$app['orm.em']->persist($personnage);
+			$app['orm.em']->flush();
+	
+			$app['session']->getFlashBag()->add('success', 'L\'objet a été ajouté au personnage.');
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail', array('personnage' => $personnage->getId())),301);
+		}
+	
+		return $app['twig']->render('admin/personnage/items.twig', array(
+				'personnage' => $personnage,
+				'form' => $form->createView(),
 		));
 	}
 	

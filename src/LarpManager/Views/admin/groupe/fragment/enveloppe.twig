@@ -100,21 +100,86 @@ TOTAL : {{ groupe.richesseTotale|default(0) }} PA
 		{% if participant.personnage %}
 			<h6><i class="fa fa-circle"></i><strong>&nbsp;#{{ participant.personnage.id }}</strong> {{ participant.personnage.nom }}</h6>
 			<div class="white-box">
-				<a href=" {{ path('groupe.personnage.documents', {'groupe': groupe.id, 'personnage': participant.personnage.id}) }}">Modifier la liste de documents</a>
+			
+				Documents :
+				<a href=" {{ path('personnage.documents', {'personnage': participant.personnage.id}) }}">Modifier la liste de documents</a>
+				<ul>
 				{% for document in participant.personnage.documents %}
 					<li><a href="{{ path('document.detail', {'document':document.id}) }}"><strong>{{ document.code }}</strong>&nbsp;{{ document.titre }}</a></li>
 				{% else %}
 					<li>Aucun</li>
 				{% endfor %}
-			</div>
-			<div class="white-box">
-				<a href=" {{ path('groupe.personnage.items', {'groupe': groupe.id, 'personnage': participant.personnage.id}) }}">Modifier la liste des objets</a>
+				</ul>
+			
+				Objets :
+				<a href=" {{ path('personnage.items', {'personnage': participant.personnage.id}) }}">Modifier la liste des objets</a>
+				<ul>
 				{% for item in participant.personnage.items %}
 					<li><a href="{{ path('item.detail', {'item':item.id}) }}"><strong>{{ item.numero }}</strong>&nbsp;{{ item.label }}</a></li>
 				{% else %}
 					<li>Aucun</li>
 				{% endfor %}
-			</div>
+				</ul>
+
+				Sorts :
+				<a href="{{ path('personnage.admin.update.sort', {'personnage': participant.personnage.id}) }}">Modifier la liste des sorts</a>
+				<ul>
+				{% for sort in participant.personnage.sorts %}
+					<li>{{ sort.label }} - {{ sort.domaine.label }} Niveau {{ sort.niveau }}</li>
+				{% else %}
+					<li>Aucun</li>	
+				{% endfor %}
+				</ul>
+					
+				Potions :
+				<a href="{{ path('personnage.admin.update.potion', {'personnage': participant.personnage.id}) }}">Modifier la liste des potions</a>
+				<ul>
+				{% for potion in participant.personnage.potions %}
+					<li>{{ potion.label }} - Niveau {{ potion.niveau }}</li>
+				{% else %}
+					<li>Aucune</li>
+				{% endfor %}
+				</ul>
+				
+				Prières :
+				<a href="{{ path('personnage.admin.update.priere', {'personnage': participant.personnage.id}) }}">Modifier la liste des prières</a>
+				<ul>
+				{% for priere in participant.personnage.prieres %}
+					<li>{{ priere.sphere.label }} - Niveau {{ priere.niveau }} ({{ priere.label }})</li>
+				{% else %}
+					<li>Aucune</li>
+				{% endfor %}
+				</ul>
+				
+				Ingrédients :
+				<a href="{{ path('personnage.admin.update.ingredient', {'personnage': participant.personnage.id}) }}">Modifier la liste des ingrédients</a>
+				<ul>
+				{% for personnageIngredient in participant.personnage.personnageIngredients %}
+					<li>{{personnageIngredient.nombre}} - {{ personnageIngredient.ingredient }}</li>
+				{% else %}
+					<li>Aucun</li>
+				{% endfor %}
+				</ul>
+				
+				Ressources :
+				<a href="{{ path('personnage.admin.update.ressource', {'personnage': participant.personnage.id}) }}">Modifier la liste des ressources</a>
+				<ul>
+				{% for personnageRessource in participant.personnage.personnageRessources %}
+					<li>{{personnageRessource.nombre}} - {{ personnageRessource.ressource }}</li>
+				{% else %}
+					<li>Aucun</li>
+				{% endfor %}
+				</ul>
+				
+				Richesse :
+				<a href="{{ path('personnage.admin.update.richesse', {'personnage': participant.personnage.id}) }}">Modifier la richesse</a>
+				<ul>
+					<li>{{ participant.personnage.richesse|default(0) }} PA</li>
+				</ul>
+
+			</div>		
+				
+					
 		{% endif %}
 	{% endfor %}
 {% endif %}

@@ -17,64 +17,47 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-namespace LarpManager\Form;
+ 
+namespace LarpManager\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use Doctrine\ORM\EntityRepository;
 
-use LarpManager\Repository\DocumentRepository;
 
 
 /**
- * LarpManager\Form\PersonnageDocumentForm
+ * LarpManager\Form\Type\PersonnageRessourceType
  *
  * @author kevin
  *
  */
-class PersonnageDocumentForm extends AbstractType
+class PersonnageRessourceType extends AbstractType
 {
-	/**
-	 * Construction du formulaire
-	 * 
-	 * @param FormBuilderInterface $builder
-	 * @param array $options
-	 */
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
-		$builder->add('documents','entity', array(
-					'label' => "Choisissez les documents possédé par le personnage en début de jeu",
-					'multiple' => true,
-					'expanded' => true,
-					'required' => false,
-					'class' => 'LarpManager\Entities\Document',
-					'property' => 'identity',
-					'query_builder' => function(DocumentRepository $er) {
-						return $er->createQueryBuilder('d')->orderBy('d.code', 'ASC');
-					},
-				));
+		$builder
+			->add('nombre', 'integer', array(
+					'label' => 'quantite',
+					'required' => true
+			))
+			->add('ressource','entity', array(
+					'label' => 'Choisisez la ressource',
+					'required' => true,
+					'class' => 'LarpManager\Entities\Ressource',
+					'property' => 'label',
+			));
 	}
-		
-	/**
-	 * Définition de l'entité conercné
-	 *
-	 * @param OptionsResolverInterface $resolver
-	 */
+
 	public function setDefaultOptions(OptionsResolverInterface $resolver)
 	{
 		$resolver->setDefaults(array(
-				'data_class' => '\LarpManager\Entities\Personnage',
+				'data_class' => '\LarpManager\Entities\PersonnageRessource',
 		));
 	}
-	
-	/**
-	 * Nom du formulaire 
-	 * @return string
-	 */
+
 	public function getName()
 	{
-		return 'personnageDocument';
+		return 'personnageRessource';
 	}
 }

@@ -39,9 +39,6 @@ use LarpManager\Form\Groupe\GroupeDocumentForm;
 use LarpManager\Form\Groupe\GroupeItemForm;
 
 use LarpManager\Form\BackgroundForm;
-use LarpManager\Form\PersonnageDocumentForm;
-use LarpManager\Form\PersonnageItemForm;
-
 
 use LarpManager\Entities\Groupe;
 use LarpManager\Entities\GroupeHasRessource;
@@ -573,70 +570,6 @@ class GroupeController
 	
 		return $app['twig']->render('admin/groupe/items.twig', array(
 				'groupe' => $groupe,
-				'form' => $form->createView(),
-		));
-	}
-	
-	/**
-	 * Gestion des documents lié à un personnage
-	 * @param Request $request
-	 * @param Application $app
-	 * @param Groupe $groupe
-	 * @param Personnage $personnage
-	 */
-	public function personnageDocumentAction(Request $request, Application $app, Groupe $groupe, Personnage $personnage)
-	{
-		$form = $app['form.factory']->createBuilder(new PersonnageDocumentForm(), $personnage)
-			->add('submit','submit', array('label' => 'Enregistrer'))
-			->getForm();
-		
-		$form->handleRequest($request);
-			
-		if ( $form->isValid() )
-		{
-			$personnage = $form->getData();
-			$app['orm.em']->persist($personnage);
-			$app['orm.em']->flush();
-				
-			$app['session']->getFlashBag()->add('success', 'Le document a été ajouté au personnage.');
-			return $app->redirect($app['url_generator']->generate('groupe.detail', array('index' => $groupe->getId())));
-		}
-		
-		return $app['twig']->render('admin/personnage/documents.twig', array(
-				'groupe' => $groupe,
-				'personnage' => $personnage,
-				'form' => $form->createView(),
-		));		
-	}
-	
-	/**
-	 * Gestion des objets lié à un personnage
-	 * @param Request $request
-	 * @param Application $app
-	 * @param Groupe $groupe
-	 * @param Personnage $personnage
-	 */
-	public function personnageItemAction(Request $request, Application $app, Groupe $groupe, Personnage $personnage)
-	{
-		$form = $app['form.factory']->createBuilder(new PersonnageItemForm(), $personnage)
-			->add('submit','submit', array('label' => 'Enregistrer'))
-			->getForm();
-	
-		$form->handleRequest($request);
-			
-		if ( $form->isValid() )
-		{
-			$personnage = $form->getData();
-			$app['orm.em']->persist($personnage);
-			$app['orm.em']->flush();
-	
-			$app['session']->getFlashBag()->add('success', 'L\'objet a été ajouté au personnage.');
-			return $app->redirect($app['url_generator']->generate('groupe.detail', array('index' => $groupe->getId())));
-		}
-	
-		return $app['twig']->render('admin/personnage/items.twig', array(
-				'groupe' => $groupe,
-				'personnage' => $personnage,
 				'form' => $form->createView(),
 		));
 	}

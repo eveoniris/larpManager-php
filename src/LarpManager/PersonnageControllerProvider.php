@@ -68,6 +68,15 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 				throw new AccessDeniedException();
 			}
 		};
+		
+		/**
+		 * Vérifie que l'utilisateur dispose du role SCENARISTE
+		 */
+		$mustBeScenariste = function(Request $request) use ($app) {
+			if (!$app['security.authorization_checker']->isGranted('ROLE_SCENARISTE')) {
+				throw new AccessDeniedException();
+			}
+		};
 				
 		/**
 		 * Vérifie que l'utilisateur posséde la ressource demandée
@@ -272,6 +281,56 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 			->method('GET|POST')
 			->convert('personnage', 'converter.personnage:convert')
 			->before($mustBeOrga);
+			
+		/**
+		 * Modification des ingrédients
+		 */
+		$controllers->match('/admin/{personnage}/update/ingredients','LarpManager\Controllers\PersonnageController::adminUpdateIngredientAction')
+			->assert('personnage', '\d+')
+			->bind("personnage.admin.update.ingredient")
+			->method('GET|POST')
+			->convert('personnage', 'converter.personnage:convert')
+			->before($mustBeOrga);
+			
+		/**
+		 * Modifications des ressources
+		 */
+		$controllers->match('/admin/{personnage}/update/ressource','LarpManager\Controllers\PersonnageController::adminUpdateRessourceAction')
+			->assert('personnage', '\d+')
+			->bind("personnage.admin.update.ressource")
+			->method('GET|POST')
+			->convert('personnage', 'converter.personnage:convert')
+			->before($mustBeOrga);
+			
+		/**
+		 * Modification de la richesse
+		 */
+		$controllers->match('/admin/{personnage}/update/richesse','LarpManager\Controllers\PersonnageController::adminUpdateRichesseAction')
+			->assert('personnage', '\d+')
+			->bind("personnage.admin.update.richesse")
+			->method('GET|POST')
+			->convert('personnage', 'converter.personnage:convert')
+			->before($mustBeOrga);
+			
+		/**
+		 * Gestion des documents lié à un personnage
+		 */
+		$controllers->match('/admin/{personnage}/documents','LarpManager\Controllers\PersonnageController::documentAction')
+			->bind("personnage.documents")
+			->assert('personnage', '\d+')
+			->convert('personnage', 'converter.personnage:convert')
+			->method('GET|POST')
+			->before($mustBeScenariste);
+			
+		/**
+		 * Gestion des objets lié à un personnage
+		 */
+		$controllers->match('/admin/{personnage}/items','LarpManager\Controllers\PersonnageController::itemAction')
+			->bind("personnage.items")
+			->assert('personnage', '\d+')
+			->convert('personnage', 'converter.personnage:convert')
+			->method('GET|POST')
+			->before($mustBeScenariste);
 			
 		/**
 		 * Mise à jours des langues

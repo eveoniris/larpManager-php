@@ -1,0 +1,91 @@
+{% extends "layout.twig" %}
+
+{% block title %}Groupes{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path('personnage.admin.list') }}">Liste des personnages</a></li>
+		<li><a href="{{ path('personnage.admin.detail', {'personnage': personnage.id}) }}">Détail de {{ personnage.publicName }}</a></li>
+		<li class="active">Modifier les ressources</li>
+	</ol>
+	
+	<div class="well well-sm">
+		<form action="{{ path('personnage.admin.update.ressource',{'personnage': personnage.id}) }}" method="POST">
+			{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}		
+			{{ form_start(form) }}
+			<h4>{{ form_label(form.personnageRessources) }}</h4>
+			<p>Ajoutez içi les ressources additionnelles</p>
+			<ul class="list-group personnageRessources" data-prototype="{{ form_widget(form.personnageRessources.vars.prototype)|e }}">
+				{% for personnageRessource in form.personnageRessources %}
+					<li class="list-group-item">
+							<div class="ressource">
+								{{ form_widget(personnageRessource.nombre) }}
+								{{ form_widget(personnageRessource.ressource) }}
+							</div>
+					</li>
+				{% endfor %}
+			</ul>
+			{{ form_end(form) }}
+		</form>
+	</div>
+{% endblock %}
+
+{% block javascript %}
+<script>
+
+	function addPersonnageRessourceForm(collectionHolder, $newRessourceLinkLi) {
+	    // Récupère l'élément ayant l'attribut data-prototype comme expliqué plus tôt
+	    var prototype = collectionHolder.attr('data-prototype');
+	
+	    // Remplace '__name__' dans le HTML du prototype par un nombre basé sur
+	    // la longueur de la collection courante
+	    var newForm = prototype.replace(/__name__/g, collectionHolder.children().length);
+	
+	    // Affiche le formulaire dans la page dans un li, avant le lien "ajouter un tag"
+	    var $newFormLi = $('<li class="list-group-item"></li>').append(newForm);
+	    $newRessourceLinkLi.before($newFormLi);
+	
+		 // ajoute un lien de suppression au nouveau formulaire
+	    addPersonnageRessourceFormDeleteLink($newFormLi);
+	}
+	
+	function addPersonnageRessourceFormDeleteLink($personnageRessourceFormLi) {
+	    var $removeFormA = $('<span class="input-group-btn"><a class="btn btn-link" href="#"><span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span></a></span>');
+	    $('select',$personnageRessourceFormLi).wrap('<div class="input-group"></div>');
+	    $('select',$personnageRessourceFormLi).after($removeFormA);
+	
+	    $removeFormA.on('click', function(e) {
+	        // empêche le lien de créer un « # » dans l'URL
+	        e.preventDefault();
+	
+	        // supprime l'élément li pour le formulaire de tag
+	        $personnageRessourceFormLi.remove();
+	    });
+	}
+
+	var collectionRessourceHolder = $('ul.personnageRessources');
+	var $addPersonnageRessourceLink = $('<a href="#" class="add_personnageRessource_link">Ajouter une ressource</a>');
+	var $newRessourceLinkLi = $('<li class="list-group-item"></li>').append($addPersonnageRessourceLink);
+	
+	jQuery(document).ready(function() {
+		
+	    collectionRessourceHolder.find('li').each(function() {
+	        addPersonnageRessourceFormDeleteLink($(this));
+	    });
+	
+	    collectionRessourceHolder.append($newRessourceLinkLi);
+	
+	    $addPersonnageRessourceLink.on('click', function(e) {
+	        // empêche le lien de créer un « # » dans l'URL
+	        e.preventDefault();
+	
+	        // ajoute un nouveau formulaire tag (voir le prochain bloc de code)
+	        addPersonnageRessourceForm(collectionRessourceHolder, $newRessourceLinkLi);
+	    });
+	    $("div#personnageRessource_personnageRessources").parent().remove();
+	});
+
+</script>
+{% endblock javascript %}
