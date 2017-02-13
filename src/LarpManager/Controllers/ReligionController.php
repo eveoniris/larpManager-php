@@ -24,9 +24,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Doctrine\Common\Collections\ArrayCollection;
 use Silex\Application;
-use LarpManager\Form\ReligionForm;
-use LarpManager\Form\ReligionBlasonForm;
-use LarpManager\Form\ReligionLevelForm;
+use LarpManager\Form\Religion\ReligionForm;
+use LarpManager\Form\Religion\ReligionBlasonForm;
+use LarpManager\Form\Religion\ReligionLevelForm;
 use Doctrine\ORM\Query;
 
 /**

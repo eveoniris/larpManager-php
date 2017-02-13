@@ -36,6 +36,7 @@ use LarpManager\Form\Personnage\PersonnageRichesseForm;
 use LarpManager\Form\Personnage\PersonnageDocumentForm;
 use LarpManager\Form\Personnage\PersonnageItemForm;
 use LarpManager\Form\Personnage\PersonnageOriginForm;
+use LarpManager\Form\Personnage\PersonnageReligionForm;
 
 
 use LarpManager\Form\PersonnageFindForm;

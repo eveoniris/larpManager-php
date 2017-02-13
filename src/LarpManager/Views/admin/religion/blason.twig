@@ -4,18 +4,24 @@
 
 {% block content %}
 
-<div class="well bs-component">
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path("religion") }}">Liste des religions</a></li>
+		<li><a href="{{ path('religion.detail', {'index': religion.id}) }}">{{ religion.label }}</a></li>
+		<li class="active">Modifier le blason</li>
+	</ol>
 	
-	
-	<div class="header"><h5>Ajouter un blason pour la religion {{ religion.label }}</h5></div>
-	
-	<blockquote>Choisissez votre fichier et téléversez le dans larpManager.</blockquote>
-	
-	<form action="{{ path('religion.update.blason', {'religion': religion.id}) }}" method="POST" {{ form_enctype(form) }}>			
-			{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
-			{{ form(form) }}
-	</form>
-	
-</div>
+	<div class="well well-sm">
+
+		<div class="header"><h5>Ajouter un blason pour la religion {{ religion.label }}</h5></div>
+		
+		<blockquote>Choisissez votre fichier et téléversez le dans larpManager.</blockquote>
+		
+		<form action="{{ path('religion.update.blason', {'religion': religion.id}) }}" method="POST" {{ form_enctype(form) }}>			
+				{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+				{{ form(form) }}
+		</form>
+		
+	</div>
 
 {% endblock content %}

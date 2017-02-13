@@ -5,19 +5,28 @@
 {% block style %}
 <style>
 ul, li {
-  
   list-style: none;
 }
 
 a {
-
   text-decoration: none;
 }
 
+ul.waterfall {
+	padding-left:0px;
+}
+
 .waterfall .pin {
-  width: 200px;
+  width: 480px;
   height: auto;
-  margin: 0 0 10px 20px;
+  margin: 0 0 0px 0px;
+  border-style: solid;
+  border-width : 5px;
+  border-color: rgba(0,0,0,0.75);
+  -webkit-transition: all 0.6s ease;
+  -moz-transition: all 0.6s ease;
+  -o-transition: all 0.6s ease;
+  transition: all 0.6s ease;
 }
 
 .waterfall .pin a {
@@ -26,8 +35,47 @@ a {
 }
 
 .waterfall.gallery .pin {
-  width: 180px;
+  width: 460px;
 }
+
+figcaption {
+	position: absolute;
+	background: black;
+	background: rgba(0,0,0,0.75);
+	color: white;
+	width:470px;
+	height: 35px;
+}
+figcaption.menu {
+	opacity: 0;
+	top:0px;
+	z-index: 666;
+	
+	-webkit-transition: all 0.6s ease;
+	-moz-transition: all 0.6s ease;
+	-o-transition: all 0.6s ease;
+	transition: all 0.6s ease;
+}
+
+figcaption.tags {
+	height:95px;
+	margin-top:-95px;
+	padding-top: 5px;
+	padding-left: 5px;
+}
+
+figure:hover figcaption.menu {
+	opacity: 1;
+}
+
+li.pin:hover {
+	border-color: rgba(240,240,240,1);
+}
+.cap-bot figcaption.menu {
+	left: 0;
+}
+
+
 </style>
 
 {% endblock style %}
@@ -38,80 +86,107 @@ a {
 		<li class="active">Objets</li>
 	</ol>
 	
-	<div class="well well-sm">
-		<div class="clearfix">
-			<div class="pull-right">
-				Lister les objets par tags :
-				{% for tag in tags %}
-					<a href="{{ path('stock_objet_index', {'tag':tag.id}) }}">{{ tag.nom }}&nbsp;<span class="badge">{{ tag.objets|length }}</span></a>
-				{% endfor %}
-				<a href="{{ path('stock_objet_index', {'tag':-1}) }}">Objets sans tag&nbsp;<span class="badge">{{ objetsWithoutTagCount }}</span></a>
-			</div>
-			
-			<a href="{{ path('stock_objet_add') }}" class="btn btn-default">Créer un nouvel objet</a>
-		</div>
-		
-		<h5>
-		
-		{% if tag %}
-			Vous listez les objets correspondant au tag <strong>{{tag.nom }}</strong>&nbsp;<small>{{ objets|length }} objet(s)</small>
-		{% elseif tagId == -1 %}
-			Vous listez tous les objets sans tags&nbsp;<small>{{ objets|length }} objet(s)</small>
-		{% else %}
-			Vous listez tous les objets&nbsp;<small>{{ objets|length }} objet(s)</small>
-		{% endif %}
-		</h5>
-		Astuce : utiliez la molette de la sourie en bas de page pour charger les objets suivants 
-	</div>
 	
-	<div class="well well-sm">
+	<nav class="navbar navbar-default" style="padding-right: 5px;">
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-2" aria-expanded="false">
+		        <span class="sr-only">Toggle navigation</span>
+		        <span class="icon-bar"></span>
+		        <span class="icon-bar"></span>
+		        <span class="icon-bar"></span>
+			</button>
+			<span class="navbar-brand">
+				{% if tag %}
+					Vous listez les objets correspondant au tag <strong>{{tag.nom }}</strong>&nbsp;<small>{{ objets|length }} objet(s)</small>
+				{% elseif tagId == -1 %}
+					Vous listez tous les objets sans tags&nbsp;<small>{{ objets|length }} objet(s)</small>
+				{% elseif rangement %}
+					Vous listez les objets correspondant au rangement <strong>{{rangement.label }}</strong>&nbsp;<small>{{ objets|length }} objet(s)</small>
+				{% elseif rangementId == -1 %}
+					Vous listez tous les objets sans rangement&nbsp;<small>{{ objets|length }} objet(s)</small>
+				{% else %}
+					Vous listez tous les objets&nbsp;<small>{{ objets|length }} objet(s)</small>
+				{% endif %}
+			</span>
+		</div>
+		<div id="bs-example-navbar-collapse-2" class="collapse navbar-collapse">
+			<ul class="nav navbar-nav navbar-right">
+				<li role="presentation" class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+	      				Tags
+	      				<span class="caret"></span>
+	    			</a>
+	    			<ul class="dropdown-menu">
+		    			{% for tag in tags %}
+							<li><a href="{{ path('stock_objet_index', {'tag':tag.id}) }}">{{ tag.nom }}&nbsp;({{ tag.objets|length }})</a></li>
+						{% endfor %}
+						<li><a href="{{ path('stock_objet_index', {'tag':-1}) }}">Objets sans tag&nbsp;({{ objetsWithoutTagCount }})</a></li>
+					</ul>
+	    		</li>
+	    		<li role="presentation" class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+	      				Rangements
+	      				<span class="caret"></span>
+	    			</a>
+	    			<ul class="dropdown-menu">
+	    				{% for rangement in rangements %}
+							<li><a href="{{ path('stock_objet_index', {'rangement':rangement.id}) }}">{{ rangement.label }}&nbsp;{{ rangement.objets|length }}</a></li>
+						{% endfor %}
+						<li><a href="{{ path('stock_objet_index', {'rangement':-1}) }}">Objets sans rangement&nbsp;{{ objetsWithoutRangementCount }}</a></li>
+					</ul>
+	    		</li>
+	    		<a href="{{ path('stock_objet_add') }}" class="btn btn-primary navbar-btn">Créer un nouvel objet</a>
+	    	</ul>
+	    </div>
+	</nav> 
 			
-		 	<ul class="waterfall center-block">
-	    		{% for objet in objets %}
-		    		<li class="pin">
-		    			<ul class="list-group">
-		    				<li class="list-group-item">
-		    					<a href="{{ path('stock_objet_update', {'objet': objet.id}) }}">
-		    					{% if objet.photo %}
-				  					<img src="{{ path('stock_objet_photo',{'objet': objet.id,'miniature': true}) }}" alt="{{ objet.photo.name }}" />
-				  				{% else %}
-				  					Modifier
-				  				{% endif %}
-				  				</a>
-				  			</li>
-				  			<li class="list-group-item">
-				  				{% for tag in objet.tags %}
-				  				 	<span class="badge">{{ tag }}</span>
-				  				{% endfor %}
-				  				<div class="btn-group" role="group" aria-label="...">
-				  					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-      									Action
-      									<span class="caret"></span>
-    								</button>
-    								<ul class="dropdown-menu">
-    									<li><a href="{{ path('stock_objet_tag', {'objet': objet.id}) }}">Modifier les tags</a></li>
-    									<li><a href="{{ path('item.new', {'objet': objet.id}) }}">Creer un objet de jeu</a></li>
-    									<li><a href="{{ path('stock_objet_update', {'objet': objet.id}) }}">Modifier</a></li>
-					  					<li><a href="{{ path('stock_objet_clone', {'objet': objet.id}) }}">Cloner</a></li>
-					  					<li><a href="{{ path('stock_objet_delete', {'objet': objet.id}) }}">Supprimer</a></li>
-					  				</ul>
-					  			</div>
-				  			</li>
-				  			<li class="list-group-item">
-				  				{% for item in objet.items %}
-				  					<span class="text-info">Objet de jeu : <strong>{{ item.numero }} - {{ item.label }}</strong></span> 
-				  				{% else %}
-				  					<span class="text-success">Cet objet n'est pas utilisé en jeu.</span>
-				  				{% endfor %}
-				  			</li>
-				  			<li class="list-group-item">
-								<strong>{{ objet.nom }}</strong>
-								<p>{{ objet.description }}</p>
-				  			</li>
-			  			</ul>
-			    	</li>
-	  			{% endfor %}
-	  		</ul>
-	  </div>
+	<ul class="waterfall">
+    	{% for objet in objets %}
+    		<li class="pin">
+    			<figure  tabindex="0" class="cap-bot">
+	    			
+	    			{% if objet.photo %}
+			  			<img src="{{ path('stock_objet_photo',{'objet': objet.id}) }}" alt="{{ objet.photo.name }}" />
+			  		{% else %}
+			  			Modifier
+			  		{% endif %}
+			  		
+			  		<figcaption class="menu">
+			  			<nav class="navbar navbar-default" style="margin-bottom: 0px; border-radius:0;">
+  									<div class="navbar-header">
+					  					<span class="navbar-brand">{{ objet.nom }}</span>
+				  				</div>
+  								<div class="collapse navbar-collapse">
+  									<ul class="nav navbar-nav navbar-right">
+							  			<li role="presentation" class="dropdown">
+						  					<a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+		      									Action
+		      									<span class="caret"></span>
+		    								</a>
+		    								<ul class="dropdown-menu">
+		    									<li><a href="{{ path('stock_objet_tag', {'objet': objet.id}) }}">Modifier les tags</a></li>
+	    									<li><a href="{{ path('item.new', {'objet': objet.id}) }}">Creer un objet de jeu</a></li>
+	    									<li><a href="{{ path('stock_objet_update', {'objet': objet.id}) }}">Modifier</a></li>
+						  					<li><a href="{{ path('stock_objet_clone', {'objet': objet.id}) }}">Cloner</a></li>
+						  					<li><a href="{{ path('stock_objet_delete', {'objet': objet.id}) }}">Supprimer</a></li>
+						  				</ul>
+						  			</li>
+						  		</ul>
+					  		</div>
+			  			</nav>
+			  		</figcaption>
+			  		<figcaption class="tags">
+						<p>Description : {{ objet.description }}</p>
+						<p>Tags : {{ objet.tags|join(', ') }}</p>
+						{% for item in objet.items %}
+		  					<span class="text-info">Objet de jeu : <strong>{{ item.numero }} - {{ item.label }}</strong></span> 
+		  				{% else %}
+		  					<span class="text-success">Cet objet n'est pas utilisé en jeu.</span>
+		  				{% endfor %}
+			  		</figcaption>
+			  	</figure>
+	    	</li>
+  		{% endfor %}
+  	</ul>
 	
 {% endblock content %}

@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace LarpManager\Form;
+namespace LarpManager\Form\Religion;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -30,7 +30,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  * @author kevin
  *
  */
-class ReligionLevelForm extends AbstractType
+class ReligionForm extends AbstractType
 {
 	/**
 	 * Construction du formulaire
@@ -47,11 +47,16 @@ class ReligionLevelForm extends AbstractType
 				->add('description','textarea', array(
 					'label' => 'Description',
 					'required' => false,
-					'attr' => array('rows' => 10),
+					'attr' => array(
+							'class' => 'tinymce',
+							'rows' => 10),
 				))
-				->add('index','number', array(
-					'label' => 'Index',
-					'required' => true,
+				->add('spheres', 'entity', array(
+					'label' => 'Sphères',
+					'multiple' => true,
+					'expanded' => true,
+					'class' => 'LarpManager\Entities\Sphere',
+					'choice_label' => 'label',
 				));
 	}
 	
@@ -63,7 +68,7 @@ class ReligionLevelForm extends AbstractType
 	public function configureOptions(OptionsResolver $resolver)
 	{
 		$resolver->setDefaults(array(
-				'data_class' => 'LarpManager\Entities\ReligionLevel',
+				'data_class' => 'LarpManager\Entities\Religion',
 		));
 	}
 	
@@ -72,6 +77,6 @@ class ReligionLevelForm extends AbstractType
 	 */
 	public function getName()
 	{
-		return 'religionLevel';
+		return 'religion';
 	}
 }

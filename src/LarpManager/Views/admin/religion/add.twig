@@ -2,6 +2,12 @@
 
 {% block content %}
 
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path("religion") }}">Liste des religions</a></li>
+		<li class="active">Ajout</li>
+	</ol>
+	
 	<div class="container-fluid">
 		<div class="row">
 			<div class="col-xs-12 col-md-8">
@@ -14,21 +20,3 @@
 	</div>
 	
 {% endblock content %}
-
-{% block javascript %}
-
-	{{ parent() }}
-
-	{# inclusion du plugin tinymce pour la saisie du post #}   
-	<script src="{{ app.request.basepath }}/js/tinymce/tinymce.min.js"></script>
-
-	<script type="text/javascript">
-		tinyMCE.init({
-				mode: "textareas",
-				theme: "modern",
-				plugins : "spellchecker,insertdatetime,preview", 
-		});
-		
-	</script>
-
-{% endblock javascript %}

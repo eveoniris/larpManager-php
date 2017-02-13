@@ -30,6 +30,19 @@ use Doctrine\ORM\EntityRepository;
 class ObjetRepository extends EntityRepository
 {
 	/**
+	 * Trouve tous les objets
+	 */
+	public function findAll()
+	{
+		$qb = $this->getEntityManager()->createQueryBuilder();
+		
+		$qb->select('o');
+		$qb->from('LarpManager\Entities\Objet','o');
+		$qb->orderBy('o.id','DESC');
+		return $qb->getQuery()->getResult();
+	}
+	
+	/**
 	 * Trouve tous les objets correspondant au tag
 	 * @return ArrayCollection $classes
 	 */
@@ -39,8 +52,10 @@ class ObjetRepository extends EntityRepository
 		
 		$qb->select('o');
 		$qb->from('LarpManager\Entities\Objet','o');
+		$qb->join('o.photo','p');
 		$qb->join('o.tags','t');
 		$qb->where('t.nom LIKE :tag');
+		$qb->orderBy('o.id','DESC');
 		$qb->setParameter('tag', $tag->getNom());
 		
 		return $qb->getQuery()->getResult();
@@ -56,9 +71,45 @@ class ObjetRepository extends EntityRepository
 		
 		$qb->select('o');
 		$qb->from('LarpManager\Entities\Objet','o');
+		$qb->orderBy('o.id','DESC');
 		$qb->leftjoin('o.tags','t');
 		$qb->where('t.id is null');
 				
+		return $qb->getQuery()->getResult();
+	}
+	
+	/**
+	 * Trouve tous les objets correspondant au tag
+	 * @return ArrayCollection $classes
+	 */
+	public function findByRangement($rangement)
+	{
+		$qb = $this->getEntityManager()->createQueryBuilder();
+	
+		$qb->select('o');
+		$qb->from('LarpManager\Entities\Objet','o');
+		$qb->join('o.rangement','r');
+		$qb->where('r.id = :rangement');
+		$qb->orderBy('o.id','DESC');
+		$qb->setParameter('rangement', $rangement->getId());
+	
+		return $qb->getQuery()->getResult();
+	}
+	
+	/**
+	 * Trouve tous les objets sans rangement
+	 * @return ArrayCollection $classes
+	 */
+	public function findWithoutRangement()
+	{
+		$qb = $this->getEntityManager()->createQueryBuilder();
+	
+		$qb->select('o');
+		$qb->from('LarpManager\Entities\Objet','o');
+		$qb->leftjoin('o.rangement','r');
+		$qb->orderBy('o.id','DESC');
+		$qb->where('r.id is null');
+	
 		return $qb->getQuery()->getResult();
 	}
 }

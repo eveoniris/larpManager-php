@@ -18,19 +18,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace LarpManager\Form;
+namespace LarpManager\Form\Religion;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
- * LarpManager\Form\ReligionForm
+ * LarpManager\Form\TrombineForm
  *
  * @author kevin
  *
  */
-class ReligionForm extends AbstractType
+class ReligionBlasonForm extends AbstractType
 {
 	/**
 	 * Construction du formulaire
@@ -40,30 +40,20 @@ class ReligionForm extends AbstractType
 	 */
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
-		$builder->add('label','text', array(
-					'label' => 'Label',
+		$builder->add('blason','file', array(
+					'label' => 'Choisissez votre fichier',
 					'required' => true,
-				))
-				->add('description','textarea', array(
-					'label' => 'Description',
-					'required' => false,
-					'attr' => array('rows' => 10),
-				))
-				->add('spheres', 'entity', array(
-					'label' => 'Sphères',
-					'multiple' => true,
-					'expanded' => true,
-					'class' => 'LarpManager\Entities\Sphere',
-					'choice_label' => 'label',
+					'mapped' => false,
 				));
 	}
 	
+
 	/**
 	 * Définition de l'entité concerné
-	 * 
-	 * @param OptionsResolver $resolver
+	 *
+	 * @param OptionsResolverInterface $resolver
 	 */
-	public function configureOptions(OptionsResolver $resolver)
+	public function setDefaultOptions(OptionsResolverInterface $resolver)
 	{
 		$resolver->setDefaults(array(
 				'data_class' => 'LarpManager\Entities\Religion',
@@ -75,6 +65,6 @@ class ReligionForm extends AbstractType
 	 */
 	public function getName()
 	{
-		return 'religion';
+		return 'religionBlason';
 	}
 }

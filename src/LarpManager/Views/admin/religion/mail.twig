@@ -4,27 +4,34 @@
 
 {% block content %}
 
-<a href="{{ path("religion") }}">Retour à la liste des religions</a>
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path("religion") }}">Liste des religions</a></li>
+		<li><a href="{{ path('religion.detail', {'index': religion.id}) }}">{{ religion.label }}</a></li>
+		<li class="active">Liste des adresses mails</li>
+	</ol>
 
-<table>
-<thead>
-	<tr>
-		<th>Religion</th>
-		<th>Mails</th>
-	</tr>
-</thead>
-<tbody>
-{%  for religion in religions %}
-	<tr>
-		<td>{{ religion.label }}</td>
-		<td>
-	{% for personnageReligion in religion.personnagesReligions %}
-		{{ personnageReligion.personnage.user.email }},&nbsp;
-	{% endfor %}
-		</td>
-	</tr>
-{%  endfor %}
-</tbody>
-</table>
+	<div class="well well-sm">
+		<table>
+		<thead>
+			<tr>
+				<th>Religion</th>
+				<th>Mails</th>
+			</tr>
+		</thead>
+		<tbody>
+		{%  for religion in religions %}
+			<tr>
+				<td>{{ religion.label }}</td>
+				<td>
+			{% for personnageReligion in religion.personnagesReligions %}
+				{{ personnageReligion.personnage.user.email }},&nbsp;
+			{% endfor %}
+				</td>
+			</tr>
+		{%  endfor %}
+		</tbody>
+		</table>
+	</div>
 	
 {% endblock content %}

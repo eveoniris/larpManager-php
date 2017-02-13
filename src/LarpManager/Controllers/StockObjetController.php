@@ -45,6 +45,9 @@ class StockObjetController
 	 */
 	public function indexAction(Request $request, Application $app)
 	{	
+		$repoRangement = $app['orm.em']->getRepository('\LarpManager\Entities\Rangement');
+		$rangements = $repoRangement->findAll();
+		
 		$repoTag = $app['orm.em']->getRepository('\LarpManager\Entities\Tag');
 		$tags = $repoTag->findAll();
 		
@@ -54,9 +57,16 @@ class StockObjetController
 		$objetsWithoutTagCount = 0;
 		if ( $objetsWithoutTag ) $objetsWithoutTagCount = count($objetsWithoutTag); 
 		
+		$objetsWithoutRangement = $repoObjet->findWithoutRangement();
+		$objetsWithoutRangementCount = 0;
+		if ( $objetsWithoutRangement ) $objetsWithoutRangementCount = count($objetsWithoutRangement);
+		
 			
 		$tagId = $request->get('tag');
 		$tag = null;
+		$rangementId = $request->get('rangement');
+		$rangement = null;
+		
 		if ( $tagId )
 		{
 			if ( $tagId == -1 ) // recherche les objets n'ayant pas de tag
@@ -77,8 +87,31 @@ class StockObjetController
 			}
 		}
 		else {
-			$objets = $repoObjet->findAll();
+			if ( $rangementId )
+			{
+				if ( $rangementId == -1 ) // recherche les objets n'ayant pas de tag
+				{
+					$objets = $objetsWithoutRangement;
+				}
+				else
+				{
+					$rangement = $repoRangement->find($rangementId);
+					if ( $rangement )
+					{
+						$objets = $repoObjet->findByRangement($rangement);
+					}
+					else
+					{
+						$objets = $repoObjet->findAll();
+					}
+				}
+			}
+			else {
+				$objets = $repoObjet->findAll();
+			}
 		}
+		
+		
 
 		return $app['twig']->render('admin/stock/objet/list.twig', array(
 				'objets' => $objets,
@@ -86,6 +119,10 @@ class StockObjetController
 				'tag' => $tag,
 				'tagId' => $tagId,
 				'objetsWithoutTagCount' => $objetsWithoutTagCount,
+				'objetsWithoutRangementCount' => $objetsWithoutRangementCount,
+				'rangements' => $rangements,
+				'rangement' => $rangement,
+				'rangementId' => $rangementId,
 		));
 	}
 	
@@ -233,7 +270,7 @@ class StockObjetController
 			}
 			else if ( $form->get('save_clone')->isClicked())
 			{
-				return $app->redirect($app['url_generator']->generate('stock_objet_clone', array('index' => $objet->getId())),301);
+				return $app->redirect($app['url_generator']->generate('stock_objet_clone', array('objet' => $objet->getId())),301);
 			}
 			
 		}
@@ -290,7 +327,7 @@ class StockObjetController
 			}
 			else
 			{
-				return $app->redirect($app['url_generator']->generate('stock_objet_clone', array('index' => $newObjet->getId())),301);
+				return $app->redirect($app['url_generator']->generate('stock_objet_clone', array('objet' => $newObjet->getId())),301);
 			}
 		}
 		

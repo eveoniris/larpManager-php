@@ -6,22 +6,21 @@
 
 	<ol class="breadcrumb">
 		<li><a href="{{ path('homepage') }}">Accueil</a></li>
-		<li><a href="{{ path('religion') }}">Liste des religions</a></li>
-		<li class="active">Personnages ayant cette religion</li>
+		<li><a href="{{ path("religion") }}">Liste des religions</a></li>
+		<li><a href="{{ path('religion.detail', {'index': religion.id}) }}">{{ religion.label }}</a></li>
+		<li class="active">Personnages</li>
 	</ol>
 	
 
-<div class="container-fluid">
-	<div class="row">
-		<div class="col-xs-12 col-md-12">
-				<div class="well well-sm">
-				<h4>
-					{{ religion.label }}
-					<small>
-						( {{ religion.personnagesReligions|length }} personnages )
-					</small>
-				</h4>
-			</div>
+	<div class="well well-sm">
+	
+			<h4>
+				{{ religion.label }}
+				<small>
+					( {{ religion.personnagesReligions|length }} personnages )
+				</small>
+			</h4>
+	
 
 			<div class="list-group">
 				{% for personnageReligion in religion.personnagesReligions %}
@@ -35,6 +34,5 @@
 			</div>
 		</div>
 	</div>
-</div>
 	
 {% endblock %}

@@ -2,25 +2,22 @@
 
 {% block content %}
 
-<div class="container-fluid">
-	<div class="row">
-		<div class="col-xs-12 col-md-12">
-			<div class="well well-sm">
-				<h4>
-					Gestion des religions
-					<small>
-						( {{ religions|length }} religions )
-					</small>
-				</h4>
-			</div>
-			
-			<div>
-				<a href="{{ path('religion.mail') }}"><button  type="button" class="btn btn-default">Liste mail</button></a>
-			</div>
-			{{ include("admin/religion/fragment/list.twig", {'religions' : religions, 'add' : true}) }}
-		</div>
-	</div>
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li class="active">Liste des religions</li>
+	</ol>
 
-</div>
+	<div class="well well-sm">
+	
+			<h4>
+				Gestion des religions
+				<small>
+					( {{ religions|length }} religions )
+				</small>
+			</h4>	
+			<a href="{{ path('religion.mail') }}"><button  type="button" class="btn btn-default">Liste mail</button></a>
+			
+			{{ include("admin/religion/fragment/list.twig", {'religions' : religions, 'add' : true}) }}
+	</div>
 	
 {% endblock %}
