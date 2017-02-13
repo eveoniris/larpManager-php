@@ -1,34 +1,19 @@
 {% extends "layout.twig" %}
 
 {% block content %}
-	<div class="container-fluid">
-		<div class="row">
-			<div class="col-xs-12 col-md-8">
-				{{ include("admin/religion/fragment/form.twig",{
-					'legend': 'Modification d\'une religion',
-					'action': path('religion.update',{'index': religion.id}),
-					'form' : form}) }}
-			</div>
-		</div>
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path("religion") }}">Liste des religions</a></li>
+		<li><a href="{{ path('religion.detail', {'index': religion.id}) }}">{{ religion.label }}</a></li>
+		<li class="active">Modification</li>
+	</ol>
+	
+	<div class="well well-sm">
+		{{ include("admin/religion/fragment/form.twig",{
+			'legend': 'Modification d\'une religion',
+			'action': path('religion.update',{'index': religion.id}),
+			'form' : form}) }}
 	</div>
 	
 {% endblock content %}
-
-
-{% block javascript %}
-
-	{{ parent() }}
-
-	{# inclusion du plugin tinymce pour la saisie du post #}   
-	<script src="{{ app.request.basepath }}/js/tinymce/tinymce.min.js"></script>
-
-	<script type="text/javascript">
-		tinyMCE.init({
-				mode: "textareas",
-				theme: "modern",
-				plugins : "spellchecker,insertdatetime,preview", 
-		});
-		
-	</script>
-
-{% endblock javascript %}

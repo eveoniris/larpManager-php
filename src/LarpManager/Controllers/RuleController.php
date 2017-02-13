@@ -60,7 +60,7 @@ class RuleController
 				
 			if (!$extension || ! in_array($extension, array('pdf'))) {
 				$app['session']->getFlashBag()->add('error','Désolé, votre fichier ne semble pas valide (vérifiez le format de votre fichier)');
-				return $app->redirect($app['url_generator']->generate('rules.admin'),301);
+				return $app->redirect($app['url_generator']->generate('rules'),301);
 			}
 				
 			$ruleFilename = hash('md5',$app['user']->getUsername().$filename . time()).'.'.$extension;
