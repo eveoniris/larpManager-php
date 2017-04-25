@@ -156,7 +156,7 @@ class LarpManagerManager
 	public function getGnActif()
 	{
 		$repo = $this->app['orm.em']->getRepository('\LarpManager\Entities\Gn');
-		return $repo->findGnActif();
+		return $repo->findNext();
 	}	
 	
 	/**

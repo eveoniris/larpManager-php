@@ -35,9 +35,9 @@ class PnjControllerProvider implements ControllerProviderInterface
 	{
 		$controllers = $app['controllers_factory'];
 		
-		$controllers->match('/pnj/inscription','LarpManager\Controllers\PnjController::inscriptionAction')
-			->bind("pnj.inscription")
-			->method('GET|POST');
+		$controllers->match('/','LarpManager\Controllers\PnjController::listAction')
+			->bind("pnj.list")
+			->method('GET');
 		
 		return $controllers;
 	}

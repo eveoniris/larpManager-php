@@ -129,17 +129,20 @@ class GroupeSecondaireController
 			 * Ajoute le responsable du groupe dans le groupe si il n'y est pas déjà
 			 */
 			$personnage = $groupeSecondaire->getResponsable();
-			if ( ! $groupeSecondaire->isMembre($personnage) )
+			if ( $personnage )
 			{
-				$membre = new \LarpManager\Entities\Membre();
-				$membre->setPersonnage($personnage);
-				$membre->setSecondaryGroup($groupeSecondaire);
-				$membre->setSecret(false);
-				
-				$app['orm.em']->persist($membre);
-				$app['orm.em']->flush();
-				
-				$groupeSecondaire->addMembre($membre);
+				if ( ! $groupeSecondaire->isMembre($personnage) )
+				{
+					$membre = new \LarpManager\Entities\Membre();
+					$membre->setPersonnage($personnage);
+					$membre->setSecondaryGroup($groupeSecondaire);
+					$membre->setSecret(false);
+					
+					$app['orm.em']->persist($membre);
+					$app['orm.em']->flush();
+					
+					$groupeSecondaire->addMembre($membre);
+				}
 			}
 			
 			$app['orm.em']->persist($topic);

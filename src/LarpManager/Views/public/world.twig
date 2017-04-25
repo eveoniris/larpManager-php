@@ -178,7 +178,7 @@
 			fiefsGeom: null,
 
 			// Collection des geometries des groupes
-			groupesGeom: null,
+			//groupesGeom: null,
 
 			// Collection des geometries des langues
 			//languesGeom: null,
@@ -539,7 +539,7 @@
 				this.countriesGeom = new L.geoJson(false, {style: this.territoireStyle, onEachFeature: this.onEachFeature});
 				this.regionsGeom = new L.geoJson(false, {style: this.regionStyle, onEachFeature: this.onEachFeature});
 				this.fiefsGeom = new L.geoJson(false, {style: this.fiefStyle, onEachFeature: this.onEachFeature});
-				this.groupesGeom = new L.layerGroup();
+				//this.groupesGeom = new L.layerGroup();
 				//this.languesGeom = new L.layerGroup();
 				this.routesGeom = new L.geoJson(false, {onEachFeature: this.onEachFeature});
 				this.fortificationsGeom = new L.geoJson(false, {onEachFeature: this.onEachFeature});
@@ -637,7 +637,7 @@
 				var descriptionDiv = $('#description');
 				var adminDiv = $('#admin');
 				
-				$(descriptionDiv).html('<h4>'+props.name+'</h4><p>'+props.description+'</p>'+'<p><strong>Groupes : </strong>' + props.groupes.join(', '));
+				$(descriptionDiv).html('<h4>'+props.name+'</h4><p>'+props.description+'</p>');
 
 				{% if is_granted('ROLE_ORGA', app.user) %}
 					$(adminDiv).html('<a href="'+editLink+'">Modifier</a>'
@@ -1004,7 +1004,7 @@
 								{
 									marker = L.marker(latLng).bindTooltip(groupe.nom,{'pane':'labels'}).openTooltip();
 								}
-								cartographie.groupesGeom.addLayer(marker);
+								//cartographie.groupesGeom.addLayer(marker);
 							}
 							cartographie.groupeList[groupe.id] = groupe;
 							
@@ -1014,7 +1014,7 @@
 				}).error(function() {});
 			},
 
-			loadLangues: function() {
+			/*loadLangues: function() {
 					$.ajax({
 						dataType: 'json',
 						url: 'world/langues.json',
@@ -1043,7 +1043,7 @@
 							
 						}
 					}).error(function() {});
-			},
+			},*/
 
 			// sauvegarde une geometrie de territoire en base de donnee
 			saveTerritoire: function() {
@@ -1163,7 +1163,7 @@
 			// Applique les geometries et les layers sur la carte
 			applyOnMap: function() {
 				this.countriesGeom.addTo(this.map);
-				this.groupesGeom.addTo(this.map);
+				//this.groupesGeom.addTo(this.map);
 
 				// Options disponibles dans le controlLayer
 				var baseMaps = {
@@ -1176,7 +1176,7 @@
 					"Pays" : this.countriesGeom,
 					"Regions" : this.regionsGeom,
 					"Fiefs" : this.fiefsGeom,
-					"Groupes" : this.groupesGeom,
+					//"Groupes" : this.groupesGeom,
 				};
 				
 				L.control.layers(
@@ -1237,8 +1237,8 @@
 	cartographie.loadCountries();
 	cartographie.loadRegions();
 	cartographie.loadFiefs();
-	cartographie.loadGroupes();
-	cartographie.loadLangues();
+	//cartographie.loadGroupes();
+	//cartographie.loadLangues();
 	
 	cartographie.applyOnMap();
 

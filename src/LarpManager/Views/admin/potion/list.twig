@@ -20,6 +20,7 @@
 				<div class="row">
 					<div class="col-md-8">
 						<strong>{{potion.numero}}</strong> : {{ potion.label }} - Niveau {{ potion.niveau }}
+						{% if potion.secret %}<span style="color:red;">&nbsp;(SECRET)&nbsp;</span>{% endif %}
 						{{ potion.description|markdown }}
 						{% if potion.documentUrl %}
 							<a href="{{ path('magie.potion.document', {'potion': potion.id, 'document': potion.documentUrl}) }}">Télécharger le pdf associé</a>

@@ -1,0 +1,34 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+
+<ol class="breadcrumb">
+  <li class="active">Personnages non joueurs</li>
+</ol>
+
+<div class="well bs-component">	
+	<table class="table">
+		<caption >
+			<h5>Liste des pnj</h5>
+		</caption>
+	
+		<thead>
+				<tr>
+					<th>Nom Prénom</th>
+					<th>Email</th>
+					<th></th>
+				</tr>
+		</thead>
+		<tbody>
+			{% for pnj in pnjs %}
+				<tr>
+					<td>{{ pnj.user.etatCivil.nom }} {{ pnj.user.etatCivil.prenom }}</td>
+					<td>{{ pnj.user.email }}</td>
+				</tr>
+			{% endfor %}
+		</tbody>	
+	</table>
+		
+</div>
+			
+{% endblock content %}

@@ -143,6 +143,27 @@ class Gn extends BaseGn
 	}
 	
 	/**
+	 * Fourni la liste de tous les participants inscrit en tant que PNJ
+	 */
+	public function getParticipantsPnj()
+	{
+		$participants = new ArrayCollection();
+		
+		foreach( $this->getParticipants() as $participant)
+		{
+			if ( $participant->getBillet() )
+			{
+				if ( $participant->getBillet()->getLabel() ==  'Inscription PNJ')
+				{
+					$participants[] = $participant;
+				}
+			}
+		}
+		
+		return $participants;
+	}
+	
+	/**
 	 * Indique si le jeu est passé ou pas
 	 * 
 	 * @return boolean

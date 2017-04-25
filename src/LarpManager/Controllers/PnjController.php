@@ -35,21 +35,14 @@ class PnjController
 	/**
 	 * 
 	 */
-	public function inscriptionAction(Request $request, Application $app)
+	public function listAction(Request $request, Application $app)
 	{
-		$form = $app['form.factory']->createBuilder(new PnjInscriptionForm())
-			->add('subscribe','submit', array('label' => 'S\'inscrire'))
-			->getForm();
+		$gn = $app['larp.manager']->getGnActif();
 		
-		$form->handleRequest($request);
-				
-		if ( $form->isValid() )
-		{
-			
-		}
-		
-		return $app['twig']->render('public/pnj/inscription.twig', array(
-				'form' => $form->createView(),
+		$pnjs = $gn->getParticipantsPnj();
+
+		return $app['twig']->render('admin/pnj/list.twig', array(
+			'pnjs' => $pnjs,	
 		));
 	}
 }

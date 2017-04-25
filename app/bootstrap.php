@@ -297,6 +297,7 @@ else
 	$app->mount('/rumeur', new LarpManager\RumeurControllerProvider());
 	$app->mount('/strategie', new LarpManager\StrategieControllerProvider());
 	$app->mount('/objet', new LarpManager\ObjetControllerProvider());
+	$app->mount('/pnj', new LarpManager\PnjControllerProvider());
 	//$app->mount('/question', new LarpManager\QuestionControllerProvider());
 		
 
@@ -365,6 +366,7 @@ else
 		array('^/rumeur/.*$', 'ROLE_SCENARISTE'),
 		array('^/strategie/.*$', 'ROLE_SCENARISTE'),
 		array('^/objet/.*$', 'ROLE_SCENARISTE'),
+		array('^/pnj/.*$', 'ROLE_SCENARISTE'),
 		array('^/competenceFamily/.*$', 'ROLE_REGLE'),
 		array('^/level/.*$', 'ROLE_REGLE'),
 		array('^/token/.*$', 'ROLE_REGLE'),

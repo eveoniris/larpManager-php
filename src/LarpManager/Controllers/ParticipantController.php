@@ -672,13 +672,16 @@ class ParticipantController
 			if ( $territoire )
 			{
 				$langue = $territoire->getLangue();
-				if ( ! $personnage->isKnownLanguage($langue) )
+				if ( $langue )
 				{
-					$personnageLangue = new \LarpManager\Entities\PersonnageLangues();
-					$personnageLangue->setPersonnage($personnage);
-					$personnageLangue->setLangue($langue);
-					$personnageLangue->setSource('GROUPE');
-					$app['orm.em']->persist($personnageLangue);
+					if ( ! $personnage->isKnownLanguage($langue) )
+					{
+						$personnageLangue = new \LarpManager\Entities\PersonnageLangues();
+						$personnageLangue->setPersonnage($personnage);
+						$personnageLangue->setLangue($langue);
+						$personnageLangue->setSource('GROUPE');
+						$app['orm.em']->persist($personnageLangue);
+					}
 				}
 			}
 	
@@ -1884,7 +1887,7 @@ class ParticipantController
 		{
 			$data = $form->getData();
 			
-			if ( is_empty($data['explanation'])) {
+			if ( empty($data['explanation'])) {
 				$app['session']->getFlashBag()->add('error', 'Vos devez remplir le champ Explication.');
 			}
 			else
