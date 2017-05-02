@@ -191,6 +191,16 @@ class MagieControllerProvider implements ControllerProviderInterface
 			->method('GET');
 			
 		/**
+		 * Obtenir les personnages possédant cette potion
+		 */
+		$controllers->match('/potion/{potion}/personnages','LarpManager\Controllers\MagieController::potionPersonnagesAction')
+			->assert('potion', '\d+')
+			->bind("magie.potion.personnages")
+			->convert('potion', 'converter.potion:convert')
+			->before($mustBeScenariste)
+			->method('GET');
+			
+		/**
 		 * Ajouter une potion
 		 */
 		$controllers->match('/potion/add','LarpManager\Controllers\MagieController::potionAddAction')

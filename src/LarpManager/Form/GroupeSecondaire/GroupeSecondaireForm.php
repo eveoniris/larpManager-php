@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace LarpManager\Form;
+namespace LarpManager\Form\GroupeSecondaire;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -64,7 +64,7 @@ class GroupeSecondaireForm extends AbstractType
 						'query_builder' => function(EntityRepository $er) {
 							$qb = $er->createQueryBuilder('u');
 							$qb->orderBy('u.nom', 'ASC');
-							$qb->orderBy('u.surnom', 'ASC');
+							$qb->addOrderBy('u.surnom', 'ASC');
 							return $qb;
 						},
 						'property' => 'identity',

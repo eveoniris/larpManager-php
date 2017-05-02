@@ -18,36 +18,65 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace LarpManager\Form;
+namespace LarpManager\Form\Potion;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * LarpManager\Form\PersonnageUpdateRenommeForm
+ * LarpManager\Form\PotionForm
  *
  * @author kevin
  *
  */
-class PersonnageUpdateRenommeForm extends AbstractType
+class PotionForm extends AbstractType
 {
 	/**
 	 * Construction du formulaire
-	 * Seul les éléments ne dépendant pas des points d'expérience sont modifiables
-	 *
+	 * 
 	 * @param FormBuilderInterface $builder
 	 * @param array $options
 	 */
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
-		$builder->add('renomme','integer', array(
-				'required' => true,
-				'label' => 'Choisissez la nouvelle renommée du personnage'
-		));
-
+		$builder->add('label','text', array(
+					'required' => true,
+					'label' => 'Label',
+				))
+				->add('numero', 'text', array(
+					'required' => true,
+					'label' => 'Numéro', 
+				))
+				->add('niveau','choice', array(
+						'required' => true,
+						'choices' => array("1" => 1,"2" => 2, "3" => 3, "4" => 4),
+						'label' => 'Niveau',
+				))
+				->add('secret', 'choice', array(
+						'required' => true,
+						'choices' => array(
+								false => 'Potion non secrète',
+								true => 'Potion secrète',
+								
+						),
+						'label' => 'Secret'
+						
+				))
+				->add('document','file', array(
+						'label' => 'Téléversez un document',
+						'required' => true,
+						'mapped' => false
+				))
+				->add('description','textarea', array(
+					'required' => false,
+					'label' => 'Description',
+					'attr' => array(
+							'class' => 'tinymce',
+							'rows' => 9),
+				));
 	}
-
+	
 	/**
 	 * Définition de l'entité concerné
 	 *
@@ -56,15 +85,16 @@ class PersonnageUpdateRenommeForm extends AbstractType
 	public function configureOptions(OptionsResolver $resolver)
 	{
 		$resolver->setDefaults(array(
-				'data_class' => 'LarpManager\Entities\Personnage',
+				'data_class' => 'LarpManager\Entities\Potion',
 		));
 	}
-
+	
 	/**
 	 * Nom du formulaire
 	 */
 	public function getName()
 	{
-		return 'personnageUpdateRenomme';
+		return 'potion';
 	}
+	
 }

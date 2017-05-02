@@ -37,7 +37,7 @@ use LarpManager\Form\Personnage\PersonnageDocumentForm;
 use LarpManager\Form\Personnage\PersonnageItemForm;
 use LarpManager\Form\Personnage\PersonnageOriginForm;
 use LarpManager\Form\Personnage\PersonnageReligionForm;
-
+use LarpManager\Form\Personnage\PersonnageUpdateRenommeForm;
 
 use LarpManager\Form\PersonnageFindForm;
 use LarpManager\Form\PersonnageForm;
@@ -45,7 +45,6 @@ use LarpManager\Form\TriggerForm;
 use LarpManager\Form\TriggerDeleteForm;
 use LarpManager\Form\PersonnageUpdateForm;
 use LarpManager\Form\PersonnageTransfertForm;
-use LarpManager\Form\PersonnageUpdateRenommeForm;
 use LarpManager\Form\PersonnageUpdateSortForm;
 use LarpManager\Form\PersonnageUpdatePotionForm;
 use LarpManager\Form\PersonnageUpdateDomaineForm;
@@ -823,11 +822,9 @@ class PersonnageController
 	 * @param Request $request
 	 * @param Application $app
 	 */
-	public function adminUpdateRenommeAction(Request $request, Application $app)
-	{
-		$personnage = $request->get('personnage');
-		
-		$form = $app['form.factory']->createBuilder(new PersonnageUpdateRenommeForm(), $personnage)
+	public function adminUpdateRenommeAction(Request $request, Application $app, Personnage $personnage)
+	{	
+		$form = $app['form.factory']->createBuilder(new PersonnageUpdateRenommeForm())
 			->add('save','submit', array('label' => 'Valider les modifications'))
 			->getForm();
 		
@@ -835,8 +832,17 @@ class PersonnageController
 			
 		if ( $form->isValid() )
 		{
-			$personnage = $form->getData();
+			$renomme = $form->get('renomme')->getData();
+			$explication = $form->get('explication')->getData();
+			
+			$renomme_history = new \LarpManager\Entities\RenommeHistory();
+			
+			$renomme_history->setRenomme($renomme);
+			$renomme_history->setExplication($explication);
+			$renomme_history->setPersonnage($personnage);
+			$personnage->addRenomme($renomme);
 				
+			$app['orm.em']->persist($renomme_history);
 			$app['orm.em']->persist($personnage);
 			$app['orm.em']->flush();
 				

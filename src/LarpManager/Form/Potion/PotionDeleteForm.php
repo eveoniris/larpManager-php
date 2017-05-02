@@ -18,54 +18,47 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace LarpManager\Form;
+namespace LarpManager\Form\Potion;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
- * LarpManager\Form\SecondaryGroupFindForm
- *
+ * LarpManager\Form\PotionDeleteForm
+ * 
  * @author kevin
  *
  */
-class SecondaryGroupFindForm extends AbstractType
+class PotionDeleteForm extends AbstractType
 {
 	/**
 	 * Construction du formulaire
-	 *
+	 * 
 	 * @param FormBuilderInterface $builder
 	 * @param array $options
 	 */
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
-		$builder->add('search','text', array(
-						'required' => true,
-				))
-				->add('type', 'choice', array(
-						'required' => true,
-						'choices' => array(
-							'numero' => 'Numéro',
-							'group_name' => 'Nom du groupe',
-						)
-				));
 	}
 	
 	/**
-	 * Définition de l'entité concernée
-	 *
-	 * @param OptionsResolver $resolver
+	 * Définition de la classe d'entité concernée
+	 * 
+	 * @param OptionsResolverInterface $resolver
 	 */
-	public function configureOptions(OptionsResolver $resolver)
+	public function setDefaultOptions(OptionsResolverInterface $resolver)
 	{
+		$resolver->setDefaults(array(
+				'class' => 'LarpManager\Entities\Potion',
+		));
 	}
 	
 	/**
-	 * Nom du formulaire
+	 * Nom du formlaire
 	 */
 	public function getName()
 	{
-		return 'secondaryGroupFind';
+		return 'potionDelete';
 	}
 }

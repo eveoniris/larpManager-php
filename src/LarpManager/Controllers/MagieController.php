@@ -26,12 +26,13 @@ use LarpManager\Form\DomaineForm;
 use LarpManager\Form\DomaineDeleteForm;
 use LarpManager\Form\SortForm;
 use LarpManager\Form\SortDeleteForm;
-use LarpManager\Form\PotionForm;
-use LarpManager\Form\PotionDeleteForm;
+use LarpManager\Form\Potion\PotionForm;
+use LarpManager\Form\Potion\PotionDeleteForm;
 use LarpManager\Form\PriereForm;
 use LarpManager\Form\PriereDeleteForm;
 use LarpManager\Form\SphereForm;
 use LarpManager\Form\SphereDeleteForm;
+use LarpManager\Entities\Potion;
 
 /**
  * LarpManager\Controllers\MagieController
@@ -408,6 +409,20 @@ class MagieController
 		$potion = $request->get('potion');
 	
 		return $app['twig']->render('admin/potion/detail.twig', array(
+				'potion' => $potion,
+		));
+	}
+	
+	
+	/**
+	 * Liste des personnages ayant cette potion
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function potionPersonnagesAction(Request $request, Application $app, Potion $potion)
+	{
+		return $app['twig']->render('admin/potion/personnages.twig', array(
 				'potion' => $potion,
 		));
 	}

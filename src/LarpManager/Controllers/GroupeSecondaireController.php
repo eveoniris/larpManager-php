@@ -23,9 +23,9 @@ namespace LarpManager\Controllers;
 use Symfony\Component\HttpFoundation\Request;
 use Silex\Application;
 use JasonGrimes\Paginator;
-use LarpManager\Form\GroupeSecondaireForm;
-use LarpManager\Form\GroupeSecondairePostulerForm;
-use LarpManager\Form\SecondaryGroupFindForm;
+use LarpManager\Form\GroupeSecondaire\GroupeSecondaireForm;
+use LarpManager\Form\GroupeSecondaire\GroupeSecondairePostulerForm;
+use LarpManager\Form\GroupeSecondaire\SecondaryGroupFindForm;
 use LarpManager\Form\MessageForm;
 
 use LarpManager\Entities\Message;

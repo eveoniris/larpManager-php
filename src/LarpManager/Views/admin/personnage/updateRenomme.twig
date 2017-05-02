@@ -14,6 +14,7 @@
 		<form action="{{ path('personnage.admin.update.renomme', {'personnage': personnage.id}) }}" method="POST" {{ form_enctype(form) }}>
 			<fieldset>
 				<legend>Modification de {{ personnage.publicName }}</legend>
+				<p><strong>Ce personnage a {{ personnage.renomme }} points de renommé.</strong></p>
 				{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
 	
 				{{ form(form) }}

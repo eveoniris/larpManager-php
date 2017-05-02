@@ -18,47 +18,56 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace LarpManager\Form;
+namespace LarpManager\Form\Personnage;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * LarpManager\Form\PotionDeleteForm
- * 
+ * LarpManager\Form\PersonnageUpdateRenommeForm
+ *
  * @author kevin
  *
  */
-class PotionDeleteForm extends AbstractType
+class PersonnageUpdateRenommeForm extends AbstractType
 {
 	/**
 	 * Construction du formulaire
-	 * 
+	 * Seul les éléments ne dépendant pas des points d'expérience sont modifiables
+	 *
 	 * @param FormBuilderInterface $builder
 	 * @param array $options
 	 */
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
+		$builder->add('renomme','integer', array(
+					'required' => true,
+					'label' => 'Combien de points de renommé voulez-vous ajouter ? (indiquez une valeur négative pour retirer des points)',
+					'mapped' => false
+				))
+				->add('explication','textarea', array(
+					'required' => true,
+					'mapped' => false,
+					'label' => 'Donnez une explication',
+				));
+
 	}
-	
+
 	/**
-	 * Définition de la classe d'entité concernée
-	 * 
-	 * @param OptionsResolverInterface $resolver
+	 * Définition de l'entité concerné
+	 *
+	 * @param OptionsResolver $resolver
 	 */
-	public function setDefaultOptions(OptionsResolverInterface $resolver)
+	public function configureOptions(OptionsResolver $resolver)
 	{
-		$resolver->setDefaults(array(
-				'class' => 'LarpManager\Entities\Potion',
-		));
 	}
-	
+
 	/**
-	 * Nom du formlaire
+	 * Nom du formulaire
 	 */
 	public function getName()
 	{
-		return 'potionDelete';
+		return 'personnageUpdateRenomme';
 	}
 }

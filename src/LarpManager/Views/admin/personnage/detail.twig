@@ -112,7 +112,20 @@
 	  					</nav>
 	  					<div class="panel-body">
 	  						<p>Origine : <strong class="text-success">{{ personnage.territoire|default("non définie") }}</strong></p>
-							<p>Renommée : <strong class="text-success">{{ personnage.renomme|default(0) }}</strong></p>
+							<p>Renommée : <strong class="text-success">{{ personnage.renomme|default(0) }}</strong>
+								  	<a role="button" data-toggle="collapse" href="#renommeHistory" aria-expanded="false" aria-controls="collapseExample">
+										<i class="fa fa-history" aria-hidden="true"></i>
+									</a>
+							</p>
+							<div class="collapse" id="renommeHistory">
+								<h6>Historique</h6>		
+									
+								<div class="list-group">
+									{% for historique in personnage.renommeHistories %}
+										<div class="list-group-item">{{ historique.date|date("Y-m-d h:i:s") }} : {{ historique.renomme }}  {% if historique.explication %} pour la raison suivante : "{{ historique.explication }}"{% endif %}.</div>
+									{% endfor %}
+								</div>
+							</div>
 							<p>Pugilat : <strong class="text-success">{{ app['personnage.manager'].pugilat(personnage)|default(0) }}</strong></p>
 														
 							<h6>Domaines de magie</h6>
