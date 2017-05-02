@@ -206,6 +206,16 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 			->method('GET|POST')
 			->convert('personnage', 'converter.personnage:convert')
 			->before($mustBeOrga);
+
+		/**
+		 * Modification de l'héroisme d'un personnage (orga)
+		 */
+		$controllers->match('/admin/{personnage}/update/heroisme','LarpManager\Controllers\PersonnageController::adminUpdateHeroismeAction')
+			->assert('personnage', '\d+')
+			->bind("personnage.admin.update.heroisme")
+			->method('GET|POST')
+			->convert('personnage', 'converter.personnage:convert')
+			->before($mustBeOrga);
 			
 		/**
 		 * Ajout d'un jeton (orga)

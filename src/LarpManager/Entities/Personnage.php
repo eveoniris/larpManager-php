@@ -528,6 +528,16 @@ class Personnage extends BasePersonnage
 	}
 	
 	/**
+	 * Ajoute des points d'héroisme à un personnage
+	 * @param unknown $heroisme
+	 */
+	public function addHeroisme($heroisme)
+	{
+		$this->setHeroisme($this->getHeroisme() + $heroisme);
+		return $this;
+	}
+	
+	/**
 	 * Ajoute des points de renomme à un personnage
 	 * @param unknown $renomme
 	 */

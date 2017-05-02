@@ -627,6 +627,12 @@ class ParticipantController
 				if ( $competenceFamily->getLabel() == "Noblesse")
 				{
 					$personnage->addRenomme(2);
+					$renomme_history = new \LarpManager\Entities\RenommeHistory();
+						
+					$renomme_history->setRenomme(2);
+					$renomme_history->setExplication('Compétence Noblesse niveau 1');
+					$renomme_history->setPersonnage($personnage);
+					$app['orm.em']->persist($renomme_history);
 				}
 			}
 	
@@ -2187,18 +2193,48 @@ class ParticipantController
 				{
 					case 1:
 						$personnage->addRenomme(2);
+						$renomme_history = new \LarpManager\Entities\RenommeHistory();
+						
+						$renomme_history->setRenomme(2);
+						$renomme_history->setExplication('Compétence Noblesse niveau 1');
+						$renomme_history->setPersonnage($personnage);
+						$app['orm.em']->persist($renomme_history);
 						break;
 					case 2:
 						$personnage->addRenomme(3);
+						$renomme_history = new \LarpManager\Entities\RenommeHistory();
+						
+						$renomme_history->setRenomme(3);
+						$renomme_history->setExplication('Compétence Noblesse niveau 2');
+						$renomme_history->setPersonnage($personnage);
+						$app['orm.em']->persist($renomme_history);
 						break;
 					case 3:
 						$personnage->addRenomme(2);
+						$renomme_history = new \LarpManager\Entities\RenommeHistory();
+						
+						$renomme_history->setRenomme(2);
+						$renomme_history->setExplication('Compétence Noblesse niveau 3');
+						$renomme_history->setPersonnage($personnage);
+						$app['orm.em']->persist($renomme_history);
 						break;
 					case 4:
 						$personnage->addRenomme(5);
+						$renomme_history = new \LarpManager\Entities\RenommeHistory();
+						
+						$renomme_history->setRenomme(5);
+						$renomme_history->setExplication('Compétence Noblesse niveau 4');
+						$renomme_history->setPersonnage($personnage);
+						$app['orm.em']->persist($renomme_history);
 						break;
 					case 5:
 						$personnage->addRenomme(6);
+						$renomme_history = new \LarpManager\Entities\RenommeHistory();
+						
+						$renomme_history->setRenomme(6);
+						$renomme_history->setExplication('Compétence Noblesse niveau 5');
+						$renomme_history->setPersonnage($personnage);
+						$app['orm.em']->persist($renomme_history);
 						break;
 				}
 			}

@@ -100,6 +100,7 @@
 								    		</a>
 											<ul class="dropdown-menu">
 												<li><a href="{{ path('personnage.admin.update.renomme', {'personnage': personnage.id}) }}">Modifier la renommée</a></li>
+												<li><a href="{{ path('personnage.admin.update.heroisme', {'personnage': personnage.id}) }}">Modifier l'héroisme</a></li>
 												<li><a href="{{ path('personnage.admin.update.domaine', {'personnage': personnage.id}) }}">Modifier la liste des domaines de magie</a></li>
 												<li><a href="{{ path('personnage.admin.religion.add', {'personnage': personnage.id}) }}">Ajouter une religion</a></li>
 												<li><a href="{{ path('personnage.admin.origine.update', {'personnage': personnage.id}) }}">Modifier l'origine</a></li>
@@ -123,6 +124,18 @@
 								<div class="list-group">
 									{% for historique in personnage.renommeHistories %}
 										<div class="list-group-item">{{ historique.date|date("Y-m-d h:i:s") }} : {{ historique.renomme }}  {% if historique.explication %} pour la raison suivante : "{{ historique.explication }}"{% endif %}.</div>
+									{% endfor %}
+								</div>
+							</div>
+							<p>Héroisme : <strong class="text-success">{{ personnage.heroisme|default(0) }}</strong>
+								<a role="button" data-toggle="collapse" href="#heroismeHistory" aria-expanded="false" aria-controls="collapseExample">
+									<i class="fa fa-history" aria-hidden="true"></i>
+								</a>
+							<div class="collapse" id="heroismeHistory">
+								<h6>Historique</h6>		
+								<div class="list-group">
+									{% for historique in personnage.heroismeHistories %}
+										<div class="list-group-item">{{ historique.date|date("Y-m-d h:i:s") }} : {{ historique.heroisme }}  {% if historique.explication %} pour la raison suivante : "{{ historique.explication }}"{% endif %}.</div>
 									{% endfor %}
 								</div>
 							</div>

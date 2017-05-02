@@ -38,6 +38,7 @@ use LarpManager\Form\Personnage\PersonnageItemForm;
 use LarpManager\Form\Personnage\PersonnageOriginForm;
 use LarpManager\Form\Personnage\PersonnageReligionForm;
 use LarpManager\Form\Personnage\PersonnageUpdateRenommeForm;
+use LarpManager\Form\Personnage\PersonnageUpdateHeroismeForm;
 
 use LarpManager\Form\PersonnageFindForm;
 use LarpManager\Form\PersonnageForm;
@@ -851,6 +852,46 @@ class PersonnageController
 		}
 		
 		return $app['twig']->render('admin/personnage/updateRenomme.twig', array(
+				'form' => $form->createView(),
+				'personnage' => $personnage));
+	}
+	
+	/**
+	 * Modification de l'héroisme d'un personnage
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Personnage $personnage
+	 */
+	public function adminUpdateHeroismeAction(Request $request, Application $app, Personnage $personnage)
+	{
+		$form = $app['form.factory']->createBuilder(new PersonnageUpdateHeroismeForm())
+			->add('save','submit', array('label' => 'Valider les modifications'))
+			->getForm();
+		
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$heroisme = $form->get('heroisme')->getData();
+			$explication = $form->get('explication')->getData();
+				
+			$heroisme_history = new \LarpManager\Entities\HeroismeHistory();
+				
+			$heroisme_history->setHeroisme($heroisme);
+			$heroisme_history->setExplication($explication);
+			$heroisme_history->setPersonnage($personnage);
+			$personnage->addHeroisme($heroisme);
+		
+			$app['orm.em']->persist($heroisme_history);
+			$app['orm.em']->persist($personnage);
+			$app['orm.em']->flush();
+		
+			$app['session']->getFlashBag()->add('success','Le personnage a été sauvegardé.');
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
+		}
+		
+		return $app['twig']->render('admin/personnage/updateHeroisme.twig', array(
 				'form' => $form->createView(),
 				'personnage' => $personnage));
 	}
