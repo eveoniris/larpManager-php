@@ -3,35 +3,20 @@
 	<h5>Compétences</h5>
 </div>
 
-<div class="row">
-	<div class="col-sm-6">
-		<h6>Compétences <small>({{ personnage.xp|default(0) }} xp)</small></h6>
-		
-		<ul class="list-group">
-			
-			{% for competence in personnage.competences %}
-				<li class="list-group-item">
-					<strong>{{ competence.competenceFamily.label }}</strong>&nbsp({{ competence.level.label }}) : {{ competence.description|markdown }}
-					<p class="list-group-item-text">
-	    				{% if competence.documentUrl %}
-	    					<a class="btn btn-default btn-sm" href="{{ path('participant.competence.detail',{'participant': participant.id, 'competence' : competence.id}) }}">
-	    						<i class="fa fa-file"></i> Voir l'aide de jeu
-	    					</a>
-	    				{% endif %}
+<h6>{{ personnage.xp|default(0) }} / {{ personnage.xpTotal }} xp</h6>
+
+<ul class="list-group">
+	
+	{% for competence in personnage.competences %}
+		<li class="list-group-item">
+			<strong>{{ competence.competenceFamily.label }}</strong>&nbsp({{ competence.level.label }}) : {{ competence.description|markdown }}
+				<p class="list-group-item-text">
+    				{% if competence.documentUrl %}
+    					<a class="btn btn-default btn-sm" href="{{ path('participant.competence.detail',{'participant': participant.id, 'competence' : competence.id}) }}">
+    						<i class="fa fa-file"></i> Voir l'aide de jeu
+    					</a>
+    				{% endif %}
     				</p>							
 				</li>
 			{% endfor %}
-		</ul>
-	</div>
-	
-	<div class="col-sm-6">
-		<h6>Historique</h6>
-		<ul class="list-group">		
-		{% for historique in personnage.experienceGains %}
-			<li class="list-group-item">{{ historique.operationDate|date("Y-m-d h:i:s") }} : + {{ historique.xpGain }} xp {% if historique.explanation %} pour la raison suivante : "{{ historique.explanation }}"{% endif %}.</li>
-		{% endfor %}
-		{% for historique in personnage.experienceUsages %}
-			<li class="list-group-item">{{ historique.operationDate|date("Y-m-d h:i:s") }} : - {{ historique.xpUse }} xp pour acquérir {{ historique.competence.label }}.</li>
-		{% endfor %}
-	</div>
-</div>
+</ul>

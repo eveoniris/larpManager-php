@@ -75,6 +75,8 @@
 					{% include 'public/personnage/fragment/info.twig' with {'personnage': personnage, 'participant' : participant} %}
 					{% include 'public/personnage/fragment/origine.twig' with {'personnage': personnage, 'participant': participant} %}
 					{% include 'public/personnage/fragment/pugilat.twig' with {'personnage': personnage} %}
+					{% include 'public/personnage/fragment/competence.twig' with {'personnage': personnage, 'participant': participant} %}
+
 				</div>
 				
 			</div>
@@ -106,9 +108,7 @@
 			
 			
 		</div>		
-		<div class="well well-sm">
-			{% include 'public/personnage/fragment/competence.twig' with {'personnage': personnage, 'participant': participant} %}
-		</div>
+
 
 		{# Autre 
 		<div class="header">

@@ -33,9 +33,45 @@
 			</li>
 			<li class="list-group-item">
 				<strong>Expérience :</strong> {{ personnage.xp|default(0) }}
+				<a role="button" data-toggle="collapse" href="#xpHistory" aria-expanded="false" aria-controls="collapseExample">
+					<i class="fa fa-history" aria-hidden="true"></i>
+				</a>
+				<div class="collapse" id="xpHistory">
+					<div class="list-group">		
+					{% for historique in personnage.experienceGains %}
+						<div class="list-group-item">{{ historique.operationDate|date("Y-m-d h:i:s") }} : + {{ historique.xpGain }} xp {% if historique.explanation %} pour la raison suivante : "{{ historique.explanation }}"{% endif %}.</div>
+					{% endfor %}
+					{% for historique in personnage.experienceUsages %}
+						<div class="list-group-item">{{ historique.operationDate|date("Y-m-d h:i:s") }} : - {{ historique.xpUse }} xp pour acquérir {{ historique.competence.label }}.</div>
+					{% endfor %}
+					</div>
+				</div>
 			</li>
 			<li class="list-group-item">
 				<strong>Renommée :</strong> {{ personnage.renomme|default(0) }}
+				<a role="button" data-toggle="collapse" href="#renommeHistory" aria-expanded="false" aria-controls="collapseExample">
+					<i class="fa fa-history" aria-hidden="true"></i>
+				</a>
+				<div class="collapse" id="renommeHistory">
+					<div class="list-group">
+						{% for historique in personnage.renommeHistories %}
+							<div class="list-group-item">{{ historique.date|date("Y-m-d h:i:s") }} : {{ historique.renomme }}  {% if historique.explication %} pour la raison suivante : "{{ historique.explication }}"{% endif %}.</div>
+						{% endfor %}
+					</div>
+				</div>
+			</li>
+			<li class="list-group-item">
+				<strong>Héroisme :</strong> {{ personnage.heroisme|default(0) }}
+				<a role="button" data-toggle="collapse" href="#heroismeHistory" aria-expanded="false" aria-controls="collapseExample">
+					<i class="fa fa-history" aria-hidden="true"></i>
+				</a>
+				<div class="collapse" id="heroismeHistory">
+					<div class="list-group">
+						{% for historique in personnage.heroismeHistories %}
+							<div class="list-group-item">{{ historique.date|date("Y-m-d h:i:s") }} : {{ historique.heroisme }}  {% if historique.explication %} pour la raison suivante : "{{ historique.explication }}"{% endif %}.</div>
+						{% endfor %}
+					</div>
+				</div>
 			</li>
 			{# <li class="list-group-item">
 				<strong>Titre :</strong> {{ app['personnage.manager'].titre(personnage)|default('Aucun') }}
