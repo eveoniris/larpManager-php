@@ -39,6 +39,7 @@ use LarpManager\Services\Converter\AppelationConverter;
 use LarpManager\Services\Converter\BackgroundConverter;
 use LarpManager\Services\Converter\BilletConverter;
 use LarpManager\Services\Converter\ClasseConverter;
+use LarpManager\Services\Converter\CultureConverter;
 use LarpManager\Services\Converter\CompetenceConverter;
 use LarpManager\Services\Converter\ConstructionConverter;
 use LarpManager\Services\Converter\DebriefingConverter;
@@ -164,6 +165,16 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 		$app['converter.classe'] = $app->share(function($app) {
 			return new ClasseConverter($app['orm.em']);
 		});
+		
+		// culture converter
+		$app['converter.culture'] = $app->share(function($app) {
+			return new CultureConverter($app['orm.em']);
+		});
+		
+		// event converter
+		$app['converter.event'] = $app->share(function($app) {
+			return new EventConverter($app['orm.em']);
+		});
 			
 		// personnage converter
 		$app['converter.personnage'] = $app->share(function($app) {
@@ -179,12 +190,7 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 		$app['converter.territoire'] = $app->share(function($app) {
 			return new TerritoireConverter($app['orm.em']);
 		});
-		
-		// event converter
-		$app['converter.event'] = $app->share(function($app) {
-			return new EventConverter($app['orm.em']);
-		});
-		
+				
 		// personnage secondaire converter
 		$app['converter.personnageSecondaire'] = $app->share(function($app) {
 			return new PersonnageSecondaireConverter($app['orm.em']);

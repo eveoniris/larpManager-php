@@ -298,6 +298,8 @@ else
 	$app->mount('/strategie', new LarpManager\StrategieControllerProvider());
 	$app->mount('/objet', new LarpManager\ObjetControllerProvider());
 	$app->mount('/pnj', new LarpManager\PnjControllerProvider());
+	$app->mount('/culture', new LarpManager\CultureControllerProvider());
+	
 	//$app->mount('/question', new LarpManager\QuestionControllerProvider());
 		
 
@@ -328,6 +330,7 @@ else
 		array('^/etatCivil/.*$', 'ROLE_ADMIN'),
 		array('^/restauration/.*$', 'ROLE_ADMIN'),
 		array('^/question/.*$', 'ROLE_ADMIN'),
+		array('^/culture/.*$', 'ROLE_ADMIN'),
 		array('^/groupeGn/.*$', 'ROLE_USER'),
 		array('^/gn/.*$', 'ROLE_USER'),
 		array('^/trombinoscope/.*$', 'ROLE_SCENARISTE'),

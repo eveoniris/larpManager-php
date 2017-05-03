@@ -6,6 +6,7 @@
 
 	    <link rel="stylesheet" href="{{ app.request.basepath }}/leaflet-1.0.3/leaflet.css" />
         <link rel="stylesheet" href="{{ app.request.basepath }}/leaflet/L.Control.MousePosition.css" />
+        <link rel="stylesheet" href="{{ app.request.basepath }}/leaflet/L.Control.Window.css" />
         <link rel="stylesheet" href="{{ app.request.basepath }}/leaflet.draw/leaflet.draw.css" />
         <link rel="stylesheet" href="{{ app.request.basepath }}/leaflet/Control.MiniMap.min.css" />
         <link rel="stylesheet" href="{{ app.request.basepath }}/leaflet-fullscreen/Control.FullScreen.css" />
@@ -14,8 +15,16 @@
 
 			#map {
 				height: 800px;
-				width: 1200px;
-				
+				width: 100%;
+			}
+			
+			#content {
+				padding: 0px;
+				margin: 0px;
+			}
+			
+			.navbar {
+				margin-bottom: 0px;
 			}
 			
 			#aide {
@@ -23,9 +32,12 @@
 				color: green;
 			}
 			
+			.leaflet-control-window .title {
+				color: #000;
+			}
+			
 			.mapbox {
 			    position: relative;
-			    padding-right : 10px;
 			}
 
 			.mapbox .overlay {
@@ -48,6 +60,10 @@
 				box-shadow: 0 0 15px rgba(0,0,0,0.2);
 				border-radius: 5px;
 				width: 300px;
+			}
+			
+			#description {
+				z-index: 314160;
 			}
 			
 			.info  {
@@ -95,14 +111,12 @@
 {% endblock %}
 
 {% block content %}
-<div class="well well-sm clearfix">
+<div class="clearfix">
 	
 		<div class="mapbox">
 			<div class="row-fluid some" id="map"></div>
 		</div> 
 		<p id="aide">Cliquez sur l'un des éléments de la carte pour en afficher la description. Vous pouvez aussi choisir les calques a afficher (pays, régions ou fiefs) avec l'outil calque en haut à droite de la carte.</p>
-		<hr />
-		<p id="description"></p>
 		<div id="admin">
 		</div>		
 </div>
@@ -115,6 +129,7 @@
 
 <script src="{{ app.request.basepath }}/leaflet-1.0.3/leaflet.js"></script>
 <script src="{{ app.request.basepath }}/leaflet/L.Control.MousePosition.js"></script>
+<script src="{{ app.request.basepath }}/leaflet/L.Control.Window.js"></script>
 <script src="{{ app.request.basepath }}/leaflet-fullscreen/Control.FullScreen.js"></script>
 <script src="{{ app.request.basepath }}/leaflet-pattern/leaflet-pattern.js"></script>
 
@@ -196,6 +211,9 @@
 			// carte
 			map: null,
 
+			// fenêtre modale
+			descriptionWin : null,
+
 			// limites de la carte
 			mapBounds : null,	
 
@@ -262,7 +280,9 @@
 					'spaceWeight': 10,
 					'angle': 45,
 					'opacity': 1,
-					}); 
+					});
+				
+				this.descriptionWin = L.control.window(map,{title:'Hello world!',content:'This is my first control window.'})
 			},
 			
 			// Création des limites de la carte
@@ -634,11 +654,14 @@
 			    			     			        
 				if ( props && ! props.description ) props.description = 'Aucune description';
 
-				var descriptionDiv = $('#description');
+				//var descriptionDiv = $('#description');
 				var adminDiv = $('#admin');
-				
-				$(descriptionDiv).html('<h4>'+props.name+'</h4><p>'+props.description+'</p>');
-
+				this.descriptionWin.title(props.name);
+				this.descriptionWin.content(props.description);
+				this.descriptionWin.show('top');
+				//$('.modal-title',descriptionDiv).html(props.name);
+				//$('.modal-body',descriptionDiv).html(props.description);
+				//$(descriptionDiv).modal('show')
 				{% if is_granted('ROLE_ORGA', app.user) %}
 					$(adminDiv).html('<a href="'+editLink+'">Modifier</a>'
 					        		+'<br /><a href="'+editStrategieLink+'">Jeu stratégique</a>');
@@ -1162,6 +1185,7 @@
 
 			// Applique les geometries et les layers sur la carte
 			applyOnMap: function() {
+				
 				this.countriesGeom.addTo(this.map);
 				//this.groupesGeom.addTo(this.map);
 

@@ -1,0 +1,34 @@
+{% extends "layout.twig" %}
+
+{% block title %}Culture{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path('culture') }}">Liste des cultures</a></li>
+		<li class="active">Détail d'une culture</li>
+	</ol>
+
+	<div class="list-group">
+		<div class="list-group-item">
+			<div class="list-group-item-heading"><h6>Label</h6></div>
+			<div class="list-group-item-text">{{ culture.label }}</div>
+		</div>
+	</div>
+	
+	<div class="panel panel-default">
+		<div class="panel-heading"><h4>Description</h4></div>
+		<div class="panel-body">
+			<p>{{ culture.description|markdown }}</p>
+		</div>
+	</div>
+	
+	<div class="panel panel-default">
+		<div class="panel-heading"><h4>Description complète</h4></div>
+		<div class="panel-body">
+			<p>{{ culture.descriptionComplete|markdown }}</p>
+		</div>
+	</div>
+	
+{% endblock content %}

@@ -1,0 +1,38 @@
+{% extends "layout.twig" %}
+
+{% block title %}Culture{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li class="active">Liste des cultures</li>
+	</ol>
+
+	<div class="well well-sm">
+	
+		<a href="{{ path('culture.add') }}"><i class="fa fa-plus"></i> Ajouter une culture</a>
+		
+		<ul class="list-group">
+		{% for culture in cultures %}
+		
+			<li class="list-group-item">
+				<div class="row">
+					<div class="col-md-8">
+						{{ culture.label }}
+						{{ culture.description|markdown }}
+						
+					</div>
+					<div class="col-md-4">
+						<a href="{{ path('culture.update',{'culture':culture.id}) }}"><i class="fa fa-pencil"></i> Modifier</a>&nbsp;|&nbsp;
+						<a href="{{ path('culture.detail',{'culture':culture.id}) }}"><i class="fa fa-eye"></i> Detail</a>&nbsp;|&nbsp;
+						<a href="{{ path('culture.delete',{'culture':culture.id}) }}"><i class="fa fa-eraser"></i> Supprimer</a>
+					</div>
+				</div>
+		    </li>
+
+		{% endfor %}
+	 	</ul>
+	</div>
+	
+{% endblock %}

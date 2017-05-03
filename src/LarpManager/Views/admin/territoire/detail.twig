@@ -39,6 +39,14 @@
 	    		</div>
 	    		
 	    		<div class="list-group-item">
+	    			<h4 class="list-group-item-heading">Culture</h4>
+	    			<ul>
+	    				<li>{{ territoire.culture.label|default('Non définie') }}</li>
+	    			</ul>
+	    			<a href="{{ path('territoire.admin.update.culture', {'territoire': territoire.id}) }}">Modifier</a>
+	    		</div>
+	    		
+	    		<div class="list-group-item">
 	    			<h4 class="list-group-item-heading">Statut</h4>
 	    			<ul>
 	    				<li>{{ territoire.statut|default('Normal') }}</li>
