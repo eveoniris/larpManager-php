@@ -8,16 +8,18 @@
 	<div class="row">
 		<div class="col-xs-12 col-md-12">
 				<div class="well well-sm">
-				<h4>
-					Gestion des compétences
-					<small>
-						( {{ competences|length }} competences )
-					</small>
-				</h4>
-			</div>
+					<h4>
+						Gestion des compétences
+						<small>
+							( {{ competences|length }} competences )
+						</small>
+					</h4>
+					Le nombre de personnage indiqué correspond aux personnages participant au prochain GN.
+				</div>
 			<div>
 				<a href="{{ path('competence.materiel') }}"><button  type="button" class="btn btn-default">Liste matériel</button></a>
 			</div>
+			
 			{{ include("admin/competence/fragment/list.twig", {'competences' : competences, 'add' : true}) }}
 		</div>
 	</div>

@@ -51,6 +51,7 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 	 *  - participant.personnage.remove
 	 *  - participant.personnage.trombine
 	 *  - participant.personnage.surnom.edit
+	 *  - participant.personnage.politique
 	 *  - participant.priere.detail
 	 *  - participant.priere.document
 	 *  - participant.potion.detail
@@ -291,6 +292,16 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 			->assert('participant', '\d+')
 			->convert('participant', 'converter.participant:convert')
 			->bind("participant.background")
+			->method('GET')
+			->before($mustOwnParticipant);
+			
+		/**
+		 * Affiche les liens entres les fiefs pour un personnage politique initié
+		 */
+		$controllers->match('/{participant}/personnage/politique','LarpManager\Controllers\ParticipantController::politiqueAction')
+			->assert('participant', '\d+')
+			->convert('participant', 'converter.participant:convert')
+			->bind("participant.personnage.politique")
 			->method('GET')
 			->before($mustOwnParticipant);
 			

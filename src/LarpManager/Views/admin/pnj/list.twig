@@ -9,21 +9,48 @@
 <div class="well bs-component">	
 	<table class="table">
 		<caption >
-			<h5>Liste des pnj</h5>
+			<h5>
+				Liste des pnj
+				<small>
+					( {{ pnjs|length }} PNJs )
+				</small>
+			</h5>
 		</caption>
 	
 		<thead>
 				<tr>
 					<th>Nom Prénom</th>
 					<th>Email</th>
-					<th></th>
+					<th>Billet</th>
+					<th>Groupe</th>
 				</tr>
 		</thead>
 		<tbody>
+			<div class="white-box">
+				{% for pnj in pnjs %}
+					{{ pnj.user.email }}
+				{% endfor %}
+			</div>
+				
 			{% for pnj in pnjs %}
 				<tr>
 					<td>{{ pnj.user.etatCivil.nom }} {{ pnj.user.etatCivil.prenom }}</td>
 					<td>{{ pnj.user.email }}</td>
+					<td>
+					{% if pnj.billet %}
+						{{ pnj.billet.label }}
+					{% else %}
+						<span class="text-danger">Aucun billet</span>
+					{% endif %}
+					</td>
+					<td>
+						{% if pnj.groupegn %}
+							<a href="{{ path('groupe.detail', {'index': pnj.groupegn.groupe.id}) }}">{{ pnj.groupegn.groupe }}</a>
+						{% else %}
+							<span class="text-danger">Aucun groupe</span>
+						{% endif %}
+						
+					</td>
 				</tr>
 			{% endfor %}
 		</tbody>	

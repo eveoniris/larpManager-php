@@ -103,6 +103,9 @@
 					{% include 'public/personnage/fragment/alchimie.twig' with {'personnage': personnage, 'participant': participant} %}
 					{% include 'public/personnage/fragment/magie.twig' with {'personnage': personnage, 'participant': participant} %}
 					{% include 'public/personnage/fragment/language.twig' with {'personnage': personnage, 'participant': participant} %}
+					{% if personnage.hasCompetence('Politique') %}
+						{% include 'public/personnage/fragment/politique.twig' with {'personnage': personnage, 'participant': participant} %}
+					{% endif %}
 				</div>
 			</div>
 			

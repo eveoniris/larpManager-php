@@ -9,7 +9,7 @@
 	<li class="list-group-item">
 		<h4 class="list-group-item-heading">
 			{{ competence.competenceFamily.label }} - <small>Niveau {{ competence.level.label }}
-			 / ( <a href="{{ path('competence.perso', {'competence': competence.id}) }}">{{ competence.personnages|length }} personnages</a>)</small>
+			 / ( <a href="{{ path('competence.perso', {'competence': competence.id}) }}">{{ competence.personnagesGn(app['larp.manager'].getGnActif.id)|length }} personnages</a>)</small>
 			<div class="pull-right btn-group" role="group" aria-label="...">
 				<a href="{{ path('competence.detail', {'competence': competence.id}) }}" class="btn btn-primary" role="button">Voir</a>
 			    <a href="{{ path('competence.update', {'competence': competence.id}) }}" class="btn btn-default" role="button">Modifier</a>
@@ -25,7 +25,10 @@
 		{% if not competence.documentUrl %}
 			<p class="list-group-item-text text-warning">Attention, cette compétence n'a pas de document associé</p>
 		{% else %}
-			<p class="list-group-item-text text-default"><a href="{{ path('competence.document',{'competence' : competence.id, 'document':competence.documentUrl}) }}">Téléchargez le document</a></p>
+			<p class="list-group-item-text text-default">
+				<a href="{{ path('competence.document',{'competence' : competence.id, 'document':competence.documentUrl}) }}">Téléchargez le document</a>&nbsp;|&nbsp;
+				<a class="text-danger" href="{{ path('competence.document.remove',{'competence' : competence.id}) }}">Supprimer le document</a>
+			</p>
 		{% endif %}
 		
 	</li>

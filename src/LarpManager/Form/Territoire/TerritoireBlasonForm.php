@@ -18,19 +18,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace LarpManager\Form;
+namespace LarpManager\Form\Territoire;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
- * LarpManager\Form\TerritoireIngredientsForm
+ * LarpManager\Form\TrombineForm
  *
  * @author kevin
  *
  */
-class TerritoireIngredientsForm extends AbstractType
+class TerritoireBlasonForm extends AbstractType
 {
 	/**
 	 * Construction du formulaire
@@ -40,23 +40,20 @@ class TerritoireIngredientsForm extends AbstractType
 	 */
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
-		$builder->add('ingredients','entity', array(
-					'required' => false,
-					'label' => 'Ingrédients',
-					'class' => 'LarpManager\Entities\Ingredient',
-					'multiple' => true,
-					'expanded' => true,
-					'mapped' => true,
-					'property' => 'label',
+		$builder->add('blason','file', array(
+					'label' => 'Choisissez votre fichier',
+					'required' => true,
+					'mapped' => false,
 				));
 	}
 	
+
 	/**
 	 * Définition de l'entité concerné
-	 * 
-	 * @param OptionsResolver $resolver
+	 *
+	 * @param OptionsResolverInterface $resolver
 	 */
-	public function configureOptions(OptionsResolver $resolver)
+	public function setDefaultOptions(OptionsResolverInterface $resolver)
 	{
 		$resolver->setDefaults(array(
 				'data_class' => 'LarpManager\Entities\Territoire',
@@ -68,6 +65,6 @@ class TerritoireIngredientsForm extends AbstractType
 	 */
 	public function getName()
 	{
-		return 'territoireIngredients';
+		return 'territoireBlason';
 	}
 }

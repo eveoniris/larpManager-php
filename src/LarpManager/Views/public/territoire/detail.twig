@@ -28,17 +28,40 @@
 			
 			<div class="list-group">
   			
-  				<div class="list-group-item">
-  					<div class="header">
-			    		<h5>Jeu stratégique</h5>
-			    	</div>
-			    	<ul>
-	    			<li>Resistance de base {{ territoire.resistance|default("non définie") }}</li>
-	    			<li>Defense du territoire : {{ territoire.defense }} (prend en compte les constructions)</li>
-	    			<li>Richesse {{ territoire.tresor|default("non définie") }}</li>
+  				{% if is_granted('ROLE_USER', app.user) %}
+  					{% if is_granted('TERRITOIRE_MEMBER', territoire.id) %}
+		  				<div class="list-group-item">
+		  					<div class="header">
+					    		<h5>Jeu stratégique</h5>
+					    	</div>
+					    	<ul>
+			    				<li>Resistance de base : <span class="text-success">{{ territoire.resistance|default("non définie") }}</span></li>
+			    				<li>Defense du territoire : <span class="text-success">{{ territoire.defense }}</span> (prend en compte les constructions)</li>
+			    				<li>Statut du territoire :  <span class="text-success">{{ territoire.statut|default("Normal") }}</span></li>
+			    				<li>Richesse : <span class="text-success" data-toggle="tooltip" data-placement="bottom" title="La richesse dépend du statut du territoire, elle est réduite de moité si le statut est Désordre, et est réduite à 1 si le statut est Désolation. La richesse normale de ce territoire est {{ territoire.tresor|default(0) }}">{{ territoire.richesse }}</span></li>
+			    			</ul>
+			    		</div>
+		    		{% endif %}
+		    	{% endif %}
+	    		
+	    		<div class="list-group-item">
+	    			<div class="header">
+	    				<h5>Culture</h5>
+	    			</div>
+	    			
+		    		{% if territoire.culture %}
+		    			<strong>{{ territoire.culture.label }}</strong><br/ >
+		    			{{ territoire.culture.description|markdown }}
+		    			{% if is_granted('ROLE_USER', app.user) %}
+    						{% if is_granted('TERRITOIRE_MEMBER', territoire.id) %}
+		    					{{ territoire.culture.descriptionComplete|markdown }}
+		    				{% endif %}
+		    			{% endif %}
+		    		{% else %}
+		    			Aucune culture définie
+		    		{% endif %}
 	    			</ul>
 	    		</div>
-	    		
 	    		<div class="list-group-item">
 	    			<div class="header">
 			    		<h5>Constructions</h5>
@@ -46,10 +69,11 @@
 			    	<ul>
 			    		{% for construction in territoire.constructions %}
 			    			<li>{{ construction.fullLabel }}</li>
+			    		{% else %}
+			    			Aucune construction.
 			    		{% endfor %}
 			    	</ul>
 			    </div>
-			    
 			    
 				<div class="list-group-item">
 					<div class="header">
@@ -60,11 +84,15 @@
     					{{ territoire.description|markdown }}
     				{% endif %}
     				</p>
-    				<p class="list-group-item-text">
-	    			{% if territoire.descriptionSecrete %}
-    					{{ territoire.descriptionSecrete|markdown }}
-    				{% endif %}
-    				</p>
+    				{% if is_granted('ROLE_USER', app.user) %}
+    					{% if is_granted('TERRITOIRE_MEMBER', territoire.id) %}
+		    				<p class="list-group-item-text">
+			    			{% if territoire.descriptionSecrete %}
+		    					{{ territoire.descriptionSecrete|markdown }}
+		    				{% endif %}
+		    				</p>
+		    			{% endif %}
+	    			{% endif %}
 	    		</div>
 	    		
 	    		<div class="list-group-item">
@@ -79,6 +107,7 @@
 	    				</ul>
 	    			</p>
 	    		</div>
+
 	    		
 	    		<div class="list-group-item">
 	    			<div class="header">
@@ -124,18 +153,22 @@
     				</p>
     			</div>
 	    		
-	    		<div class="list-group-item">
-	    			<div class="header">
-	    				<h5>Economie</h5>
-	    			</div>	
-    				<p class="list-group-item-text">
-    					<ul>
-    						<li><strong>Importations : </strong>{% if territoire.importations|length > 0 %}{{ territoire.importations|join(', ') }}{% else %}Rien{% endif %}</li>
-    						<li><strong>Exportations : </strong>{% if territoire.exportations|length > 0 %}{{ territoire.exportations|join(', ') }}{% else %}Rien{% endif %}</li>
-    						<li><strong>Ingrédients : </strong>{% if territoire.ingredients|length > 0 %}{{ territoire.ingredients|join(', ') }}{% else %}Rien{% endif %}</li>
-    					</ul>
-    				</p>
-    			</div>
+	    		{% if is_granted('ROLE_USER', app.user) %}
+	    			{% if is_granted('TERRITOIRE_MEMBER', territoire.id) %}
+			    		<div class="list-group-item">
+			    			<div class="header">
+			    				<h5>Economie</h5>
+			    			</div>	
+		    				<p class="list-group-item-text">
+		    					<ul>
+		    						<li><strong>Importations : </strong>{% if territoire.importations|length > 0 %}{{ territoire.importations|join(', ') }}{% else %}Rien{% endif %}</li>
+		    						<li><strong>Exportations : </strong>{% if territoire.exportations|length > 0 %}{{ territoire.exportations|join(', ') }}{% else %}Rien{% endif %}</li>
+		    						<li><strong>Ingrédients : </strong>{% if territoire.ingredients|length > 0 %}{{ territoire.ingredients|join(', ') }}{% else %}Rien{% endif %}</li>
+		    					</ul>
+		    				</p>
+		    			</div>
+	    			{% endif %}
+	    		{% endif %}
     			
     			
 	    		

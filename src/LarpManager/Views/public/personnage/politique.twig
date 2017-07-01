@@ -1,0 +1,35 @@
+{% extends "layout.twig" %}
+
+{% block title %}Votre personnage{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Page d'accueil</a></li>
+		<li><a href="{{ path('participant.index', {'participant' : participant.id}) }}">{{ participant.gn.label }}</a></li>
+		<li><a href="{{ path('participant.personnage', {'participant': participant.id}) }}">{{ personnage.nom }} {{ personnage.surnom }}</a></li>
+		<li class="active">Politique</li>
+	</ol>
+
+	<div class="well">
+		<ul>
+		{% set tempArray = {} %}
+		{% for groupe in groupes %}
+			{% for groupeTmp in groupes %}
+				{% if groupeTmp != groupe %}
+					{% if groupe.id not in tempArray %}
+						{% if groupe.isAllyTo(groupeTmp) %}
+							{% set tempArray = tempArray|merge({(groupeTmp.id):(groupeTmp.id)}) %}
+							<li><strong>{{ groupe.nom }}</strong> est allié à <strong>{{ groupeTmp.nom }}</strong></li>
+						{% elseif groupe.isEnemyTo(groupeTmp) %}
+							{% set tempArray = tempArray|merge({(groupeTmp.id):(groupeTmp.id)}) %}
+							<li><strong>{{ groupe.nom }}</strong> est l'ennemi de <strong>{{ groupeTmp.nom }}</strong></li>
+						{% endif %}
+					{% endif %}
+				{% endif %}
+			{% endfor %}
+		{% endfor %}
+		</ul>			
+	</div>
+{% endblock content %}
+

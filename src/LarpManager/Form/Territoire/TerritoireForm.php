@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace LarpManager\Form;
+namespace LarpManager\Form\Territoire;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -70,6 +70,14 @@ class TerritoireForm extends AbstractType
 					'label' => 'Statut',
 					'required' => false,
 					'choices' => array('Normal' => 'Normal', 'Désordre' => 'Désordre', 'Désolation' => 'Désolation')
+				))
+				->add('ordreSocial','integer', array(
+					'label' => 'Ordre social',
+					'required' => false,
+					'attr' => array(
+							'min' => 1,
+							'max' => 5
+					)
 				))
 				->add('geojson', 'textarea', array(
 					'label' => 'GeoJSON',

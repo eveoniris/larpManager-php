@@ -4,59 +4,12 @@
 
 {% block style %}
 <style>
-ul, li {
-  
-  list-style: none;
-}
-
-a {
-
-  text-decoration: none;
-}
-
-.waterfall .pin {
-  width: 200px;
-  height: auto;
-  margin: 0 0 10px 20px;
-}
-
-.waterfall .pin a {
-  width: 100%;
-  height: 100%;
-}
-
-.waterfall.gallery .pin {
-  width: 180px;
-}
-
-.item
-{
-	color: #000;
-	font-weight: bold;
-	width : 167px;
-	padding : 5px 5px 5px 5px; 
-}
-
-.item-bleu
-{
-	background-color: DodgerBlue;
-}
-.item-orange
-{
-	background-color: orange;
-}
-
-.item-header
-{
-}
-.item-text
-{
-	text-align: center;
-}
-
+.hover_img a { position:relative; }
+.hover_img a span { position:absolute; display:none; z-index:99; }
+.hover_img a:hover span { display:block; }
 </style>
-
 {% endblock style %}
+
 {% block content %}
 
 	<ol class="breadcrumb">
@@ -65,55 +18,55 @@ a {
 	</ol>
 	
 	<div class="well well-sm">
-
-		 	<ul class="waterfall center-block">
+		 	<table class="table">
+		 		<thead>
+		 			<tr>
+		 				<th>numéro</th>
+		 				<th>Qualité et identification</th>
+		 				<th>Label</th>
+		 				<th>Photo</th>
+		 				<th>Description</th>
+		 				<th>Spécial</th>
+		 				<th>Groupe</th>
+		 				<th>Personnage</th>
+		 				<th>Action</th>
+		 			</tr>
+		 		</thead>
+		 		<tbody>
 	    		{% for item in items%}
-		    		<li class="pin">
-		    			<ul class="list-group">
-		    				<li class="list-group-item">
-				    			<div class="item {% if item.couleur == 'bleu' %}item-bleu{% else %}item-orange{% endif %}">
-									<div class="item-header">
-										{{ item.numero }}
-										<span class="pull-right">{{ item.quality.numero }}{{ item.identification }}</span>
-									</div>
-									<div class="item-text">
-										{{ item.description|markdown }}
-									</div>
-								</div>
-								<a href="{{ path('item.detail', {'item': item.id}) }}">
-				    				<img src="{{ path('stock_objet_photo',{'objet': item.objet.id, 'miniature': true}) }}" alt="{{ item.label }}" />
-				    			</a>
-				    		</li>
-		    				<li class="list-group-item">
-				  				<div class="btn-group" role="group" aria-label="...">
-						  			<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-		      							Action
-		      							<span class="caret"></span>
-		    						</button>
-		    						<ul class="dropdown-menu">
-		    							<li><a href="{{ path('item.update', {'item': item.id}) }}">Modifier</a></li>
-		    							<li><a href="{{ path('item.delete', {'item': item.id}) }}">Supprimer</a></li>
-					  				</ul>
-					  			</div>
-					  		</li>
-			  				<li class="list-group-item">
-						  		<div>
-									{{ item.description|markdown }}
-									{{ item.special|markdown }}
-								</div>
-							</li>
-							<li class="list-group-item">
-						
-								<div>
-									<strong>Qui possède cet objet ?</strong><br />
-									Groupe : {{ item.groupes|join(',') }}<br />
-									Personnage : {{ item.personnages|join(',') }}<br />
-								</div>
-							</li>
-						</ul>
-			    	</li>
+		    		<tr>
+		    			<td>{{ item.numero }}</td>
+		    			<td>{{ item.quality.numero }}{{ item.identification }}</td>
+		    			<td>{{ item.label }}</td>
+		   				<td>
+							<div class="hover_img">
+								<a href="#">Show Image<span>
+						    		<img src="{{ path('stock_objet_photo',{'objet': item.objet.id, 'miniature': true}) }}" alt="{{ item.label }}" />
+						    		</span>
+						    	</a>
+					    	</div>
+					    </td>
+		    			<td>{{ item.description|markdown }}</td>
+		    			<td>{{ item.special|markdown }}</td>
+		    			<td>{{ item.groupes|join(',') }}</td>
+						<td>{{ item.personnages|join(',') }}</td>
+					    <td>
+			  				<div class="btn-group" role="group" aria-label="...">
+					  			<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+	      							Action
+	      							<span class="caret"></span>
+	    						</button>
+	    						<ul class="dropdown-menu">
+	    							<li><a href="{{ path('item.detail', {'item': item.id}) }}">Détails</a></li>
+	    							<li><a href="{{ path('item.update', {'item': item.id}) }}">Modifier</a></li>
+	    							<li><a href="{{ path('item.delete', {'item': item.id}) }}">Supprimer</a></li>
+				  				</ul>
+				  			</div>
+				  		</td>
+					</tr>
 	  			{% endfor %}
-	  		</ul>
+	  			</tbody>
+	  		</table>
 	  </div>
 	
 {% endblock content %}

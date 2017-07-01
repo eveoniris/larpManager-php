@@ -44,6 +44,32 @@ class Competence extends BaseCompetence
 	}
 	
 	/**
+	 * Fourni la liste des personnages participants à un gn particulier
+	 *
+	 * @return \Doctrine\Common\Collections\Collection
+	 */
+	public function getPersonnagesGn($gnId)
+	{
+		$liste = new ArrayCollection();
+		foreach (parent::getPersonnages() as $personnage)
+		{
+			foreach ( $personnage->getParticipants() as $participant)
+			{
+				$gn = $participant->getGn();
+				if ( $gn )
+				{
+					if ( $gn->getId() == $gnId )
+					{
+						$liste[] = $participant;
+					}
+				}
+			}
+		}
+		return $liste;
+	}
+	
+	
+	/**
 	 * Fourni le label d'une compétence
 	 */
 	public function getLabel()

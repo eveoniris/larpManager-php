@@ -7,7 +7,7 @@
 	<ol class="breadcrumb">
 		<li><a href="{{ path('homepage') }}">Accueil</a></li>
 		<li><a href="{{ path('competence') }}">Liste des compétences</a></li>
-		<li class="active">Personnages ayant cette compétence</li>
+		<li class="active">Personnages ayant cette compétence (pour le prochain GN)</li>
 	</ol>
 	
 
@@ -24,7 +24,7 @@
 			</div>
 
 			<div class="list-group">
-				{% for personnage in competence.personnages %}
+				{% for personnage in competence.personnagesGn(app['larp.manager'].getGnActif.id) %}
 					<a class="list-group-item" href="{{ path('personnage.admin.detail',{'personnage':personnage.id}) }}">#{{ personnage.id }} - {{ personnage.nom }}&nbsp;{{ personnage.surnom }} - {{ personnage.classeName }}</a>
 				{% endfor %}
 			</div>

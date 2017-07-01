@@ -22,14 +22,19 @@ namespace LarpManager\Controllers;
 
 use Symfony\Component\HttpFoundation\Request;
 use Silex\Application;
-use LarpManager\Form\TerritoireForm;
-use LarpManager\Form\TerritoireDeleteForm;
-use LarpManager\Form\TerritoireStrategieForm;
-use LarpManager\Form\TerritoireIngredientsForm;
-use LarpManager\Form\TerritoireBlasonForm;
+
+use LarpManager\Form\Territoire\TerritoireForm;
+use LarpManager\Form\Territoire\TerritoireDeleteForm;
+use LarpManager\Form\Territoire\TerritoireStrategieForm;
+use LarpManager\Form\Territoire\TerritoireIngredientsForm;
+use LarpManager\Form\Territoire\TerritoireBlasonForm;
 
 use LarpManager\Form\Territoire\TerritoireCultureForm;
+use LarpManager\Form\Territoire\TerritoireLoiForm;
+use LarpManager\Form\Territoire\TerritoireStatutForm;
+
 use LarpManager\Entities\Territoire;
+use LarpManager\Entities\Loi;
 
 /**
  * LarpManager\Controllers\TerritoireController
@@ -115,6 +120,38 @@ class TerritoireController
 		return $app['twig']->render('admin/territoire/detail.twig', array('territoire' => $territoire));
 	}
 	
+	/**
+	 * Ajoute une loi à un territoire
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Territoire $territoire
+	 */
+	public function updateLoiAction(Request $request, Application $app, Territoire $territoire)
+	{
+		$form = $app['form.factory']->createBuilder(new TerritoireLoiForm(), $territoire)
+			->add('update','submit', array('label' => "Sauvegarder"))
+			->getForm();
+		
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$territoire = $form->getData();
+			
+			$app['orm.em']->persist($territoire);
+			$app['orm.em']->flush();
+				
+			$app['session']->getFlashBag()->add('success','Le territoire a été mis à jour');
+			return $app->redirect($app['url_generator']->generate('territoire.admin.detail', array('territoire' => $territoire->getId())),301);
+		}
+		
+		return $app['twig']->render('admin/territoire/loi.twig', array(
+				'territoire' => $territoire,
+				'form' => $form->createView(),
+		));
+	}
+		
 	/**
 	 * Ajoute une construction dans un territoire
 	 * 
@@ -341,6 +378,36 @@ class TerritoireController
 		}
 		
 		return $app['twig']->render('admin/territoire/culture.twig', array(
+				'territoire' => $territoire,
+				'form' => $form->createView(),
+		));
+	}
+	
+	/**
+	 * Met à jour le statut d'un territoire
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Territoire $territoire
+	 */
+	public function updateStatutAction(Request $request, Application $app, Territoire $territoire)
+	{
+		$form = $app['form.factory']->createBuilder(new TerritoireStatutForm(), $territoire)
+			->add('update','submit', array('label' => "Sauvegarder"))
+			->getForm();
+	
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$app['orm.em']->persist($territoire);
+			$app['orm.em']->flush();
+				
+			$app['session']->getFlashBag()->add('success','Le territoire a été mis à jour');
+			return $app->redirect($app['url_generator']->generate('territoire.admin.detail', array('territoire' => $territoire->getId())),301);
+		}
+	
+		return $app['twig']->render('admin/territoire/updateStatut.twig', array(
 				'territoire' => $territoire,
 				'form' => $form->createView(),
 		));

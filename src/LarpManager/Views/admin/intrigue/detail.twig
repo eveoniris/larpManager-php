@@ -33,6 +33,28 @@
 					</ul>
 				</div>
 				
+				<h6><i class="fa fa-circle"></i>&nbsp;Groupes secondaires concernés</h6>
+				<div class="white-box">
+					<ul>
+					{% for intrigueHasGroupeSecondaire in intrigue.intrigueHasGroupeSecondaires %}
+						<li><a href="{{ path('groupeSecondaire.admin.detail', {'groupe': intrigueHasGroupeSecondaire.secondaryGroup.id}) }}">{{ intrigueHasGroupeSecondaire.secondaryGroup.label }}</a></li>
+					{% else %}
+						<li>Aucun</li>
+					{% endfor %}
+					</ul>
+				</div>
+				
+				<h6><i class="fa fa-circle"></i>&nbsp;Instances concernées</h6>
+				<div class="white-box">
+					<ul>
+					{% for intrigueHasLieu in intrigue.intrigueHasLieus %}
+						<li><a href="{{ path('lieu.detail', {'lieu': intrigueHasLieu.lieu.id}) }}">{{ intrigueHasLieu.lieu.nom }}</a></li>
+					{% else %}
+						<li>Aucun</li>
+					{% endfor %}
+					</ul>
+				</div>
+				
 				<h6><i class="fa fa-circle"></i>&nbsp;Evénements</h6>
 				<div class="white-box">
 					<ul>

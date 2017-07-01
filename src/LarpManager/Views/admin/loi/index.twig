@@ -1,0 +1,46 @@
+{% extends "layout.twig" %}
+
+{% block title %}Loi{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li class="active">Liste des lois</li>
+	</ol>
+
+	<div class="well well-sm">
+	
+		<a href="{{ path('loi.add') }}"><i class="fa fa-plus"></i> Ajouter une loi</a>
+		
+		<ul class="list-group">
+		{% for loi in lois %}
+		
+			<li class="list-group-item">
+				<div class="row">
+					<div class="col-md-8">
+						{{ loi.label }}
+						{{ loi.description|markdown }}
+						{% if not loi.documentUrl %}
+							<p class="list-group-item-text text-warning">Attention, cette loi n'a pas de document associé</p>
+						{% else %}
+							<p class="list-group-item-text text-default">
+								<a href="{{ path('loi.document',{'loi' : loi.id}) }}">Téléchargez le document</a>&nbsp;|&nbsp;
+								<a class="text-danger" href="{{ path('loi.document.remove',{'loi' : loi.id}) }}">Supprimer le document</a>
+							</p>
+						{% endif %}
+						
+					</div>
+					<div class="col-md-4">
+						<a href="{{ path('loi.update',{'loi':loi.id}) }}"><i class="fa fa-pencil"></i> Modifier</a>&nbsp;|&nbsp;
+						<a href="{{ path('loi.detail',{'loi':loi.id}) }}"><i class="fa fa-eye"></i> Detail</a>&nbsp;|&nbsp;
+						<a href="{{ path('loi.delete',{'loi':loi.id}) }}"><i class="fa fa-eraser"></i> Supprimer</a>
+					</div>
+				</div>
+		    </li>
+
+		{% endfor %}
+	 	</ul>
+	</div>
+	
+{% endblock %}

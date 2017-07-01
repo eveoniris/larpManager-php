@@ -18,53 +18,65 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace LarpManager\Form;
+namespace LarpManager\Form\Loi;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Doctrine\ORM\EntityRepository;
+
+use LarpManager\Form\Type\ClasseType;
 
 /**
- * LarpManager\Form\TrombineForm
+ * LarpManager\Form\Groupe\LoiForm
  *
  * @author kevin
  *
  */
-class TerritoireBlasonForm extends AbstractType
+class LoiForm extends AbstractType
 {
 	/**
-	 * Construction du formulaire
+	 * Contruction du formulaire
 	 * 
 	 * @param FormBuilderInterface $builder
 	 * @param array $options
 	 */
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
-		$builder->add('blason','file', array(
-					'label' => 'Choisissez votre fichier',
-					'required' => true,
-					'mapped' => false,
-				));
+		$builder->add('label','text')
+				->add('description','textarea', array(
+						'required' => false,
+						'label' => 'Description succinte',
+						'attr' => array(
+							'class' => 'tinymce',
+							'row' => 9,
+						),
+				))
+				->add('document','file', array(
+						'label' => 'Téléversez un document',
+						'required' => true,
+						'mapped' => false
+				))
+				->add('submit', 'submit', array('label' => 'Valider'));
 	}
-	
 
 	/**
-	 * Définition de l'entité concerné
-	 *
+	 * Définition de l'entité conercné
+	 * 
 	 * @param OptionsResolverInterface $resolver
 	 */
 	public function setDefaultOptions(OptionsResolverInterface $resolver)
 	{
 		$resolver->setDefaults(array(
-				'data_class' => 'LarpManager\Entities\Territoire',
+				'data_class' => '\LarpManager\Entities\Loi',
 		));
 	}
-	
+
 	/**
 	 * Nom du formulaire
 	 */
 	public function getName()
 	{
-		return 'territoireBlason';
+		return 'loi';
 	}
 }

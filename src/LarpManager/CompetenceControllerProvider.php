@@ -82,7 +82,16 @@ class CompetenceControllerProvider implements ControllerProviderInterface
 			->convert('competence', 'converter.competence:convert')
 			->method('GET')
 			->before($mustBeOrga);
-				
+
+		/**
+		 * Retirer un document lié à une compétence
+		 */
+		$controllers->match('{competence}/remove/document','LarpManager\Controllers\CompetenceController::removeDocumentAction')
+			->bind("competence.document.remove")
+			->convert('competence', 'converter.competence:convert')
+			->method('GET')
+			->before($mustBeOrga);
+			
 		/**
 		 * Liste des personnages ayant cette compétence
 		 */

@@ -47,7 +47,9 @@
 								{% if groupeGn.free %}<span class="text-success">Libre</span>{% else %}<span class="text-danger">Reservé</span>{% endif %}</td>
 							<td>
 								{%if oldGroupeGn %}
-									{{ oldGroupeGn.responsable.user.etatCivil.prenom }} - {{ oldGroupeGn.responsable.user.email }}
+									{% if oldGroupeGn.responsable %}
+										{{ oldGroupeGn.responsable.user.etatCivil.prenom }} - {{ oldGroupeGn.responsable.user.email }}
+									{% endif %}
 								{% else %}
 									Nouveau groupe.
 								{% endif %}

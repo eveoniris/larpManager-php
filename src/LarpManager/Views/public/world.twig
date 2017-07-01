@@ -1,4 +1,4 @@
-{% extends "layout.twig" %}
+{% extends "layout_fs.twig" %}
 
 {% block title %}Le monde{% endblock title %}
        
@@ -12,11 +12,17 @@
         <link rel="stylesheet" href="{{ app.request.basepath }}/leaflet-fullscreen/Control.FullScreen.css" />
         
 		<style>		
+		
+		body {
+ 		   padding: 0;
+    	   margin: 0;
+		}
+		html, body, #map {
+    		height: 100vh;
+    		width: 100vw;
+		}
 
-			#map {
-				height: 800px;
-				width: 100%;
-			}
+
 			
 			#content {
 				padding: 0px;
@@ -112,20 +118,13 @@
 
 {% block content %}
 <div class="clearfix">
-	
-		<div class="mapbox">
-			<div class="row-fluid some" id="map"></div>
-		</div> 
-		<p id="aide">Cliquez sur l'un des éléments de la carte pour en afficher la description. Vous pouvez aussi choisir les calques a afficher (pays, régions ou fiefs) avec l'outil calque en haut à droite de la carte.</p>
-		<div id="admin">
-		</div>		
+	<div class="mapbox">
+		<div class="row-fluid some" id="map"></div>
+	</div> 		
 </div>
-
 {% endblock %}
 
 {% block javascript %}
-
-
 
 <script src="{{ app.request.basepath }}/leaflet-1.0.3/leaflet.js"></script>
 <script src="{{ app.request.basepath }}/leaflet/L.Control.MousePosition.js"></script>
@@ -166,7 +165,7 @@
 			mapMaxZoom : 6,
 
 			// zoom au chargement de la carte
-			mapNormalZoom: 2,
+			mapNormalZoom: 3,
 			
 			// Liste des pays	
 			countriesList : Object(),
@@ -214,6 +213,9 @@
 			// fenêtre modale
 			descriptionWin : null,
 
+			// bouton fullscreen
+			fsControl : null,
+
 			// limites de la carte
 			mapBounds : null,	
 
@@ -257,6 +259,7 @@
 				this.map = L.map('map', {
 					  maxZoom: this.mapMaxZoom,
 					  minZoom: this.mapMinZoom,
+					  zoom: 3,
 					  crs: L.CRS.Simple,
 					  detectRetina: true,
 					  infinite: false,
@@ -292,9 +295,6 @@
 						this.map.unproject([16383,1], this.mapMaxZoom)	    
 					);
 				this.map.setMaxBounds(this.mapBounds);
-
-				var _mapCenter = this.map.unproject([16384/2, 11536/2], this.mapMaxZoom);
-				this.map.setView(_mapCenter, this.mapNormalZoom);
 			},
 			
 			// Création du tileLayer de base
@@ -350,6 +350,8 @@
 			// Applique les limites de la carte à la carte
 			fitMap: function() {
 				this.map.fitBounds(this.mapBounds);
+				var _mapCenter = this.map.unproject([16384/2, 11536/2], this.mapMaxZoom);
+				this.map.setView(_mapCenter, this.mapNormalZoom);
 			},
 
 			// méthode déclenchée pour toute nouvelle geometrie
@@ -388,9 +390,9 @@
 			// map.on('enterFullscreen', function(){});
 			createFullScreenControl: function() {
 				// create fullscreen control
-				var fsControl = new L.Control.FullScreen();
+				this.fsControl = new L.Control.FullScreen();
 				// add fullscreen control to the map
-				this.map.addControl(fsControl);
+				this.map.addControl(this.fsControl);
 			},
 
 			// Création du control calques
@@ -649,23 +651,20 @@
 			// Affichage des informations concernant le layer selectionné
 			displayInfoPanel: function(props)
 			{
+				var detailLink = "{{ app.request.basepath }}/territoire/"+props.id+"/joueur";
 				var editLink = "{{ app.request.basepath }}/territoire/"+props.id+"/update";
 			    var editStrategieLink = "{{ app.request.basepath }}/territoire/"+props.id+"/updateStrategie";
 			    			     			        
 				if ( props && ! props.description ) props.description = 'Aucune description';
 
-				//var descriptionDiv = $('#description');
-				var adminDiv = $('#admin');
 				this.descriptionWin.title(props.name);
-				this.descriptionWin.content(props.description);
-				this.descriptionWin.show('top');
-				//$('.modal-title',descriptionDiv).html(props.name);
-				//$('.modal-body',descriptionDiv).html(props.description);
-				//$(descriptionDiv).modal('show')
+				var content = '<a href="'+detailLink+'">Voir le descriptif détaillé</a><hr />' + props.description ;
 				{% if is_granted('ROLE_ORGA', app.user) %}
-					$(adminDiv).html('<a href="'+editLink+'">Modifier</a>'
-					        		+'<br /><a href="'+editStrategieLink+'">Jeu stratégique</a>');
+					content = content + '<br /><a href="'+editLink+'">Modifier</a>'
+				        		+'<br /><a href="'+editStrategieLink+'">Jeu stratégique</a>';
 				{% endif %}
+				this.descriptionWin.content(content);
+				this.descriptionWin.show('topRight');
 			},
 
 			// Création du pannel de sauvegarde d'une geometrie territoire
@@ -1185,7 +1184,6 @@
 
 			// Applique les geometries et les layers sur la carte
 			applyOnMap: function() {
-				
 				this.countriesGeom.addTo(this.map);
 				//this.groupesGeom.addTo(this.map);
 
@@ -1221,7 +1219,7 @@
 					this.map.addControl(this.drawControl);
 				{% endif %}
 
-				this.map.addControl(this.desordreLegend);
+				//this.map.addControl(this.desordreLegend);
 				//this.map.addControl(this.langueLegend);
 				
 				this.saveTerritoirePanel.addTo(this.map);
@@ -1249,7 +1247,7 @@
 	
 	cartographie.createGeomCollection();
 	cartographie.createDrawControl();
-	cartographie.createDesordreLegend();
+	//cartographie.createDesordreLegend();
 	cartographie.createLangueLegend();
 	cartographie.createFullScreenControl();
 	cartographie.createSaveTerritoirePanel();

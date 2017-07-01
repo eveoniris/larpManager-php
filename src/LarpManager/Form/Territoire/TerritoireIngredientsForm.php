@@ -18,19 +18,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace LarpManager\Form;
+namespace LarpManager\Form\Territoire;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * LarpManager\Form\TerritoireDeleteForm
+ * LarpManager\Form\TerritoireIngredientsForm
  *
  * @author kevin
  *
  */
-class TerritoireDeleteForm extends AbstractType
+class TerritoireIngredientsForm extends AbstractType
 {
 	/**
 	 * Construction du formulaire
@@ -40,6 +40,15 @@ class TerritoireDeleteForm extends AbstractType
 	 */
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
+		$builder->add('ingredients','entity', array(
+					'required' => false,
+					'label' => 'Ingrédients',
+					'class' => 'LarpManager\Entities\Ingredient',
+					'multiple' => true,
+					'expanded' => true,
+					'mapped' => true,
+					'property' => 'label',
+				));
 	}
 	
 	/**
@@ -59,6 +68,6 @@ class TerritoireDeleteForm extends AbstractType
 	 */
 	public function getName()
 	{
-		return 'territoireDelete';
+		return 'territoireIngredients';
 	}
 }

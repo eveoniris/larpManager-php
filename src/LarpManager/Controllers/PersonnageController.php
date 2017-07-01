@@ -1925,19 +1925,16 @@ class PersonnageController
 	{
 		$personnage = $request->get('personnage');
 		
-		$app['pdf.manager']->AddPage();
-		$app['pdf.manager']->SetFont('Arial','B',16);
-		$app['pdf.manager']->Cell(40,10,$personnage->getNom());
 		
-		header("Content-Type: application/pdf");
-		header("Content-Disposition: attachment; filename=".$personnage->getNom()."_".date("Ymd").".pdf");
-		header("Pragma: no-cache");
-		header("Expires: 0");
-		
-		$output = fopen("php://output", "w");
-		fputs($app['pdf.manager']->Output($personnage->getNom()."_".date("Ymd").".pdf",'I'));
-		fclose($output);
-		exit();
-		
+		$html2pdf = $app['html2pdf'];
+		$html2pdf->writeHTML(
+				$app['twig']->render('public/personnage/pdf.twig', array(
+						'personnage' => $personnage
+				))
+			);
+		$html2pdf->output();
+				
+		exit;
+
 	}
 }

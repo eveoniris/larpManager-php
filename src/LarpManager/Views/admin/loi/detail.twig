@@ -1,0 +1,39 @@
+{% extends "layout.twig" %}
+
+{% block title %}Loi{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path('loi') }}">Liste des lois</a></li>
+		<li class="active">Détail d'une loi</li>
+	</ol>
+
+	<div class="list-group">
+		<div class="list-group-item">
+			<div class="list-group-item-heading"><h6>Label</h6></div>
+			<div class="list-group-item-text">{{ loi.label }}</div>
+		</div>
+	</div>
+	
+	<div class="panel panel-default">
+		<div class="panel-heading"><h4>Description</h4></div>
+		<div class="panel-body">
+			<p>{{ loi.description|markdown }}</p>
+		</div>
+	</div>
+	
+	<div class="panel panel-default">
+		<div class="panel-heading"><h4>Document</h4></div>
+		<div class="panel-body">
+			{% if not loi.documentUrl %}
+	    		Aucun document n'est disponible
+	    	{% else %}
+	    		<a href="{{ path('loi.document',{'loi' : loi.id}) }}">Téléchargez le document</a>&nbsp;|&nbsp;
+				<a class="text-danger" href="{{ path('loi.document.remove',{'loi' : loi.id}) }}">Supprimer le document</a>
+	    	{% endif %}
+    	</div>
+    </div>
+	
+{% endblock content %}

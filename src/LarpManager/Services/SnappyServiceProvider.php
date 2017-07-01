@@ -27,7 +27,7 @@ class SnappyServiceProvider implements ServiceProviderInterface
         });
         $app['snappy.pdf'] = $app->share(function ($app) {
             return new Pdf(
-                isset($app['snappy.pdf_binary']) ? $app['snappy.pdf_binary'] : '/usr/local/bin/wkhtmltopdf',
+                isset($app['snappy.pdf_binary']) ? $app['snappy.pdf_binary'] : __DIR__.'/../../../vendor/bin/wkhtmltopdf-i386',
                 isset($app['snappy.pdf_options']) ? $app['snappy.pdf_options'] : array()
             );
         });

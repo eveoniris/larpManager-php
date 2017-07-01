@@ -1,0 +1,24 @@
+{% extends "layout.twig" %}
+
+{% block title %}Loi{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path('loi') }}">Liste des lois</a></li>
+		<li class="active">Modification d'une loi</li>
+	</ol>
+	
+	
+	<div class="well bs-component">
+		<form action="{{ path('loi.update', {'loi': loi.id}) }}" method="POST" {{ form_enctype(form) }} novalidate>
+			<fieldset>
+				<legend>Modification d'une loi</legend>
+					{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+					{{ form(form) }}
+			</fieldset>
+		</form>
+	</div>
+				
+{% endblock content %}

@@ -55,6 +55,7 @@ use LarpManager\Services\Converter\IngredientConverter;
 use LarpManager\Services\Converter\IntrigueConverter;
 use LarpManager\Services\Converter\ItemConverter;
 use LarpManager\Services\Converter\LieuConverter;
+use LarpManager\Services\Converter\LoiConverter;
 use LarpManager\Services\Converter\MembreConverter;
 use LarpManager\Services\Converter\MessageConverter;
 use LarpManager\Services\Converter\MonnaieConverter;
@@ -174,6 +175,11 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 		// event converter
 		$app['converter.event'] = $app->share(function($app) {
 			return new EventConverter($app['orm.em']);
+		});
+
+		// loi converter
+		$app['converter.loi'] = $app->share(function($app) {
+			return new LoiConverter($app['orm.em']);
 		});
 			
 		// personnage converter

@@ -38,7 +38,6 @@ use Nicl\Silex\MarkdownServiceProvider;
 use LarpManager\Services\UserServiceProvider;
 use LarpManager\Services\LarpManagerServiceProvider;
 use LarpManager\Services\NotifyServiceProvider;
-use LarpManager\Services\SnappyServiceProvider;
 use LarpManager\Services\Regexp;
 
 $loader = require_once __DIR__.'/../vendor/autoload.php';
@@ -167,15 +166,6 @@ $app->register(new UrlGeneratorServiceProvider());
 $app->register(new SessionServiceProvider());
 
 
-// PDF
-$app['snappy.pdf_options'] = array(
-	'viewport-size' => "1024x768",
-	'page-size' => 'A4',
-);
-
-//$app['snappy.image_binary'] = __DIR__."/../vendor/wemersonjanuario/wkhtmltopdf-windows/bin/64bit/wkhtmltoimage.exe";
-//$app['snappy.pdf_binary'] = __DIR__."/../vendor/wemersonjanuario/wkhtmltopdf-windows/bin/64bit/wkhtmltopdf.exe";
-$app->register(new SnappyServiceProvider());
 
 /**
  * Définition des routes
@@ -299,6 +289,7 @@ else
 	$app->mount('/objet', new LarpManager\ObjetControllerProvider());
 	$app->mount('/pnj', new LarpManager\PnjControllerProvider());
 	$app->mount('/culture', new LarpManager\CultureControllerProvider());
+	$app->mount('/loi', new LarpManager\LoiControllerProvider());
 	
 	//$app->mount('/question', new LarpManager\QuestionControllerProvider());
 		
@@ -345,11 +336,12 @@ else
 		array('^/personnageSecondaire/.*$', 'ROLE_ADMIN'),
 		array('^/joueur/.*$', 'ROLE_USER'),
 		array('^/notification/.*$', 'ROLE_USER'),
-		array('^/territoire/.*$', 'ROLE_USER'),
+		//array('^/territoire/.*$', 'ROLE_USER'),
 		array('^/religion/.*$', 'ROLE_USER'),
 		array('^/groupeSecondaireType/.*$', 'ROLE_SCENARISTE'),
 		array('^/background/.*$', 'ROLE_USER'),
 		array('^/debriefing/.*$', 'ROLE_USER'),
+		array('^/loi/.*$', 'ROLE_USER'),
 		array('^/age/.*$', 'ROLE_REGLE'),
 		array('^/magie/.*$', 'ROLE_USER'),
 		array('^/genre/.*$', 'ROLE_REGLE'),

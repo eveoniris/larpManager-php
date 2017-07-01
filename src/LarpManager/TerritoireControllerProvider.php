@@ -84,14 +84,13 @@ class TerritoireControllerProvider implements ControllerProviderInterface
 		};
 		
 		/**
-		 * Détail d'un territoire (pour les joueurs)
+		 * Détail d'un territoire (pour les joueurs membre de ce territoire)
 		 */
 		$controllers->match('/{territoire}/joueur','LarpManager\Controllers\TerritoireController::detailJoueurAction')
 			->assert('territoire', '\d+')
 			->bind("territoire.detail")
 			->method('GET')
-			->convert('territoire', 'converter.territoire:convert')
-			->before($mustBeOnGroupe);
+			->convert('territoire', 'converter.territoire:convert');
 		
 		/**
 		 * Liste des territoires
@@ -138,6 +137,16 @@ class TerritoireControllerProvider implements ControllerProviderInterface
 			->method('GET|POST')
 			->convert('territoire', 'converter.territoire:convert')
 			->before($mustBeCartographe);
+			
+		/**
+		 * Mise à jour du statut
+		 */
+		$controllers->match('/{territoire}/statut/update','LarpManager\Controllers\TerritoireController::updateStatutAction')
+			->assert('territoire', '\d+')
+			->bind("territoire.admin.update.statut")
+			->method('GET|POST')
+			->convert('territoire', 'converter.territoire:convert')
+			->before($mustBeCartographe);
 				
 		/**
 		 * Détail d'un territoire
@@ -147,6 +156,16 @@ class TerritoireControllerProvider implements ControllerProviderInterface
 			->bind("territoire.admin.detail")
 			->convert('territoire', 'converter.territoire:convert')
 			->method('GET')
+			->before($mustBeCartographe);
+			
+		/**
+		 * Modifications des lois d'un territoire
+		 */
+		$controllers->match('/{territoire}/loi/update','LarpManager\Controllers\TerritoireController::updateLoiAction')
+			->assert('territoire', '\d+')
+			->bind("territoire.loi.update")
+			->method('GET|POST')
+			->convert('territoire', 'converter.territoire:convert')
 			->before($mustBeCartographe);
 			
 		/**

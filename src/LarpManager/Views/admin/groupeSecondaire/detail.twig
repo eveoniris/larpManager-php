@@ -51,6 +51,19 @@
 	</div>
 		
 	<div class="panel panel-default">
+		<div class="panel-heading">Intrigues</div>
+		<div class="panel-body">
+			<div class="list-group">
+				{% for intrigueHasGroupeSecondaire in groupeSecondaire.intrigueHasGroupeSecondaires %}
+				<a class="list-group-item" href="{{ path('intrigue.detail', {'intrigue': intrigueHasGroupeSecondaire.intrigue.id }) }}">
+					{{ intrigueHasGroupeSecondaire.intrigue.titre }}
+				</a>
+				{% endfor %}
+			</div>
+		</div>
+	</div>
+		
+	<div class="panel panel-default">
 		<div class="panel-heading">Liste des postulants</div>
 		<div class="panel-body">
 		

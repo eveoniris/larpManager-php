@@ -2,6 +2,13 @@
 	{% for session in groupe.groupeGns %}
 		<div class="col-md-4">
 	   		<h6><i class="fa fa-circle"></i> {{ session.gn }}</h6>
+	   		
+	   		<div class="white-box">
+	   		{% for participant in session.participants %}
+	   			{{ participant.user.email }}
+	   		{% endfor %}
+	   		</div>
+	   		
 	   		<ul class="media-list">
 			{% for participant in session.participants %}
 				<li class="media">

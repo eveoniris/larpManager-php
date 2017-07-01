@@ -22,6 +22,47 @@
 				<a href=" {{ path('lieu.documents', {'lieu': lieu.id}) }}">Modifier la liste de documents</a><br />
 				Documents entreposés : {{ lieu.documents|join(', ') }}
 			</div>
+			
+			<div class="list-group-item">
+				Intrigues liées : 
+				<ul>
+					{% for intrigueHasLieu in lieu.intrigueHasLieus  %}
+						<li><a href="{{ path('intrigue.detail', {'intrigue' : intrigueHasLieu.intrigue.id})  }}">{{ intrigueHasLieu.intrigue.titre }}</a></li>
+					{% endfor %}
+				</ul>
+			</div>
+			
+			<div class="list-group-item">
+				Groupes liés (via une intrigue) : 
+				<ul>
+					{% for intrigueHasLieu in lieu.intrigueHasLieus  %}
+						<li>
+							<a href="{{ path('intrigue.detail', {'intrigue' : intrigueHasLieu.intrigue.id})  }}">{{ intrigueHasLieu.intrigue.titre }}</a>
+							<ul>
+								{% for intrigueHasGroupe in intrigueHasLieu.intrigue.intrigueHasGroupes %}
+									<li><a href="{{ path('groupe.detail', {'index': intrigueHasGroupe.groupe.id}) }}">{{ intrigueHasGroupe.groupe.nom }}</a></li>
+								{% endfor %}
+							</ul>
+						</li>
+					{% endfor %}
+				</ul>
+			</div>
+			
+			<div class="list-group-item">
+				Groupes secondaires liés (via une intrigue) : 
+				<ul>
+					{% for intrigueHasLieu in lieu.intrigueHasLieus  %}
+						<li>
+							<a href="{{ path('intrigue.detail', {'intrigue' : intrigueHasLieu.intrigue.id})  }}">{{ intrigueHasLieu.intrigue.titre }}</a>
+							<ul>
+								{% for intrigueHasGroupeSecondaire in intrigueHasLieu.intrigue.intrigueHasGroupeSecondaires %}
+									<li><a href="{{ path('groupeSecondaire.admin.detail', {'groupe': intrigueHasGroupeSecondaire.secondaryGroup.id}) }}">{{ intrigueHasGroupeSecondaire.secondaryGroup.label }}</a></li>
+								{% endfor %}
+							</ul>
+						</li>
+					{% endfor %}
+				</ul>
+			</div>
 				
 		</div>
 	</div>

@@ -145,6 +145,22 @@ class IntrigueController
 				}
 				
 				/**
+				 * Pour tous les groupes secondaires de l'intrigue
+				 */
+				foreach ($intrigue->getIntrigueHasGroupeSecondaires() as $intrigueHasGroupeSecondaire)
+				{
+					$intrigueHasGroupeSecondaire->setIntrigue($intrigue);
+				}
+				
+				/**
+				 * Pour tous les lieux de l'intrigue
+				 */
+				foreach ($intrigue->getIntrigueHasLieus() as $intrigueHasLieu)
+				{
+					$intrigueHasLieu->setIntrigue($intrigue);
+				}
+				
+				/**
 				 * Pour tous les événements de l'intrigue
 				 */
 				foreach ($intrigue->getIntrigueHasEvenements() as $intrigueHasEvenement)
@@ -194,8 +210,10 @@ class IntrigueController
 	function updateAction(Request $request, Application $app, Intrigue $intrigue)
 	{
 		$originalIntrigueHasGroupes = new ArrayCollection();
+		$originalIntrigueHasGroupeSecondaires = new ArrayCollection();
 		$originalIntrigueHasEvenements = new ArrayCollection();
 		$originalIntrigueHasObjectifs = new ArrayCollection();
+		$originalIntrigueHasLieus = new ArrayCollection();
 		
 		/**
 		 *  Crée un tableau contenant les objets IntrigueHasGroupe de l'intrigue
@@ -203,6 +221,14 @@ class IntrigueController
 		foreach ($intrigue->getIntrigueHasGroupes() as $intrigueHasGroupe)
 		{
 			$originalIntrigueHasGroupes->add($intrigueHasGroupe);
+		}
+		
+		/**
+		 *  Crée un tableau contenant les objets IntrigueHasGroupeSecondaire de l'intrigue
+		 */
+		foreach ($intrigue->getIntrigueHasGroupeSecondaires() as $intrigueHasGroupeSecondaire)
+		{
+			$originalIntrigueHasGroupeSecondaires->add($intrigueHasGroupeSecondaire);
 		}
 		
 		/**
@@ -219,6 +245,14 @@ class IntrigueController
 		foreach ($intrigue->getIntrigueHasObjectifs() as $intrigueHasObjectif)
 		{
 			$originalIntrigueHasObjectifs->add($intrigueHasObjectif);
+		}
+		
+		/**
+		 *  Crée un tableau contenant les objets IntrigueHasLieu de l'intrigue
+		 */
+		foreach ($intrigue->getIntrigueHasLieus() as $intrigueHasLieu)
+		{
+			$originalIntrigueHasLieus->add($intrigueHasLieu);
 		}
 		
 		$form = $app['form.factory']->createBuilder(new IntrigueForm(), $intrigue)
@@ -240,6 +274,14 @@ class IntrigueController
 			}
 			
 			/**
+			 * Pour tous les groupes secondaires de l'intrigue
+			 */
+			foreach ($intrigue->getIntrigueHasGroupeSecondaires() as $intrigueHasGroupeSecondaire)
+			{
+				$intrigueHasGroupeSecondaire->setIntrigue($intrigue);
+			}
+			
+			/**
 			 * Pour tous les événements de l'intrigue
 			 */
 			foreach ($intrigue->getIntrigueHasEvenements() as $intrigueHasEvenement)
@@ -256,11 +298,28 @@ class IntrigueController
 			}
 			
 			/**
+			 * Pour tous les lieus de l'intrigue
+			 */
+			foreach ($intrigue->getIntrigueHasLieus() as $intrigueHasLieu)
+			{
+				$intrigueHasLieu->setIntrigue($intrigue);
+			}
+			
+			/**
 			 *  supprime la relation entre intrigueHasGroupe et l'intrigue
 			 */
 			foreach ($originalIntrigueHasGroupes as $intrigueHasGroupe) {
 				if ($intrigue->getIntrigueHasGroupes()->contains($intrigueHasGroupe) == false) {
 					$app['orm.em']->remove($intrigueHasGroupe);
+				}
+			}
+			
+			/**
+			 *  supprime la relation entre intrigueHasGroupe et l'intrigue
+			 */
+			foreach ($originalIntrigueHasGroupeSecondaires as $intrigueHasGroupeSecondaire) {
+				if ($intrigue->getIntrigueHasGroupes()->contains($intrigueHasGroupeSecondaire) == false) {
+					$app['orm.em']->remove($intrigueHasGroupeSecondaire);
 				}
 			}
 			
@@ -279,6 +338,15 @@ class IntrigueController
 			foreach ($originalIntrigueHasObjectifs as $intrigueHasObjectif) {
 				if ($intrigue->getIntrigueHasObjectifs()->contains($intrigueHasObjectif) == false) {
 					$app['orm.em']->remove($intrigueHasObjectif);
+				}
+			}
+			
+			/**
+			 *  supprime la relation entre intrigueHasLieu et l'intrigue
+			 */
+			foreach ($originalIntrigueHasLieus as $intrigueHasLieu) {
+				if ($intrigue->getIntrigueHasLieus()->contains($intrigueHasLieu) == false) {
+					$app['orm.em']->remove($intrigueHasLieu);
 				}
 			}
 			

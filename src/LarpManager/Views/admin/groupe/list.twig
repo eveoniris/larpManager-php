@@ -112,6 +112,7 @@
 						{% endif %}
 						</a>
 					</th>
+					<th>Sessions</th>
 					<th>Statut</th>
 					<th>Scénariste</th>
 					<th />
@@ -123,6 +124,13 @@
 					<td>{% if groupe.pj %}PJ{%else%}PNJ{% endif %}</td>
 					<td>{{ groupe.numero }}</td>
 					<td>{{ groupe.nom }}</td>
+					<td>
+						<ul>
+						{% for groupeGn in groupe.groupeGns %}
+							<li><strong>{{ groupeGn.gn.label }}</strong> : {{ groupeGn.participants|length }} / {{ groupe.placeTotal|default(0) }} </li>
+						{% endfor %}
+						</ul>
+					</td>
 					<td>{% if groupe.lock %}<span class="text-danger">Verrouillé</span>{% else %}Ouvert{% endif %}</td>
 					<td>{% if groupe.scenariste %}{{ groupe.scenariste.username }} {% else %}pas de scénariste{% endif %}</td>
 					<td>

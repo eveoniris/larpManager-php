@@ -27,9 +27,8 @@
 		"nicl/silex-markdown" : "1.1.0",
 		"jasongrimes/paginator" : "1.0",
 		"neutron/silex-imagine-provider" : "~0.1",
-		"knplabs/knp-snappy" : "*",
-		"h4cc/wkhtmltopdf-i386" : "~0.12",
-		"wemersonjanuario/wkhtmltopdf-windows" : "~0.12"
+		"tecnickcom/tcpdf" : "6.2.12",
+		"spipu/html2pdf" : "4.6"
 	},
 	"autoload" : {
 		"psr-0" : {

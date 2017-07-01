@@ -24,6 +24,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Silex\Application;
 
 use LarpManager\Form\CompetenceForm;
+use LarpManager\Entities\Competence;
 
 /**
  * LarpManager\Controllers\CompetenceController
@@ -245,6 +246,24 @@ class CompetenceController
 				'competence' => $competence,
 				'form' => $form->createView(),
 		));
+	}
+	
+	/**
+	 * Retire le document d'une competence
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Competence $competence
+	 */
+	public function removeDocumentAction(Request $request, Application $app, Competence $competence)
+	{
+		$competence->setDocumentUrl(null);
+		
+		$app['orm.em']->persist($competence);
+		$app['orm.em']->flush();
+		$app['session']->getFlashBag()->add('success', 'La compétence a été mise à jour.');
+		
+		return $app->redirect($app['url_generator']->generate('competence'));
 	}
 	
 	/**

@@ -26,6 +26,8 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Doctrine\ORM\EntityRepository;
 
 use LarpManager\Form\Type\IntrigueHasGroupeType;
+use LarpManager\Form\Type\IntrigueHasGroupeSecondaireType;
+use LarpManager\Form\Type\IntrigueHasLieuType;
 use LarpManager\Form\Type\IntrigueHasEvenementType;
 use LarpManager\Form\Type\IntrigueHasObjectifType;
 
@@ -56,6 +58,22 @@ class IntrigueForm extends AbstractType
 						'allow_delete' => true,
 						'by_reference' => false,
 						'type' => new IntrigueHasGroupeType()
+				))
+				->add('intrigueHasGroupeSecondaires', 'collection', array(
+						'label' => "Groupes secondaires concernés",
+						'required' => false,
+						'allow_add' => true,
+						'allow_delete' => true,
+						'by_reference' => false,
+						'type' => new IntrigueHasGroupeSecondaireType()
+				))
+				->add('intrigueHasLieus', 'collection', array(
+						'label' => "Instances concernées",
+						'required' => false,
+						'allow_add' => true,
+						'allow_delete' => true,
+						'by_reference' => false,
+						'type' => new IntrigueHasLieuType()
 				))
 				->add('intrigueHasEvenements', 'collection', array(
 						'label' => "Evénements",

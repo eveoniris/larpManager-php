@@ -86,6 +86,7 @@ class Territoire extends BaseTerritoire implements \JsonSerializable
 		$this->exportations = new ArrayCollection();
 		$this->langues = new ArrayCollection();
 		$this->religions = new ArrayCollection();
+		$this->setOrdreSocial(3);
 		parent::__construct();
 	}
 	
@@ -152,6 +153,60 @@ class Territoire extends BaseTerritoire implements \JsonSerializable
 	public function __toString()
 	{
 		return $this->getNom();
+	}
+	
+	/**
+	 * Determine si un territoire dispose d'une construction
+	 * 
+	 * @param unknown $label
+	 */
+	public function hasConstruction($label)
+	{
+		foreach ( $this->getConstructions() as $construction)
+		{
+			if ( $construction->getLabel() == $label ) return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Fourni la richesse d'un territoire, en fonction de son statut (1/2 si désordre, 1 pièce si désolation), et des constructions
+	 */
+	public function getRichesse()
+	{
+		$tresor = parent::getTresor();
+		if ( ! $tresor) $tresor = 0;
+		
+		// si le territoire dispose d'une route, la richesse est multiplié par deux
+		if ( $this->hasConstruction('Route'))
+		{
+			$tresor = $tresor * 2;
+		}
+		
+		// gestion de l'état du territoire
+		switch ($this->getStatut() )
+		{
+			case 'Normal': return $tresor;
+			case 'Désordre': return round($tresor/ 2);
+			case 'Désolation': return 1;
+			default : return $tresor;
+		}
+	}
+	
+	/**
+	 * Fourni la culture d'un territoire ou à défaut la culture du territoire parent.
+	 */
+	public function getCulture()
+	{
+		if ( $this->culture )
+		{
+			return parent::getCulture();
+		}
+		else if ( $this->getTerritoire())
+		{
+			return $this->getTerritoire()->getCulture();
+		}
+		return null;		
 	}
 	
 	/**

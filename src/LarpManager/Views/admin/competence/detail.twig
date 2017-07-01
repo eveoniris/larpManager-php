@@ -35,6 +35,7 @@
 	    					Aucun document n'est disponible
 	    				{% else %}
 	    					<a href="{{ path('competence.document',{'competence' : competence.id, 'document':competence.documentUrl}) }}">Téléchargez le document</a>
+	    					<a href="{{ path('competence.document.remove',{'competence' : competence.id}) }}">Supprimer le document</a>
 	    				{% endif %}
     				</p>
     				

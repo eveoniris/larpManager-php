@@ -157,6 +157,10 @@ class Gn extends BaseGn
 				{
 					$participants[] = $participant;
 				}
+				if ( $participant->getBillet()->getLabel() ==  'Gratuit PNJ')
+				{
+					$participants[] = $participant;
+				}
 			}
 		}
 		

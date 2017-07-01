@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace LarpManager\Form;
+namespace LarpManager\Form\Territoire;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -47,6 +47,14 @@ class TerritoireStrategieForm extends AbstractType
 			->add('resistance','integer', array(
 					'label' => 'Resistance',
 					'required' => true,
+			))
+			->add('ordreSocial','integer', array(
+				'label' => 'Ordre social',
+				'required' => false,
+				'attr' => array(
+						'min' => 1,
+						'max' => 5
+				)
 			));
 	}
 		

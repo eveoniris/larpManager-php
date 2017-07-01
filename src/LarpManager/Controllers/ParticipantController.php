@@ -321,11 +321,59 @@ class ParticipantController
 			$app['session']->getFlashBag()->add('error','Vous n\'avez pas encore de personnage.');
 			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
 		}
+
+		$lois = $app['orm.em']->getRepository('LarpManager\Entities\Loi')->findAll();
 		
 		return $app['twig']->render('public/personnage/detail.twig', array(
 				'personnage' => $personnage,
 				'participant' => $participant,
+				'lois' => $lois
 		));
+	}
+	
+	/**
+	 * Fourni la page détaillant les relations entre les fiefs
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Participant $participant
+	 */
+	public function politiqueAction(Request $request, Application $app, Participant $participant)
+	{
+		$personnage = $participant->getPersonnage();
+		
+		if ( ! $personnage )
+		{
+			$app['session']->getFlashBag()->add('error','Vous n\'avez pas encore de personnage.');
+			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+		}
+		
+		if ( ! $personnage->hasCompetence('Politique') )
+		{
+			$app['session']->getFlashBag()->add('error','Votre personnage ne dispose pas de la compétence Politique');
+			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+		}
+				
+		// recherche de tous les groupes participant au prochain GN
+		$gn = $app['larp.manager']->getGnActif();
+		$groupeGns = $gn->getGroupeGns();
+		$groupes = new ArrayCollection();
+		foreach ( $groupeGns as $groupeGn)
+		{
+			$groupe = $groupeGn->getGroupe();
+			if ( $groupe->getTerritoires()->count() > 0 )
+			{
+				$groupes[] = $groupe;
+			}
+			
+		}
+						
+		return $app['twig']->render('public/personnage/politique.twig', array(
+				'personnage' => $personnage,
+				'participant' => $participant,
+				'groupes' => $groupes,
+		));
+		
 	}
 	
 	/**
