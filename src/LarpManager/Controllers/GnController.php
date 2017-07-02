@@ -355,7 +355,14 @@ class GnController
 			$line[] = utf8_decode($participant->getUser()->getEtatCivil()->getNom());
 			$line[] = utf8_decode($participant->getUser()->getEtatCivil()->getPrenom());
 			$line[] = utf8_decode($participant->getUser()->getEmail());
-			$line[] = utf8_decode($participant->getUser()->getEtatCivil()->getDateNaissance()->format('Y-m-d'));
+			if ( $participant->getUser()->getEtatCivil()->getDateNaissance() )
+			{
+				$line[] = utf8_decode($participant->getUser()->getEtatCivil()->getDateNaissance()->format('Y-m-d'));
+			}
+			else 
+			{
+				$line[] = '?';	
+			}
 			fputcsv($output, $line, ';');
 		}
 		

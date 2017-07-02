@@ -81,6 +81,7 @@ use LarpManager\Services\Converter\RumeurConverter;
 use LarpManager\Services\Converter\SecondaryGroupConverter;
 use LarpManager\Services\Converter\SortConverter;
 use LarpManager\Services\Converter\SphereConverter;
+use LarpManager\Services\Converter\TechnologieConverter;
 use LarpManager\Services\Converter\TerritoireConverter;
 use LarpManager\Services\Converter\TitreConverter;
 use LarpManager\Services\Converter\TokenConverter;
@@ -191,7 +192,12 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 		$app['converter.personnageReligion'] = $app->share(function($app) {
 			return new PersonnageReligionConverter($app['orm.em']);
 		});		
-		
+
+		// technologie converter
+		$app['converter.technologie'] = $app->share(function($app) {
+			return new TechnologieConverter($app['orm.em']);
+		});
+			
 		// territoire converter
 		$app['converter.territoire'] = $app->share(function($app) {
 			return new TerritoireConverter($app['orm.em']);

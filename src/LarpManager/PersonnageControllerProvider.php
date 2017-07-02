@@ -51,6 +51,7 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 	 *  - personnage.competence.add
 	 *  - personnage.competence.remove
 	 *  - personnage.religion.add
+	 *  - personnage.technologie.update
 	 *
 	 * @param Application $app
 	 * @return Controllers $controllers
@@ -144,6 +145,16 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 		$controllers->match('/admin/{personnage}/materiel','LarpManager\Controllers\PersonnageController::adminMaterielAction')
 			->assert('personnage', '\d+')
 			->bind("personnage.admin.materiel")
+			->method('GET|POST')
+			->convert('personnage', 'converter.personnage:convert')
+			->before($mustBeOrga);
+			
+		/**
+		 * Technologie connue par un personnage
+		 */
+		$controllers->match('/admin/{personnage}/technologie','LarpManager\Controllers\PersonnageController::adminTechnologieAction')
+			->assert('personnage', '\d+')
+			->bind("personnage.technologie.update")
 			->method('GET|POST')
 			->convert('personnage', 'converter.personnage:convert')
 			->before($mustBeOrga);

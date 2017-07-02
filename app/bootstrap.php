@@ -271,6 +271,7 @@ else
 	$app->mount('/admin', new LarpManager\AdminControllerProvider());
 	$app->mount('/titre', new LarpManager\TitreControllerProvider());
 	$app->mount('/ingredient', new LarpManager\IngredientControllerProvider());
+	$app->mount('/technologie', new LarpManager\TechnologieControllerProvider());
 	$app->mount('/trombinoscope', new LarpManager\TrombinoscopeControllerProvider());
 	$app->mount('/document', new LarpManager\DocumentControllerProvider());
 	$app->mount('/token', new LarpManager\TokenControllerProvider());
@@ -362,6 +363,7 @@ else
 		array('^/strategie/.*$', 'ROLE_SCENARISTE'),
 		array('^/objet/.*$', 'ROLE_SCENARISTE'),
 		array('^/pnj/.*$', 'ROLE_SCENARISTE'),
+		array('^/technologie/.*$', 'ROLE_SCENARISTE'),
 		array('^/competenceFamily/.*$', 'ROLE_REGLE'),
 		array('^/level/.*$', 'ROLE_REGLE'),
 		array('^/token/.*$', 'ROLE_REGLE'),

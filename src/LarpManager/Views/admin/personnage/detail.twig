@@ -173,6 +173,7 @@
 									<p class="list-group-item">Candidature au groupe {{ postulant.secondaryGroup.label }} en attente de validation.</p>
 								{% endfor %}
 							</div>
+
 						</div>
 					</div>
 					
@@ -250,6 +251,7 @@
 												<li><a href="{{ path('personnage.admin.update.ingredient', {'personnage': personnage.id}) }}">Modifier la liste des ingrédients</a></li>
 												<li><a href="{{ path('personnage.admin.update.ressource', {'personnage': personnage.id}) }}">Modifier la liste des ressources</a></li>
 												<li><a href="{{ path('personnage.admin.update.richesse', {'personnage': personnage.id}) }}">Modifier la richesse</a></li>
+												<li><a href="{{ path('personnage.technologie.update', {'personnage': personnage.id}) }}">Modifier les savoir-faire</a></li>
 											</ul>
 										</li>
 	  								</ul>
@@ -325,6 +327,13 @@
 								<div class="list-group-item">
 									<h6 class="list-group-item-heading">Richesse :</h6>
 									<div class="list-group-item-text">{{ personnage.richesse|default(0) }} PA</div>
+								</div>
+								
+								<div class="list-group-item">
+									<h6 class="list-group-item-heading">Savoir-faire :</h6>
+									{% for technologie in personnage.technologies %}
+										<div class="list-group-item-text">{{ technologie.label }}</div>
+									{% endfor %}
 								</div>
 								
 								<div class="list-group-item">

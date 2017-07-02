@@ -39,6 +39,7 @@ use LarpManager\Form\Personnage\PersonnageOriginForm;
 use LarpManager\Form\Personnage\PersonnageReligionForm;
 use LarpManager\Form\Personnage\PersonnageUpdateRenommeForm;
 use LarpManager\Form\Personnage\PersonnageUpdateHeroismeForm;
+use LarpManager\Form\Personnage\PersonnageTechnologieForm;
 
 use LarpManager\Form\PersonnageFindForm;
 use LarpManager\Form\PersonnageForm;
@@ -249,6 +250,38 @@ class PersonnageController
 		}
 		
 		return $app['twig']->render('admin/personnage/age.twig', array(
+				'personnage' => $personnage,
+				'form' => $form->createView(),
+		));
+	}
+	
+	/**
+	 * Modification des savoir-faire d'un personnage
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Personnage $personnage
+	 */
+	public function adminTechnologieAction(Request $request, Application $app, Personnage $personnage)
+	{
+		$form = $app['form.factory']->createBuilder(new PersonnageTechnologieForm(), $personnage)
+			->add('valider','submit', array('label' => 'Valider'))
+			->getForm();
+		
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
+		{
+			$personnage = $form->getData();
+				
+			$app['orm.em']->persist($personnage);
+			$app['orm.em']->flush();
+				
+			$app['session']->getFlashBag()->add('success','Le personnage a été sauvegardé');
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
+		}
+		
+		return $app['twig']->render('admin/personnage/updateTechnologie.twig', array(
 				'personnage' => $personnage,
 				'form' => $form->createView(),
 		));
