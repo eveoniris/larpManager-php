@@ -1,0 +1,32 @@
+body {
+  background-color :#fff;
+  font-family :Serif;
+  font-size :15pt;
+}
+
+#info {
+	display:none;
+}
+
+#content {
+	width: auto;
+	border: 0;
+	margin: 0 5%;
+	padding: 0;
+	float: none !important;
+}
+
+.print-center {
+	text-align : center;
+}
+
+table {
+	width: 100%;
+	border : 1px solid #000;
+	margin-top : 5px;
+	margin-bottom : 5px;
+}
+
+table td {
+	text-align: center;
+}

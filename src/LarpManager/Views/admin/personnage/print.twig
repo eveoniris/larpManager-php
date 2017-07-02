@@ -1,0 +1,125 @@
+{% extends "layout_print.twig" %}
+
+{% block content %}
+	<div class="print-center">
+		{{ personnage.nom }} <small>alias {{ personnage.surnom }}</small>
+		<br />
+		Origine : {{ personnage.territoire|default("non définie") }}
+		<br />
+		{{ personnage.classeName }}, {{ personnage.genre }}, <small>{{ personnage.ageReel|default('x') }} ans ({{ personnage.age }})</small>
+		<br />
+		{% if personnage.user %}{{ personnage.user.etatCivil.nom }} {{ personnage.user.etatCivil.prenom }}{% else %}Ce personnage n'est pas lié à un joueur{% endif %}. {% if personnage.intrigue %}participe aux intrigues{% else %}ne participe pas aux intrigues{% endif %}	
+	</div>
+	
+	<table>
+		<thead>
+			<tr>
+				<th>Expérience</th>
+				<th>Renommée</th>
+				<th>Héroisme</th>
+				<th>Pugilat</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+			 	<td>{{ personnage.xp|default(0) }} / {{ personnage.xpTotal }} xp</td>
+			 	<td>{{ personnage.renomme|default(0) }}</td>
+			 	<td>{{ personnage.heroisme|default(0) }}</td>
+			 	<td>{{ personnage.pugilat }}</td>
+		</tbody>
+	</table>	
+								
+	<table>
+		<thead>
+			<tr>
+				<th>Dommaines de magie</th>
+				<th>Religions</th>
+				<th>Langages</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>
+					{% for domaine in personnage.domaines %}
+						{{ domaine.label }}<br />
+					{% endfor %}
+				</td>
+				<td>
+					{% for personnageReligion in personnage.personnagesReligions %}
+						{{ personnageReligion.religion.label }} - {{ personnageReligion.religionLevel.label }}<br />
+					{% endfor %}
+				</td>
+				<td>
+					{% for personnageLangue in personnage.personnageLangues %}
+						<strong>{{ personnageLangue.langue}}</strong> ({{ personnageLangue.source }})<br />
+					{% endfor %}
+				</td>
+		</tbody>
+	</table>		
+	
+	<table>
+		<thead>
+			<tr>
+				<th>Compétences</th>
+				<th>Inventaire</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>
+					{% for competence in personnage.competences %}
+						{{ competence.competenceFamily.label }}&nbsp({{ competence.level.label }})<br />
+					{% endfor %}
+				</td>
+				<td>
+					{% for document in personnage.documents %}
+						{{ document.code }}&nbsp;{{ document.titre }}<br />
+					{% endfor %}
+
+					{% for item in personnage.items %}
+						{{ item.numero }}&nbsp;{{ item.label }}<br />
+					{% endfor %}
+		
+					{% for sort in personnage.sorts %}
+						{{ sort.label }} - {{ sort.domaine.label }} Niveau {{ sort.niveau }}<br />
+					{% endfor %}
+		
+					{% for potion in personnage.potions %}
+						{{ potion.label }} - Niveau {{ potion.niveau }}<br />
+					{% endfor %}		
+								
+					{% for priere in personnage.prieres %}
+						{{ priere.sphere.label }} - Niveau {{ priere.niveau }} ({{ priere.label }})<br />
+					{% endfor %}
+		
+					{% for personnageIngredient in personnage.personnageIngredients %}
+						{{personnageIngredient.nombre}} - {{ personnageIngredient.ingredient }}<br />
+					{% endfor %}
+		
+					{% for personnageRessource in personnage.personnageRessources %}
+						{{personnageRessource.nombre}} - {{ personnageRessource.ressource }}<br />
+					{% endfor %}
+										
+					{{ personnage.richesse|default(0) }} PA<br />
+		
+					{% for technologie in personnage.technologies %}
+						{{ technologie.label }}<br />
+					{% endfor %}
+				</td>
+			</tr>
+		</tbody>
+	</table>
+					
+		
+	<h3>Groupes secondaires</h3>
+	<ul>
+		{% for groupeSecondaire in personnage.secondaryGroups %}
+			<li>{{ groupeSecondaire.label }}</li>
+		{% endfor %}
+		
+		{% for postulant in personnage.postulants %}
+			<li>Candidature au groupe {{ postulant.secondaryGroup.label }} en attente de validation.</li>
+		{% endfor %}
+	</ul>
+	
+{% endblock content %}

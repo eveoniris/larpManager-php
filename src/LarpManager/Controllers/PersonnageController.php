@@ -1946,7 +1946,6 @@ class PersonnageController
 				'competences' =>  $availableCompetences,
 		));
 	}	
-
 	
 	/**
 	 * Exporte la fiche d'un personnage
@@ -1954,20 +1953,11 @@ class PersonnageController
 	 * @param Request $request
 	 * @param Application $app
 	 */
-	public function exportAction(Request $request, Application $app)
+	public function exportAction(Request $request, Application $app, Personnage $personnage)
 	{
-		$personnage = $request->get('personnage');
-		
-		
-		$html2pdf = $app['html2pdf'];
-		$html2pdf->writeHTML(
-				$app['twig']->render('public/personnage/pdf.twig', array(
-						'personnage' => $personnage
-				))
-			);
-		$html2pdf->output();
-				
-		exit;
+		return $app['twig']->render('admin/personnage/print.twig', array(
+				'personnage' => $personnage
+			));
 
 	}
 }

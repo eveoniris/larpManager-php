@@ -1,0 +1,25 @@
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="{{ app.request.basepath }}/css/print.css" media="print" />
+		<style>
+			#info {
+				border : 1px solid #000;
+				margin : 50px 50px 50px 50px;
+				padding: 50px 50px 50px 50px;
+				font-size : 18px;
+				font-weight: bold;
+				text-align : center;
+				background-color : lightgreen;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="info">
+			Utilisez la fonction "Imprimer" de votre navigateur (Ctrl+p).
+		</div>
+		<div class="content">
+		{% block content %}
+		{% endblock content %}
+		</div>
+	</body>
+</html>
