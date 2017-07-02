@@ -100,7 +100,8 @@
 		</div>
 		
 		<blockquote>
-		{% if participant.isResponsable(groupe) %}
+		{% if participant.isResponsable(groupe) or
+			is_granted('ROLE_ADMIN', app.user) %}
 			<p>Vous disposez de <strong>{{ groupe.alliances|length }}</strong> alliance(s) sur un maximum de <strong>3</strong>.</p>
 			<p>Vous pouvez choisir <strong>{{ groupe.ennemies|length - groupe.alliances|length }}</strong> allié(s) supplémentaire(s).</p>
 			<p>Votre nombre d'ennemis doit toujours être supérieur à votre nombre d'alliés. Pour augmenter le nombe d'alliance possible (jusqu'à un maximum de 3), choisissez plus d'ennemis</p>
@@ -119,9 +120,18 @@
 						{% else %}
 							{{ alliance.groupe }}
 						{% endif %}
+						{% if participant.isResponsable(groupe) or
+							is_granted('ROLE_ADMIN', app.user) %}
+							<div class="white-box">
+								<strong>Demande :</strong>{{ alliance.message|markdown }}
+								<hr />
+								<strong>Réponse :</strong>{{ alliance.messageAllie|markdown }}
+							</div>
+						{% endif %}
 					</div>
 					<div class="col-md-4">
-						{% if participant.isResponsable(groupe) %}
+						{% if participant.isResponsable(groupe) or
+							is_granted('ROLE_ADMIN', app.user) %}
 							<a href="{{ path('groupe.breakAlliance', {'participant': participant.id, 'groupe': groupe.id, 'alliance': alliance.id}) }}">Rompre cette alliance</a>
 						{% endif %}
 					</div>
@@ -133,7 +143,8 @@
 		{% endfor %}
 		</ul>
 		
-		{% if participant.isResponsable(groupe) %}
+		{% if participant.isResponsable(groupe) or
+			is_granted('ROLE_ADMIN', app.user) %}
 		
 			{% if groupe.waitingAlliances|length > 0 %}
 				<div class="header">
@@ -147,6 +158,9 @@
 							<div class="row">
 								<div class="col-md-8">
 									Vous avez demandé une alliance avec <strong>{{ alliance.requestedGroupe }}</strong>.
+									<div class="white-box">
+										<strong>Demande :</strong>{{ alliance.message|markdown }}
+									</div>
 								</div>
 								<div class="col-md-4">
 									<a href="{{ path('groupe.cancelRequestedAlliance', {'participant': participant.id, 'groupe': groupe.id, 'alliance': alliance.id}) }}">Annuler la demande</a>
@@ -156,6 +170,9 @@
 							<div class="row">
 								<div class="col-md-8">
 									<strong>{{ alliance.groupe }}</strong> vous a demandé une alliance.
+									<div class="white-box">
+										<strong>Demande :</strong>{{ alliance.message|markdown }}
+									</div>
 								</div>
 								<div class="col-md-4">
 									<a href="{{ path('groupe.acceptAlliance', {'participant': participant.id, 'groupe': groupe.id, 'alliance': alliance.id}) }}">Accepter la demande</a>
@@ -175,7 +192,8 @@
 		</div>
 		
 		<blockquote>
-		{% if participant.isResponsable(groupe) %}
+		{% if participant.isResponsable(groupe)  or
+			is_granted('ROLE_ADMIN', app.user) %}
 			<p>Vous disposez de <strong>{{ groupe.ennemies|length }}</strong> ennemi(s) sur un maximum de <strong>5</strong>.</p>
 			<p>Si vous avez 3 ennemis ou plus, vous ne pouvez plus faire de Déclaration de guerre (mais vous pouvez toujours en recevoir)</p>
 			<p>Etre l’ennemi d’un groupe ne signifie pas que vous devez tuer à vue ses membres, simplement que vous avez un différent important à régler avec lui. Le but est de générer du jeu, pas de l’appauvrir en générant des massacres.</p>
@@ -194,9 +212,18 @@
 						{% else %}
 							<strong>{{ ennemi.groupe }}</strong> vous a déclaré la guerre.
 						{% endif %}
+						{% if participant.isResponsable(groupe) or
+							is_granted('ROLE_ADMIN', app.user) %}
+							<div class="white-box">
+								<strong>Message : </strong>{{ ennemi.message|markdown }}
+							</div>
+						{% endif %}
 					</div>
 					<div class="col-md-4">
-						{% if participant.isResponsable(groupe) %}<a href="{{ path('groupe.requestPeace', {'participant': participant.id, 'groupe': groupe.id, 'enemy': ennemi.id}) }}">Proposer de faire la paix</a>{% endif %}
+						{% if participant.isResponsable(groupe)  or
+							is_granted('ROLE_ADMIN', app.user) %}
+							<a href="{{ path('groupe.requestPeace', {'participant': participant.id, 'groupe': groupe.id, 'enemy': ennemi.id}) }}">Proposer de faire la paix</a>
+						{% endif %}
 					</div>
 				</div>
 			</li>	
@@ -205,7 +232,8 @@
 		{% endfor %}
 		</ul>
 		
-		{% if participant.isResponsable(groupe) %}
+		{% if participant.isResponsable(groupe) or
+			is_granted('ROLE_ADMIN', app.user) %}
 		
 			{% if groupe.waitingPeace|length > 0 %}
 				<div class="header">
@@ -219,6 +247,9 @@
 							<div class="row">
 								<div class="col-md-8">
 									Vous avez demandé la paix avec <strong>{{ war.requestedGroupe }}</strong>.
+									<div class="white-box">
+										<strong>Demande :</strong>{{ war.message|markdown }}
+									</div>
 								</div>
 								<div class="col-md-4">
 									<a href="{{ path('groupe.cancelRequestedPeace', {'participant': participant.id, 'groupe': groupe.id, 'enemy': war.id}) }}">Annuler la demande</a>
@@ -228,6 +259,9 @@
 							<div class="row">
 								<div class="col-md-8">
 									<strong>{{ war.groupe }}</strong> propose la paix.
+									<div class="white-box">
+										<strong>Demande :</strong>{{ war.message|markdown }}
+									</div>
 								</div>
 								<div class="col-md-4">
 									<a href="{{ path('groupe.acceptPeace', {'participant': participant.id, 'groupe': groupe.id, 'enemy': war.id}) }}">Accepter la demande</a>
@@ -260,7 +294,8 @@
 			{% endif %}
 		{% endif %}
 		
-		{% if participant.isResponsable(groupe) %}
+		{% if participant.isResponsable(groupe) or
+			is_granted('ROLE_ADMIN', app.user) %}
 			<a class="btn btn-success" href="{{ path('groupe.requestAlliance', {'participant': participant.id, 'groupe': groupe.id}) }}">Demander une alliance</a>
 			<a class="btn btn-danger" href="{{ path('groupe.declareWar', {'participant': participant.id, 'groupe': groupe.id}) }}">Choisir un ennemi</a>
 		{% endif %}
