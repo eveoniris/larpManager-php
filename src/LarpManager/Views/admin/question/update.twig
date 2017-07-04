@@ -1,0 +1,24 @@
+{% extends "layout.twig" %}
+
+{% block title %}Question{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path('question') }}">Liste des questions</a></li>
+		<li class="active">Modification d'une question</li>
+	</ol>
+	
+	
+	<div class="well bs-component">
+		<form action="{{ path('question.update', {'question': question.id}) }}" method="POST" {{ form_enctype(form) }} novalidate>
+			<fieldset>
+				<legend>Modification d'une question</legend>
+					{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+					{{ form(form) }}
+			</fieldset>
+		</form>
+	</div>
+				
+{% endblock content %}

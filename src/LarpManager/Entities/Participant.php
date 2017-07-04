@@ -50,6 +50,18 @@ class Participant extends BaseParticipant
 	}
 	
 	/**
+	 * Verifie si le participant a répondu à cette question
+	 */
+	public function asAnswser(Question $q)
+	{
+		foreach( $this->getReponses() as $reponse)
+		{
+			if ( $reponse->getQuestion() == $q) return true;
+		}
+		return false;
+	}
+	
+	/**
 	 * Vérifie si le joueur est responsable du groupe
 	 * @param Groupe $groupe
 	 */

@@ -660,6 +660,30 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 			->method('GET|POST')
 			->convert('participant', 'converter.participant:convert')
 			->before($mustOwnParticipant);
+		
+		/**
+		 * Apporter une réponse à une question
+		 */
+		$controllers->match('/{participant}/question/{question}/reponse/{reponse}','LarpManager\Controllers\ParticipantController::reponseAction')
+			->assert('question', '\d+')
+			->assert('participant', '\d+')
+			->bind('participant.question.reponse')
+			->method('GET|POST')
+			->convert('question', 'converter.question:convert')
+			->convert('participant', 'converter.participant:convert')
+			->before($mustOwnParticipant);
+
+		/**
+		 * Supprimer une réponse à une question
+		 */
+		$controllers->match('/{participant}/reponse/{reponse}/delete','LarpManager\Controllers\ParticipantController::reponseDeleteAction')
+			->assert('reponse', '\d+')
+			->assert('participant', '\d+')
+			->bind('participant.reponse.delete')
+			->method('GET|POST')
+			->convert('reponse', 'converter.reponse:convert')
+			->convert('participant', 'converter.participant:convert')
+			->before($mustOwnParticipant);
 			
 		/**
 		 * Liste des joueurs

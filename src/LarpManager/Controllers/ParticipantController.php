@@ -72,6 +72,9 @@ use LarpManager\Entities\Sort;
 use LarpManager\Entities\Competence;
 use LarpManager\Entities\Groupe;
 use LarpManager\Entities\Rule;
+use LarpManager\Entities\Question;
+use LarpManager\Entities\Reponse;
+
 
 /**
  * LarpManager\Controllers\ParticipantController
@@ -92,13 +95,66 @@ class ParticipantController
 	{
 		$groupeGn = $participant->getSession();
 		
+		// liste des questions non répondu par le participant
+		$repo = $app['orm.em']->getRepository('LarpManager\Entities\Question');
+		$questions = $repo->findByParticipant($participant);
+		
 		return $app['twig']->render('public/participant/index.twig', array(
 				'gn' => $participant->getGn(),
 				'participant' => $participant,
 				'groupeGn' => $groupeGn,
+				'questions' => $questions,
 		));
 	}
 	
+	/**
+	 * Apporter une réponse à une question
+	 * 
+	 * @param Application $app
+	 * @param Request $request
+	 * @param Participant $participant
+	 * @param Question $question
+	 * @param unknown $reponse
+	 */
+	public function reponseAction(Application $app, Request $request, Participant $participant, Question $question, $reponse)
+	{		
+		$rep = new Reponse();
+		$rep->setQuestion($question);
+		$rep->setParticipant($participant);
+		$rep->setReponse($reponse);
+		
+		$app['orm.em']->persist($rep);
+		$app['orm.em']->flush();
+		
+		$app['session']->getFlashBag()->add('Success','Votre réponse a été prise en compte !');
+		return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+		
+	}
+	
+	/**
+	 * Supprimer une réponse à une question
+	 * 
+	 * @param Application $app
+	 * @param Request $request
+	 * @param Participant $participant
+	 * @param Reponse $reponse
+	 */
+	public function reponseDeleteAction(Application $app, Request $request, Participant $participant, Reponse $reponse)
+	{		
+		$app['orm.em']->remove($reponse);
+		$app['orm.em']->flush();
+		
+		$app['session']->getFlashBag()->add('Success','Votre réponse a été supprimée, veuillez répondre de nouveau à la question !');
+		return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+	}
+	
+	/**
+	 * Création d'un nouveau participant
+	 * 
+	 * @param Application $app
+	 * @param Request $request
+	 * @param User $user
+	 */
 	public function newAction(Application $app, Request $request, User $user)
 	{
 		$participant = new Participant();

@@ -36,7 +36,7 @@ class QuestionControllerProvider implements ControllerProviderInterface
 	/**
 	 * Initialise les routes pour les questions
 	 * Routes :
-	 * 	- question.list
+	 * 	- question
 	 * 	- question.add
 	 *  - question.update
 	 *  - question.detail
@@ -70,8 +70,8 @@ class QuestionControllerProvider implements ControllerProviderInterface
 		/**
 		 * Lister les questions
 		 */
-		$controllers->match('/','LarpManager\Controllers\QuestionController::listAction')
-			->bind('question.list')
+		$controllers->match('/','LarpManager\Controllers\QuestionController::indexAction')
+			->bind('question')
 			->method('GET|POST')
 			->before($mustBeAdmin);
 		

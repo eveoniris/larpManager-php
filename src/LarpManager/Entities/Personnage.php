@@ -159,7 +159,7 @@ class Personnage extends BasePersonnage
 			if ( $priere == $p ) return true;
 		}
 		return false;
-	}
+	}	
 			
 	/**
 	 * Vérifie si le personnage connait cette potion

@@ -73,7 +73,9 @@ use LarpManager\Services\Converter\PostulantConverter;
 use LarpManager\Services\Converter\PotionConverter;
 use LarpManager\Services\Converter\PriereConverter;
 use LarpManager\Services\Converter\QualityConverter;
+use LarpManager\Services\Converter\QuestionConverter;
 use LarpManager\Services\Converter\ReligionConverter;
+use LarpManager\Services\Converter\ReponseConverter;
 use LarpManager\Services\Converter\RestaurationConverter;
 use LarpManager\Services\Converter\RestrictionConverter;
 use LarpManager\Services\Converter\RuleConverter;
@@ -191,7 +193,12 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 		// personnage religion converter
 		$app['converter.personnageReligion'] = $app->share(function($app) {
 			return new PersonnageReligionConverter($app['orm.em']);
-		});		
+		});
+		
+		// reponse converter
+		$app['converter.reponse'] = $app->share(function($app) {
+			return new ReponseConverter($app['orm.em']);
+		});
 
 		// technologie converter
 		$app['converter.technologie'] = $app->share(function($app) {
@@ -336,6 +343,11 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 		// quality converter
 		$app['converter.quality'] = $app->share(function($app) {
 			return new QualityConverter($app['orm.em']);
+		});
+		
+		// question converter
+		$app['converter.question'] = $app->share(function($app) {
+			return new QuestionConverter($app['orm.em']);
 		});
 		
 		// titre converter

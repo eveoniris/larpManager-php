@@ -10,12 +10,46 @@
 namespace LarpManager\Entities;
 
 use LarpManager\Entities\BaseQuestion;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * LarpManager\Entities\Question
  *
- * @Entity()
+ * @Entity(repositoryClass="LarpManager\Repository\QuestionRepository")
  */
 class Question extends BaseQuestion
 {
+		/**
+		 * Compte les réponse à une question
+		 * 
+		 * @param unknown $reponse
+		 */
+		public function getReponsesCount($reponse)
+		{
+			$count = 0;
+			foreach( $this->getReponses() as $rep)
+			{
+				if ( $rep->getReponse() == $reponse) $count++;
+			}
+			return $count;
+		}
+		
+		/**
+		 * Obtient la liste des participants ayant répondu (en fonction de la réponse)
+		 * 
+		 * @param unknown $rep
+		 */
+		public function getParticipants($rep)
+		{
+			$participants = new ArrayCollection();
+			
+			foreach( $this->getReponses() as $reponse)
+			{
+				if ( $reponse->getReponse() == $rep)
+				{
+					$participants[] = $reponse->getParticipant();
+				}
+			}
+			return $participants;
+		}
 }

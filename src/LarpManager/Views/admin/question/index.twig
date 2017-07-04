@@ -1,0 +1,47 @@
+{% extends "layout.twig" %}
+
+{% block title %}Question{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li class="active">Liste des questions</li>
+	</ol>
+
+	<div class="well well-sm">
+	
+		<a href="{{ path('question.add') }}"><i class="fa fa-plus"></i> Ajouter une question</a>
+		
+		<ul class="list-group">
+		{% for question in questions %}
+		
+			<li class="list-group-item">
+				<div class="row">
+					<div class="col-md-8">
+						<table class="table">
+							<tr>
+								<td>{{ question.label }}</td>
+								<td>{{ question.text|markdown }}</td>
+								<td>{{ question.choix|markdown }}</td>
+								{% for reponse in question.choix|split(';') %}
+									<td>
+										<strong>{{ reponse }}</strong> : {{ question.reponsesCount(reponse) }}
+									</td>
+								{% endfor %}
+							</tr>
+						</table>
+					</div>
+					<div class="col-md-4">
+						<a href="{{ path('question.update',{'question':question.id}) }}"><i class="fa fa-pencil"></i> Modifier</a>&nbsp;|&nbsp;
+						<a href="{{ path('question.detail',{'question':question.id}) }}"><i class="fa fa-eye"></i> Detail</a>&nbsp;|&nbsp;
+						<a href="{{ path('question.delete',{'question':question.id}) }}"><i class="fa fa-eraser"></i> Supprimer</a>
+					</div>
+				</div>
+		    </li>
+
+		{% endfor %}
+	 	</ul>
+	</div>
+	
+{% endblock %}
