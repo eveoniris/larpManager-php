@@ -144,7 +144,7 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 		 */
 		$controllers->match('/admin/{personnage}/materiel','LarpManager\Controllers\PersonnageController::adminMaterielAction')
 			->assert('personnage', '\d+')
-			->bind("personnage.admin.materiel")
+			->bind("personnage.materiel.update")
 			->method('GET|POST')
 			->convert('personnage', 'converter.personnage:convert')
 			->before($mustBeOrga);
@@ -446,7 +446,17 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 			->bind("personnage.export")
 			->method('GET')
 			->convert('personnage', 'converter.personnage:convert')
-			->before($mustOwn);			
+			->before($mustOwn);
+		
+		/**
+		 * Impression de l'enveloppe du personnage
+		 */
+		$controllers->match('/{personnage}/enveloppe/print','LarpManager\Controllers\PersonnageController::enveloppePrintAction')
+			->assert('personnage', '\d+')
+			->bind("personnage.enveloppe.print")
+			->method('GET|POST')
+			->convert('personnage', 'converter.personnage:convert')
+			->before($mustBeOrga);
 									
 		/**
 		 * Retire la dernière compétence acquise par un personnage

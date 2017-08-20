@@ -24,8 +24,8 @@
 			</div>
 
 			<div class="list-group">
-				{% for personnage in competence.personnagesGn(app['larp.manager'].getGnActif.id) %}
-					<a class="list-group-item" href="{{ path('personnage.admin.detail',{'personnage':personnage.id}) }}">#{{ personnage.id }} - {{ personnage.nom }}&nbsp;{{ personnage.surnom }} - {{ personnage.classeName }}</a>
+				{% for participant in competence.personnagesGn(app['larp.manager'].getGnActif.id) %}
+					<a class="list-group-item" href="{{ path('personnage.admin.detail',{'personnage':participant.personnage.id}) }}">#{{ participant.personnage.id }} - {{ participant.personnage.nom }}&nbsp;{{ participant.personnage.surnom }} - {{ participant.personnage.classeName }}</a>
 				{% endfor %}
 			</div>
 		</div>

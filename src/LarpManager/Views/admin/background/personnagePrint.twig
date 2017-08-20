@@ -1,0 +1,32 @@
+{% extends "layout_print.twig" %}
+
+{% block style %}
+<style>
+body {
+	font-size:12px;
+}
+</style>
+{% endblock style %}
+
+
+
+{% block content %}
+
+	{% for groupeGn in groupeGns %}
+		{% for participant in groupeGn.participants if participant.personnage %}
+		
+			{% set backgrounds = participant.personnage.personnageBackgrounds %}
+			{% for background in backgrounds if date(background.creationDate) < date('-8 month')%}
+				<h2>#{{ groupeGn.groupe.numero }} {{ groupeGn.groupe.nom }}</h2>
+				<h3>#{{ background.personnage.id }} {{ background.personnage.nom }}{% if background.personnage.surnom %} alias {{ background.personnage.surnom }}{% endif %}
+						
+				{{ background.text|markdown }}
+		
+				<hr class="print-page-break" />
+			{% endfor %}
+		
+		{% endfor %}
+		
+	{% endfor %}
+
+{% endblock content %}

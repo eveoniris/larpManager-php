@@ -1,41 +1,20 @@
-<!DOCTYPE html>
-<html>
-    <head>
-    	<meta charset="utf-8">
-    	<title>LarpManager - Impression des quetes</title>
-    </head>
-    <body>
-<h2>Liste des quetes</h2>
+{% extends "layout_print.twig" %}
+{% block content %}
 
-<h4>Statistiques :</h4>
-{% for key, quantite in stats %}
-	{{ key }} : {{ quantite }}<br />
-{% endfor %}
-<table border="1" style="width:100%; border-collapse:collapse">
-<thead>
-	<tr>
-		<td><strong>Groupe</strong></td>
-		<td><strong>Pays</strong></td>
-		<td><strong>Demandes</strong></td>
-		<td><strong>Valeur</strong></td>
-		<td><strong>Récompense</strong></td>
-	</tr>
-</thead>
-<tbody>
 	{% for quete in quetes %}
-		<tr>
-			<td>#{{ quete.groupe.numero}} {{ quete.groupe.nom }}</td>
-			<td>{% if quete.groupe.territoire %} {{ quete.groupe.territoire.nom}}{% endif %}</td>
-			<td>
+		<div>
+			<h4>Quête commerciale pour #{{ quete.groupe.numero}} {{ quete.groupe.nom }}</h4>
+			<p>La route commerciale doit partir de <strong>{% if quete.groupe.territoire %}{{ quete.groupe.territoire.nom }}{% else %}INCONNU{% endif %}</strong> est parvenir au territoire <strong>{% if quete.quete.cible %}{{ quete.quete.cible.nom }}{% else %}INCONNU{% endif %}</strong></p>
+			<strong>Les ressources demandées sont :</strong>
+			<ul>
 				{% for ressource in quete.quete.needs %}	
-					{{ ressource.label }},&nbsp;
+					<li>{{ ressource.label }}</li>
 				{% endfor %}
-			</td>
-			<td>{{ quete.quete.valeur }}</td>
-			<td>{{ quete.quete.recompenses|join(', ') }}</td>
-		</tr>
+			</ul>
+			<strong>Récompenses : </strong>{{ quete.quete.recompenses|join(', ') }}
+		</div>
+
+		<hr class="print-page-break" />
 	{% endfor %}
-</tbody>
-</table>
-</body>
-</html>
+
+{% endblock content %}

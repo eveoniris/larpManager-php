@@ -173,6 +173,22 @@ class GnController
 	}
 	
 	/**
+	 * Liste des participants à un jeu ayant un billet mais pas encore de personnage
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Gn $gn
+	 */
+	public function participantsWithoutPersoAction(Request $request, Application $app, Gn $gn)
+	{
+		$participants = $gn->getParticipantsWithoutPerso();
+	
+		return $app['twig']->render('admin/gn/participantswithoutperso.twig', array(
+				'gn' => $gn,
+				'participants' => $participants,
+		));
+	}
+	
+	/**
 	 * Liste des participants à un jeu ayant un billet mais pas encore de groupe au format CSV
 	 * @param Request $request
 	 * @param Application $app
@@ -246,7 +262,45 @@ class GnController
 		fclose($output);
 		exit();
 	}
-		
+
+	/**
+	 * Liste des participants à un jeu n'ayant pas encore de personnage au format CSV
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Gn $gn
+	 */
+	public function participantsWithoutPersoCSVAction(Request $request, Application $app, Gn $gn)
+	{
+		$participants = $gn->getParticipantsWithoutPerso();
+	
+		header("Content-Type: text/csv");
+		header("Content-Disposition: attachment; filename=eveoniris_participants_sans_perso_".date("Ymd").".csv");
+		header("Pragma: no-cache");
+		header("Expires: 0");
+			
+		$output = fopen("php://output", "w");
+	
+		// header
+		fputcsv($output,
+		array(
+		'Nom',
+		'Prénom',
+		'Email'), ';');
+			
+		foreach ( $participants as $participant)
+		{
+			$line = array();
+			$line[] = utf8_decode($participant->getUser()->getEtatCivil()->getNom());
+			$line[] = utf8_decode($participant->getUser()->getEtatCivil()->getPrenom());
+			$line[] = utf8_decode($participant->getUser()->getEmail());
+			fputcsv($output, $line, ';');
+		}
+	
+		fclose($output);
+		exit();
+	}
+	
 	/**
 	 * Liste des participants à un jeu
 	 * 
@@ -347,7 +401,8 @@ class GnController
 			'Nom',
 			'Prénom',
 			'Email',
-			'Date de naissance'), ';');
+			'Date de naissance',
+			'fedegn'), ';');
 			
 		foreach ( $participants as $participant)
 		{
@@ -362,6 +417,14 @@ class GnController
 			else 
 			{
 				$line[] = '?';	
+			}
+			if ( $participant->getUser()->getEtatCivil()->getFedeGn() )
+			{
+				$line[] = utf8_decode($participant->getUser()->getEtatCivil()->getFedeGn());
+			}
+			else
+			{
+				$line[] = '?';
 			}
 			fputcsv($output, $line, ';');
 		}

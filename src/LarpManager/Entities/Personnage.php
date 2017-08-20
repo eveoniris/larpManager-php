@@ -48,6 +48,40 @@ class Personnage extends BasePersonnage
 	}
 	
 	/**
+	 * Vérifie si un personnage connait une priere
+	 * 
+	 * @param unknown $priere
+	 */
+	public function hasPriere(Priere $priere)
+	{
+		foreach($this->getPrieres() as $p)
+		{
+			if ( $p == $priere) return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Fourni tous les gns auquel participe un personnage
+	 */
+	public function getGns()
+	{
+		$gns = new ArrayCollection();
+		
+		if ( $this->getUser() )
+		{
+			foreach ( $this->getUser()->getParticipants() as $participant )
+			{
+				if( $participant->getBillet() )
+				{
+					$gns[] = $participant->getGn();
+				}
+			}
+		}
+		return $gns;
+	}
+	
+	/**
 	 * Détermine si le personnage participe à un GN
 	 * 
 	 * @param Gn $gn
@@ -68,15 +102,25 @@ class Personnage extends BasePersonnage
 	}
 	
 	/**
-	 * Set Participant entity (one to one).
-	 *
-	 * @return \LarpManager\Entities\Personnage
+	 * Détermine si le personnage participe à un GN
+	 * 
+	 * @param unknown $gnLabel
 	 */
-	public function setParticipantNull()
+	public function participeToByLabel($gnLabel)
 	{
-		$this->participant = null;
-	
-		return $this;
+		if ( $this->getUser() )
+		{
+			foreach ( $this->getUser()->getParticipants() as $participant )
+			{
+				if( $participant->getBillet() 
+				 && $participant->getGn()->getLabel() == $gnLabel 
+				 && $participant->getPersonnage() == $this )
+				{
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 	
 	/**
@@ -391,6 +435,46 @@ class Personnage extends BasePersonnage
 		
 		$identity = $this->getNom().' '.$this->getSurnom().' (';
 		if ( $groupe ) $identity .= $groupe->getNom();
+		$identity .= ')';
+		return $identity;
+	}
+	
+	public function getGroupeByLabel($gnLabel)
+	{
+		if ( $this->getUser() )
+		{
+			foreach ( $this->getUser()->getParticipants() as $participant )
+			{
+				if( $participant->getBillet()
+						&& $participant->getGn()->getLabel() == $gnLabel
+						&& $participant->getPersonnage() == $this )
+				{
+					return $participant->getGroupeGn()->getGroupe();
+				}
+			}
+		}
+		return null;
+	}
+	
+	public function getIdentityByLabel($gnLabel)
+	{
+		$groupeLabel = null;
+		if ( $this->getUser() )
+		{
+			foreach ( $this->getUser()->getParticipants() as $participant )
+			{
+				if( $participant->getBillet()
+					&& $participant->getGn()->getLabel() == $gnLabel
+					&& $participant->getPersonnage() == $this )
+				{
+					$groupeGn = $participant->getGroupeGn();
+					$groupeLabel = $groupeGn->getGroupe()->getNom();
+				}
+			}
+		}
+		
+		$identity = $this->getNom().' '.$this->getSurnom().' (';
+		if ( $groupeLabel ) $identity .= $groupeLabel;
 		$identity .= ')';
 		return $identity;
 	}

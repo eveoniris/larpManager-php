@@ -133,6 +133,15 @@ class GnControllerProvider implements ControllerProviderInterface
 			->before($mustBeAdmin);
 			
 		/**
+		 * Liste des participants à un gn ayant un billet mais pas de personnages
+		 */
+			$controllers->match('/{gn}/participants/withoutperso', 'LarpManager\Controllers\GnController::participantsWithoutPersoAction')
+			->assert('gn', '\d+')
+			->convert('gn', 'converter.gn:convert')
+			->bind("gn.participants.withoutperso")
+			->before($mustBeAdmin);
+			
+		/**
 		 * Liste des participants à un gn n'ayant pas encore de billet
 		 */
 		$controllers->match('/{gn}/participants/withoutbillet.csv', 'LarpManager\Controllers\GnController::participantsWithoutBilletCSVAction')
@@ -148,6 +157,15 @@ class GnControllerProvider implements ControllerProviderInterface
 			->assert('gn', '\d+')
 			->convert('gn', 'converter.gn:convert')
 			->bind("gn.participants.withoutgroup.csv")
+			->before($mustBeAdmin);
+			
+		/**
+		 * Liste des participants à un gn ayant un billet mais n'ayant pas encore de personnage
+		 */
+		$controllers->match('/{gn}/participants/withoutperso.csv', 'LarpManager\Controllers\GnController::participantsWithoutPersoCSVAction')
+			->assert('gn', '\d+')
+			->convert('gn', 'converter.gn:convert')
+			->bind("gn.participants.withoutperso.csv")
 			->before($mustBeAdmin);
 			
 		/**

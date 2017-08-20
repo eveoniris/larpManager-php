@@ -1,0 +1,130 @@
+{% extends "layout.twig" %}
+
+{% block title %}Personnages renommés{% endblock title %}
+
+{% block style %}
+<style>
+ul, li {
+  list-style: none;
+}
+
+a {
+  text-decoration: none;
+}
+
+ul.waterfall {
+	padding-left:0px;
+}
+
+.waterfall .pin {
+  width: 480px;
+  height: auto;
+  margin: 0 0 0px 0px;
+  border-style: solid;
+  border-width : 5px;
+  border-color: rgba(0,0,0,0.75);
+  -webkit-transition: all 0.6s ease;
+  -moz-transition: all 0.6s ease;
+  -o-transition: all 0.6s ease;
+  transition: all 0.6s ease;
+}
+
+.waterfall .pin a {
+  width: 100%;
+  height: 100%;
+}
+
+.waterfall.gallery .pin {
+  width: 460px;
+}
+
+figcaption {
+	position: absolute;
+	background: black;
+	background: rgba(0,0,0,0.75);
+	color: white;
+	width:470px;
+	height: 35px;
+}
+figcaption.menu {
+	opacity: 0;
+	top:0px;
+	z-index: 666;
+	
+	-webkit-transition: all 0.6s ease;
+	-moz-transition: all 0.6s ease;
+	-o-transition: all 0.6s ease;
+	transition: all 0.6s ease;
+}
+
+figcaption.tags {
+	height:95px;
+	margin-top:-95px;
+	padding-top: 5px;
+	padding-left: 5px;
+}
+
+figure:hover figcaption.menu {
+	opacity: 1;
+}
+
+li.pin:hover {
+	border-color: rgba(240,240,240,1);
+}
+.cap-bot figcaption.menu {
+	left: 0;
+}
+
+
+</style>
+
+{% endblock style %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Page d'accueil</a></li>
+		<li class="active">Les personnages renommés</li>
+	</ol>
+
+	<nav class="navbar navbar-default" style="padding-right: 5px;">
+		<div class="navbar-header">
+			<span class="navbar-brand">
+				Voici tous les personnages ayant une renommé supérieure à 10.
+			</span>
+		</div>
+	</nav>
+
+
+	<ul class="waterfall">
+		{% for personnage in personnages %}
+			<li class="pin">
+    			<figure  tabindex="0" class="cap-bot">
+	    			{% if personnage.trombineUrl %}
+						<img src="{{ path('personnage.trombine', {'personnage' : personnage.id }) }}" />
+					{% else %}
+						<img src="{{ app.request.basepath }}/img/no_trombine.png" />
+					{% endif %}
+					<figcaption class="menu">
+						<nav class="navbar navbar-default" style="margin-bottom: 0px; border-radius:0;">
+  							<div class="navbar-header">
+					  			<span class="navbar-brand">{{ personnage.nom }}</span>
+				  			</div>
+						</nav>
+					</figcaption>
+					<figcaption class="tags">
+						{% if personnage.groupe %}
+							{% if personnage.groupe.territoire %}
+								Actuellement en {{ personnage.groupe.territoire.nom }}
+							{% else %}
+								Localisation inconnue
+							{% endif %}
+						{% else %}
+							Localisation inconnue							
+						{% endif %}
+					</figcaption>
+				</figure>
+			</li>
+  		{% endfor %}
+  	</ul>
+{% endblock %}

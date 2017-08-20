@@ -3,19 +3,74 @@
 	<h5>Religion</h5>
 </div>
 
-<div class="row">
-	<div class="col-sm-6">
-		<div class="list-group">
-			{% for personnageReligion in personnage.personnagesReligions %}
-				<a class="list-group-item" href="{{ path('forum.topic',{'index': personnageReligion.religion.topic.id }) }}">{{ personnageReligion.religion.label }} - {{ personnageReligion.religionLevel.label }}</a>
-			{% endfor %}
-		</div>
-	</div>
-	<div class="col-sm-6">
-		Vous pouvez choisir autant de religions que vous voulez. Attention toutefois, les règles suivantes s'appliquent :
-		<ul>
-			<li>Vous ne pouvez avoir qu'une seule religion au niveau "Fervent"</li>
-			<li>Si vous choisissez une religion au niveau "Fanatique", vous perdez toutes vos autres religions (un Fanatique n'a qu'une seule religion).</li>
-		</ul>			
-	</div>
+<div class="list-group">
+	{% for personnageReligion in personnage.personnagesReligions %}
+		<li class="list-group-item">
+			<h6>{{ personnageReligion.religion.label }} - {{ personnageReligion.religionLevel.label }}</h6>
+			<a href="{{ path('forum.topic',{'index': personnageReligion.religion.topic.id }) }}">Forum</a>
+			<p class="list-group-item-text">
+				{{ personnageReligion.religion.description|markdown }}
+			</p>
+			{% if personnageReligion.religionLevel.index >= 1 %}
+				<p class="list-group-item-text">
+					<h6>{{ personnageReligion.religion.label }} - Informations supplémentaires pour les Pratiquants :</h6>
+					{{ personnageReligion.religion.descriptionPratiquant|markdown }}
+				</p>
+			{% endif %}
+			{% if personnageReligion.religionLevel.index >= 2 %}
+				<p class="list-group-item-text">
+					<h6>{{ personnageReligion.religion.label }} - Informations supplémentaires pour les Fervents :</h6>
+					{{ personnageReligion.religion.descriptionFervent|markdown }}
+				</p>
+			{% endif %}
+			{% if personnageReligion.religionLevel.index >= 3 %}
+				<p class="list-group-item-text">
+					<h6>{{ personnageReligion.religion.label }} - Informations supplémentaires pour les Fanatiques :</h6>
+					{{ personnageReligion.religion.descriptionFanatique|markdown }}
+				</p>
+			{% endif %}
+		</li>
+	{% endfor %}
 </div>
+
+{% if personnage.hasCompetence('Prêtrise') %}
+	<div class="header">
+		<h5>Vos connaissances religieuses</h5>
+	</div>
+	
+	<div class="list-group">
+		{# accés à toutes les descriptions pour pratiquants des religions de leur pays #}
+	 	{% if personnage.getCompetenceNiveau('Prêtrise') >= 1 %}
+	 		Votre compétence Prêtrise Apprenti vous permet de connaitre les descriptions des religions de votre pays.
+	 		
+	 		{%  if  personnage.territoire.religion %}
+		 		<h6>{{ personnage.territoire.religion.label }}</h6>
+		 		<p class="list-group-item-text">
+		 			{{ personnage.territoire.religion.descriptionPratiquant|markdown }}
+		 		</p>
+		 	{% else %}
+		 		<h6>Votre pays ne dispose pas de religion principale</h6>
+		 	{% endif %}
+	 		
+	 		{% for religion in personnage.territoire.religions %}
+	 			<h6>{{ religion.label }}</h6>
+	 			<p class="list-group-item-text">
+	 				{{ religion.descriptionPratiquant|markdown }}
+	 			</p>
+	 		{% else %}
+	 			<h6>Votre pays ne dispose pas de religions secondaires</h6>
+	 		{% endfor %}
+	 	{% endif %}
+	 	
+	 	{# Peuvent choisir 3 religions pour acceder à leur description pour pratiquants #}
+	 	{% if personnage.getCompetenceNiveau('Prêtrise') >= 2 %}
+	 		Votre connaissance de Prêtrise vous permet de connaitre des descriptions de religions supplémentaires.
+	 		{% for religion in personnage.religions %}
+	 			<h6>{{ religion.label }}</h6>
+	 			<p class="list-group-item-text">
+	 				{{ religion.descriptionPratiquant|markdown }}
+	 			</p>
+	 		{% endfor %}
+	 	{% endif %}
+	</div>
+{% endif %}

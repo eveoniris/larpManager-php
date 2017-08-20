@@ -256,6 +256,15 @@ class ParticipantController
 				}
 			}
 			
+			// on supprime aussi les réponses aux sondages
+			if ( $participant->getReponses() )
+			{
+				foreach ( $participant->getReponses() as $reponse)
+				{
+					$app['orm.em']->remove($reponse);
+				}
+			}
+			
 			$app['orm.em']->remove($participant);
 			$app['orm.em']->flush();
 		
@@ -417,10 +426,10 @@ class ParticipantController
 		foreach ( $groupeGns as $groupeGn)
 		{
 			$groupe = $groupeGn->getGroupe();
-			if ( $groupe->getTerritoires()->count() > 0 )
-			{
+			//if ( $groupe->getTerritoires()->count() > 0 )
+			//{
 				$groupes[] = $groupe;
-			}
+			//}
 			
 		}
 						
@@ -616,13 +625,16 @@ class ParticipantController
 			if ( $territoire )
 			{
 				$langue = $territoire->getLangue();
-				if ( ! $data['personnage']->isKnownLanguage($langue) )
+				if ( $langue )
 				{
-					$personnageLangue = new \LarpManager\Entities\PersonnageLangues();
-					$personnageLangue->setPersonnage($data['personnage']);
-					$personnageLangue->setLangue($langue);
-					$personnageLangue->setSource('GROUPE');
-					$app['orm.em']->persist($personnageLangue);
+					if ( ! $data['personnage']->isKnownLanguage($langue) )
+					{
+						$personnageLangue = new \LarpManager\Entities\PersonnageLangues();
+						$personnageLangue->setPersonnage($data['personnage']);
+						$personnageLangue->setLangue($langue);
+						$personnageLangue->setSource('GROUPE');
+						$app['orm.em']->persist($personnageLangue);
+					}
 				}
 			}
 			
@@ -639,7 +651,68 @@ class ParticipantController
 				'participant' => $participant,
 		));
 	}
-	
+
+	/**
+	 * Reprendre un ancien personnage
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Participant $participant
+	 */
+	public function adminPersonnageOldAction(Request $request, Application $app, Participant $participant)
+	{
+		$groupeGn = $participant->getGroupeGn();
+		$groupe = $groupeGn->getGroupe();
+		$gn = $groupeGn->getGn();
+				
+		$form = $app['form.factory']->createBuilder()
+			->add('personnage','entity', array(
+					'label' =>  'Choisissez le personnage',
+					'property' => 'nom',
+					'class' => 'LarpManager\Entities\Personnage',
+					'choices' => array_unique($participant->getUser()->getPersonnages()->toArray()),
+			))
+			->add('save','submit', array('label' => 'Valider'))
+			->getForm();
+			
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
+		{
+			$data = $form->getData();
+			$participant->setPersonnage($data['personnage']);
+			
+			$territoire = $groupe->getTerritoire();
+			if ( $territoire )
+			{
+				$langue = $territoire->getLangue();
+				if ( $langue )
+				{
+					if ( ! $data['personnage']->isKnownLanguage($langue) )
+					{
+						$personnageLangue = new \LarpManager\Entities\PersonnageLangues();
+						$personnageLangue->setPersonnage($data['personnage']);
+						$personnageLangue->setLangue($langue);
+						$personnageLangue->setSource('GROUPE');
+						$app['orm.em']->persist($personnageLangue);
+					}
+				}
+			}
+			
+			$app['orm.em']->persist($participant);
+			$app['orm.em']->flush();
+			
+			$app['session']->getFlashBag()->add('success','Le personnage a été sauvegardé.');
+			return $app->redirect($app['url_generator']->generate('gn.participants.withoutperso', array('gn' => $gn->getId())),301);
+		}
+		
+		return $app['twig']->render('admin/participant/personnage_old.twig', array(
+				'form' => $form->createView(),
+				'groupe' => $groupe,
+				'participant' => $participant,
+		));
+	}
+
 	/**
 	 * Création d'un nouveau personnage. L'utilisateur doit être dans un groupe et son billet doit être valide
 	 *
@@ -808,6 +881,152 @@ class ParticipantController
 		$territoires = $app['orm.em']->getRepository('LarpManager\Entities\Territoire')->findRoot();
 		
 		return $app['twig']->render('public/participant/personnage_new.twig', array(
+				'form' => $form->createView(),
+				'classes' => array_unique($classes),
+				'groupe' => $groupe,
+				'participant' => $participant,
+				'ages' => $ages,
+				'territoires' => $territoires,
+		));
+	}
+	
+	/**
+	 * Création d'un nouveau personnage. L'utilisateur doit être dans un groupe et son billet doit être valide
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function adminPersonnageNewAction(Request $request, Application $app, Participant $participant)
+	{
+		$groupeGn = $participant->getGroupeGn();	
+		$groupe = $groupeGn->getGroupe();
+		
+		$personnage = new \LarpManager\Entities\Personnage();
+		$classes = $app['orm.em']->getRepository('\LarpManager\Entities\Classe')->findAllCreation();
+	
+		// j'ajoute içi certain champs du formulaires (les classes)
+		// car j'ai besoin des informations du groupe pour les alimenter
+		$form = $app['form.factory']->createBuilder(new PersonnageForm(), $personnage)
+			->add('classe','entity', array(
+				'label' =>  'Classes disponibles',
+				'property' => 'label',
+				'class' => 'LarpManager\Entities\Classe',
+				'choices' => array_unique($classes),
+			))
+		->add('save','submit', array('label' => 'Valider le personnage'))
+		->getForm();
+			
+		$form->handleRequest($request);
+	
+		if ( $form->isValid() )
+		{
+			$personnage = $form->getData();
+				
+			$personnage->setUser($app['user']);
+			$participant->setPersonnage($personnage);
+	
+			// Ajout des points d'expérience gagné à la création d'un personnage
+			$personnage->setXp($participant->getGn()->getXpCreation());
+	
+			// historique
+			$historique = new \LarpManager\Entities\ExperienceGain();
+			$historique->setExplanation("Création de votre personnage");
+			$historique->setOperationDate(new \Datetime('NOW'));
+			$historique->setPersonnage($personnage);
+			$historique->setXpGain($participant->getGn()->getXpCreation());
+			$app['orm.em']->persist($historique);
+				
+			// ajout des compétences acquises à la création
+			foreach ($personnage->getClasse()->getCompetenceFamilyCreations() as $competenceFamily)
+			{
+				$firstCompetence = $competenceFamily->getFirstCompetence();
+				if ( $firstCompetence )
+				{
+					$personnage->addCompetence($firstCompetence);
+					$firstCompetence->addPersonnage($personnage);
+					$app['orm.em']->persist($firstCompetence);
+				}
+	
+				if ( $competenceFamily->getLabel() == "Noblesse")
+				{
+					$personnage->addRenomme(2);
+					$renomme_history = new \LarpManager\Entities\RenommeHistory();
+	
+					$renomme_history->setRenomme(2);
+					$renomme_history->setExplication('Compétence Noblesse niveau 1');
+					$renomme_history->setPersonnage($personnage);
+					$app['orm.em']->persist($renomme_history);
+				}
+			}
+	
+			// Ajout des points d'expérience gagné grace à l'age
+			$xpAgeBonus = $personnage->getAge()->getBonus();
+			if ( $xpAgeBonus )
+			{
+				$personnage->addXp($xpAgeBonus);
+				$historique = new \LarpManager\Entities\ExperienceGain();
+				$historique->setExplanation("Bonus lié à l'age");
+				$historique->setOperationDate(new \Datetime('NOW'));
+				$historique->setPersonnage($personnage);
+				$historique->setXpGain($xpAgeBonus);
+				$app['orm.em']->persist($historique);
+			}
+	
+			// Ajout des langues en fonction de l'origine du personnage
+			$langue = $personnage->getOrigine()->getLangue();
+			if ( $langue )
+			{
+				$personnageLangue = new \LarpManager\Entities\PersonnageLangues();
+				$personnageLangue->setPersonnage($personnage);
+				$personnageLangue->setLangue($langue);
+				$personnageLangue->setSource('ORIGINE');
+				$app['orm.em']->persist($personnageLangue);
+			}
+				
+			// Ajout des langues secondaires lié à l'origine du personnage
+			foreach ( $personnage->getOrigine()->getLangues() as $langue)
+			{
+				if ( ! $personnage->isKnownLanguage($langue) )
+				{
+					$personnageLangue = new \LarpManager\Entities\PersonnageLangues();
+					$personnageLangue->setPersonnage($personnage);
+					$personnageLangue->setLangue($langue);
+					$personnageLangue->setSource('ORIGINE');
+					$app['orm.em']->persist($personnageLangue);
+				}
+			}
+				
+			// Ajout de la langue du groupe
+			$territoire = $groupe->getTerritoire();
+			if ( $territoire )
+			{
+				$langue = $territoire->getLangue();
+				if ( $langue )
+				{
+					if ( ! $personnage->isKnownLanguage($langue) )
+					{
+						$personnageLangue = new \LarpManager\Entities\PersonnageLangues();
+						$personnageLangue->setPersonnage($personnage);
+						$personnageLangue->setLangue($langue);
+						$personnageLangue->setSource('GROUPE');
+						$app['orm.em']->persist($personnageLangue);
+					}
+				}
+			}
+	
+			$app['orm.em']->persist($personnage);
+			$app['orm.em']->persist($participant);
+			$app['orm.em']->flush();
+	
+	
+			$app['session']->getFlashBag()->add('success','Votre personnage a été sauvegardé.');
+			return $app->redirect($app['url_generator']->generate('gn.participants.withoutperso', array('gn' => $groupeGn->getGn()->getId())),301);
+		}
+	
+		$ages = $app['orm.em']->getRepository('LarpManager\Entities\Age')->findAllOnCreation();
+		$territoires = $app['orm.em']->getRepository('LarpManager\Entities\Territoire')->findRoot();
+	
+		return $app['twig']->render('admin/participant/personnage_new.twig', array(
 				'form' => $form->createView(),
 				'classes' => array_unique($classes),
 				'groupe' => $groupe,
@@ -1391,6 +1610,69 @@ class ParticipantController
 				'participant' => $participant,
 				'potions' => $potions,
 				'niveau' => $niveau,
+		));
+	}
+	
+	/**
+	 * Choix d'une nouvelle description de religion
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Participant $participant
+	 */
+	public function religionDescriptionAction(Request $request, Application $app, Participant $participant)
+	{
+		$personnage = $participant->getPersonnage();
+		
+		if ( ! $personnage )
+		{
+			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créer un personnage !');
+			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+		}
+		
+		if ( ! $personnage->hasTrigger('PRETRISE INITIE') )
+		{
+			$app['session']->getFlashBag()->add('error','Désolé, vous ne pouvez pas choisir de descriptif de religion supplémentaire.');
+			return $app->redirect($app['url_generator']->generate('participant.personnage', array('participant' => $participant->getId())),301);
+		}
+		
+		$availableDescriptionReligion = $app['personnage.manager']->getAvailableDescriptionReligion($personnage);
+			
+		$form = $app['form.factory']->createBuilder()
+			->add('religion','entity', array(
+					'required' => true,
+					'label' => 'Choisissez votre nouveau descriptif religion',
+					'multiple' => false,
+					'expanded' => true,
+					'class' => 'LarpManager\Entities\Religion',
+					'choices' => $availableDescriptionReligion,
+					'choice_label' => 'label'
+			))
+			->add('save','submit', array('label' => 'Valider'))
+			->getForm();
+		
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
+		{
+			$data = $form->getData();
+			$religion = $data['religion'];
+						
+			$personnage->addReligion($religion);
+			
+			$trigger = $personnage->getTrigger('PRETRISE INITIE');
+			$app['orm.em']->remove($trigger);
+			
+			$app['orm.em']->flush();
+			
+			$app['session']->getFlashBag()->add('success','Vos modifications ont été enregistrées.');
+			return $app->redirect($app['url_generator']->generate('participant.personnage', array('participant' => $participant->getId())),301);
+		}
+			
+		return $app['twig']->render('public/personnage/descriptionReligion.twig', array(
+				'form' => $form->createView(),
+				'personnage' => $personnage,
+				'participant' => $participant,
 		));
 	}
 	
@@ -2357,8 +2639,11 @@ class ParticipantController
 						{
 							if ( $priere->getNiveau() == $competence->getLevel()->getId() )
 							{
-								$priere->addPersonnage($personnage);
-								$personnage->addPriere($priere);
+								if ( ! $personnage->hasPriere($priere) )
+								{
+									$priere->addPersonnage($personnage);
+									$personnage->addPriere($priere);
+								}
 							}
 						}
 					}
@@ -2369,7 +2654,35 @@ class ParticipantController
 					return $app->redirect($app['url_generator']->generate('participant.personnage', array('participant' => $participant->getId())),301);
 				}
 			}
-				
+			
+			// case special prêtrise initié
+			if ( $competence->getCompetenceFamily()->getLabel() == "Prêtrise")
+			{
+				if (  $competence->getLevel()->getId() >= 2 )
+				{
+					$trigger = new \LarpManager\Entities\PersonnageTrigger();
+					$trigger->setPersonnage($personnage);
+					$trigger->setTag('PRETISE INITIE');
+					$trigger->setDone(false);
+					$app['orm.em']->persist($trigger);
+					$app['orm.em']->flush();
+					
+					$trigger = new \LarpManager\Entities\PersonnageTrigger();
+					$trigger->setPersonnage($personnage);
+					$trigger->setTag('PRETISE INITIE');
+					$trigger->setDone(false);
+					$app['orm.em']->persist($trigger);
+					$app['orm.em']->flush();
+					
+					$trigger = new \LarpManager\Entities\PersonnageTrigger();
+					$trigger->setPersonnage($personnage);
+					$trigger->setTag('PRETISE INITIE');
+					$trigger->setDone(false);
+					$app['orm.em']->persist($trigger);
+					$app['orm.em']->flush();
+				}
+			}
+					
 				
 			// cas special alchimie
 			if ( $competence->getCompetenceFamily()->getLabel() == "Alchimie")

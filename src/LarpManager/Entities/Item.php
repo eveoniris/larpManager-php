@@ -22,6 +22,7 @@ class Item extends BaseItem
 	{
 		$this->setDateCreation(new \Datetime('NOW'));
 		$this->setDateUpdate(new \Datetime('NOW'));
+		$this->setQuantite(1);
 		parent::__construct();
 	}
 }

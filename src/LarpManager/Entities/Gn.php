@@ -143,6 +143,27 @@ class Gn extends BaseGn
 	}
 	
 	/**
+	 * Fourni la liste de tous les participants à un GN ayant un billet mais n'ayant pas de perso
+	 */
+	public function getParticipantsWithoutPerso()
+	{
+		$participants = new ArrayCollection();
+	
+		foreach( $this->getParticipants() as $participant)
+		{
+			if ( $participant->getBillet() )
+			{
+				if ( ! $participant->getPersonnage() )
+				{
+					$participants[] = $participant;
+				}
+			}
+		}
+	
+		return $participants;
+	}
+	
+	/**
 	 * Fourni la liste de tous les participants inscrit en tant que PNJ
 	 */
 	public function getParticipantsPnj()

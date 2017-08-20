@@ -37,7 +37,7 @@
 			{% for competence in competences|sort %}
 				<div class="list-group-item">
 					<div class="list-group-item-heading"><h6>{{ competence.label }}</h6></div>
-					<div class="list-group-item-text">{{ competence.description }}</div>
+					<div class="list-group-item-text">{{ competence.description|markdown }}</div>
 				</div>
 			{% endfor %}
 		</div>

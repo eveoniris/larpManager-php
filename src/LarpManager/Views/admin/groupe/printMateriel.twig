@@ -1,37 +1,110 @@
-<!DOCTYPE html>
-<html>
-    <head>
-    	<meta charset="utf-8">
-    	<title>LarpManager - Impression des fiches de personnage</title>
-    </head>
-    <body>
-    	
-{% for personnage in groupe.personnages %}
-		<div>
-	    	<h2>Groupe {{groupe.numero }} - {{ groupe.nom }}</h2>
-	    	<h3>#{{ personnage.id }} {{ personnage.nom }} {{ personnage.surnom }}</h3>
-	    	<h4>Matériel necessaire</h4>
-	    
-	    	<ul>	
-	    	{% for competence in personnage.competences %}
-	    		{% if competence.materiel %}
-				<li><strong>{{ competence.competenceFamily.label }}&nbsp({{ competence.level.label }}) : </strong>
-					{{ competence.materielRaw }}
-				</li>
-				{% endif %}
-			{% else %}
-				<li>Aucun matériel</li>
-			{% endfor %}
-			{% if personnage.renomme %}
-				<li><strong>Renommée : </strong> {{ personnage.renomme|default(0) }}
+{% extends "layout_print.twig" %}
+
+{% block style %}
+<style>
+body {
+	font-size:12px;
+}
+</style>
+{% endblock style %}
+
+{% block content %}
+
+{% for participant in participants if participant.personnage %}
+
+	<h2>#{{ participant.personnage.id }} {{ participant.personnage.nom }} {{ participant.personnage.surnom }}</h2>
+	<h3>Groupe {{groupe.numero }} - {{ groupe.nom }}</h3>
+	
+	{% for participantHasRestauration in participant.participantHasRestaurations %}
+		<strong>Restauration :</strong> {{ participantHasRestauration.restauration.label }}<br />
+	{% endfor %}
+	
+	<strong>Personnage Secondaire : </strong>
+	{% if participant.personnageSecondaire %}
+		{{ participant.personnageSecondaire.classe.label }}
+	{% else %}
+		PAS DE PERSONNAGE SECONDAIRE
+	{% endif %}
+	<br />
+		
+	
+	<strong>Renommée :</strong> {{ participant.personnage.renomme|default(0) }}<br />
+	<strong>Héroisme :</strong> {{ participant.personnage.heroisme|default(0) }}<br />
+	<strong>Richesse :</strong> {{ participant.personnage.richesse|default(0) }} PA<br />
+	<strong>Lié aux compétences: </strong>
+	<ul>	
+	{% for competence in participant.personnage.competences %}
+		{% if competence.materiel %}
+			<li><strong>{{ competence.competenceFamily.label }}&nbsp({{ competence.level.label }}) : </strong>
+				{{ competence.materielRaw }}
+			</li>
+		{% endif %}
+	{% else %}
+		<li>Aucun matériel</li>
+	{% endfor %}
+	</ul>
+	
+	<strong>Lié aux langues : </strong>
+	<ul>
+		{% for personnageLangue in participant.personnage.personnageLangues %}
+			{% if personnageLangue.langue.diffusion == 2 %}
+				<li><strong>{{ personnageLangue.langue.label }}</strong></li>
 			{% endif %}
-			{% if personnage.materiel %}
-				<li>{{ personnage.materiel }}</li>
-			{% endif %}
-			</ul>
-			<hr />				
-	    </div>
+		{% else %}
+			<li>Aucun matériel</li>
+		{% endfor %}
+	</ul>
+																	
+	{# documents #}
+	<strong>Document</strong>
+	<ul>
+	{% for document in participant.personnage.documents %}
+		<li><strong>{{ document.code }}</strong>&nbsp;{{ document.titre }}</li>
+	{% endfor %}
+	</ul>
+	
+	
+	{# objets #}
+	<strong>Objets</strong>
+	<ul>
+	{% for item in participant.personnage.items %}
+		<li><strong>{{ item.numero }}</strong>&nbsp;{{ item.label }}</li>
+	{% endfor %}
+	</ul>
+	
+	{# ingredients #}
+	<strong>Ingrédients</strong>
+	<ul>
+		{% for personnageIngredient in participant.personnage.personnageIngredients %}
+			<li>{{personnageIngredient.nombre}} - {{ personnageIngredient.ingredient }}</li>
+		{% endfor %}
+	</ul>
+	
+	{# ressources #}
+	<strong>Ressources</strong>
+	<ul>
+		{% for personnageRessource in participant.personnage.personnageRessources %}
+			<li>{{personnageRessource.nombre}} - {{ personnageRessource.ressource }}</li>
+		{% endfor %}
+	</ul>
+		
+	<strong>Technologie</strong>
+	<ul>
+	{% for technologie in participant.personnage.technologies %}
+		<li>{{ technologie.label }}</li>
+	{% endfor %}
+	</ul>
+		
+	<strong>Matériel supplémentaire</strong><br />
+	{{ participant.personnage.materiel }}
+	
+	<hr class="print-page-break" />
+
+{% else %}
+	Attention ! Pas de personnage.
+	
+	<hr class="print-page-break" />
 {% endfor %}
- 
-</body>
-</html>
+
+
+{% endblock content %}

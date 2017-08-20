@@ -50,4 +50,14 @@ class BackgroundRepository extends EntityRepository
 		
 		return $qb->getQuery()->getSingleScalarResult();
 	}
+	
+	public function findBackgrounds($gnId)
+	{
+		
+		$backgrounds = $this->getEntityManager()
+			->createQuery('SELECT b FROM LarpManager\Entities\Background b JOIN b.gn gn JOIN b.groupe g WHERE gn.id = 2 ORDER BY g.numero ASC')
+			->getResult();
+		
+		return $backgrounds;
+	}
 }

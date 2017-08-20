@@ -198,6 +198,22 @@ class HomepageController
 	}	
 	
 	/**
+	 * Affiche le trombinoscpe des personnes renommé
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function renomAction(Request $request, Application $app)
+	{
+		// trouver tous les personnages participants au prochain GN et ayant une renommé supérieur à 10
+		$personnages = $app['orm.em']->getRepository('LarpManager\Entities\Personnage')->findAllByRenomme(11);
+		
+		return $app['twig']->render('public/renom.twig', array(
+				'personnages' => $personnages,
+		));
+	}
+	
+	/**
 	 * Affiche une carte du monde
 	 *
 	 * @param Request $request

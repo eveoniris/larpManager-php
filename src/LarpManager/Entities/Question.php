@@ -20,6 +20,20 @@ use Doctrine\Common\Collections\ArrayCollection;
 class Question extends BaseQuestion
 {
 		/**
+		 * Fourni la réponse à une question en fonction de son hash
+		 * 
+		 * @param unknown $hash
+		 */
+		public function getReponse($hash)
+		{
+			foreach ( preg_split('/[;]+/',$this->getChoix()) as $reponse)
+			{
+				if ( sha1($reponse) == $hash ) return $reponse;
+			}
+			return false;
+		}
+		
+		/**
 		 * Compte les réponse à une question
 		 * 
 		 * @param unknown $reponse
@@ -29,7 +43,7 @@ class Question extends BaseQuestion
 			$count = 0;
 			foreach( $this->getReponses() as $rep)
 			{
-				if ( $rep->getReponse() == $reponse) $count++;
+				if ( $rep->getReponse() == sha1($reponse)) $count++;
 			}
 			return $count;
 		}
@@ -45,7 +59,7 @@ class Question extends BaseQuestion
 			
 			foreach( $this->getReponses() as $reponse)
 			{
-				if ( $reponse->getReponse() == $rep)
+				if ( $reponse->getReponse() == sha1($rep))
 				{
 					$participants[] = $reponse->getParticipant();
 				}

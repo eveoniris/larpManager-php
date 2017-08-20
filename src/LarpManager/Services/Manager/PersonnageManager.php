@@ -177,6 +177,25 @@ class PersonnageManager
 	}
 	
 	/**
+	 * Retourne la liste des toutes les religions inconnue d'un personnage
+	 * @param Personnage $personnage
+	 */
+	public function getAvailableDescriptionReligion(Personnage $personnage)
+	{
+		$availableDescriptionReligions = new ArrayCollection();
+		
+		$repo = $this->app['orm.em']->getRepository('\LarpManager\Entities\Religion');
+		$religions = $repo->findAll();
+		
+		foreach ( $religions as $religion)
+		{
+			if ( ! $personnage->getReligions()->contains($religion)) $availableDescriptionReligions[] = $religion;	
+		}
+		
+		return $availableDescriptionReligions; 
+	}
+	
+	/**
 	 * Récupére la liste des toutes les compétences accessibles pour un personnage
 	 *
 	 * @param Personnage $personnage
@@ -211,7 +230,7 @@ class PersonnageManager
 			return ($a->getLabel() < $b->getLabel()) ? -1 : 1;
 		});
 	
-			return  new ArrayCollection(iterator_to_array($iterator));
+		return  new ArrayCollection(iterator_to_array($iterator));
 	}
 	
 	/**

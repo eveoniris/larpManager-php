@@ -16,7 +16,7 @@
 			<fieldset>
 				<legend>Supression d'une question</legend>
 					{{ question.label }}
-					{{ question.description|markdown }}
+					{{ question.text|markdown }}
 					{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
 					{{ form(form) }}
 			</fieldset>

@@ -174,7 +174,7 @@
 				
 				var notifications = [];
 				var lastConnecteds = [];
-				var tid = setInterval(notification, 10000);
+				//var tid = setInterval(notification, 10000);
 				
 				function notification() {
 					var url = '{{ path('notification.list') }}';
@@ -219,7 +219,7 @@
 				}
 
 				// appel une premiere fois le systéme de notification
-				notification();
+				//notification();
 
 				// retire la notification
 				$('ul#notifications_list').on('click','a.notification_remove', function(event) {

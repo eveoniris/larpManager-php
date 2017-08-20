@@ -43,6 +43,12 @@
 		</div>
 		
 		{{ paginator|raw }}
+		
+		<div class="pull-right">
+			<a href="{{ path('background.print') }}" class="btn btn-primary navbar-btn">Imprimer tous les backgrounds de groupe</a>
+			<a href="{{ path('background.personnage.print') }}" class="btn btn-primary navbar-btn">Imprimer tous les backgrounds personnels</a>
+		</div>
+		
 		<table class="table table-striped table-bordered table-condensed table-hover">
 			<thead>
 				<tr>

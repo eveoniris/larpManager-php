@@ -135,6 +135,16 @@ class StockObjetController
 	 */
 	public function listWithoutProprioAction(Request $request, Application $app)
 	{
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Objet');
+		
+		$qb = $repo->createQueryBuilder('o');
+		$qb->select('o');
+		$qb->where('o.proprietaire IS NULL');
+		$objet_without_proprio = $qb->getQuery()->getResult();
+		
+		return $app['twig']->render('admin/stock/objet/listWithoutProprio.twig', array(
+				'objets' => $objet_without_proprio,
+			));
 	}
 	
 	/**
@@ -145,6 +155,16 @@ class StockObjetController
 	 */
 	public function listWithoutResponsableAction(Request $request, Application $app)
 	{	
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Objet');
+		
+		$qb = $repo->createQueryBuilder('o');
+		$qb->select('o');
+		$qb->where('o.user IS NULL');
+		$objet_without_responsable = $qb->getQuery()->getResult();
+		
+		return $app['twig']->render('admin/stock/objet/listWithoutResponsable.twig', array(
+				'objets' => $objet_without_responsable,
+		));
 	}
 	
 	/**
@@ -155,6 +175,16 @@ class StockObjetController
 	 */
 	public function listWithoutRangementAction(Request $request, Application $app)
 	{
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Objet');
+		
+		$qb = $repo->createQueryBuilder('o');
+		$qb->select('o');
+		$qb->where('o.rangement IS NULL');
+		$objet_without_rangement = $qb->getQuery()->getResult();
+		
+		return $app['twig']->render('admin/stock/objet/listWithoutRangement.twig', array(
+				'objets' => $objet_without_rangement,
+		));
 	}
 
 	/**
@@ -362,7 +392,7 @@ class StockObjetController
 				
 				if ( $objet->getPhoto() )
 				{
-					$objet->getPhoto()->upload();
+					$objet->getPhoto()->upload($app);
 					$app['orm.em']->persist($objet->getPhoto());
 				}
 

@@ -17,6 +17,26 @@
 		<li class="active">Objets</li>
 	</ol>
 	
+	<nav class="navbar navbar-default" style="padding-right: 5px;">
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-2" aria-expanded="false">
+		        <span class="sr-only">Toggle navigation</span>
+		        <span class="icon-bar"></span>
+		        <span class="icon-bar"></span>
+		        <span class="icon-bar"></span>
+			</button>
+			<span class="navbar-brand">
+			</span>
+		</div>
+		<div id="bs-example-navbar-collapse-2" class="collapse navbar-collapse">
+			<ul class="nav navbar-nav navbar-right">
+				<a href="{{ path('items.print.csv') }}" class="btn btn-primary navbar-btn">Fichier CSV</a>
+				<a href="{{ path('items.print.photo') }}" class="btn btn-primary navbar-btn">Imprimer les photos</a>
+				<a href="{{ path('items.print') }}" class="btn btn-primary navbar-btn">Imprimer les etiquettes</a>
+			</ul>
+		</div>
+	</nav>
+	
 	<div class="well well-sm">
 		 	<table class="table">
 		 		<thead>
@@ -25,6 +45,7 @@
 		 				<th>Qualité et identification</th>
 		 				<th>Label</th>
 		 				<th>Photo</th>
+		 				<th>Quantite</th>
 		 				<th>Description</th>
 		 				<th>Spécial</th>
 		 				<th>Groupe</th>
@@ -46,10 +67,19 @@
 						    	</a>
 					    	</div>
 					    </td>
+					    <td>{{ item.quantite }}</td>
 		    			<td>{{ item.description|markdown }}</td>
 		    			<td>{{ item.special|markdown }}</td>
-		    			<td>{{ item.groupes|join(',') }}</td>
-						<td>{{ item.personnages|join(',') }}</td>
+		    			<td>
+		    				{% for groupe in item.groupes %}
+		    					<a href="{{ path('groupe.detail', {'index':groupe.id}) }}">{{ groupe }}</a><br />
+		    				{% endfor %}
+		    			</td>
+						<td>
+							{% for personnage in item.personnages %}
+								<a href="{{ path('personnage.admin.detail', {'personnage':personnage.id}) }}">{{ personnage }}</a><br />
+							{% endfor %}
+						</td>
 					    <td>
 			  				<div class="btn-group" role="group" aria-label="...">
 					  			<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -57,6 +87,7 @@
 	      							<span class="caret"></span>
 	    						</button>
 	    						<ul class="dropdown-menu">
+	    							<li><a href="{{ path('item.print', {'item': item.id}) }}">Imprimer</a></li>
 	    							<li><a href="{{ path('item.detail', {'item': item.id}) }}">Détails</a></li>
 	    							<li><a href="{{ path('item.update', {'item': item.id}) }}">Modifier</a></li>
 	    							<li><a href="{{ path('item.delete', {'item': item.id}) }}">Supprimer</a></li>

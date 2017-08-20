@@ -887,8 +887,13 @@ class GroupeController
 	{
 		$groupe = $request->get('groupe');
 		
+		// recherche les personnages du prochains GN membre du groupe
+		$session = $groupe->getNextSession();
+		$participants = $session->getParticipants();
+				
 		return $app['twig']->render('admin/groupe/printMateriel.twig', array(
-				'groupe' => $groupe
+				'groupe' => $groupe,
+				'participants' => $participants,
 		));
 	}
 	
@@ -908,6 +913,35 @@ class GroupeController
 	}
 	
 	/**
+	 * Imprimmer toutes les enveloppes de tous les groupes
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function printAllAction(Request $request, Application $app)
+	{
+		$gn = $app['larp.manager']->getGnActif();
+		$groupeGns = $gn->getGroupeGns();
+		
+		$ressourceRares = new ArrayCollection($app['orm.em']->getRepository('\LarpManager\Entities\Ressource')->findRare());
+		$ressourceCommunes = new ArrayCollection($app['orm.em']->getRepository('\LarpManager\Entities\Ressource')->findCommun());
+		
+		$groupes = new ArrayCollection();
+		foreach ( $groupeGns as $groupeGn)
+		{
+			$groupe = $groupeGn->getGroupe();
+			$quete = $app['larp.manager']->generateQuete($groupe, $ressourceCommunes, $ressourceRares);
+			$groupes[] = array(
+					'groupe' => $groupe,
+					'quete'=> $quete,
+			);
+		}
+		return $app['twig']->render('admin/groupe/printAll.twig', array(
+				'groupes' => $groupes,
+		));
+	}
+	
+	/**
 	 * Impression matériel pour le groupe
 	 *
 	 * @param Request $request
@@ -917,19 +951,20 @@ class GroupeController
 	{
 		$groupe = $request->get('groupe');
 	
-		$html = $app['twig']->render('admin/groupe/printMaterielGroupe.twig', array(
-				'groupe' => $groupe
+		// recherche les personnages du prochains GN membre du groupe
+		$session = $groupe->getNextSession();
+		$participants = $session->getParticipants();
+		
+		$ressourceRares = new ArrayCollection($app['orm.em']->getRepository('\LarpManager\Entities\Ressource')->findRare());
+		$ressourceCommunes = new ArrayCollection($app['orm.em']->getRepository('\LarpManager\Entities\Ressource')->findCommun());
+		$quete = $app['larp.manager']->generateQuete($groupe, $ressourceCommunes, $ressourceRares);
+		
+		return $app['twig']->render('admin/groupe/printMaterielGroupe.twig', array(
+				'groupe' => $groupe,
+				'participants' => $participants,
+				'quete' => $quete,
+				'session' => $session,
 		));
-		
-		$filename = sprintf('test-%s.pdf', date('Y-m-d'));
-		
-		return new Response(
-				$app['snappy.pdf']->getOutputFromHtml($html),
-				200,
-				[
-						'Content-Type'        => 'application/pdf',
-						'Content-Disposition' => sprintf('attachment; filename="%s"', $filename),
-				]);
 	}
 	
 	/**
@@ -941,9 +976,37 @@ class GroupeController
 	public function printPersoAction(Request $request, Application $app)
 	{
 		$groupe = $request->get('groupe');
+		
+		// recherche les personnages du prochains GN membre du groupe
+		$session = $groupe->getNextSession();
+		$participants = $session->getParticipants();
+		$quetes = new ArrayCollection();
+		
+		$ressourceRares = new ArrayCollection($app['orm.em']->getRepository('\LarpManager\Entities\Ressource')->findRare());
+		$ressourceCommunes = new ArrayCollection($app['orm.em']->getRepository('\LarpManager\Entities\Ressource')->findCommun());
+		
+		foreach ($participants as $participant)
+		{
+			$personnage = $participant->getPersonnage();
+			if ( $personnage && $personnage->hasCompetence('Commerce') )
+			{
+				$niveau = $personnage->getCompetenceNiveau('Commerce');
+				if ($niveau >= 2)
+				{
+					$quetes[] = array(
+							'quete' => $app['larp.manager']->generateQuete($groupe, $ressourceCommunes, $ressourceRares),
+							'personnage' => $personnage
+						);
+				}
+			}
+		}
+		
+		
 	
 		return $app['twig']->render('admin/groupe/printPerso.twig', array(
-				'groupe' => $groupe
+				'groupe' => $groupe,
+				'participants' => $participants,
+				'quetes' => $quetes,
 		));
 	}
 		

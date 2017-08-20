@@ -48,6 +48,7 @@ class Document extends BaseDocument
 	{
 		$this->setCreationDate(new \Datetime('now'));
 		$this->setUpdateDate(new \Datetime('now'));
+		$this->setImpression(false);
 	}
 	
 	/**

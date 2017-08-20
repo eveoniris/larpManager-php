@@ -127,7 +127,16 @@ class TerritoireControllerProvider implements ControllerProviderInterface
 			->method('GET|POST')
 			->convert('territoire', 'converter.territoire:convert')
 			->before($mustBeCartographe);
-			
+		/**
+		 * Mise à jour des territoires cibles
+		 */
+		$controllers->match('/{territoire}/cibles/update','LarpManager\Controllers\TerritoireController::updateCiblesAction')
+			->assert('territoire', '\d+')
+			->bind("territoire.admin.update.cibles")
+			->method('GET|POST')
+			->convert('territoire', 'converter.territoire:convert')
+			->before($mustBeCartographe);
+
 		/**
 		 * Mise à jour de la culture
 		 */

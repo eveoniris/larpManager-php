@@ -68,6 +68,9 @@
 							{% if trigger.tag == 'SORT MAITRE' %}
 								<li class="list-group-item"><a href="{{ path('participant.personnage.sort', {'participant': participant.id, 'niveau' : 4}) }}">Choisir un sortilège de niveau Maitre</a></li>
 							{% endif %}
+							{% if trigger.tag == 'PRETRISE INITIE' %}
+								<li class="list-group-item"><a href="{{ path('participant.personnage.religionDescription', {'participant': participant.id}) }}">Choisir une description de religion</a></li>
+							{% endif %}
 						{% endfor %}	
 						</ul>
 					{% endif %}
@@ -103,8 +106,11 @@
 					{% include 'public/personnage/fragment/alchimie.twig' with {'personnage': personnage, 'participant': participant} %}
 					{% include 'public/personnage/fragment/magie.twig' with {'personnage': personnage, 'participant': participant} %}
 					{% include 'public/personnage/fragment/language.twig' with {'personnage': personnage, 'participant': participant} %}
+					{% if personnage.technologies|length > 0 %}
+						{% include 'public/personnage/fragment/technologie.twig' with {'personnage': personnage, 'participant': participant} %}
+					{% endif %}
 					{% if personnage.hasCompetence('Politique') %}
-						{% include 'public/personnage/fragment/politique.twig' with {'personnage': personnage, 'participant': participant} %}
+						{% include 'public/personnage/fragment/politique.twig' with {'personnage': personnage, 'participant': participant, 'lois': lois} %}
 					{% endif %}
 				</div>
 			</div>

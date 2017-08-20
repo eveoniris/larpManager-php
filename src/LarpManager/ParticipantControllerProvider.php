@@ -276,6 +276,26 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 			->before($mustOwnParticipant);
 			
 		/**
+		 * Création d'un personnage rapide
+		 */
+		$controllers->match('/{participant}/admin/personnage/new','LarpManager\Controllers\ParticipantController::adminPersonnageNewAction')
+			->assert('participant', '\d+')
+			->convert('participant', 'converter.participant:convert')
+			->bind("participant.admin.personnage.new")
+			->method('GET|POST')
+			->before($mustBeAdmin);
+		/**
+		 * Reprendre un personnage
+		 */
+		$controllers->match('/{participant}/admin/personnage/old','LarpManager\Controllers\ParticipantController::adminPersonnageOldAction')
+			->assert('participant', '\d+')
+			->convert('participant', 'converter.participant:convert')
+			->bind("participant.admin.personnage.old")
+			->method('GET|POST')
+			->before($mustBeAdmin);
+
+			
+		/**
 		 * Reprendre un personnage
 		 */
 		$controllers->match('/{participant}/personnage/old','LarpManager\Controllers\ParticipantController::personnageOldAction')
@@ -592,6 +612,17 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 			->convert('participant', 'converter.participant:convert')
 			->before($mustOwnParticipant);
 
+		/**
+		 * Formulaire d'ajout des description de religion gagnés grace à prêtrise initié
+		 * Accessible uniquement au proprietaire du personnage
+		 */
+		$controllers->match('/{participant}/personnage/religionDescription','LarpManager\Controllers\ParticipantController::religionDescriptionAction')
+			->assert('participant', '\d+')
+			->bind("participant.personnage.religionDescription")
+			->method('GET|POST')
+			->convert('participant', 'converter.participant:convert')
+			->before($mustOwnParticipant);
+			
 		/**
 		 * Formulaire d'ajout des langues gagnés grace à litterature initie
 		 * Accessible uniquement au proprietaire du personnage

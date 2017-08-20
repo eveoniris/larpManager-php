@@ -1,0 +1,93 @@
+{% extends "layout.twig" %}
+
+{% block title %}Objets{% endblock title %}
+
+{% block style %}
+<style>
+.hover_img a { position:relative; }
+.hover_img a span { position:absolute; display:none; z-index:99; }
+.hover_img a:hover span { display:block; }
+</style>
+{% endblock style %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li class="active">Objets</li>
+	</ol>
+	
+	<nav class="navbar navbar-default" style="padding-right: 5px;">
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-2" aria-expanded="false">
+		        <span class="sr-only">Toggle navigation</span>
+		        <span class="icon-bar"></span>
+		        <span class="icon-bar"></span>
+		        <span class="icon-bar"></span>
+			</button>
+			<span class="navbar-brand">
+					Vous listez tous les objets sans propriétaires &nbsp;<small>{{ objets|length }} objet(s)</small>
+			</span>
+		</div>
+	</nav> 
+	
+	<div class="well well-sm">
+	 	<table class="table">
+	 		<thead>
+	 			<tr>
+	 				<th>Nom</th>
+	 				<th>Photo</th>
+	 				<th>Description</th>
+	 				<th>Tags</th>
+	 				<th>Objet de jeu</th>
+	 				<th>Action</th>
+	 			</tr>
+	 		</thead>
+	 		<tbody>
+	 			{% for objet in objets %}
+	 				<tr>
+	 					<td>{{ objet.nom }}</td>
+	 					<td>
+	 						{% if objet.photo %}
+		 						<div class="hover_img">
+									<a href="#">Show Image
+										<span>
+											<img src="{{ path('stock_objet_photo',{'objet': objet.id}) }}" alt="{{ objet.photo.name }}" />
+										</span>
+									</a>
+								</div>
+							{% else %}
+			  					aucune photo
+			  				{% endif %}
+			  			</td>
+	 					<td>{{ objet.description }}</td>
+	 					<td>{{ objet.tags|join(', ') }}</td>
+	 					<td>
+		 					{% for item in objet.items %}
+			  					<span class="text-info"><strong>{{ item.numero }} - {{ item.label }}</strong></span> 
+			  				{% else %}
+			  					<span class="text-success">Cet objet n'est pas utilisé en jeu.</span>
+			  				{% endfor %}
+		  				</td>
+	 					<td>
+	 						<div class="btn-group" role="group" aria-label="...">
+					  			<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+	      							Action
+	      							<span class="caret"></span>
+	    						</button>
+		 						<ul class="dropdown-menu">
+									<li><a href="{{ path('stock_objet_tag', {'objet': objet.id}) }}">Modifier les tags</a></li>
+									<li><a href="{{ path('item.new', {'objet': objet.id}) }}">Creer un objet de jeu</a></li>
+									<li><a href="{{ path('stock_objet_update', {'objet': objet.id}) }}">Modifier</a></li>
+				  					<li><a href="{{ path('stock_objet_clone', {'objet': objet.id}) }}">Cloner</a></li>
+				  					<li><a href="{{ path('stock_objet_delete', {'objet': objet.id}) }}">Supprimer</a></li>
+								</ul>
+							</div>
+	 					</td>
+	 				</tr>
+	 			{% endfor %}
+	 		</tbody>
+	 	</table>
+	 </div>
+	
+{% endblock content %}

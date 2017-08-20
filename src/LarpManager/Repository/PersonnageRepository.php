@@ -94,4 +94,36 @@ class PersonnageRepository extends EntityRepository
 		
 		return $qb->getQuery()->getResult();
 	}
+	
+	/**
+	 * Trouve tous les personnages ayant une renommé supérieure à x.
+	 * 
+	 * @param unknown $renomme
+	 */
+	public function findAllByRenomme($renomme)
+	{
+		$qb = $this->getEntityManager()->createQueryBuilder();
+		$qb->select('p');
+		$qb->from('LarpManager\Entities\Personnage','p');
+		$qb->andWhere('p.renomme > :renomme')->setParameter('renomme', $renomme);
+		return $qb->getQuery()->getResult();
+	}
+	
+	/**
+	 * Trouve tous les backgrounds liés aux personnages.
+	 * @param unknown $gnId
+	 */
+	public function findBackgrounds($gnId)
+	{
+		$qb = $this->getEntityManager()->createQueryBuilder();
+		$qb->select('pb');
+		$qb->from('LarpManager\Entities\Participant','pa');
+		$qb->join('pa.personnage', 'p');
+		$qb->join('pa.groupeGn', 'gg');
+		$qb->join('p.personnageBackground', 'pb');
+		$qb->join('gg.gn', 'gn');
+		$qb->andWhere('gn.id = :gnId')->setParameter('gnId', $gnId);
+		return $qb->getQuery()->getResult();
+		
+	}
 }

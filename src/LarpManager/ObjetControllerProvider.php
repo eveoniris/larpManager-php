@@ -49,6 +49,36 @@ class ObjetControllerProvider implements ControllerProviderInterface
 		$controllers->match('/','LarpManager\Controllers\ObjetController::indexAction')
 			->bind("items")
 			->method('GET');
+			
+		/**
+		 * Imprimer les étiquettes des objets de jeu
+		 */
+		$controllers->match('/print','LarpManager\Controllers\ObjetController::printAllAction')
+			->bind("items.print")
+			->method('GET');
+			
+		/**
+		 * Imprimer les étiquettes des objets de jeu
+		 */
+		$controllers->match('/printPhoto','LarpManager\Controllers\ObjetController::printPhotoAction')
+			->bind("items.print.photo")
+			->method('GET');
+			
+		/**
+		 * Imprimer le fichier CSV avec tous les objets de jeu
+		 */
+		$controllers->match('/print.csv','LarpManager\Controllers\ObjetController::printCsvAction')
+			->bind("items.print.csv")
+			->method('GET');
+			
+		/**
+		 * Imprimer les étiquettes des objets de jeu
+		 */
+		$controllers->match('/{item}/print','LarpManager\Controllers\ObjetController::printAction')
+			->assert('item', '\d+')
+			->convert('item', 'converter.item:convert')
+			->bind("item.print")
+			->method('GET');
 		
 		/**
 		 * Création d'un objet de jeu

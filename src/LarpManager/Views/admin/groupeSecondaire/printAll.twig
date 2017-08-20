@@ -1,0 +1,22 @@
+{% extends "layout_print.twig" %}
+
+{% block content %}
+
+{% for groupeSecondaire in groupeSecondaires %}
+	<h2>Groupe {{ groupeSecondaire.label }}</h2>
+	{% if groupeSecondaire.responsable %}
+	<strong>Responsable : {{ groupeSecondaire.responsable }}</strong>
+	{% endif %}
+	
+	<h6>Liste des membres</h6>
+	<ul>
+	{% for membre in groupeSecondaire.membres %}
+		<li>{{ membre.personnage.identity }}</li>
+	{% endfor %}
+	</ul>
+
+	<p>{{ groupeSecondaire.materiel }}</p>
+	<hr class="print-page-break" />
+{% endfor %}
+
+{% endblock content %}

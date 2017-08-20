@@ -117,7 +117,7 @@ class GroupeRepository extends EntityRepository
 	
 		return $qb->getQuery()->getSingleScalarResult();
 	}
-
+	
 	/**
 	 * Fourni la liste de tous les groupes classé par numéro
 	 * 

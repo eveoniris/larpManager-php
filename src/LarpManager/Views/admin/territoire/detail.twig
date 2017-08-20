@@ -25,7 +25,22 @@
 					</div>
 				</div>
 			</div>
-							    			
+				
+			<div class="list-group">
+				<div class="list-group-item">
+				<h4 class="list-group-item-heading">Quêtes commerciales</h4>
+				<strong>Liste des pays cibles : </strong>
+				<ul>
+					{% for t in territoire.territoireCibles %}
+					<li>{{ t.nom }}</li>
+					{% else %}
+					<li>Aucune cibles définies</li>
+					{% endfor %}
+				</ul>	
+				<a href="{{ path('territoire.admin.update.cibles', {'territoire': territoire.id }) }}">Modifier</a> 	
+				</div>
+			</div>
+	    			
   			<div class="list-group">
   			
   				<div class="list-group-item">

@@ -22,7 +22,7 @@
 							{% for loi in fief.lois %}
 								<li>{{ loi.label }} : <a href="{{ path('loi.document',{'loi' : loi.id}) }}">Téléchargez le document</a></li>
 							{% else %}
-								<li>Le fief {{ fief.label }} ne dispose pas de lois écrites</li>
+								<li>Le fief {{ fief.nom }} ne dispose pas de lois écrites</li>
 							{% endfor %}
 						{% endfor %}
 					{% endfor %}

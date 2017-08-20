@@ -1,0 +1,125 @@
+{% extends "layout_print.twig" %}
+
+{% block style %}
+<style>
+body {
+font-size: 12px;
+}
+table tr td {
+	font-size : 12px;
+	vertical-align: top;
+}
+
+</style>
+{% endblock style %}
+
+{% block content %}
+
+{% for groupe in groupes %}
+
+	{% set quete = groupe.quete %}
+	{% set groupe = groupe.groupe %}
+	
+	<h2>Groupe {{groupe.numero }} - {{ groupe.nom }}</h2>
+	
+	<strong>Les personnages</strong>
+	<ul>
+	{% for participant in groupe.nextSession.participants %}
+		{% if participant.personnage %}
+			<li>#{{ participant.personnage.id }} {{ participant.personnage.nom }} {{ participant.personnage.surnom }}</li>
+		{% else %}
+			<li>Attention le participant {{ participant.user.username }} / {{ participant.user.email }} n'a pas de personnage</li>
+		{% endif %}
+	{% endfor %}
+	</ul>	
+		
+	<strong>Ressources</strong>
+	<ul>
+	{% if groupe.hasRessource %}
+		{% for territoire in groupe.territoires %}
+			{% for ressource in territoire.exportations %}
+		    	<li><strong>{{ ressource.label }}</strong> fourni par <strong>{{ territoire.nom }}</strong></li>
+			{% endfor %}
+		{% endfor %}
+	{% else %}
+		<li>Aucun</li>
+	{% endif %}
+	{% for groupeHasRessource in groupe.groupeHasRessources %}
+        	<li><strong>{{ groupeHasRessource.quantite }} {{ groupeHasRessource.ressource.label }}</strong></li>
+	{% endfor %}
+	</ul>	
+	
+	<strong>Richesse</strong>
+	<ul>
+	{% if groupe.hasRichesse %}
+		{% for territoire in groupe.territoires %}
+			<li><strong>{{ territoire.richesse }} PA</strong> fourni par <strong>{{ territoire.nom }}</strong></li>
+		{% endfor %}
+	{% else %}
+		<li>Aucun</li>
+	{% endif %}
+		<li><strong>{{ groupe.richesse|default(0) }} PA</strong> supplémentaire</li>
+	</ul>
+	
+	<strong>Ingrédients</strong>
+	<ul>
+	{% if groupe.hasIngredient %}
+		{% for territoire in groupe.territoires %}
+			{% for ingredient in territoire.ingredients %}
+				<li><strong>{{ ingredient.label }}</strong> fourni par <strong>{{ territoire.nom }}</strong></li>
+		    {% endfor %}
+		{% endfor %}
+	{% else %}
+		<li>Aucune</li>
+	{% endif %}
+	{% for groupeHasIngredient in groupe.groupeHasIngredients %}
+        	<li><strong>{{ groupeHasIngredient.quantite }} {{ groupeHasIngredient.ingredient.fullLabel }}</strong></li>
+	{% endfor %}
+	</ul>
+	
+	<strong>Documents</strong>
+	<ul>
+	{% for document in groupe.documents %}
+		<li>{{ document.code }} -- {{ document.titre }}</li>
+	{% endfor %}
+	</ul>
+	
+	<strong>Objets</strong>
+	<ul>
+	{% for objet in groupe.items %}
+		<li>{{ objet.numero }} - {{ objet.label }}</li>
+	{% endfor %}
+	</ul>
+	
+	<strong>Matériel</strong>
+	<p>{{ groupe.materielRaw }}</p>
+	
+	<strong>Jeu maritime</strong>
+	{% if groupe.nextSession.jeuMaritime %}
+	Participe au jeu maritime
+	{% else %}
+	Ne participe pas au jeu maritime
+	{% endif %}
+
+	<hr class="print-page-break" />
+
+	<div>
+		<h4>Quête commerciale pour #{{ groupe.numero}} {{ groupe.nom }}</h4>
+        <p>La route commerciale doit partir de <strong>{% if groupe.territoire %}{{ groupe.territoire.nom }}{% else %}INCONNU{% endif %}</strong> et parvenir à <strong>{% if quete.cible %}{{ quete.cible.nom }}{% else %}INCONNU{% endif %}</strong></p>
+        <strong>Les ressources demandées sont :</strong>
+        <ul>
+        	{% for ressource in quete.needs %}
+            	<li>{{ ressource.label }}</li>
+            {% endfor %}
+		</ul>
+        <strong>Récompenses : </strong>{{ quete.recompenses|join(', ') }}
+	</div>
+
+	<div class="print-page-break"></div>
+	
+	
+	
+	
+{% endfor %}
+
+{% endblock content %}

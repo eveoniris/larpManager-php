@@ -82,6 +82,23 @@
 									<li class="list-group-item">Ce personnage ne fait pas parti d'un groupe.</li>
 								{% endif %}
 							</div>
+							
+							<h6>Groupe(s) secondaire(s)</h6>
+							<ul class="list-group">
+								{% for groupeSecondaire in personnage.secondaryGroups %}
+										<li class="list-group-item">{{ groupeSecondaire.label }}</li>
+								{% endfor %}
+							</ul>
+	
+							<h6>Postule à </h6>
+							{% if personnage.postulants|length > 0 %}
+								<ul class="list-group">
+								{% for postulant in personnage.postulants %}
+									<li class="list-group-item">candidature au groupe {{ postulant.secondaryGroup.label }} en attente de validation.</li>
+								{% endfor %}
+								</ul>
+							{% endif %}
+
 						</div>
 					</div>
 
@@ -105,6 +122,9 @@
 												<li><a href="{{ path('personnage.admin.religion.add', {'personnage': personnage.id}) }}">Ajouter une religion</a></li>
 												<li><a href="{{ path('personnage.admin.origine.update', {'personnage': personnage.id}) }}">Modifier l'origine</a></li>
 												<li><a href="{{ path('personnage.admin.update.langue', {'personnage': personnage.id}) }}">Modifier les languages</a></li>
+												<li><a href="{{ path('personnage.admin.update.sort', {'personnage': personnage.id}) }}">Modifier la liste des sorts</a></li>
+												<li><a href="{{ path('personnage.admin.update.potion', {'personnage': personnage.id}) }}">Modifier la liste des potions</a></li>
+												<li><a href="{{ path('personnage.admin.update.priere', {'personnage': personnage.id}) }}">Modifier la liste des prieres</a></li>
 											</ul>
 										</li>
 	  								</ul>
@@ -174,6 +194,34 @@
 								{% endfor %}
 							</div>
 
+
+							<div class="list-group-item">
+							<h6 class="list-group-item-heading">Sorts :</h6>
+								{% for sort in personnage.sorts %}
+									<div class="list-group-item-text">{{ sort.label }} - {{ sort.domaine.label }} Niveau {{ sort.niveau }}</div>
+								{% else %}
+									<div class="list-group-item-text">Aucun</div>
+								{% endfor %}
+							</div>
+							
+							<div class="list-group-item">	
+								<h6 class="list-group-item-heading">Potions :</h6>
+								{% for potion in personnage.potions %}
+									<div class="list-group-item-text">{{ potion.label }} - Niveau {{ potion.niveau }}</div>
+								{% else %}
+									<div class="list-group-item-text">Aucune</div>
+								{% endfor %}
+							</div>
+							
+							<div class="list-group-item">
+								<h6 class="list-group-item-heading">Prières</h6>
+								{% for priere in personnage.prieres %}
+									<p class="list-group-item-text">
+										{{ priere.sphere.label }} - Niveau {{ priere.niveau }} ({{ priere.label }})
+									</p>
+								{% endfor %}
+							</div>
+								
 						</div>
 					</div>
 					
@@ -245,13 +293,12 @@
 											<ul class="dropdown-menu">
 												<li><a href=" {{ path('personnage.documents', {'personnage': personnage.id}) }}">Modifier la liste de documents</a></li>
 												<li><a href=" {{ path('personnage.items', {'personnage': personnage.id}) }}">Modifier la liste des objets</a></li>
-												<li><a href="{{ path('personnage.admin.update.sort', {'personnage': personnage.id}) }}">Modifier la liste des sorts</a></li>
-												<li><a href="{{ path('personnage.admin.update.potion', {'personnage': personnage.id}) }}">Modifier la liste des potions</a></li>
-												<li><a href="{{ path('personnage.admin.update.priere', {'personnage': personnage.id}) }}">Modifier la liste des prieres</a></li>
 												<li><a href="{{ path('personnage.admin.update.ingredient', {'personnage': personnage.id}) }}">Modifier la liste des ingrédients</a></li>
 												<li><a href="{{ path('personnage.admin.update.ressource', {'personnage': personnage.id}) }}">Modifier la liste des ressources</a></li>
 												<li><a href="{{ path('personnage.admin.update.richesse', {'personnage': personnage.id}) }}">Modifier la richesse</a></li>
-												<li><a href="{{ path('personnage.technologie.update', {'personnage': personnage.id}) }}">Modifier les savoir-faire</a></li>
+												<li><a href="{{ path('personnage.technologie.update', {'personnage': personnage.id}) }}">Modifier les technologies</a></li>
+												<li><a href="{{ path('personnage.materiel.update', {'personnage': personnage.id}) }}">Modifier le matériel</a></li>
+												<li><a href="{{ path('personnage.enveloppe.print', {'personnage':personnage.id}) }}">Imprimer l'enveloppe</a></li>
 											</ul>
 										</li>
 	  								</ul>
@@ -261,6 +308,41 @@
 						<div class="panel-body">						
 							<div class="list-group">
 							
+								<div class="list-group-item">
+									<h6 class="list-group-item-heading">Point de renommée : {{ personnage.renomme|default(0) }}</h6>
+								</div>
+								
+								<div class="list-group-item">
+									<h6 class="list-group-item-heading">Point d'héroisme : {{ personnage.heroisme|default(0) }}</h6>
+								</div>
+								
+								<div class="list-group-item">
+									<h6 class="list-group-item-heading">Richesse : {{ personnage.richesse|default(0) }} PA</h6>
+								</div>
+								
+								<div class="list-group-item">
+									<h6 class="list-group-item-heading">Lié aux compétences :</h6>	
+									{% for competence in personnage.competences if competence.materiel %}
+										<div class="list-group-item-text"><strong>{{ competence.competenceFamily.label }}&nbsp({{ competence.level.label }}) : </strong>
+											{{ competence.materielRaw }}
+										</div>
+									{% else %}
+										<div class="list-group-item-text">Aucun matériel</div>
+									{% endfor %}
+								</div>
+								
+								<div class="list-group-item">
+									<h6 class="list-group-item-heading">Lié aux langages</h6>
+									{% for personnageLangue in personnage.personnageLangues %}
+										{% if personnageLangue.langue.diffusion == 2 %}
+											<div class="list-group-item-text"><strong>{{ personnageLangue.langue.label }}</strong></div>
+										{% endif %}
+									{% else %}
+										<div class="list-group-item-text">Aucun matériel</div>
+									{% endfor %}
+								</div>
+								
+								
 								<div class="list-group-item">
 									<h6 class="list-group-item-heading">Documents :</h6>
 									{% for document in personnage.documents %}
@@ -276,33 +358,6 @@
 										<div class="list-group-item-text"><a href="{{ path('item.detail', {'item':item.id}) }}"><strong>{{ item.numero }}</strong>&nbsp;{{ item.label }}</a></div>
 									{% else %}
 										<div class="list-group-item-text">Aucun</div>
-									{% endfor %}
-								</div>
-				
-								<div class="list-group-item">
-								<h6 class="list-group-item-heading">Sorts :</h6>
-									{% for sort in personnage.sorts %}
-										<div class="list-group-item-text">{{ sort.label }} - {{ sort.domaine.label }} Niveau {{ sort.niveau }}</div>
-									{% else %}
-										<div class="list-group-item-text">Aucun</div>
-									{% endfor %}
-								</div>
-								
-								<div class="list-group-item">	
-									<h6 class="list-group-item-heading">Potions :</h6>
-									{% for potion in personnage.potions %}
-										<div class="list-group-item-text">{{ potion.label }} - Niveau {{ potion.niveau }}</div>
-									{% else %}
-										<div class="list-group-item-text">Aucune</div>
-									{% endfor %}
-								</div>
-								
-								<div class="list-group-item">
-									<h6 class="list-group-item-heading">Prières</h6>
-									{% for priere in personnage.prieres %}
-										<p class="list-group-item-text">
-											{{ priere.sphere.label }} - Niveau {{ priere.niveau }} ({{ priere.label }})
-										</p>
 									{% endfor %}
 								</div>
 								
@@ -325,19 +380,14 @@
 								</div>
 								
 								<div class="list-group-item">
-									<h6 class="list-group-item-heading">Richesse :</h6>
-									<div class="list-group-item-text">{{ personnage.richesse|default(0) }} PA</div>
-								</div>
-								
-								<div class="list-group-item">
-									<h6 class="list-group-item-heading">Savoir-faire :</h6>
+									<h6 class="list-group-item-heading">Technologies :</h6>
 									{% for technologie in personnage.technologies %}
 										<div class="list-group-item-text">{{ technologie.label }}</div>
 									{% endfor %}
 								</div>
 								
 								<div class="list-group-item">
-									<h6 class="list-group-item-heading">Matériel (déprécié)</h6>
+									<h6 class="list-group-item-heading">Matériel</h6>
 									{{ personnage.materiel }}
 									<br />
 								</div>

@@ -60,6 +60,7 @@
 						{% if is_granted('ROLE_CARTOGRAPHE', app.user) %}<li><a href="{{ path('religion') }}">Religions</a></li>{% endif %}
 						{% if is_granted('ROLE_CARTOGRAPHE', app.user) %}<li><a href="{{ path('culture') }}">Cultures</a></li>{% endif %}
 						<li><a href="{{ path('world') }}">Carte</a></li>
+						<li><a href="{{ path('renom') }}">Personnages renommés</a></li>
 					</ul>
 				</li>
 			
@@ -93,6 +94,7 @@
 						<li><a href="{{ path('econnomie') }}">Economie</a></li>
 						<li><a href="{{ path('strategie') }}">Stratégie</a></li>
 						<li><a href="{{ path('groupe.diplomatie') }}">Diplomatie</a></li>
+						<li><a href="{{ path('groupe.quetes') }}">Quêtes commerciales</a></li>
 						<li><a href="{{ path('trombinoscope') }}">Trombinoscope</a></li>
 						<li><a href="{{ path('trombinoscope.perso') }}">Selection</a></li>
 						<li><a href="{{ path('appelation') }}">Appelations</a></li>

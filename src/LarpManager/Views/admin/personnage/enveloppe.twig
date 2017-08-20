@@ -1,0 +1,90 @@
+{% extends "layout_print.twig" %}
+
+{% block content %}
+
+<div class="print-center">
+	{{ personnage.nom }} <small>alias {{ personnage.surnom }}</small>
+</div>
+
+{% if personnage.user %}
+	{% for participant in personnage.user.participants %}
+		<strong>Personnage Secondaire : </strong>
+		{% if participant.personnageSecondaire %}
+			{{ participant.personnageSecondaire.classe.label }}
+		{% else %}
+			PAS DE PERSONNAGE SECONDAIRE
+		{% endif %}
+	{% endfor %}
+{% endif %}
+	
+<strong>Renommée :</strong> {{ personnage.renomme|default(0) }}<br />
+<strong>Héroisme :</strong> {{ personnage.heroisme|default(0) }}<br />
+<strong>Richesse :</strong> {{ personnage.richesse|default(0) }} PA<br />
+<strong>Lié aux compétences : </strong>
+<ul>	
+{% for competence in personnage.competences %}
+	{% if competence.materiel %}
+		<li><strong>{{ competence.competenceFamily.label }}&nbsp({{ competence.level.label }}) : </strong>
+			{{ competence.materielRaw }}
+		</li>
+	{% endif %}
+{% else %}
+	<li>Aucun matériel</li>
+{% endfor %}
+</ul>
+
+<strong>Lié aux langues : </strong>
+<ul>
+	{% for personnageLangue in personnage.personnageLangues %}
+		{% if personnageLangue.langue.diffusion == 2 %}
+			<li><strong>{{ personnageLangue.langue.label }}</strong></li>
+		{% endif %}
+	{% else %}
+		<li>Aucun matériel</li>
+	{% endfor %}
+</ul>
+																
+{# documents #}
+<strong>Document</strong>
+<ul>
+{% for document in personnage.documents %}
+	<li><strong>{{ document.code }}</strong>&nbsp;{{ document.titre }}</li>
+{% endfor %}
+</ul>
+
+
+{# objets #}
+<strong>Objets</strong>
+<ul>
+{% for item in personnage.items %}
+	<li><strong>{{ item.numero }}</strong>&nbsp;{{ item.label }}</li>
+{% endfor %}
+</ul>
+
+{# ingredients #}
+<strong>Ingrédients</strong>
+<ul>
+	{% for personnageIngredient in personnage.personnageIngredients %}
+		<li>{{personnageIngredient.nombre}} - {{ personnageIngredient.ingredient }}</li>
+	{% endfor %}
+</ul>
+
+{# ressources #}
+<strong>Ressources</strong>
+<ul>
+	{% for personnageRessource in personnage.personnageRessources %}
+		<li>{{personnageRessource.nombre}} - {{ personnageRessource.ressource }}</li>
+	{% endfor %}
+</ul>
+	
+<strong>Technologie</strong>
+<ul>
+{% for technologie in personnage.technologies %}
+	<li>{{ technologie.label }}</li>
+{% endfor %}
+</ul>
+	
+<strong>Matériel supplémentaire</strong><br />
+{{ personnage.materiel }}
+
+{% endblock content %}

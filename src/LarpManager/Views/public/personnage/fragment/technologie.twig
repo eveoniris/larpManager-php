@@ -1,0 +1,18 @@
+	<div class="header">
+		<h5>Vos savoir-faires</h5>
+	</div>
+	
+	<div class="row">
+		<div class="col-sm-12">
+		
+			<div class="list-group">
+			{% for technologie in personnage.technologies %}
+				<div class="list-group-item">
+					<div class="list-group-item-heading">{{ technologie.label }}</div>
+					<div class="list-group-item-text">{{ technologie.description|markdown }}</div>
+				</div>
+			{% endfor %}
+			</div>
+			
+		</div>
+	</div>

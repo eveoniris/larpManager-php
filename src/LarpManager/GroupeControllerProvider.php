@@ -228,6 +228,14 @@ class GroupeControllerProvider implements ControllerProviderInterface
 			->before($mustBeScenariste);
 			
 		/**
+		 * Impression de toutes les enveloppes
+		 */
+		$controllers->match('/print','LarpManager\Controllers\GroupeController::printAllAction')
+			->bind("groupe.print")
+			->method('GET')
+			->before($mustBeScenariste);
+			
+		/**
 		 * Impression du matériel necessaire
 		 */
 		$controllers->match('/{groupe}/print/materiel','LarpManager\Controllers\GroupeController::printMaterielAction')

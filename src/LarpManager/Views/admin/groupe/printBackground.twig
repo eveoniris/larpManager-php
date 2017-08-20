@@ -1,10 +1,17 @@
-<!DOCTYPE html>
-<html>
-    <head>
-    	<meta charset="utf-8">
-    	<title>LarpManager - Impression des fiches de personnage</title>
-    </head>
-    <body>
+{% extends "layout_print.twig" %}
+
+{% block style %}
+<style>
+body {
+	font-size:12px;
+}
+</style>
+{% endblock style %}
+
+{% block content %}
+
+
+
 <h2>{{ groupe.nom }}</h2>
 
 <h3>Background du chef de groupe</h3>
@@ -32,3 +39,6 @@
 	<hr />
 {% endfor %}
 </div>
+
+
+{% endblock content %}

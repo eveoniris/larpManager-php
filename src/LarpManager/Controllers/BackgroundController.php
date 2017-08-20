@@ -95,6 +95,36 @@ class BackgroundController
 	}
 	
 	/**
+	 * Impression de tous les backgrounds de groupe
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function printAction(Request $request, Application $app)
+	{
+		$backgrounds = $app['orm.em']->getRepository('\LarpManager\Entities\Background')->findBackgrounds(2);
+			
+		return $app['twig']->render('admin/background/print.twig', array(
+			'backgrounds' => $backgrounds,	
+		));
+	}
+	
+	/**
+	 * Impression de tous les backgrounds de personnage
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function personnagePrintAction(Request $request, Application $app)
+	{		
+		$groupeGns = $app['orm.em']->getRepository('\LarpManager\Entities\GroupeGn')->findByGn(2);
+		
+		return $app['twig']->render('admin/background/personnagePrint.twig', array(
+				'groupeGns' => $groupeGns,
+		));
+	}
+	
+	/**
 	 * Ajout d'un background
 	 * 
 	 * @param Request $request

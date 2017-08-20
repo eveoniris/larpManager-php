@@ -17,7 +17,7 @@
 		{% for groupe in groupes %}
 			{% for groupeTmp in groupes %}
 				{% if groupeTmp != groupe %}
-					{% if groupe.id not in tempArray %}
+					
 						{% if groupe.isAllyTo(groupeTmp) %}
 							{% set tempArray = tempArray|merge({(groupeTmp.id):(groupeTmp.id)}) %}
 							<li><strong>{{ groupe.nom }}</strong> est allié à <strong>{{ groupeTmp.nom }}</strong></li>
@@ -25,7 +25,7 @@
 							{% set tempArray = tempArray|merge({(groupeTmp.id):(groupeTmp.id)}) %}
 							<li><strong>{{ groupe.nom }}</strong> est l'ennemi de <strong>{{ groupeTmp.nom }}</strong></li>
 						{% endif %}
-					{% endif %}
+					
 				{% endif %}
 			{% endfor %}
 		{% endfor %}

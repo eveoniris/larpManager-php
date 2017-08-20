@@ -24,6 +24,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Silex\Application;
 use JasonGrimes\Paginator;
 use LarpManager\Form\GroupeSecondaire\GroupeSecondaireForm;
+use LarpManager\Form\GroupeSecondaire\GroupeSecondaireMaterielForm;
 use LarpManager\Form\GroupeSecondaire\GroupeSecondairePostulerForm;
 use LarpManager\Form\GroupeSecondaire\SecondaryGroupFindForm;
 use LarpManager\Form\MessageForm;
@@ -165,6 +166,64 @@ class GroupeSecondaireController
 				'form' => $form->createView(),
 		));
 	}
+	
+	/**
+	 * Mise à jour du matériel necessaire à un groupe secondaire
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 * @param SecondaryGroup $groupeSecondaire
+	 */
+	public function materielUpdateAction(Request $request, Application $app, SecondaryGroup $groupeSecondaire)
+	{
+		$form = $app['form.factory']->createBuilder(new GroupeSecondaireMaterielForm(),$groupeSecondaire)->getForm();
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
+		{
+			$groupeSecondaire = $form->getData();
+			$app['orm.em']->persist($groupeSecondaire);
+			$app['orm.em']->flush();
+			$app['session']->getFlashBag()->add('success', 'Le groupe secondaire a été mis à jour.');
+			
+			return $app->redirect($app['url_generator']->generate('groupeSecondaire.admin.detail', array('groupe' => $groupeSecondaire->getId())),301);
+		}
+		
+		return $app['twig']->render('admin/groupeSecondaire/materiel.twig', array(
+				'groupeSecondaire' => $groupeSecondaire,
+				'form' => $form->createView(),
+		));
+	}
+	
+	/**
+	 * Impression de l'enveloppe du groupe secondaire
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 * @param SecondaryGroup $groupeSecondaire
+	 */
+	public function materielPrintAction(Request $request, Application $app, SecondaryGroup $groupeSecondaire)
+	{
+		return $app['twig']->render('admin/groupeSecondaire/print.twig', array(
+				'groupeSecondaire' => $groupeSecondaire,
+		));
+	}
+	
+	/**
+	 * Impression de toutes les enveloppes groupe secondaire
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 * @param SecondaryGroup $groupeSecondaire
+	 */
+	public function materielPrintAllAction(Request $request, Application $app)
+	{
+		$groupeSecondaires = $app['orm.em']->getRepository('\LarpManager\Entities\SecondaryGroup')->findAll();
+		return $app['twig']->render('admin/groupeSecondaire/printAll.twig', array(
+				'groupeSecondaires' => $groupeSecondaires,
+		));
+	}
+	
 	
 	/**
 	 * Met à jour un de groupe secondaire

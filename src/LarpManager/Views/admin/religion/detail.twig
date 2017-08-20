@@ -32,13 +32,62 @@
   		<div class="list-group">
 		    		
 	    	<div class="list-group-item">
-		    	<h4 class="list-group-item-heading">Description</h4>
+		    	<h4 class="list-group-item-heading">Description publique</h4>
     			<p class="list-group-item-text">
     				{% if not religion.description %}
     				<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
     				Attention, cette religion n'a pas de description.
     				{% else %}
     					{{ religion.description|markdown }}
+    				{% endif %}
+    			</p>
+	    	</div>
+	    	
+	    	<div class="list-group-item">
+		    	<h4 class="list-group-item-heading">Description à destination des orgas</h4>
+    			<p class="list-group-item-text">
+    				{% if not religion.descriptionOrga %}
+    				<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+    				Attention, cette religion n'a pas de description.
+    				{% else %}
+    					{{ religion.descriptionOrga|markdown }}
+    				{% endif %}
+    			</p>
+	    	</div>	    	
+	    	
+	    	<div class="list-group-item">
+		    	<h4 class="list-group-item-heading">Description à destination des pratiquants</h4>
+    			<p class="list-group-item-text">
+    				{% if not religion.descriptionPratiquant %}
+    				<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+    				Attention, cette religion n'a pas de description.
+    				{% else %}
+    					{{ religion.descriptionPratiquant|markdown }}
+    				{% endif %}
+    			</p>
+	    	</div>
+	    	
+	    	<div class="list-group-item">
+		    	<h4 class="list-group-item-heading">Description à destination des fervents</h4>
+    			<p class="list-group-item-text">
+    				{% if not religion.descriptionFervent %}
+    				<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+    				Attention, cette religion n'a pas de description.
+    				{% else %}
+    					{{ religion.descriptionFervent|markdown }}
+    				{% endif %}
+    			</p>
+	    	</div>
+	    	
+	    	
+	    	<div class="list-group-item">
+		    	<h4 class="list-group-item-heading">Description à destination des fanatiques</h4>
+    			<p class="list-group-item-text">
+    				{% if not religion.descriptionFanatique %}
+    				<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+    				Attention, cette religion n'a pas de description.
+    				{% else %}
+    					{{ religion.descriptionFanatique|markdown }}
     				{% endif %}
     			</p>
 	    	</div>

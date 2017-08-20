@@ -21,9 +21,9 @@
 			<strong>Richesse : </strong>
 			<ul>
 			    {% for territoire in groupe.territoires %}   				
-					<li><strong>{{ territoire.tresor|default(0) }} PA</strong> fourni par <strong>{{ territoire.nom }}</strong></li>
+				<li><strong>{{ territoire.richesse }} PA</strong> fourni par <strong>{{ territoire.nom }}</strong> (maximum : {{ territoire.tresor|default(0) }})</li>
 			    {% endfor %}
-		    </ul>
+		       </ul>
 		    				
 		    <strong>Ressources : </strong>
 		    <ul>

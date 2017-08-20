@@ -136,6 +136,10 @@ class QuestionController
 		{
 			$question = $form->getData();
 			
+			foreach ($question->getReponses() as $reponse)
+			{
+				$app['orm.em']->remove($reponse);
+			}
 			$app['orm.em']->remove($question);
 			$app['orm.em']->flush();
 				

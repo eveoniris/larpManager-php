@@ -41,4 +41,15 @@ class ItemRepository extends EntityRepository
 		
 		return $numeroMax++;
 	}
+	
+	public function findAll()
+	{
+		$qb = $this->getEntityManager()->createQueryBuilder();
+		
+		$qb->select('i');
+		$qb->from('LarpManager\Entities\Item','i');
+		
+		$qb->orderBy('i.numero', 'DESC');
+		return $qb->getQuery()->getResult();
+	}
 }

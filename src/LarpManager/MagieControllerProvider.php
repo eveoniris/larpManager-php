@@ -42,7 +42,7 @@ class MagieControllerProvider implements ControllerProviderInterface
 	public function connect(Application $app)
 	{
 		$mustBeScenariste = function(Request $request) use ($app) {
-			if (!$app['security.authorization_checker']->isGranted('ROLE_SCENARISTE')) {
+			if (!$app['security.authorization_checker']->isGranted('ROLE_REGLE')) {
 				throw new AccessDeniedException();
 			}
 		};

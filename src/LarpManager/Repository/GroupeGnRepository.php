@@ -46,4 +46,14 @@ class GroupeGnRepository extends EntityRepository
 		
 		return reset($groupeGns);
 	}
+	
+	public function findByGn($gnId)
+	{
+		$groupeGns = $this->getEntityManager()
+			->createQuery('SELECT g FROM LarpManager\Entities\GroupeGn g JOIN g.gn gn WHERE gn.id = :gnId')
+			->setParameter('gnId', $gnId)
+			->getResult();
+		
+		return $groupeGns;		
+	}
 }

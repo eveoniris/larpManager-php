@@ -212,9 +212,9 @@ class ReligionController
 			}
 			else if ( $form->get('delete')->isClicked())
 			{
-				$app['orm.em']->remove($religion);
+				/*$app['orm.em']->remove($religion);
 				$app['orm.em']->flush();
-				$app['session']->getFlashBag()->add('success', 'La religion a été supprimée.');
+				$app['session']->getFlashBag()->add('success', 'La religion a été supprimée.');*/
 				return $app->redirect($app['url_generator']->generate('religion'),301);
 			}
 		}		

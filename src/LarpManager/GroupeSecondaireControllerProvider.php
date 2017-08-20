@@ -151,7 +151,35 @@ class GroupeSecondaireControllerProvider implements ControllerProviderInterface
 			->bind("groupeSecondaire.admin.add")
 			->method('GET|POST')
 			->before($mustBeOrga);
-						
+
+		/**
+		 * Modification du matériel d'un groupe secondaire
+		 */
+		$controllers->match('/{groupeSecondaire}/materiel/update','LarpManager\Controllers\GroupeSecondaireController::materielUpdateAction')
+			->assert('groupeSecondaire', '\d+')
+			->bind("groupeSecondaire.materiel.update")
+			->method('GET|POST')
+			->convert('groupeSecondaire', 'converter.secondaryGroup:convert')
+			->before($mustBeOrga);
+			
+		/**
+		 * Impression du matériel d'un groupe secondaire
+		 */
+		$controllers->match('/{groupeSecondaire}/materiel/print','LarpManager\Controllers\GroupeSecondaireController::materielPrintAction')
+			->assert('groupeSecondaire', '\d+')
+			->bind("groupeSecondaire.materiel.print")
+			->method('GET|POST')
+			->convert('groupeSecondaire', 'converter.secondaryGroup:convert')
+			->before($mustBeOrga);
+			
+		/**
+		 * Impression du matériel des groupes secondaires
+		 */
+		$controllers->match('/materiel/print','LarpManager\Controllers\GroupeSecondaireController::materielPrintAllAction')
+			->bind("groupeSecondaire.materiel.printAll")
+			->method('GET|POST')
+			->before($mustBeOrga);			
+			
 		/**
 		 * Modification d'un groupe secondaire (pour les orgas)
 		 */

@@ -92,6 +92,15 @@ class RestaurationControllerProvider implements ControllerProviderInterface
 			->method('GET');
 		
 		/**
+		 * Exporter la liste des utilisateurs d'un lieu de restauration
+		 */
+		$controllers->match('/{restauration}/users/export','LarpManager\Controllers\RestaurationController::usersExportAction')
+			->bind("restauration.users.export")
+			->assert('restauration', '\d+')
+			->convert('restauration', 'converter.restauration:convert')
+			->method('GET');
+			
+		/**
 		 * Ajoute une restauration
 		 */
 		$controllers->match('/add','LarpManager\Controllers\RestaurationController::addAction')

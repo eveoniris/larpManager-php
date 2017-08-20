@@ -29,6 +29,16 @@
 					<h6>Description (secrete)</h6>
 					<p>{{ groupeSecondaire.descriptionSecrete|markdown }}</p>
 				</div>
+				
+				<div class="list-group-item">
+					<h6>Matériel</h6>
+					<p>{{ groupeSecondaire.materiel }}</p>
+					<p>
+						<a href="{{ path('groupeSecondaire.materiel.update', {'groupeSecondaire': groupeSecondaire.id}) }}">Modifier</a><br />
+						<a href="{{ path('groupeSecondaire.materiel.print', {'groupeSecondaire': groupeSecondaire.id}) }}">Impression</a>
+					</p>
+				</div>
+				
 				<div class="list-group-item">
 					<div class="list-group-item-heading">
 						<h6>Responsable</h6>
@@ -69,17 +79,19 @@
 		
 			<div class="list-group">
 				{% for postulant in groupeSecondaire.postulants %}
-				<div class="list-group-item">
-					<h6 class="list-group-item-heading">
-						<a href="{{ path('personnage.admin.detail', {'personnage':postulant.personnage.id}) }}">{{ postulant.personnage.nom }}&nbsp;{{ postulant.personnage.surnom }}</a>
-					</h6>
-					{% if postulant.personnage.groupe %}<p class="list-group-item-text">Groupe : <a href="{{ path('groupe.detail', {'index': postulant.personnage.groupe.id}) }}">{{ postulant.personnage.groupe.nom }}</a></p>{% endif %}
-					{% if postulant.personnage.user %}<p class="list-group-item-text">Utilisateur : <a href="{{ path('user.view', {'id': postulant.personnage.user.id}) }}">{{ postulant.personnage.user.username }}</a></p>{% endif %}
-					<p class="list-group-item-text">Date de la demande : {{ postulant.date|date('Y-m-d') }}</p>
-					<p class="list-group-item-text">{{ postulant.explanation|markdown }}</p>
-					<p class="list-group-item-text"><a href="{{ path('groupeSecondaire.admin.postulant.accept', {'groupe': groupeSecondaire.id,'postulant': postulant.id}) }}">Accepter cette candidature</a></p>
-					<p class="list-group-item-text"><a href="{{ path('groupeSecondaire.admin.postulant.remove', {'groupe': groupeSecondaire.id,'postulant': postulant.id}) }}">Supprimer cette candidature</a></p>
-				</div>
+					{% if postulant.personnage.participeToByLabel('LH3') %}
+						<div class="list-group-item">
+							<h6 class="list-group-item-heading">
+								<a href="{{ path('personnage.admin.detail', {'personnage':postulant.personnage.id}) }}">{{ postulant.personnage.nom }}&nbsp;{{ postulant.personnage.surnom }}</a>
+							</h6>
+							{% if postulant.personnage.groupe %}<p class="list-group-item-text">Groupe : <a href="{{ path('groupe.detail', {'index': postulant.personnage.groupe.id}) }}">{{ postulant.personnage.groupe.nom }}</a></p>{% endif %}
+							{% if postulant.personnage.user %}<p class="list-group-item-text">Utilisateur : <a href="{{ path('user.view', {'id': postulant.personnage.user.id}) }}">{{ postulant.personnage.user.username }}</a></p>{% endif %}
+							<p class="list-group-item-text">Date de la demande : {{ postulant.date|date('Y-m-d') }}</p>
+							<p class="list-group-item-text">{{ postulant.explanation|markdown }}</p>
+							<p class="list-group-item-text"><a href="{{ path('groupeSecondaire.admin.postulant.accept', {'groupe': groupeSecondaire.id,'postulant': postulant.id}) }}">Accepter cette candidature</a></p>
+							<p class="list-group-item-text"><a href="{{ path('groupeSecondaire.admin.postulant.remove', {'groupe': groupeSecondaire.id,'postulant': postulant.id}) }}">Supprimer cette candidature</a></p>
+						</div>
+					{% endif %}
 				{% endfor %}		
 			</div>
 		</div>
@@ -91,29 +103,31 @@
 			<a href="{{ path('groupeSecondaire.admin.newMembre', {'groupeSecondaire': groupeSecondaire.id}) }}">Ajouter un membre</a>
 			<div class="list-group">
 				{% for membre in groupeSecondaire.membres %}
-					<div class="list-group-item">
-						<div class="list-group-item-heading">
-							<h6 class="list-group-item-heading">{{ membre.personnage.identity }}</h6>
-						</div>
-						<div class="list-group-item-text">
-							{% if membre.secret %}
-								<p class="text-danger">A accès aux secrets du groupe</p>
-								<a href="{{ path('groupeSecondaire.admin.secret.off', {'groupe': groupeSecondaire.id , 'membre':membre.id}) }}">
-									Retirer l'accés aux secrets
+					{% if membre.personnage.participeToByLabel('LH3') %}
+						<div class="list-group-item">
+							<div class="list-group-item-heading">
+								<h6 class="list-group-item-heading"><a href="{{ path('personnage.admin.detail', {'personnage': membre.personnage.id}) }}">{{ membre.personnage.identityByLabel('LH3') }}</a></h6>
+							</div>
+							<div class="list-group-item-text">
+								{% if membre.secret %}
+									<p class="text-danger">A accès aux secrets du groupe</p>
+									<a href="{{ path('groupeSecondaire.admin.secret.off', {'groupe': groupeSecondaire.id , 'membre':membre.id}) }}">
+										Retirer l'accés aux secrets
+									</a>
+								{% else %}
+									<p>N'a pas accès aux secrets du groupe</p>
+									<a href="{{ path('groupeSecondaire.admin.secret.on', {'groupe': groupeSecondaire.id , 'membre':membre.id}) }}">
+										Donner accés aux secrets
+									</a>
+								{% endif %}
+							</div>
+							<div class="list-group-item-text">
+								<a href="{{ path('groupeSecondaire.admin.member.remove', {'groupe': groupeSecondaire.id, 'membre': membre.id}) }}">
+									Retirer ce membre.
 								</a>
-							{% else %}
-								<p>N'a pas accès aux secrets du groupe</p>
-								<a href="{{ path('groupeSecondaire.admin.secret.on', {'groupe': groupeSecondaire.id , 'membre':membre.id}) }}">
-									Donner accés aux secrets
-								</a>
-							{% endif %}
+							</div>
 						</div>
-						<div class="list-group-item-text">
-							<a href="{{ path('groupeSecondaire.admin.member.remove', {'groupe': groupeSecondaire.id, 'membre': membre.id}) }}">
-								Retirer ce membre.
-							</a>
-						</div>
-					</div>
+					{% endif %}
 				{% endfor %}
 			</div>
 		</div>
@@ -124,11 +138,9 @@
 		<div class="panel-body">
 			<div class="list-group">
 				{% for membre in groupeSecondaire.membres %}
-					<div class="list-group-item">
-						<div class="list-group-item-text">
-							{{ membre.personnage.user.email }}
-						</div>
-					</div>
+					{% if membre.personnage.participeToByLabel('LH3') %}
+						{{ membre.personnage.user.email }},&nbsp;
+					{% endif %}
 				{% endfor %}
 			</div>
 		</div>

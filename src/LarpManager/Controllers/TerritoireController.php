@@ -32,6 +32,7 @@ use LarpManager\Form\Territoire\TerritoireBlasonForm;
 use LarpManager\Form\Territoire\TerritoireCultureForm;
 use LarpManager\Form\Territoire\TerritoireLoiForm;
 use LarpManager\Form\Territoire\TerritoireStatutForm;
+use LarpManager\Form\Territoire\TerritoireCiblesForm;
 
 use LarpManager\Entities\Territoire;
 use LarpManager\Entities\Loi;
@@ -43,6 +44,36 @@ use LarpManager\Entities\Loi;
  */
 class TerritoireController
 {
+
+	/**
+	 * Modifier les listes de cibles pour les quêtes commerciales
+	 */
+	public function updateCiblesAction(Request $request, Application $app, Territoire $territoire)
+	{
+		$form = $app['form.factory']->createBuilder(new TerritoireCiblesForm(), $territoire)
+                        ->add('update','submit', array('label' => "Sauvegarder"))
+                        ->getForm();
+
+                $form->handleRequest($request);
+                        
+                if ( $form->isValid() )
+                {
+                        $territoire = $form->getData();
+                        
+                        $app['orm.em']->persist($territoire);
+                        $app['orm.em']->flush();
+                                
+                        $app['session']->getFlashBag()->add('success','Le territoire a été mis à jour');
+                        return $app->redirect($app['url_generator']->generate('territoire.admin.detail', array('territoire' => $territoire->getId())),301);
+                }
+
+
+		return $app['twig']->render('admin/territoire/cibles.twig', array(
+			'territoire' => $territoire,
+			'form' => $form->createView()
+		));
+	}
+
 	/**
 	 * Liste des territoires
 	 * 

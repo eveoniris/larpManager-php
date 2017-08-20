@@ -161,6 +161,50 @@ class RestaurationController
 	}
 	
 	/**
+	 * Liste des utilisateurs ayant ce lieu de restauration
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Restauration $restauration
+	 */
+	public function usersExportAction(Request $request, Application $app, Restauration $restauration)
+	{
+		header("Content-Type: text/csv");
+		header("Content-Disposition: attachment; filename=eveoniris_restaurations_".$restauration->getId()."_".date("Ymd").".csv");
+		header("Pragma: no-cache");
+		header("Expires: 0");
+			
+		$output = fopen("php://output", "w");
+			
+		// header
+		fputcsv($output,
+		array(
+		'nom',
+		'prenom',
+		'restriction'), ';');
+			
+		foreach ($restauration->getUserByGn() as $userByGn)
+		{
+			foreach ( $userByGn['users'] as $user)
+			{
+				$restriction = '';
+				foreach ( $user->getRestrictions() as $r)
+				{
+					$restriction .= $r->getLabel() . ' - ';
+				}
+				$line = array();
+				$line[] = utf8_decode($user->getEtatCivil()->getNom());
+				$line[] = utf8_decode($user->getEtatCivil()->getPrenom());
+				$line[] = utf8_decode($restriction);			
+				fputcsv($output, $line, ';');
+			}
+		}
+			
+		fclose($output);
+		exit();
+	}
+	
+	/**
 	 * Liste des restrictions alimentaires
 	 *
 	 * @param Request $request

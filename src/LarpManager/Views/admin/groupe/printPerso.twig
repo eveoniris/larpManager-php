@@ -1,219 +1,221 @@
-<!DOCTYPE html>
-<html>
-    <head>
-    	<meta charset="utf-8">
-    	<title>LarpManager - Impression des fiches de personnage</title>
-    	<style>
-    		body
-    		{
-    			font-size: 12px;
-    		}
-			hr { 
-			  border-top: 1px dashed #8c8b8b;
-			  border-left-width: 0px;
-			  border-right-width: 0px;
-			  border-bottom-width: 0px; 
-			} 
-			hr:after { 
-			  display: inline-block; 
-			  position: relative; 
-			  top: -12px; 
-			  left: 0px; 
-			  padding: 0 3px; 
-			  background: #fff; 
-			  color: #8c8b8b; 
-			  font-size: 18px; 
-			}
-			h4 {
-				margin-top : 0px;
-				margin-bottom : 0px;
-			}
-			ul {
-				padding : 0px;
-				list-style-type: none;
-				margin-top: 0px;
-				margin-bottom : 0px;
-			}
-			ul li {
-				margin : 0px;
-				paffing : 0px;
-			}
-			fieldset {
-				padding : 0px;
-				border: 1px dashed #8c8b8b;
-				margin-bottom : 10px;
-				padding : 5px;
-			}
-			fieldset legend {
-				font-weight: bold;
-				font-size : 1.2em;
-			}
-    	</style>
-    </head>
-    <body>    	
+{% extends "layout_print.twig" %}
+
+{% block style %}
+<style>
+body {
+font-size: 12px;
+}
+table tr td {
+	font-size : 12px;
+	vertical-align: top;
+}
+</style>
+{% endblock style %}
+
+{% block content %}	
     	
-{% for personnage in groupe.personnages %}
-		<div style="page-break-after:always;">
-			<table style="width: 100%;">
-				<tr>
-				<td>
-					<fieldset>
-					<ul>
-				    	<li><h4>Groupe {{groupe.numero }} - {{ groupe.nom }}</h4></li>
-				    	<li><strong>#{{ personnage.id }} {{ personnage.nom }} {{ personnage.surnom }}</strong>
-				    	<small>(&nbsp;
-							{% if personnage.participant %} 
-								{{ personnage.participant.user.etatCivil.nom }} {{ personnage.participant.user.etatCivil.prenom }}</a>
-							{% else %}
-								Ce personnage n'est pas lié à un joueur
-							{% endif %}
-						&nbsp;)</small>
-						</li>
-						<li><strong>Classe  : </strong>{{ personnage.classeName }}</li>
-						<li><strong>Restauration : </strong>
-						{% if personnage.participant.getTavernId %}
-							{{ app['larp.manager'].getTavern(personnage.participant) }}
-						{% else %}
-							Rien
-						{% endif %}
-						</li>
-					</ul>
-					</fieldset>
+{% for participant in participants %}
+	{% if participant.personnage %}
+	{% set personnage = participant.personnage %}
+	<div class="print-center">
+		<table>
+			<tr>
+				<td style="width:33%;">
+					<strong>#{{ personnage.id }}</strong><br />
+					<strong>{{ personnage.nom }} {% if personnage.surnom %}<small>alias {{ personnage.surnom }}</small>{% endif %}</strong>
+					<br />
+					Origine : {{ personnage.territoire|default("non définie") }}
+					<br />
+					{{ personnage.classeName }}, {{ personnage.genre }}, <small>{{ personnage.ageReel|default('x') }} ans ({{ personnage.age }})</small>
+					<br />
+					{% if personnage.user %}{{ personnage.user.etatCivil.nom }} {{ personnage.user.etatCivil.prenom }}{% else %}Ce personnage n'est pas lié à un joueur{% endif %}. {% if personnage.intrigue %}participe aux intrigues{% else %}ne participe pas aux intrigues{% endif %}	
 				</td>
 				<td>
-				<fieldset>
-					<legend>Sécurité</legend>
-					{% if personnage.user.etatCivil %}
-					<ul>
-						<li><strong>Problèmes médicaux :</strong> {{ personnage.user.etatCivil.problemeMedicaux }}</li>
-						<li><strong>Personne à prévenir :</strong> {{ personnage.user.etatCivil.personneAPrevenir }}</li>
-						<li><strong>Numéro de téléphone :</strong> {{ personnage.user.etatCivil.telPap }}</li>
-					</ul>
-					{% else %}
-						<strong>Aucune information</strong>
-					{% endif %}
-				</fieldset>
-				</td>
-	    		<td>
-		    	<fieldset>
-		    		<legend></legend>
-		    		<ul>			
-						<li><strong>Renommée : </strong> {{ personnage.renomme|default(0) }}</li>
-						<li><strong>Pugilat : </strong> {{ app['personnage.manager'].pugilat(personnage)|default(0) }}</li>
-						<li><strong>Expérience : </strong> {{ personnage.xp|default(0) }} / {{ personnage.xpTotal }} xp</li>
-						<li><strong>Perso secondaire : </strong>
-						{% if personnage.user.personnageSecondaire %}
-							{{ personnage.user.personnageSecondaire.classe.label }}</strong>
-						{% else %}
-							Guerrier
-						{% endif %}
-						</li>
-					</ul>
-				</fieldset>
-				</td>
-			</tr>
-			</table>
-			
-	    	<fieldset>
-	    		<legend>Compétences</legend>
-		    	<ul>	
-		    	{% for competence in personnage.competences %}
-					<li><strong>{{ competence.competenceFamily.label }}&nbsp({{ competence.level.label }})</strong> : {{ competence.descriptionRaw }}</li>
-				{% endfor %}
-				</ul>
-			</fieldset>
-			
-			<table style="width: 100%;">
-				<tr>
-						<td style="width: 50%">
-							<fieldset>
-								<legend>Religion</legend>
-									<strong>Liste des religions</strong> :
-									
-									{% for personnageReligion in personnage.personnagesReligions %}
-										{{ personnageReligion.religion.label }} - {{ personnageReligion.religionLevel.label }},&nbsp;
-									{% else %}
-										Aucune
-									{% endfor %}
-																	
-								{% if personnage.prieres|length > 0 %}
-									<strong>Liste des prières</strong>
-									<ul>
-									{% for priere in personnage.prieres %}
-										<li>{{ priere.sphere.label }} - Niveau {{ priere.niveau }} : {{ priere.label }}</li>
-									{% endfor %}
-									</ul>
-								{% endif %}
-								
-							</fieldset>
-						</td>
-					{% if personnage.domaines|length > 0 or  personnage.sorts|length > 0 or personnage.potions|length > 0 %}
-					<td style="width: 50%">
-					
-						<fieldset>
-							<legend>Magie</legend>
-							<table style="width:100%;">
-								<tr>
-								<td>
-									<strong>Domaine de magie</strong>
-									<ul>
-									{% for domaine in personnage.domaines %}
-										<li>{{ domaine.label }}</li>
-									{% endfor %}
-									</ul>
-								</td>
-								<td>
-									<strong>Sorts</strong>
-									<ul>
-									{% for sort in personnage.sorts %}
-										<li>
-											{{ sort.label }} - {{ sort.domaine.label }} Niveau {{ sort.niveau }}
-										</li>
-									{% endfor %}
-									</ul>
-								</td>
-								<td>
-									<strong>Potions</strong>
-									<ul>
-									{% for potion in personnage.potions %}
-										<li>
-											{{ potion.label }} - Niveau {{ potion.niveau }}
-										</li>
-									{% endfor %}
-									</ul>
-								</td>
-							</tr>
-							</table>
-						</fieldset>
-					</td>
-					{% endif %}
-				</tr>
-			</table>
-			<fieldset>
-				<legend>Langage</legend>
-				<ul>
-				<li><strong>Origine :</strong> {{ personnage.territoire|default("non définie") }}</li>
-				<li><strong>Liste des langues connues :</strong>
-					{% for personnageLangue in personnage.personnageLangues %}
-						{{ personnageLangue.langue}},&nbsp;
+					<strong>Groupe #{{ groupe.numero }} {{ groupe.nom }}</strong><br />
+					{% for participantHasRestauration in participant.participantHasRestaurations %}
+						{{ participantHasRestauration.restauration.label }}<br />
 					{% endfor %}
-				</li>
-				</ul>
-			</fieldset>
-			<hr />
-			<table>
-				<tr>
-				<td>
-					<h4>Numéro de personnage à montrer à votre meurtrier :&nbsp;<strong style="font-size: 1.6em;">{{ personnage.id }}</strong></h4>
+					<strong>Personnage Secondaire : </strong>
+					{% if participant.personnageSecondaire %}
+						{{ participant.personnageSecondaire.classe.label }}
+					{% else %}
+						PAS DE PERSONNAGE SECONDAIRE
+					{% endif %}
+							
 				</td>
 				<td>
-					<img style="float: right;" height="50" src="/img/logo_eve.png" align="right">
+					{% if personnage.user %}
+						{% if personnage.user.etatCivil %}
+							Personne à contacter en cas d'urgence : {{ personnage.user.etatCivil.personneAPrevenir }}
+							<br />
+							Téléphone : {{ personnage.user.etatCivil.telPap }}
+							<br />
+							Problèmes médicaux : {{ personnage.user.etatCivil.problemeMedicaux }} 
+						{% endif %}
+					{% endif %}
 				</td>
 			</tr>
-			</table>
-							
-	    </div>
+		</table>
+	</div>
+	
+	<table>
+		<thead>
+			<tr>
+				<th>Renommée</th>
+				<th>Héroisme</th>
+				<th>Pugilat</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+			 	<td>{{ personnage.renomme|default(0) }}</td>
+			 	<td>{{ personnage.heroisme|default(0) }}</td>
+			 	<td>{{ personnage.pugilat }}</td>
+		</tbody>
+	</table>	
+								
+	<table>
+		<thead>
+			<tr>
+				<th>Expérience</th>
+				<th>Religions</th>
+				<th>Langages</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+			 	<td style="text-align: center; width:33%">{{ personnage.xp|default(0) }} / {{ personnage.xpTotal }} xp</td>
+				<td>
+					{% for personnageReligion in personnage.personnagesReligions %}
+						{{ personnageReligion.religion.label }} - {{ personnageReligion.religionLevel.label }}<br />
+					{% endfor %}
+				</td>
+				<td>
+					{% for personnageLangue in personnage.personnageLangues %}
+						<strong>{{ personnageLangue.langue}}</strong> ({{ personnageLangue.source }})<br />
+					{% endfor %}
+				</td>
+			</tr>
+		</tbody>
+	</table>		
+	
+	<div style="border: 1px solid #000;padding: 5px;">
+	{% for competence in personnage.competences %}
+		<strong>{{ competence.competenceFamily.label }}&nbsp({{ competence.level.label }})</strong> : 
+		{{ competence.descriptionRaw }}<br />
+	{% endfor %}
+	</div>
+
+	<table>
+		<thead>
+			<tr>
+				<th>Dommaines de magie</th>
+				<th>Inventaire</th>
+				<th>Groupe secondaires</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>
+					{% for domaine in personnage.domaines %}
+						{{ domaine.label }}<br />
+					{% endfor %}
+				</td>
+				<td>				
+					{% for document in personnage.documents %}
+						{{ document.code }}&nbsp;{{ document.titre }}<br />
+					{% endfor %}
+
+					{% for item in personnage.items %}
+						{{ item.numero }}&nbsp;{{ item.label }}<br />
+					{% endfor %}
+		
+					{% for personnageIngredient in personnage.personnageIngredients %}
+						{{personnageIngredient.nombre}} - {{ personnageIngredient.ingredient }}<br />
+					{% endfor %}
+		
+					{% for personnageRessource in personnage.personnageRessources %}
+						{{personnageRessource.nombre}} - {{ personnageRessource.ressource }}<br />
+					{% endfor %}
+										
+					{{ personnage.richesse|default(0) }} PA<br />
+		
+					{% for technologie in personnage.technologies %}
+						{{ technologie.label }}<br />
+					{% endfor %}
+				</td>
+				<td>
+					{% for groupeSecondaire in personnage.secondaryGroups %}
+						{{ groupeSecondaire.label }}<br />
+					{% endfor %}
+					
+					{% for postulant in personnage.postulants %}
+						Candidature au groupe {{ postulant.secondaryGroup.label }} en attente de validation.<br />
+					{% endfor %}
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	
+	<table>
+		<thead>
+			<tr>
+				<th>Sort</th>
+				<th>Potions</th>
+				<th>Prières</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>
+					{% for sort in personnage.sorts %}
+						{{ sort.label }} - {{ sort.domaine.label }} Niveau {{ sort.niveau }}<br />
+					{% endfor %}
+				</td>
+				<td>
+					{% for potion in personnage.potions %}
+						{{ potion.label }} - Niveau {{ potion.niveau }}<br />
+					{% endfor %}
+				</td>		
+					
+				<td>			
+					{% for priere in personnage.prieres %}
+						{{ priere.sphere.label }} - Niveau {{ priere.niveau }} ({{ priere.label }})<br />
+					{% endfor %}
+				</td>
+			</tr>
+		</tbody>
+	</table>
+					
+	<hr />	
+	<br /><br />
+	
+	<div class="print-center">
+		<span style="font-size:12px;">Partie à découper et à remettre au PC Joueur par votre meurtrier en cas de mort du personnage</span>
+		<h4>Personnage ID : {{ personnage.id }}
+		{{ personnage.nom }} {% if personnage.surnom %}<small>alias {{ personnage.surnom }}</small>{% endif %}<br />
+		MORT</h4>
+	</div>
+	
+	<div class="print-page-break"></div>
+{% else %}
+Ce participant ne dispose pas de personnages
+{% endif %}	
+{% endfor %}
+
+{% for quete in quetes %}
+		<div>
+                        <h4>Quête commerciale pour #{{ quete.personnage.id}} {{ quete.personnage.nom }} ({{ groupe.nom }})</h4>
+                        <p>La route commerciale doit partir de <strong>{% if groupe.territoire %}{{ groupe.territoire.nom }}{% else %}INCONNU{% endif %} et parvenir à <strong>{% if quete.quete.cible %}{{ quete.quete.cible }}{% else %}INCONNU{% endif %}</strong></p>
+                        <strong>Les ressources demandées sont :</strong>
+                        <ul>
+                                {% for ressource in quete.quete.needs %}
+                                        <li>{{ ressource.label }}</li>
+                                {% endfor %}
+                        </ul>
+                        <strong>Récompenses : </strong>{{ quete.quete.recompenses|join(', ') }}
+                </div>
+		<hr class="print-page-break" />
 {% endfor %}
  
-</body>
-</html>
+{% endblock content %}

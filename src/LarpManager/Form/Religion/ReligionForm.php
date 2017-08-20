@@ -45,11 +45,39 @@ class ReligionForm extends AbstractType
 					'required' => true,
 				))
 				->add('description','textarea', array(
-					'label' => 'Description',
+					'label' => 'Description rapide',
 					'required' => false,
 					'attr' => array(
 							'class' => 'tinymce',
 							'rows' => 10),
+				))
+				->add('description_orga','textarea', array(
+						'label' => 'Description pour les ORGAS',
+						'required' => false,
+						'attr' => array(
+								'class' => 'tinymce',
+								'rows' => 10),
+				))
+				->add('description_pratiquant','textarea', array(
+						'label' => 'Description pour les PRATIQUANTS',
+						'required' => false,
+						'attr' => array(
+								'class' => 'tinymce',
+								'rows' => 10),
+				))
+				->add('description_fervent','textarea', array(
+						'label' => 'Description pour les FERVENTS',
+						'required' => false,
+						'attr' => array(
+								'class' => 'tinymce',
+								'rows' => 10),
+				))
+				->add('description_fanatique','textarea', array(
+						'label' => 'Description pour les FANATIQUES',
+						'required' => false,
+						'attr' => array(
+								'class' => 'tinymce',
+								'rows' => 10),
 				))
 				->add('spheres', 'entity', array(
 					'label' => 'Sphères',

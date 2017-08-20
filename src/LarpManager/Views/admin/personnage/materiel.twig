@@ -14,7 +14,7 @@
 	</ol>
 	
 	<div class="well bs-component">
-		<form action="{{ path('personnage.admin.materiel',{'personnage':personnage.id}) }}" method="POST" {{ form_enctype(form) }}>
+		<form action="{{ path('personnage.materiel.update',{'personnage':personnage.id}) }}" method="POST" {{ form_enctype(form) }}>
 			<fieldset>
 				<legend>Matériel de {{ personnage.nom }} {{ personnage.surnom }} - <small>appartient actuellement à {{ personnage.user }}</small></legend>
 						

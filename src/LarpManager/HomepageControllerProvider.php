@@ -89,6 +89,12 @@ class HomepageControllerProvider implements ControllerProviderInterface
 					->bind('blason.get')
 					->before($mustBeUser);
 					
+		/** Affichage du trombinoscope des personnages renommés */
+		$controllers->match('/renom','LarpManager\Controllers\HomepageController::renomAction')
+					->method('GET')
+					->bind('renom')
+					->before($mustBeUser);
+					
 		/** Affichage de la cartographie du monde de conan */
 		$controllers->match('/world','LarpManager\Controllers\HomepageController::worldAction')
 					->method('GET')

@@ -287,6 +287,13 @@ class PersonnageController
 		));
 	}
 	
+	public function enveloppePrintAction(Request $request, Application $app, Personnage $personnage)
+	{
+		return $app['twig']->render('admin/personnage/enveloppe.twig', array(
+				'personnage' => $personnage,
+		));
+	}
+	
 	/**
 	 * Modifie le matériel lié à un personnage
 	 * 
@@ -367,6 +374,7 @@ class PersonnageController
 		$form = $app['form.factory']->createBuilder()
 			->add('participant','entity', array(
 					'required' => true,
+					'expanded' => true,
 					'label' => 'Nouveau propriétaire',
 					'class' => 'LarpManager\Entities\Participant',
 					'property' => 'userIdentity',
@@ -381,24 +389,27 @@ class PersonnageController
 			$data = $form->getData();
 			$participant = $data['participant'];
 			
-			$oldParticipant = $personnage->getParticipant();
-			
+			$personnage->setUser($participant->getUser());
+						
 			// gestion de l'ancien personnage
 			if ( $participant->getPersonnage() )
 			{
 				$oldPersonnage = $participant->getPersonnage();
-				$oldPersonnage->setParticipantNull();
+				$oldPersonnage->removeParticipant($participant);
 				$oldPersonnage->setGroupeNull();
 			}
 			
 			// le personnage doit rejoindre le groupe de l'utilisateur
-			if ( $participant->getGroupe())
+			if ( $participant->getGroupeGn())
 			{
-				$personnage->setGroupe($participant->getGroupe());
+				if ( $participant->getGroupeGn()->getGroupe() )
+				{
+					$personnage->setGroupe($participant->getGroupeGn()->getGroupe());
+				}
 			}
 				
 			$participant->setPersonnage($personnage);
-			$personnage->setParticipant($participant);
+			$personnage->addParticipant($participant);
 						
 			$app['orm.em']->persist($participant);
 			$app['orm.em']->persist($personnage);
@@ -1955,8 +1966,18 @@ class PersonnageController
 	 */
 	public function exportAction(Request $request, Application $app, Personnage $personnage)
 	{
+		$participant = $personnage->getParticipants()->last();
+		$groupe = null;
+
+		if ( $participant && $participant->getGroupeGn() )
+		{
+			$groupe = $participant->getGroupeGn()->getGroupe();
+		}
+
 		return $app['twig']->render('admin/personnage/print.twig', array(
-				'personnage' => $personnage
+				'personnage' => $personnage,
+				'participant' => $participant,
+				'groupe' => $groupe,
 			));
 
 	}

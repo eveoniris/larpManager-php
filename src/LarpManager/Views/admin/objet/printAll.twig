@@ -1,0 +1,124 @@
+{% extends "layout_print.twig" %}
+
+{% block style %}
+<style>
+.item
+{
+	color: #000;
+	font-weight: bold;
+	width : 400px;
+	padding : 5px 5px 5px 5px; 
+	border: 1px solid #000;
+	margin-right : 10px;
+	margin-bottom : 5px;
+	display: inline-block;
+}
+
+.item-bleu
+{
+	background-color: DodgerBlue;
+}
+.item-orange
+{
+	background-color: orange;
+}
+
+.item-header
+{
+}
+.item-text
+{
+	text-align: center;
+}
+.pull-right {
+  float: right !important;
+}
+
+.recto {
+	display: inline-block;
+	border-right: 1px dashed #000;
+	width: 190px;
+	padding-right : 10px;
+}
+.verso {
+	display: inline-block;
+	width: 190px;
+}
+
+img {
+	display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+table td {
+	vertical-align : top;
+	width : 200px;
+	padding: 10px;
+}
+
+</style>
+{% endblock style %}
+
+{% block content %}
+	<h6>BLEU</h6>
+	{% for item in items if item.couleur == 'bleu' %}
+		{% for i in 1..item.quantite %}
+			<div class="item {% if item.couleur == 'bleu' %}item-bleu{% else %}item-orange{% endif %}">
+				<table>
+					<tr>
+						<td>
+							
+								<div class="item-header">
+									<bold>{{ item.numero }}</bold>
+									<span class="pull-right"><bold>{{ item.quality.numero }}{{ item.identification }}</bold></span>
+								</div>
+								<div class="item-text">
+									{{ item.objet.nom }}
+								</div>
+							
+						</td>
+						<td>
+							
+								{{ item.description|markdown }}
+							
+						</td>
+					</tr>
+				</table>
+				
+				
+			</div>
+		{% endfor %}
+	{% endfor %}
+	
+	<div class="print-page-break"></div>
+	<h6>ORANGE</h6>
+	{% for item in items if item.couleur != 'bleu' %}
+		{% for i in 1..item.quantite %}
+			<div class="item {% if item.couleur == 'bleu' %}item-bleu{% else %}item-orange{% endif %}">
+				<table>
+					<tr>
+						<td>
+							
+								<div class="item-header">
+									<bold>{{ item.numero }}</bold>
+									<span class="pull-right"><bold>{{ item.quality.numero }}{{ item.identification }}</bold></span>
+								</div>
+								<div class="item-text">
+									{{ item.objet.nom }}
+								</div>
+							
+						</td>
+						<td>
+							
+								{{ item.description|markdown }}
+							
+						</td>
+					</tr>
+				</table>
+				
+				
+			</div>
+		{% endfor %}
+	{% endfor %}
+{% endblock %}

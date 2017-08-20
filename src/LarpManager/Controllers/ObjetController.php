@@ -55,6 +55,142 @@ class ObjetController
 	}
 	
 	/**
+	 * Impression d'une etiquette
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Item $item
+	 */
+	public function printAction(Request $request, Application $app, Item $item)
+	{
+		return $app['twig']->render('admin/objet/print.twig', array(
+				'item' => $item,
+		));
+	}
+	
+	/**
+	 * Impression de toutes les etiquettes
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function printAllAction(Request $request, Application $app)
+	{
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Item');
+		$items = $repo->findAll();
+		
+		return $app['twig']->render('admin/objet/printAll.twig', array(
+				'items' => $items,
+		));
+	}
+	
+	/**
+	 * Impression de tous les objets avec photo
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function printPhotoAction(Request $request, Application $app)
+	{
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Item');
+		$items = $repo->findAll();
+		
+		return $app['twig']->render('admin/objet/printPhoto.twig', array(
+				'items' => $items,
+		));
+	}
+	
+	/**
+	 * Sortie CSV
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function printCsvAction(Request $request, Application $app)
+	{
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Item');
+		$items = $repo->findAll();
+		
+		header("Content-Type: text/csv");
+		header("Content-Disposition: attachment; filename=eveoniris_objets_".date("Ymd").".csv");
+		header("Pragma: no-cache");
+		header("Expires: 0");
+		
+		$output = fopen("php://output", "w");
+			
+		// header
+		fputcsv($output,
+			array(
+				'numéro',
+				'identification',
+				'label',
+				'description',
+				'special',
+				'groupe',
+				'personnage',
+				'rangement',
+				'proprietaire'
+			), ';');
+			
+		foreach ($items as $item)
+		{
+			$line = array();
+			$line[] = utf8_decode($item->getNumero());
+			$line[] = utf8_decode($item->getQuality()->getNumero().$item->getIdentification());
+			$line[] = utf8_decode($item->getlabel());
+			$line[] = utf8_decode(html_entity_decode(strip_tags($item->getDescription())));
+			$line[] = utf8_decode(html_entity_decode(strip_tags($item->getSpecial())));
+			
+			$groupes = '';
+			foreach ( $item->getGroupes() as $groupe )
+			{
+				$groupes = $groupe->getNom().', ';
+			}
+			$line[] = utf8_decode($groupes);
+			
+			$personnages = '';
+			foreach ( $item->getPersonnages() as $personnage )
+			{
+				$personnages = $personnage->getNom().', ';
+			}
+			$line[] = utf8_decode($personnages);
+			
+			$objet = $item->getObjet();
+			if ( $objet )
+			{
+				if ( $objet->getRangement() )
+				{
+					$line[] = utf8_decode($objet->getRangement()->getAdresse());
+				}
+				else
+				{
+					$line[] =  '';
+				}
+			
+				if ( $objet->getProprietaire() )
+				{
+					$line[] = utf8_decode($objet->getProprietaire()->getNom());
+				}
+				else
+				{
+					$line[] =  '';
+				}
+				
+			}
+			else
+			{
+				$line[] = '';
+				$line[] = '';
+			}
+
+			fputcsv($output, $line, ';');
+		}
+		
+		fclose($output);
+		exit();
+	}
+	
+	/**
 	 * Création d'un nouvel objet de jeu
 	 * 
 	 * @param Request $request
@@ -90,12 +226,15 @@ class ObjetController
 				case 1:
 					$identification = mt_rand(1,10);
 					$item->setIdentification($identification);
+					break;
 				case 11:
 					$identification = mt_rand(11,20);
 					$item->setIdentification($identification);
+					break;
 				case 81:
 					$identification = mt_rand(81,99);
 					$item->setIdentification($identification);
+					break;
 			}
 
 			$app['orm.em']->persist($item);	
@@ -143,6 +282,23 @@ class ObjetController
 		{
 			$app['orm.em']->persist($item);
 			$app['orm.em']->flush();
+			
+			// en fonction de l'identification choisie, choisir un numéro d'identification
+			$identification = $item->getIdentification();
+			switch ($identification){
+				case 1:
+					$identification = mt_rand(1,10);
+					$item->setIdentification($identification);
+					break;
+				case 11:
+					$identification = mt_rand(11,20);
+					$item->setIdentification($identification);
+					break;
+				case 81:
+					$identification = mt_rand(81,99);
+					$item->setIdentification($identification);
+					break;
+			}
 				
 			$app['session']->getFlashBag()->add('success', 'L\'objet de jeu a été sauvegardé');
 			return $app->redirect($app['url_generator']->generate('items'),301);

@@ -20,6 +20,10 @@ body {
 	text-align : center;
 }
 
+.print-page-break {
+	page-break-before:always
+}
+
 table {
 	width: 100%;
 	border : 1px solid #000;

@@ -1,33 +1,15 @@
-{% extends "layout.twig" %}
-
-{% block title %}Quetes commerciales{% endblock %}
-
+{% extends "layout_print.twig" %}
 {% block content %}
+		<div>
+                        <h4>Quête commerciale pour #{{ groupe.numero}} {{ groupe.nom }}</h4>
+                        <p>La route commerciale doit partir de <strong>{% if groupe.territoire %}{{ groupe.territoire.nom }}{% else %}INCONNU{% endif %}</strong> et parvenir à <strong>{% if cible %}{{ cible.nom }}{% else %}INCONNU{% endif %}</strong></p>
+                        <strong>Les ressources demandées sont :</strong>
+                        <ul>
+                                {% for ressource in needs %}
+                                        <li>{{ ressource.label }}</li>
+                                {% endfor %}
+                        </ul>
+                        <strong>Récompenses : </strong>{{ recompenses|join(', ') }}
+                </div>
 
-	<ol class="breadcrumb">
-		<li><a href="{{ path('homepage') }}">Accueil</a></li>
-		<li><a href="{{ path("groupe.admin.list") }}">Liste des groupes</a></li>
-		<li class="active">Générateur de quête commerciale</li>
-	</ol>
-	
-	<div class="well well-sm">
-		<h4>{{ groupe.nom }}</h4>
-		<strong>Importations : </strong> {{ groupe.importations|join(', ') }}<br />
-		<strong>Exportations : </strong> {{ groupe.exportations|join(', ') }}<br />
-	</div>
-	
-	<div class="well well-sm">
-		<strong>Ressources demandées : </strong>
-			{% for ressource in needs %}	
-				{{ ressource.label }} ({{ ressource.rarete.label }}),&nbsp;
-			{% endfor %}
-		<br />
-		<strong>Valeur des ressources demandées : </strong>{{ valeur }}
-		<br />
-		
-		<strong>Récompense : </strong>{{ px }} px ainsi que {{ recompenses|join(', ') }}
-		
-	</div>
-		
-	
 {% endblock content %}

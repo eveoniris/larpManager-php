@@ -51,7 +51,7 @@ class GroupeGnControllerProvider implements ControllerProviderInterface
 		 * Vérifie que l'utilisateur est responsable de ce groupe pour cette session de jeu
 		 */
 		$mustBeResponsable = function(Request $request) use ($app) {
-			if (!$app['security.authorization_checker']->isGranted('GROUPE_RESPONSABLE', $request->get('groupeGn'))) {
+			if (!$app['security.authorization_checker']->isGranted('GROUPE_RESPONSABLE', $request->get('groupe'))) {
 				throw new AccessDeniedException();
 			}
 		};
@@ -122,9 +122,11 @@ class GroupeGnControllerProvider implements ControllerProviderInterface
 		/**
 		 * Ajoute un participant du groupe (pour les chefs de groupes
 		 */
-		$controllers->match('/{groupeGn}/add','LarpManager\Controllers\GroupeGnController::joueurAddAction')
+		$controllers->match('/{groupe}/jeu/{groupeGn}/add','LarpManager\Controllers\GroupeGnController::joueurAddAction')
 			->assert('groupeGn', '\d+')
 			->convert('groupeGn', 'converter.groupeGn:convert')
+			->assert('groupe', '\d+')
+			->convert('groupe', 'converter.groupe:convert')
 			->bind("groupeGn.joueur.add")
 			->method('GET|POST')
 			->before($mustBeResponsable)
@@ -156,9 +158,11 @@ class GroupeGnControllerProvider implements ControllerProviderInterface
 		/**
 		 * Modifie le nombre de place recherché par le chef de groupe
 		 */
-		$controllers->match('/{groupeGn}/placeAvailable','LarpManager\Controllers\GroupeGnController::placeAvailableAction')
+		$controllers->match('/{groupe}/jeu/{groupeGn}/placeAvailable','LarpManager\Controllers\GroupeGnController::placeAvailableAction')
 			->assert('groupeGn', '\d+')
 			->convert('groupeGn', 'converter.groupeGn:convert')
+			->assert('groupe', '\d+')
+			->convert('groupe', 'converter.groupe:convert')
 			->bind("groupeGn.placeAvailable")
 			->method('GET|POST')
 			->before($mustBeResponsable)

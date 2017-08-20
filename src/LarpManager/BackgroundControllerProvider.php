@@ -71,6 +71,22 @@ class BackgroundControllerProvider implements ControllerProviderInterface
 			->before($mustBeScenariste);
 			
 		/**
+		 * Imprime tous les background
+		 */
+		$controllers->match('/print','LarpManager\Controllers\BackgroundController::printAction')
+			->bind("background.print")
+			->method('GET|POST')
+			->before($mustBeScenariste);
+
+		/**
+		 * Imprime tous les backgrounds personnage
+		 */
+		$controllers->match('/personnage/print','LarpManager\Controllers\BackgroundController::personnagePrintAction')
+			->bind("background.personnage.print")
+			->method('GET|POST')
+			->before($mustBeScenariste);
+			
+		/**
 		 * Ajoute un background
 		 */
 		$controllers->match('/{background}/update','LarpManager\Controllers\BackgroundController::updateAction')
