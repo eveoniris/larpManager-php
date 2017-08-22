@@ -490,8 +490,8 @@ class ParticipantController
 	public function personnageTrombineAction(Request $request, Application $app, Participant $participant, Personnage $personnage)
 	{
 		$form = $app['form.factory']->createBuilder(new TrombineForm(), array())
-		->add('envoyer','submit', array('label' => 'Envoyer'))
-		->getForm();
+			->add('envoyer','submit', array('label' => 'Envoyer'))
+			->getForm();
 	
 		$form->handleRequest($request);
 			

@@ -511,6 +511,13 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 			->method('GET')
 			->convert('personnage', 'converter.personnage:convert');
 			
+		/** Modifie une photo */
+		$controllers->match('/{personnage}/trombine/update','LarpManager\Controllers\PersonnageController::updateTrombineAction')
+			->assert('personnage', '\d+')
+			->bind('personnage.trombine.update')
+			->method('GET|POST')
+			->convert('personnage', 'converter.personnage:convert');
+			
 		/**
 		 * Création d'un nouveau personnage
 		 */

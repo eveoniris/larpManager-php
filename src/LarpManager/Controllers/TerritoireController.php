@@ -546,6 +546,25 @@ class TerritoireController
 		{
 			$territoire = $form->getData();
 			
+			foreach ( $territoire->getPersonnages() as $personnage)
+			{
+				$personnage->setTerritoire(null);
+				$app['orm.em']->persist($personnage);
+			}
+			
+			foreach ($territoire->getGroupes() as $groupe)
+			{
+				$groupe->removeTerritoire($territoire);
+				$app['orm.em']->persist($groupe);
+			}
+			
+			if ( $territoire->getGroupe() )
+			{
+				$groupe = $territoire->getGroupe();
+				$groupe->setTerritoire(null);
+				$app['orm.em']->persist($groupe);
+			}
+			
 			$app['orm.em']->remove($territoire);
 			$app['orm.em']->flush();
 			$app['session']->getFlashBag()->add('success', 'Le territoire a été supprimé.');

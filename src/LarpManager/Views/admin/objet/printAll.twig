@@ -2,6 +2,11 @@
 
 {% block style %}
 <style>
+
+div.content
+{
+font-size: 0;
+}
 .item
 {
 	color: #000;
@@ -9,9 +14,10 @@
 	width : 400px;
 	padding : 5px 5px 5px 5px; 
 	border: 1px solid #000;
-	margin-right : 10px;
-	margin-bottom : 5px;
 	display: inline-block;
+	margin:0px;
+	font-size: 10px;
+	height:80px;
 }
 
 .item-bleu
@@ -51,10 +57,23 @@ img {
     margin-right: auto;
 }
 
+table {
+	border-collapse: collapse;
+	border: 0px;
+}
 table td {
 	vertical-align : top;
 	width : 200px;
-	padding: 10px;
+	padding-right: 10px;
+	padding-left: 10px;
+	border : 0px;
+}
+p {
+margin-top : 0px;
+margin-bottom: 0px;
+}
+span {
+margin: 0px;
 }
 
 </style>
@@ -74,7 +93,7 @@ table td {
 									<span class="pull-right"><bold>{{ item.quality.numero }}{{ item.identification }}</bold></span>
 								</div>
 								<div class="item-text">
-									{{ item.objet.nom }}
+									{{ item.label }}
 								</div>
 							
 						</td>

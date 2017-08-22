@@ -46,6 +46,10 @@ class EconnomieControllerProvider implements ControllerProviderInterface
 		$controllers->match('/','LarpManager\Controllers\EconnomieController::indexAction')
 			->bind("econnomie")
 			->method('GET');
+		
+		$controllers->match('/csv','LarpManager\Controllers\EconnomieController::csvAction')
+			->bind("economie.csv")
+			->method('GET');
 					
 		return $controllers;
 	}

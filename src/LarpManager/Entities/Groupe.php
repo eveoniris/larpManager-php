@@ -205,7 +205,7 @@ class Groupe extends BaseGroupe
 		$richesse = $this->getRichesse();
 		foreach ($this->getTerritoires() as $territoire )
 		{
-			$richesse += $territoire->getTresor();
+			$richesse += $territoire->getRichesse();
 		}
 		return $richesse;
 	}

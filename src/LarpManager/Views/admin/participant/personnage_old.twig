@@ -1,0 +1,17 @@
+{% extends "layout.twig" %}
+
+{% block title %}{{ groupe.nom }}{% endblock title %}
+
+{% block content %}
+
+<div class="well well-sm">
+	<form action="{{ path('participant.admin.personnage.old', {'participant': participant.id}) }}" method="POST" {{ form_enctype(form) }}>
+		<fieldset>
+			<legend>{{ groupe.nom }} - <small>Récupération d'un personnage</small></legend>
+			{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+			{{ form(form) }}
+		</fieldset>
+	</form>
+</div>
+
+{% endblock content %}

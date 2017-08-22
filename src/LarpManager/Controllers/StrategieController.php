@@ -74,4 +74,74 @@ class StrategieController
 				'territoires' => $territoires,
 		));
 	}
+	
+	/**
+	 * Sortie CSV pour le jeu strategique
+	 * 
+	 *  Liste des fiefs /
+	 *  Nom du groupe qui le contrôle (vide si personne) / 
+	 *  Niveau d'ordre social 
+	 *  Liste des constructions sur le fief 
+	 *  case vide (pour pouvoir le modifier) 
+	 *  valeur de défense max 
+	 *  valeur de défense actuelle (identique pour l'instant mais ce serait bien de prévoir que ça change)
+	 *  case vide (pour gérer les changements)
+	 *  case vide (pour mettre les horaires d'attaque ou de défense)
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function csvAction(Request $request,Application $app)
+	{
+		$territoires = $app['orm.em']->getRepository('\LarpManager\Entities\Territoire')->findFiefs();
+		
+		header("Content-Type: text/csv");
+		header("Content-Disposition: attachment; filename=eveoniris_economie_".date("Ymd").".csv");
+		header("Pragma: no-cache");
+		header("Expires: 0");
+		
+		$output = fopen("php://output", "w");
+		
+		fputcsv($output,
+				array(
+						utf8_decode('fief'),
+						utf8_decode('groupe'),
+						utf8_decode('Niveau d\'ordre social'),
+						utf8_decode('Constructions'),
+						utf8_decode('Constructions ajoutées'),
+						utf8_decode('Résistance'),
+						utf8_decode('Défense max'),
+						utf8_decode('Défense actuelle'),
+						utf8_decode('Changements'),
+						utf8_decode('Horaires')
+				), ';');
+		
+		foreach ( $territoires as $territoire) {
+			$line = array();
+			
+			$line[] = utf8_decode($territoire->getNom());
+			$groupe = $territoire->getGroupe();
+			if ( $groupe )
+			{
+				$line[] = utf8_decode('#'.$groupe->getNumero().' '.$groupe->getNom());
+			}
+			else
+			{
+				$line[] = utf8_decode('Aucun');
+			}
+				
+			$line[] = utf8_decode($territoire->getStatut());
+			$line[] = utf8_decode(join(' - ',$territoire->getConstructions()->toArray()));
+			$line[] = '';
+			$line[] = utf8_decode($territoire->getResistance());
+			$line[] = utf8_decode($territoire->getDefense());
+			$line[] = utf8_decode($territoire->getDefense());
+			$line[] = '';
+			$line[] = '';
+			
+			fputcsv($output, $line, ';');
+		}
+		
+		fclose($output);
+		exit();
+	}
 }

@@ -46,6 +46,10 @@ class StrategieControllerProvider implements ControllerProviderInterface
 		$controllers->match('/','LarpManager\Controllers\StrategieController::indexAction')
 			->bind("strategie")
 			->method('GET');
+		
+		$controllers->match('/csv','LarpManager\Controllers\StrategieController::csvAction')
+			->bind("strategie.csv")
+			->method('GET');
 					
 		return $controllers;
 	}

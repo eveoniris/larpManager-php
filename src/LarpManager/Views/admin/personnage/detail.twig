@@ -277,6 +277,38 @@
 				</div>
 				<div class="col-md-4">
 				
+				
+					<div class="panel panel-default">
+						<nav class="navbar navbar-default" style="margin-bottom: 0px;">
+	  						<div class="container-fluid">
+	  							<div class="navbar-header">
+	  								<span class="navbar-brand">Photo</span>
+	  							</div>
+	  							<div class="collapse navbar-collapse">
+	  								<ul class="nav navbar-nav navbar-right">
+		  								<li class="dropdown">
+		  								 	<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+								      			Action
+								      			<span class="caret"></span>
+								    		</a>
+											<ul class="dropdown-menu">
+												<li><a href="{{ path('personnage.trombine.update', {'personnage': personnage.id}) }}">Modifier la trombine</a></li>
+											</ul>
+										</li>
+	  								</ul>
+	  							</div>
+	  						</div>
+	  					</nav>
+					
+						<div class="panel-body">
+							{% if personnage.trombineUrl %}
+								<img class="media-object" src="{{ path('personnage.trombine', {'personnage' : personnage.id }) }}" />
+							{% else %}
+								<img class="media-object" src="{{ app.request.basepath }}/img/no_trombine.png" />
+							{% endif %}
+						</div>
+					</div>
+				
 					<div class="panel panel-default">
 						<nav class="navbar navbar-default" style="margin-bottom: 0px;">
 	  						<div class="container-fluid">

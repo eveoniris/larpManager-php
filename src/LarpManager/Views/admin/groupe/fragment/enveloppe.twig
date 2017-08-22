@@ -7,7 +7,7 @@
 <ul>
 {% if groupe.hasRichesse %}
 	{% for territoire in groupe.territoires %}
-		<li><strong>{{ territoire.tresor|default(0) }} PA</strong> fourni par <strong>{{ territoire.nom }}</strong></li>
+		<li><strong>{{ territoire.richesse|default(0) }} PA</strong> fourni par <strong>{{ territoire.nom }}</strong></li>
 	{% endfor %}
 {% else %}
 	<li>Aucune PA fourni par les territoires</li>
