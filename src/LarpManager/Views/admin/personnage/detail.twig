@@ -73,7 +73,7 @@
 								{% if personnage.user %}
 									{% for participant in personnage.user.participants %}
 										{% if participant.groupeGn %}
-											<a class="list-group-item" href="{{ path('groupe.detail', {'index': participant.groupeGn.groupe.id}) }}">{{participant.groupeGn.gn.label}} - {{ participant.groupeGn.groupe.nom }}</a>
+											<a class="list-group-item" href="{{ path('groupe.detail', {'index': participant.groupeGn.groupe.id}) }}">{{participant.groupeGn.gn.label}} - #{{ participant.groupeGn.groupe.numero }} {{ participant.groupeGn.groupe.nom }}</a>
 										{% else %}
 											N'est pas lié à un groupe
 										{% endif %}										

@@ -109,14 +109,6 @@ class UserControllerProvider implements ControllerProviderInterface
 			->before($mustBeUser);
 			
 		/**
-		 * Affiche la liste des GN
-		 */
-		$controllers->match('/gn', 'LarpManager\Controllers\UserController::gnListAction')
-			->bind('user.gn.list')
-			->method('GET')
-			->before($mustBeUser);
-			
-		/**
 		 * Affiche les informations d'un GN
 		 */
 		$controllers->match('/gn/{gn}', 'LarpManager\Controllers\UserController::gnDetailAction')

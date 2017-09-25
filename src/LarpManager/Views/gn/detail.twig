@@ -1,0 +1,313 @@
+{% extends "layout.twig" %}
+
+{% block title %}Gn -- {{ gn.label }}{% endblock title %}
+
+{% block content %}
+
+	<div class="well well-sm clearfix">
+		<ol class="breadcrumb">
+			<li><a href="{{ path('homepage')  }}">Accueil</a></li>
+			<li><a href="{{path('gn.list') }}">Liste des GNs</a></li>
+			<li class="active">{{ gn.label }}</li>
+		</ol>
+		
+		<blockquote>
+			{% if gn.description %}
+				{{ gn.description|markdown }}
+			{% else %}
+				Aucune description
+			{% endif %}
+		</blockquote>
+	</div>
+	
+	{% if is_granted('ROLE_ADMIN', app.user) %}		
+		<div class="panel panel-conan">
+		    <div class="panel-heading">Administratif (Ceci n'est visible que pour les ADMIN)</div>
+		    
+		    <div class="panel-body">
+		    	<ul>
+					<li><strong>Nombre de point d'expérience à la création d'un personnage : </strong>{{ gn.xpCreation }}</li>
+					<li><a href="{{ path('gn.billet', {'gn': gn.id}) }}">Gestion des billets</a></li>
+					<li><a href="{{ path('gn.update', {'gn': gn.id}) }}">Modifier le GN</a></li>
+					<li><a href="{{ path('gn.delete', {'gn': gn.id}) }}">Supprimer le GN</a></li>
+				</ul>
+				
+				<ul>
+					<li><a href="{{ path('gn.participants', {'gn': gn.id}) }}"><i class="fa fa-users"></i> Participants ({{ gn.participants|length }})</a></li>
+					<li><a href="{{ path('gn.participants.withoutbillet', {'gn': gn.id}) }}"><i class="fa fa-users"></i> Participants sans billet ({{ gn.participantswithoutbillet|length }})</a></li>
+					<li><a href="{{ path('gn.participants.withoutgroup', {'gn': gn.id}) }}"><i class="fa fa-users"></i> Participants sans groupe (mais avec billet) ({{ gn.participantswithoutgroup|length }})</a></li>
+					<li><a href="{{ path('gn.participants.withoutperso', {'gn': gn.id}) }}"><i class="fa fa-users"></i> Participants sans personnage ({{ gn.participantswithoutperso|length }})</a></li>
+					<li><a href="{{ path('gn.groupesReserves', {'gn': gn.id}) }}"><i class="fa fa-download"></i> Groupes réservés</a></li>
+					<li><a href="{{ path('gn.fedegn', {'gn': gn.id}) }}"><i class="fa fa-download"></i> Document FédéGN</a></li>
+				</ul>
+			</div>
+		</div>
+	{% endif %}
+	
+	<div class="row">
+		<div class="col-md-6">
+			<div class="panel panel-conan">
+				<div class="panel-heading">Informations</div>
+				
+				<div class="panel-body">
+					<strong>Ou ?</strong> 
+					{{ gn.adresse|markdown }}
+					<strong>Quand ?</strong>
+					<p>Du {{ gn.dateDebut|date('d-m-Y') }} au {{ gn.dateFin|date('d-m-Y') }}.<br />
+				    L'acceuil des joueurs débutera le {{ gn.dateInstallationJoueur|date('d-m-Y') }} à {{ gn.dateInstallationJoueur|date('H:i') }} heure.</p>
+				    
+				    {% if participant %}
+				    	Vous participez à ce jeu
+				    {% else %}
+					    <a href="{{ path('user.gn.participe', {'gn': gn.id}) }}"><i class="fa fa-check" aria-hidden="true"></i>&nbsp;Participer !</a>
+				    {% endif %}
+				    
+				</div>
+			</div>	
+			
+			{% if participant %}
+				<div class="panel panel-conan">
+					<div class="panel-heading">Billet et restauration</div>
+					
+					<div class="panel-body">
+						<strong>Billet :</strong>
+						<ul class="list-group">
+							<li class="list-group-item">
+								{% if participant.billet %}
+									<i class="fa fa-ticket" aria-hidden="true"></i>&nbsp; {{ participant.billet }}
+								{% else %}
+									Vous n'avez pas encore de billets. Si vous venez d'effectuer l'achat du billet, attendez un jour ou deux que celui-ci vous soit attribué (il s'agit d'une opération manuelle)
+								{% endif %}
+							</li>
+						</ul>
+						
+						<strong>Restauration :</strong>
+						<ul class="list-group">
+							{% for participantHasRestauration in participant.participantHasRestaurations %}
+								<li class="list-group-item">
+									<i class="fa fa-coffee" aria-hidden="true"></i>&nbsp;
+									{{ participantHasRestauration.restauration.label }}</strong> obtenu le {{ participantHasRestauration.date|date('Y-m-d') }}
+								</li>
+							{% else %}
+								<li class="list-group-item">Vous n'avez pas de restauration prévu pendant le jeu. Utilisez la billeterie si vous voulez bénéficier de repas et de ticket boissons pendant le jeu.</li>
+							{% endfor %}
+						</ul>
+						
+						<strong>Achetez votre billet et votre restauration :</strong>
+						<ul class="list-group">
+							<li class="list-group-item">
+								<i class="fa fa-shopping-basket" aria-hidden="true"></i>&nbsp;
+								<a href=" {{ path('gn.billetterie', {'gn': participant.gn.id }) }}">Billetterie</a>
+							</li>
+						</ul>
+					</div>
+				</div>
+			{% endif %}
+			
+			<div class="panel panel-conan">
+				<div class="panel-heading">Forums</div>
+				<div class="panel-body">
+					<ul class="list-group">
+						<li class="list-group-item"><a href="{{ path('forum') }}"><i class="fa fa-comment"></i> Forum</a></li>
+						{% set groupeGn = participant.groupeGn %}
+						{% if groupeGn %}
+							{% set groupe = groupeGn.groupe %}
+								{% if groupe %}
+									{% if groupe.topic %}
+										{% set count = app.user.newPosts(groupe.topic)|length %}
+											<li class="list-group-item">
+												<a href="{{ path('forum.topic', {'index': groupe.topic.id}) }}">
+													{% if count > 0 %}<strong>{% endif %}
+													<i class="fa fa-comment"></i> Forum du groupe "{{ groupe.nom }}"
+													({{ count }})
+													{% if count > 0 %}</strong>{% endif %}
+												</a>
+											</li>
+									{% endif %}
+									{% for territoire in  groupe.territoires %}
+										{% if territoire.topic %}
+											{% set count = app.user.newPosts(territoire.topic)|length %}
+												<li class="list-group-item">
+													<a href="{{ path('forum.topic', {'index': territoire.topic.id}) }}">
+														{% if count > 0 %}<strong>{% endif %}
+														<i class="fa fa-comment"></i> Forum du territoire "{{ territoire.nom }}"
+														({{ count }})
+														{% if count > 0 %}</strong>{% endif %}
+													</a>
+												</li>
+										{% endif %}
+										{% for ancestor in territoire.getAncestors %}
+											{% if ancestor.topic %}
+												{% set count = app.user.newPosts(ancestor.topic)|length %}
+													<li class="list-group-item">
+														<a href="{{ path('forum.topic', {'index': ancestor.topic.id}) }}">
+															{% if count > 0 %}<strong>{% endif %}
+															<i class="fa fa-comment"></i> Forum du territoire "{{ ancestor.nom }}"
+															({{ count }})
+															{% if count > 0 %}</strong>{% endif %}
+														</a>
+													</li>
+												{% endif %}
+										{% endfor %}
+									{% endfor %}
+								{% endif %}
+						{% endif %}
+
+						{% if participant.personnage %}
+							{% for personnageReligion in participant.personnage.personnagesReligions %}
+								<li class="list-group-item">
+									{% set count = app.user.newPosts(personnageReligion.religion.topic)|length %}
+									<a href="{{ path('forum.topic',{'index': personnageReligion.religion.topic.id }) }}">
+										{% if count > 0 %}<strong>{% endif %}
+										<i class="fa fa-comment"></i> Forum de la religion "{{ personnageReligion.religion.label }}"
+										({{ count }})
+										{% if count > 0 %}</strong>{% endif %}
+									</a>
+								</li>
+							{% endfor %}
+							{% for membre in participant.personnage.membres %}
+								<li class="list-group-item">
+									{%  set count = app.user.newPosts(membre.secondaryGroup.topic)|length %}
+									<a href="{{ path('forum.topic',{'index': membre.secondaryGroup.topic.id}) }}">
+										{% if count > 0 %}<strong>{% endif %}
+										<i class="fa fa-comment"></i> Forum du groupe secondaire "{{ membre.secondaryGroup.label }}"
+										({{ count }})
+										{% if count > 0 %}</strong>{% endif %}
+									</a>
+								</li>
+							{% endfor %}			
+						{% endif %}
+					</ul>
+				</div>
+			</div>
+			
+			
+			
+		</div>
+		<div class="col-md-6">
+			<div class="panel panel-conan">
+				<div class="panel-heading">Les annonces</div>
+				<div class="panel-body">
+					{% for  annonce in gn.annonces%}
+						<div class="pull-right">
+							<small>publié le {{ annonce.updateDate|date('Y-m-d') }}</small>
+						</div>
+						<strong>{{ annonce.title }}</strong>
+									
+						{{ annonce.text|markdown }}
+						{% if is_granted('ROLE_REDACTEUR', app.user) %}
+							<a class="btn btn-primary" href="{{ path('annonce.update', {'annonce': annonce.id}) }}"><i class="fa fa-pencil"></i></a>
+						{% endif %}
+					{% endfor %}			
+				</div>
+			</div>
+			
+			<div class="panel panel-conan">
+				<div class="panel-heading">Votre personnage</div>
+				
+				<div class="panel-body">
+					<ul>
+					{% if participant.personnage %}
+						<li>
+							<a href="{{ path('participant.personnage', {'participant': participant.id}) }}"><i class="fa fa-user" aria-hidden="true"></i>&nbsp;
+				   				{{ participant.personnage.nom }} {{ participant.personnage.surnom }}&nbsp;--&nbsp;{{ participant.personnage.classeName }}
+				   			</a>
+				   		</li>
+					{% else %}
+						<li><a href="{{ path('participant.personnage.new', {'participant': participant.id}) }}"><i class="fa fa-plus" aria-hidden="true"></i> Créer un personnage</a></li>
+						<li><a href="{{ path('participant.personnage.old', {'participant': participant.id}) }}"><i class="fa fa-plus" aria-hidden="true"></i> Reprendre un personnage</a></li>
+					{% endif %}
+					
+					{% if participant.personnageSecondaire %}
+	 					<li>Personnage secondaire :&nbsp;<strong>{{ participant.personnageSecondaire.classe.label }}</strong></li>
+	 				{% else %}
+	 					<li>Vous n'avez pas de personne secondaire, choisissez-en !</li>
+					{% endif %}
+						<li><a href="{{ path('participant.personnageSecondaire', {'participant': participant.id}) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Modifier votre personnage secondaire</a></li>
+					</ul>
+				</div>
+			</div>
+			
+			<div class="panel panel-conan">
+				<div class="panel-heading">Vos groupes</div>
+				<div class="panel-body">
+					<strong>Groupe principal :</strong>
+					<ul class="list-group">
+						{% if participant.session %}
+							<li class="list-group-item"><a href="{{ path('groupeGn.groupe', {'groupeGn': participant.session.id}) }}"><i class="fa fa-users"></i> Votre groupe {{ participant.session.groupe.nom }}</a></li>
+						{% else %}
+							<li class="list-group-item"><a href="{{ path('participant.groupe.join', {'participant': participant.id}) }}"><i class="fa fa-users"></i> Rejoindre un groupe</a></li>
+						{% endif %}
+					</ul>
+					
+					<strong>Groupes secondaires :</strong>
+					<ul class="list-group">
+						{% if participant.personnage %}
+							{% for membre in participant.personnage.membres %}
+								<li class="list-group-item"><a href="{{ path('participant.groupeSecondaire.detail', {'participant': participant.id, 'groupeSecondaire': membre.secondaryGroup.id}) }}">{{ membre.secondaryGroup }}</a></li>
+							{% endfor %}
+							{% for postulant in participant.personnage.postulants %}
+								<li class="list-group-item">{{ postulant.secondaryGroup }} -- En attente</li>
+							{% endfor %}
+						{% endif %}
+					</ul>
+					
+				</div>
+			</div>
+			
+			{# Liste des questions auquelles l'utilisateur doit répondre #}
+			{% for question in questions %}
+				{% if not participant.asAnswser(question) %}
+					<div class="panel panel-conan">
+						<div class="panel-heading">
+							[Sondage] : {{ question.label }}
+						</div>
+						<div class="panel-body">
+							{{ question.text|markdown }}
+							<ul>
+							{% for reponse in question.choix|split(';') %}
+								<li><a href="{{ path('participant.question.reponse', {'participant':participant.id,'question': question.id, 'reponse':reponse}) }}">{{ reponse }}</a></li>
+							{% endfor %}
+							</ul>
+						</div>
+					</div>
+				{% endif %}
+			{% endfor %}
+			{% for reponse in participant.reponses %}
+				<div class="panel panel-conan">
+					<div class="panel-heading">
+						[Répondu] : {{ reponse.question.label }}
+					</div>
+					<div class="panel-body">
+						{{ reponse.question.text|markdown }}
+						<strong>{{ reponse.question.reponse(reponse.reponse) }}</strong>
+						<div class="pull-right">
+							<a class="btn btn-danger" href="{{ path('participant.reponse.delete', {'participant':participant.id,'reponse': reponse.id}) }}">Supprimer ma réponse</a>
+						</div>
+					</div>
+				</div>
+			{% endfor %}
+			
+			<div class="header">
+				<h5>Règles</h5>
+			</div>
+			<ul class="list-group">
+				<li class="list-group-item"><a href="{{ path('participant.classe.list', {'participant': participant.id}) }}">Les classes</a></li>
+				<li class="list-group-item"><a href="{{ path('participant.competence.list', {'participant': participant.id}) }}">Les compétences</a></li>
+				<li class="list-group-item"><a href="{{ path('participant.regle.list', {'participant': participant.id}) }}">Les règles</a></li>
+			</ul>
+			
+			<div class="header">
+				<h5>Univers</h5>
+			</div>
+			<ul class="list-group">
+				<li class="list-group-item"><a href="{{ path('world') }}">La carte</a></li>
+				<li class="list-group-item"><a href="{{ path('gn.groupes', {'gn': participant.gn.id}) }}">Les groupes</a></li>
+				<li class="list-group-item"><a href="{{ path('participant.groupeSecondaire.list', {'participant': participant.id}) }}">Les groupes secondaires</a></li>
+				<li class="list-group-item"><a href="{{ path('participant.religion.list', {'participant': participant.id}) }}">Les religions</a></li>
+			</ul>
+			
+			
+		</div>
+	</div>
+{% endblock %}

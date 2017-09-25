@@ -23,7 +23,8 @@ namespace LarpManager\Controllers;
 use Symfony\Component\HttpFoundation\Request;
 use Silex\Application;
 
-use LarpManager\Form\GnForm;
+use LarpManager\Form\Gn\GnForm;
+use LarpManager\Form\Gn\GnDeleteForm;
 use LarpManager\Form\ParticipantFindForm;
 use LarpManager\Entities\Gn;
 use JasonGrimes\Paginator;
@@ -40,34 +41,54 @@ use Doctrine\Common\Collections\ArrayCollection;
 class GnController
 {
 	/**
-	 * @description affiche la liste des gns
+	 * Affiche la liste des gns
+	 * 
+	 * @param Request $request
+	 * @param Application $app
 	 */
 	public function listAction(Request $request, Application $app) 
 	{
-		$order_by = $request->get('order_by') ?: 'id';
-		$order_dir = $request->get('order_dir') == 'DESC' ? 'DESC' : 'ASC';
-		$limit = (int)($request->get('limit') ?: 50);
-		$page = (int)($request->get('page') ?: 1);
-		$offset = ($page - 1) * $limit;
-		
-		$criteria = array();
-		
-		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Gn');
-		$gns = $repo->findBy(
-				$criteria,
-				array( $order_by => $order_dir),
-				$limit,
-				$offset);
-		
-		$numResults = $repo->findCount($criteria);
-		
-		$paginator = new Paginator($numResults, $limit, $page,
-				$app['url_generator']->generate('gn.list') . '?page=(:num)&limit=' . $limit . '&order_by=' . $order_by . '&order_dir=' . $order_dir
-				);
-		
-		return $app['twig']->render('admin/gn/list.twig', array(
+		$gns = $app['orm.em']->getRepository('\LarpManager\Entities\Gn')->findAll();
+						
+		return $app['twig']->render('gn/list.twig', array(
 				'gns' => $gns,
-				'paginator' => $paginator,
+		));
+	}
+	
+	/**
+	 * Detail d'un gn
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function detailAction(Request $request, Application $app, Gn $gn)
+	{
+		$participant = $app['user']->getParticipant($gn);
+		
+		// liste des questions non répondu par le participant
+		$repo = $app['orm.em']->getRepository('LarpManager\Entities\Question');
+		$questions = $repo->findByParticipant($participant);
+		
+		return $app['twig']->render('gn/detail.twig', array(
+				'gn' => $gn,
+				'participant' => $participant,
+				'questions' => $questions,
+		));
+	}
+	
+	/**
+	 * Gestion des billets d'un GN
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function billetAction(Request $request, Application $app, Gn $gn)
+	{
+		$participant = null;
+	
+		return $app['twig']->render('gn/billet.twig', array(
+				'gn' => $gn,
+				'participant' => $participant,
 		));
 	}
 	
@@ -116,28 +137,12 @@ class GnController
 			return $app->redirect($app['url_generator']->generate('gn.list'),301);
 		}
 	
-		return $app['twig']->render('admin/gn/add.twig', array(
+		return $app['twig']->render('gn/add.twig', array(
 				'form' => $form->createView(),
 		));
 	}
 	
-	/**
-	 * Detail d'un gn
-	 * 
-	 * @param Request $request
-	 * @param Application $app
-	 */
-	public function detailAction(Request $request, Application $app, Gn $gn)
-	{	
-		if ( $app['security.authorization_checker']->isGranted('ROLE_ADMIN') )
-		{
-			return $app['twig']->render('admin/gn/detail.twig', array('gn' => $gn));
-		}
-		else
-		{
-			return $app['twig']->render('public/gn/detail.twig', array('gn' => $gn));
-		}	
-	}
+
 	
 	/**
 	 * Liste des participants à un jeu n'ayant pas encore de billets
@@ -150,7 +155,7 @@ class GnController
 	{
 		$participants = $gn->getParticipantsWithoutBillet();
 		
-		return $app['twig']->render('admin/gn/participantswithoutbillet.twig', array(
+		return $app['twig']->render('gn/participantswithoutbillet.twig', array(
 				'gn' => $gn,
 				'participants' => $participants,
 		));
@@ -166,7 +171,7 @@ class GnController
 	{
 		$participants = $gn->getParticipantsWithoutGroup();
 		
-		return $app['twig']->render('admin/gn/participantswithoutgroup.twig', array(
+		return $app['twig']->render('gn/participantswithoutgroup.twig', array(
 				'gn' => $gn,
 				'participants' => $participants,
 		));
@@ -182,7 +187,7 @@ class GnController
 	{
 		$participants = $gn->getParticipantsWithoutPerso();
 	
-		return $app['twig']->render('admin/gn/participantswithoutperso.twig', array(
+		return $app['twig']->render('gn/participantswithoutperso.twig', array(
 				'gn' => $gn,
 				'participants' => $participants,
 		));
@@ -368,7 +373,7 @@ class GnController
 				$app['url_generator']->generate('gn.participants', array('gn' => $gn->getId())) . '?page=(:num)&limit=' . $limit . '&order_by=' . $order_by . '&order_dir=' . $order_dir
 				);
 		
-		return $app['twig']->render('admin/gn/participants.twig', array(
+		return $app['twig']->render('gn/participants.twig', array(
 				'gn' => $gn,
 				'participants' => $participants,
 				'paginator' => $paginator,
@@ -433,6 +438,38 @@ class GnController
 		exit();
 	}
 	
+	/**
+	 * Suppression d'un GN
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Gn $gn
+	 */
+	public function deleteAction(Request $request, Application $app, Gn $gn)
+	{
+		$form = $app['form.factory']->createBuilder(new GnDeleteForm(), $gn)
+			->add('delete','submit', array('label' => "Supprimer"))
+			->getForm();
+		
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
+		{
+			$gn = $form->getData();
+
+			$app['orm.em']->remove($gn);
+			$app['orm.em']->flush();
+					
+			$app['session']->getFlashBag()->add('success', 'Le gn a été supprimé.');
+			
+			return $app->redirect($app['url_generator']->generate('gn.list'));
+		}
+		
+		return $app['twig']->render('gn/delete.twig', array(
+				'gn' => $gn,
+				'form' => $form->createView(),
+		));
+	}
 	
 	/**
 	 * Met à jour un gn
@@ -444,7 +481,6 @@ class GnController
 	{	
 		$form = $app['form.factory']->createBuilder(new GnForm(), $gn)
 			->add('update','submit', array('label' => "Sauvegarder"))
-			->add('delete','submit', array('label' => "Supprimer"))
 			->getForm();
 	
 		$form->handleRequest($request);
@@ -453,24 +489,14 @@ class GnController
 		{
 			$gn = $form->getData();
 	
-			if ($form->get('update')->isClicked())
-			{	
-				$app['orm.em']->persist($gn);
-				$app['orm.em']->flush();
-				$app['session']->getFlashBag()->add('success', 'Le gn a été mis à jour.');
-			}
-			else if ($form->get('delete')->isClicked())
-			{
-				$app['orm.em']->remove($gn);
-				$app['orm.em']->flush();
-					
-				$app['session']->getFlashBag()->add('success', 'Le gn a été supprimé.');
-			}
-	
+			$app['orm.em']->persist($gn);
+			$app['orm.em']->flush();
+			$app['session']->getFlashBag()->add('success', 'Le gn a été mis à jour.');
+			
 			return $app->redirect($app['url_generator']->generate('gn.list'));
 		}
 	
-		return $app['twig']->render('admin/gn/update.twig', array(
+		return $app['twig']->render('gn/update.twig', array(
 				'gn' => $gn,
 				'form' => $form->createView(),
 		));
@@ -494,7 +520,7 @@ class GnController
 		$groupeGns = new ArrayCollection(iterator_to_array($iterator));
 		
 	
-		return $app['twig']->render('public/gn/billetterie.twig', array(
+		return $app['twig']->render('gn/billetterie.twig', array(
 				'gn' => $gn,
 				'groupeGns' => $groupeGns,
 		));

@@ -35,8 +35,9 @@ class GnRepository extends EntityRepository
 	 */
 	public function findNext()
 	{
+		// AND g.date_debut > CURRENT_DATE()
 		$gns = $this->getEntityManager()
-			->createQuery('SELECT g FROM LarpManager\Entities\Gn g WHERE g.actif = true AND g.date_debut > CURRENT_DATE() ORDER BY g.date_debut ASC')
+			->createQuery('SELECT g FROM LarpManager\Entities\Gn g WHERE g.actif = true ORDER BY g.date_debut DESC')
 			->getResult();
 		
 		return $gns[0];
@@ -47,7 +48,7 @@ class GnRepository extends EntityRepository
 	 */		
 	public function findAll()
 	{
-		return $this->findBy(array(), array('date_debut' => 'ASC'));
+		return $this->findBy(array(), array('date_debut' => 'DESC'));
 	}
 	
 	/**

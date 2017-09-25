@@ -102,7 +102,15 @@ class GnControllerProvider implements ControllerProviderInterface
 		$controllers->match('/{gn}','LarpManager\Controllers\GnController::detailAction')
 			->assert('gn', '\d+')
 			->convert('gn', 'converter.gn:convert')
-			->bind("gn.detail")
+			->bind("gn.detail");
+			
+		/**
+		 * Gestion des billets d'un GN
+		 */
+		$controllers->match('/{gn}/billet','LarpManager\Controllers\GnController::billetAction')
+			->assert('gn', '\d+')
+			->convert('gn', 'converter.gn:convert')
+			->bind("gn.billet")
 			->before($mustBeAdmin);
 
 		/**

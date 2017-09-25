@@ -7,13 +7,14 @@
 	<ol class="breadcrumb">
 		<li><a href="{{ path('homepage') }}">Accueil</a></li>
 		<li><a href="{{ path("gn.list") }}">Liste des grandeur nature</a></li>
-		<li class="active">Modification d'un grandeur nature</li>
+		<li><a href="{{path('gn.detail', {'gn': gn.id}) }}">{{ gn.label }}</a></li>
+		<li class="active">Suppression d'un grandeur nature</li>
 	</ol>
 	
 	<div class="well bs-component">
-		<form action="{{ path('gn.update', {'gn': gn.id}) }}" method="POST" {{ form_enctype(form) }} novalidate>
+		<form action="{{ path('gn.delete', {'gn': gn.id}) }}" method="POST" {{ form_enctype(form) }} novalidate>
 			<fieldset>
-				<legend>Modification d'un grandeur nature</legend>
+				<legend>Suppression d'un grandeur nature</legend>
 					{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
 					{{ form(form) }}
 			</fieldset>

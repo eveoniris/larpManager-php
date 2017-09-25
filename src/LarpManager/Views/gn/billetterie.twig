@@ -7,8 +7,9 @@
 	<div class="well well-sm">
 		<ol class="breadcrumb">
 			<li><a href="{{ path('homepage')  }}">Accueil</a></li>
-			<li><a href="{{path('user.gn.list') }}">Liste des GNs</a></li>
-			<li class="active">Billetterie -- {{ gn.label }}</li>
+			<li><a href="{{path('gn.list') }}">Liste des GNs</a></li>
+			<li><a href="{{path('gn.detail', {'gn': gn.id}) }}">{{ gn.label }}</a></li>
+			<li class="active">Billetterie</li>
 		</ol>
 		
 		<blockquote>
@@ -23,7 +24,6 @@
 	
 	<div class="row">
 		<div class="col-md-7">
-			En cas de problème d'affichage, utilisez <a href="https://www.helloasso.com/associations/eve-oniris/evenements/legendes-d-hyboree-3">le lien suivant</a>.
 			{{ gn.billetterie|raw }}
 		</div>
 		<div class="col-md-5">
@@ -33,13 +33,13 @@
 						<th>Numéro</th>
 						<th>Groupe</th>
 						<th>Statut</th>
-						<th>Chef de groupe opus 2</th>
+						<th>Chef de groupe opus précédent</th>
 						<th>Pays</th>
 					</tr>
 				</thead>
 				<tbody>
 					{% for groupeGn in groupeGns %}
-						{% set oldGroupeGn = groupeGn.groupe.groupeGnById(1) %}
+						{% set oldGroupeGn = groupeGn.groupe.groupeGnById(gn.id-1) %}
 						<tr>
 							<td>{{ groupeGn.groupe.numero }}</td>
 							<td>{{ groupeGn.groupe.nom }}</td>

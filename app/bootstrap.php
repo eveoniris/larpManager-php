@@ -336,7 +336,6 @@ else
 		array('^/personnageSecondaire/.*$', 'ROLE_ADMIN'),
 		array('^/joueur/.*$', 'ROLE_USER'),
 		array('^/notification/.*$', 'ROLE_USER'),
-		//array('^/territoire/.*$', 'ROLE_USER'),
 		array('^/religion/.*$', 'ROLE_USER'),
 		array('^/groupeSecondaireType/.*$', 'ROLE_SCENARISTE'),
 		array('^/background/.*$', 'ROLE_USER'),

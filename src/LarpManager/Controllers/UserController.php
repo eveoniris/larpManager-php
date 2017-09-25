@@ -225,35 +225,6 @@ class UserController
 	}
 	
 	/**
-	 * Affiche la liste des GN actifs
-	 * 
-	 * @param Application $app
-	 * @param Request $request
-	 */
-	public function gnListAction(Application $app, Request $request)
-	{
-		$gns = $app['orm.em']->getRepository('LarpManager\Entities\Gn')->findActive();
-		
-		return $app['twig']->render('public/gn/list.twig', array(
-				'gns' => $gns,
-		));
-	}
-	
-	/**
-	 * Affiche les informations à propos d'un GN
-	 * 
-	 * @param Application $app
-	 * @param Request $request
-	 * @param Gn $gn
-	 */
-	public function gnDetailAction(Application $app, Request $request, Gn $gn)
-	{
-		return $app['twig']->render('public/gn/detail.twig', array(
-				'gn' => $gn,
-		));
-	}
-	
-	/**
 	 * Formulaire de participation à un jeu
 	 * 
 	 * @param Application $app

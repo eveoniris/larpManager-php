@@ -18,14 +18,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace LarpManager\Form;
+namespace LarpManager\Form\Gn;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
- * LarpManager\Form\GnForm
+ * LarpManager\Form\Gn\GnForm
  *
  * @author kevin
  *
