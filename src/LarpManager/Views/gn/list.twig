@@ -24,27 +24,19 @@
 			<div class="panel-heading">
 				{{ gn.label }}
 			</div>
-	  		<div class="panel-body">
+	  		<div class="panel-body clearfix">
+	  		
 		  		<p>Du <strong>{{ gn.dateDebut|date('d/m/Y') }}</strong> au <strong>{{ gn.dateFin|date('d/m/Y') }}</strong></p>
-		  		
-		  		{% if is_granted('ROLE_ADMIN', app.user) %}
-			  		<ul>
-			  			<li>Etat : {% if gn.actif %}<span class="text-success">Actif</span>{% else %}non actif{% endif %}</li>
-			  			<li>Nombre de participants : {{ gn.participants|length }}</li>
-			  			<li>Nombre de billets vendus : {{ gn.billetCount }}</li>
-			  		</ul>
-			  	{% endif %}
 		  		 
     			{% if gn.description %}
 					{{ gn.description|markdown }}
 				{% else %}
-					Aucune description.
+					<p>Aucune description.</p>
 				{% endif %}
 				
 				<ul class="list-group">
-					<li class="list-group-item"><a href="{{ path('gn.detail', {'gn': gn.id}) }}"><i class="fa fa-eye" aria-hidden="true"></i>&nbsp;Plus d'informations</a></li>
 					{% if gn.isPast %}
-						<li class="list-group-item"><span class="text-danger">Le jeu est terminé.</span></li>
+						<li class="list-group-item"><span class="text-danger">Le jeu est terminé, il n'est plus possible d'y participer</span></li>
 					{% else %}
 						{% if app.user.takePart(gn) %}
 							<li class="list-group-item"><span class="text-success">Vous participez à ce jeu</span></li>
@@ -53,6 +45,22 @@
 						{% endif %}
 					{% endif %}
 				</ul>
+				
+				{% if is_granted('ROLE_ADMIN', app.user) %}
+		  				<p>Ces informations ne sont visibles que par les ADMINs</p>
+			  			<ul>
+			  				<li>Etat : {% if gn.actif %}<span class="text-success">Actif</span>{% else %}non actif{% endif %}</li>
+			  				<li>Nombre de participants : {{ gn.participants|length }}</li>
+			  				<li>Nombre de billets vendus : {{ gn.billetCount }}</li>
+			  			</ul>
+			  	{% endif %}
+			  	
+			  	<div class="pull-right">
+					<a class="btn btn-primary" href="{{ path('gn.detail', {'gn': gn.id}) }}">
+						<i class="fa fa-eye" aria-hidden="true"></i>&nbsp;Plus d'informations
+					</a>
+				</div>
+			  	
 			</div>
 		</div>
 	{% endfor %}	
