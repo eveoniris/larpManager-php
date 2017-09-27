@@ -1288,23 +1288,6 @@ class ParticipantController
 	}
 
 	/**
-	 * Liste des religions
-	 *
-	 * @param Request $request
-	 * @param Application $app
-	 */
-	public function religionListAction(Request $request, Application $app, Participant $participant)
-	{
-		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Religion');
-		$religions = $repo->findAllOrderedByLabel();
-	
-		return $app['twig']->render('public/participant/religion.twig', array(
-				'religions' => $religions,
-				'participant' => $participant,
-		));
-	}
-
-	/**
 	 * Ajoute une religion au personnage
 	 *
 	 * @param Request $request

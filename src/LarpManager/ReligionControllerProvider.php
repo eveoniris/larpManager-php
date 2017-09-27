@@ -75,8 +75,7 @@ class ReligionControllerProvider implements ControllerProviderInterface
 		 */
 		$controllers->match('/','LarpManager\Controllers\ReligionController::indexAction')
 			->bind("religion")
-			->method('GET')
-			->before($mustBeCartographe);
+			->method('GET');
 		
 		/**
 		 * Ajout d'une religion

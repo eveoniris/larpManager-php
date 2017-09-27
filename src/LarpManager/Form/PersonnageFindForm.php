@@ -41,7 +41,7 @@ class PersonnageFindForm extends AbstractType
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
 		$builder->add('value','text', array(
-					'required' => true,	
+					'required' => false,	
 					'label' => 'Recherche',
 					'attr' => array(
 						'placeholder' => 'Votre recherche',
@@ -49,7 +49,7 @@ class PersonnageFindForm extends AbstractType
 					),
 				))
 				->add('type','choice', array(
-					'required' => true,
+					'required' => false,
 					'choices' => array(
 						'id' => 'ID',
 						'nom' => 'Nom',
@@ -58,6 +58,24 @@ class PersonnageFindForm extends AbstractType
 					'attr' => array(
 						'aria-label' => "...",
 					)
+				))
+				->add('religion', 'entity',  array(
+					'required' => false,
+					'label' => 'Par religion',
+					'class' => 'LarpManager\Entities\Religion',
+					'property' => 'label',
+				))
+				->add('competence', 'entity', array(
+					'required' => false,
+					'label' => 'Par compétence',
+					'class' => 'LarpManager\Entities\Competence',
+					'property' => 'label',
+				))
+				->add('classe','entity',array(
+					'required' => false,
+					'label' => 'Par classe',
+					'class' => 'LarpManager\Entities\Classe',
+					'property' => 'label',
 				));
 	}
 	

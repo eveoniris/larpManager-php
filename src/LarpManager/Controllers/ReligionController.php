@@ -61,7 +61,7 @@ class ReligionController
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Religion');
 		$religions = $repo->findAllOrderedByLabel();
 		
-		return $app['twig']->render('admin/religion/index.twig', array('religions' => $religions));
+		return $app['twig']->render('religion/list.twig', array('religions' => $religions));
 	}
 	
 	/**

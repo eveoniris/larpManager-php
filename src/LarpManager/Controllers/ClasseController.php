@@ -23,6 +23,7 @@ namespace LarpManager\Controllers;
 use Symfony\Component\HttpFoundation\Request;
 use Silex\Application;
 use LarpManager\Form\Classe\ClasseForm;
+use LarpManager\Entities\Classe;
 
 /**
  * LarpManager\Controllers\ClasseController
@@ -42,21 +43,7 @@ class ClasseController
 	{
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Classe');
 		$classes = $repo->findAllOrderedByLabel();
-		return $app['twig']->render('admin/classe/list.twig', array('classes' => $classes));
-	}
-	
-
-	/**
-	 * Liste des perso ayant cette classe
-	 *
-	 * @param Request $request
-	 * @param Application $app
-	 */
-	public function persoAction(Request $request, Application $app)
-	{
-		$classe = $request->get('classe');
-			
-		return $app['twig']->render('admin/classe/perso.twig', array('classe' => $classe));
+		return $app['twig']->render('classe/list.twig', array('classes' => $classes));
 	}
 	
 	/**
@@ -94,7 +81,7 @@ class ClasseController
 			}
 		}
 		
-		return $app['twig']->render('admin/classe/add.twig', array(
+		return $app['twig']->render('classe/add.twig', array(
 				'form' => $form->createView(),
 		));
 	}
@@ -104,12 +91,8 @@ class ClasseController
 	 * @param Request $request
 	 * @param Application $app
 	 */
-	public function updateAction(Request $request, Application $app)
-	{
-		$id = $request->get('index');
-		
-		$classe = $app['orm.em']->find('\LarpManager\Entities\Classe',$id);
-		
+	public function updateAction(Request $request, Application $app, Classe $classe)
+	{	
 		$form = $app['form.factory']->createBuilder(new ClasseForm(), $classe)
 			->add('update','submit', array('label' => "Sauvegarder"))
 			->add('delete','submit', array('label' => "Supprimer"))
@@ -138,7 +121,7 @@ class ClasseController
 			return $app->redirect($app['url_generator']->generate('classe'));
 		}
 			
-		return $app['twig']->render('admin/classe/update.twig', array(
+		return $app['twig']->render('classe/update.twig', array(
 				'classe' => $classe,
 				'form' => $form->createView(),
 		));
@@ -149,21 +132,9 @@ class ClasseController
 	 * @param Request $request
 	 * @param Application $app
 	 */
-	public function detailAction(Request $request, Application $app)
+	public function detailAction(Request $request, Application $app, Classe $classe)
 	{
-		$id = $request->get('index');
-		
-		$classe = $app['orm.em']->find('\LarpManager\Entities\Classe',$id);
-		
-		if ( $classe )
-		{
-			return $app['twig']->render('admin/classe/detail.twig', array('classe' => $classe));
-		}
-		else
-		{
-			$app['session']->getFlashBag()->add('error', 'La classe n\'a pas été trouvée.');
-			return $app->redirect($app['url_generator']->generate('classe'));
-		}
+		return $app['twig']->render('admin/classe/detail.twig', array('classe' => $classe));
 	}
 
 }

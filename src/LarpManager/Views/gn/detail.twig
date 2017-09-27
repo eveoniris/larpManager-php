@@ -20,7 +20,7 @@
 		</blockquote>
 	</div>
 	
-	{% if is_granted('ROLE_ADMIN', app.user) %}		
+	{% if is_granted('ROLE_ADMIN', app.user) %}
 		<div class="panel panel-conan">
 		    <div class="panel-heading">Administratif (Ceci n'est visible que pour les ADMIN)</div>
 		    
@@ -39,6 +39,13 @@
 					<li><a href="{{ path('gn.participants.withoutperso', {'gn': gn.id}) }}"><i class="fa fa-users"></i> Participants sans personnage ({{ gn.participantswithoutperso|length }})</a></li>
 					<li><a href="{{ path('gn.groupesReserves', {'gn': gn.id}) }}"><i class="fa fa-download"></i> Groupes réservés</a></li>
 					<li><a href="{{ path('gn.fedegn', {'gn': gn.id}) }}"><i class="fa fa-download"></i> Document FédéGN</a></li>
+				</ul>
+				
+				<ul>
+					<li><a href="{{ path('gn.groupes', {'gn': gn.id}) }}">Les groupes sur le jeu</a></li>
+					<li><a href="{{ path('gn.personnages', {'gn': gn.id}) }}">Les personnages sur le jeu</a></li>
+					<li><a href="{{ path('gn.pnjs', {'gn': gn.id}) }}">Les PNJs sur le jeu</a></li>
+					<li><a href="{{ path('gn.personnages.renom', {'gn':gn.id}) }}">Les personnages renommés</a></li>
 				</ul>
 			</div>
 		</div>
@@ -288,25 +295,24 @@
 				</div>
 			{% endfor %}
 			
-			<div class="header">
-				<h5>Règles</h5>
+			<div class="panel panel-conan">
+				<div class="panel-heading">Règles</div>
+				<div class="panel-body">
+					<ul class="list-group">
+						<li class="list-group-item"><a href="{{ path('participant.competence.list', {'participant': participant.id}) }}">Les compétences</a></li>
+						<li class="list-group-item"><a href="{{ path('participant.regle.list', {'participant': participant.id}) }}">Les règles</a></li>
+					</ul>
+				</div>
 			</div>
-			<ul class="list-group">
-				<li class="list-group-item"><a href="{{ path('participant.classe.list', {'participant': participant.id}) }}">Les classes</a></li>
-				<li class="list-group-item"><a href="{{ path('participant.competence.list', {'participant': participant.id}) }}">Les compétences</a></li>
-				<li class="list-group-item"><a href="{{ path('participant.regle.list', {'participant': participant.id}) }}">Les règles</a></li>
-			</ul>
 			
-			<div class="header">
-				<h5>Univers</h5>
+			<div class="panel panel-conan">
+				<div class="panel-heading">Univers</div>
+				<div class="panel-body">
+					<ul class="list-group">
+						<li class="list-group-item"><a href="{{ path('participant.groupeSecondaire.list', {'participant': participant.id}) }}">Les groupes secondaires</a></li>
+					</ul>
+				</div>
 			</div>
-			<ul class="list-group">
-				<li class="list-group-item"><a href="{{ path('world') }}">La carte</a></li>
-				<li class="list-group-item"><a href="{{ path('gn.groupes', {'gn': participant.gn.id}) }}">Les groupes</a></li>
-				<li class="list-group-item"><a href="{{ path('participant.groupeSecondaire.list', {'participant': participant.id}) }}">Les groupes secondaires</a></li>
-				<li class="list-group-item"><a href="{{ path('participant.religion.list', {'participant': participant.id}) }}">Les religions</a></li>
-			</ul>
-			
 			
 		</div>
 	</div>

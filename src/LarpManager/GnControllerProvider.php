@@ -186,7 +186,7 @@ class GnControllerProvider implements ControllerProviderInterface
 			->before($mustBeAdmin);
 			
 		/**
-		 * Modifier un gn
+		 * Document FEDEGN
 		 */
 		$controllers->match('/{gn}/fedegn','LarpManager\Controllers\GnController::fedegnAction')
 			->assert('gn', '\d+')
@@ -212,6 +212,36 @@ class GnControllerProvider implements ControllerProviderInterface
 			->convert('gn', 'converter.gn:convert')
 			->bind("gn.groupes")
 			->method('GET');
+			
+		/**
+		 * Liste des personnages prévu sur un jeu
+		 */
+		$controllers->match('/{gn}/personnages','LarpManager\Controllers\GnController::personnagesAction')
+			->assert('gn', '\d+')
+			->convert('gn', 'converter.gn:convert')
+			->bind("gn.personnages")
+			->method('GET')
+			->before($mustBeAdmin);
+		
+		/**
+		 * Liste des pnjs prévu sur un jeu
+		 */	
+		$controllers->match('/{gn}/pnj','LarpManager\Controllers\GnController::pnjsAction')
+			->assert('gn', '\d+')
+			->convert('gn', 'converter.gn:convert')
+			->bind("gn.pnjs")
+			->method('GET')
+			->before($mustBeAdmin);
+			
+		/**
+		 * Liste des personnages renommé prévu sur un jeu
+		 */
+		$controllers->match('/{gn}/personnages/renom','LarpManager\Controllers\GnController::renomAction')
+			->assert('gn', '\d+')
+			->convert('gn', 'converter.gn:convert')
+			->bind("gn.personnages.renom")
+			->method('GET')
+			->before($mustBeAdmin);
 			
 		return $controllers;
 	}

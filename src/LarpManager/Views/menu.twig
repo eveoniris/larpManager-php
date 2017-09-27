@@ -33,12 +33,12 @@
 				</ul>
 			</li>	
 					
-			{# Menus reservé aux admins #}
-			{% if is_granted('ROLE_ADMIN', app.user) %}
-				<li class="dropdown">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Admin<span class="caret"></span></a>
-					<ul class="dropdown-menu">
-						<li><a href="{{ path('gn.list') }}">Grandeurs natures</a></li>
+			{# Menus reservé aux admins #}			
+			<li class="dropdown">
+				<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Admin<span class="caret"></span></a>
+				<ul class="dropdown-menu">
+					<li><a href="{{ path('gn.list') }}">Grandeurs natures</a></li>
+					{% if is_granted('ROLE_ADMIN', app.user) %}
 						<li><a href="{{ path('billet.list') }}">Billets</a></li>
 						<li><a href="{{ path('user.admin.list') }}">Utilisateurs</a></li>
 						<li><a href="{{ path('restriction.list') }}">Restrictions alimentaires</a></li>
@@ -48,21 +48,21 @@
 						<li><a href="{{ path('admin') }}">Administration</a></li>
 						<li><a href="{{ path('admin.rappels') }}">Rappels</a></li>
 						<li><a href="{{ path('question') }}">Questions</a></li>
-					</ul>
-				</li>
-			{% endif %}
+					{% endif %}
+					{% if is_granted('ROLE_REDACTEUR', app.user) %}<li><a href="{{ path('annonce.list') }}">Annonces</a></li>{% endif %}
+				</ul>
+			</li>
 			
 			
-				<li class="dropdown">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Univers<span class="caret"></span></a>
-					<ul class="dropdown-menu">
-						{% if is_granted('ROLE_CARTOGRAPHE', app.user) %}<li><a href="{{ path('territoire.admin.list') }}">Territoires</a></li>{% endif %}
-						{% if is_granted('ROLE_CARTOGRAPHE', app.user) %}<li><a href="{{ path('religion') }}">Religions</a></li>{% endif %}
-						{% if is_granted('ROLE_CARTOGRAPHE', app.user) %}<li><a href="{{ path('culture') }}">Cultures</a></li>{% endif %}
-						<li><a href="{{ path('world') }}">Carte</a></li>
-						<li><a href="{{ path('renom') }}">Personnages renommés</a></li>
-					</ul>
-				</li>
+			<li class="dropdown">
+				<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Univers<span class="caret"></span></a>
+				<ul class="dropdown-menu">
+					{% if is_granted('ROLE_CARTOGRAPHE', app.user) %}<li><a href="{{ path('territoire.admin.list') }}">Territoires</a></li>{% endif %}
+					<li><a href="{{ path('religion') }}">Religions</a></li>
+					{% if is_granted('ROLE_CARTOGRAPHE', app.user) %}<li><a href="{{ path('culture') }}">Cultures</a></li>{% endif %}
+					<li><a href="{{ path('world') }}">Carte</a></li>
+				</ul>
+			</li>
 			
 			
 			{# Menus reservé aux scénaristes #}
@@ -72,7 +72,7 @@
 					<ul class="dropdown-menu">
 						<li><a href="{{ path('groupe.admin.list') }}">Liste des groupes</a></li>
 						<li><a href="{{ path('groupeSecondaire.admin.list') }}">Liste des groupes secondaires</a></li>
-						<li><a href="{{ path('pnj.list') }}">Liste des PNJ</a></li>
+						<li><a href="{{ path('personnage.admin.list') }}">Liste des personnages</a></li>
 						<li><a href="{{ path('intrigue.list') }}">Intrigues</a></li>
 						<li><a href="{{ path('background.list') }}">Backgrounds</a></li>
 						<li><a href="{{ path('debriefing.list') }}">Debriefings</a></li>
@@ -105,21 +105,21 @@
 						<li><a href="{{ path('religion.level') }}">Fanatisme</a></li>
 						<li><a href="{{ path('monnaie') }}">Monnaie</a></li>						
 						<li><a href="{{ path('quality') }}">Qualité</a></li>
-						<li><a href="{{ path('personnage.admin.list') }}">Personnages</a></li>
 					</ul>
 				</li>
 			{% endif %}
 			
 			{# Menus reservé aux règles #}
-			{% if is_granted('ROLE_REGLE', app.user) %}
-				<li class="dropdown">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Règles<span class="caret"></span></a>
-					<ul class="dropdown-menu">
-						<li><a href="{{ path('rules') }}">Règles</a></li>
+			<li class="dropdown">
+				<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Règles<span class="caret"></span></a>
+				<ul class="dropdown-menu">
+					<li><a href="{{ path('rules') }}">Règles</a></li>
+					<li><a href="{{ path('competence') }}">Compétences</a></li>
+					<li><a href="{{ path('classe') }}">Classes</a></li>
+					{% if is_granted('ROLE_REGLE', app.user) %}
+						<hr />
 						<li><a href="{{ path('competence.family') }}">Famille de compétences</a></li>
 						<li><a href="{{ path('level') }}">Niveaux</a></li>
-						<li><a href="{{ path('competence') }}">Compétences</a></li>
-						<li><a href="{{ path('classe') }}">Classes</a></li>
 						<li><a href="{{ path('age') }}">Ages</a></li>
 						<li><a href="{{ path('genre') }}">Genres</a></li>
 						<li><a href="{{ path('token.list') }}">Jetons</a></li>
@@ -130,9 +130,9 @@
 						<li><a href="{{ path('magie.sphere.list') }}">Sphères</a></li>
 						<li><a href="{{ path('magie.priere.list') }}">Prières</a></li>
 						<li><a href="{{ path('personnageSecondaire.list') }}">Personnage secondaire</a></li>
-					</ul>
-				</li>
-			{% endif %}
+					{% endif %}
+				</ul>
+			</li>
 			
 			{# Menus reservé au stock #}
 			{% if is_granted('ROLE_STOCK', app.user) %}
@@ -148,23 +148,6 @@
 						<li><a href="{{ path('stock_objet_index') }}">Objets</a></li>
 						<li><a href="{{ path('stock_objet_export') }}">Exporter</a></li>
 					</ul>
-				</li>
-			{% endif %}
-			
-			{# Notifications #}
-			{% if is_granted('ROLE_USER', app.user) %}
-				<li class="dropdown">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-						<i class="fa fa-exclamation-circle" aria-hidden="true"></i> (<span id="notifications-count">0</span>)<span class="caret"></span></a>
-					<ul class="dropdown-menu" id="notifications_list"></ul>
-				</li>
-			{% endif %}
-			
-			{% if is_granted('ROLE_USER', app.user) %}
-				<li class="dropdown">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-						<i class="fa fa-users" aria-hidden="true"></i> (<span id="lastConnected-count">0</span>)<span class="caret"></span></a>
-					<ul class="dropdown-menu" id="lastConnected_list"></ul>
 				</li>
 			{% endif %}
 									

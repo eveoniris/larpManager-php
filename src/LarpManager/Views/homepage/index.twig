@@ -7,11 +7,6 @@
 	<div class="row">
 		<div class="col-md-3">
 			<div class="well well-sm">				
-				{# si l'utilisateur est scénariste, lui afficher les liens la gestion des annonces #}
-				{% if is_granted('ROLE_REDACTEUR', app.user) %}
-					{% include 'homepage/fragment/redacteur.twig' with {'user': user} %}
-				{% endif %}
-			
 				{# si l'utilisateur est scénariste, lui afficher les liens vers les groupes dont il a la responsabilité #}
 				{% if is_granted('ROLE_SCENARISTE', app.user) %}
 					{% include 'homepage/fragment/scenariste.twig' with {'user': user} %}

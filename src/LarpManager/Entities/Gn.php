@@ -43,7 +43,47 @@ class Gn extends BaseGn
 	}
 	
 	/**
-	 * Fourni la liste des groupes prévu sur un jeu
+	 * Fourni la liste de tous les personnages prévu sur un jeu
+	 */
+	public function getPersonnages()
+	{
+		$personnages = new ArrayCollection();
+		$participants = $this->getParticipants();
+		
+		foreach ($participants as $participant)
+		{
+			$personnage = $participant->getPersonnage();
+			if ( $personnage)
+			{
+				$personnages[] = $personnage;
+			}
+		}
+		
+		return $personnages;
+	}
+	
+	/**
+	 * Fourni la liste de tous les personnages ayant une certaine renommé prévu sur un jeu
+	 */
+	public function getPersonnagesRenom($renom = 0)
+	{
+		$personnages = new ArrayCollection();
+		$participants = $this->getParticipants();
+		
+		foreach ($participants as $participant)
+		{
+			$personnage = $participant->getPersonnage();
+			if ( $personnage and $personnage->getRenomme() > $renom)
+			{
+				$personnages[] = $personnage;
+			}
+		}
+		
+		return $personnages;
+	}
+	
+	/**
+	 * Fourni la liste des groupes de PJ prévu sur un jeu
 	 */
 	public function getGroupeGnsPj()
 	{

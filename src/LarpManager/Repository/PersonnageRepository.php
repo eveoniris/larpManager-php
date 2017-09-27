@@ -43,6 +43,8 @@ class PersonnageRepository extends EntityRepository
 	
 		$qb->select($qb->expr()->count('p'));
 		$qb->from('LarpManager\Entities\Personnage','p');
+		$qb->join('p.participants','pa');
+		$qb->join('pa.gn','gn');
 	
 		foreach ( $criteria as $critere )
 		{
@@ -67,6 +69,8 @@ class PersonnageRepository extends EntityRepository
 		
 		$qb->select('p');
 		$qb->from('LarpManager\Entities\Personnage','p');
+		$qb->join('p.participants','pa');
+		$qb->join('pa.gn','gn');
 		
 		foreach ( $criteria as $critere )
 		{
@@ -92,20 +96,6 @@ class PersonnageRepository extends EntityRepository
 		$qb->from('LarpManager\Entities\Personnage','p');
 		$qb->andWhere('p.id IN (:ids)')->setParameter('ids', $ids);
 		
-		return $qb->getQuery()->getResult();
-	}
-	
-	/**
-	 * Trouve tous les personnages ayant une renommé supérieure à x.
-	 * 
-	 * @param unknown $renomme
-	 */
-	public function findAllByRenomme($renomme)
-	{
-		$qb = $this->getEntityManager()->createQueryBuilder();
-		$qb->select('p');
-		$qb->from('LarpManager\Entities\Personnage','p');
-		$qb->andWhere('p.renomme > :renomme')->setParameter('renomme', $renomme);
 		return $qb->getQuery()->getResult();
 	}
 	

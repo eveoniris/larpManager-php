@@ -1,0 +1,26 @@
+{% extends "layout.twig" %}
+
+{% block title %}Classes{% endblock title %}
+
+{% block content %}
+
+	<div class="well well-sm clearfix">
+		<ol class="breadcrumb">
+			<li><a href="{{ path('homepage')  }}">Accueil</a></li>
+			<li><a href="{{ path('classe') }}">Les classes</a></li>
+			<li class="active">Ajouter une classe</li>
+		</ol>
+	</div>
+
+								
+	<div class="well well-sm">
+		<form class="form" action="{{ path('classe.add') }}" method="POST" {{ form_enctype(form) }} novalidate>
+			<fieldset>
+				<legend>Ajouter une classe</legend>
+				{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+				{{ form(form) }}
+			</fieldset>
+		</form>
+	</div>
+	
+{% endblock content %}

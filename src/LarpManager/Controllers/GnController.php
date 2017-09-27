@@ -26,6 +26,8 @@ use Silex\Application;
 use LarpManager\Form\Gn\GnForm;
 use LarpManager\Form\Gn\GnDeleteForm;
 use LarpManager\Form\ParticipantFindForm;
+use LarpManager\Form\PersonnageFindForm;
+
 use LarpManager\Entities\Gn;
 use JasonGrimes\Paginator;
 
@@ -74,6 +76,60 @@ class GnController
 				'participant' => $participant,
 				'questions' => $questions,
 		));
+	}
+	
+	/**
+	 * Les personnages present pendant le jeu
+	 */
+	public function personnagesAction(Request $request, Application $app, Gn $gn)
+	{
+		$order_by = $request->get('order_by') ?: 'id';
+		$order_dir = $request->get('order_dir') == 'DESC' ? 'DESC' : 'ASC';
+		$limit = (int)($request->get('limit') ?: 50);
+		$page = (int)($request->get('page') ?: 1);
+		$offset = ($page - 1) * $limit;
+		$criteria = array();
+		
+		$criteria[] = "gn.id = ".$gn->getId();
+		
+		$form = $app['form.factory']->createBuilder(new PersonnageFindForm())->getForm();
+		
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$data = $form->getData();
+			$type = $data['type'];
+			$value = $data['value'];
+			switch ($type){
+				case 'nom':
+					$criteria[] = "p.nom LIKE '%$value%'";
+					break;
+				case 'id':
+					$criteria[] = "p.id = $value";
+			}
+		}
+		
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Personnage');
+		$personnages = $repo->findList(
+				$criteria,
+				array( 'by' =>  $order_by, 'dir' => $order_dir),
+				$limit,
+				$offset);
+		
+		$numResults = $repo->findCount($criteria);
+		
+		$paginator = new Paginator($numResults, $limit, $page,
+				$app['url_generator']->generate('gn.personnages', array('gn' => $gn->getId())) . '?page=(:num)&limit=' . $limit . '&order_by=' . $order_by . '&order_dir=' . $order_dir
+				);
+		
+		return $app['twig']->render('gn/personnages.twig', array(
+				'gn' => $gn,
+				'personnages' => $personnages,
+				'paginator' => $paginator,
+				'numResults' => $numResults,
+				'form' => $form->createView(),
+			));
 	}
 	
 	/**
@@ -526,6 +582,32 @@ class GnController
 		));
 	}
 	
+	/**
+	 * Liste des personnages renommé prévu sur le jeu
+	 */
+	public function renomAction(Request $request, Application $app, Gn $gn)
+	{
+		// trouver tous les personnages participants au prochain GN et ayant une renommé supérieur à 10
+		$personnages = $gn->getPersonnagesRenom(10);
+		
+		return $app['twig']->render('gn/renom.twig', array(
+				'personnages' => $personnages,
+				'gn' => $gn,
+		));
+	}
+	
+	/**
+	 * Liste des pnjs prévu sur le jeu
+	 */
+	public function pnjsAction(Request $request, Application $app, Gn $gn)
+	{
+		$pnjs = $gn->getParticipantsPnj();
+
+		return $app['twig']->render('gn/pnjs.twig', array(
+			'pnjs' => $pnjs,
+			'gn' => $gn,
+		));
+	}
 
 	/**
 	 * Liste des groupes prévu sur le jeu
@@ -536,23 +618,16 @@ class GnController
 	 */
 	public function groupesAction(Request $request, Application $app, Gn $gn)
 	{
-		$groupeGns = $gn->getGroupeGnsPj();
-		$iterator = $groupeGns->getIterator();
+		$groupes = $gn->getGroupes();
+		$iterator = $groupes->getIterator();
 		$iterator->uasort(function ($a, $b) {
-			return ($a->getGroupe()->getNumero() < $b->getGroupe()->getNumero()) ? -1 : 1;
+			return ($a->getNumero() < $b->getNumero()) ? -1 : 1;
 		});
-		$groupeGns = new ArrayCollection(iterator_to_array($iterator));
-		
-		$participant = $app['user']->getParticipant($gn);
-		if ( ! $participant )
-		{
-			$app['session']->getFlashBag()->add('error', 'Vous devez participer à ce jeu pour voir la liste des groupes');
-			return $app->redirect($app['url_generator']->generate('homepage'));
-		}
+		$groupes = new ArrayCollection(iterator_to_array($iterator));
 
-		return $app['twig']->render('public/gn/groupes.twig', array(
-				'groupeGns' => $groupeGns,
-				'participant' => $participant,
+		return $app['twig']->render('gn/groupes.twig', array(
+				'groupes' => $groupes,
+				'gn' => $gn,
 		));
 	}
 	

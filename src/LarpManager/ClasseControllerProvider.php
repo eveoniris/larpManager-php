@@ -39,8 +39,6 @@ class ClasseControllerProvider implements ControllerProviderInterface
 	 * 	- classe.add
 	 *  - classe.update
 	 *  - classe.detail
-	 *  - classe.detail.export
-	 *  - classe.export
 	 *
 	 * @param Application $app
 	 * @return Controllers $controllers
@@ -52,50 +50,46 @@ class ClasseControllerProvider implements ControllerProviderInterface
 		/**
 		 * Vérifie que l'utilisateur dispose du role REGLE
 		 */
-		$mustBeOrga = function(Request $request) use ($app) {
+		$mustBeRegle = function(Request $request) use ($app) {
 			if (!$app['security.authorization_checker']->isGranted('ROLE_REGLE')) {
 				throw new AccessDeniedException();
 			}
 		};
 		
+		/**
+		 * Affiche la liste des classes
+		 */
 		$controllers->match('/','LarpManager\Controllers\ClasseController::indexAction')
 			->bind("classe")
-			->method('GET')
-			->before($mustBeOrga);
-				
-		$controllers->match('/{classe}/perso','LarpManager\Controllers\ClasseController::persoAction')
-			->bind("classe.perso")
-			->convert('classe', 'converter.classe:convert')
-			->before($mustBeOrga)
 			->method('GET');
 		
+		/**
+		 * Ajoute une classe
+		 */
 		$controllers->match('/add','LarpManager\Controllers\ClasseController::addAction')
 			->bind("classe.add")
 			->method('GET|POST')
-			->before($mustBeOrga);
+			->before($mustBeRegle);
 				
-		$controllers->match('/{index}/update','LarpManager\Controllers\ClasseController::updateAction')
+		/**
+		 * Met à jour une classe
+		 */
+		$controllers->match('/{classe}/update','LarpManager\Controllers\ClasseController::updateAction')
 			->assert('index', '\d+')
 			->bind("classe.update")
+			->convert('classe', 'converter.classe:convert')
 			->method('GET|POST')
-			->before($mustBeOrga);
+			->before($mustBeRegle);
 		
-		$controllers->match('/{index}','LarpManager\Controllers\ClasseController::detailAction')
+		/**
+		 * Détail d'une classe
+		 */
+		$controllers->match('/{classe}','LarpManager\Controllers\ClasseController::detailAction')
 			->assert('index', '\d+')
 			->bind("classe.detail")
+			->convert('classe', 'converter.classe:convert')
 			->method('GET')
-			->before($mustBeOrga);
-		
-		$controllers->match('/{index}/export','LarpManager\Controllers\ClasseController::detailExportAction')
-			->assert('index', '\d+')
-			->bind("classe.detail.export")
-			->method('GET')
-			->before($mustBeOrga);
-		
-		$controllers->match('/export','LarpManager\Controllers\ClasseController::exportAction')
-			->bind("classe.export")
-			->method('GET')
-			->before($mustBeOrga);
+			->before($mustBeRegle);
 					
 		return $controllers;
 	}

@@ -1,0 +1,52 @@
+{% extends "layout.twig" %}
+
+{% block title %}Religions{% endblock title %}
+
+{% block content %}
+
+	<div class="well well-sm clearfix">
+		<ol class="breadcrumb">
+			<li><a href="{{ path('homepage')  }}">Accueil</a></li>
+			<li class="active">Les religions</li>
+		</ol>
+		
+		<blockquote>
+			Toutes les religions du monde d'hyborée.
+			<small>
+					( {{ religions|length }} religions )
+			</small>
+		</blockquote>
+	
+		{% if is_granted('ROLE_ADMIN', app.user) %}
+			<div class="pull-right">
+				<a class="btn btn-primary" href="{{ path('religion.add') }}">Ajouter une religion</a>
+			</div>
+		{% endif %}
+		
+	</div>
+	
+	<div class="list-group">
+		{% for religion in religions %}
+			<div class="list-group-item clearfix">
+				<h5 class="list-group-item-heading header">{{ religion.label }}</h5>
+				<div class="rows clearfix">
+					<div class="col-md-2">
+						{% if religion.blason %}
+		      				<img width="160" src="{{ path('blason.get', {'blason' : religion.blason }) }}" />
+		      			{% endif %}
+				    </div>
+				    <div class="col-md-10">
+						<p class="list-group-item-text">{{ religion.description|markdown }}</p>
+					</div>
+				</div>
+				{% if is_granted('ROLE_ADMIN', app.user) %}
+					<div class="btn-group pull-right" role="group" aria-label="...">
+						<a href="{{ path('religion.detail', {index: religion.id}) }}" class="btn btn-primary" role="button">Détail</a>
+			    		<a href="{{ path('religion.update', {index: religion.id}) }}" class="btn btn-default" role="button">Modifier</a>
+					</div>
+				{% endif %}
+			</div>
+		{% endfor %}
+	</div>
+	
+{% endblock content %}

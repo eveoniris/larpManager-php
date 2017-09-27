@@ -36,11 +36,10 @@ class CompetenceControllerProvider implements ControllerProviderInterface
 	/**
 	 * Initialise les routes pour les competences
 	 * Routes :
-	 *  - competence.admin.list
 	 * 	- competence.list
-	 * 	- competence.admin.add
-	 *  - competence.admin.update
-	 *  - competence.admin.detail
+	 * 	- competence.add
+	 *  - competence.update
+	 *  - competence.detail
 	 *
 	 * @param Application $app
 	 * @return Controllers $controllers
@@ -52,7 +51,7 @@ class CompetenceControllerProvider implements ControllerProviderInterface
 		/**
 		 * Vérifie que l'utilisateur dispose du role REGLE
 		 */
-		$mustBeOrga = function(Request $request) use ($app) {
+		$mustBeRegle = function(Request $request) use ($app) {
 			if (!$app['security.authorization_checker']->isGranted('ROLE_REGLE')) {
 				throw new AccessDeniedException();
 			}
@@ -64,7 +63,7 @@ class CompetenceControllerProvider implements ControllerProviderInterface
 		$controllers->match('/','LarpManager\Controllers\CompetenceController::indexAction')
 			->bind("competence")
 			->method('GET')
-			->before($mustBeOrga);
+			->before($mustBeRegle);
 			
 		/**
 		 * Liste des competence pour les orgas
@@ -72,7 +71,7 @@ class CompetenceControllerProvider implements ControllerProviderInterface
 		$controllers->match('/materiel','LarpManager\Controllers\CompetenceController::materielAction')
 			->bind("competence.materiel")
 			->method('GET')
-			->before($mustBeOrga);
+			->before($mustBeRegle);
 		
 		/**
 		 * Obtenir un document lié à une compétence
@@ -81,7 +80,7 @@ class CompetenceControllerProvider implements ControllerProviderInterface
 			->bind("competence.document")
 			->convert('competence', 'converter.competence:convert')
 			->method('GET')
-			->before($mustBeOrga);
+			->before($mustBeRegle);
 
 		/**
 		 * Retirer un document lié à une compétence
@@ -90,18 +89,7 @@ class CompetenceControllerProvider implements ControllerProviderInterface
 			->bind("competence.document.remove")
 			->convert('competence', 'converter.competence:convert')
 			->method('GET')
-			->before($mustBeOrga);
-			
-		/**
-		 * Liste des personnages ayant cette compétence
-		 */
-		$controllers->match('/{competence}/perso','LarpManager\Controllers\CompetenceController::persoAction')
-			->assert('competence', '\d+')
-			->bind("competence.perso")
-			->method('GET')
-			->convert('competence', 'converter.competence:convert')
-			->before($mustBeOrga);
-			
+			->before($mustBeRegle);
 			
 		/**
 		 * Ajout d'une compétence
@@ -109,7 +97,7 @@ class CompetenceControllerProvider implements ControllerProviderInterface
 		$controllers->match('/add','LarpManager\Controllers\CompetenceController::addAction')
 			->bind("competence.add")
 			->method('GET|POST')
-			->before($mustBeOrga);
+			->before($mustBeRegle);
 		
 		/**
 		 * Modification d'une compétence
@@ -119,7 +107,7 @@ class CompetenceControllerProvider implements ControllerProviderInterface
 			->bind("competence.update")
 			->method('GET|POST')
 			->convert('competence', 'converter.competence:convert')
-			->before($mustBeOrga);
+			->before($mustBeRegle);
 		
 
 		/**
@@ -130,7 +118,7 @@ class CompetenceControllerProvider implements ControllerProviderInterface
 			->bind("competence.detail")
 			->method('GET')
 			->convert('competence', 'converter.competence:convert')
-			->before($mustBeOrga);
+			->before($mustBeRegle);
 			
 		return $controllers;
 	}
