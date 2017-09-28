@@ -1,0 +1,23 @@
+{% extends "layout.twig" %}
+
+{% block title %}Règles{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path("rules") }}">Liste des règles</a></li>
+		<li class="active">Ajout d'une règle</li>
+	</ol>
+	
+	<div class="well well-sm">
+	
+		<form action="{{ path('rule.add') }}" method="POST" {{ form_enctype(form) }} novalidate>			
+			{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+			{{ form(form) }}
+			{{ form_rest(form) }}
+		</form>
+			
+	</div>
+	
+{% endblock content %}

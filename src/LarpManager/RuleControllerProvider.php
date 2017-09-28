@@ -22,6 +22,9 @@ namespace LarpManager;
 
 use Silex\Application;
 use Silex\ControllerProviderInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+
 /**
  * LarpManager\RuleControllerProvider
  * 
@@ -46,17 +49,49 @@ class RuleControllerProvider implements ControllerProviderInterface
 	{
 		$controllers = $app['controllers_factory'];
 
+		/**
+		 * Vérifie que l'utilisateur dispose du role REGLE
+		 */
+		 
+		$mustBeRegle = function(Request $request) use ($app) {
+			if (!$app['security.authorization_checker']->isGranted('ROLE_REGLE')) {
+				throw new AccessDeniedException();
+			}
+		};
+		
 		/** Page de gestion des règles */
 		$controllers->match('/','LarpManager\Controllers\RuleController::listAction')
-			->method('GET|POST')
+			->method('GET')
 			->bind('rules');
-			
-		/** suppression d'un règle */
-		$controllers->match('/{rule}/delete','LarpManager\Controllers\RuleController::deleteAction')
+		
+		/** Ajout d'une règle */
+		$controllers->match('/add','LarpManager\Controllers\RuleController::addAction')
+			->method('GET|POST')
+			->bind('rule.add')
+			->before($mustBeRegle);
+		
+		/** détail d'une règle */
+		$controllers->match('/{rule}/detail','LarpManager\Controllers\RuleController::detailAction')
 			->assert('rule', '\d+')
 			->convert('rule', 'converter.rule:convert')
 			->method('GET')
-			->bind('rule.delete');
+			->bind('rule.detail');
+			
+		/** modification d'une règle */
+		$controllers->match('/{rule}/update','LarpManager\Controllers\RuleController::updateAction')
+			->assert('rule', '\d+')
+			->convert('rule', 'converter.rule:convert')
+			->method('GET|POST')
+			->bind('rule.update')
+			->before($mustBeRegle);
+				
+		/** suppression d'une règle */
+		$controllers->match('/{rule}/delete','LarpManager\Controllers\RuleController::deleteAction')
+			->assert('rule', '\d+')
+			->convert('rule', 'converter.rule:convert')
+			->method('GET|POST')
+			->bind('rule.delete')
+			->before($mustBeRegle);
 		
 		/** Téléchargement du document */
 		$controllers->match('/{rule}/document','LarpManager\Controllers\RuleController::documentAction')

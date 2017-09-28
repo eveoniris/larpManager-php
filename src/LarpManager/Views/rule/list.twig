@@ -1,0 +1,50 @@
+{% extends "layout.twig" %}
+
+{% block title %}Règles{% endblock title %}
+
+{% block content %}
+
+	<div class="well well-sm clearfix">
+	
+		<ol class="breadcrumb">
+			<li><a href="{{ path('homepage') }}">Page d'accueil</a></li>
+			<li class="active">Liste des règles</li>
+		</ol>
+	
+		<blockquote>
+			Les fichiers ci-dessous contiennent les règles spécifiques à certains aspect du jeu.
+			<small>
+				{{ regles|length }} règles
+			</small>
+		</blockquote>
+		
+		{% if is_granted('ROLE_REGLE', app.user) %}
+			<div class="pull-right">
+				<a class="btn btn-primary" href="{{ path('rule.add') }}">Ajouter une règle</a>
+			</div>
+		{% endif %}
+	</div>
+
+	<div class="panel panel-conan">
+		<div class="panel-heading">Liste des règles</div>
+		<div class="panel-body">
+			<div class="list-group">
+				{% for regle in regles %}
+					<div class="list-group-item">
+						<h5 class="list-group-item-heading">{{ regle.label }}
+							<div class="pull-right">
+								<small><a target="_blank" href="{{ path('rule.document',{'rule': regle.id}) }}"><i class="fa fa-download"></i> Téléchargez le fichier</a></small>
+							</div>
+						</h5>
+						<p class="list-group-item-text">{{ regle.description|markdown }}</p>
+						{% if is_granted('ROLE_REGLE', app.user) %}
+							<p class="list-group-item-text"><a href="{{ path('rule.update',{'rule': regle.id}) }}"><i class="fa fa-edit"></i> Modifier</a></p>
+							<p class="list-group-item-text"><a href="{{ path('rule.delete',{'rule': regle.id}) }}"><i class="fa fa-remove"></i> Supprimer le fichier</a></p>
+						{% endif %}
+					</div>
+				{% endfor %}
+			</div>
+		</div>
+	</div>
+	
+{% endblock content %}

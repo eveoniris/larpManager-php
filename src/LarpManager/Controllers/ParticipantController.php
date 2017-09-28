@@ -1037,52 +1037,6 @@ class ParticipantController
 	}
 	
 	/**
-	 * Page listant les règles à télécharger
-	 *
-	 * @param Request $request
-	 * @param Application $app
-	 */
-	public function regleListAction(Request $request, Application $app, Participant $participant)
-	{
-		$regles = $app['orm.em']->getRepository('LarpManager\Entities\Rule')->findAll();
-	
-		return $app['twig']->render('public/rule/list.twig', array(
-				'regles' => $regles,
-				'participant' => $participant,
-		));
-	}
-	
-	/**
-	 * Détail d'une règle
-	 * 
-	 * @param Request $request
-	 * @param Application $app
-	 * @param Participant $participant
-	 * @param Rule $regle
-	 */
-	public function regleDetailAction(Request $request, Application $app, Participant $participant, Rule $rule)
-	{
-		return $app['twig']->render('public/rule/detail.twig', array(
-				'regle' => $rule,
-				'participant' => $participant,
-		));
-	}	
-	
-	/**
-	 * Télécharger une règle
-	 *
-	 * @param Request $request
-	 * @param Application $app
-	 * @param Participant $participant
-	 * @param Rule rule
-	 */
-	public function regleDocumentAction(Request $request, Application $app, Participant $participant, Rule $rule)
-	{
-		$filename = __DIR__.'/../../../private/rules/'.$rule->getUrl();
-		return $app->sendFile($filename);
-	}
-	
-	/**
 	 * Rejoindre un groupe
 	 *
 	 * @param Request $request

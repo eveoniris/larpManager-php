@@ -18,19 +18,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace LarpManager\Form;
+namespace LarpManager\Form\Rule;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
- * LarpManager\Form\TrombineForm
+ * LarpManager\Form\Rule\RuleDeleteForm
  *
  * @author kevin
  *
  */
-class RuleForm extends AbstractType
+class RuleDeleteForm extends AbstractType
 {
 	/**
 	 * Construction du formulaire
@@ -40,23 +40,6 @@ class RuleForm extends AbstractType
 	 */
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
-		$builder->add('rule','file', array(
-					'label' => 'Choisissez votre fichier',
-					'required' => true,
-				))
-				->add('label','text', array(
-					'label' => 'Choisissez un titre',
-					'required' => true,
-				))
-				->add('description','textarea', array(
-					'label' => 'Ecrivez une petite description',
-					'required' => true,
-					'attr' => array(
-							'class' => 'tinymce',
-							'rows' => 5,
-					)
-						
-				));
 	}
 	
 
@@ -67,6 +50,9 @@ class RuleForm extends AbstractType
 	 */
 	public function setDefaultOptions(OptionsResolverInterface $resolver)
 	{
+		$resolver->setDefaults(array(
+				'data_class' => '\LarpManager\Entities\rule',
+		));
 	}
 	
 	/**
@@ -74,6 +60,6 @@ class RuleForm extends AbstractType
 	 */
 	public function getName()
 	{
-		return 'rule';
+		return 'ruleDelete';
 	}
 }

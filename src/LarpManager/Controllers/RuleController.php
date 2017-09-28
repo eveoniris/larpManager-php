@@ -24,7 +24,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Silex\Application;
 
 use LarpManager\Entities\Rule;
-use LarpManager\Form\RuleForm;
+use LarpManager\Form\Rule\RuleForm;
+use LarpManager\Form\Rule\RuleDeleteForm;
+use LarpManager\Form\Rule\RuleUpdateForm;
 
 
 /**
@@ -43,9 +45,22 @@ class RuleController
 	 */
 	public function listAction(Request $request, Application $app)
 	{
+		$regles = $app['orm.em']->getRepository('LarpManager\Entities\Rule')->findAll();
+	
+		return $app['twig']->render('rule/list.twig', array(
+				'regles' => $regles,
+		));
+	
+	}
+	
+	/**
+	 * Ajout d'une règle
+	 */
+	public function addAction(Request $request, Application $app)
+	{
 		$form = $app['form.factory']->createBuilder(new RuleForm(), array())
-		->add('envoyer','submit', array('label' => 'Envoyer'))
-		->getForm();
+			->add('envoyer','submit', array('label' => 'Envoyer'))
+			->getForm();
 	
 		$form->handleRequest($request);
 	
@@ -79,13 +94,45 @@ class RuleController
 			$app['session']->getFlashBag()->add('success','Votre fichier a été enregistrée');
 		}
 	
-		$regles = $app['orm.em']->getRepository('LarpManager\Entities\Rule')->findAll();
-	
-		return $app['twig']->render('admin/rules/index.twig', array(
+		return $app['twig']->render('rule/add.twig', array(
 				'form' => $form->createView(),
-				'regles' => $regles,
 		));
+	}
 	
+	/**
+	 * Détail d'une règle
+	 */
+	public function detailAction(Request $request, Application $app, Rule $rule)
+	{
+		return $app['twig']->render('rule/detail.twig', array(
+				'rule' => $rule,
+		));
+	}
+	
+	/**
+	 * Mise à jour d'une règle
+	 */
+	public function updateAction(Request $request, Application $app, Rule $rule)
+	{
+		$form = $app['form.factory']->createBuilder(new RuleUpdateForm(), $rule)
+			->add('envoyer','submit', array('label' => 'Envoyer'))
+			->getForm();
+	
+		$form->handleRequest($request);
+	
+		if ( $form->isValid() )
+		{
+			$rule = $form->getData();	
+			$app['orm.em']->persist($rule);
+			$app['orm.em']->flush();
+	
+			$app['session']->getFlashBag()->add('success','Vos modifications été enregistrées');
+		}
+	
+		return $app['twig']->render('rule/update.twig', array(
+				'form' => $form->createView(),
+				'rule' => $rule,
+		));
 	}
 	
 	/**
@@ -96,21 +143,36 @@ class RuleController
 	 */
 	public function deleteAction(Request $request, Application $app, Rule $rule)
 	{
-		$app['orm.em']->remove($rule);
-		$app['orm.em']->flush();
+		$form = $app['form.factory']->createBuilder(new RuleDeleteForm(), $rule)
+			->add('supprimer','submit', array('label' => 'Supprimer'))
+			->getForm();
 	
-		$filename = __DIR__.'/../../../private/rules/'.$rule->getUrl();
+		$form->handleRequest($request);
 	
-		if ( file_exists($filename))
+		if ( $form->isValid() )
 		{
-			unlink($filename);
-		}
-		else
-		{
-			$app['session']->getFlashBag()->add('error','impossible de supprimer le fichier ' . $filename);
-		}
+			$app['orm.em']->remove($rule);
+			$app['orm.em']->flush();
 	
-		return $app->redirect($app['url_generator']->generate('rules'),301);
+			$filename = __DIR__.'/../../../private/rules/'.$rule->getUrl();
+	
+			if ( file_exists($filename))
+			{
+				unlink($filename);
+				$app['session']->getFlashBag()->add('success','suppresion du fichier ' . $filename);
+			}
+			else
+			{
+				$app['session']->getFlashBag()->add('error','impossible de supprimer le fichier ' . $filename);
+			}
+		
+			return $app->redirect($app['url_generator']->generate('rules'),301);
+		}
+		
+		return $app['twig']->render('rule/delete.twig', array(
+				'form' => $form->createView(),
+				'rule' => $rule,
+		));
 	}
 	
 	/**
