@@ -267,6 +267,7 @@ else
 	$app->mount('/statistique', new LarpManager\StatistiqueControllerProvider());
 	$app->mount('/background', new LarpManager\BackgroundControllerProvider());
 	$app->mount('/debriefing', new LarpManager\DebriefingControllerProvider());
+	$app->mount('/pnj', new LarpManager\PnjControllerProvider());
 	$app->mount('/admin', new LarpManager\AdminControllerProvider());
 	$app->mount('/titre', new LarpManager\TitreControllerProvider());
 	$app->mount('/ingredient', new LarpManager\IngredientControllerProvider());
@@ -287,6 +288,7 @@ else
 	$app->mount('/rumeur', new LarpManager\RumeurControllerProvider());
 	$app->mount('/strategie', new LarpManager\StrategieControllerProvider());
 	$app->mount('/objet', new LarpManager\ObjetControllerProvider());
+	$app->mount('/pnj', new LarpManager\PnjControllerProvider());
 	$app->mount('/culture', new LarpManager\CultureControllerProvider());
 	$app->mount('/loi', new LarpManager\LoiControllerProvider());
 	$app->mount('/question', new LarpManager\QuestionControllerProvider());
@@ -323,6 +325,7 @@ else
 		array('^/groupeGn/.*$', 'ROLE_USER'),
 		array('^/gn/.*$', 'ROLE_USER'),
 		array('^/trombinoscope/.*$', 'ROLE_SCENARISTE'),
+		array('^/pnj/.*$', 'ROLE_USER'),
 		array('^/message/.*$', 'ROLE_USER'),
 		array('^/groupe/.*$', 'ROLE_USER'),
 		array('^/groupeSecondaire/.*$', 'ROLE_USER'),
@@ -357,6 +360,7 @@ else
 		array('^/rumeur/.*$', 'ROLE_SCENARISTE'),
 		array('^/strategie/.*$', 'ROLE_SCENARISTE'),
 		array('^/objet/.*$', 'ROLE_SCENARISTE'),
+		array('^/pnj/.*$', 'ROLE_SCENARISTE'),
 		array('^/technologie/.*$', 'ROLE_SCENARISTE'),
 		array('^/competenceFamily/.*$', 'ROLE_REGLE'),
 		array('^/level/.*$', 'ROLE_REGLE'),
