@@ -377,7 +377,7 @@ class ParticipantController
 	 * @param Request $request
 	 * @param Application $app
 	 */
-	public function personnageAction(Request $request, Application $app, Participant $participant)
+	/*public function personnageAction(Request $request, Application $app, Participant $participant)
 	{
 		$personnage = $participant->getPersonnage();
 		
@@ -394,7 +394,7 @@ class ParticipantController
 				'participant' => $participant,
 				'lois' => $lois
 		));
-	}
+	}*/
 	
 	/**
 	 * Fourni la page détaillant les relations entre les fiefs
@@ -580,25 +580,25 @@ class ParticipantController
 		if ( ! $groupeGn )
 		{
 			$app['session']->getFlashBag()->add('error','Désolé, vous devez rejoindre un groupe avant de pouvoir créer votre personnage.');
-			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $groupeGn->getGn()->getId())),301);
 		}
 		
 		if ( ! $participant->getBillet() )
 		{
 			$app['session']->getFlashBag()->add('error','Désolé, vous devez avoir un billet avant de pouvoir créer votre personnage.');
-			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $groupeGn->getGn()->getId())),301);
 		}
 		
 		if ( $groupeGn->getGroupe()->getLock() == true)
 		{
 			$app['session']->getFlashBag()->add('error','Désolé, ce groupe est fermé. La création de personnage est temporairement désactivé.');
-			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $groupeGn->getGn()->getId())),301);
 		}
 		
 		if ( $participant->getPersonnage() )
 		{
 			$app['session']->getFlashBag()->add('error','Désolé, vous disposez déjà d\'un personnage.');
-			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $groupeGn->getGn()->getId())),301);
 		}
 		
 		$groupe = $groupeGn->getGroupe();
@@ -642,7 +642,7 @@ class ParticipantController
 			$app['orm.em']->flush();
 			
 			$app['session']->getFlashBag()->add('success','Votre personnage a été sauvegardé.');
-			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $groupeGn->getGn()->getId())),301);
 		}
 		
 		return $app['twig']->render('public/participant/personnage_old.twig', array(
@@ -726,25 +726,25 @@ class ParticipantController
 		if ( ! $groupeGn )
 		{
 			$app['session']->getFlashBag()->add('error','Désolé, vous devez rejoindre un groupe avant de pouvoir créer votre personnage.');
-			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $groupeGn->getGn()->getId())),301);
 		}
 		
 		if ( ! $participant->getBillet() )
 		{
 			$app['session']->getFlashBag()->add('error','Désolé, vous devez avoir un billet avant de pouvoir créer votre personnage.');
-			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $groupeGn->getGn()->getId())),301);
 		}
 
 		if ( $groupeGn->getGroupe()->getLock() == true)
 		{
 			$app['session']->getFlashBag()->add('error','Désolé, ce groupe est fermé. La création de personnage est temporairement désactivé.');
-			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $groupeGn->getGn()->getId())),301);
 		}
 	
 		if ( $participant->getPersonnage() )
 		{
 			$app['session']->getFlashBag()->add('error','Désolé, vous disposez déjà d\'un personnage.');
-			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $groupeGn->getGn()->getId())),301);
 		}
 		
 		$groupe = $groupeGn->getGroupe();
@@ -874,7 +874,7 @@ class ParticipantController
 	
 	
 			$app['session']->getFlashBag()->add('success','Votre personnage a été sauvegardé.');
-			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $groupeGn->getGn()->getId())),301);
 		}
 	
 		$ages = $app['orm.em']->getRepository('LarpManager\Entities\Age')->findAllOnCreation();
@@ -1037,6 +1037,52 @@ class ParticipantController
 	}
 	
 	/**
+	 * Page listant les règles à télécharger
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function regleListAction(Request $request, Application $app, Participant $participant)
+	{
+		$regles = $app['orm.em']->getRepository('LarpManager\Entities\Rule')->findAll();
+	
+		return $app['twig']->render('public/rule/list.twig', array(
+				'regles' => $regles,
+				'participant' => $participant,
+		));
+	}
+	
+	/**
+	 * Détail d'une règle
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Participant $participant
+	 * @param Rule $regle
+	 */
+	public function regleDetailAction(Request $request, Application $app, Participant $participant, Rule $rule)
+	{
+		return $app['twig']->render('public/rule/detail.twig', array(
+				'regle' => $rule,
+				'participant' => $participant,
+		));
+	}	
+	
+	/**
+	 * Télécharger une règle
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Participant $participant
+	 * @param Rule rule
+	 */
+	public function regleDocumentAction(Request $request, Application $app, Participant $participant, Rule $rule)
+	{
+		$filename = __DIR__.'/../../../private/rules/'.$rule->getUrl();
+		return $app->sendFile($filename);
+	}
+	
+	/**
 	 * Rejoindre un groupe
 	 *
 	 * @param Request $request
@@ -1067,21 +1113,21 @@ class ParticipantController
 				if ( ! $groupe )
 				{
 					$app['session']->getFlashBag()->add('error','Désolé, le code que vous utilisez ne correspond à aucun groupe');
-					return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+					return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),301);
 				}
 				
 				$groupeGn = $groupe->getGroupeGn($participant->getGn());
 				if ( ! $groupeGn )
 				{
 					$app['session']->getFlashBag()->add('error','Le code correspond à un groupe qui ne participe pas à cette session de jeu.');
-					return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+					return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),301);
 				}
 				
 				// il faut que le groupe ai un responsable pour le rejoindre
 				if ( ! $groupeGn->getResponsable() )
 				{
 					$app['session']->getFlashBag()->add('error','Le groupe n\'a pas encore de responsable, vous ne pouvez pas le rejoindre pour le moment.');
-					return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+					return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),301);
 				}
 					
 				$participant->setGroupeGn($groupeGn);
@@ -1092,7 +1138,7 @@ class ParticipantController
 				$app['notify']->joinGroupe($participant, $groupeGn);
 						
 				$app['session']->getFlashBag()->add('success','Vous avez rejoint le groupe.');
-				return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);				
+				return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),301);				
 		}
 		
 		return $app['twig']->render('public/groupe/join.twig', array(
@@ -1127,7 +1173,7 @@ class ParticipantController
 	
 			$app['session']->getFlashBag()->add('success','Le personnage secondaire a été enregistré.');
 						
-			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGroupeGn()->getGn()->getId())),301);
 		}
 	
 		return $app['twig']->render('public/participant/personnageSecondaire.twig', array(
@@ -1237,6 +1283,23 @@ class ParticipantController
 		return $app['twig']->render('public/participant/origine.twig', array(
 				'form' => $form->createView(),
 				'personnage' => $personnage,
+				'participant' => $participant,
+		));
+	}
+
+	/**
+	 * Liste des religions
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function religionListAction(Request $request, Application $app, Participant $participant)
+	{
+		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Religion');
+		$religions = $repo->findAllOrderedByLabel();
+	
+		return $app['twig']->render('public/participant/religion.twig', array(
+				'religions' => $religions,
 				'participant' => $participant,
 		));
 	}

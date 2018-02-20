@@ -1,0 +1,51 @@
+{% extends "layout.twig" %}
+
+{% block title %}Gn{% endblock title %}
+
+{% block content %}
+
+	<div class="well well-sm clearfix">
+		<ol class="breadcrumb">
+			<li><a href="{{ path('homepage')  }}">Accueil</a></li>
+			<li class="active">Liste des fiefs</li>
+		</ol>
+		
+		<blockquote>
+			Voici la liste des fiefs, des groupes les possédants, et des pays dont ils font partit.
+		</blockquote>
+		
+	</div>
+	
+	<table class="table table-condensed">
+		<thead>
+			<tr>
+				<th>Fief</th>
+				<th>Pays</th>
+				<th>Groupe</th>
+				<th>Nbr de joueurs</th>
+		</thead>
+		<tbody>
+		{% for fief in fiefs %}
+			<tr>
+				<td>{{ fief.nom }}</td>
+				<td>{{ fief.root.nom }}</td>
+				<td>
+				{% if fief.groupe %}
+					<a href="{{ path('groupe.detail', {'index': fief.groupe.id}) }}">#{{  fief.groupe.numero }}&nbsp;{{ fief.groupe.nom }}</a>
+				{% else %}
+					libre
+				{% endif %}
+				</td>
+				<td>
+				{% if fief.groupe %}
+					{% for session in fief.groupe.groupeGns %}
+						{{ session.gn.label }} : {{ session.participants|length }}&nbsp;/&nbsp;
+					{% endfor %}
+				{% endif %}
+				</td>
+			</tr>
+		{% endfor %}
+		</tbody>
+	</table>
+	
+{% endblock content %}

@@ -66,8 +66,7 @@ class GnControllerProvider implements ControllerProviderInterface
 		 */
 		$controllers->match('/','LarpManager\Controllers\GnController::listAction')
 			->bind("gn.list")
-			->method('GET')
-			->before($mustBeAdmin);
+			->method('GET');
 
 		/**
 		 * Ajouter un gn
@@ -186,7 +185,7 @@ class GnControllerProvider implements ControllerProviderInterface
 			->before($mustBeAdmin);
 			
 		/**
-		 * Document FEDEGN
+		 * Modifier un gn
 		 */
 		$controllers->match('/{gn}/fedegn','LarpManager\Controllers\GnController::fedegnAction')
 			->assert('gn', '\d+')
@@ -205,6 +204,42 @@ class GnControllerProvider implements ControllerProviderInterface
 			->method('GET');
 			
 		/**
+		 *  Impression des backgrounds de chefs de groupes pour un jeu
+		 */
+		$controllers->match('/{gn}/groupes/backgrounds/chef','LarpManager\Controllers\GnController::backgroundsChefAction')
+			->assert('gn', '\d+')
+			->convert('gn', 'converter.gn:convert')
+			->bind('gn.groupes.backgrounds.chef')
+			->method('GET');
+			
+		/**
+		 *  Impression des backgrounds de groupes pour un jeu
+		 */
+		$controllers->match('/{gn}/groupes/backgrounds/groupe','LarpManager\Controllers\GnController::backgroundsGroupeAction')
+			->assert('gn', '\d+')
+			->convert('gn', 'converter.gn:convert')
+			->bind('gn.groupes.backgrounds.groupe')
+			->method('GET');
+			
+		/**
+		 *  Impression des backgrounds des membres groupes pour un jeu
+		 */
+		$controllers->match('/{gn}/groupes/backgrounds/membres','LarpManager\Controllers\GnController::backgroundsMembresAction')
+			->assert('gn', '\d+')
+			->convert('gn', 'converter.gn:convert')
+			->bind('gn.groupes.backgrounds.membres')
+			->method('GET');
+			
+		/**
+		 *  Impression des enveloppes pour un jeu
+		 */
+		$controllers->match('/{gn}/groupes/enveloppes','LarpManager\Controllers\GnController::enveloppesAction')
+			->assert('gn', '\d+')
+			->convert('gn', 'converter.gn:convert')
+			->bind('gn.groupes.enveloppes')
+			->method('GET');
+			
+		/**
 		 * Liste des groupes prévu sur un jeu
 		 */
 		$controllers->match('/{gn}/groupes','LarpManager\Controllers\GnController::groupesAction')
@@ -214,34 +249,22 @@ class GnControllerProvider implements ControllerProviderInterface
 			->method('GET');
 			
 		/**
-		 * Liste des personnages prévu sur un jeu
+		 * Liste des groupes recherchant des joueurs
 		 */
-		$controllers->match('/{gn}/personnages','LarpManager\Controllers\GnController::personnagesAction')
+		$controllers->match('/{gn}/groupesPlaces','LarpManager\Controllers\GnController::groupesPlacesAction')
 			->assert('gn', '\d+')
 			->convert('gn', 'converter.gn:convert')
-			->bind("gn.personnages")
-			->method('GET')
-			->before($mustBeAdmin);
-		
-		/**
-		 * Liste des pnjs prévu sur un jeu
-		 */	
-		$controllers->match('/{gn}/pnj','LarpManager\Controllers\GnController::pnjsAction')
-			->assert('gn', '\d+')
-			->convert('gn', 'converter.gn:convert')
-			->bind("gn.pnjs")
-			->method('GET')
-			->before($mustBeAdmin);
+			->bind("gn.groupesPlaces")
+			->method('GET');
 			
 		/**
-		 * Liste des personnages renommé prévu sur un jeu
+		 * La fiche de personnage d'un participant au gn.
 		 */
-		$controllers->match('/{gn}/personnages/renom','LarpManager\Controllers\GnController::renomAction')
+		$controllers->match('/{gn}/personnage', 'LarpManager\Controllers\GnController::personnageAction')
 			->assert('gn', '\d+')
 			->convert('gn', 'converter.gn:convert')
-			->bind("gn.personnages.renom")
-			->method('GET')
-			->before($mustBeAdmin);
+			->bind("gn.personnage")
+			->method('GET');
 			
 		return $controllers;
 	}

@@ -113,6 +113,15 @@
 			label {
 				margin-bottom: 0px;
 			}
+			
+			/* remove label background elements */
+			.leaflet-tooltip.my-labels {
+			  background-color: transparent;
+			  border: transparent;
+			  box-shadow: none;
+			  font-weight: bold;
+			  font-size: 20px;
+			}
 		</style>
 {% endblock %}
 
@@ -147,6 +156,7 @@
 <script src="{{ app.request.basepath }}/leaflet/spin.min.js"></script>
 <script src="{{ app.request.basepath }}/leaflet/leaflet.spin.min.js"></script>
 <script src="{{ app.request.basepath }}/js/randomColor.min.js"></script>
+<script src="{{ app.request.basepath }}/turf/turf-3.0.11.min.js"></script>
 
 
 <script>
@@ -184,6 +194,8 @@
 
 			// Collection des geometries des pays		
 			countriesGeom: null,
+			countriesLabelLayer : null,
+			data_points : null,
 
 			// Collection des geometries des régions		
 			regionsGeom: null,
@@ -277,6 +289,13 @@
 				    iconAnchor:   [24, 24], // point of the icon which will correspond to marker's location
 				    popupAnchor:  [-48, 96] // point from which the popup should open relative to the iconAnchor
 				});
+
+				this.data_points = {
+				    "type": "FeatureCollection",
+				    "name": "test-points-short-named",
+				    "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+				    "features": []
+				};
 
 				this.languagePattern = new L.StripePattern({
 					'color': 'red',
@@ -468,6 +487,13 @@
 				      }
 				});
 
+				L.Draw.Ville = L.Draw.Marker.extend({
+					initialize: function (map, options) {
+						 L.Draw.Marker.prototype.initialize.call(this, map, options);
+				          this.type = 'ville';
+				      }
+				});
+
 				L.Draw.Itineraire = L.Draw.Polyline.extend({
 					 initialize: function (map, options) {
 						 L.Draw.Polyline.prototype.initialize.call(this, map, options);
@@ -559,6 +585,15 @@
 			// Création des collections de geometries
 			createGeomCollection: function() {
 				this.countriesGeom = new L.geoJson(false, {style: this.territoireStyle, onEachFeature: this.onEachFeature});
+				
+				this.countriesLabelLayer = new L.geoJson(null, {
+						pointToLayer: function(feature,latlng){
+						    label = String(feature.properties.name) // .bindTooltip can't use straight 'feature.properties.attribute'
+						    return new L.CircleMarker(latlng, {
+						      radius: 0.1,
+						    }).bindTooltip(label, {permanent: true, direction: "center", className: "my-labels"}).openTooltip();
+						    }
+						  });				
 				this.regionsGeom = new L.geoJson(false, {style: this.regionStyle, onEachFeature: this.onEachFeature});
 				this.fiefsGeom = new L.geoJson(false, {style: this.fiefStyle, onEachFeature: this.onEachFeature});
 				//this.groupesGeom = new L.layerGroup();
@@ -936,7 +971,7 @@
 						    	geom.properties.id = country.id;
 						    	geom.properties.groupes = country.groupes;
 						    	geom.properties.desordre = country.desordre;
-						    	cartographie.countriesGeom.addData(geom);
+						    	cartographie.countriesGeom.addData(geom);						    	
 						    }
 						    
 						    cartographie.countriesList[country.id] = country;
@@ -1184,7 +1219,8 @@
 
 			// Applique les geometries et les layers sur la carte
 			applyOnMap: function() {
-				this.countriesGeom.addTo(this.map);
+				this.countriesGeom.addTo(this.map);			
+				
 				//this.groupesGeom.addTo(this.map);
 
 				// Options disponibles dans le controlLayer
@@ -1232,6 +1268,23 @@
 				this.map.on(L.Draw.Event.CREATED, this.drawCreated);
 				this.map.on(L.Draw.Event.EDITED, this.drawEdited);
 				
+			},
+
+			createLabel: function() {
+				 var polygon = L.polygon([[[-81, 41], [-88, 36], [-84, 31], [-80, 33], [-77, 39], [-81, 41]]]);
+				 console.log(polygon);
+				 var center = polygon.getCenter();
+				 console.log(center);
+				 this.countriesLabelLayer.addTo(this.map);
+				    	
+				    /*cartographie.data_points.features.push( 
+				    		{ 
+					    		"type": "Feature", 
+					    		"properties": { "name": country.name }, 
+					    		"geometry": { "type": "Point", "coordinates": center.geometry.coordinates } 
+					    	});
+					});
+					this.countriesLabelLayer.addData(this.data_points);*/
 			}
 			
 	};
@@ -1263,6 +1316,8 @@
 	//cartographie.loadLangues();
 	
 	cartographie.applyOnMap();
+
+	cartographie.createLabel();
 
 </script>
 

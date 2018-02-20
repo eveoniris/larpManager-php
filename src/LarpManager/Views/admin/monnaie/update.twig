@@ -6,12 +6,12 @@
 
 	<ol class="breadcrumb">
 		<li><a href="{{ path('homepage') }}">Accueil</a></li>
-		<li><a href="{{ path('monnaie') }}">Liste des monnaie</a></li>
+		<li><a href="{{ path('lieu') }}">Liste des monnaie</a></li>
 		<li class="active">Mise à jour d'une monnaie</li>
 	</ol>
 	
 	<div class="well well-sm">
-		<form data-toggle="validator" action="{{ path('monnaie.update', {'monnaie': monnaie.id}) }}" method="POST" {{ form_enctype(form) }}  novalidate>
+		<form action="{{ path('monnaie.update', {'monnaie': monnaie.id}) }}" method="POST" {{ form_enctype(form) }}  novalidate>
 			<fieldset>
 				<legend>Mise à jour d'une monnaie</legend>
 				{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}

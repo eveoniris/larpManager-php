@@ -1,0 +1,25 @@
+<ul class="pagination">
+	<li {% if pagination.page <= 1 %} class="disabled" {%  endif %}>
+    	<a href="{{ path(pagination.route, pagination.route_params|merge({'page': 1})) }}" aria-label="First"><span aria-hidden="true"><<</span></a>
+    </li>
+    	
+  	<li {% if pagination.page <= 1 %} class="disabled" {%  endif %}>    		
+		<a href="{{ path(pagination.route, pagination.route_params|merge({'page': pagination.page-1})) }}" aria-label="Previous"><span aria-hidden="true"><</span></a>
+    </li>
+
+    {#display p numbers only from p-4 to p+4 but don't go <1 or >pages_count#}
+    {% for p in range(max(pagination.page-4, 1), min(pagination.page+4, pagination.pages_count)) %}
+    <li {% if p == pagination.page %} class="active"{% endif %}>
+    	<a href="{{ path(pagination.route, pagination.route_params|merge({'page': p})) }}">{{ p }}</a>
+	</li>
+	{% endfor %}
+        
+        
+	<li {% if pagination.page >= pagination.pages_count %} class="disabled"{% endif %}>
+		<a href="{{ path(pagination.route,pagination.route_params|merge({'page': pagination.page+1})) }}">></a>
+	</li>
+	
+	<li {% if pagination.page >= pagination.pages_count %} class="disabled"{% endif %}>
+		<a href="{{ path(pagination.route,pagination.route_params|merge({'page': pagination.pages_count})) }}">>></a>
+	</li>    
+</ul>

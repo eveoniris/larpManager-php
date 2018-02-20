@@ -1,0 +1,284 @@
+{% extends "layout.twig" %}
+
+{% block title %}{{ groupe.nom }}{% endblock title %}
+
+{% block content %}
+
+<div class="well bs-component">	
+	<form action="{{ path('groupe.personnage.add',{'index':groupe.id}) }}" method="POST" {{ form_enctype(form) }}>
+		<fieldset>
+			<legend>{{ groupe.nom }} - <small>Création d'un personnage</small></legend>
+			{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+
+			{{ form_row(form.nom) }}
+			{{ form_row(form.surnom) }}
+			{{ form_row(form.age) }}
+			{{ form_row(form.genre) }}
+			{{ form_row(form.intrigue) }}
+			
+			{{ form_row(form.classe) }}
+	
+			<div id="classeInfo">
+			</div>
+			
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					Compétences
+				</div>
+				
+				<div class="panel-body">
+					<p>Composez votre personnage avec une ou plusieurs compétences.</p>
+					<ul>
+					<li>Les compétences surlignées en vert correspondent aux compétences favorites de votre classe</li>
+					<li>Les compétences surlignées en violet correspondent aux compétences normales de votre classe</li>
+					<li>Les compétences acquises à la création ne peuvent pas être dés-selectionnée.</li>
+					</ul>
+					<div class="col-sm-6">
+					
+						<div class="list-group">
+							<div class="form-group">
+							{% for competence in competences %}
+								<div class="col-sm-6">
+									<div class="checkbox">
+										<label class>
+											<input name="competence[{{ competence.id }}]" index="{{ competence.id }}" type="checkbox" class="competence">
+											<span  data-toggle="tooltip" title="{{ competence.description}}">{{ competence.nom }}</span>
+										</label>
+									</div>
+								</div>
+							{% endfor %}
+							</div>
+						</div>
+						
+					</div>
+					<div class="col-sm-6">
+						<div id="competenceList">
+							<h5>Vos compétences <small><span id="xp">10</span> points d'expériences</small></h5>
+						</div>
+					</div>
+					
+				</div>
+			</div>
+							
+			{{ form_rest(form) }}
+		</fieldset>
+	</form>
+</div>
+{% endblock content %}
+
+{% block javascript %}
+
+	{{  parent() }}
+	<script>
+		var xp_initial = 10;
+		var xp = xp_initial;
+		var niveaux = {}; // liste des niveaux et leur cout
+		var competences = {}; // liste des competences
+		var competences_selection = []; // liste des competences choisies
+		
+		// mise à jour du panneau d'information sur la classe
+		var update_class_info = function(classeId) {
+			$.ajax({
+				'url' : "{{ path('personnage.classe') }}",
+				'type' :  'get',
+				'data' : {classeId: classeId},
+				})
+				.done(function(result) {
+					$('#classeInfo').fadeToggle("slow", function() {
+						competences = result.competences;
+						niveaux = result.niveaux;
+
+						clean_competence_list();
+						init_competence_list();
+						
+						$('#classeInfo').html(result.html);
+						$('#classeInfo').fadeToggle("slow");
+					});
+				});			
+		};
+
+		// fourni le niveau actuelle d'une competence
+		var getCompetenceNiveau = function(index)
+		{
+			return competences_selection[index].niveau;
+		}
+		
+		// fourni le cout en xp pour une competence en fonction de son niveau
+		var getCompetenceCout = function(index,niveau)
+		{
+			if ( ! competences[index])	return niveaux[niveau].coutMeconnu;
+			var type = competences[index].type;
+
+			switch (type) {
+				case 'creation' : // on traite les competences acquises à la creation comme des compétence favorite
+					if (niveau == 1 ) return 0; // le premier niveau est gratuit
+				case 'favorite': 
+					return niveaux[niveau].coutFavori;
+					break;
+				case 'normale' :
+					return niveaux[niveau].coutNormal;
+					break;
+			}	
+		};
+
+		// met à jour les points d'expériences
+		var update_xp = function()
+		{
+			$('span#xp').text(xp);
+		}
+		
+		// lorsque l'on choisi une compétence, celle-ci doit fournir le niveau "apprentit" au joueur
+		// et mettre à jour son compte de XP en fonction de la classe (compétences favorites, normales, acquise à la création)
+		var get_competence_info = function(competenceId) {
+			$.ajax({
+				'url': "{{ path('personnage.competence') }}",
+				'type' : 'get',
+				'data' : {competenceId: competenceId},
+				})
+				.done(function(result) {
+					
+				});
+		};
+		
+		// supprime les attribus visuels des competences et décoche toute les competences
+		var clean_competence_list = function() {
+			$('input.competence[type="checkbox"]').prop('checked', false); 
+			$('input.competence[type="checkbox"]').removeAttr('disabled');
+			$('input.competence[type="checkbox"]').parent().removeClass('bg-success');
+			$('input.competence[type="checkbox"]').parent().removeClass('bg-info');
+		};
+
+		// indique visuellement quelles sont les competences favorites et normales
+		// et indique leur cout via un attribu
+		var init_competence_list = function() {
+
+			$('input.competence[type="checkbox"]').each(function() {
+				var id  = $(this).attr('index');
+				if ( competences[id] ) {
+					switch ( competences[id].type) {
+					case 'creation':
+						$(this).prop("checked", true);
+						$(this).attr("disabled",true);
+						$(this).parent().addClass('bg-success');
+						$(this).trigger('change');
+						break;
+					case 'favorite':
+						$(this).parent().addClass('bg-success');
+						break;
+					case 'normale':
+						$(this).parent().addClass('bg-info');
+					} 
+				}
+			});
+		};
+
+		// lorsqu'une competence est selectionner
+		var selection_competence = function(checkbox) {
+			
+			// trouver le cout de la competence selectionné
+			var competenceId = $(checkbox).attr('index');
+			
+			cout = getCompetenceCout(competenceId,1); // pour obtenir le cout du premier niveau
+			
+			if ( xp - cout >= 0 ) { // le joueur a suffisement de xp
+
+				// ajoute la competence au niveau 1 dans sa selection
+				var newCompetence = {
+						index: competenceId,
+						niveau: 1
+				};
+				competences_selection[competenceId] = newCompetence;
+				
+				xp -= cout;
+				update_xp();
+				var competence = $(checkbox).siblings('span').clone();
+				var niveau = '<input class="niveau" type="range" min="1" max="3" value="1" currentValue="1" competenceId="'+competenceId+'" />';
+
+				$(competence).append("&nbsp;(<span class='niveau'>Niveau 1</span>)");
+				$(competence).append($(niveau));
+				$("#competenceList").append($(competence));
+				$(competence).wrap('<div class="competence_'+$(checkbox).attr('index')+'"></div>');
+				range_event();
+			}
+			else { // le joueur n'a pas assez de xp
+				$(checkbox).prop("checked", false);
+			}
+		};
+
+		// lorsqu'une competence est deselectionnée
+		var deselection_competence = function(checkbox) {
+			var competenceId = $(checkbox).attr('index');
+
+			var niveau = getCompetenceNiveau(competenceId);
+			cout = getCompetenceCout(competenceId,niveau);
+			xp += cout;
+			update_xp();
+			
+			$('div.competence_'+$(checkbox).attr('index')).remove();
+		};
+
+		var range_event = function(input) {
+			$('input.niveau[type="range"]').on('change', function() {
+				
+				var competenceId = $(this).attr('competenceId');
+				var oldNiveau = $(this).attr('currentValue');
+				var newNiveau = $(this).val();
+
+				console.log('changement du niveau de la competence ' + competenceId);
+				console.log('ancien niveau ' + oldNiveau);
+				console.log('nouveau niveau ' + newNiveau);
+
+				if ( newNiveau > oldNiveau )
+				{
+					var cout = getCompetenceCout(competenceId,newNiveau);
+					if ( xp - cout >= 0 )
+					{
+						xp-= cout;
+						update_xp();
+						$(this).attr('currentValue',newNiveau);
+						$(this).siblings('span.niveau').text('Niveau '+newNiveau);
+					}
+					else
+					{
+						$(this).val(oldNiveau);	
+					}
+				}
+				else if ( newNiveau < oldNiveau )
+				{
+					var cout = getCompetenceCout(competenceId,oldNiveau);
+					xp+= cout;
+					update_xp();
+					$(this).attr('currentValue',newNiveau);
+					$(this).siblings('span.niveau').text('Niveau '+newNiveau);
+				}
+			});
+		};
+		
+		// lorsque l'on choisi une classe, le panneau d'information de la classe doit ce mettre à jour
+		// de plus la/les compétences acquise à la création de cette classe doivent être cochée
+		jQuery(document).ready(function() {
+
+			// chargement de la classe pre-selectionnée
+			$("#personnage_classe option:selected").each(function() {
+				update_class_info($(this).val());
+				
+			});
+
+			// lorsque la classe change, on recharge les informations de la classe
+			$("#personnage_classe").on('change',function(){
+				update_class_info($(this).val());
+			});
+
+			// ecoute les événement de selection/deselection d'une competence
+			$('input.competence').on('change', function() {
+				if ($(this).is(':checked')) {				
+					selection_competence($(this));
+				}
+				else {
+					deselection_competence($(this));
+				}
+			});
+		});
+		
+	</script>
+{% endblock javascript %}

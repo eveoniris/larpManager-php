@@ -64,6 +64,22 @@ class Groupe extends BaseGroupe
 	}
 	
 	/**
+	 * Fourni la session d'un groupe relatif à un GN
+	 * @param Gn $gn
+	 */
+	public function getSession(Gn $gn)
+	{
+		foreach ( $this->getGroupeGns() as $groupeGn)
+		{
+			if ( $groupeGn->getGn() == $gn )
+			{
+				return $groupeGn;
+			}
+		}
+		return null;
+	}
+	
+	/**
 	 * Fourni la prochaine session de jeu
 	 */
 	public function getNextSession()

@@ -1,0 +1,93 @@
+{% extends "layout.twig" %}
+
+{% block title %}Gn{% endblock title %}
+
+{% block content %}
+
+	<div class="well well-sm clearfix">
+		<ol class="breadcrumb">
+			<li><a href="{{ path('homepage')  }}">Accueil</a></li>
+			<li><a href="{{path('gn.list') }}">Liste des GNs</a></li>
+			<li class="active">{{ gn.label }}</li>
+		</ol>
+		
+		<blockquote>
+			{% if gn.description %}
+				{{ gn.description|markdown }}
+			{% else %}
+				Aucune description
+			{% endif %}
+		</blockquote>
+		
+		{% if is_granted('ROLE_ADMIN', app.user) %}
+			<div class="pull-right">
+				<a href="{{ path('gn.update', {'gn': gn.id}) }}" class="btn btn-primary">Modifier</a>
+				<a href="{{ path('gn.delete', {'gn': gn.id}) }}" class="btn btn-danger">Supprimer</a>
+			</div>
+		{% endif %}
+		
+	</div>
+	
+	{% if is_granted('ROLE_ADMIN', app.user) %}		
+		<div class="well well-sm">
+		    <div class="header"><h5>Administratif</h5></div>
+			
+				<h6>Création d'un personnage</h6>
+				<p><strong>Nombre de point d'expérience à la création d'un personnage : </strong>{{ gn.xpCreation }}</p>
+				<ul>
+					<li><a href="{{ path('gn.participants', {'gn': gn.id}) }}"><i class="fa fa-users"></i> Participants ({{ gn.participants|length }})</a></li>
+					<li><a href="{{ path('gn.participants.withoutbillet', {'gn': gn.id}) }}"><i class="fa fa-users"></i> Participants sans billet ({{ gn.participantswithoutbillet|length }})</a></li>
+					<li><a href="{{ path('gn.participants.withoutgroup', {'gn': gn.id}) }}"><i class="fa fa-users"></i> Participants sans groupe (mais avec billet) ({{ gn.participantswithoutgroup|length }})</a></li>
+					<li><a href="{{ path('gn.participants.withoutperso', {'gn': gn.id}) }}"><i class="fa fa-users"></i> Participants sans personnage ({{ gn.participantswithoutperso|length }})</a></li>
+					<li><a href="{{ path('gn.groupesReserves', {'gn': gn.id}) }}"><i class="fa fa-download"></i> Groupes réservés</a></li>
+					<li><a href="{{ path('gn.fedegn', {'gn': gn.id}) }}"><i class="fa fa-download"></i> Document FédéGN</a></li>
+					<li><a href="{{ path('billet.add',{'gn': gn.id}) }}"><i class="fa fa-plus"></i> Ajouter un billet</a></li>
+				</ul>
+					    
+				<table class="table">
+				<thead>
+					<tr>
+						<th>Billet</th>
+						<th>Quantité</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+				{% for billet in gn.billets %}
+					<tr>
+						<td>{{ billet.label }}</td>
+						<td>{{ billet.participants|length }}</td>
+						<td>
+							<div class="btn-toolbar pull-right" role="toolbar" aria-label="...">
+								<div class="btn-group" role="group" aria-label="...">
+									<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Liste" href="{{ path('billet.participants', {'billet': billet.id}) }}"><i class="fa fa-users" aria-hidden="true"></i></a>
+									<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Modifier" href="{{ path('billet.update',{'billet':billet.id}) }}"><i class="fa fa-pencil"></i></a>
+									<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Supprimer" href="{{ path('billet.delete',{'billet':billet.id}) }}"><i class="fa fa-eraser"></i></a>
+								</div>
+							</div>
+						</td>
+					</tr>
+				{% endfor %}
+					</tbody>
+				</table>
+			</div>
+	{% endif %}
+	
+	<div class="panel panel-conan">
+		<div class="panel-heading">Informations</div>
+		
+		<div class="panel-body">
+			Ou ? {{ gn.adresse|markdown }}
+			Quand ?
+			Du {{ gn.dateDebut|date('Y-m-d') }} au {{ gn.dateFin|date('Y-m-d') }}.<br />
+		    L'acceuil des joueurs débutera le {{ gn.dateInstallationJoueur|date('Y-m-d') }} à {{ gn.dateInstallationJoueur|date('H:i') }} heure.
+		    
+		    {% if app.user.takePart(gn) %}
+		    	Vous participez à ce jeu
+		    {% else %}
+			    <a href="{{ path('user.gn.participe', {'gn': gn.id}) }}"><i class="fa fa-check" aria-hidden="true"></i>&nbsp;Participer !</a>
+		    {% endif %}
+		    
+		</div>
+	</div>			
+{% endblock %}

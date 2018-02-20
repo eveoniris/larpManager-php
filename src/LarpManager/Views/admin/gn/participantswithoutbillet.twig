@@ -1,0 +1,49 @@
+{% extends "layout.twig" %}
+
+{% block title %}Grandeur nature{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path("gn.list") }}">Liste des grandeur nature</a></li>
+		<li><a href="{{ path('gn.detail', {'gn':gn.id}) }}">{{ gn.label }}</a></li>
+		<li class="active">Liste des participants sans billets</li>
+	</ol>
+
+<div class="well well-sm">
+
+	<div class="header">
+		<h5>Liste des participants à {{ gn.label }} n'ayant pas encore de billets</h5>
+	</div>
+		
+	<a href="{{  path('gn.participants.withoutbillet.csv', {'gn': gn.id}) }}">Télécharger cette liste au format CSV</a>
+	
+	<table class="table table-condensed table-striped table-bordered">
+		<thead>
+			<tr>
+				<th>Participant</th>
+				<th>Email</th>
+				<th />
+			</tr>
+		</thead>
+		<tbody>
+			{% for participant in participants %}
+				<tr>
+					<td>{{ participant.user.etatCivil.nom }} {{ participant.user.etatCivil.prenom }}</td>
+					<td>{{ participant.user.email }}</td>
+					<td>
+						<div class="btn-toolbar pull-right" role="toolbar" aria-label="...">
+							<div class="btn-group" role="group" aria-label="...">
+								<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Choisir le billet" href="{{ path('participant.billet',{'participant':participant.id}) }}"><i class="fa fa-ticket"></i></a>
+							</div>
+						</div>
+					</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>	
+
+</div>
+
+{% endblock content %}

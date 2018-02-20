@@ -32,41 +32,6 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class AdminController
 {
-	// Fourni la liste des modules disponibles
-	private function getModuleList()
-	{
-		$moduleList = Array();
-		$modulePath = __DIR__.'/../Modules';
-		$files = scandir($modulePath);
-		$cleanPath = rtrim($modulePath, '/'). '/';
-		foreach($files as $t) {
-			if ($t<>"." && $t<>"..") {
-				$dir = $cleanPath . $t;
-				if ( is_dir($dir) )  {
-					$moduleList[] = $t;
-				}
-			}
-		}
-		return $moduleList;
-	}
-	
-	private function addModule($module)
-	{
-		
-		// Mise à jour de Views/module/menu.twig
-		// {% include '@Example/Hooks/menu.twig' %}
-		
-		// Mise à jour de Modules/autoload.php
-		// require_once 'Example/bootstrap.php';
-		
-		
-	}
-	
-	private function removeModule($module)
-	{
-		
-	}
-	
 	// Returns a file size limit in bytes based on the PHP upload_max_filesize
 	// and post_max_size
 	private function file_upload_max_size() {
@@ -165,9 +130,6 @@ class AdminController
 		// taille des documents
 		$docTotalSpace = $this->getSymbolByQuantity($this->foldersize(__DIR__.'/../../../private'));
 		
-		// liste des modules
-		$moduleList = $this->getModuleList();
-		
 		return $app['twig']->render('admin/index.twig', array(
 				'phpVersion' => $phpVersion,
 				'zendVersion' => $zendVersion,
@@ -176,7 +138,6 @@ class AdminController
 				'cacheTotalSpace' => $cacheTotalSpace,
 				'logTotalSpace' => $logTotalSpace,
 				'docTotalSpace' => $docTotalSpace,
-				'moduleList' => $moduleList,
 		));
 	}
 	

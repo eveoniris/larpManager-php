@@ -101,6 +101,14 @@ class TerritoireControllerProvider implements ControllerProviderInterface
 			->before($mustBeCartographe);
 			
 		/**
+		 * Liste des fiefs
+		 */
+		$controllers->match('/fief','LarpManager\Controllers\TerritoireController::fiefAction')
+			->bind("territoire.fief")
+			->method('GET')
+			->before($mustBeCartographe);
+			
+		/**
 		 * Ajout d'un territoire
 		 */
 		$controllers->match('/add','LarpManager\Controllers\TerritoireController::addAction')

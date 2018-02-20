@@ -1,0 +1,86 @@
+{% extends "layout.twig" %}
+
+{% block title %}Grandeur nature{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path("gn.list") }}">Liste des grandeur nature</a></li>
+		<li class="active">Détail d'un grandeur nature</li>
+	</ol>
+
+	<div class="row">
+						
+		<div class="col-md-6">
+		
+			<div class="well well-sm">
+				
+			    <div class="header"><h5>{{ gn.label }}</h5></div>
+		    
+		    		    	
+		    	<h6>Description</h6>
+	   			{% if not gn.description %}
+	   				<span class="text-danger">Attention, ce gn n'a pas de description.</span>
+	    		{% else %}
+	    			{{ gn.description|markdown }}
+	    		{% endif %}
+	
+		    	<h6>Création d'un personnage</h6>
+		    			
+		    	<p><strong>Nombre de point d'expérience à la création d'un personnage : </strong>{{ gn.xpCreation }}</p>
+	    			
+		    	<div class="btn-group" role="group" aria-label="...">
+	  				<a class="btn btn-primary" role="button" href="{{ path('gn.update', {'gn' : gn.id}) }}"><span class="glyphicon glyphicon-edit" style="margin-right: 5px;"></span>Modifier</a>
+				</div>
+			</div>
+		</div>
+	    		
+		<div class="col-md-6">
+			<div class="well well-sm">
+		    	<div class="header"><h5>Administratif</h5></div>
+			
+				<ul>
+					<li><a href="{{ path('gn.participants', {'gn': gn.id}) }}"><i class="fa fa-users"></i> Participants ({{ gn.participants|length }})</a></li>
+					<li><a href="{{ path('gn.participants.csv', {'gn': gn.id}) }}"><i class="fa fa-users"></i> Participants CSV({{ gn.participants|length }})</a></li>
+					<li><a href="{{ path('gn.groupes.csv', {'gn': gn.id}) }}"><i class="fa fa-users"></i> Groupes CSV</a></li>
+					<li><a href="{{ path('gn.participants.withoutbillet', {'gn': gn.id}) }}"><i class="fa fa-users"></i> Participants sans billet ({{ gn.participantswithoutbillet|length }})</a></li>
+					<li><a href="{{ path('gn.participants.withoutgroup', {'gn': gn.id}) }}"><i class="fa fa-users"></i> Participants sans groupe (mais avec billet) ({{ gn.participantswithoutgroup|length }})</a></li>
+					<li><a href="{{ path('gn.participants.withoutperso', {'gn': gn.id}) }}"><i class="fa fa-users"></i> Participants sans personnage ({{ gn.participantswithoutperso|length }})</a></li>
+					<li><a href="{{ path('gn.groupesReserves', {'gn': gn.id}) }}"><i class="fa fa-download"></i> Groupes réservés</a></li>
+					<li><a href="{{ path('gn.fedegn', {'gn': gn.id}) }}"><i class="fa fa-download"></i> Document FédéGN</a></li>
+					<li><a href="{{ path('billet.add',{'gn': gn.id}) }}"><i class="fa fa-plus"></i> Ajouter un billet</a></li>
+				</ul>
+					    
+				<table class="table">
+				<thead>
+					<tr>
+						<th>Billet</th>
+						<th>Quantité</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+				{% for billet in gn.billets %}
+					<tr>
+						<td>{{ billet.label }}</td>
+						<td>{{ billet.participants|length }}</td>
+						<td>
+							<div class="btn-toolbar pull-right" role="toolbar" aria-label="...">
+								<div class="btn-group" role="group" aria-label="...">
+									<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Liste" href="{{ path('billet.participants', {'billet': billet.id}) }}"><i class="fa fa-users" aria-hidden="true"></i></a>
+									<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Modifier" href="{{ path('billet.update',{'billet':billet.id}) }}"><i class="fa fa-pencil"></i></a>
+									<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Supprimer" href="{{ path('billet.delete',{'billet':billet.id}) }}"><i class="fa fa-eraser"></i></a>
+								</div>
+							</div>
+						</td>
+					</tr>
+				{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+	
+			
+{% endblock %}

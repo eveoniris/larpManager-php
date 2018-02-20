@@ -1,0 +1,78 @@
+{% extends "layout.twig" %}
+
+{% block title %}Classes{% endblock title %}
+
+{% block content %}
+
+		<ol class="breadcrumb">
+			<li><a href="{{ path('homepage')  }}">Accueil</a></li>
+			<li><a href="{{ path('participant.index', {'participant' : participant.id}) }}">{{ participant.gn.label }}</a></li>
+			<li class="active">Les classes</li>
+		</ol>
+	
+		<div class="row">
+		{% for classe in classes %}
+			<div class="col-sm-12 col-md-12">
+			<div class="panel panel-default">
+
+				<div class="header">
+					<h5>{{ classe.label }}</h5>
+				</div>
+				
+				<div class="panel-body">
+					<blockquote>
+						<p class="text-justify">{{ classe.description|markdown }}</p>
+					</blockquote>
+					<div class="row">
+						<div class="col-lg-3">
+							<img width="184" height="250" alt="{{ classe.labelFeminin }}" src="{{ app.request.basepath }}/img/{{ classe.imageF }}" />
+						</div>
+						<div class="col-lg-6">
+							<h6>
+								<p class="text-center">Compétences acquises à la création</p>
+							</h6>
+							
+							<p>
+					      		{% for competenceFamily in classe.competenceFamilyCreations %}
+									{% if loop.index != 1 %}&nbsp;<i class="fa fa-ellipsis-h"></i>&nbsp;{% endif %}
+				      				<span data-toggle="tooltip" data-placement="top" title="{{ competenceFamily.descriptionRaw }}">{{ competenceFamily.label }}</span>
+				      			{% endfor %}
+					      	</p>
+						
+							<h6>
+								<p class="text-center">Compétences favorites</p>
+							</h6>
+							
+					      	<p>
+								{% for competenceFamily in classe.competenceFamilyFavorites %}
+									{% if loop.index != 1 %}&nbsp;<i class="fa fa-ellipsis-h"></i>&nbsp;{% endif %}
+				      				<span data-toggle="tooltip" data-placement="top" title="{{ competenceFamily.descriptionRaw }}">{{ competenceFamily.label }}</span>
+				      			{% endfor %}
+					      	</p>
+					      	
+							<h6>
+								<p class="text-center">Compétences normales</p>
+							</h6>
+							
+					      	<p>
+								{% for competenceFamily in classe.competenceFamilyNormales %}
+									{% if loop.index != 1 %}&nbsp;<i class="fa fa-ellipsis-h"></i>&nbsp;{% endif %}
+				      				<span  data-toggle="tooltip" data-placement="top" title="{{ competenceFamily.descriptionRaw }}">{{ competenceFamily.label }}</span>
+				      			{% endfor %}
+						    </p>
+				      		
+						</div>
+						<div class="col-lg-3">
+							<img width="184" height="250" alt="{{ classe.labelMasculin }}" src="{{ app.request.basepath }}/img/{{ classe.imageM }}" />
+						</div>
+					</div>
+				</div>
+			</div>
+			</div>
+		{% endfor %}
+
+		</div> <!-- end row -->
+		
+	
+
+{% endblock content %}

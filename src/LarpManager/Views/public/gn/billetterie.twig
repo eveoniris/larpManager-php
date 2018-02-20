@@ -1,0 +1,72 @@
+{% extends "layout.twig" %}
+
+{% block title %}Gn{% endblock title %}
+
+{% block content %}
+
+	<div class="well well-sm">
+		<ol class="breadcrumb">
+			<li><a href="{{ path('homepage')  }}">Accueil</a></li>
+			<li><a href="{{path('user.gn.list') }}">Liste des GNs</a></li>
+			<li class="active">Billetterie -- {{ gn.label }}</li>
+		</ol>
+		
+		<blockquote>
+			Si vous voulez réserver un groupe, prennez une place "Réservation d'un groupe", et indiquez dans le formulaire le nom du groupe que vous voulez réserver. La place PJ du chef de groupe est comprise dans le tarif réservation de groupe.
+			Une fois votre paiement effectué, Eve-oniris recevra une notification et vous donnera les droits necessaire pour que vous puissiez administrer votre groupe.
+		</blockquote>
+		<blockquote>
+			Attention, le site HelloAsso qui nous permet de gérer les inscriptions en ligne va vous solliciter pour vous demander un don, en effet, sa prestation est gratuite et il compte sur la générosité des utilisateurs pour se rémunérer. Libre à vous d'accepter ou refuser, soyez-y simplement attentifs, il vous le proposera par défaut.
+			Votre inscription sera prise en compte du point de vue du paiement, mais une démarche humaine est nécessaire pour valider l'inscription sur larpmanager. Celle-ci sera effectuée dans les 3 jours maximum après le paiement.
+		</blockquote>
+	
+	
+	<div class="row">
+		<div class="col-md-7">
+			En cas de problème d'affichage, utilisez <a href="https://www.helloasso.com/associations/eve-oniris/evenements/legendes-d-hyboree-3">le lien suivant</a>.
+			{{ gn.billetterie|raw }}
+		</div>
+		<div class="col-md-5">
+			<table class="table table-stripped table-condensed">
+				<thead>
+					<tr>
+						<th>Numéro</th>
+						<th>Groupe</th>
+						<th>Statut</th>
+						<th>Chef de groupe opus 2</th>
+						<th>Pays</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for groupeGn in groupeGns %}
+						{% set oldGroupeGn = groupeGn.groupe.groupeGnById(1) %}
+						<tr>
+							<td>{{ groupeGn.groupe.numero }}</td>
+							<td>{{ groupeGn.groupe.nom }}</td>
+							<td>
+								{% if groupeGn.free %}<span class="text-success">Libre</span>{% else %}<span class="text-danger">Reservé</span>{% endif %}</td>
+							<td>
+								{%if oldGroupeGn %}
+									{% if oldGroupeGn.responsable %}
+										{{ oldGroupeGn.responsable.user.etatCivil.prenom }} - {{ oldGroupeGn.responsable.user.email }}
+									{% endif %}
+								{% else %}
+									Nouveau groupe.
+								{% endif %}
+							</td>
+							<td>
+								{% if groupeGn.groupe.territoire %}
+									{{ groupeGn.groupe.territoire.nom }}
+								{% else %}
+									Rataché à aucun pays.
+								{% endif %}
+							</td>		
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+	</div>
+	
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path('stock_objet_index') }}">Objets</a></li>
+		<li><a href="{{ path('stock_objet_detail', {'objet': objet.id}) }}">{{ objet.nom }}</a></li>
+		<li>Modification</li>
+	</ol>
+
+<div class="well well-sm">
+
+	<div class="page-header">
+		<h1>Modification d'un objet</h1>
+	</div>
+
+	<div class="container-fluid">
+	    {% if objet.photo %}
+        	<img src="{{ path('stock_objet_photo',{'objet': objet.id}) }}" alt="{{ objet.photo.name }}" class="img-responsive" />
+        {% endif %}
+		<div class="row">
+			<div class="col-xs-12 col-md-8">
+				{{ include("stock/objet/fragment/form.twig",{'action': path('stock_objet_update',{'objet':objet.id}), 'form' : form}) }}
+			</div>
+		</div>
+	</div>
+
+</div>	
+{% endblock content %}

@@ -1,0 +1,90 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+
+<ol class="breadcrumb">
+	<li><a href="{{ path('homepage') }}">Accueil</a></li>
+	<li class="active">Gestion du stock</li>
+</ol>
+	
+<div class="well well-sm">
+
+<div class="row">
+
+	<div class="col-xs-12 col-md-8">
+	
+		<h3>{{ objet_count }} objets en stock</h3>
+		
+		{% if objet_without_proprio_count != 0 
+			or objet_without_responsable_count != 0 
+			or objet_without_rangement_count != 0 
+			or etats|length == 0
+			or tags|length == 0
+			or localisations|length == 0
+			or rangements|length == 0
+			or proprietaires|length == 0 %}
+			
+		<div class="panel panel-warning">
+			<div class="panel-heading">
+				<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+				Des problèmes sont à régler !
+			</div>
+		  	<div class="panel-body">
+				<ul>
+				{% if objet_without_proprio_count != 0 %}
+				<li>Attention, {{ objet_without_proprio_count }} objet(s) sans propriétaire. (<a href="{{ path('stock_objet_list_without_proprio',{'page':1}) }}" >Voir la liste</a>)</li>
+				{%  endif %}
+				
+				{% if objet_without_responsable_count != 0 %}
+				<li>Attention, {{ objet_without_responsable_count }} objet(s) sans responsable. (<a href="{{ path('stock_objet_list_without_responsable',{'page':1}) }}" >Voir la liste</a>)</li>
+				{%  endif %}
+				
+				{% if objet_without_rangement_count != 0 %}
+				<li>Attention, {{ objet_without_rangement_count }} objet(s) sans rangement. (<a href="{{ path('stock_objet_list_without_rangement',{'page':1}) }}" >Voir la liste</a>)</li>
+				{%  endif %}
+				
+				{% if etats|length == 0 %}
+				<li>Aucun état n'est défini. Vous devriez en définir au moins un.</li>
+				{%  endif %}
+				
+				{% if tags|length == 0 %}
+				<li>Aucun tag n'est défini. Vous devriez en définir au moins un.</li>
+				{%  endif %}
+				
+				{% if localisations|length == 0 %}
+				<li>Aucune localisation n'est définie. Vous devriez en définir au moins un.</li>
+				{%  endif %}
+				
+				{% if rangements|length == 0 %}
+				<li>Aucun rangement n'est défini. Vous devriez en définir au moins un.</li>
+				{%  endif %}
+				
+				{% if proprietaires|length == 0 %}
+				<li>Aucun Propriétaires n'est défini. Vous devriez en définir au moins un.</li>
+				{%  endif %}
+				
+				</ul>
+			</div>
+		</div>
+		{% endif %}
+		
+
+		<h3>Liste des 10 derniers objets ajoutés dans le stock.</h3>
+		{{ include("stock/objet/fragment/list.twig", {'objets' : last_add, 'add' : true}) }}
+		
+	</div>
+
+
+	<div class="col-xs-12 col-md-4">
+		{{ include("stock/etat/list.twig", {'etats' : etats}) }}
+		{{ include("stock/tag/list.twig", {'tags' : tags}) }}
+		{{ include("stock/localisation/list.twig", {'localisations' : localisations}) }}
+		{{ include("stock/rangement/list.twig", {'rangements' : rangements}) }}
+		{{ include("stock/proprietaire/list.twig", {'proprietaires' : proprietaires}) }}
+	</div>
+</div>
+
+
+</div>
+
+{%  endblock %}

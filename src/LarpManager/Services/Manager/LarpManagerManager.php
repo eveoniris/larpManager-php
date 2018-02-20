@@ -50,7 +50,6 @@ class LarpManagerManager
 				"1 pièce d'or (10 pièces d'argent)",
 				"1 point de renommée",
 				"1 point d'héroïsme",
-				"5 ingrédients au hasard",
 				"2 ingrédients au choix",
 				"4 ressources communes choisies",
 				"2 ressources rares choisies",
@@ -58,14 +57,25 @@ class LarpManagerManager
 				"3 ressouces rare au hasard",
 				"2 points de rituel",
 				"2 points de mana",
-				"1 formule alchimique au hasard",
-				"1 sortilège au hasard",
-				"2 potions alchimiques au hasard",
-				"1 potion alchimique au choisies",
+				"1 formule alchimique apprenti ou initié au hasard",
+				"1 sortilège apprenti ou initié au hasard",
+				"2 potions alchimiques apprenti ou initié au hasard",
+				"1 potion alchimique apprenti ou initié au choix",
 				"1 réponse à une question simple",
 				"1 carte aventure (jeu maritime)",
+				"5 ingrédients apprenti au hasard",
+				"2 ingrédients expert au hasard",
+				"1 ingrédient maître au hasard",
 		);
-		
+
+		$cible = null;
+		if ( $groupe->getTerritoire() )
+		{
+			$tabCible = $groupe->getTerritoire()->getTerritoireCibles()->toArray();
+			shuffle($tabCible);
+			if ( count($tabCible) > 0 ) $cible = $tabCible[0];
+		}
+
 		$needs = new ArrayCollection();
 		$recompenses = new ArrayCollection();
 		$px = 0;
@@ -144,7 +154,7 @@ class LarpManagerManager
 
 		return array(
 				'needs' => $needs,
-				'px' => $px,
+				'cible' => $cible,
 				'valeur' => $valeur,
 				'recompenses' => $recompenses,
 		);

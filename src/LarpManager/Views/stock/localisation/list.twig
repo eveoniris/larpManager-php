@@ -1,0 +1,13 @@
+<ul class="list-group">
+	<a href="{{ path('stock_localisation_add') }}" class="list-group-item active">
+		<span class="badge"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></span>
+		<h4 class="list-group-item-heading">Ajouter une localisation</h4>
+	</a>
+	{%  for localisation in localisations %}
+		<a href="{{ path('stock_localisation_update', {index: localisation.id}) }}" class="list-group-item">
+			<span class="badge">{{ localisation.objets|length }}</span>
+			<h4 class="list-group-item-heading">{{ localisation.label }}</h4>
+			<p>{{ localisation.precision }}</p>
+		</a>
+	{%  endfor %}
+</ul>

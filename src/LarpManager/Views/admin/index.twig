@@ -19,20 +19,6 @@
 				<li class="list-group-item"><strong>Taille des logs :</strong> {{ logTotalSpace }} (<a href="{{ path('admin.log.empty') }}">vider</a>)</li>
 				<li class="list-group-item"><strong>Taille des documents :</strong> {{ docTotalSpace }}</li>
 			</ul>
-			
-			Listes des modules disponibles :
-			<ul class="list-group">
-				{% for module in moduleList %}
-					<li class="list-group-item">
-						{{ module }}
-						<span class="pull-right">
-							<a href="#">Installer</a>
-							<a href="#">Retirer</a>
-							<a href="#">Supprimer</a>
-						</span>
-					</li>
-				{% endfor %}
-			</ul>
 		</div>
 		
 		<div class="col-md-8">

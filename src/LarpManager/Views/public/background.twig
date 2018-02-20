@@ -1,0 +1,39 @@
+{% extends "layout.twig" %}
+
+{% block title %}Background{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Page d'accueil</a></li>
+		<li class="active">Background</li>
+	</ol>
+	
+	<div class="well bs-component">
+									
+		<div class="header"><h5>Vos backgrounds de groupe</h5></div>
+		
+		{% for background in backsGroupe %}
+			{% if background.visibility == 'GROUPE_MEMBER' %}
+				Background visible en qualité de membre du groupe {{ personnage.groupe }}
+			{% elseif background.visibility == 'GROUPE_OWNER' %}
+				Background visible en qualité de responsable du groupe {{ personnage.groupe }}
+			{% elseif background.visibility == 'PUBLIC' %}
+				Background visible à tous les joueurs
+			{% endif %}
+			{{ background.text|markdown }}
+		{% else %}
+			Votre groupe n'a pas encore de background validé.  
+		{% endfor %}
+		
+		{% if backsJoueur|length > 0 %}
+			<div class="header"><h5>Vos backgrounds personnels</h5></div>
+			
+			{% for background in backsJoueur %}
+				{{ background.text|markdown }}
+			{% endfor %}
+		{% endif %}	
+		
+	</div>
+	
+{% endblock content %}

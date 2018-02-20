@@ -46,6 +46,14 @@ class PersonnageBackgroundForm extends AbstractType
 					'attr' => array(
 							'class' => 'tinymce',
 							'rows' => 9),
+				))
+				->add('gn', 'entity', array(
+						'required' => true,
+						'label' => 'GN',
+						'class' => 'LarpManager\Entities\Gn',
+						'property' => 'label',
+						'placeholder' => 'Choisissez le GN auquel est lié ce background',
+						'empty_data'  => null
 				));
 	}
 	

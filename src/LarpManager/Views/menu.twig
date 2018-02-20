@@ -58,6 +58,7 @@
 				<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Univers<span class="caret"></span></a>
 				<ul class="dropdown-menu">
 					{% if is_granted('ROLE_CARTOGRAPHE', app.user) %}<li><a href="{{ path('territoire.admin.list') }}">Territoires</a></li>{% endif %}
+					{% if is_granted('ROLE_CARTOGRAPHE', app.user) %}<li><a href="{{ path('territoire.fief') }}">Fiefs</a></li>{% endif %}
 					<li><a href="{{ path('religion') }}">Religions</a></li>
 					{% if is_granted('ROLE_CARTOGRAPHE', app.user) %}<li><a href="{{ path('culture') }}">Cultures</a></li>{% endif %}
 					<li><a href="{{ path('world') }}">Carte</a></li>

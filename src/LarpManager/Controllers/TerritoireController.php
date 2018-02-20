@@ -88,6 +88,18 @@ class TerritoireController
 	}
 	
 	/**
+	 * Liste des fiefs
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function fiefAction(Request $request, Application $app)
+	{
+		$fiefs = $app['orm.em']->getRepository('\LarpManager\Entities\Territoire')->findFiefs();
+		return $app['twig']->render('territoire/fief.twig', array('fiefs' => $fiefs));
+	}
+	
+	/**
 	 * Impression des territoires
 	 * @param Request $request
 	 * @param Application $app

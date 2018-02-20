@@ -1,0 +1,57 @@
+{% extends "layout.twig" %}
+
+{% block title %}Groupes{% endblock title %}
+
+{% block content %}
+
+	<div class="container-fluid">
+		<div class="row">
+		
+			<div class="col-xs-12 col-md-12">	
+				{% if groupes|length == 0 %}
+					<div class="panel panel-warning">
+						<div class="panel-heading">
+							<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+							Des problèmes sont à régler !
+						</div>
+						
+		  				<div class="panel-body">
+							<ul>
+								{% if groupes|length == 0 %}
+									<li>Attention, aucun groupe n'est défini.</li>
+								{%  endif %}
+							</ul>
+						</div>
+					</div>
+				{% endif %} 				
+			</div>
+
+		<div class="col-xs-12 col-md-12">
+			<div class="well well-sm">
+				<h4>
+					Gestion des groupes
+					<small>
+						( {{ groupes|length }} groupes )
+					</small>
+				</h4>
+			</div>
+			
+			{% if is_granted('ROLE_ADMIN', app.user) %}
+			<ul class="list-group">
+				<a href="{{ path('groupe.place') }}" class="list-group-item active">
+					<span class="badge"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></span>
+					<h4 class="list-group-item-heading">Modifier les places disponibles</h4>
+				</a>
+			</ul>
+			{% endif %}
+			{{ include("groupe/fragment/list.twig", {'groupes' : groupes, 'add' : true}) }}
+		</div>
+	</div>
+</div>
+
+{% endblock content %}
+
+
+
+
+

@@ -16,7 +16,7 @@
 			<h5>Nombre de place disponibles</h5>
 		</div>						
 						
-		<form action="{{ path('groupeGn.placeAvailable', {'groupeGn': groupeGn.id}) }}" method="POST" {{ form_enctype(form) }}>
+		<form action="{{ path('groupeGn.placeAvailable', {'groupe': groupeGn.groupe.id, 'groupeGn': groupeGn.id}) }}" method="POST" {{ form_enctype(form) }}>
 			{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
 			{{ form(form) }}
 		</form>

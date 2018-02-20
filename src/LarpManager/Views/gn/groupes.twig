@@ -19,8 +19,14 @@
 		</blockquote>
 		
 		{% if is_granted('ROLE_ADMIN', app.user) %}
-			<a href="">Ajouter un groupe</a><br />
-			<a href="">Imprimer les enveloppes</a>
+		Actions (visible uniquement par ADMIN) :
+		<ul>
+			<li><a href="{{ path('groupe.add') }}">Ajouter un groupe</a></li>
+			<li><a href="{{ path('gn.groupes.enveloppes',{'gn': gn.id}) }}">Imprimer les enveloppes</a></li>
+			<li><a href="{{ path('gn.groupes.backgrounds.chef',{'gn': gn.id}) }}">Imprimer les backgrounds des chefs de groupes</a></li>
+			<li><a href="{{ path('gn.groupes.backgrounds.groupe',{'gn': gn.id}) }}">Imprimer les backgrounds des groupes</a></li>
+			<li><a href="{{ path('gn.groupes.backgrounds.membres',{'gn': gn.id}) }}">Imprimer les backgrounds des membres de groupes</a></li>
+		</ul>
 		{% endif %}
 	</div>
 	
@@ -35,10 +41,27 @@
 		{% endif %}
 	
 		Les groupes de joueurs
-		<ul class="list-group">
-			{% for groupe in groupes if groupe.pj %}	
-				<li class="list-group-item">{{ groupe.numero }} -- {{ groupe.nom }}</li>
+		<div class="list-group">
+			{% for groupe in groupes if groupe.pj %}
+				{% set session = groupe.getSession(gn) %}	
+				<div class="list-group-item">
+					<h4 class="list-group-item-heading">
+						{{ groupe.numero }} -- {{ groupe.nom }}
+					 	{% if is_granted('ROLE_SCENARISTE', app.user) %}
+					 		<a href="{{ path('groupe.detail', {'index': groupe.id}) }}">Détail</a>
+					 	{% endif %}
+					</h4>
+					{% if session.free %}Ce groupe est libre{% else %}Ce groupe est réservé{% endif %}<br />
+					Joueur.euse.s recherché.e : {{ session.placeAvailable|default(0) }}<br />
+					Contacter le/la responsable : 
+						{% if session.responsable %} 
+							{{ session.responsable.user }}. <a href="{{ path('message.new', {'to': session.responsable.user.id }) }}">Envoyer un message</a>
+						{% else %}
+							Aucun chef de groupe, impossible de le/la contacter.
+						{% endif %}
+					<p class="list-group-item-text">{{ groupe.description|markdown }}</p>
+				</div>
 			{% endfor %}
-		</ul>
+		</div>
 	</div>
 {% endblock content %}

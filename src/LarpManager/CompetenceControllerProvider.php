@@ -58,7 +58,7 @@ class CompetenceControllerProvider implements ControllerProviderInterface
 		};
 		
 		/**
-		 * Liste des competence pour les orgas
+		 * Liste des competences
 		 */
 		$controllers->match('/','LarpManager\Controllers\CompetenceController::indexAction')
 			->bind("competence")
@@ -66,7 +66,7 @@ class CompetenceControllerProvider implements ControllerProviderInterface
 			->before($mustBeRegle);
 			
 		/**
-		 * Liste des competence pour les orgas
+		 * Liste du métériel necessaire pour les compétences
 		 */
 		$controllers->match('/materiel','LarpManager\Controllers\CompetenceController::materielAction')
 			->bind("competence.materiel")
@@ -109,6 +109,15 @@ class CompetenceControllerProvider implements ControllerProviderInterface
 			->convert('competence', 'converter.competence:convert')
 			->before($mustBeRegle);
 		
+		/**
+		 * Suppression d'une compétence
+		 */
+		$controllers->match('/{competence}/delete','LarpManager\Controllers\CompetenceController::deleteAction')
+			->assert('competence', '\d+')
+			->bind("competence.delete")
+			->method('GET|POST')
+			->convert('competence', 'converter.competence:convert')
+			->before($mustBeRegle);
 
 		/**
 		 * Detail d'une compétence

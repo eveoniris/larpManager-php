@@ -41,7 +41,7 @@ class StockEtatController
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Etat');
 		$etats = $repo->findAll();
 	
-		return $app['twig']->render('admin/stock/etat/index.twig', array('etats' => $etats));
+		return $app['twig']->render('stock/etat/index.twig', array('etats' => $etats));
 	}
 		
 	/**
@@ -71,7 +71,7 @@ class StockEtatController
 			return $app->redirect($app['url_generator']->generate('stock_etat_index'));
 		}
 	
-		return $app['twig']->render('admin/stock/etat/add.twig', array('form' => $form->createView()));
+		return $app['twig']->render('stock/etat/add.twig', array('form' => $form->createView()));
 	}
 	
 	/**
@@ -112,7 +112,7 @@ class StockEtatController
 			return $app->redirect($app['url_generator']->generate('stock_etat_index'));
 			
 		}
-		return $app['twig']->render('admin/stock/etat/update.twig', array(
+		return $app['twig']->render('stock/etat/update.twig', array(
 				'etat' => $etat,
 				'form' => $form->createView()));
 	}	

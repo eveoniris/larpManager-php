@@ -75,7 +75,7 @@ class StockController
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Proprietaire');
 		$proprietaires = $repo->findAll();
 		
-		return $app['twig']->render('admin/stock/index.twig', array(
+		return $app['twig']->render('stock/index.twig', array(
 				'objet_count' => $objet_count,
 				'last_add' => $last_add,
 				'objet_without_proprio_count' => $objet_without_proprio_count,

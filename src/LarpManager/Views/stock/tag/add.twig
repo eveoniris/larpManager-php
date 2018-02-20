@@ -1,0 +1,20 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+
+<div class="well well-sm">
+
+	<div class="page-header">
+		<h1>Ajout d'un tag</h1>
+	</div>
+
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-xs-12 col-md-8">
+				{{ include("stock/tag/form.twig",{'action': path('stock_tag_add'), 'form' : form}) }}
+			</div>
+		</div>
+	</div>
+
+</div>
+{% endblock %}

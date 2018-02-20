@@ -1,0 +1,187 @@
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+  
+  	<!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="{{ path('homepage') }}">LarpManager</a>
+    </div>
+
+	<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+		<ul class="nav navbar-nav">
+		
+			<li class="dropdown">
+				<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+					{% if app.user %}Bienvenu {{ app.user.name }}{% else %}Connectez-vous !{% endif %}<span class="caret"></span>
+				</a>
+				<ul class="dropdown-menu">
+					{%  if app.user %}			
+						<li><a href="{{ path('user') }}">Mon compte</a></li>
+						<li><a href="{{ path('messagerie') }}">Ma messagerie</a></li>
+						<li><a href="{{ path('forum') }}">Forum</a></li>
+						<li><a href="{{ path('user.logout') }}">Déconnection</a></li>
+					{%  else %}
+						<li><a href="{{ path('user.login') }}">Connection</a></li>
+						<li><a href="{{ path('user.register') }}">S'enregistrer</a></li>
+						<li><a href="{{ path('user.forgot-password') }}">Mot de passe oublié ?</a></li>
+					{%  endif %}
+				</ul>
+			</li>	
+					
+			{# Menus reservé aux admins #}			
+			<li class="dropdown">
+				<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Admin<span class="caret"></span></a>
+				<ul class="dropdown-menu">
+					<li><a href="{{ path('gn.list') }}">Grandeurs natures</a></li>
+					{% if is_granted('ROLE_ADMIN', app.user) %}
+						<li><a href="{{ path('billet.list') }}">Billets</a></li>
+						<li><a href="{{ path('user.admin.list') }}">Utilisateurs</a></li>
+						<li><a href="{{ path('restriction.list') }}">Restrictions alimentaires</a></li>
+						<li><a href="{{ path('restauration.list') }}">Lieux de restauration</a></li>
+						<li><a href="{{ path('right.admin.list') }}">Liste des droits</a></li>
+						<li><a href="{{ path('statistique') }}">Statistiques</a></li>
+						<li><a href="{{ path('admin') }}">Administration</a></li>
+						<li><a href="{{ path('admin.rappels') }}">Rappels</a></li>
+						<li><a href="{{ path('question') }}">Questions</a></li>
+					{% endif %}
+					{% if is_granted('ROLE_REDACTEUR', app.user) %}<li><a href="{{ path('annonce.list') }}">Annonces</a></li>{% endif %}
+				</ul>
+			</li>
+			
+			
+			<li class="dropdown">
+				<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Univers<span class="caret"></span></a>
+				<ul class="dropdown-menu">
+					{% if is_granted('ROLE_CARTOGRAPHE', app.user) %}<li><a href="{{ path('territoire.admin.list') }}">Territoires</a></li>{% endif %}
+					<li><a href="{{ path('religion') }}">Religions</a></li>
+					{% if is_granted('ROLE_CARTOGRAPHE', app.user) %}<li><a href="{{ path('culture') }}">Cultures</a></li>{% endif %}
+					<li><a href="{{ path('world') }}">Carte</a></li>
+					<li><a href="{{ path('renom') }}">Personnages renommés</a></li>
+				</ul>
+			</li>
+			
+			
+			{# Menus reservé aux scénaristes #}
+			{% if is_granted('ROLE_SCENARISTE', app.user) %}
+				<li class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Scénario<span class="caret"></span></a>
+					<ul class="dropdown-menu">
+						<li><a href="{{ path('groupe.admin.list') }}">Liste des groupes</a></li>
+						<li><a href="{{ path('groupeSecondaire.admin.list') }}">Liste des groupes secondaires</a></li>
+						<li><a href="{{ path('pnj.list') }}">Liste des PNJ</a></li>
+						<li><a href="{{ path('intrigue.list') }}">Intrigues</a></li>
+						<li><a href="{{ path('background.list') }}">Backgrounds</a></li>
+						<li><a href="{{ path('debriefing.list') }}">Debriefings</a></li>
+						<li><a href="{{ path('rumeur.list') }}">Rumeurs</a></li>
+						<li><a href="{{ path('chronologie') }}">Chronologie</a></li>
+						<li><a href="{{ path('lieu') }}">Lieux</a></li>
+						<li><a href="{{ path('document') }}">Documents</a></li>
+						<li><a href="{{ path('items') }}">Objets</a></li>
+					</ul>
+				</li>
+			{% endif %}
+			{# Menus reservé aux scénaristes #}
+			{% if is_granted('ROLE_SCENARISTE', app.user) %}
+				<li class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Jeu<span class="caret"></span></a>
+					<ul class="dropdown-menu">
+						<li><a href="{{ path('loi') }}">Lois</a></li>
+						<li><a href="{{ path('technologie') }}">Technologies</a></li>
+						<li><a href="{{ path('econnomie') }}">Economie</a></li>
+						<li><a href="{{ path('strategie') }}">Stratégie</a></li>
+						<li><a href="{{ path('groupe.diplomatie') }}">Diplomatie</a></li>
+						<li><a href="{{ path('groupe.quetes') }}">Quêtes commerciales</a></li>
+						<li><a href="{{ path('trombinoscope') }}">Trombinoscope</a></li>
+						<li><a href="{{ path('trombinoscope.perso') }}">Selection</a></li>
+						<li><a href="{{ path('appelation') }}">Appelations</a></li>
+						<li><a href="{{ path('titre.admin.list') }}">Titres</a></li>
+						<li><a href="{{ path('langue') }}">Langues</a></li>
+						<li><a href="{{ path('ressource') }}">Ressources</a></li>
+						<li><a href="{{ path('ingredient.admin.list') }}">Ingredients</a></li>
+						<li><a href="{{ path('religion.level') }}">Fanatisme</a></li>
+						<li><a href="{{ path('monnaie') }}">Monnaie</a></li>						
+						<li><a href="{{ path('quality') }}">Qualité</a></li>
+						<li><a href="{{ path('personnage.admin.list') }}">Personnages</a></li>
+					</ul>
+				</li>
+			{% endif %}
+			
+			{# Menus reservé aux règles #}
+			{% if is_granted('ROLE_REGLE', app.user) %}
+				<li class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Règles<span class="caret"></span></a>
+					<ul class="dropdown-menu">
+						<li><a href="{{ path('rules') }}">Règles</a></li>
+						<li><a href="{{ path('competence.family') }}">Famille de compétences</a></li>
+						<li><a href="{{ path('level') }}">Niveaux</a></li>
+						<li><a href="{{ path('competence') }}">Compétences</a></li>
+						<li><a href="{{ path('classe') }}">Classes</a></li>
+						<li><a href="{{ path('age') }}">Ages</a></li>
+						<li><a href="{{ path('genre') }}">Genres</a></li>
+						<li><a href="{{ path('token.list') }}">Jetons</a></li>
+						<li><a href="{{ path('construction') }}">Constructions</a></li>
+						<li><a href="{{ path('magie.domaine.list') }}">Domaine de magie</a></li>
+						<li><a href="{{ path('magie.sort.list') }}">Sortilèges</a></li>
+						<li><a href="{{ path('magie.potion.list') }}">Potions</a></li>
+						<li><a href="{{ path('magie.sphere.list') }}">Sphères</a></li>
+						<li><a href="{{ path('magie.priere.list') }}">Prières</a></li>
+						<li><a href="{{ path('personnageSecondaire.list') }}">Personnage secondaire</a></li>
+					</ul>
+				</li>
+			{% endif %}
+			
+			{# Menus reservé au stock #}
+			{% if is_granted('ROLE_STOCK', app.user) %}
+				<li class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Stock<span class="caret"></span></a>
+					<ul class="dropdown-menu">
+						<li><a href="{{ path('stock_homepage') }}">Tableau de bord</a></li>
+						<li><a href="{{ path('stock_etat_index') }}">Etats</a></li>
+						<li><a href="{{ path('stock_tag_index') }}">Tags</a></li>
+						<li><a href="{{ path('stock_localisation_index') }}">Localisations</a></li>
+						<li><a href="{{ path('stock_rangement_index') }}">Rangements</a></li>
+						<li><a href="{{ path('stock_proprietaire_index') }}">Proprietaires</a></li>
+						<li><a href="{{ path('stock_objet_index') }}">Objets</a></li>
+						<li><a href="{{ path('stock_objet_export') }}">Exporter</a></li>
+					</ul>
+				</li>
+			{% endif %}
+			
+			{# Notifications #}
+			{% if is_granted('ROLE_USER', app.user) %}
+				<li class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+						<i class="fa fa-exclamation-circle" aria-hidden="true"></i> (<span id="notifications-count">0</span>)<span class="caret"></span></a>
+					<ul class="dropdown-menu" id="notifications_list"></ul>
+				</li>
+			{% endif %}
+			
+			{% if is_granted('ROLE_USER', app.user) %}
+				<li class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+						<i class="fa fa-users" aria-hidden="true"></i> (<span id="lastConnected-count">0</span>)<span class="caret"></span></a>
+					<ul class="dropdown-menu" id="lastConnected_list"></ul>
+				</li>
+			{% endif %}
+									
+			{% if is_granted('ADMIN_USER', app.user) %}
+			<li class="dropdown">
+				<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Larp</a>
+				<ul class="dropdown-menu">			
+					<li><a href="{{ path('install') }}">Tableau de bord</a></li>
+				</ul>
+			</li>
+			{% endif %}
+			
+			{% block module_menu %}
+				{% include 'module/menu.twig' %}
+			{% endblock module_menu %}
+			
+		</ul>
+	</div>
+</div>

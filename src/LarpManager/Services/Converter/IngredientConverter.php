@@ -49,7 +49,7 @@ class IngredientConverter
      * 
      * @param unknown $id
      * @throws NotFoundHttpException
-     * @return LarpManager\Entities\Ingredient
+     * @return LarpManager\Entities\Titre
      */
     public function convert($id)
     {

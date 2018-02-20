@@ -1,0 +1,117 @@
+{% extends "layout.twig" %}
+
+{% block title %}Grandeur nature{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path("gn.list") }}">Liste des grandeur nature</a></li>
+		<li><a href="{{ path('gn.detail', {'gn':gn.id}) }}">{{ gn.label }}</a></li>
+		<li class="active">Liste des participants</li>
+	</ol>
+
+<div class="well well-sm">
+
+	<div class="header">
+		<h5>Liste des participants à {{ gn.label }}</h5>
+	</div>
+	
+	<ul class="list-group">
+		<li class="list-group-item">	
+			<div class="btn-toolbar" role="toolbar" aria-label="...">
+				<form class="form-inline" action="{{ path('gn.participants', {'gn': gn.id}) }}" method="POST" {{ form_enctype(form) }}>
+					{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+					<div class="form-group">
+						<div class="input-group">
+							{{ form_widget(form.value) }}
+						</div>
+						<div class="input-group">					
+							{{ form_widget(form.type) }}
+							<div class="input-group-btn">
+								<button type="submit" class="btn btn-default" data-toggle="tooltup" data-placement="top" title="Lancer la recherche"><i class="fa fa-search"></i></button>
+								<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Reset" href="{{ path('gn.participants', {'gn': gn.id}) }}"><i class="fa fa-refresh"></i></a>
+							</div>
+						</div>
+					</div>
+					{{ form_rest(form) }}
+				</form>
+				
+				{{ form_errors(form) }}
+			</div>
+		</li>
+
+		<li class="list-group-item">
+			{% if paginator.totalItems == 1 %}
+		        <strong>1</strong> participant trouvée.
+		    {% else %}
+		        <strong>{{ paginator.totalItems }}</strong> participants trouvés.
+		    {% endif %}
+		
+		    Montre <strong>{{ paginator.currentPageFirstItem }} - {{ paginator.currentPageLastItem }}</strong>.
+	    </li>
+	 </ul>
+		 
+	{{ paginator|raw }}	
+		
+	<table class="table table-condensed table-striped table-bordered">
+		<thead>
+			<tr>
+				<th>Participant</th>
+				<th>Email</th>
+				<th>Billet</th>
+				<th>Restauration</th>
+				<th>Groupe</th>
+				<th />
+			</tr>
+		</thead>
+		<tbody>
+			{% for participant in participants %}
+				<tr>
+					<td>{{ participant.user.etatCivil.nom }} {{ participant.user.etatCivil.prenom }}</td>
+					<td>{{ participant.user.email }}</td>
+					<td>
+						{% if not participant.billet %}
+							<span class="text-danger">Ce participant n'a pas de billet !</span>
+						{% else %}
+							{{ participant.billet }}
+						{% endif %}
+					</td>
+					<td>
+						{% if participant.participantHasRestaurations|length > 0 %}
+							
+							{% for participantHasRestauration in participant.participantHasRestaurations %}
+								{{ participantHasRestauration.restauration.label }}<br />
+							{% endfor %}
+							
+						{% else %}
+							<span class="text-danger">Aucune restauration</span>
+						{% endif %}
+					</td>
+					<td>
+						{% if participant.groupeGn %}
+							<a href="{{ path('groupe.detail', {'index': participant.groupeGn.groupe.id}) }}">{{ participant.groupeGn.groupe }}</a>
+						{% else %}
+							<span class="text-danger">Aucun groupe</span>
+						{% endif %}
+					</td>
+					<td>
+						<div class="btn-toolbar pull-right" role="toolbar" aria-label="...">
+							<div class="btn-group" role="group" aria-label="...">
+								<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Ajouter à un groupe" href="{{ path('participant.groupe',{'participant':participant.id}) }}"><i class="fa fa-users"></i></a>
+								<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Choisir le billet" href="{{ path('participant.billet',{'participant':participant.id}) }}"><i class="fa fa-ticket"></i></a>
+								<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="ajouter un lieu de restauration" href="{{ path('participant.restauration',{'participant':participant.id}) }}"><i class="fa fa-coffee"></i></a>
+								<a class="btn btn-danger" data-toggle="tooltip" data-placement="top" title="Retirer le participant" href="{{ path('participant.remove',{'participant':participant.id}) }}"><i class="fa fa-close"></i></a>
+							</div>
+						</div>
+					</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	
+	{{ paginator|raw }}	
+
+</div>
+
+{% endblock content %}

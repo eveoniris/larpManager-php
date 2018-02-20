@@ -1,0 +1,263 @@
+{# detail du groupe #}
+
+<h4>{{ groupe.nom }}</h4>
+
+{% if app.user.isResponsable(groupe) %}
+<blockquote>
+Vous êtes responsable de ce groupe.
+</blockquote>
+{% endif %}
+
+<p>{{ groupe.description|markdown }}</p>
+
+<div class="header">
+	<h5>Composition</h5>
+</div>
+
+<ul class="list-group">
+	{% if groupe.responsable %}
+		<li class="list-group-item"><strong>Responsable : </strong>{{ groupe.responsable.username }} / {{ groupe.responsable.email }}</li>
+	{% endif %}
+	{% if groupe.scenariste %}
+		<li class="list-group-item"><strong>Scénariste : </strong>{{ groupe.scenariste.username }} / {{ groupe.scenariste.email }}</li>
+	{% endif %}
+	
+	<li class="list-group-item">
+		<table class="table">
+			<thead>
+				<tr>
+					<th>Utilisateur</th>
+					<th>Nom du personnage</th>
+					<th>Classe</th>
+				</tr>
+			</thead>
+			<tbody>
+			
+				{% for participant in  groupe.participants %}
+					<tr>						
+						<td>{{ participant.user.username }} / {{ participant.user.email }}</td>
+						<td>
+							{% if participant.personnage %}
+								{{ participant.personnage.publicName }}
+							{% endif %}
+						</td>
+						<td>
+							{% if participant.personnage %}
+								{{ participant.personnage.classeName }}
+							{% endif %}
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</li>
+</ul>
+
+<div class="header">
+	<h5>trombinoscope</h5>
+</div>
+
+<div class="row">
+{% for participant in  groupe.participants %}
+	<div class="col-xs-6 col-md-3">
+		{% if participant.user.trombineUrl %}
+			<img width="160" src="{{ path('trombine.get', {'trombine' : participant.user.trombineUrl }) }}" />
+			<div class="caption">
+				{% if participant.personnage %}
+					{{ participant.personnage.publicName }}
+				{% endif %}
+			</div>
+		{% endif %}
+	</div>
+{% endfor %}
+</div>
+
+<br />
+
+<div class="header">
+	<h5>Pays</h5>
+	{% if groupe.territoire %}
+		<h6>{{ groupe.territoire.nom }}&nbsp;<a href="{{ path('territoire.detail', {'territoire': groupe.territoire.id}) }}">Plus d'informations</a></h6>
+		{{ groupe.territoire.description|markdown }}
+	{% endif %}
+</div>
+
+<div class="header">
+	<h5>Territoire(s) contrôlé(s)</h5>
+</div>
+
+{% for territoire in groupe.territoires %}
+	<h6>{{ territoire.nom }}&nbsp;<a href="{{ path('territoire.detail', {'territoire': territoire.id}) }}">Plus d'informations</a></h6>
+	{{ territoire.description|markdown }}
+	
+	<div class="text-muted">
+		<strong>Secret</strong>
+		{{ territoire.descriptionSecrete|markdown }}
+	</div>
+{% endfor %}
+				
+<div class="header">
+	<h5>Vos alliés</h5>
+</div>
+
+<blockquote>
+{% if app.user.isResponsable(groupe) %}
+	<p>Vous disposez de <strong>{{ groupe.alliances|length }}</strong> alliance(s) sur un maximum de <strong>3</strong>.</p>
+	<p>Vous pouvez choisir <strong>{{ groupe.ennemies|length - groupe.alliances|length }}</strong> allié(s) supplémentaire(s).</p>
+	<p>Votre nombre d'ennemis doit toujours être supérieur à votre nombre d'alliés. Pour augmenter le nombe d'alliance possible (jusqu'à un maximum de 3), choisissez plus d'ennemis</p>
+{% else %}
+	<p>Votre chef de groupe a la possibilité de gérer les alliances.</p>
+{% endif %}
+</blockquote>
+
+<ul class="list-group">
+{% for alliance in groupe.alliances %}
+	<li class="list-group-item">
+		<div class="row">
+			<div class="col-md-8">
+				{% if alliance.groupe == groupe %}
+					{{ alliance.requestedGroupe }}
+				{% else %}
+					{{ alliance.groupe }}
+				{% endif %}
+			</div>
+			<div class="col-md-4">
+				<a href="{{ path('groupe.breakAlliance', {'groupe': groupe.id, 'alliance': alliance.id}) }}">Rompre cette alliance</a>
+			</div>
+		</div>
+	</li>
+		
+{% else %}
+	Vous n'avez aucun alliés.
+{% endfor %}
+</ul>
+
+{% if app.user.isResponsable(groupe) %}
+
+	{% if groupe.waitingAlliances|length > 0 %}
+		<div class="header">
+			<h5>Négociations en cours</h5>
+		</div>
+		
+		<ul class="list-group">
+		{% for alliance in groupe.waitingAlliances %}
+			<li class="list-group-item">
+				{% if alliance.groupe == groupe %}
+					<div class="row">
+						<div class="col-md-8">
+							Vous avez demandé une alliance avec <strong>{{ alliance.requestedGroupe }}</strong>.
+						</div>
+						<div class="col-md-4">
+							<a href="{{ path('groupe.cancelRequestedAlliance', {'groupe': groupe.id, 'alliance': alliance.id}) }}">Annuler la demande</a>
+						</div>
+					</div>
+				{% else %}
+					<div class="row">
+						<div class="col-md-8">
+							<strong>{{ alliance.groupe }}</strong> vous a demandé une alliance.
+						</div>
+						<div class="col-md-4">
+							<a href="{{ path('groupe.acceptAlliance', {'groupe': groupe.id, 'alliance': alliance.id}) }}">Accepter la demande</a>
+							<a href="{{ path('groupe.refuseAlliance', {'groupe': groupe.id, 'alliance': alliance.id}) }}">Refuser la demande</a>
+						</div>
+					</div>
+				{% endif %}
+			</li>
+		{% endfor %}	
+		</ul>
+	{% endif %}
+
+{% endif %}
+
+<div class="header">
+	<h5>Vos ennemis</h5>
+</div>
+
+<blockquote>
+{% if app.user.isResponsable(groupe) %}
+	<p>Vous disposez de <strong>{{ groupe.ennemies|length }}</strong> ennemi(s) sur un maximum de <strong>5</strong>.</p>
+	<p>Si vous avez 3 ennemis ou plus, vous ne pouvez plus faire de Déclaration de guerre (mais vous pouvez toujours en recevoir)</p>
+	<p>Etre l’ennemi d’un groupe ne signifie pas que vous devez tuer à vue ses membres, simplement que vous avez un différent important à régler avec lui. Le but est de générer du jeu, pas de l’appauvrir en générant des massacres.</p>
+{% else %}
+	<p>Votre chef de groupe a la possibilité de gérer les alliances.</p>
+{% endif %}
+</blockquote>
+
+<ul class="list-group">
+{% for ennemi in groupe.ennemies %}
+	<li class="list-group-item">
+		<div class="row">
+			<div class="col-md-8">
+				{% if ennemi.groupe == groupe %}
+					Vous avez déclaré la guerre à <strong>{{ ennemi.requestedGroupe }}</strong>.
+				{% else %}
+					<strong>{{ ennemi.groupe }}</strong> vous a déclaré la guerre.
+				{% endif %}
+			</div>
+			<div class="col-md-4">
+				{% if app.user.isResponsable(groupe) %}<a href="{{ path('groupe.requestPeace', {'groupe': groupe.id, 'enemy': ennemi.id}) }}">Proposer de faire la paix</a>{% endif %}
+			</div>
+		</div>
+	</li>	
+{% endfor %}
+</ul>
+
+{% if app.user.isResponsable(groupe) %}
+
+	{% if groupe.waitingPeace|length > 0 %}
+		<div class="header">
+			<h5>Négociations de paix en cours</h5>
+		</div>
+		
+		<ul class="list-group">
+		{% for war in groupe.waitingPeace %}
+			<li class="list-group-item">
+				{% if war.groupe == groupe %}
+					<div class="row">
+						<div class="col-md-8">
+							Vous avez demandé la paix avec <strong>{{ war.requestedGroupe }}</strong>.
+						</div>
+						<div class="col-md-4">
+							<a href="{{ path('groupe.cancelRequestedPeace', {'groupe': groupe.id, 'enemy': war.id}) }}">Annuler la demande</a>
+						</div>
+					</div>
+				{% else %}
+					<div class="row">
+						<div class="col-md-8">
+							<strong>{{ war.groupe }}</strong> propose la paix.
+						</div>
+						<div class="col-md-4">
+							<a href="{{ path('groupe.acceptPeace', {'groupe': groupe.id, 'enemy': war.id}) }}">Accepter la demande</a>
+							<a href="{{ path('groupe.refusePeace', {'groupe': groupe.id, 'enemy': war.id}) }}">Refuser la demande</a>
+						</div>
+					</div>
+				{% endif %}
+			</li>
+		{% endfor %}	
+		</ul>
+		
+	{% endif %}
+	
+	{% if groupe.oldEnemies|length > 0 %}
+		<div class="header">
+			<h5>Vos anciens ennemis</h5>
+		</div>
+		
+		<ul class="list-group">
+			{% for war in groupe.oldEnemies %}
+				<li class="list-group-item">
+					{% if war.groupe == groupe %}
+						Vous avez fait la paix avec <strong>{{ war.requestedGroupe }}</strong>.
+					{% else %}
+						Vous avez fait la paix avec <strong>{{ war.groupe }}</strong>.
+					{% endif %}
+				</li>
+			{% endfor %}
+		</ul>
+	{% endif %}
+{% endif %}
+
+{% if app.user.isResponsable(groupe) %}
+	<a class="btn btn-success" href="{{ path('groupe.requestAlliance', {'groupe': groupe.id}) }}">Demander une alliance</a>
+	<a class="btn btn-danger" href="{{ path('groupe.declareWar', {'groupe': groupe.id}) }}">Choisir un ennemi</a>
+{% endif %}

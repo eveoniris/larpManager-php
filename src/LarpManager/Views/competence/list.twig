@@ -1,0 +1,54 @@
+{% extends "layout.twig" %}
+
+{% block title %}Competences{% endblock title %}
+
+{% block content %}
+
+	<div class="well well-sm clearfix">
+		<ol class="breadcrumb">
+			<li><a href="{{ path('homepage')  }}">Accueil</a></li>
+			<li class="active">Les compétences</li>
+		</ol>
+		
+		<blockquote>
+			Toutes les compétences
+			<small>
+				{{ competences|length }} competences.
+				{% if is_granted('ROLE_REGLE', app.user) %}
+					Rassurez-vous, les joueurs ne verront que les compétences de niveau apprenti
+				{% endif %}
+			</small>
+		</blockquote>
+		
+		{% if is_granted('ROLE_REGLE', app.user) %}
+			<div class="pull-right">
+				<a class="btn btn-primary" href="{{ path('competence.add') }}">Ajouter une compétence</a>
+			</div>
+		{% endif %}
+	</div>
+		
+	<div class="row">
+		{% for competence in competences %}
+			<div class="col-sm-4 col-md-4">
+				<div class="panel panel-default fixed-height">
+					<div class="header">
+						<h5>{{ competence.competenceFamily.label }}</h5>
+					</div>
+					<div class="panel-body">
+		      			<blockquote>
+		      				<p>{{ competence.competenceFamily.description|markdown }}</p>
+		      			</blockquote>
+		      			<h6>{{competence.level.label }}</h6>
+		      			<p>{{ competence.description|markdown }}</p>
+		      			
+		      			{% if is_granted('ROLE_REGLE', app.user) %}
+		      				<a href="{{ path('competence.update', {'competence':competence.id}) }}">Modifier</a><br />
+							<a href="{{ path('competence.delete', {'competence':competence.id}) }}">Supprimer</a>
+						{% endif %}
+		    		</div>
+		  		</div>
+		  	</div>
+		{% endfor %}
+	</div>
+
+{% endblock content %}

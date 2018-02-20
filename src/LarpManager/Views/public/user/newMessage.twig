@@ -1,0 +1,42 @@
+{% extends "layout.twig" %}
+
+{% block title %}Ma messagerie{% endblock title %}
+
+{% block content %}
+
+<ol class="breadcrumb">
+	<li>Navigation :</li>
+	<li><a href="{{ path('homepage')  }}">Accueil</a></li>
+	<li class="active">Nouveau message</li>
+</ol>
+
+	<div class="well bs-component">
+		<form action="{{ path('user.message.new',{'from_id': user.id, 'to_id':destinataire.id}) }}" 
+				method="POST" {{ form_enctype(form) }}
+				novalidate >
+			<fieldset>
+				<legend>Envoi d'un message</legend>
+				
+				<div class="list-group">
+					<div class="list-group-item">
+						<div class="list-group-item-heading">
+							Envoyé à&nbsp;
+							<strong>
+							{% if destinataire.personnage %}
+								{{ destinataire.personnage.publicName }}
+							{% else %}
+								{{ destinataire }}
+							{% endif %}
+							</strong><br />
+						</div>
+					</div>
+				</div>
+				
+				{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+							
+				{{ form(form) }}
+			</fieldset>
+		</form>
+	</div>
+
+{% endblock %}

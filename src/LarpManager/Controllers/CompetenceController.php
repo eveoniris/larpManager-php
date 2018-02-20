@@ -42,10 +42,17 @@ class CompetenceController
 	 */
 	public function indexAction(Request $request, Application $app)
 	{		
-		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Competence');
-		$competences = $repo->findAllOrderedByLabel();
-			
-		return $app['twig']->render('admin/competence/index.twig', array('competences' => $competences));
+		if ( $app['security.authorization_checker']->isGranted('ROLE_REGLE') )
+		{
+			$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Competence');
+			$competences = $repo->findAllOrderedByLabel();
+		}
+		else
+		{
+			$competences = $app['larp.manager']->getRootCompetences();
+		}
+		
+		return $app['twig']->render('competence/list.twig', array('competences' => $competences));
 	}
 
 	/**

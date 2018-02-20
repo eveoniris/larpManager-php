@@ -1,0 +1,56 @@
+{% extends "layout.twig" %}
+
+{% block title %}Gn -- {{ gn.label }}{% endblock title %}
+
+{% block content %}
+	<div class="well well-sm clearfix">
+		<ol class="breadcrumb">
+			<li><a href="{{ path('homepage')  }}">Accueil</a></li>
+			<li><a href="{{path('gn.list') }}">Liste des GNs</a></li>
+			<li><a href="{{path('gn.detail', {'gn': gn.id}) }}">{{ gn.label }}</a></li>
+			<li class="active">Les groupes recherchant des joueur.euse.s</li>
+		</ol>
+		
+		<blockquote>
+			Tous les groupes recherchant des joueur.euse.s sur {{ gn.label }}
+			<small>
+				{{ groupes|length }} groupes
+			</small>
+		</blockquote>
+	</div>
+	
+	<div class="well well-sm">
+
+			{% for groupe in groupes if groupe.pj %}
+				{% set session = groupe.getSession(gn) %}	
+				<h4>
+					{{ groupe.numero }} -- {{ groupe.nom }}
+				 	{% if is_granted('ROLE_SCENARISTE', app.user) %}
+				 		<a href="{{ path('groupe.detail', {'index': groupe.id}) }}">Détail</a>
+				 	{% endif %}
+				</h4>
+				
+				<ul>
+					<li>{% if session.free %}Ce groupe est libre{% else %}Ce groupe est réservé{% endif %}<br />
+					<li>Joueur.euse.s recherché.e : {{ session.placeAvailable|default(0) }}<br />
+					<li>Contacter le/la responsable : 
+						{% if session.responsable %} 
+							{{ session.responsable.user }}. <a href="{{ path('message.new', {'to': session.responsable.user.id }) }}">Envoyer un message</a>
+						{% else %}
+							Aucun chef de groupe, impossible de le/la contacter.
+						{% endif %}
+					</li>
+				</ul>
+				
+				{% if groupe.description %}
+					{{ groupe.description|markdown }}
+				{% else %}
+					Aucune description
+				{% endif %}
+				
+				
+				<hr />
+			{% endfor %}
+
+	</div>
+{% endblock content %}

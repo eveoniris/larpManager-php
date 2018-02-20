@@ -1,0 +1,25 @@
+{% extends "layout_print.twig" %}
+
+{% block style %}
+<style>
+body {
+	font-size:12px;
+}
+</style>
+{% endblock style %}
+
+{% block content %}
+
+{%  for groupe in groupes %}
+
+{% for background in groupe.backs('GROUPE_MEMBER') if background.gn == gn %}
+
+	<h2>#{{ groupe.numero }} -- {{ groupe.nom }}</h2>
+	<h3>Ce background est destiné aux membres du groupe</h3>	
+	{{ background.text|markdown }}
+	<hr style="page-break-after: always;" />
+{% endfor %}
+
+{% endfor %}
+
+{% endblock content %}

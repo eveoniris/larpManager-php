@@ -384,6 +384,7 @@ class Personnage extends BasePersonnage
 			+ $this->getCompetencePugilat('Armes à 2 mains')
 			+ $this->getCompetencePugilat('Armes d\'hast')
 			+ $this->getCompetencePugilat('Armure')
+			+ $this->getCompetencePugilat('Armurerie')
 			+ $this->getCompetencePugilat('Attaque sournoise')
 			+ $this->getCompetencePugilat('Protection')
 			+ $this->getCompetencePugilat('Résistance')
@@ -391,10 +392,16 @@ class Personnage extends BasePersonnage
 			+ $this->getCompetencePugilat('Stratégie')
 			+ $this->getCompetencePugilat('Survie');
 		
-		// armurerie au niveau initié double le score de pugilat
+		// armurerie au niveau initié ajoute 5 points
 		if ( $this->getCompetenceNiveau('Armurerie') >= 2 )
 		{
-			$pugilat = $pugilat * 2;
+			$pugilat = $pugilat + 5;
+		}
+		
+		// sauvegerie au niveau initié ajoute 5 points
+		if ( $this->getCompetenceNiveau('Sauvegerie') >= 2 )
+		{
+			$pugilat = $pugilat + 5;
 		}
 		
 		return $pugilat;

@@ -40,7 +40,7 @@ class StockLocalisationController
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Localisation');
 		$localisations = $repo->findAll();
 	
-		return $app['twig']->render('admin/stock/localisation/index.twig', array('localisations' => $localisations));
+		return $app['twig']->render('stock/localisation/index.twig', array('localisations' => $localisations));
 	}
 	
 	/**
@@ -109,7 +109,7 @@ class StockLocalisationController
 
 			return $app->redirect($app['url_generator']->generate('stock_localisation_index'));
 		}
-		return $app['twig']->render('admin/stock/localisation/update.twig', array(
+		return $app['twig']->render('stock/localisation/update.twig', array(
 				'localisation' => $localisation,
 				'form' => $form->createView()));
 	}	

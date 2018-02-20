@@ -1,0 +1,60 @@
+{% extends "layout.twig" %}
+
+{% block title %}Grandeur nature{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path("gn.list") }}">Liste des grandeur nature</a></li>
+		<li><a href="{{ path('gn.detail', {'gn':gn.id}) }}">{{ gn.label }}</a></li>
+		<li class="active">Liste des participants avec un billet mais n'étant pas dans un groupe</li>
+	</ol>
+
+<div class="well well-sm">
+
+	<div class="header">
+		<h5>Liste des participants à {{ gn.label }} avec un billet mais n'ayant pas de personnages</h5>
+	</div>
+		
+	<a href="{{  path('gn.participants.withoutperso.csv', {'gn': gn.id}) }}">Télécharger cette liste au format CSV</a>
+	
+	<table class="table table-condensed table-striped table-bordered">
+		<thead>
+			<tr>
+				<th>Participant</th>
+				<th>Email</th>
+				<th>Billet</th>
+				<th>Groupe</th>
+				<th />
+			</tr>
+		</thead>
+		<tbody>
+			{% for participant in participants %}
+				<tr>
+					<td>
+						{% if participant.user.etatCivil %}
+							{{ participant.user.etatCivil.nom }} {{ participant.user.etatCivil.prenom }}
+						{% else %}
+							Ce joueur n'a pas encore rempli son état-civil
+						{% endif %}
+					</td>
+					<td>{{ participant.user.email }}</td>
+					<td>{{ participant.billet|default('Pas de billet') }}</td>
+					<td>
+						{% if participant.groupeGn %}
+							{{ participant.groupeGn.groupe.nom }}
+						{% endif %}
+					</td>						
+					<td>
+						<a href="{{ path('participant.admin.personnage.new', {'participant' : participant.id}) }}">Créer un personnage</a>
+						<a href="{{ path('participant.admin.personnage.old', {'participant' : participant.id}) }}">Récupérer un ancien personnage</a>
+					</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>	
+
+</div>
+
+{% endblock content %}

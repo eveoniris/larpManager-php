@@ -1,0 +1,82 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path('stock_objet_index') }}">Objets</a></li>
+		<li><a href="{{ path('stock_objet_detail', {'objet': objet.id}) }}">{{ objet.nom }}</a></li>
+		<li>Gestion des tags</li>
+	</ol>
+	
+	<div class="well well-sm">
+		<div class="row">
+			<div class="col-md-6">
+				<form action="{{ path('stock_objet_tag', {'objet': objet.id}) }}" method="POST" {{ form_enctype(form) }}>
+					{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+					{{ form_start(form) }}
+					{{ form_row(form.tags) }}
+					<ul class="list-group news" data-prototype="{{ form_widget(form.news.vars.prototype)|e }}">
+						{% for tag in form.news %}
+							<li class="list-group-item">
+								<div class="tag">
+									{{ form_widget(news.tag) }}
+								</div>
+							</li>
+						{% endfor %}
+					</ul>
+					{{ form_end(form) }}
+				</form>
+			</div>
+			<div class="col-md-6">
+				{% if objet.photo %}
+		        	<img src="{{ path('stock_objet_photo',{'objet': objet.id}) }}" alt="{{ objet.photo.name }}" class="img-responsive" />
+		        {% endif %}
+		        {{ objet.nom }}
+		        {{ objet.description }}
+		    </div>
+        
+	</div>
+	
+{% endblock content %}
+
+{% block javascript %}
+<script>
+
+		function addTagForm(collectionHolder, $newLink) {
+		    var prototype = collectionHolder.attr('data-prototype');
+		    var newForm = prototype.replace(/__name__/g, collectionHolder.children().length);
+		    var $newFormLi = $('<li class="list-group-item"></li>').append(newForm);
+		    $newLink.before($newFormLi);
+		    addTagFormDeleteLink($newFormLi);
+		}
+		
+		function addTagFormDeleteLink($formLi) {
+		    var $removeFormA = $('<span class="input-group-btn"><a class="btn btn-link" href="#"><span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span> Retirer ce tag</a></span>');
+		    $($formLi).append($removeFormA);
+
+		    $removeFormA.on('click', function(e) {
+		        e.preventDefault();
+		        $formLi.remove();
+		    });
+		}
+
+		var collectionTagHolder = $('ul.news');
+		var $addTagLink = $('<a href="#" class="add_tag_link">Créer un nouveau tag</a>');
+		var $newTagLink = $('<li class="list-group-item"></li>').append($addTagLink);
+
+		jQuery(document).ready(function() {
+			collectionTagHolder.find('li').each(function() {
+				addTagFormDeleteLink($(this));
+			});
+			collectionTagHolder.append($newTagLink);
+			
+			$addTagLink.on('click', function(e) {
+		        e.preventDefault();
+		        addTagForm(collectionTagHolder, $newTagLink);
+		    });
+			$("#objetTag_news").parent().remove();
+		});
+		
+</script>
+{% endblock javascript %}

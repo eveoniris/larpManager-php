@@ -1,0 +1,12 @@
+<ul class="list-group">
+	<a href="{{ path('stock_tag_add') }}" class="list-group-item active">
+		<span class="badge"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></span>
+		<h4 class="list-group-item-heading">Ajouter un tag</h4>
+	</a>
+	{%  for tag in tags %}
+		<a href="{{ path('stock_tag_update', {index: tag.id}) }}" class="list-group-item">
+			<span class="badge">{{ tag.objets|length }}</span>
+			<h4 class="list-group-item-heading">{{ tag.nom }}</h4>
+		</a>
+	{%  endfor %}
+</ul>

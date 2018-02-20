@@ -63,6 +63,9 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 	 *  - participant.groupe.join
 	 *  - participant.groupe.list
 	 *  - participant.groupe.detail
+	 *  - participant.regle.list
+	 *  - participant.regle.detail
+	 *  - participant.regle.document
 	 *  - groupe.requestAlliance
 	 *  - groupe.cancelRequestedAlliance
 	 *  - groupe.acceptAlliance
@@ -188,7 +191,35 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 			->convert('participant', 'converter.participant:convert')
 			->bind('participant.index')
 			->method('GET')
-			->before($mustOwnParticipant);		
+			->before($mustOwnParticipant);
+
+		/** Liste des règles */
+		$controllers->match('/{participant}/regle','LarpManager\Controllers\ParticipantController::regleListAction')
+			->assert('participant', '\d+')
+			->convert('participant', 'converter.participant:convert')
+			->method('GET')
+			->bind('participant.regle.list')
+			->before($mustOwnParticipant);
+				
+		/** Récupére un fichier de règle */
+		$controllers->match('/{participant}/regle/{rule}','LarpManager\Controllers\ParticipantController::regleDetailAction')
+			->assert('participant', '\d+')
+			->convert('participant', 'converter.participant:convert')
+			->assert('rule', '\d+')
+			->convert('rule', 'converter.rule:convert')
+			->method('GET')
+			->bind('participant.regle.detail')
+			->before($mustOwnParticipant);
+				
+		/** Récupére un fichier de règle */
+		$controllers->match('/{participant}/regle/{rule}/document','LarpManager\Controllers\ParticipantController::regleDocumentAction')
+			->assert('participant', '\d+')
+			->convert('participant', 'converter.participant:convert')
+			->assert('rule', '\d+')
+			->convert('rule', 'converter.rule:convert')
+			->method('GET')
+			->bind('participant.regle.document')
+			->before($mustOwnParticipant);			
 			
 		/**
 		 * Rejoindre un groupe
@@ -562,12 +593,12 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 		/**
 		 * Détail du personnage
 		 */
-		$controllers->match('/{participant}/personnage','LarpManager\Controllers\ParticipantController::personnageAction')
+		/*$controllers->match('/{participant}/personnage','LarpManager\Controllers\ParticipantController::personnageAction')
 			->assert('participant', '\d+')
 			->convert('participant', 'converter.participant:convert')
 			->bind("participant.personnage")
 			->method('GET')
-			->before($mustOwnParticipant);
+			->before($mustOwnParticipant);*/
 		
 		/**
 		 * Formulaire de choix d'une nouvelle potion
