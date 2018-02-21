@@ -8,8 +8,8 @@
 
 	<ol class="breadcrumb">
 		<li><a href="{{ path('homepage')  }}">Accueil</a></li>
-		<li><a href="{{ path('participant.index', {'participant' : participant.id}) }}">{{ participant.gn.label }}</a></li>
-		<li><a href="{{ path('participant.personnage', {'participant': participant.id})  }}">{{ personnage.nom }} {{ personnage.surnom }}</a></li>
+		<li><a href="{{ path('gn.detail', {'gn' : participant.gn.id}) }}">{{ participant.gn.label }}</a></li>
+		<li><a href="{{ path('gn.personnage', {'gn': participant.gn.id}) }}">{{ participant.personnage.nom }} {{ participant.personnage.surnom }}</a></li>
 		<li class="active">Choix d'un domaine de magie</li>
 	</ol>
 	
