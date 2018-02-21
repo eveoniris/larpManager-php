@@ -6,8 +6,8 @@
 
 	<ol class="breadcrumb">
 		<li><a href="{{ path('homepage') }}">Page d'accueil</a></li>
-		<li><a href="{{ path('participant.index', {'participant' : participant.id}) }}">{{ participant.gn.label }}</a></li>
-		{% if participant.personnage %}<li><a href="{{ path('participant.personnage', {'participant' : participant.id}) }}">{{ participant.personnage.nom }} {{ participant.personnage.surnom }}</a></li>{% endif %}
+			<li><a href="{{ path('gn.detail', {'gn' : participant.gn.id}) }}">{{ participant.gn.label }}</a></li>
+			{% if participant.personnage %}<li><a href="{{ path('gn.personnage', {'gn': participant.gn.id}) }}">{{ participant.personnage.nom }} {{ participant.personnage.surnom }}</a></li>{% endif %}
 		<li class="active">Groupes secondaires</li>
 	</ol>
 	
