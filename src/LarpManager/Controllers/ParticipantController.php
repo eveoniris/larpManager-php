@@ -580,7 +580,7 @@ class ParticipantController
 		if ( ! $groupeGn )
 		{
 			$app['session']->getFlashBag()->add('error','Désolé, vous devez rejoindre un groupe avant de pouvoir créer votre personnage.');
-			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $groupeGn->getGn()->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),301);
 		}
 		
 		if ( ! $participant->getBillet() )
