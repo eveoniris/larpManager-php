@@ -399,7 +399,7 @@ class Personnage extends BasePersonnage
 		}
 		
 		// sauvegerie au niveau initié ajoute 5 points
-		if ( $this->getCompetenceNiveau('Sauvegerie') >= 2 )
+		if ( $this->getCompetenceNiveau('Sauvagerie') >= 2 )
 		{
 			$pugilat = $pugilat + 5;
 		}
