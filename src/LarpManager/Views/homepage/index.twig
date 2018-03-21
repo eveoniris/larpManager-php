@@ -61,13 +61,15 @@
 					<div class="header">
 						<h5>Intrigues liées à vos groupes</h5>
 					</div>
-					<a href="{{ path('intrigue.list') }}">Liste de toutes les intrigues</a>
+					<a href="{{ path('intrigue.list') }}">Liste de toutes les intrigues actives</a>
 					<div class="list-group">
 						{% for groupe in app.user.groupeScenariste %}
 							{% for intrigueHasGroupe in groupe.intrigueHasGroupes %}
-								<a class="list-group-item text-success" href="{{ path('intrigue.detail', {'intrigue': intrigueHasGroupe.intrigue.id}) }}">{{groupe.nom}} -- {{ intrigueHasGroupe.intrigue.titre }}</a>
+								{% if intrigueHasGroupe.intrigue.state ==  "ACTIF" %}
+									<a class="list-group-item text-success" href="{{ path('intrigue.detail', {'intrigue': intrigueHasGroupe.intrigue.id}) }}">{{groupe.nom}} -- {{ intrigueHasGroupe.intrigue.titre }}</a>
+								{% endif %}
 							{% else %}
-								<a class="list-group-item text-danger" href="{{ path('intrigue.add') }}">Attention, aucune intrigue ne concerne votre groupe {{ groupe.nom }}. Vous devriez peut-être en définir une.</a>
+								<a class="list-group-item text-danger" href="{{ path('intrigue.add') }}">Attention, aucune intrigue active ne concerne votre groupe {{ groupe.nom }}. Vous devriez peut-être en définir une.</a>
 							{% endfor %}
 						{% endfor %}
 					</div>
