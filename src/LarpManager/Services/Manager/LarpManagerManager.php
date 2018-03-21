@@ -208,6 +208,19 @@ class LarpManagerManager
 	}
 	
 	/**
+	 * Fourni la liste des droits concernant la l'état des intrigues
+	 * @return string[]
+	 */
+	public function getState()
+	{
+		$state = array(
+				'ACTIF' => 'L\'élément est actif',
+				'INACTIF' => 'L\'élément est inactif',
+		);
+		return $state;
+	}
+	
+	/**
 	 * Fourni la liste des droits concernant la visibilité des backgrounds
 	 * @return string[]
 	 */
