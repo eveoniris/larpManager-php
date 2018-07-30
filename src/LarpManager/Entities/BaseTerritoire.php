@@ -216,14 +216,8 @@ class BaseTerritoire
      */
     protected $religion;
 
-    /**
-     * @ManyToMany(targetEntity="Territoire", inversedBy="territoireStarts")
-     * @JoinTable(name="territoire_quete",
-     *     joinColumns={@JoinColumn(name="territoire_id", referencedColumnName="id", nullable=false)},
-     *     inverseJoinColumns={@JoinColumn(name="territoire_cible_id", referencedColumnName="id", nullable=false)}
-     * )
-     */
-    protected $territoireCibles;
+    //Avant, il y avait ici un $territoireCibles (voir l'historique GIT avant juillet 2018)
+    //Ceci creait une definition de table incorrect...
 
     /**
      * @ManyToMany(targetEntity="Territoire", mappedBy="territoireCibles")

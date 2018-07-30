@@ -77,7 +77,7 @@ else
 	
 	$app->register(new Silex\Provider\MonologServiceProvider(), array(
 			'monolog.logfile' => __DIR__.'/../logs/development.log',
-			'monolog.level' => \Monolog\Logger::CRITICAL
+			'monolog.level' => \Monolog\Logger::DEBUG
 	));
 }
 
