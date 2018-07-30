@@ -7,7 +7,8 @@
 
 	<ol class="breadcrumb">
 		<li><a href="{{ path('homepage')  }}">Accueil</a></li>
-		<li><a href="{{ path('personnage')  }}">Votre personnage</a></li>
+		<li><a href="{{ path('gn.detail', {'gn' : participant.gn.id}) }}">{{ participant.gn.label }}</a></li>
+		<li><a href="{{ path('gn.personnage', {'gn': participant.gn.id}) }}">{{ participant.personnage.nom }} {{ participant.personnage.surnom }}</a></li>
 		<li class="active">Choix d'une origine</li>
 	</ol>
 	

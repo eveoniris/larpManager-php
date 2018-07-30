@@ -15,6 +15,7 @@
 		<div class="header"><h5>Vos backgrounds de groupe</h5></div>
 		
 		{% for background in backsGroupe %}
+			<div class="header"><h5>{{ background.gn.label }}</h5></div>
 			{% if background.visibility == 'GROUPE_MEMBER' %}
 				<blockquote>Background visible en qualité de membre du groupe {{ personnage.groupe }}</blockquote>
 			{% elseif background.visibility == 'GROUPE_OWNER' %}
@@ -31,6 +32,7 @@
 			<div class="header"><h5>Vos backgrounds personnels</h5></div>
 			
 			{% for background in backsJoueur %}
+			<div class="header"><h5>{{ background.gn.label }}</h5></div>
 				{{ background.text|markdown }}
 			{% endfor %}
 		{% endif %}	

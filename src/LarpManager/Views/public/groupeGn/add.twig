@@ -20,7 +20,7 @@
 		Par contre <bold>il faut</bold> que ce joueur ai préalablement créé son compte sur LarpManager et ai indiqué vouloir participer à cette session de jeu.
 		</p>
 		
-		<form action="{{ path('groupeGn.joueur.add', {'groupeGn': groupeGn.id}) }}" method="POST" {{ form_enctype(form) }}>
+		<form action="{{ path('groupeGn.joueur.add', {'groupeGn': groupeGn.id, 'groupe': groupeGn.groupe.id}) }}" method="POST" {{ form_enctype(form) }}>
 			{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
 			{{ form(form) }}
 		</form>

@@ -378,13 +378,13 @@ class Personnage extends BasePersonnage
 	public function getPugilat()
 	{
 		$pugilat = 0;
+		
 		$pugilat = $this->getCompetencePugilat('Agilité')
 			+ $this->getCompetencePugilat('Armes à distance')
 			+ $this->getCompetencePugilat('Armes à 1 main')
 			+ $this->getCompetencePugilat('Armes à 2 mains')
 			+ $this->getCompetencePugilat('Armes d\'hast')
 			+ $this->getCompetencePugilat('Armure')
-			+ $this->getCompetencePugilat('Armurerie')
 			+ $this->getCompetencePugilat('Attaque sournoise')
 			+ $this->getCompetencePugilat('Protection')
 			+ $this->getCompetencePugilat('Résistance')
@@ -399,7 +399,7 @@ class Personnage extends BasePersonnage
 		}
 		
 		// sauvegerie au niveau initié ajoute 5 points
-		if ( $this->getCompetenceNiveau('Sauvegerie') >= 2 )
+		if ( $this->getCompetenceNiveau('Sauvagerie') >= 2 )
 		{
 			$pugilat = $pugilat + 5;
 		}

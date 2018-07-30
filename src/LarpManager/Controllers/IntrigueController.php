@@ -116,6 +116,11 @@ class IntrigueController
 	{
 		$intrigue = new Intrigue();
 		$form = $app['form.factory']->createBuilder(new IntrigueForm(), $intrigue)
+			->add('state','choice', array(
+					'required' => true,
+					'label' =>  'Etat',
+					'choices' => $app['larp.manager']->getState(),
+			))
 			->add('add','submit', array('label' => 'Ajouter l\'intrigue'))->getForm();
 		
 		$form->handleRequest($request);
@@ -256,6 +261,11 @@ class IntrigueController
 		}
 		
 		$form = $app['form.factory']->createBuilder(new IntrigueForm(), $intrigue)
+			->add('state','choice', array(
+					'required' => true,
+					'label' =>  'Etat',
+					'choices' => $app['larp.manager']->getState(),
+			))
 			->add('enregistrer','submit', array('label' => 'Enregistrer'))->getForm();
 		
 		$form->handleRequest($request);

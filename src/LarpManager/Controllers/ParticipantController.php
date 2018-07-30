@@ -127,7 +127,7 @@ class ParticipantController
 		$app['orm.em']->flush();
 		
 		$app['session']->getFlashBag()->add('Success','Votre réponse a été prise en compte !');
-		return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+		return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),301);
 		
 	}
 	
@@ -145,7 +145,7 @@ class ParticipantController
 		$app['orm.em']->flush();
 		
 		$app['session']->getFlashBag()->add('Success','Votre réponse a été supprimée, veuillez répondre de nouveau à la question !');
-		return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+		return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),301);
 	}
 	
 	/**
@@ -410,13 +410,13 @@ class ParticipantController
 		if ( ! $personnage )
 		{
 			$app['session']->getFlashBag()->add('error','Vous n\'avez pas encore de personnage.');
-			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),301);
 		}
 		
 		if ( ! $personnage->hasCompetence('Politique') )
 		{
 			$app['session']->getFlashBag()->add('error','Votre personnage ne dispose pas de la compétence Politique');
-			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.personnage', array('gn' => $participant->getGn()->getId())),301);
 		}
 				
 		// recherche de tous les groupes participant au prochain GN
@@ -455,7 +455,7 @@ class ParticipantController
 		if ( ! $personnage )
 		{
 			$app['session']->getFlashBag()->add('error','Vous n\'avez pas encore de personnage.');
-			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),301);
 		}
 		
 		$form = $app['form.factory']->createBuilder(new PersonnageEditForm(), $personnage)
@@ -471,7 +471,7 @@ class ParticipantController
 			$app['orm.em']->flush();
 			
 			$app['session']->getFlashBag()->add('success','Vos modifications ont été prises en compte.');
-			return $app->redirect($app['url_generator']->generate('participant.personnage', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.personnage', array('gn' => $participant->getGn()->getId())),301);
 		}
 		
 		return $app['twig']->render('public/personnage/edit.twig', array(
@@ -519,7 +519,7 @@ class ParticipantController
 			$app['orm.em']->flush();
 	
 			$app['session']->getFlashBag()->add('success','Votre photo a été enregistrée');
-			return $app->redirect($app['url_generator']->generate('participant.personnage', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.personnage', array('gn' => $participant->getGn()->getId())),301);
 		}
 	
 		return $app['twig']->render('public/personnage/trombine.twig', array(
@@ -580,7 +580,7 @@ class ParticipantController
 		if ( ! $groupeGn )
 		{
 			$app['session']->getFlashBag()->add('error','Désolé, vous devez rejoindre un groupe avant de pouvoir créer votre personnage.');
-			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $groupeGn->getGn()->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),301);
 		}
 		
 		if ( ! $participant->getBillet() )
@@ -726,7 +726,7 @@ class ParticipantController
 		if ( ! $groupeGn )
 		{
 			$app['session']->getFlashBag()->add('error','Désolé, vous devez rejoindre un groupe avant de pouvoir créer votre personnage.');
-			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $groupeGn->getGn()->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' =>  $participant->getGn()->getId())),301);
 		}
 		
 		if ( ! $participant->getBillet() )
@@ -1094,7 +1094,7 @@ class ParticipantController
 		if ( ! $participant->getBillet() )
 		{
 			$app['session']->getFlashBag()->add('error','Désolé, vous devez obtenir un billet avant de pouvoir rejoindre un groupe');
-			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),301);
 		}
 				
 		$form = $app['form.factory']->createBuilder(new GroupeInscriptionForm(), array())
@@ -1197,7 +1197,7 @@ class ParticipantController
 		if ( ! $personnage )
 		{
 			$app['session']->getFlashBag()->add('error','Désolé, Vous devez faire votre personnage pour pouvoir consulter votre background.');
-			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),301);
 		}
 	
 		$backsGroupe = new ArrayCollection();
@@ -1249,19 +1249,19 @@ class ParticipantController
 		if ( ! $personnage )
 		{
 			$app['session']->getFlashBag()->add('error','Désolé, vous devez créer un personnage avant de choisir son origine.');
-			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),301);
 		}
 		
 		if ( $personnage->getGroupe()->getLock() == true)
 		{
 			$app['session']->getFlashBag()->add('error','Désolé, il n\'est plus possible de modifier ce personnage. Le groupe est verouillé. Contacter votre scénariste si vous pensez que cela est une erreur');
-			return $app->redirect($app['url_generator']->generate('participant.personnage', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.personnage', array('gn' => $participant->getGn()->getId())),301);
 		}
 	
 		if ( $personnage->getTerritoire() )
 		{
 			$app['session']->getFlashBag()->add('error','Désolé, il n\'est pas possible de modifier votre origine. Veuillez contacter votre orga pour exposer votre problème.');
-			return $app->redirect($app['url_generator']->generate('participant.personnage', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.personnage', array('gn' => $participant->getGn()->getId())),301);
 		}
 	
 		$form = $app['form.factory']->createBuilder(new PersonnageOriginForm(), $personnage)
@@ -1277,7 +1277,7 @@ class ParticipantController
 			$app['orm.em']->flush();
 	
 			$app['session']->getFlashBag()->add('success','Votre personnage a été sauvegardé.');
-			return $app->redirect($app['url_generator']->generate('participant.personnage', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.personnage', array('gn' => $participant->getGn()->getId())),301);
 		}
 	
 		return $app['twig']->render('public/participant/origine.twig', array(
@@ -1317,13 +1317,13 @@ class ParticipantController
 		if ( ! $personnage )
 		{
 			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créer un personnage avant de choisir une religion !');
-			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),301);
 		}
 				
 		if ( $participant->getGroupeGn()->getGroupe()->getLock() == true)
 		{
 			$app['session']->getFlashBag()->add('error','Désolé, il n\'est plus possible de modifier ce personnage. Le groupe est verouillé. Contacter votre scénariste si vous pensez que cela est une erreur');
-			return $app->redirect($app['url_generator']->generate('participant.personnage', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.personnage', array('gn' => $participant->getGn()->getId())),301);
 		}
 	
 	
@@ -1331,7 +1331,7 @@ class ParticipantController
 		if ( $personnage->isFanatique() )
 		{
 			$app['session']->getFlashBag()->add('error','Désolé, vous êtes un Fanatique, il vous est impossible de choisir une nouvelle religion. Veuillez contacter votre orga en cas de problème.');
-			return $app->redirect($app['url_generator']->generate('participant.personnage', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.personnage', array('gn' => $participant->getGn()->getId())),301);
 		}
 	
 		$personnageReligion = new \LarpManager\Entities\PersonnagesReligions();
@@ -1343,7 +1343,7 @@ class ParticipantController
 		if ( $availableReligions->count() == 0 )
 		{
 			$app['session']->getFlashBag()->add('error','Désolé, il n\'y a plus de religion disponibles ( Sérieusement ? vous êtes éclectique, c\'est bien, mais ... faudrait savoir ce que vous voulez non ? L\'heure n\'est-il pas venu de faire un choix parmi tous ces dieux ?)');
-			return $app->redirect($app['url_generator']->generate('participant.personnage', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.personnage', array('gn' => $participant->getGn()->getId())),301);
 		}
 	
 		// construit le tableau de choix
@@ -1385,7 +1385,7 @@ class ParticipantController
 				if ( $personnage->isFervent() )
 				{
 					$app['session']->getFlashBag()->add('error','Désolé, vous êtes déjà Fervent d\'une autre religion, il vous est impossible de choisir une nouvelle religion en tant que Fervent. Veuillez contacter votre orga en cas de problème.');
-					return $app->redirect($app['url_generator']->generate('participant.personnage', array('participant' => $participant->getId())),301);
+					return $app->redirect($app['url_generator']->generate('gn.personnage', array('gn' => $participant->getGn()->getId())),301);
 				}
 			}
 	
@@ -1393,7 +1393,7 @@ class ParticipantController
 			$app['orm.em']->flush();
 	
 			$app['session']->getFlashBag()->add('success','Votre personnage a été sauvegardé.');
-			return $app->redirect($app['url_generator']->generate('participant.personnage', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.personnage', array('gn' => $participant->getGn()->getId())),301);
 		}
 	
 		return $app['twig']->render('public/personnage/religion_add.twig', array(
@@ -1419,13 +1419,13 @@ class ParticipantController
 		if ( ! $personnage )
 		{
 			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créer un personnage !');
-			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),301);
 		}
 		
 		if ( ! $personnage->isKnownPriere($priere) )
 		{
 			$app['session']->getFlashBag()->add('error', 'Vous ne connaissez pas cette prière !');
-			return $app->redirect($app['url_generator']->generate('participant.personnage', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.personnage', array('gn' => $participant->getGn()->getId())),301);
 		}
 		
 		return $app['twig']->render('public/priere/detail.twig', array(
@@ -1450,13 +1450,13 @@ class ParticipantController
 		if ( ! $personnage )
 		{
 			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créer un personnage !');
-			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),301);
 		}
 		
 		if ( ! $personnage->isKnownPriere($priere) )
 		{
 			$app['session']->getFlashBag()->add('error', 'Vous ne connaissez pas cette prière !');
-			return $app->redirect($app['url_generator']->generate('participant.personnage', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.personnage', array('gn' => $participant->getGn()->getId())),301);
 		}
 			
 		$file = __DIR__.'/../../../private/doc/'.$priere->getDocumentUrl();
@@ -1479,13 +1479,13 @@ class ParticipantController
 		if ( ! $personnage )
 		{
 			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créer un personnage !');
-			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),301);
 		}
 	
 		if ( ! $personnage->isKnownPotion($potion) )
 		{
 			$app['session']->getFlashBag()->add('error', 'Vous ne connaissez pas cette potion !');
-			return $app->redirect($app['url_generator']->generate('participant.personnage', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.personnage', array('gn' => $participant->getGn()->getId())),301);
 		}
 	
 		return $app['twig']->render('public/potion/detail.twig', array(
@@ -1510,13 +1510,13 @@ class ParticipantController
 		if ( ! $personnage )
 		{
 			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créer un personnage !');
-			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),301);
 		}
 	
 		if ( ! $personnage->isKnownPotion($potion) )
 		{
 			$app['session']->getFlashBag()->add('error', 'Vous ne connaissez pas cette potion !');
-			return $app->redirect($app['url_generator']->generate('participant.personnage', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.personnage', array('gn' => $participant->getGn()->getId())),301);
 		}
 			
 		$file = __DIR__.'/../../../private/doc/'.$potion->getDocumentUrl();
@@ -1536,7 +1536,7 @@ class ParticipantController
 		if ( ! $personnage )
 		{
 			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créer un personnage !');
-			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),301);
 		}
 		
 		$niveau = $request->get('niveau');
@@ -1547,7 +1547,7 @@ class ParticipantController
 				&& ! $personnage->hasTrigger('ALCHIMIE MAITRE') )
 		{
 			$app['session']->getFlashBag()->add('error','Désolé, vous ne pouvez pas choisir de potions supplémentaires.');
-			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.personnage', array('gn' => $participant->getGn()->getId())),301);
 		}
 	
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Potion');
@@ -1601,7 +1601,7 @@ class ParticipantController
 			$app['orm.em']->flush();
 	
 			$app['session']->getFlashBag()->add('success','Vos modifications ont été enregistrées.');
-			return $app->redirect($app['url_generator']->generate('participant.personnage', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.personnage', array('gn' => $participant->getGn()->getId())),301);
 		}
 	
 		return $app['twig']->render('personnage/potion.twig', array(
@@ -1627,13 +1627,13 @@ class ParticipantController
 		if ( ! $personnage )
 		{
 			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créer un personnage !');
-			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),301);
 		}
 		
 		if ( ! $personnage->hasTrigger('PRETRISE INITIE') )
 		{
 			$app['session']->getFlashBag()->add('error','Désolé, vous ne pouvez pas choisir de descriptif de religion supplémentaire.');
-			return $app->redirect($app['url_generator']->generate('participant.personnage', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.personnage', array('gn' => $participant->getGn()->getId())),301);
 		}
 		
 		$availableDescriptionReligion = $app['personnage.manager']->getAvailableDescriptionReligion($personnage);
@@ -1666,7 +1666,7 @@ class ParticipantController
 			$app['orm.em']->flush();
 			
 			$app['session']->getFlashBag()->add('success','Vos modifications ont été enregistrées.');
-			return $app->redirect($app['url_generator']->generate('participant.personnage', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.personnage', array('gn' => $participant->getGn()->getId())),301);
 		}
 			
 		return $app['twig']->render('public/personnage/descriptionReligion.twig', array(
@@ -1690,13 +1690,13 @@ class ParticipantController
 		if ( ! $personnage )
 		{
 			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créer un personnage !');
-			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),301);
 		}
 	
 		if ( ! $personnage->hasTrigger('LANGUE COMMUNE') )
 		{
 			$app['session']->getFlashBag()->add('error','Désolé, vous ne pouvez pas choisir de langue commune supplémentaire.');
-			return $app->redirect($app['url_generator']->generate('participant.personnage', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.personnage', array('gn' => $participant->getGn()->getId())),301);
 		}
 	
 		$availableLangues = $app['personnage.manager']->getAvailableLangues($personnage, 2);
@@ -1733,7 +1733,7 @@ class ParticipantController
 			$app['orm.em']->flush();
 	
 			$app['session']->getFlashBag()->add('success','Vos modifications ont été enregistrées.');
-			return $app->redirect($app['url_generator']->generate('participant.personnage', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.personnage', array('gn' => $participant->getGn()->getId())),301);
 		}
 	
 		return $app['twig']->render('public/personnage/langueCommune.twig', array(
@@ -1757,13 +1757,13 @@ class ParticipantController
 		if ( ! $personnage )
 		{
 			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créer un personnage !');
-			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),301);
 		}
 	
 		if ( ! $personnage->hasTrigger('LANGUE COURANTE') )
 		{
 			$app['session']->getFlashBag()->add('error','Désolé, vous ne pouvez pas choisir de langue courante supplémentaire.');
-			return $app->redirect($app['url_generator']->generate('participant.personnage', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.personnage', array('gn' => $participant->getGn()->getId())),301);
 		}
 		
 		$availableLangues = $app['personnage.manager']->getAvailableLangues($personnage, 1);
@@ -1800,7 +1800,7 @@ class ParticipantController
 			$app['orm.em']->flush();
 	
 			$app['session']->getFlashBag()->add('success','Vos modifications ont été enregistrées.');
-			return $app->redirect($app['url_generator']->generate('participant.personnage', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.personnage', array('gn' => $participant->getGn()->getId())),301);
 		}
 	
 		return $app['twig']->render('public/personnage/langueCourante.twig', array(
@@ -1824,13 +1824,13 @@ class ParticipantController
 		if ( ! $personnage )
 		{
 			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créer un personnage !');
-			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),301);
 		}
 	
 		if ( ! $personnage->hasTrigger('LANGUE ANCIENNE') )
 		{
 			$app['session']->getFlashBag()->add('error','Désolé, vous ne pouvez pas choisir de langue ancienne supplémentaire.');
-			return $app->redirect($app['url_generator']->generate('participant.personnage', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.personnage', array('gn' => $participant->getGn()->getId())),301);
 		}
 	
 		$availableLangues = $app['personnage.manager']->getAvailableLangues($personnage, 0);
@@ -1867,7 +1867,7 @@ class ParticipantController
 			$app['orm.em']->flush();
 	
 			$app['session']->getFlashBag()->add('success','Vos modifications ont été enregistrées.');
-			return $app->redirect($app['url_generator']->generate('participant.personnage', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.personnage', array('gn' => $participant->getGn()->getId())),301);
 		}
 	
 		return $app['twig']->render('public/personnage/langueAncienne.twig', array(
@@ -1890,13 +1890,13 @@ class ParticipantController
 		if ( ! $personnage )
 		{
 			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créer un personnage !');
-			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),301);
 		}
 	
 		if ( ! $personnage->hasTrigger('DOMAINE MAGIE') )
 		{
 			$app['session']->getFlashBag()->add('error','Désolé, vous ne pouvez pas choisir de domaine de magie supplémentaire.');
-			return $app->redirect($app['url_generator']->generate('participant.personnage', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.personnage', array('gn' => $participant->getGn()->getId())),301);
 		}
 		
 		$availableDomaines = $app['personnage.manager']->getAvailableDomaines($personnage);
@@ -1932,7 +1932,7 @@ class ParticipantController
 			$app['orm.em']->flush();
 				
 			$app['session']->getFlashBag()->add('success','Vos modifications ont été enregistrées.');
-			return $app->redirect($app['url_generator']->generate('participant.personnage', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.personnage', array('gn' => $participant->getGn()->getId())),301);
 			
 		}
 		
@@ -1957,7 +1957,7 @@ class ParticipantController
 		if ( ! $personnage )
 		{
 			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créer un personnage !');
-			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),301);
 		}
 		
 		$niveau = $request->get('niveau');
@@ -1968,7 +1968,7 @@ class ParticipantController
 				&& ! $personnage->hasTrigger('SORT MAITRE') )
 		{
 			$app['session']->getFlashBag()->add('error','Désolé, vous ne pouvez pas choisir de sortilèges supplémentaires.');
-			return $app->redirect($app['url_generator']->generate('participant.personnage', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.personnage', array('gn' => $participant->getGn()->getId())),301);
 		}
 		
 		$sorts = $app['personnage.manager']->getAvailableSorts($personnage, $niveau);
@@ -2021,7 +2021,7 @@ class ParticipantController
 			$app['orm.em']->flush();
 	
 			$app['session']->getFlashBag()->add('success','Vos modifications ont été enregistrées.');
-			return $app->redirect($app['url_generator']->generate('participant.personnage', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.personnage', array('gn' => $participant->getGn()->getId())),301);
 		}
 	
 		return $app['twig']->render('personnage/sort.twig', array(
@@ -2048,13 +2048,13 @@ class ParticipantController
 		if ( ! $personnage )
 		{
 			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créer un personnage !');
-			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),301);
 		}
 	
 		if ( ! $personnage->isKnownSort($sort) )
 		{
 			$app['session']->getFlashBag()->add('error', 'Vous ne connaissez pas ce sort !');
-			return $app->redirect($app['url_generator']->generate('participant.personnage', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.personnage', array('gn' => $participant->getGn()->getId())),301);
 		}
 	
 		return $app['twig']->render('public/sort/detail.twig', array(
@@ -2079,13 +2079,13 @@ class ParticipantController
 		if ( ! $personnage )
 		{
 			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créer un personnage !');
-			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),301);
 		}
 	
 		if ( ! $personnage->isKnownSort($sort) )
 		{
 			$app['session']->getFlashBag()->add('error', 'Vous ne connaissez pas ce sort !');
-			return $app->redirect($app['url_generator']->generate('participant.personnage', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.personnage', array('gn' => $participant->getGn()->getId())),301);
 		}
 			
 		$file = __DIR__.'/../../../private/doc/'.$sort->getDocumentUrl();
@@ -2106,7 +2106,7 @@ class ParticipantController
 		if ( ! $personnage )
 		{
 			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créer un personnage !');
-			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),301);
 		}
 		
 		$domaines = $app['orm.em']->getRepository('\LarpManager\Entities\Domaine')->findAll();
@@ -2149,13 +2149,13 @@ class ParticipantController
 		if ( ! $personnage )
 		{
 			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créer un personnage !');
-			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),301);
 		}
 	
 		if ( ! $personnage->isKnownCompetence($competence) )
 		{
 			$app['session']->getFlashBag()->add('error', 'Vous ne connaissez pas cette competence !');
-			return $app->redirect($app['url_generator']->generate('participant.personnage', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.personnage', array('gn' => $participant->getGn()->getId())),301);
 		}
 	
 		return $app['twig']->render('public/competence/detail.twig', array(
@@ -2197,13 +2197,13 @@ class ParticipantController
 		if ( ! $personnage )
 		{
 			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créer un personnage !');
-			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),301);
 		}
 	
 		if ( ! $personnage->isKnownCompetence($competence) )
 		{
 			$app['session']->getFlashBag()->add('error', 'Vous ne connaissez pas cette competence !');
-			return $app->redirect($app['url_generator']->generate('participant.personnage', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.personnage', array('gn' => $participant->getGn()->getId())),301);
 		}
 			
 		$file = __DIR__.'/../../../private/doc/'.$competence->getDocumentUrl();
@@ -2244,7 +2244,7 @@ class ParticipantController
 		if ( ! $personnage )
 		{
 			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créer un personnage avant de postuler à un groupe secondaire!');
-			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),301);
 		}
 	
 		/**
@@ -2253,7 +2253,7 @@ class ParticipantController
 		if ( $groupeSecondaire->isPostulant($personnage) )
 		{
 			$app['session']->getFlashBag()->add('error', 'Votre avez déjà postulé dans ce groupe. Inutile d\'en refaire la demande.');
-			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),301);
 		}
 	
 		/**
@@ -2262,7 +2262,7 @@ class ParticipantController
 		if ( $groupeSecondaire->isMembre($personnage) )
 		{
 			$app['session']->getFlashBag()->add('error', 'Votre êtes déjà membre de ce groupe. Inutile d\'en refaire la demande.');
-			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),301);
 		}
 	
 		/**
@@ -2303,7 +2303,7 @@ class ParticipantController
 					
 				$app['session']->getFlashBag()->add('success', 'Votre candidature a été enregistrée, et transmise au chef de groupe.');
 		
-				return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+				return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),301);
 			}
 		}
 	
@@ -2328,13 +2328,13 @@ class ParticipantController
 		if ( ! $personnage )
 		{
 			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créer un personnage !');
-			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),301);
 		}
 		
 		if ( ! $membre )
 		{
 			$app['session']->getFlashBag()->add('error', 'Votre n\'êtes pas membre de ce groupe.');
-			return $app->redirect($app['url_generator']->generate('participant.personnage', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.personnage', array('gn' => $participant->getGn()->getId())),301);
 		}
 	
 		return $app['twig']->render('public/groupeSecondaire/detail.twig', array(
@@ -2515,13 +2515,13 @@ class ParticipantController
 		if ( ! $personnage )
 		{
 			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créer un personnage !');
-			return $app->redirect($app['url_generator']->generate('participant.index', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),301);
 		}
 		
 		if ( $participant->getGroupeGn()->getGroupe()->getLock() == true)
 		{
 			$app['session']->getFlashBag()->add('error','Désolé, il n\'est plus possible de modifier ce personnage. Le groupe est verouillé. Contacter votre scénariste si vous pensez que cela est une erreur');
-			return $app->redirect($app['url_generator']->generate('participant.personnage', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.personnage', array('gn' => $participant->getGn()->getId())),301);
 		}
 	
 		$availableCompetences = $app['personnage.manager']->getAvailableCompetences($personnage);
@@ -2529,7 +2529,7 @@ class ParticipantController
 		if ( $availableCompetences->count() == 0 )
 		{
 			$app['session']->getFlashBag()->add('error','Désolé, il n\'y a plus de compétence disponible (Bravo !).');
-			return $app->redirect($app['url_generator']->generate('participant.personnage', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.personnage', array('gn' => $participant->getGn()->getId())),301);
 		}
 	
 		// construit le tableau de choix
@@ -2651,7 +2651,7 @@ class ParticipantController
 				else
 				{
 					$app['session']->getFlashBag()->add('error','Pour obtenir la compétence Prêtrise, vous devez être FERVENT ou FANATIQUE');
-					return $app->redirect($app['url_generator']->generate('participant.personnage', array('participant' => $participant->getId())),301);
+					return $app->redirect($app['url_generator']->generate('gn.personnage', array('gn' => $participant->getGn()->getId())),301);
 				}
 			}
 			
@@ -2912,7 +2912,7 @@ class ParticipantController
 			$app['orm.em']->flush();
 				
 			$app['session']->getFlashBag()->add('success','Votre personnage a été sauvegardé.');
-			return $app->redirect($app['url_generator']->generate('participant.personnage', array('participant' => $participant->getId())),301);
+			return $app->redirect($app['url_generator']->generate('gn.personnage', array('gn' => $participant->getGn()->getId())),301);
 		}
 	
 		return $app['twig']->render('public/personnage/competence.twig', array(

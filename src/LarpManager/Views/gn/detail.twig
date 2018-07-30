@@ -208,6 +208,38 @@
 				</div>
 			</div>
 			
+			{% for question in questions %}
+				{% if not participant.asAnswser(question) %}
+					<div class="panel panel-conan">
+						<div class="panel-heading">
+							[Sondage] : {{ question.label }}
+						</div>
+						<div class="panel-body">
+							{{ question.text|markdown }}
+							<ul>
+							{% for reponse in question.choix|split(';') %}
+								<li><a href="{{ path('participant.question.reponse', {'participant':participant.id,'question': question.id, 'reponse':reponse}) }}">{{ reponse }}</a></li>
+							{% endfor %}
+							</ul>
+						</div>
+					</div>
+				{% endif %}
+			{% endfor %}
+			{% for reponse in participant.reponses %}
+			<div class="panel panel-conan">
+				<div class="panel-heading">
+					[Répondu] : {{ reponse.question.label }}
+				</div>
+				<div class="panel-body">
+					{{ reponse.question.text|markdown }}
+					<strong>{{ reponse.question.reponse(reponse.reponse) }}</strong>
+					<div class="pull-right">
+						<a class="btn btn-danger" href="{{ path('participant.reponse.delete', {'participant':participant.id,'reponse': reponse.id}) }}">Supprimer ma réponse</a>
+					</div>
+				</div>
+			</div>
+			{% endfor %}
+			
 			<div class="panel panel-conan">
 				<div class="panel-heading">Votre personnage</div>
 				
@@ -230,6 +262,7 @@
 	 					<li>Vous n'avez pas de personne secondaire, choisissez-en !</li>
 					{% endif %}
 						<li><a href="{{ path('participant.personnageSecondaire', {'participant': participant.id}) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Modifier votre personnage secondaire</a></li>
+						<li><a href="{{ path('participant.background', {'participant': participant.id}) }}"><i class="fa fa-book" aria-hidden="true"></i> Votre background</a></li>
 					</ul>
 				</div>
 			</div>

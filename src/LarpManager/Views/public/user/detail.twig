@@ -77,7 +77,7 @@
 								{% if is_granted('ROLE_ORGA', app.user) %}
 									<a href="{{ path('personnage.admin.detail',{'personnage': participant.personnage.id}) }}">{{ participant.personnage.publicName }}</a>
 								{% else %}
-									<a href="{{ path('participant.personnage',{'participant': participant.id}) }}">{{ participant.personnage.publicName }}</a>
+									<a href="{{ path('gn.personnage',{'gn': participant.gn.id}) }}">{{ participant.personnage.publicName }}</a>
 								{% endif %}
 							</div>	        		
 			        	{% endif %}

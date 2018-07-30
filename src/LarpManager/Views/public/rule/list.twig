@@ -6,7 +6,7 @@
 
 	<ol class="breadcrumb">
 		<li><a href="{{ path('homepage') }}">Page d'accueil</a></li>
-		<li><a href="{{ path('participant.index', {'participant' : participant.id}) }}">{{ participant.gn.label }}</a></li>
+		<li><a href="{{ path('gn.detail', {'gn' : participant.gn.id}) }}">{{ participant.gn.label }}</a></li>
 		<li class="active">Règles</li>
 	</ol>
 	

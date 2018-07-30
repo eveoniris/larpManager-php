@@ -177,12 +177,6 @@ class Territoire extends BaseTerritoire implements \JsonSerializable
 		$tresor = parent::getTresor();
 		if ( ! $tresor) $tresor = 0;
 		
-		// si le territoire dispose d'une route, la richesse est multiplié par deux
-		if ( $this->hasConstruction('Route'))
-		{
-			$tresor = $tresor * 2;
-		}
-		
 		// gestion de l'état du territoire
 		switch ($this->getStatut() )
 		{

@@ -161,8 +161,8 @@
 			    			</div>	
 		    				<p class="list-group-item-text">
 		    					<ul>
-		    						<li><strong>Importations : </strong>{% if territoire.importations|length > 0 %}{{ territoire.importations|join(', ') }}{% else %}Rien{% endif %}</li>
-		    						<li><strong>Exportations : </strong>{% if territoire.exportations|length > 0 %}{{ territoire.exportations|join(', ') }}{% else %}Rien{% endif %}</li>
+		    						<li><strong>Exportation : </strong>{% if territoire.importations|length > 0 %}{{ territoire.importations|join(', ') }}{% else %}Rien{% endif %}</li>
+		    						<li><strong>Production : </strong>{% if territoire.exportations|length > 0 %}{{ territoire.exportations|join(', ') }}{% else %}Rien{% endif %}</li>
 		    						<li><strong>Ingrédients : </strong>{% if territoire.ingredients|length > 0 %}{{ territoire.ingredients|join(', ') }}{% else %}Rien{% endif %}</li>
 		    					</ul>
 		    				</p>
