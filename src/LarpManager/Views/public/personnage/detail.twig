@@ -100,7 +100,8 @@
 						</div>
 					</div>
 				
-					{% include 'public/personnage/fragment/groupeSecondaire.twig' with {'personnage': personnage, 'participant': participant} %}
+					{% include 'public/personnage/fragment/groupeSecondaireChef.twig' with {'personnage': personnage, 'participant': participant} %}
+					{% include 'public/personnage/fragment/groupeSecondaireMembre.twig' with {'personnage': personnage, 'participant': participant} %}
 					{% include 'public/personnage/fragment/religion.twig' with {'personnage': personnage, 'participant': participant} %}
 					{% include 'public/personnage/fragment/priere.twig' with {'personnage': personnage, 'participant': participant} %}
 					{% include 'public/personnage/fragment/alchimie.twig' with {'personnage': personnage, 'participant': participant} %}
