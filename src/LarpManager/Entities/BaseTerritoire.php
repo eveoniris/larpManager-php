@@ -217,7 +217,7 @@ class BaseTerritoire
     protected $religion;
 
     //Avant, il y avait ici un $territoireCibles (voir l'historique GIT avant juillet 2018)
-    //Ceci creait une definition de table incorrect...
+    //Ceci creait une definition de table incorrecte...
 
     /**
      * @ManyToMany(targetEntity="Territoire", mappedBy="territoireCibles")
