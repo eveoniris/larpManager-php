@@ -298,16 +298,36 @@ class GroupeSecondaireController
 	}
 	
 	/**
+	 * Construit le contexte pour la page détail de groupe seconaire (pour les orgas)
+	 * @param Application $app
+	 * @param SecondaryGroup $groupeSecondaire
+	 * @return array of 
+	 */
+	public function buildContextDetailTwig(Application $app, SecondaryGroup $groupeSecondaire, array $extraParameters = null) {
+	    $gnActif = $app['larp.manager']->getGnActif();
+	    $result = array(
+	        'groupeSecondaire' => $groupeSecondaire,
+	        'gn' => $gnActif	        
+	    );
+	    
+	    if($extraParameters == null) {
+	        return $result;
+	    }
+	    
+	    return array_merge($result, $extraParameters);
+	}
+	
+	/**
 	 * Détail d'un groupe secondaire (pour les orgas)
 	 * @param Request $request
 	 * @param Application $app
 	 */
 	public function adminDetailAction(Request $request, Application $app)
 	{
-		$groupeSecondaire = $request->get('groupe');
-
-		return $app['twig']->render('admin/groupeSecondaire/detail.twig', array(
-				'groupeSecondaire' => $groupeSecondaire));
+		$groupeSecondaire = $request->get('groupe');		
+		return $app['twig']->render('admin/groupeSecondaire/detail.twig',
+		    $this->buildContextDetailTwig($app, $groupeSecondaire)
+		 );
 	}
 	
 	/**
@@ -340,10 +360,9 @@ class GroupeSecondaireController
 			return $app->redirect($app['url_generator']->generate('groupeSecondaire.admin.detail', array('groupe' => $groupeSecondaire->getId())),301);
 		}
 		
-		return $app['twig']->render('admin/groupeSecondaire/newMembre.twig', array(
-				'form' => $form->createView(),
-				'groupeSecondaire' => $groupeSecondaire,
-			));
+		return $app['twig']->render('admin/groupeSecondaire/newMembre.twig', 
+		    $this->buildContextDetailTwig($app, $groupeSecondaire, array('form' => $form->createView()))
+		);
 	}
 	
 	/**
@@ -362,8 +381,9 @@ class GroupeSecondaireController
 				
 		$app['session']->getFlashBag()->add('success', 'la candidature a été supprimée.');
 		
-		return $app['twig']->render('admin/groupeSecondaire/detail.twig', array(
-				'groupeSecondaire' => $groupeSecondaire));
+		return $app['twig']->render('admin/groupeSecondaire/detail.twig',
+		    $this->buildContextDetailTwig($app, $groupeSecondaire)
+		);
 	}
 	
 	/**
@@ -392,8 +412,9 @@ class GroupeSecondaireController
 			
 		$app['session']->getFlashBag()->add('success', 'la candidature a été accepté.');
 	
-		return $app['twig']->render('admin/groupeSecondaire/detail.twig', array(
-				'groupeSecondaire' => $groupeSecondaire));
+		return $app['twig']->render('admin/groupeSecondaire/detail.twig',
+		    $this->buildContextDetailTwig($app, $groupeSecondaire)
+		);
 	}	
 	
 	/**
@@ -413,8 +434,9 @@ class GroupeSecondaireController
 	
 		$app['session']->getFlashBag()->add('success', 'le membre a été retiré.');
 	
-		return $app['twig']->render('admin/groupeSecondaire/detail.twig', array(
-				'groupeSecondaire' => $groupeSecondaire));
+		return $app['twig']->render('admin/groupeSecondaire/detail.twig',
+		    $this->buildContextDetailTwig($app, $groupeSecondaire)
+		);
 	}
 	
 	/**
@@ -432,8 +454,9 @@ class GroupeSecondaireController
 		$app['orm.em']->persist($membre);
 		$app['orm.em']->flush();
 		
-		return $app['twig']->render('admin/groupeSecondaire/detail.twig', array(
-				'groupeSecondaire' => $groupeSecondaire));
+		return $app['twig']->render('admin/groupeSecondaire/detail.twig',
+		    $this->buildContextDetailTwig($app, $groupeSecondaire)
+		);
 	}
 	
 	/**
@@ -451,7 +474,8 @@ class GroupeSecondaireController
 		$app['orm.em']->persist($membre);
 		$app['orm.em']->flush();
 	
-		return $app['twig']->render('admin/groupeSecondaire/detail.twig', array(
-				'groupeSecondaire' => $groupeSecondaire));
+		return $app['twig']->render('admin/groupeSecondaire/detail.twig',
+		    $this->buildContextDetailTwig($app, $groupeSecondaire)
+		);
 	}
 }
