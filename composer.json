@@ -2,7 +2,7 @@
 	"name" : "eveoniris/larp-manager",
 	"description" : "Larp Manager",
 	"require" : {
-		"silex/silex" : "^1.3",
+		"silex/silex" : "1.3",
 		"twig/twig" : "^1.18",
 		"symfony/twig-bridge" : "^2.7",
 		"doctrine/dbal" : "^2.5",
