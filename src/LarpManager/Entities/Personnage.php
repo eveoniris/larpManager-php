@@ -233,6 +233,52 @@ class Personnage extends BasePersonnage
 			if ( $sort == $s ) return true;
 		}
 		return false;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public function getSortAnomalieMessage()
+    {   
+        
+        $countByLevel = array(0, 0, 0, 0);
+        foreach ($this->getSorts() as $sort) 
+	    {
+	        $countByLevel[$sort->getNiveau()-1] += 1;
+	    }
+	    
+	    $expectedByLevel = array(0, 0, 0, 0);
+	    foreach ( $this->getCompetences() as $competence)
+	    {
+	        if($competence->getSortNiveau1() != null) {
+	            $expectedByLevel[0] += $competence->getSortNiveau1();
+	        }
+	        
+	        if($competence->getSortNiveau2() != null) {
+	            $expectedByLevel[1] += $competence->getSortNiveau2();
+	        }
+	        
+	        if($competence->getSortNiveau3() != null) {
+	            $expectedByLevel[2] += $competence->getSortNiveau3();
+	        }
+	        
+	        if($competence->getSortNiveau4() != null) {
+	            $expectedByLevel[3] += $competence->getSortNiveau4();
+            }
+        }
+        
+        for($i = 0; $i < 4;$i++) {
+            if($expectedByLevel[$i] < $countByLevel[$i]) {
+                return ($countByLevel[$i] - $expectedByLevel[$i]) . " sort de niveau " . ($i+1) . " en trop " . $expectedByLevel[$i] . " " . $countByLevel[$i]; 
+            }
+            
+            if($expectedByLevel[$i] > $countByLevel[$i]) {
+                return ($expectedByLevel[$i] - $countByLevel[$i]) . " sort de niveau " . ($i+1) . " manquant " . $expectedByLevel[$i] . " " . $countByLevel[$i];
+            }
+	    }
+	    
+        return "";	        
 	}
 	
 	/**
@@ -290,6 +336,67 @@ class Personnage extends BasePersonnage
 		}
 		return $languages;
 	}
+
+    /**
+     * Retourne les anomalies entre le nombre de langue autorisé et le nombre de langue affectés.
+     *
+     * @return \Doctrine\Common\Collections\Collection|NULL
+     */
+    public function getLanguesAnomaliesMessage()
+    {
+        
+
+        // On compte les langues connues
+        $compteLangue = 0;
+        $compteLangueAncienne = 0;
+        $label = "";
+        foreach ($this->getPersonnageLangues() as $personnageLangue)
+        {
+            $label = $label . " " . $personnageLangue->getLangue();
+            if (strpos($personnageLangue->getLangue(), "Ancien:") === 0)
+            {
+                $compteLangueAncienne += 1;
+            } else
+            {
+                $compteLangue += 1;
+            }
+        }
+
+        // On parcourt les compétences pour compter le nombre de langues & langues anciennes qui devrait être connue.
+        $maxLangueConnue = 2;
+        $maxLangueAncienneConnue = 0;
+        foreach ($this->getCompetences() as $competence)
+        {
+            if ($competence->getLangueConnue() != null)
+            {
+                $maxLangueConnue += $competence->getLangueConnue();
+            }
+
+            if ($competence->getLangueAncienneConnue() != null)
+            {
+                $maxLangueAncienneConnue += $competence->getLangueAncienneConnue();
+            }
+        }
+
+        // On génère le message de restitution de l'anomalie.
+        if ($compteLangue > $maxLangueConnue)
+        {
+            return ($compteLangue - $maxLangueConnue) . " langue(s) en trop";
+        } else if ($compteLangue < $maxLangueConnue)
+        {
+            return ($maxLangueConnue - $compteLangue) . " langue(s) manquante(s)";
+        }
+
+        if ($maxLangueAncienneConnue < $compteLangueAncienne)
+        {
+            return ($compteLangueAncienne - $maxLangueAncienneConnue) . " langue(s) ancienne(s) en trop";
+        } else if ($maxLangueAncienneConnue > $compteLangueAncienne)
+        {
+            return ($maxLangueAncienneConnue - $compteLangueAncienne) . " langue(s) ancienne(s) en manquante(s)";
+	    }
+	    return "";
+	}
+	
 	
 	/**
 	 * Fourni le language
@@ -354,7 +461,7 @@ class Personnage extends BasePersonnage
 		}
 		return $niveau;
 	}
-	
+		
 	/**
 	 * Fourni le niveau d'une compétence pour le score de pugilat
 	 * @param unknown $label

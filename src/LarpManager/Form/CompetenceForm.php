@@ -51,13 +51,53 @@ class CompetenceForm extends AbstractType
 					'required' => true,
 					'class' => 'LarpManager\Entities\Level',
 					'property' => 'label',
-				))
+				))								
 				->add('description','textarea', array(
 					'required' => false,
 					'attr' => array(
 							'class' => 'tinymce'
 					),
 				))
+				->add('langueConnue','integer', array(
+				    'label' => 'Langue connue',
+				    'required' => false
+				))
+				->add('langueAncienneConnue','integer', array(
+				    'label' => 'Langue ancienne connue',
+				    'required' => false
+				))
+				->add('sortNiveau1','integer', array(
+				    'label' => 'Sort niveau 1',
+				    'required' => false
+				))
+				->add('sortNiveau2','integer', array(
+				    'label' => 'Sort niveau 2',
+				    'required' => false
+				))
+				->add('sortNiveau3','integer', array(
+				    'label' => 'Sort niveau 3',
+				    'required' => false
+				))
+				->add('sortNiveau4','integer', array(
+				    'label' => 'Sort niveau 4',
+				    'required' => false
+				))
+				->add('alchimieNiveau1','integer', array(
+				    'label' => 'Alchimie niveau 1',
+				    'required' => false
+				))
+				->add('alchimieNiveau2','integer', array(
+				    'label' => 'Alchimie niveau 2',
+				    'required' => false
+				))
+				->add('alchimieNiveau3','integer', array(
+				    'label' => 'Alchimie niveau 3',
+				    'required' => false
+				))
+				->add('alchimieNiveau4','integer', array(
+				    'label' => 'Alchimie niveau 4',
+				    'required' => false
+				))				
 				->add('document','file', array(
 					'label' => 'Téléversez un document',
 					'required' => true,

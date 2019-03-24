@@ -28,12 +28,62 @@ class BaseCompetence
      * @GeneratedValue(strategy="AUTO")
      */
     protected $id;
-
+    
     /**
      * @Column(type="text", nullable=true)
      */
     protected $description;
-
+       
+    /**
+     * @Column(type="integer", nullable=true)
+     */
+    protected $langueConnue;
+    
+    /**
+     * @Column(type="integer", nullable=true)
+     */
+    protected $langueAncienneConnue;
+    
+    /**
+     * @Column(type="integer", nullable=true)
+     */
+    protected $sortNiveau1;
+    
+    /**
+     * @Column(type="integer", nullable=true)
+     */
+    protected $sortNiveau2;
+            
+    /**
+     * @Column(type="integer", nullable=true)
+     */
+    protected $sortNiveau3;
+    
+    /**
+     * @Column(type="integer", nullable=true)
+     */
+    protected $sortNiveau4;
+    
+    /**
+     * @Column(type="integer", nullable=true)
+     */
+    protected $alchimieNiveau1;
+    
+    /**
+     * @Column(type="integer", nullable=true)
+     */
+    protected $alchimieNiveau2;
+    
+    /**
+     * @Column(type="integer", nullable=true)
+     */
+    protected $alchimieNiveau3;
+    
+    /**
+     * @Column(type="integer", nullable=true)
+     */
+    protected $alchimieNiveau4;
+    
     /**
      * @Column(type="string", length=45, nullable=true)
      */
@@ -77,6 +127,8 @@ class BaseCompetence
      */
     protected $personnages;
 
+ 
+    
     public function __construct()
     {
         $this->experienceUsages = new ArrayCollection();
@@ -129,6 +181,8 @@ class BaseCompetence
     {
         return $this->description;
     }
+    
+  
 
     /**
      * Set the value of documentUrl.
@@ -293,6 +347,171 @@ class BaseCompetence
     {
         return $this->level;
     }
+    
+    /**
+     * @return mixed
+     */
+    public function getSortNiveau1()
+    {
+        return $this->sortNiveau1;
+    }
+    
+    /**
+     * @param mixed $sortNiveau1
+     */
+    public function setSortNiveau1($sortNiveau1)
+    {
+        $this->sortNiveau1 = $sortNiveau1;
+    }
+    
+    /**
+     * @return mixed
+     */
+    public function getSortNiveau2()
+    {
+        return $this->sortNiveau2;
+    }
+    
+    /**
+     * @param mixed $sortNiveau2
+     */
+    public function setSortNiveau2($sortNiveau2)
+    {
+        $this->sortNiveau2 = $sortNiveau2;
+    }
+    
+    /**
+     * @return mixed
+     */
+    public function getSortNiveau3()
+    {
+        return $this->sortNiveau3;
+    }
+    
+    /**
+     * @param mixed $sortNiveau3
+     */
+    public function setSortNiveau3($sortNiveau3)
+    {
+        $this->sortNiveau3 = $sortNiveau3;
+    }
+    
+    /**
+     * @return mixed
+     */
+    public function getSortNiveau4()
+    {
+        return $this->sortNiveau4;
+    }
+    
+    /**
+     * @param mixed $sortNiveau4
+     */
+    public function setSortNiveau4($sortNiveau4)
+    {
+        $this->sortNiveau4 = $sortNiveau4;
+    }
+    
+    
+    /**
+     * @return mixed
+     */
+    public function getAlchimieNiveau1()
+    {
+        return $this->alchimieNiveau1;
+    }
+    
+    /**
+     * @param mixed $alchimieNiveau1
+     */
+    public function setAlchimieNiveau1($alchimieNiveau1)
+    {
+        $this->alchimieNiveau1 = $alchimieNiveau1;
+    }
+    
+    /**
+     * @return mixed
+     */
+    public function getAlchimieNiveau2()
+    {
+        return $this->alchimieNiveau2;
+    }
+    
+    /**
+     * @param mixed $alchimieNiveau2
+     */
+    public function setAlchimieNiveau2($alchimieNiveau2)
+    {
+        $this->alchimieNiveau2 = $alchimieNiveau2;
+    }
+    
+    /**
+     * @return mixed
+     */
+    public function getAlchimieNiveau3()
+    {
+        return $this->alchimieNiveau3;
+    }
+    
+    /**
+     * @param mixed $alchimieNiveau3
+     */
+    public function setAlchimieNiveau3($alchimieNiveau3)
+    {
+        $this->alchimieNiveau3 = $alchimieNiveau3;
+    }
+    
+    /**
+     * @return mixed
+     */
+    public function getAlchimieNiveau4()
+    {
+        return $this->alchimieNiveau4;
+    }
+    
+    /**
+     * @param mixed $alchimieNiveau4
+     */
+    public function setAlchimieNiveau4($alchimieNiveau4)
+    {
+        $this->alchimieNiveau4 = $alchimieNiveau4;
+    }
+    
+    
+    /**
+     * @return mixed
+     */
+    public function getLangueAncienneConnue()
+    {
+        return $this->langueAncienneConnue;
+    }
+    
+    /**
+     * @param mixed $langueAncienneConnue
+     */
+    public function setLangueAncienneConnue($langueAncienneConnue)
+    {
+        $this->langueAncienneConnue = $langueAncienneConnue;
+    }
+    
+    /**
+     * @return mixed
+     */
+    public function getLangueConnue()
+    {
+        return $this->langueConnue;
+    }
+    
+    /**
+     * @param mixed $langueConnue
+     */
+    public function setLangueConnue($langueConnue)
+    {
+        $this->langueConnue = $langueConnue;
+    }
+    
+    
+    
 
     /**
      * Add Personnage entity to collection.

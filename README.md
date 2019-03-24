@@ -31,7 +31,7 @@ php composer-setup.php
 
 Configure MySQL connection settings.yml and normal_settings.yml
 
-4) In console, execute :
+4) If you have no database, you can initialize it with  :
 
 ```
 vendor/bin/doctrine orm:schema-tool:drop --force

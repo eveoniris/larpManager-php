@@ -47,7 +47,79 @@
     						{{ competence.materiel|markdown }}
     					{% endif %}
     				</p>
+    				
+    				{% if competence.langueConnue %}
+    				<h4 class="list-group-item-heading">Langue connue</h4>
+    				<p class="list-group-item-text">
+    					{{ competence.langueConnue }}
+    				</p>
+    				{% endif %}
+    				
+    				{% if competence.langueAncienneConnue %}
+    				<h4 class="list-group-item-heading">Langue ancienne connnue</h4>
+    				<p class="list-group-item-text">
+    					{{ competence.langueAncienneConnue }}
+    				</p>
+    				{% endif %}
+    				
+	   				{% if competence.sortNiveau1 %}
+    				<h4 class="list-group-item-heading">Sort de niveau 1</h4>
+    				<p class="list-group-item-text">
+    					{{ competence.sortNiveau1 }}
+    				</p>
+    				{% endif %}
+    				
+					{% if competence.sortNiveau2 %}
+    				<h4 class="list-group-item-heading">Sort de niveau 2</h4>
+    				<p class="list-group-item-text">
+    					{{ competence.sortNiveau2 }}
+    				</p>
+    				{% endif %}
+    				
+					{% if competence.sortNiveau3 %}
+    				<h4 class="list-group-item-heading">Sort de niveau 3</h4>
+    				<p class="list-group-item-text">
+    					{{ competence.sortNiveau3 }}
+    				</p>
+    				{% endif %}
+    				
+					{% if competence.sortNiveau4 %}
+    				<h4 class="list-group-item-heading">Sort de niveau 4</h4>
+    				<p class="list-group-item-text">
+    					{{ competence.sortNiveau4 }}
+    				</p>
+    				{% endif %}
+    				
+    				{% if competence.alchimieNiveau1 %}
+    				<h4 class="list-group-item-heading">Recette de niveau 1</h4>
+    				<p class="list-group-item-text">
+    					{{ competence.alchimieNiveau1 }}
+    				</p>
+    				{% endif %}
+    				
+					{% if competence.alchimieNiveau2 %}
+    				<h4 class="list-group-item-heading">Recette de niveau 2</h4>
+    				<p class="list-group-item-text">
+    					{{ competence.alchimieNiveau2 }}
+    				</p>
+    				{% endif %}
+    				
+					{% if competence.alchimieNiveau3 %}
+    				<h4 class="list-group-item-heading">Recette de niveau 3</h4>
+    				<p class="list-group-item-text">
+    					{{ competence.alchimieNiveau3 }}
+    				</p>
+    				{% endif %}
+    				
+					{% if competence.alchimieNiveau4 %}
+    				<h4 class="list-group-item-heading">Recette de niveau 4</h4>
+    				<p class="list-group-item-text">
+    					{{ competence.alchimieNiveau4 }}
+    				</p>
+    				{% endif %}
 	    		</div>
+	    		
+	    		
 	    		
   				<div class="list-group-item">
   					<div class="btn-group" role="group" aria-label="...">

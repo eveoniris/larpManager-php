@@ -175,7 +175,11 @@
 								{% endfor %}
 							</div>
 							
-							<h6>Languages connus</h6>
+							<h6>Langages connus </h6>
+							{% set languesAnomalie = personnage.getLanguesAnomaliesMessage() %}
+							{% if languesAnomalie != "" %}
+							<div>{{languesAnomalie}}</div>
+							{% endif %}
 							<div class="list-group">
 								{% for personnageLangue in personnage.personnageLangues %}
 									<div class="list-group-item"><strong>{{ personnageLangue.langue}}</strong> ({{ personnageLangue.source }})  - <a href="{{ path('personnage.admin.langue.delete', {'personnage': personnage.id, 'personnageLangue' : personnageLangue.id }) }}">Supprimer</a></div>
@@ -197,6 +201,11 @@
 
 							<div class="list-group-item">
 							<h6 class="list-group-item-heading">Sorts :</h6>
+								{% set sortAnomalie = personnage.getSortAnomalieMessage() %}
+								{% if sortAnomalie != "" %}
+								<div>{{sortAnomalie}}</div>
+								{% endif %}
+																
 								{% for sort in personnage.sorts %}
 									<div class="list-group-item-text">{{ sort.label }} - {{ sort.domaine.label }} Niveau {{ sort.niveau }}</div>
 								{% else %}
