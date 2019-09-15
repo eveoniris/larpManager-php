@@ -66,7 +66,7 @@
 						{%  else %}
 							<a href="{{ path('groupe.admin.list', {'order_by': 'pj', 'order_dir': 'ASC'}) }}">
 						{% endif %}
-							Numero
+							Type
 						{% if app.request.get('order_by') == 'pj'  %}
 							{% if app.request.get('order_dir') == 'ASC' %}
 								<span class="caret"></span>
