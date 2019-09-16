@@ -23,16 +23,14 @@ namespace LarpManager\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
-use LarpManager\Entities\CompetenceAttribute;
 
 /**
- * LarpManager\Form\CompetenceForm
+ * LarpManager\Form\AttributeTypeForm
  *
  * @author kevin
  *
  */
-class CompetenceForm extends AbstractType
+class AttributeTypeForm extends AbstractType
 {
 	/**
 	 * Construction du formulaire
@@ -42,47 +40,20 @@ class CompetenceForm extends AbstractType
 	 */
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
-		$builder->add('competenceFamily','entity', array(
-					'label' => 'Famille',
-					'required' => true,
-					'class' => 'LarpManager\Entities\CompetenceFamily',
-					'property' => 'label',
-				))
-				->add('level','entity', array(
-					'label' => 'Niveau',
-					'required' => true,
-					'class' => 'LarpManager\Entities\Level',
-					'property' => 'label',
-				))								
-				->add('description','textarea', array(
-					'required' => false,
-					'attr' => array(
-							'class' => 'tinymce'
-					),
-				))
-				->add('document','file', array(
-					'label' => 'Téléversez un document',
-					'required' => true,
-					'mapped' => false
-				))
-				->add('materiel','textarea', array(
-					'label' => 'Matériel necessaire',
-					'required' => false,
-					'attr' => array(
-							'class' => 'tinymce'
-					),
-				));
+		$builder->add('label','text', array(
+					'required' => true,	
+				));				
 	}
 	
 	/**
-	 * Définition de l'entité concerné
+	 * Définition de l'entité concernée
 	 * 
 	 * @param OptionsResolverInterface $resolver
 	 */
 	public function setDefaultOptions(OptionsResolverInterface $resolver)
 	{
 		$resolver->setDefaults(array(
-				'class' => 'LarpManager\Entities\Competence',
+				'class' => 'LarpManager\Entities\AttributeType',
 		));
 	}
 	
@@ -91,6 +62,6 @@ class CompetenceForm extends AbstractType
 	 */
 	public function getName()
 	{
-		return 'competence';
+		return 'attributeType';
 	}
 }

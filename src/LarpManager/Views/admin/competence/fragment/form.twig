@@ -1,9 +1,65 @@
+{% block content %}
 <div class="well bs-component">
+	<style>
+		.lm-attributes > li  > .form-group > .control-label {
+			display:none;
+		}
+	</style>
+		
 	<form action="{{ action }}" method="POST" {{ form_enctype(form) }} novalidate>
 		<fieldset>
 			<legend>{{ legend }}</legend>
 				{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
-				{{ form(form) }}
+				
+				{{ form_start(form) }}
+					 {{ form_row(form.competenceFamily) }}					
+					 {{ form_row(form.level) }}					 
+					 {{ form_row(form.description) }}
+							
+					{% if isNew == false %}		
+					<h3>Attributes</h3>
+					<input type="text" id="competenceAttributesAsString" name="competenceAttributesAsString" style="visibility: hidden;" value="{{ competence.competenceAttributesAsString }}" />
+				    <div class="lm-attributes">				    						   
+				    </div>
+					<div><button type="button" id="attribute_add"  class="btn-primary btn">Ajouter</button></div>	
+				    
+				    {% endif %}	
+										
+				{{ form_end(form) }}
+				
+				
 		</fieldset>
+				
 	</form>
+	{% if isNew  == false  %}
+	<div style="display:none">
+		<div id="lh-template-row-competence-attribute" class="row lh-attribute-row">				        						        
+            <div class="col-sm-6">
+	            <div class="form-group row">
+	    			<label class="col-sm-3 col-form-label" style="vertical-align: middle;line-height:30px">Type</label>
+	    			<div class="col-sm-9">
+				        <select class="lh-attribute-type form-control">
+					        {% for attribute in available_attributes %}
+					            <option value="{{ attribute.id }}">{{ attribute.label }}</option>
+					        {% endfor %}
+						</select>
+					</div>
+				</div>
+			</div>					            					            
+            <div class="col-sm-4">
+            	<div class="form-group row ">
+	            	<label  class="col-sm-3 col-form-label" style="vertical-align: middle;line-height:30px">Valeur</label>
+	            	<div class="col-sm-9">
+		            	<input type="text" class="form-control lh-attribute-value">
+	            	</div>
+            	</div>
+          	</div>
+            <div class="col-sm-2">
+            	<button type="button"  class="btn-primary btn lh-attribute-delete">-</button>
+            </div>
+        </div> 			
+	</div>
+	{% endif %}
 </div>
+{% endblock content %}
+

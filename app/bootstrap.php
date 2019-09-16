@@ -230,6 +230,7 @@ else
 	
 	$app->mount('/', new LarpManager\HomepageControllerProvider());
 	$app->mount('/annonce', new LarpManager\AnnonceControllerProvider());
+	$app->mount('/attributeType', new LarpManager\AttributeTypeControllerProvider());
 	$app->mount('/user',  new LarpManager\UserControllerProvider());
 	$app->mount('/droit',  new LarpManager\RightControllerProvider());
 	$app->mount('/stock', new LarpManager\StockControllerProvider());
@@ -246,7 +247,7 @@ else
 	$app->mount('/territoire', new LarpManager\TerritoireControllerProvider());
 	$app->mount('/appelation', new LarpManager\AppelationControllerProvider());
 	$app->mount('/langue', new LarpManager\LangueControllerProvider());
-	$app->mount('/competence', new LarpManager\CompetenceControllerProvider());
+	$app->mount('/competence', new LarpManager\CompetenceControllerProvider());	
 	$app->mount('/competenceFamily', new LarpManager\CompetenceFamilyControllerProvider());
 	$app->mount('/level', new LarpManager\LevelControllerProvider());
 	$app->mount('/classe', new LarpManager\ClasseControllerProvider());
@@ -363,6 +364,7 @@ else
 		array('^/pnj/.*$', 'ROLE_SCENARISTE'),
 		array('^/technologie/.*$', 'ROLE_SCENARISTE'),
 		array('^/competenceFamily/.*$', 'ROLE_REGLE'),
+	    array('^/attributeType/.*$', 'ROLE_REGLE'),
 		array('^/level/.*$', 'ROLE_REGLE'),
 		array('^/token/.*$', 'ROLE_REGLE'),
 		array('^/stock/.*$', 'ROLE_STOCK'),

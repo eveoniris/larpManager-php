@@ -142,3 +142,11 @@ ul.forum li
 .form .form-control {
 	margin-bottom: 15px;
 }
+
+.pastille-orange {
+	display:block;
+	width:20px;
+	height:20px;
+	background-color: orange;
+	border-radius: 15px; 
+}

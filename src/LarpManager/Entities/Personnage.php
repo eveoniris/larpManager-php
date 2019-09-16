@@ -29,6 +29,7 @@ namespace LarpManager\Entities;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use LarpManager\Entities\BasePersonnage;
+use Doctrine\Common\Annotations\Annotation\Attribute;
 
 /**
  * LarpManager\Entities\Personnage
@@ -218,6 +219,43 @@ class Personnage extends BasePersonnage
 			if ( $potion == $p ) return true;
 		}
 		return false;
+	}
+	
+	/**
+	 * Contrôle si le personnage connait le bon nombre de potion
+	 * @return non vide ,si il y a une anomalie
+	 */
+	public function getPotionAnomalieMessage()
+	{
+	    $countByLevel = array(0, 0, 0, 0);
+	    foreach ($this->getPotions() as $potion)
+	    {
+	        $countByLevel[$potion->getNiveau()-1] += 1;
+	    }
+	    
+	    $expectedByLevel = array(0, 0, 0, 0);
+	    foreach ( $this->getCompetences() as $competence)
+	    {
+	        for($i=0;$i < 4;$i++) {
+	            $v = $competence->getAttributeValue(AttributeType::$POTIONS[$i]);
+	            if($v != null) {
+	                $expectedByLevel[$i] += $v;
+	            }
+	        }    
+	    }
+	    
+	    for($i = 0; $i < 4;$i++) {
+	        error_log("PA " . $expectedByLevel[$i] . " " . $countByLevel[$i]);
+	        if($expectedByLevel[$i] < $countByLevel[$i]) {
+	            return ($countByLevel[$i] - $expectedByLevel[$i]) . " potion(s) de niveau " . ($i+1) . " en trop ";
+	        }
+	        
+	        if($expectedByLevel[$i] > $countByLevel[$i]) {
+	            return ($expectedByLevel[$i] - $countByLevel[$i]) . " potion(s) de niveau " . ($i+1) . " manquante";
+	        }
+	    }
+	    
+	    return "";
 	}	
 
 	/**
@@ -240,46 +278,76 @@ class Personnage extends BasePersonnage
      * @return
      */
     public function getSortAnomalieMessage()
-    {   
+    {
         
         $countByLevel = array(0, 0, 0, 0);
-        foreach ($this->getSorts() as $sort) 
-	    {
-	        $countByLevel[$sort->getNiveau()-1] += 1;
-	    }
-	    
-	    $expectedByLevel = array(0, 0, 0, 0);
-	    foreach ( $this->getCompetences() as $competence)
-	    {
-	        if($competence->getSortNiveau1() != null) {
-	            $expectedByLevel[0] += $competence->getSortNiveau1();
-	        }
-	        
-	        if($competence->getSortNiveau2() != null) {
-	            $expectedByLevel[1] += $competence->getSortNiveau2();
-	        }
-	        
-	        if($competence->getSortNiveau3() != null) {
-	            $expectedByLevel[2] += $competence->getSortNiveau3();
-	        }
-	        
-	        if($competence->getSortNiveau4() != null) {
-	            $expectedByLevel[3] += $competence->getSortNiveau4();
+        foreach ($this->getSorts() as $sort)
+        {
+            $countByLevel[$sort->getNiveau()-1] += 1;
+        }
+        
+        // On cumule dans $expectedByLevel , le nombre de sorts attendu
+        $expectedByLevel = array(0, 0, 0, 0);       
+        foreach ( $this->getCompetences() as $competence)
+        {
+            for($i=0;$i < 4;$i++) {
+                $v = $competence->getAttributeValue(AttributeType::$SORTS[$i]);
+                if($v != null) {
+                    $expectedByLevel[$i] += $v;
+                }
+            }            
+        }
+        
+        for($i = 0; $i < 4;$i++) {
+            if($expectedByLevel[$i] < $countByLevel[$i]) {
+                return ($countByLevel[$i] - $expectedByLevel[$i]) . " sort(s) de niveau " . ($i+1) . " en trop";
+            }
+            
+            if($expectedByLevel[$i] > $countByLevel[$i]) {
+                return ($expectedByLevel[$i] - $countByLevel[$i]) . " sort(s) de niveau " . ($i+1) . " manquant";
+            }
+        }
+        
+        return "";
+    }
+    
+    /**
+     * Contrôle si il y a une anomalie dans le nombre de prière 
+     * @return non vide ,si il y a une anomalie
+     */
+    public function getPrieresAnomalieMessage()
+    {
+        
+        $countByLevel = array(0, 0, 0, 0);
+        foreach ($this->getPrieres() as $sort)
+        {
+            $countByLevel[$sort->getNiveau()-1] += 1;
+        }
+        
+        // On cumule dans $expectedByLevel , le nombre de sorts attendu
+        $expectedByLevel = array(0, 0, 0, 0);
+        foreach ( $this->getCompetences() as $competence)
+        {
+            for($i=0;$i < 4;$i++) {
+                $v = $competence->getAttributeValue(AttributeType::$PRIERES[$i]);
+                if($v != null) {
+                    $expectedByLevel[$i] += $v;
+                }
             }
         }
         
         for($i = 0; $i < 4;$i++) {
             if($expectedByLevel[$i] < $countByLevel[$i]) {
-                return ($countByLevel[$i] - $expectedByLevel[$i]) . " sort de niveau " . ($i+1) . " en trop " . $expectedByLevel[$i] . " " . $countByLevel[$i]; 
+                return ($countByLevel[$i] - $expectedByLevel[$i]) . " prière(s) de niveau " . ($i+1) . " en trop";
             }
             
             if($expectedByLevel[$i] > $countByLevel[$i]) {
-                return ($expectedByLevel[$i] - $countByLevel[$i]) . " sort de niveau " . ($i+1) . " manquant " . $expectedByLevel[$i] . " " . $countByLevel[$i];
+                return ($expectedByLevel[$i] - $countByLevel[$i]) . " prière(s) de niveau " . ($i+1) . " manquant";
             }
-	    }
-	    
-        return "";	        
-	}
+        }
+        
+        return "";
+    }
 	
 	/**
 	 * Vérifie si le personnage connait ce domaine de magie
@@ -367,14 +435,16 @@ class Personnage extends BasePersonnage
         $maxLangueAncienneConnue = 0;
         foreach ($this->getCompetences() as $competence)
         {
-            if ($competence->getLangueConnue() != null)
+            $lc = $competence->getAttributeValue(AttributeType::$LANGUE); 
+            if ($lc != null)
             {
-                $maxLangueConnue += $competence->getLangueConnue();
+                $maxLangueConnue += $lc;
             }
 
-            if ($competence->getLangueAncienneConnue() != null)
+            $lc = $competence->getAttributeValue(AttributeType::$LANGUE_ANCIENNE);
+            if ($lc != null)
             {
-                $maxLangueAncienneConnue += $competence->getLangueAncienneConnue();
+                $maxLangueAncienneConnue += $lc;
             }
         }
 

@@ -23,22 +23,22 @@ namespace LarpManager\Repository;
 use Doctrine\ORM\EntityRepository;
 
 /**
- * LarpManager\Repository\CompetenceFamilyRepository
+ * LarpManager\Repository\AttributeTypeRepository
  *
- * @author kevin
+ * @author jsy  
  */
-class CompetenceFamilyRepository extends EntityRepository
+class AttributeTypeRepository extends EntityRepository
 {
     /**
      * Find all classes ordered by label
-     * @return ArrayCollection $competenceFamilies
+     * @return ArrayCollection $attributes
      */
     public function findAllOrderedByLabel()
     {
-        $competenceFamilies = $this->getEntityManager()
-        	->createQuery('SELECT cf FROM LarpManager\Entities\CompetenceFamily cf ORDER BY cf.label ASC')
-        	->getResult();
+        $attributes = $this->getEntityManager()
+        ->createQuery('SELECT cf FROM LarpManager\Entities\AttributeType cf ORDER BY cf.label ASC')
+        ->getResult();
         
-        return $competenceFamilies;
+        return $attributes;
     }
 }

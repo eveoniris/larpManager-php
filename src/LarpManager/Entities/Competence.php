@@ -27,9 +27,7 @@
 
 namespace LarpManager\Entities;
 
-use LarpManager\Entities\BaseCompetence;
 use Doctrine\Common\Collections\ArrayCollection;
-
 
 /**
  * LarpManager\Entities\Competence
@@ -127,4 +125,79 @@ class Competence extends BaseCompetence
 		return $competenceFirst;
 	}
 	
+	
+	public function getCompetenceAttributesAsString() 
+	{	    
+	    $r = "";	    
+	    foreach ($this->getCompetenceAttributes() as $attribute ) {	        
+	        $r = $r .  $attribute->getAttributeTypeId() . ":" . $attribute->getValue() . ";";
+	    }	   
+	    return $r;
+	}
+	
+	public function findAttributeByTypeId($typeId) {
+	    foreach($this->getCompetenceAttributes() as $attr) {
+	        if($attr->getAttributeTypeId() == $typeId) {
+	            return $attr;
+	        }
+	    }
+	    return null;
+	}
+	
+	public function setCompetenceAttributesAsString($value, $ormEm, $attributeRepos)
+	{
+	    $keepTypeIds  = array();	    
+	    if($value != null) {
+
+            $entries = explode(";", $value, 30);
+            	    
+            error_log("Set " . $value);
+            
+            foreach($entries as $entry) {
+                
+                $arrayIdValue = explode(":", $entry, 2);
+                if(count($arrayIdValue) != 2)
+                    continue;
+                $typeId = intval($arrayIdValue[0]);
+                $value = intval($arrayIdValue[1]);
+                
+                array_push($keepTypeIds, $typeId);
+                $attr  = $this->findAttributeByTypeId($typeId);
+                if($attr == null ) {	        
+        	        $attr = new CompetenceAttribute();
+        	        $attr->setCompetence($this);
+        	        $attr->setCompetenceId($this->id);
+        	        $attr->setAttributeTypeId($typeId);
+        	        $attr->setAttributeType($attributeRepos->find($typeId));	        
+        	        $attr->setValue(intval($value));	        	        	        	      
+        	        $this->addCompetenceAttribute($attr);
+                } else {
+                    $attr->setValue($value);
+                }
+            }
+	    } else {
+	        // $value est null => $keepTypeIds est vide, on va donc tout supprimer.
+	    }
+	    
+	    foreach($this->getCompetenceAttributes() as $attr) {
+	        if(! in_array($attr->getAttributeTypeId(), $keepTypeIds)) {
+	             error_log("Remove " . $attr->getAttributeTypeId());
+	            $attributeType = $attr->getAttributeType();
+	            $attributeType->removeCompetenceAttribute($attr);	            
+	            $this->removeCompetenceAttribute($attr);
+	            $ormEm->remove($attr);
+	        }
+	    }
+	   
+	   return $this;    
+	}
+	
+	public function getAttributeValue($key) {
+	    foreach($this->getCompetenceAttributes() as $attr) {
+	        if($attr->getAttributeType()->getLabel() == $key) {
+	            return $attr->getValue();
+	        }
+	    }
+	    return null;
+	}
 }

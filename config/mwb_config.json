@@ -1,7 +1,7 @@
 {
     "export": "doctrine2-annotation",
     "zip": false,
-    "dir": "src/LarpManager/Entities",
+    "dir": "generate",
     "params": {
         "backupExistingFile": true,
         "skipPluralNameChecking": true,

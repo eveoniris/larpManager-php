@@ -15,13 +15,11 @@ You need to have : schema name, mysql login, mysql passwd
 git clone https://github.com/eveoniris/larpManager-php.git
 ```
 
-2) Install composer
+2) Install composer. Check this page to do it:  
 ```
-cd larpManager-php
-php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-php -r "if (hash_file('SHA384', 'composer-setup.php') === '544e09ee996cdf60ece3804abc52599c22b1f40f4323403c44d44fdfdd586475ca9813a858088ffbc1f233e9b180f061') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
-php composer-setup.php
+https://getcomposer.org/download/
 ```
+
 
 3) Download required package with composer
 ```
@@ -40,10 +38,30 @@ vendor/bin/doctrine orm:schema-tool:create
 Note: J'ai rencontré une erreur avec  territoire_quete dans BaseTerritoireQuete.php. Pour finaliser l'installation , j'ai du enlever le conflit de nom en renommant 'territoire_quete' en 'territoire_quete2'  
 
 
-5) Run server
+
+6) Run server
 ```
 php -S localhost:8080 -t web
 ```
+
+# Developpment
+
+All entities bases classes were generated form larpmanager.mwb. It's MySQL Workbench File.
+
+```
+vendor/mysql-workbench-schema-exporter/mysql-workbench-schema-exporter/bin/mysql-workbench-schema-export --config=config/mwb_config.json database/larpmanager.mwb
+```
+
+Note: If you meet an error about ZIP missing => install php-zip : sudo apt-get install php-zip under ubuntu
+
+
+When you have generate entites with your new tables or new attributes. You could generate an SQL patch :
+```
+vendor/bin/doctrine orm:schema-tool:update --dump-sql
+```
+
+WARNING: Before execute in production, check that patch will not drop tables or columns with data 
+
 
 
 

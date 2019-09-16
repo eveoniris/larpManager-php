@@ -178,7 +178,7 @@
 							<h6>Langages connus </h6>
 							{% set languesAnomalie = personnage.getLanguesAnomaliesMessage() %}
 							{% if languesAnomalie != "" %}
-							<div>{{languesAnomalie}}</div>
+							<div class="text-warning">{{languesAnomalie}}</div>
 							{% endif %}
 							<div class="list-group">
 								{% for personnageLangue in personnage.personnageLangues %}
@@ -203,7 +203,7 @@
 							<h6 class="list-group-item-heading">Sorts :</h6>
 								{% set sortAnomalie = personnage.getSortAnomalieMessage() %}
 								{% if sortAnomalie != "" %}
-								<div>{{sortAnomalie}}</div>
+								<div class="text-warning">{{sortAnomalie}}</div>
 								{% endif %}
 																
 								{% for sort in personnage.sorts %}
@@ -215,6 +215,10 @@
 							
 							<div class="list-group-item">	
 								<h6 class="list-group-item-heading">Potions :</h6>
+								{% set potionsAnomalie = personnage.getPotionAnomalieMessage() %}
+								{% if potionsAnomalie != "" %}
+								<div class="text-warning">{{potionsAnomalie}}</div>
+								{% endif %}
 								{% for potion in personnage.potions %}
 									<div class="list-group-item-text">{{ potion.label }} - Niveau {{ potion.niveau }}</div>
 								{% else %}
@@ -224,6 +228,11 @@
 							
 							<div class="list-group-item">
 								<h6 class="list-group-item-heading">Prières</h6>
+								{% set sortAnomalie = personnage.getPrieresAnomalieMessage() %}
+								{% if sortAnomalie != "" %}
+								<div class="text-warning">{{sortAnomalie}}</div>
+								{% endif %}
+								
 								{% for priere in personnage.prieres %}
 									<p class="list-group-item-text">
 										{{ priere.sphere.label }} - Niveau {{ priere.niveau }} ({{ priere.label }})

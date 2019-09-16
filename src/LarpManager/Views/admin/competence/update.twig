@@ -2,6 +2,16 @@
 
 {% block title %}Compétences{% endblock title %}
 
+
+{% block style %}
+<style>
+.competence-attribut {
+	width:80%;
+	float: right;
+}
+</style>
+{% endblock style %}
+
 {% block content %}
 	
 	<div class="container-fluid">
@@ -11,9 +21,101 @@
 				{{ include("admin/competence/fragment/form.twig",{
 					'legend': 'modification d\'une compétence',
 					'action': path('competence.update',{'competence': competence.id}), 
-					'form' : form}) }}
+					'form' : form,
+					'isNew' : false,
+					'competence': competence }) }}
 			</div>
-		</div>
+		</div>		
 	</div>
+	
+	
 		
 {% endblock content %}
+
+{% block javascript %}
+	<script type="text/javascript">
+		$(()=> {
+			"use strict";
+			// Script pour gérer la saisie des types d'attributs
+			
+			var $rowContainer = $(".lm-attributes");			
+			var $template = $("#lh-template-attribute-type");
+			
+			var $elInputCompetenceAttributes = $("#competenceAttributesAsString");
+								
+			/**
+			 * Ajoute une entrée dans 
+			 */
+			var insertEntry = (typeId, value) => {
+				// On utilise le template de ligne vide pour créer une nouvelle entrée.
+				var $e = $("#lh-template-row-competence-attribute").clone();
+				
+				$e.attr("id", "");
+				$e.appendTo($rowContainer);
+				
+				// On positionne les valeurs
+				$e.find(".lh-attribute-type").val(typeId);
+				$e.find(".lh-attribute-value").val(value);				
+			}
+			
+			/**
+			 * Met à jour la valeur  de $elInputCompetenceAttributes 
+			 */
+			var updateValue = () => {
+				var result = "";
+				$rowContainer.find(".lh-attribute-row").each((id, row) => {
+					var $row = $(row);
+					if(result.length > 0) {
+						result += ";";
+					}
+					result += $row.find(".lh-attribute-type").val() + ":" +$row.find(".lh-attribute-value").val(); 			
+				});
+				
+				$elInputCompetenceAttributes.val(result);
+			}
+			
+			
+			/**
+			 * Un clic sur add déclenche.
+			 */
+			$("#attribute_add").on('click', ()=> {
+				insertEntry(null, 0);
+			});
+			
+			
+			/**
+			 * Supprime une ligne
+			 */
+			$rowContainer.on('click', '.lh-attribute-delete', (e)=> {										
+				$(e.target).parents(".lh-attribute-row").remove();
+				updateValue();
+			});
+			
+			/**
+			 * Tout changement déclenche la mise à jour de la valeur  stocké  #competenceAttributesAsString
+			 */
+			$rowContainer.on('change', ()=> {				
+				updateValue();
+			});
+			
+			
+			/**
+			 * Initialise le composant
+			 */
+			
+			var pairs = $elInputCompetenceAttributes.val().split(";");
+
+			pairs.forEach((pair) => {			
+				// Pair {typeId}:{value}
+
+				var typeIdAndValue = pair.split(":");
+				if(typeIdAndValue.length == 2) {
+					console.log(typeIdAndValue);
+					insertEntry(typeIdAndValue[0], typeIdAndValue[1]);
+				}
+			});
+			
+		});
+	</script>
+{% endblock javascript %}
+
