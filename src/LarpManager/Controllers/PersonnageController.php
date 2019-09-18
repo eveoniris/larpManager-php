@@ -666,7 +666,12 @@ class PersonnageController
 					$app['orm.em']->persist($firstCompetence);
 				}
 			}
-			
+
+			//Gestion Age de base à la création
+			$age = $personnage->getAge()->getMinimumValue();
+			$age += rand(0, 4);
+			$personnage->setAgeReel($age);
+
 			// Ajout des points d'expérience gagné grace à l'age
 			$xpAgeBonus = $personnage->getAge()->getBonus();
 			if ( $xpAgeBonus )
