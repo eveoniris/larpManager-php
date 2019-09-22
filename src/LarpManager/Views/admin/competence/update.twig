@@ -51,7 +51,9 @@
 				var $e = $("#lh-template-row-competence-attribute").clone();
 				
 				$e.attr("id", "");
+				$e.find("select").attr("required", "true");
 				$e.appendTo($rowContainer);
+				
 				
 				// On positionne les valeurs
 				$e.find(".lh-attribute-type").val(typeId);
@@ -96,6 +98,26 @@
 			 */
 			$rowContainer.on('change', ()=> {				
 				updateValue();
+			});
+			
+			$rowContainer.on('focus', 'select', (e)=> {
+				var $select = $(e.target);
+				
+				var currentValue = $elInputCompetenceAttributes.val();
+				
+				var setOfUseType = {};
+				var pairs = $elInputCompetenceAttributes.val().split(";");
+				pairs.forEach((pair) => {			
+					var typeIdAndValue = pair.split(":");
+					if(typeIdAndValue.length == 2) {
+						setOfUseType[typeIdAndValue[0]] = true;
+					}
+				});
+				
+				$select.find("option").each((idx, elOption) => {
+					var v = elOption.value;
+					elOption.disabled = setOfUseType[v];  
+				});			
 			});
 			
 			
