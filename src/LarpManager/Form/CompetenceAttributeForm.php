@@ -24,53 +24,36 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
-use LarpManager\Entities\CompetenceAttribute;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use LarpManager\Entities\AttributeType;
 
 /**
- * LarpManager\Form\CompetenceForm
+ * LarpManager\Form\CompetenceAttributeForm
  *
- * @author kevin
+ * @author Jérôme
  *
  */
-class CompetenceForm extends AbstractType
+class CompetenceAttributeForm extends AbstractType
 {
 	/**
 	 * Construction du formulaire
 	 * 
-	 * @param FormBuilderInterface $builder
-	 * @param array $options
+	 * @param FormBuilderInterface $builder 
+	 * @param array $options 
 	 */
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
-		$builder->add('competenceFamily','entity', array(
-					'label' => 'Famille',
+		$builder
+				->add('attributeType','entity', array(
+					'label' => 'Type',
 					'required' => true,
-					'class' => 'LarpManager\Entities\CompetenceFamily',
-					'property' => 'label',
-				))
-				->add('level','entity', array(
-					'label' => 'Niveau',
-					'required' => true,
-					'class' => 'LarpManager\Entities\Level',
+					'class' => 'LarpManager\Entities\AttributeType',
 					'property' => 'label',
 				))								
-				->add('description','textarea', array(
-					'required' => false,
-					'attr' => array(
-							'class' => 'tinymce'
-					),
-				))
-				->add('document','file', array(
-					'label' => 'Téléversez un document',
+				->add('value', 'text', array(
 					'required' => true,
-					'mapped' => false
-				))
-				->add('materiel','textarea', array(
-					'label' => 'Matériel necessaire',
-					'required' => false,
-					'attr' => array(
-							'class' => 'tinymce'
-					),
+				    'label' => 'Nombre'
+				    
 				));
 	}
 	
@@ -82,7 +65,7 @@ class CompetenceForm extends AbstractType
 	public function setDefaultOptions(OptionsResolverInterface $resolver)
 	{
 		$resolver->setDefaults(array(
-				'class' => 'LarpManager\Entities\Competence',
+				'class' => 'LarpManager\Entities\CompetenceAttribute',
 		));
 	}
 	
@@ -91,6 +74,6 @@ class CompetenceForm extends AbstractType
 	 */
 	public function getName()
 	{
-		return 'competence';
+		return 'competenceAttribute';
 	}
 }

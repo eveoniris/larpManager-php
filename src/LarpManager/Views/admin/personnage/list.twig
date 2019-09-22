@@ -120,6 +120,9 @@
 				<th>
 					Points d'expériences
 				</th>
+				<th style="text-align:middle;" title="Anomalie">
+					Ano.
+				</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -130,6 +133,7 @@
 					<td>{{ personnage.classe }}</td>
 					<td>{{ personnage.renomme|default(0) }}</td>
 					<td>{{ personnage.groupe }}</td>
+					
 					<td>
 						{% for participant in personnage.participants %}
 							<strong>{{ participant.gn.label }}</strong>&nbsp;
@@ -138,6 +142,17 @@
 					</td>
 					<td>
 						<a href="{{ path('personnage.admin.xp', {'personnage': personnage.id}) }}">Points d'expériences</a>
+					</td>
+					<td>						
+						
+							{% set languesAnomalie = personnage.getLanguesAnomaliesMessage() %}
+							{% set potionAnomalie = personnage.getPotionAnomalieMessage() %}
+							{% set sortAnomalie = personnage.getSortAnomalieMessage() %}
+							{% set priereAnomalie = personnage.getPrieresAnomalieMessage() %}
+							{% if languesAnomalie != "" or potionAnomalie != "" or sortAnomalie != "" or priereAnomalie != "" %}
+							<div style="margin:auto;" class="pastille-orange" title='{{languesAnomalie}} {{potionAnomalie}} {{sortAnomalie}} {{priereAnomalie}}'>&nbsp;</div>
+							{% endif %}
+																
 					</td>
 				</tr>
 			{% endfor %}

@@ -1,0 +1,19 @@
+<ul class="list-group">
+	{%  if add != false %}
+		<a href="{{ path('attribute.type.add') }}" class="list-group-item active">
+			<span class="badge"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></span>
+			<h4 class="list-group-item-heading">Ajouter un type d'attribut</h4>
+		</a>
+	{%  endif %}
+	{%  for attributeType in attributes %}
+		<li class="list-group-item">
+			<h4 class="list-group-item-heading">
+				{{ attributeType.label }}
+				<div class="btn-group pull-right" role="group" aria-label="...">
+					<a href="{{ path('attribute.type.detail', {index: attributeType.id}) }}" class="btn btn-primary" role="button">Voir</a>
+				    <a href="{{ path('attribute.type.update', {index: attributeType.id}) }}" class="btn btn-default" role="button">Modifier</a>
+				</div>
+			</h4>									
+		</li>
+	{%  endfor %}
+</ul>
