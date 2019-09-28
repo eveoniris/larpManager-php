@@ -34,7 +34,7 @@ class QuestionRepository extends EntityRepository
 	 * Trouve toutes les questions auquel le participant n'a pas répondu
 	 * @return ArrayCollection $classes
 	 */
-	public function findByParticipant(Participant $participant)
+	public function findByParticipant($participant)
 	{
 		$questions = $this->getEntityManager()
 			->createQuery('SELECT q FROM LarpManager\Entities\Question q ORDER BY q.date DESC')

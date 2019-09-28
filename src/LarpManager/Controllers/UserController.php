@@ -238,14 +238,16 @@ class UserController
 		
 		$form->handleRequest($request);
 		
-		if ( $form->isValid() )
-		{
-			
-			$participant = new Participant();
-			$participant->setUser($app['user']);
-			$participant->setGn($gn);
-						
-			$app['orm.em']->persist($participant);
+		if ( $form->isValid() && (!$gn->getBesoinValidationCg() || $request->request->get('acceptCg') == 'ok') ) {
+		    $participant = new Participant();
+		    $participant->setUser($app['user']);
+		    $participant->setGn($gn);
+		    
+		    if($gn->getBesoinValidationCg()) {
+		        $participant->setValideCgLe(new \DateTime('NOW'));
+		    }
+		    
+		    $app['orm.em']->persist($participant);		    		   
 			$app['orm.em']->flush();
 			
 			$app['session']->getFlashBag()->add('success', 'Vous participez maintenant à '.$gn->getLabel().' !');
@@ -256,6 +258,39 @@ class UserController
 				'gn' => $gn,
 				'form' => $form->createView(),
 		));
+	}
+	
+	
+	/**
+	 * Formulaire de validation des cg , si cette validation n'a pas été réalisé à la participation
+	 *
+	 * @param Application $app
+	 * @param Request $request
+	 * @param Gn $gn
+	 */
+	public function gnValidCgAction(Application $app, Request $request, Gn $gn)
+	{
+	    $form = $app['form.factory']->createBuilder()
+	    ->getForm();
+	    
+	    $form->handleRequest($request);
+	    
+	    if ( $form->isValid() && $request->request->get('acceptCg') == 'ok')
+	    {
+	        $participant = $app['user']->getParticipant($gn);
+	        $participant->setValideCgLe(new \DateTime('NOW'));
+	        	        	        
+	        $app['orm.em']->persist($participant);
+	        $app['orm.em']->flush();
+	        
+	        $app['session']->getFlashBag()->add('success', 'Vous avez validé les CG pour '.$gn->getLabel().' !');
+	        return $app->redirect($app['url_generator']->generate('homepage'),301);
+	    }
+	    
+	    return $app['twig']->render('public/gn/validation_cg.twig', array(
+	        'gn' => $gn,
+	        'form' => $form->createView(),
+	    ));
 	}
 		
 	/**
