@@ -110,13 +110,14 @@
 				</div>
 			{% endif %}
 			
+
 			<div class="panel panel-conan">
 				<div class="panel-heading">Forums</div>
 				<div class="panel-body">
 					<ul class="list-group">
 						<li class="list-group-item"><a href="{{ path('forum') }}"><i class="fa fa-comment"></i> Forum</a></li>
-						{% set groupeGn = participant.groupeGn %}
-						{% if groupeGn %}
+						{% if participant and participant.groupeGn %}
+							{% set groupeGn = participant.groupeGn %}
 							{% set groupe = groupeGn.groupe %}
 								{% if groupe %}
 									{% if groupe.topic %}
@@ -159,7 +160,7 @@
 								{% endif %}
 						{% endif %}
 
-						{% if participant.personnage %}
+						{% if participant and participant.personnage %}
 							{% for personnageReligion in participant.personnage.personnagesReligions %}
 								<li class="list-group-item">
 									{% set count = app.user.newPosts(personnageReligion.religion.topic)|length %}
@@ -209,7 +210,7 @@
 			</div>
 			
 			{% for question in questions %}
-				{% if not participant.asAnswser(question) %}
+				{% if participant and not participant.asAnswser(question) %}
 					<div class="panel panel-conan">
 						<div class="panel-heading">
 							[Sondage] : {{ question.label }}
@@ -225,21 +226,24 @@
 					</div>
 				{% endif %}
 			{% endfor %}
-			{% for reponse in participant.reponses %}
-			<div class="panel panel-conan">
-				<div class="panel-heading">
-					[Répondu] : {{ reponse.question.label }}
-				</div>
-				<div class="panel-body">
-					{{ reponse.question.text|markdown }}
-					<strong>{{ reponse.question.reponse(reponse.reponse) }}</strong>
-					<div class="pull-right">
-						<a class="btn btn-danger" href="{{ path('participant.reponse.delete', {'participant':participant.id,'reponse': reponse.id}) }}">Supprimer ma réponse</a>
+			{% if participant %} 
+				{% for reponse in participant.reponses %}
+				<div class="panel panel-conan">
+					<div class="panel-heading">
+						[Répondu] : {{ reponse.question.label }}
+					</div>
+					<div class="panel-body">
+						{{ reponse.question.text|markdown }}
+						<strong>{{ reponse.question.reponse(reponse.reponse) }}</strong>
+						<div class="pull-right">
+							<a class="btn btn-danger" href="{{ path('participant.reponse.delete', {'participant':participant.id,'reponse': reponse.id}) }}">Supprimer ma réponse</a>
+						</div>
 					</div>
 				</div>
-			</div>
-			{% endfor %}
+				{% endfor %}
+   			{% endif %}
 			
+			{% if participant %}
 			<div class="panel panel-conan">
 				<div class="panel-heading">Votre personnage</div>
 				
@@ -266,6 +270,7 @@
 					</ul>
 				</div>
 			</div>
+
 			
 			<div class="panel panel-conan">
 				<div class="panel-heading">Vos groupes</div>
@@ -292,7 +297,8 @@
 					</ul>
 					
 				</div>
-			</div>			
+			</div>
+			{% endif %}	
 		</div>
 	</div>
 {% endblock %}
