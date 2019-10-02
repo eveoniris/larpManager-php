@@ -54,9 +54,9 @@ class GnController
     {
         $participant = $app['user']->getParticipant($gn);
         
-        if($participant != null && $participant->getBesoinValidationCg()) {
+        if($participant != null && $participant->getBesoinValidationCi()) {
             // L'utilisateur n'a pas validé les CG.
-            return $app->redirect($app['url_generator']->generate('user.gn.validationcg', array(
+            return $app->redirect($app['url_generator']->generate('user.gn.validationci', array(
                 'gn' => $gn->getId()
             )), 301);            
         }

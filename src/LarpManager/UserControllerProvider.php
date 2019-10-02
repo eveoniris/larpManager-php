@@ -129,15 +129,15 @@ class UserControllerProvider implements ControllerProviderInterface
 			->before($mustBeUser);
 		
 		/**
-		 * Validation des CG à un jeu
+		 * Validation des CI à un jeu
 		 */
-		$controllers->match('/gn/{gn}/validationcg', 'LarpManager\Controllers\UserController::gnValidCgAction')
+		$controllers->match('/gn/{gn}/validationci', 'LarpManager\Controllers\UserController::gnValidCiAction')
 			->assert('gn', '\d+')
 			->convert('gn', 'converter.gn:convert')
 			->bind('user.gn.participe')
 			->method('GET|POST')
 			->before($mustBeUser)
-			->bind("user.gn.validationcg");
+			->bind("user.gn.validationci");
 
 		/**
 		 * Personnage par défaut d'un utilisateur

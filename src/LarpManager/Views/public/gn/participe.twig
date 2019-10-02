@@ -15,19 +15,19 @@
 		  		<p>{{ gn.description|markdown }}</p>
 		  		<div></div>
 		  		
-		  		{% if gn.conditionsGenerales %}
-			  		<p>{{ gn.conditionsGenerales|markdown}}</p>		  		
+		  		{% if gn.conditionsInscription %}
+			  		<p>{{ gn.conditionsInscription|markdown}}</p>		  		
 		  		{% endif %}
 		  	</div>	  		  	
 		</div>
 	
 		
-		{% if gn.conditionsGenerales %}
+		{% if gn.conditionsInscription %}
 			<hr />
 			<div class="row">		
 				<div class="col-md-12">
 						<div class="checkbox">
-						  <label><input type="checkbox" name="acceptCg" value="ok" required="required">En cochant cette case, vous confirmez avoir pris connaissance des conditions générales et vous les acceptez</label>
+						  <label><input type="checkbox" name="acceptCi" value="ok" required="required">En cochant cette case, vous confirmez avoir pris connaissance des conditions d'inscription et vous les acceptez</label>
 						</div>
 				</div>
 			</div>

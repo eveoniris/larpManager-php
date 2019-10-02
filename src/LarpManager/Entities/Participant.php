@@ -106,7 +106,7 @@ class Participant extends BaseParticipant
 		
 	}
 	
-	public function getBesoinValidationCg() {
-	   return $this->getGn()->getBesoinValidationCg() && $this->getValideCgLe() == null;
+	public function getBesoinValidationCi() {
+	   return $this->getGn()->getBesoinValidationCi() && $this->getValideCiLe() == null;
 	}
 }

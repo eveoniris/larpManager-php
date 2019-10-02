@@ -238,13 +238,13 @@ class UserController
 		
 		$form->handleRequest($request);
 		
-		if ( $form->isValid() && (!$gn->getBesoinValidationCg() || $request->request->get('acceptCg') == 'ok') ) {
+		if ( $form->isValid() && (!$gn->getBesoinValidationCi() || $request->request->get('acceptCi') == 'ok') ) {
 		    $participant = new Participant();
 		    $participant->setUser($app['user']);
 		    $participant->setGn($gn);
 		    
-		    if($gn->getBesoinValidationCg()) {
-		        $participant->setValideCgLe(new \DateTime('NOW'));
+		    if($gn->getBesoinValidationCi()) {
+		        $participant->setValideCiLe(new \DateTime('NOW'));
 		    }
 		    
 		    $app['orm.em']->persist($participant);		    		   
@@ -268,26 +268,26 @@ class UserController
 	 * @param Request $request
 	 * @param Gn $gn
 	 */
-	public function gnValidCgAction(Application $app, Request $request, Gn $gn)
+	public function gnValidCiAction(Application $app, Request $request, Gn $gn)
 	{
 	    $form = $app['form.factory']->createBuilder()
 	    ->getForm();
 	    
 	    $form->handleRequest($request);
 	    
-	    if ( $form->isValid() && $request->request->get('acceptCg') == 'ok')
+	    if ( $form->isValid() && $request->request->get('acceptCi') == 'ok')
 	    {
 	        $participant = $app['user']->getParticipant($gn);
-	        $participant->setValideCgLe(new \DateTime('NOW'));
+	        $participant->setValideCiLe(new \DateTime('NOW'));
 	        	        	        
 	        $app['orm.em']->persist($participant);
 	        $app['orm.em']->flush();
 	        
-	        $app['session']->getFlashBag()->add('success', 'Vous avez validé les CG pour '.$gn->getLabel().' !');
+	        $app['session']->getFlashBag()->add('success', 'Vous avez validé les condition d\'inscription pour '.$gn->getLabel().' !');
 	        return $app->redirect($app['url_generator']->generate('homepage'),301);
 	    }
 	    
-	    return $app['twig']->render('public/gn/validation_cg.twig', array(
+	    return $app['twig']->render('public/gn/validation_ci.twig', array(
 	        'gn' => $gn,
 	        'form' => $form->createView(),
 	    ));
