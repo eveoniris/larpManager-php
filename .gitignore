@@ -6,4 +6,5 @@ composer.phar
 /database/larpmanager.mwb.bak
 /src/LarpManager/Entities/*.bak
 /cache/
+/generate/*.php
 composer.json.old
