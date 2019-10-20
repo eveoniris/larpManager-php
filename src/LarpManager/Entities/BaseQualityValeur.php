@@ -13,7 +13,7 @@ namespace LarpManager\Entities;
  * LarpManager\Entities\QualityValeur
  *
  * @Entity()
- * @Table(name="quality_valeur", indexes={@Index(name="fk_qualite_valeur_qualite1_idx", columns={"quality_id"}), @Index(name="fk_qualite_valeur_monnaie1_idx", columns={"monnaie_id"})})
+ * @Table(name="quality_valeur", indexes={@Index(name="fk_quality_valeur_qualite1_idx", columns={"quality_id"}), @Index(name="fk_quality_valeur_monnaie1_idx", columns={"monnaie_id"})})
  * @InheritanceType("SINGLE_TABLE")
  * @DiscriminatorColumn(name="discr", type="string")
  * @DiscriminatorMap({"base":"BaseQualityValeur", "extended":"QualityValeur"})

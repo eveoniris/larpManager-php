@@ -15,7 +15,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * LarpManager\Entities\Sort
  *
  * @Entity()
- * @Table(name="sort", indexes={@Index(name="fk_sorts_domaine1_idx", columns={"domaine_id"})})
+ * @Table(name="sort", indexes={@Index(name="fk_sort_domaine1_idx", columns={"domaine_id"})})
  * @InheritanceType("SINGLE_TABLE")
  * @DiscriminatorColumn(name="discr", type="string")
  * @DiscriminatorMap({"base":"BaseSort", "extended":"Sort"})
