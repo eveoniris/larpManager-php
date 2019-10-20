@@ -13,7 +13,7 @@ namespace LarpManager\Entities;
  * LarpManager\Entities\Debriefing
  *
  * @Entity()
- * @Table(name="debriefing", indexes={@Index(name="fk_background_groupe1_idx", columns={"groupe_id"}), @Index(name="fk_background_user1_idx", columns={"user_id"}), @Index(name="fk_background_gn1_idx", columns={"gn_id"})})
+ * @Table(name="debriefing", indexes={@Index(name="fk_debriefing_groupe1_idx", columns={"groupe_id"}), @Index(name="fk_debriefing_user1_idx", columns={"user_id"}), @Index(name="fk_debriefing_gn1_idx", columns={"gn_id"})})
  * @InheritanceType("SINGLE_TABLE")
  * @DiscriminatorColumn(name="discr", type="string")
  * @DiscriminatorMap({"base":"BaseDebriefing", "extended":"Debriefing"})

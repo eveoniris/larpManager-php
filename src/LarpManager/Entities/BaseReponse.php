@@ -13,7 +13,7 @@ namespace LarpManager\Entities;
  * LarpManager\Entities\Reponse
  *
  * @Entity()
- * @Table(name="reponse", indexes={@Index(name="fk_personnage_has_question_question1_idx", columns={"question_id"}), @Index(name="fk_reponse_participant1_idx", columns={"participant_id"})})
+ * @Table(name="reponse", indexes={@Index(name="fk_reponse_idx", columns={"question_id"}), @Index(name="fk_reponse_participant1_idx", columns={"participant_id"})})
  * @InheritanceType("SINGLE_TABLE")
  * @DiscriminatorColumn(name="discr", type="string")
  * @DiscriminatorMap({"base":"BaseReponse", "extended":"Reponse"})

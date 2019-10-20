@@ -1,0 +1,14 @@
+env:
+    env: test
+    
+database:
+    driver: pdo_sqlite
+    memory: true
+
+swiftmailer:
+   host: host
+   port: 25
+   username: username
+   password: password
+   encryption: null
+   auth_mode: null
