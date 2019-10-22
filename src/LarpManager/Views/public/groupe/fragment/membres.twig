@@ -1,6 +1,6 @@
 <div class="row">   	
 	{% for session in groupe.groupeGns if session.gn == participant.gn %}
-	<div class="col-md-4">
+	<div class="col-md-10">
 		<h6><i class="fa fa-circle"></i> {{ session.gn }}</h6>
 	
 		{% if participant.isResponsable(groupe) %}
