@@ -1,8 +1,8 @@
 <?php
 namespace LarpManager\Tests\Controller;
 
-require_once(__DIR__ . "\..\..\BaseTestCase.php");
-require_once(__DIR__ . "\..\..\DataFixtures\UserFixture.php");
+require_once(__DIR__ . "/../../BaseTestCase.php");
+require_once(__DIR__ . "/../../DataFixtures/UserFixture.php");
 use LarpManager\Tests\BaseTestCase;
 use LarpManager\Tests\DataFixtures\UserFixture;
 use Doctrine\Common\DataFixtures\Loader;

@@ -9,6 +9,8 @@ La version utilisées est visible dans Composer.
 PHPUnit est installé dans vendor/phpunit.
 Nous allons supposer que vous utilisez Eclipse.
 
+> Il faut que sqlite soit disponible pour votre installation PHP. Pensez à installer sqlite et à vérifier sqlite.ini ou php.ini afin que le module soit bien chargé.
+
 Il y a deux façons de lancer les tests
 
 ### Via la console
