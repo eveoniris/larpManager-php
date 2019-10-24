@@ -182,7 +182,6 @@ class PersonnageController
 		{
 			$personnage = $form->getData();
 			$app['user']->addPersonnage($personnage);
-			
 			$app['orm.em']->persist($app['user']);
 			$app['orm.em']->persist($personnage);
 			$app['orm.em']->flush();
@@ -666,7 +665,7 @@ class PersonnageController
 					$app['orm.em']->persist($firstCompetence);
 				}
 			}
-			
+
 			// Ajout des points d'expérience gagné grace à l'age
 			$xpAgeBonus = $personnage->getAge()->getBonus();
 			if ( $xpAgeBonus )
