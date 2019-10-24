@@ -781,6 +781,11 @@ class ParticipantController
 	
 			// Ajout des points d'expérience gagné à la création d'un personnage
 			$personnage->setXp($participant->getGn()->getXpCreation());
+
+			// Set basic age
+			$age = $personnage->getAge()->getMinimumValue();
+			$age += rand(0, 4);
+			$personnage->setAgeReel($age);
 				
 			// historique
 			$historique = new \LarpManager\Entities\ExperienceGain();

@@ -182,7 +182,6 @@ class PersonnageController
 		{
 			$personnage = $form->getData();
 			$app['user']->addPersonnage($personnage);
-			
 			$app['orm.em']->persist($app['user']);
 			$app['orm.em']->persist($personnage);
 			$app['orm.em']->flush();
@@ -666,11 +665,6 @@ class PersonnageController
 					$app['orm.em']->persist($firstCompetence);
 				}
 			}
-
-			//Gestion Age de base à la création
-			$age = $personnage->getAge()->getMinimumValue();
-			$age += rand(0, 4);
-			$personnage->setAgeReel($age);
 
 			// Ajout des points d'expérience gagné grace à l'age
 			$xpAgeBonus = $personnage->getAge()->getBonus();
