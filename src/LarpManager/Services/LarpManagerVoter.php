@@ -94,8 +94,8 @@ class LarpManagerVoter implements VoterInterface
 				return $this->hasBillet($user, $groupeGnId) ? VoterInterface::ACCESS_GRANTED : VoterInterface::ACCESS_DENIED;
 			}
 			if ($attribute == 'GROUPE_MEMBER') {
-				$groupeId = $object;
-				return $this->isMemberOf($user, $groupeId) ? VoterInterface::ACCESS_GRANTED : VoterInterface::ACCESS_DENIED;
+				$groupeGnId = $object;
+				return $this->isMemberOf($user, $groupeGnId) ? VoterInterface::ACCESS_GRANTED : VoterInterface::ACCESS_DENIED;
 			}
 			if ($attribute == 'TERRITOIRE_MEMBER') {
 				$territoireId = $object;
@@ -444,14 +444,14 @@ class LarpManagerVoter implements VoterInterface
 	 * @param unknown $user
 	 * @param unknown $groupeId
 	 */
-	protected function isMemberOf($user, $groupeId)
+	protected function isMemberOf($user, $groupeGnId)
 	{
 		foreach ( $user->getParticipants() as $participant )
 		{
 			if ( $participant->getGroupeGn() )
 			{
-				$groupe = $participant->getGroupeGn()->getGroupe();
-				if ( $groupe()->getId() == $groupeId)
+				$groupeGn = $participant->getGroupeGn();
+				if ( $groupeGn->getId() == $groupeGnId)
 				{
 					return true;
 				}
