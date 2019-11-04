@@ -56,7 +56,14 @@ $app['maintenance'] = file_exists(__DIR__.'/../cache/' . 'maintenance.tag');
 /**
  * Lecture du fichier de configuration
  */
-$app->register(new DerAlex\Silex\YamlConfigServiceProvider(__DIR__ . '/../config/settings.yml'));
+if(isset($_ENV['env']) && $_ENV['env'] == 'test')
+{
+    $app->register(new DerAlex\Silex\YamlConfigServiceProvider(__DIR__ . '/../config/test_settings_sqlite.yml'));
+}
+else
+{
+    $app->register(new DerAlex\Silex\YamlConfigServiceProvider(__DIR__ . '/../config/settings.yml'));
+}
 
 /**
  * Préparation des logs en fonction de l'environnement
@@ -196,24 +203,24 @@ else
 	
 	// Define firewall
 	$app['security.firewalls'] = array(
-		'public_area' => array(
-			'pattern' => '^.*$',
-			'anonymous' => true,
-			'remember_me' => array(),
-			'form' => array(
-				'login_path' => '/user/login',
-				'check_path' => '/user/login_check',
-				),
-			'logout' => array(
-				'logout_path' => '/user/logout',
-				),
-			'users' => $app->share(function($app) { 
-				return $app['user.manager']; 
-			   }),
-		),
+ 		'public_area' => array(
+ 			'pattern' => '^.*$',
+ 			'anonymous' => true,
+ 			'remember_me' => array(),
+ 			'form' => array(
+ 				'login_path' => '/user/login',
+ 				'check_path' => '/user/login_check',
+ 				),
+ 			'logout' => array(
+ 				'logout_path' => '/user/logout',
+ 				),
+ 			'users' => $app->share(function($app) { 
+ 				return $app['user.manager']; 
+ 			   }),
+ 		),
 		'secured_area' => array(	// le reste necessite d'être connecté
 			'pattern' => '^/[annonce|debriefing|objet|strategie|intrigue|rumeur|question|restriction|econnomie|monnaie|quality|rule|message|notification|statistique|billet|etatCivil|restauration|stock|droit|forum|groupe|gn|groupeGn|personnage|territoire|appelation|langue|ressource|religion|age|genre|level|competence|competenceFamily]/.*$',
-			'anonymous' => false,
+		    'anonymous' => false,
 			'remember_me' => array(),
 			'form' => array(
 					'login_path' => '/user/login',
@@ -230,6 +237,7 @@ else
 	
 	$app->mount('/', new LarpManager\HomepageControllerProvider());
 	$app->mount('/annonce', new LarpManager\AnnonceControllerProvider());
+	$app->mount('/attributeType', new LarpManager\AttributeTypeControllerProvider());
 	$app->mount('/user',  new LarpManager\UserControllerProvider());
 	$app->mount('/droit',  new LarpManager\RightControllerProvider());
 	$app->mount('/stock', new LarpManager\StockControllerProvider());
@@ -246,7 +254,7 @@ else
 	$app->mount('/territoire', new LarpManager\TerritoireControllerProvider());
 	$app->mount('/appelation', new LarpManager\AppelationControllerProvider());
 	$app->mount('/langue', new LarpManager\LangueControllerProvider());
-	$app->mount('/competence', new LarpManager\CompetenceControllerProvider());
+	$app->mount('/competence', new LarpManager\CompetenceControllerProvider());	
 	$app->mount('/competenceFamily', new LarpManager\CompetenceFamilyControllerProvider());
 	$app->mount('/level', new LarpManager\LevelControllerProvider());
 	$app->mount('/classe', new LarpManager\ClasseControllerProvider());
@@ -363,6 +371,7 @@ else
 		array('^/pnj/.*$', 'ROLE_SCENARISTE'),
 		array('^/technologie/.*$', 'ROLE_SCENARISTE'),
 		array('^/competenceFamily/.*$', 'ROLE_REGLE'),
+	    array('^/attributeType/.*$', 'ROLE_REGLE'),
 		array('^/level/.*$', 'ROLE_REGLE'),
 		array('^/token/.*$', 'ROLE_REGLE'),
 		array('^/stock/.*$', 'ROLE_STOCK'),

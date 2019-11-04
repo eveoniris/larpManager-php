@@ -57,6 +57,16 @@ class GroupeGnControllerProvider implements ControllerProviderInterface
 		};
 		
 		/**
+		 * Vérifie que l'utilisateur est membre du groupe associe au GN (GroupeGn)
+		 * @var unknown $mustBeMember
+		 */
+		$mustBeMemberOfGnGroup = function(Request $request) use ($app) {
+		    if (!$app['security.authorization_checker']->isGranted('GROUPE_MEMBER', $request->get('groupeGn'))) {
+		        throw new AccessDeniedException();
+		    }
+		};
+		
+		/**
 		 * Vérifie que l'utilisateur dispose d'un billet pour cette session de jeu
 		 */
 		$mustHaveBillet = function(Request $request) use ($app) {
@@ -153,7 +163,8 @@ class GroupeGnControllerProvider implements ControllerProviderInterface
 			->convert('groupeGn', 'converter.groupeGn:convert')
 			->bind("groupeGn.groupe")
 			->method('GET')
-			->before($mustHaveBillet);
+			->before($mustHaveBillet)
+			->before($mustBeMemberOfGnGroup);
 			
 		/**
 		 * Modifie le nombre de place recherché par le chef de groupe

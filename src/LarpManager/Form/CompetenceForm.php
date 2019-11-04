@@ -23,6 +23,8 @@ namespace LarpManager\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use LarpManager\Entities\CompetenceAttribute;
 
 /**
  * LarpManager\Form\CompetenceForm
@@ -51,7 +53,7 @@ class CompetenceForm extends AbstractType
 					'required' => true,
 					'class' => 'LarpManager\Entities\Level',
 					'property' => 'label',
-				))
+				))								
 				->add('description','textarea', array(
 					'required' => false,
 					'attr' => array(

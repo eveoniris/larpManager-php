@@ -1,0 +1,24 @@
+{% extends "layout.twig" %}
+
+{% block title %}Types d'attributs{% endblock title %}
+
+{% block content %}
+
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-xs-12 col-md-12">
+			<div class="well well-sm">
+				<h4>
+					Gestion des types attributs
+					<small>
+						( {{ attributes|length }} types )
+					</small>
+				</h4>
+			</div>
+			{{ include("admin/attributeType/fragment/list.twig", {'attributes' : attributes, 'add' : true}) }}
+		</div>
+	</div>
+
+</div>
+	
+{% endblock %}

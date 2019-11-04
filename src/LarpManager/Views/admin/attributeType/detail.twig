@@ -1,0 +1,32 @@
+{% extends "layout.twig" %}
+
+{% block title %}Type d'attribut{% endblock title %}
+
+{% block content %}
+	
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-xs-12 col-md-8">
+			
+			<a href="{{ path("attribute.type") }}">Retour à la liste des types d'attributs</a>
+						
+			<div class="well well-sm bs-component">
+				<h4>
+					{{ attributeType.label }}
+				</h4>
+			</div>
+			
+			<div class="list-group">
+				<div class="list-group-item">
+  					<div class="btn-group" role="group" aria-label="...">
+  						<a  class="btn btn-primary" role="button" href="{{ path('attribute.type.update', {index : attributeType.id}) }}">Modifier</a>
+					</div>
+  				</div>
+  			
+			</div>			
+		</div>
+	</div>
+</div>
+	
+			
+{% endblock %}

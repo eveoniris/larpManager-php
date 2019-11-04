@@ -53,6 +53,14 @@ class GnController
     public function detailAction(Request $request, Application $app, Gn $gn)
     {
         $participant = $app['user']->getParticipant($gn);
+        
+        if($participant != null && $participant->getBesoinValidationCi()) {
+            // L'utilisateur n'a pas validé les CG.
+            return $app->redirect($app['url_generator']->generate('user.gn.validationci', array(
+                'gn' => $gn->getId()
+            )), 301);            
+        }
+                
         $repo = $app['orm.em']->getRepository('LarpManager\Entities\Question');
         $questions = $repo->findByParticipant($participant);
         return $app['twig']->render('gn/detail.twig', array(

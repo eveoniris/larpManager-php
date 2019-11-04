@@ -1,0 +1,26 @@
+{% extends "layout.twig" %}
+
+{% block title %}Type d'attribut (   ){% endblock title %}
+
+{% block content %}
+
+
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-xs-12 col-md-8">
+				<a href="{{ path("attribute.type") }}">Retour à la liste des types d'attributs</a>											
+				{{attributeType.id}}
+				{{path('attribute.type.update',{'index': attributeType.id})}}
+				{{
+				include("admin/attributeType/fragment/form.twig",
+					{
+					'legend':'Modification d un type d attribut',
+					'action':path('attribute.type.update',{'index':attributeType.id}),
+					'form':form
+					}
+					)
+				}}</div>
+		</div>
+	</div>
+		
+{% endblock content %}
