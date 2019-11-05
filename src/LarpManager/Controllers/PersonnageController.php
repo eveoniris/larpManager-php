@@ -616,7 +616,7 @@ class PersonnageController
 		$personnage = new \LarpManager\Entities\Personnage();
 		
 		$participant = $request->get('participant');
-		if ( ! $participant ) {
+		if ( !$participant ) {
 			$participant = $app['user']->getParticipant();
 		}
 		else {
