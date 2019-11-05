@@ -862,5 +862,26 @@ class Personnage extends BasePersonnage
 		$groupe->removePersonnage($this);
 		$this->setGroupe(null);
 	}
-				
+	
+	public function getResumeParticipations() {
+	    $s = $this->getNom() ;
+	    
+	    if ( $this->getUser() ) {
+	       $first = true;
+    	    foreach ($this->getUser()->getParticipants() as $participant) {
+    	        if($participant->getPersonnage() != null && $participant->getPersonnage()->getId() == $this->getId()) {
+    	            if($first) {
+    	                $s = $s . " (";
+    	                $first = false;
+    	            }
+    	           $s = $s . " " . $participant->getGn()->getLabel();
+    	        }
+    	    }
+    	    if ( !$first ) {
+    	        $s = $s . " )";
+    	    }
+	    }
+	    return $s; 
+	}
+	
 }
