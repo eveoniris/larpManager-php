@@ -603,13 +603,21 @@ class ParticipantController
 		
 		$groupe = $groupeGn->getGroupe();
 		$gn = $groupeGn->getGn();
+		
+		$default = $participant->getUser()->getPersonnages()->toArray()[0];
+		$lastPersonnage = $participant->getUser()->getLastPersonnage();
+		if($lastPersonnage != null) {
+		    $default = $lastPersonnage;
+		}
+		error_log($default->getNom());
 				
 		$form = $app['form.factory']->createBuilder()
 			->add('personnage','entity', array(
 					'label' =>  'Choisissez votre personnage',
-					'property' => 'nom',
+					'property' => 'resumeParticipations',
 					'class' => 'LarpManager\Entities\Personnage',
 					'choices' => array_unique($participant->getUser()->getPersonnages()->toArray()),
+			        'data' => $default
 			))
 			->add('save','submit', array('label' => 'Valider'))
 			->getForm();
@@ -648,7 +656,7 @@ class ParticipantController
 		return $app['twig']->render('public/participant/personnage_old.twig', array(
 				'form' => $form->createView(),
 				'groupe' => $groupe,
-				'participant' => $participant,
+				'participant' => $participant
 		));
 	}
 
