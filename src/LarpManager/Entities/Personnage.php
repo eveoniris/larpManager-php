@@ -93,7 +93,8 @@ class Personnage extends BasePersonnage
 		{
 			if ( $participant = $this->getUser()->getParticipant($gn))
 			{
-				if ( $participant->getBillet())
+				if ( $participant->getBillet()
+					&& $participant->getPersonnage() == $this) 
 				{
 					return true;
 				}
@@ -895,5 +896,4 @@ class Personnage extends BasePersonnage
 	    }
 	    return $s; 
 	}
-	
 }
