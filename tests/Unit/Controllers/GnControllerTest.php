@@ -1,10 +1,10 @@
 <?php
-namespace LarpManager\Tests\Controller;
+namespace Tests\Controller;
 
-require_once(__DIR__ . "/../../BaseTestCase.php");
-require_once(__DIR__ . "/../../DataFixtures/UserFixture.php");
-use LarpManager\Tests\BaseTestCase;
-use LarpManager\Tests\DataFixtures\UserFixture;
+//require_once(__DIR__ . "/../../BaseTestCase.php");
+//require_once(__DIR__ . "/../../DataFixtures/UserFixture.php");
+use Tests\BaseTestCase;
+use Tests\DataFixtures\UserFixture;
 use Doctrine\Common\DataFixtures\Loader;
 
 
@@ -17,7 +17,7 @@ class GnControllerTest extends BaseTestCase
 	    $fixture->load($this->app["orm.em"]);
 	    
 	    $client = static::createClient();
-		$client = $this->LogIn($client, "testuser");
+		$this->LogIn($client, "testuser1");
 
 		$crawler = $client->request('GET','/gn/');
 		
