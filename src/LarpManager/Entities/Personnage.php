@@ -233,6 +233,7 @@ class Personnage extends BasePersonnage
 	        $countByLevel[$potion->getNiveau()-1] += 1;
 	    }
 	    
+	    $litteratureApprenti = null;
 	    $expectedByLevel = array(0, 0, 0, 0);
 	    foreach ( $this->getCompetences() as $competence)
 	    {
@@ -241,12 +242,16 @@ class Personnage extends BasePersonnage
 	            if($v != null) {
 	                $expectedByLevel[$i] += $v;
 	            }
-	        }    
+	        }
+	        if($competence->getCompetenceFamily()->getLabel() == CompetenceFamily::$LITTERATURE
+	            && $competence->getLevel()->getIndex() == 1) {
+	            $litteratureApprenti = $competence;
+	        }
 	    }
 	    
 	    for($i = 0; $i < 4;$i++) {
 	        error_log("PA " . $expectedByLevel[$i] . " " . $countByLevel[$i]);
-	        if($expectedByLevel[$i] < $countByLevel[$i]) {
+	        if($litteratureApprenti == null && $expectedByLevel[$i] < $countByLevel[$i]) {
 	            return ($countByLevel[$i] - $expectedByLevel[$i]) . " potion(s) de niveau " . ($i+1) . " en trop ";
 	        }
 	        
@@ -286,6 +291,8 @@ class Personnage extends BasePersonnage
             $countByLevel[$sort->getNiveau()-1] += 1;
         }
         
+        $litteratureApprenti = null;
+        
         // On cumule dans $expectedByLevel , le nombre de sorts attendu
         $expectedByLevel = array(0, 0, 0, 0);       
         foreach ( $this->getCompetences() as $competence)
@@ -295,11 +302,16 @@ class Personnage extends BasePersonnage
                 if($v != null) {
                     $expectedByLevel[$i] += $v;
                 }
+                
+                if($competence->getCompetenceFamily()->getLabel() == CompetenceFamily::$LITTERATURE
+                    && $competence->getLevel()->getIndex() == 1) {
+                        $litteratureApprenti = $competence;
+                }
             }            
         }
         
         for($i = 0; $i < 4;$i++) {
-            if($expectedByLevel[$i] < $countByLevel[$i]) {
+            if($litteratureApprenti == null && $expectedByLevel[$i] < $countByLevel[$i]) {
                 return ($countByLevel[$i] - $expectedByLevel[$i]) . " sort(s) de niveau " . ($i+1) . " en trop";
             }
             
@@ -862,5 +874,26 @@ class Personnage extends BasePersonnage
 		$groupe->removePersonnage($this);
 		$this->setGroupe(null);
 	}
-				
+	
+	public function getResumeParticipations() {
+	    $s = $this->getNom() ;
+	    
+	    if ( $this->getUser() ) {
+	       $first = true;
+    	    foreach ($this->getUser()->getParticipants() as $participant) {
+    	        if($participant->getPersonnage() != null && $participant->getPersonnage()->getId() == $this->getId()) {
+    	            if($first) {
+    	                $s = $s . " (";
+    	                $first = false;
+    	            }
+    	           $s = $s . " " . $participant->getGn()->getLabel();
+    	        }
+    	    }
+    	    if ( !$first ) {
+    	        $s = $s . " )";
+    	    }
+	    }
+	    return $s; 
+	}
+	
 }

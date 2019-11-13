@@ -37,6 +37,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class CompetenceFamily extends BaseCompetenceFamily
 {
+    public static $LITTERATURE = "Littérature";
 
 	/**
 	 * @ManyToMany(targetEntity="Classe", mappedBy="competenceFamilyFavorites")

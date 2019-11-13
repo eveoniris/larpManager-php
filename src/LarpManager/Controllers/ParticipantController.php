@@ -603,13 +603,21 @@ class ParticipantController
 		
 		$groupe = $groupeGn->getGroupe();
 		$gn = $groupeGn->getGn();
+		
+		$default = $participant->getUser()->getPersonnages()->toArray()[0];
+		$lastPersonnage = $participant->getUser()->getLastPersonnage();
+		if($lastPersonnage != null) {
+		    $default = $lastPersonnage;
+		}
+		error_log($default->getNom());
 				
 		$form = $app['form.factory']->createBuilder()
 			->add('personnage','entity', array(
 					'label' =>  'Choisissez votre personnage',
-					'property' => 'nom',
+					'property' => 'resumeParticipations',
 					'class' => 'LarpManager\Entities\Personnage',
 					'choices' => array_unique($participant->getUser()->getPersonnages()->toArray()),
+			        'data' => $default
 			))
 			->add('save','submit', array('label' => 'Valider'))
 			->getForm();
@@ -648,7 +656,7 @@ class ParticipantController
 		return $app['twig']->render('public/participant/personnage_old.twig', array(
 				'form' => $form->createView(),
 				'groupe' => $groupe,
-				'participant' => $participant,
+				'participant' => $participant
 		));
 	}
 
@@ -781,6 +789,11 @@ class ParticipantController
 	
 			// Ajout des points d'expérience gagné à la création d'un personnage
 			$personnage->setXp($participant->getGn()->getXpCreation());
+
+			// Set basic age
+			$age = $personnage->getAge()->getMinimumValue();
+			$age += rand(0, 4);
+			$personnage->setAgeReel($age);
 				
 			// historique
 			$historique = new \LarpManager\Entities\ExperienceGain();
