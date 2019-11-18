@@ -1,0 +1,53 @@
+{% extends "layout.twig" %}
+
+{% block title %}Territoire{% endblock title %}
+
+{% block content %}
+
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-xs-12 col-md-8">
+		
+			<div class="well well-sm bs-component">
+			<a href="{{ path('langue') }}">Retour à la liste des langues</a>
+				<h4>
+					{{ groupeLangue.label }}
+				</h4>
+			</div>
+		
+  			<div class="list-group">
+		    		
+		    	<div class="list-group-item">
+			    	<h4 class="list-group-item-heading">Couleur</h4>
+	    			<p class="list-group-item-text">
+	    			{% if not groupeLangue.couleur %}
+    				<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+    				Attention, ce groupe de langue n'a pas de couleur associée.
+    				{% else %}
+    					{{ groupeLangue.couleur }}
+    				{% endif %}
+    				</p>
+	    		</div>
+    			
+	    		<div class="list-group-item">
+		    		<h4 class="list-group-item-heading">Liste des langues dans ce groupe ({{ groupeLangue.langues|length }} langues)</h4>
+    				<p class="list-group-item-text">
+						<ul>
+						{% for langue in groupeLangue.langues %}
+							<li><a href="{{ path('langue.detail',{'index': langue.id}) }}">{{ langue.label }}</a></li>
+						{% endfor %}
+						</ul>
+					</p>
+				</div>
+				
+				<div class="list-group-item">
+  					<div class="btn-group" role="group" aria-label="...">
+  						<a  class="btn btn-primary" role="button" href="{{ path('langue.updateGroup', {index : groupeLangue.id}) }}">Modifier</a>
+					</div>
+  				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+{% endblock %}
