@@ -11,9 +11,12 @@
 					<small>
 						( {{ langues|length }} langues )
 					</small>
+					<small>
+						( {{ groupeLangues|length }} groupes de langues )
+					</small>
 				</h4>
 			</div>
-			
+			{{ include("langue/fragment/grouplist.twig", {'groupeLangues' : groupeLangues, 'add' : true}) }}
 			{{ include("langue/fragment/list.twig", {'langues' : langues, 'add' : true}) }}
 		</div>
 	</div>

@@ -25,6 +25,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Doctrine\ORM\Query;
 use Silex\Application;
 use LarpManager\Form\LangueForm;
+use LarpManager\Form\GroupeLangueForm;
 
 /**
  * LarpManager\Controllers\LangueController
@@ -43,10 +44,9 @@ class LangueController
 	 */
 	public function indexAction(Request $request, Application $app)
 	{
-		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Langue');
-		$langues = $repo->findAllOrderedByLabel();
-		
-		return $app['twig']->render('langue/index.twig', array('langues' => $langues));
+		$langues = $app['orm.em']->getRepository('\LarpManager\Entities\Langue')->findAllOrderedByLabel();
+		$groupeLangues = $app['orm.em']->getRepository('\LarpManager\Entities\GroupeLangue')->findAllOrderedByLabel();
+		return $app['twig']->render('langue/index.twig', array('langues' => $langues, 'groupeLangues' => $groupeLangues));
 	}
 	
 	/**
@@ -152,6 +152,113 @@ class LangueController
 
 		return $app['twig']->render('langue/update.twig', array(
 				'langue' => $langue,
+				'form' => $form->createView(),
+		));
+	}
+
+	/**
+	 * Detail d'une langue
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function detailGroupAction(Request $request, Application $app)
+	{
+		$id = $request->get('index');
+		
+		$groupeLangue = $app['orm.em']->find('\LarpManager\Entities\GroupeLangue',$id);
+		
+		return $app['twig']->render('langue/detailGroup.twig', array('groupeLangue' => $groupeLangue));
+	}
+	
+	/**
+	 * Ajoute une langue
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function addGroupAction(Request $request, Application $app)
+	{
+		$groupeLangue = new \LarpManager\Entities\GroupeLangue();
+		
+		$form = $app['form.factory']->createBuilder(new GroupeLangueForm(), $groupeLangue)
+			->add('save','submit', array('label' => "Sauvegarder"))
+			->add('save_continue','submit', array('label' => "Sauvegarder & continuer"))
+			->getForm();
+		
+		$form->handleRequest($request);
+
+		// si l'utilisateur soumet une nouvelle langue
+		if ( $form->isValid() )
+		{
+			$langue = $form->getData();
+			$app['orm.em']->persist($groupeLangue);
+			$app['orm.em']->flush();
+			
+			$app['session']->getFlashBag()->add('success', 'Le groupe de langue a été ajoutée.');
+				
+			// l'utilisateur est redirigé soit vers la liste des langues, soit vers de nouveau
+			// vers le formulaire d'ajout d'une langue
+			if ( $form->get('save')->isClicked())
+			{
+				return $app->redirect($app['url_generator']->generate('langue'),301);
+			}
+			else if ( $form->get('save_continue')->isClicked())
+			{
+				return $app->redirect($app['url_generator']->generate('langue.addGroup'),301);
+			}
+		}
+		
+		return $app['twig']->render('langue/addGroup.twig', array(
+				'form' => $form->createView(),
+		));
+	}
+	
+	/**
+	 * Modifie une langue. Si l'utilisateur clique sur "sauvegarder", la langue est sauvegardée et
+	 * l'utilisateur est redirigé vers la liste des langues. 
+	 * Si l'utilisateur clique sur "supprimer", la langue est supprimée et l'utilisateur est
+	 * redirigé vers la liste des langues. 
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function updateGroupAction(Request $request, Application $app)
+	{	
+		$id = $request->get('index');
+		
+		$groupeLangue = $app['orm.em']->find('\LarpManager\Entities\GroupeLangue',$id);
+		
+		$form = $app['form.factory']->createBuilder(new GroupeLangueForm(), $groupeLangue)
+			->add('update','submit', array('label' => "Sauvegarder"))
+			->add('delete','submit', array('label' => "Supprimer"))
+			->getForm();
+		
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
+		{
+			$langue = $form->getData();
+		
+			if ( $form->get('update')->isClicked())
+			{
+				$app['orm.em']->persist($groupeLangue);
+				$app['orm.em']->flush();
+				$app['session']->getFlashBag()->add('success', 'Le groupe de langue a été mise à jour.');
+		
+				return $app->redirect($app['url_generator']->generate('langue.detailGroup',array('index' => $id)),301);
+			}
+			else if ( $form->get('delete')->isClicked())
+			{
+				$app['orm.em']->remove($langue);
+				$app['orm.em']->flush();
+				$app['session']->getFlashBag()->add('success', 'Le groupe de langue a été supprimée.');
+				return $app->redirect($app['url_generator']->generate('langue'),301);
+			}
+		}		
+
+		return $app['twig']->render('langue/updateGroup.twig', array(
+				'groupeLangue' => $groupeLangue,
 				'form' => $form->createView(),
 		));
 	}

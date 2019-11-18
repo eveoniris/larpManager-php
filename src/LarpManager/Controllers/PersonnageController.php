@@ -559,7 +559,16 @@ class PersonnageController
 	public function adminDetailAction(Request $request, Application $app)
 	{
 		$personnage = $request->get('personnage');
-		return $app['twig']->render('admin/personnage/detail.twig', array('personnage' => $personnage));
+		$langueMateriel = array();
+		foreach($personnage->getPersonnageLangues() as $langue) {
+
+			if(!in_array($langue->getLangue()->getGroupeLangue()->getCouleur(),$langueMateriel)) {
+				array_push($langueMateriel,$langue->getLangue()->getGroupeLangue()->getCouleur());
+			}
+		}
+		$personnageLangues = $personnage->getPersonnageLangues();
+
+		return $app['twig']->render('admin/personnage/detail.twig', array('personnage' => $personnage,'langueMateriel' => $langueMateriel));
 	}
 	
 	/**
