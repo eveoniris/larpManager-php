@@ -1678,4 +1678,22 @@ class BasePersonnage
     {
         return array('id', 'nom', 'surnom', 'intrigue', 'groupe_id', 'classe_id', 'age_id', 'genre_id', 'renomme', 'photo', 'xp', 'territoire_id', 'materiel', 'vivant', 'age_reel', 'trombineUrl', 'user_id', 'richesse', 'heroisme');
     }
+    
+    /**
+     * @return la prochaine partipcipation
+     */
+    public function prochaineParticipation()
+    {
+        $now = new \DateTime();
+        $prochain = null;
+        
+        foreach ($this->participants as $p) {
+            if($now < $p->getGn()->getDateFin()) {
+                if($prochain == null || $prochain->getGn()->getDateDebut() > $p->getGn()->getDateDebut() ) {
+                    $prochain = $p;
+                }
+            }
+        }
+        return $prochain;
+    }
 }
