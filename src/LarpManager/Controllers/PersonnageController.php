@@ -510,15 +510,36 @@ class PersonnageController
 		if ( $form->isValid() )
 		{
 			$data = $form->getData();
+            //echo get_class($form->get('classe')->getData());die;
+
 			$type = $data['type'];
-			$value = $data['value'];
-			switch ($type){
-				case 'nom':
-					$criteria[] = "p.nom LIKE '%$value%'";
-					break;
-				case 'id':
-					$criteria[] = "p.id = $value";
-			}
+            $value = $data['value'];
+            $religion = $data['religion'];
+            $competence = $data['competence'];
+            //$classe = $data['classe'];
+            $classe = $form->get('classe')->getData();
+			if($type && $value)
+            {
+                switch ($type){
+                    case 'nom':
+                        $criteria[] = "p.nom LIKE '%$value%'";
+                        break;
+                    case 'id':
+                        $criteria[] = "p.id = $value";
+                }
+            }
+            if($religion)
+            {
+                $criteria[] = "pr.id = '{$religion->getId()}'";
+            }
+            if($competence)
+            {
+                //$criteria[] = "p.id = $value";
+            }
+            if($classe)
+            {
+                $criteria[] = "cl.id = '{$classe->getId()}'";//echo '<pre>';print_r($criteria);die;
+            }
 		}
 		
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Personnage');

@@ -44,6 +44,8 @@ class PersonnageRepository extends EntityRepository
 		$qb->select($qb->expr()->count('p'));
 		$qb->from('LarpManager\Entities\Personnage','p');
 		$qb->join('p.participants','pa');
+        $qb->join('p.religions','pr');
+        $qb->join('p.classe','cl');
 		$qb->join('pa.gn','gn');
 	
 		foreach ( $criteria as $critere )
@@ -69,7 +71,9 @@ class PersonnageRepository extends EntityRepository
 		
 		$qb->select('p');
 		$qb->from('LarpManager\Entities\Personnage','p');
-		$qb->join('p.participants','pa');
+        $qb->join('p.participants','pa');
+        $qb->join('p.religions','pr');
+        $qb->join('p.classe','cl');
 		$qb->join('pa.gn','gn');
 		
 		foreach ( $criteria as $critere )
