@@ -40,20 +40,21 @@ class PersonnageRepository extends EntityRepository
 	public function findCount(array $criteria = array())
 	{
 		$qb = $this->getEntityManager()->createQueryBuilder();
-	
-		$qb->select($qb->expr()->count('p'));
-		$qb->from('LarpManager\Entities\Personnage','p');
-		$qb->join('p.participants','pa');
-        $qb->join('p.religions','pr');
+
+		$qb->select($qb->expr()->count('distinct p'));
+        $qb->from('LarpManager\Entities\Personnage','p');
+        $qb->join('p.participants','pa');
+        $qb->join('p.personnagesReligions','ppr');
+        $qb->join('ppr.religion','pr');
         $qb->join('p.classe','cl');
-		$qb->join('pa.gn','gn');
-	
-		foreach ( $criteria as $critere )
-		{
-			$qb->andWhere($critere);
-			
-		}
-	
+        $qb->join('p.competences','cmp');
+//        $qb->join('pa.gn','gn');
+
+        foreach ( $criteria as $critere )
+        {
+            $qb->andWhere($critere);
+        }
+
 		return $qb->getQuery()->getSingleScalarResult();
 	}
 	
@@ -68,23 +69,25 @@ class PersonnageRepository extends EntityRepository
 	public function findList(array $criteria = array(), array $order = array(), $limit, $offset)
 	{
 		$qb = $this->getEntityManager()->createQueryBuilder();
-		
-		$qb->select('p');
+
+		$qb->select('distinct p');
 		$qb->from('LarpManager\Entities\Personnage','p');
         $qb->join('p.participants','pa');
-        $qb->join('p.religions','pr');
+        $qb->join('p.personnagesReligions','ppr');
+        $qb->join('ppr.religion','pr');
         $qb->join('p.classe','cl');
-		$qb->join('pa.gn','gn');
-		
+        $qb->join('p.competences','cmp');
+//		$qb->join('pa.gn','gn');
+
 		foreach ( $criteria as $critere )
 		{
 			$qb->andWhere($critere);
 		}
-		
+
 		$qb->setFirstResult($offset);
 		$qb->setMaxResults($limit);
 		$qb->orderBy('p.'.$order['by'], $order['dir']);
-		
+
 		return $qb->getQuery()->getResult();
 	}
 	

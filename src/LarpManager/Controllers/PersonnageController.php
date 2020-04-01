@@ -502,7 +502,7 @@ class PersonnageController
 		$page = (int)($request->get('page') ?: 1);
 		$offset = ($page - 1) * $limit;
 		$criteria = array();
-		
+
 		$form = $app['form.factory']->createBuilder(new PersonnageFindForm())->getForm();
 		
 		$form->handleRequest($request);
@@ -510,14 +510,13 @@ class PersonnageController
 		if ( $form->isValid() )
 		{
 			$data = $form->getData();
-            //echo get_class($form->get('classe')->getData());die;
 
 			$type = $data['type'];
             $value = $data['value'];
             $religion = $data['religion'];
             $competence = $data['competence'];
-            //$classe = $data['classe'];
-            $classe = $form->get('classe')->getData();
+            $classe = $data['classe'];
+
 			if($type && $value)
             {
                 switch ($type){
@@ -528,26 +527,18 @@ class PersonnageController
                         $criteria[] = "p.id = $value";
                 }
             }
-            if($religion)
-            {
-                $criteria[] = "pr.id = '{$religion->getId()}'";
-            }
-            if($competence)
-            {
-                //$criteria[] = "p.id = $value";
-            }
-            if($classe)
-            {
-                $criteria[] = "cl.id = '{$classe->getId()}'";//echo '<pre>';print_r($criteria);die;
-            }
+            if($religion) $criteria[] = "pr.id = {$religion->getId()}";
+            if($competence) $criteria[] = "cmp.id = {$competence->getId()}";
+            if($classe) $criteria[] = "cl.id = {$classe->getId()}";
 		}
-		
+
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Personnage');
 		$personnages = $repo->findList(
-				$criteria,
-				array( 'by' =>  $order_by, 'dir' => $order_dir),
-				$limit,
-				$offset);
+            $criteria,
+            array( 'by' =>  $order_by, 'dir' => $order_dir),
+            $limit,
+            $offset
+        );
 		
 		$numResults = $repo->findCount($criteria);
 		
