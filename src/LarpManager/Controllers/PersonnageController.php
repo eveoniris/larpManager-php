@@ -593,6 +593,7 @@ class PersonnageController
 				'personnages' => $personnages,
 				'paginator' => $paginator,
 				'form' => $form->createView(),
+            'optionalParameters' => $optionalParameters
 		));
 	}
 	

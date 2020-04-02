@@ -57,9 +57,9 @@
 			<tr>
 				<th>
 					{% if app.request.get('order_dir') == 'ASC' and app.request.get('order_by') == 'id' %}
-						<a href="{{ path('personnage.admin.list', {'order_by': 'id', 'order_dir': 'DESC'}) }}">
+						<a href="{{ path('personnage.admin.list', {'order_by': 'id', 'order_dir': 'DESC'})~optionalParameters }}">
 					{%  else %}
-						<a href="{{ path('personnage.admin.list', {'order_by': 'id', 'order_dir': 'ASC'}) }}">
+						<a href="{{ path('personnage.admin.list', {'order_by': 'id', 'order_dir': 'ASC'})~optionalParameters }}">
 					{% endif %}
 						#	
 					{% if app.request.get('order_by') == 'id'  %}
@@ -75,9 +75,9 @@
 				</th>
 				<th>
 					{% if app.request.get('order_dir') == 'ASC' and app.request.get('order_by') == 'nom' %}
-						<a href="{{ path('personnage.admin.list', {'order_by': 'nom', 'order_dir': 'DESC'}) }}">
+						<a href="{{ path('personnage.admin.list', {'order_by': 'nom', 'order_dir': 'DESC'})~optionalParameters }}">
 					{%  else %}
-						<a href="{{ path('personnage.admin.list', {'order_by': 'nom', 'order_dir': 'ASC'}) }}">
+						<a href="{{ path('personnage.admin.list', {'order_by': 'nom', 'order_dir': 'ASC'})~optionalParameters }}">
 					{% endif %}
 						Nom	
 					{% if app.request.get('order_by') == 'nom'  %}
@@ -96,9 +96,9 @@
 				</th>
 				<th>
 					{% if app.request.get('order_dir') == 'ASC' and app.request.get('order_by') == 'renomme' %}
-						<a href="{{ path('personnage.admin.list', {'order_by': 'renomme', 'order_dir': 'DESC'}) }}">
+						<a href="{{ path('personnage.admin.list', {'order_by': 'renomme', 'order_dir': 'DESC'})~optionalParameters }}">
 					{%  else %}
-						<a href="{{ path('personnage.admin.list', {'order_by': 'renomme', 'order_dir': 'ASC'}) }}">
+						<a href="{{ path('personnage.admin.list', {'order_by': 'renomme', 'order_dir': 'ASC'})~optionalParameters }}">
 					{% endif %}
 					Renomme
 					{% if app.request.get('order_by') == 'renomme'  %}
