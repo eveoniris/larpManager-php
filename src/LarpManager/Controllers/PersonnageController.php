@@ -502,12 +502,22 @@ class PersonnageController
 		$page = (int)($request->get('page') ?: 1);
 		$offset = ($page - 1) * $limit;
 		$criteria = array();
-        $religion = $request->query->get('religion');
-        $competence = $request->query->get('competence');
-        $classe = $request->query->get('classe');
+
+		$formData = $request->query->get('personnageFind');
+        $religion = isset($formData['religion'])?$formData['religion']:null;
+        $competence = isset($formData['competence'])?$formData['competence']:null;
+        $classe = isset($formData['classe'])?$formData['classe']:null;
         $optionalParameters = "";
 
-		$form = $app['form.factory']->createBuilder(new PersonnageFindForm())->getForm();
+		$form = $app['form.factory']->createBuilder(
+		    new PersonnageFindForm(),
+            null,
+            array(
+                'religion'=>$religion,
+                'classe'=>$classe,
+                'competence'=>$competence
+            )
+        )->getForm();
 
 		$form->handleRequest($request);
 
@@ -536,9 +546,9 @@ class PersonnageController
         if($competence) $criteria["competence"] = "cmp.id = {$competence}";
         if($classe) $criteria["classe"] = "cl.id = {$classe}";
 
-        if($religion) $optionalParameters .= "&religion={$religion}";
-        if($competence) $optionalParameters .= "&competence={$competence}";
-        if($classe) $optionalParameters .= "&classe={$classe}";
+        if($religion) $optionalParameters .= "&personnageFind[religion]={$religion}";
+        if($competence) $optionalParameters .= "&personnageFind[competence]={$competence}";
+        if($classe) $optionalParameters .= "&personnageFind[classe]={$classe}";
 
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Personnage');
 		$personnages = $repo->findList(
