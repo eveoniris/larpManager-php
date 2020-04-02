@@ -502,35 +502,43 @@ class PersonnageController
 		$page = (int)($request->get('page') ?: 1);
 		$offset = ($page - 1) * $limit;
 		$criteria = array();
+        $religion = $request->query->get('religion');
+        $competence = $request->query->get('competence');
+        $classe = $request->query->get('classe');
+        $optionalParameters = "";
 
 		$form = $app['form.factory']->createBuilder(new PersonnageFindForm())->getForm();
-		
+
 		$form->handleRequest($request);
-			
+
 		if ( $form->isValid() )
 		{
 			$data = $form->getData();
 
 			$type = $data['type'];
             $value = $data['value'];
-            $religion = $data['religion'];
-            $competence = $data['competence'];
-            $classe = $data['classe'];
+            $religion = $data['religion'] ? $data['religion']->getId() : null;
+            $competence = $data['competence'] ? $data['competence']->getId() : null;
+            $classe = $data['classe'] ? $data['classe']->getId() : null;
 
 			if($type && $value)
             {
                 switch ($type){
                     case 'nom':
-                        $criteria[] = "p.nom LIKE '%$value%'";
+                        $criteria[$type] = "p.nom LIKE '%$value%'";
                         break;
                     case 'id':
-                        $criteria[] = "p.id = $value";
+                        $criteria[$type] = "p.id = $value";
                 }
             }
-            if($religion) $criteria[] = "pr.id = {$religion->getId()}";
-            if($competence) $criteria[] = "cmp.id = {$competence->getId()}";
-            if($classe) $criteria[] = "cl.id = {$classe->getId()}";
 		}
+        if($religion) $criteria["religion"] = "pr.id = {$religion}";
+        if($competence) $criteria["competence"] = "cmp.id = {$competence}";
+        if($classe) $criteria["classe"] = "cl.id = {$classe}";
+
+        if($religion) $optionalParameters .= "&religion={$religion}";
+        if($competence) $optionalParameters .= "&competence={$competence}";
+        if($classe) $optionalParameters .= "&classe={$classe}";
 
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Personnage');
 		$personnages = $repo->findList(
@@ -543,7 +551,7 @@ class PersonnageController
 		$numResults = $repo->findCount($criteria);
 		
 		$paginator = new Paginator($numResults, $limit, $page,
-				$app['url_generator']->generate('personnage.admin.list') . '?page=(:num)&limit=' . $limit . '&order_by=' . $order_by . '&order_dir=' . $order_dir
+				$app['url_generator']->generate('personnage.admin.list') . '?page=(:num)&limit=' . $limit . '&order_by=' . $order_by . '&order_dir=' . $order_dir . $optionalParameters
 				);
 		
 		return $app['twig']->render('admin/personnage/list.twig', array(
