@@ -487,7 +487,25 @@ class PersonnageController
 				'form' => $form->createView(),
 		));
 	}
-	
+    private function getErrorMessages(\Symfony\Component\Form\Form $form) {
+        $errors = array();
+
+        foreach ($form->getErrors() as $key => $error) {
+            if ($form->isRoot()) {
+                $errors['#'][] = $error->getMessage();
+            } else {
+                $errors[] = $error->getMessage();
+            }
+        }
+
+        foreach ($form->all() as $child) {
+            if (!$child->isValid()) {
+                $errors[$child->getName()] = $this->getErrorMessages($child);
+            }
+        }
+
+        return $errors;
+    }
 	/**
 	 * Liste des personnages
 	 * 
@@ -504,18 +522,21 @@ class PersonnageController
 		$criteria = array();
 
 		$formData = $request->query->get('personnageFind');
-        $religion = isset($formData['religion'])?$formData['religion']:null;
-        $competence = isset($formData['competence'])?$formData['competence']:null;
-        $classe = isset($formData['classe'])?$formData['classe']:null;
+        $religion = isset($formData['religion'])?$app['orm.em']->find('LarpManager\Entities\Religion',$formData['religion']):null;
+        $competence = isset($formData['competence'])?$app['orm.em']->find('LarpManager\Entities\Competence',$formData['competence']):null;
+        $classe = isset($formData['classe'])?$app['orm.em']->find('LarpManager\Entities\Classe',$formData['classe']):null;
         $optionalParameters = "";
 
 		$form = $app['form.factory']->createBuilder(
 		    new PersonnageFindForm(),
             null,
             array(
-                'religion'=>$religion,
-                'classe'=>$classe,
-                'competence'=>$competence
+                'data' => [
+                    'religion' => $religion,
+                    'classe' => $classe,
+                    'competence' => $competence,
+                ],
+                'method' => 'get'
             )
         )->getForm();
 
@@ -524,12 +545,11 @@ class PersonnageController
 		if ( $form->isValid() )
 		{
 			$data = $form->getData();
-
 			$type = $data['type'];
             $value = $data['value'];
-            $religion = $data['religion'] ? $data['religion']->getId() : null;
-            $competence = $data['competence'] ? $data['competence']->getId() : null;
-            $classe = $data['classe'] ? $data['classe']->getId() : null;
+            $religion = $data['religion'] ? $data['religion'] : null;
+            $competence = $data['competence'] ? $data['competence'] : null;
+            $classe = $data['classe'] ? $data['classe'] : null;
 
 			if($type && $value)
             {
@@ -542,13 +562,18 @@ class PersonnageController
                 }
             }
 		}
-        if($religion) $criteria["religion"] = "pr.id = {$religion}";
-        if($competence) $criteria["competence"] = "cmp.id = {$competence}";
-        if($classe) $criteria["classe"] = "cl.id = {$classe}";
-
-        if($religion) $optionalParameters .= "&personnageFind[religion]={$religion}";
-        if($competence) $optionalParameters .= "&personnageFind[competence]={$competence}";
-        if($classe) $optionalParameters .= "&personnageFind[classe]={$classe}";
+        if($religion){
+            $criteria["religion"] = "pr.id = {$religion->getId()}";
+            $optionalParameters .= "&personnageFind[religion]={$religion->getId()}";
+        }
+        if($competence){
+            $criteria["competence"] = "cmp.id = {$competence->getId()}";
+            $optionalParameters .= "&personnageFind[competence]={$competence->getId()}";
+        }
+        if($classe){
+            $criteria["classe"] = "cl.id = {$classe->getId()}";
+            $optionalParameters .= "&personnageFind[classe]={$classe->getId()}";
+        }
 
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Personnage');
 		$personnages = $repo->findList(

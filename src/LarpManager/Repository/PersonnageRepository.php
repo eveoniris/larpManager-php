@@ -44,10 +44,13 @@ class PersonnageRepository extends EntityRepository
 		$qb->select($qb->expr()->count('distinct p'));
         $qb->from('LarpManager\Entities\Personnage','p');
         $qb->join('p.participants','pa');
-        $qb->join('p.personnagesReligions','ppr');
-        $qb->join('ppr.religion','pr');
-        $qb->join('p.classe','cl');
-        $qb->join('p.competences','cmp');
+        if(array_key_exists("religion",$criteria))
+        {
+            $qb->join('p.personnagesReligions','ppr');
+            $qb->join('ppr.religion','pr');
+        }
+        if(array_key_exists("classe",$criteria)) $qb->join('p.classe','cl');
+        if(array_key_exists("competence",$criteria)) $qb->join('p.competences','cmp');
 //        $qb->join('pa.gn','gn');
 
         foreach ( $criteria as $critere )
@@ -73,10 +76,13 @@ class PersonnageRepository extends EntityRepository
 		$qb->select('distinct p');
 		$qb->from('LarpManager\Entities\Personnage','p');
         $qb->join('p.participants','pa');
-        $qb->join('p.personnagesReligions','ppr');
-        $qb->join('ppr.religion','pr');
-        $qb->join('p.classe','cl');
-        $qb->join('p.competences','cmp');
+        if(array_key_exists("religion",$criteria))
+        {
+            $qb->join('p.personnagesReligions','ppr');
+            $qb->join('ppr.religion','pr');
+        }
+        if(array_key_exists("classe",$criteria)) $qb->join('p.classe','cl');
+        if(array_key_exists("competence",$criteria)) $qb->join('p.competences','cmp');
 //		$qb->join('pa.gn','gn');
 
 		foreach ( $criteria as $critere )
