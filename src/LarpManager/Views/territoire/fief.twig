@@ -11,28 +11,53 @@
 		</ol>
 		
 		<blockquote>
-			Voici la liste des fiefs, des groupes les possédants, et des pays dont ils font partit.
+			Voici la liste des fiefs, des groupes les possédants, et des pays dont ils font partie.
 		</blockquote>
+		<form class="form-inline" action="{{ path('territoire.fief') }}" method="POST" {{ form_enctype(form) }}>
+			{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+			<div class="form-group">
+				<div class="input-group">
+					{{ form_widget(form.search) }}
+				</div>
+				<div class="input-group">
+					{{ form_widget(form.type) }}
+					<div class="input-group-btn">
+						<button type="submit" class="btn btn-default" data-toggle="tooltup" data-placement="top" title="Lancer la recherche"><i class="fa fa-search"></i></button>
+						<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Reset" href="{{ path('territoire.fief') }}"><i class="fa fa-refresh"></i></a>
+					</div>
+				</div>
+			</div>
+			{{ form_rest(form) }}
+		</form>
 		
 	</div>
 	
 	<table class="table table-condensed">
 		<thead>
 			<tr>
+				<th>#</th>
 				<th>Fief</th>
 				<th>Pays</th>
-				<th>Groupe</th>
+				<th>ID groupe</th>
+				<th>Nom du groupe</th>
 				<th>Nbr de joueurs</th>
 		</thead>
 		<tbody>
 		{% for fief in fiefs %}
 			<tr>
+				<td>{{ fief.id }}</td>
 				<td>{{ fief.nom }}</td>
 				<td>{{ fief.root.nom }}</td>
 				<td>
 				{% if fief.groupe %}
-					<a href="{{ path('groupe.detail', {'index': fief.groupe.id}) }}">#{{  fief.groupe.numero }}&nbsp;{{ fief.groupe.nom }}</a>
+					<a href="{{ path('groupe.detail', {'index': fief.groupe.id}) }}">#{{  fief.groupe.numero }}</a></td>
+				</td>
+				<td>
+					<a href="{{ path('groupe.detail', {'index': fief.groupe.id}) }}">{{ fief.groupe.nom }}</a>
 				{% else %}
+					-
+				</td>
+				<td>
 					libre
 				{% endif %}
 				</td>

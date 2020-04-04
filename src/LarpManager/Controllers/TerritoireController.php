@@ -20,6 +20,7 @@
  
 namespace LarpManager\Controllers;
 
+use LarpManager\Form\Territoire\FiefForm;
 use Symfony\Component\HttpFoundation\Request;
 use Silex\Application;
 
@@ -95,8 +96,23 @@ class TerritoireController
 	 */
 	public function fiefAction(Request $request, Application $app)
 	{
+	    $groupes = $app['orm.em']->getRepository('\LarpManager\Entities\Groupe')->findList(null,null,['by'=>'nom','dir'=>'ASC'],1000,0);
+	    $form = $app['form.factory']->createBuilder(
+            new FiefForm(),
+            null,
+            array(
+                'listeGroupes' => $groupes,
+                'method' => 'get'
+            )
+        )->getForm();
+
+        $form->handleRequest($request);
+
 		$fiefs = $app['orm.em']->getRepository('\LarpManager\Entities\Territoire')->findFiefs();
-		return $app['twig']->render('territoire/fief.twig', array('fiefs' => $fiefs));
+		return $app['twig']->render('territoire/fief.twig', array(
+		    'fiefs' => $fiefs,
+            'form' => $form->createView()
+        ));
 	}
 	
 	/**
