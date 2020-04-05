@@ -537,7 +537,8 @@ class PersonnageController
                     'classe' => $classe,
                     'competence' => $competence,
                 ],
-                'method' => 'get'
+                'method' => 'get',
+                'csrf_protection' => false
             )
         )->getForm();
 
@@ -593,9 +594,9 @@ class PersonnageController
 				);
 		
 		return $app['twig']->render('admin/personnage/list.twig', array(
-				'personnages' => $personnages,
-				'paginator' => $paginator,
-				'form' => $form->createView(),
+            'personnages' => $personnages,
+            'paginator' => $paginator,
+            'form' => $form->createView(),
             'optionalParameters' => $optionalParameters
 		));
 	}

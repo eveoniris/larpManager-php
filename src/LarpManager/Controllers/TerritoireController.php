@@ -107,22 +107,28 @@ class TerritoireController
 
         $formData = $request->query->get('personnageFind');
         $pays = isset($formData['pays'])?$app['orm.em']->find('LarpManager\Entities\Territoire',$formData['pays']):null;
+        $province = isset($formData['provinces'])?$app['orm.em']->find('LarpManager\Entities\Territoire',$formData['provinces']):null;
         $groupe = isset($formData['groupe'])?$app['orm.em']->find('LarpManager\Entities\Groupe',$formData['groupe']):null;
         $optionalParameters = "";
 
         $listeGroupes = $app['orm.em']->getRepository('\LarpManager\Entities\Groupe')->findList(null,null,['by'=>'nom','dir'=>'ASC'],1000,0);
         $listePays = $app['orm.em']->getRepository('\LarpManager\Entities\Territoire')->findRoot();
-	    $form = $app['form.factory']->createBuilder(
+        $listeProvinces = $app['orm.em']->getRepository('\LarpManager\Entities\Territoire')->findProvinces();
+        //echo count($listeProvinces);die;
+        $form = $app['form.factory']->createBuilder(
             new FiefForm(),
             null,
             array(
                 'data' => [
                     'pays' => $pays,
+                    'province' => $province,
                     'groupe' => $groupe
                 ],
                 'listeGroupes' => $listeGroupes,
                 'listePays' => $listePays,
-                'method' => 'get'
+                'listeProvinces' => $listeProvinces,
+                'method' => 'get',
+                'csrf_protection' => false
             )
         )->getForm();
 
@@ -134,6 +140,7 @@ class TerritoireController
             $type = $data['type'];
             $value = $data['value'];
             $pays = $data['pays'] ? $data['pays'] : null;
+            $province = $data['province'] ? $data['province'] : null;
             $groupe = $data['groupe'] ? $data['groupe'] : null;
 
             if($type && $value)
@@ -150,11 +157,15 @@ class TerritoireController
         }
         if($groupe){
             $criteria["groupe"] = "tgr.id = {$groupe->getId()}";
-            $optionalParameters .= "&territoireFief[groupe]={$groupe->getId()}";
+            $optionalParameters .= "&fief[groupe]={$groupe->getId()}";
         }
         if($pays){
             $criteria["pays"] = "tp.id = {$pays->getId()}";
-            $optionalParameters .= "&personnageFief[pays]={$pays->getId()}";
+            $optionalParameters .= "&fief[pays]={$pays->getId()}";
+        }
+        if($province){
+            $criteria["province"] = "tpr.id = {$province->getId()}";
+            $optionalParameters .= "&fief[province]={$province->getId()}";
         }
 
         /* @var TerritoireRepository $repo */

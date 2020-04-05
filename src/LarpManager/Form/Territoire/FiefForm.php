@@ -59,6 +59,12 @@ class FiefForm extends AbstractType
                 'class' => 'LarpManager\Entities\Territoire',
                 'choices' => $options['listePays'],
             ))
+            ->add('province', 'entity', array(
+                'required' => false,
+                'label' => 'Par province',
+                'class' => 'LarpManager\Entities\Territoire',
+                'choices' => $options['listeProvinces'],
+            ))
             ->add('groupe', 'entity', array(
                 'required' => false,
                 'label' => 'Par groupe',
@@ -78,6 +84,7 @@ class FiefForm extends AbstractType
             array(
                 'listeGroupes'=>'',
                 'listePays'=>'',
+                'listeProvinces'=>'',
             )
         );
     }

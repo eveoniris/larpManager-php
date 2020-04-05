@@ -11,7 +11,7 @@
 		</ol>
 		
 		<blockquote>
-			Voici la liste des fiefs, des groupes les possédants, et des pays dont ils font partie.
+			Voici la liste des fiefs, des groupes les possédant, et des pays dont ils font partie.
 		</blockquote>
 
 
@@ -49,6 +49,7 @@
 			<tr>
 				<th>#</th>
 				<th>Fief</th>
+				<th>Province</th>
 				<th>Pays</th>
 				<th>ID groupe</th>
 				<th>Nom du groupe</th>
@@ -59,7 +60,20 @@
 			<tr>
 				<td>{{ fief.id }}</td>
 				<td>{{ fief.nom }}</td>
-				<td>{{ fief.root.nom }}</td>
+				<td>
+					{% if fief.territoire.territoire %}
+						<a href="{{ path('territoire.fief', {'order_by': 'id', 'order_dir': 'DESC','fief[province]': fief.territoire.id})~optionalParameters }}">
+							{{ fief.territoire.nom }}
+						</a>
+					{% else %}
+						-
+					{% endif %}
+				</td>
+				<td>
+					<a href="{{ path('territoire.fief', {'order_by': 'id', 'order_dir': 'DESC','fief[pays]': fief.root.id})~optionalParameters }}">
+						{{ fief.root.nom }}
+					</a>
+				</td>
 				<td>
 				{% if fief.groupe %}
 					<a href="{{ path('groupe.detail', {'index': fief.groupe.id}) }}">#{{  fief.groupe.numero }}</a></td>

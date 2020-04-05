@@ -92,13 +92,10 @@ class TerritoireRepository extends EntityRepository
         $qb->select('distinct t');
         $qb->from('LarpManager\Entities\Territoire','t');
         if(array_key_exists("groupe",$criteria)) $qb->join('t.groupe','tgr');
-        if(array_key_exists("pays",$criteria))
-        {
-            $qb->join('t.territoire','tp');
-            $qb->andWhere('tp.territoire IS NULL');
-        }
-
+        $qb->join('t.territoire','tpr');
+        $qb->join('tpr.territoire','tp');
         $qb->andWhere('t.territoire IS NOT NULL');
+        $qb->andWhere('tp.territoire IS NULL');
 
         foreach ( $criteria as $critere )
         {
@@ -124,12 +121,10 @@ class TerritoireRepository extends EntityRepository
         $qb->select($qb->expr()->count('distinct t'));
         $qb->from('LarpManager\Entities\Territoire','t');
         if(array_key_exists("groupe",$criteria)) $qb->join('t.groupe','tgr');
-        if(array_key_exists("pays",$criteria))
-        {
-            $qb->join('t.territoire','tp');
-            $qb->andWhere('tp.territoire IS NULL');
-        }
+        $qb->join('t.territoire','tpr');
+        $qb->join('tpr.territoire','tp');
         $qb->andWhere('t.territoire IS NOT NULL');
+        $qb->andWhere('tp.territoire IS NULL');
 
         foreach ( $criteria as $critere )
         {
@@ -137,5 +132,20 @@ class TerritoireRepository extends EntityRepository
         }
 
         return $qb->getQuery()->getSingleScalarResult();
+    }
+
+    public function findProvinces()
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+
+        $qb->select('distinct tpr');
+        $qb->from('LarpManager\Entities\Territoire','tpr');
+        $qb->leftJoin('LarpManager\Entities\Territoire','t','WITH','tpr.id = t.territoire');
+        $qb->join('tpr.territoire','tp');
+        $qb->andWhere('tpr.territoire IS NOT NULL');
+        $qb->andWhere('tp.territoire IS NULL');//echo $qb->getQuery()->getSQL();die;
+        $qb->orderBy('tpr.nom', 'ASC');
+
+        return $qb->getQuery()->getResult();
     }
 }
