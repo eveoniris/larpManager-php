@@ -20,6 +20,7 @@
  
 namespace LarpManager\Controllers;
 
+use LarpManager\Repository\PersonnageRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Common\Collections\ArrayCollection;
 
@@ -559,6 +560,7 @@ class PersonnageController
                         break;
                     case 'id':
                         $criteria[$type] = "p.id = $value";
+                        break;
                 }
             }
 		}
@@ -575,6 +577,7 @@ class PersonnageController
             $optionalParameters .= "&personnageFind[classe]={$classe->getId()}";
         }
 
+        /* @var PersonnageRepository $repo */
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Personnage');
 		$personnages = $repo->findList(
             $criteria,

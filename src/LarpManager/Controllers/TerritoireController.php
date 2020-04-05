@@ -20,7 +20,9 @@
  
 namespace LarpManager\Controllers;
 
+use JasonGrimes\Paginator;
 use LarpManager\Form\Territoire\FiefForm;
+use LarpManager\Repository\TerritoireRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Silex\Application;
 
@@ -96,22 +98,85 @@ class TerritoireController
 	 */
 	public function fiefAction(Request $request, Application $app)
 	{
-	    $groupes = $app['orm.em']->getRepository('\LarpManager\Entities\Groupe')->findList(null,null,['by'=>'nom','dir'=>'ASC'],1000,0);
+        $order_by = $request->get('order_by') ?: 'id';
+        $order_dir = $request->get('order_dir') == 'DESC' ? 'DESC' : 'ASC';
+        $limit = (int)($request->get('limit') ?: 50);
+        $page = (int)($request->get('page') ?: 1);
+        $offset = ($page - 1) * $limit;
+        $criteria = array();
+
+        $formData = $request->query->get('personnageFind');
+        $pays = isset($formData['pays'])?$app['orm.em']->find('LarpManager\Entities\Territoire',$formData['pays']):null;
+        $groupe = isset($formData['groupe'])?$app['orm.em']->find('LarpManager\Entities\Groupe',$formData['groupe']):null;
+        $optionalParameters = "";
+
+        $listeGroupes = $app['orm.em']->getRepository('\LarpManager\Entities\Groupe')->findList(null,null,['by'=>'nom','dir'=>'ASC'],1000,0);
+        $listePays = $app['orm.em']->getRepository('\LarpManager\Entities\Territoire')->findRoot();
 	    $form = $app['form.factory']->createBuilder(
             new FiefForm(),
             null,
             array(
-                'listeGroupes' => $groupes,
+                'data' => [
+                    'pays' => $pays,
+                    'groupe' => $groupe
+                ],
+                'listeGroupes' => $listeGroupes,
+                'listePays' => $listePays,
                 'method' => 'get'
             )
         )->getForm();
 
         $form->handleRequest($request);
 
-		$fiefs = $app['orm.em']->getRepository('\LarpManager\Entities\Territoire')->findFiefs();
+        if ( $form->isValid() )
+        {
+            $data = $form->getData();
+            $type = $data['type'];
+            $value = $data['value'];
+            $pays = $data['pays'] ? $data['pays'] : null;
+            $groupe = $data['groupe'] ? $data['groupe'] : null;
+
+            if($type && $value)
+            {
+                switch ($type){
+                    case 'idFief':
+                        $criteria[$type] = "t.id LIKE '%$value%'";
+                        break;
+                    case 'nomFief':
+                        $criteria[$type] = "t.nom LIKE '%$value%'";
+                        break;
+                }
+            }
+        }
+        if($groupe){
+            $criteria["groupe"] = "tgr.id = {$groupe->getId()}";
+            $optionalParameters .= "&territoireFief[groupe]={$groupe->getId()}";
+        }
+        if($pays){
+            $criteria["pays"] = "tp.id = {$pays->getId()}";
+            $optionalParameters .= "&personnageFief[pays]={$pays->getId()}";
+        }
+
+        /* @var TerritoireRepository $repo */
+        $repo = $app['orm.em']->getRepository('\LarpManager\Entities\Territoire');
+        $fiefs = $repo->findFiefsList(
+            $criteria,
+            array( 'by' =>  $order_by, 'dir' => $order_dir),
+            $limit,
+            $offset
+        );
+
+        $numResults = $repo->findFiefsCount($criteria);
+
+        $paginator = new Paginator($numResults, $limit, $page,
+            $app['url_generator']->generate('territoire.fief') . '?page=(:num)&limit=' . $limit . '&order_by=' . $order_by . '&order_dir=' . $order_dir . $optionalParameters
+        );
+
 		return $app['twig']->render('territoire/fief.twig', array(
 		    'fiefs' => $fiefs,
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'paginator' => $paginator,
+            'optionalParameters' => $optionalParameters
         ));
 	}
 	

@@ -13,11 +13,22 @@
 		<blockquote>
 			Voici la liste des fiefs, des groupes les possédants, et des pays dont ils font partie.
 		</blockquote>
-		<form class="form-inline" action="{{ path('territoire.fief') }}" method="POST" {{ form_enctype(form) }}>
+
+
+		{% if paginator.totalItems == 1 %}
+			<strong>1</strong> fief trouvé.
+		{% else %}
+			<strong>{{ paginator.totalItems }}</strong> fiefs trouvés.
+		{% endif %}
+
+		Montre <strong>{{ paginator.currentPageFirstItem }} - {{ paginator.currentPageLastItem }}</strong>.
+
+
+		<form class="form-inline" action="{{ path('territoire.fief') }}" method="GET" {{ form_enctype(form) }}>
 			{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
 			<div class="form-group">
 				<div class="input-group">
-					{{ form_widget(form.search) }}
+					{{ form_widget(form.value) }}
 				</div>
 				<div class="input-group">
 					{{ form_widget(form.type) }}
@@ -29,7 +40,8 @@
 			</div>
 			{{ form_rest(form) }}
 		</form>
-		
+
+		{{ paginator|raw }}
 	</div>
 	
 	<table class="table table-condensed">

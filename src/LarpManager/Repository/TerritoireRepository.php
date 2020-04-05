@@ -76,4 +76,66 @@ class TerritoireRepository extends EntityRepository
 	
 		return $result;
 	}
+
+    /**
+     * Trouve les fiefs correspondant aux critères de recherche
+     *
+     * @param array $criteria
+     * @param array $order
+     * @param unknown $limit
+     * @param unknown $offset
+     */
+    public function findFiefsList(array $criteria = array(), array $order = array(), $limit, $offset)
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+
+        $qb->select('distinct t');
+        $qb->from('LarpManager\Entities\Territoire','t');
+        if(array_key_exists("groupe",$criteria)) $qb->join('t.groupe','tgr');
+        if(array_key_exists("pays",$criteria))
+        {
+            $qb->join('t.territoire','tp');
+            $qb->andWhere('tp.territoire IS NULL');
+        }
+
+        $qb->andWhere('t.territoire IS NOT NULL');
+
+        foreach ( $criteria as $critere )
+        {
+            $qb->andWhere($critere);
+        }
+
+        $qb->setFirstResult($offset);
+        $qb->setMaxResults($limit);
+        $qb->orderBy('t.'.$order['by'], $order['dir']);
+
+        return $qb->getQuery()->getResult();
+    }
+    /**
+     * Trouve le nombre de fiefs correspondant aux critères de recherche
+     *
+     * @param array $criteria
+     * @param array $options
+     */
+    public function findFiefsCount(array $criteria = array())
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+
+        $qb->select($qb->expr()->count('distinct t'));
+        $qb->from('LarpManager\Entities\Territoire','t');
+        if(array_key_exists("groupe",$criteria)) $qb->join('t.groupe','tgr');
+        if(array_key_exists("pays",$criteria))
+        {
+            $qb->join('t.territoire','tp');
+            $qb->andWhere('tp.territoire IS NULL');
+        }
+        $qb->andWhere('t.territoire IS NOT NULL');
+
+        foreach ( $criteria as $critere )
+        {
+            $qb->andWhere($critere);
+        }
+
+        return $qb->getQuery()->getSingleScalarResult();
+    }
 }

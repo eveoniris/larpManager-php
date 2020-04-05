@@ -40,31 +40,30 @@ class FiefForm extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('search', 'text', array(
-                'required' => true,
+        $builder->add('value', 'text', array(
+                'required' => false,
                 'attr' => array(
                     'placeholder' => 'Votre recherche',
                 )
             ))
             ->add('type', 'choice', array(
-                'required' => true,
+                'required' => false,
                 'choices' => array(
                     'idFief' => 'Id du fief',
                     'nomFief' => 'Nom du fief',
                 )
             ))
-//            ->add('pays', 'entity', array(
-//                'required' => false,
-//                'label' => 'Par religion',
-//                'class' => 'LarpManager\Entities\Religion',
-//                'property' => 'label'
-//            ))
+            ->add('pays', 'entity', array(
+                'required' => false,
+                'label' => 'Par pays',
+                'class' => 'LarpManager\Entities\Territoire',
+                'choices' => $options['listePays'],
+            ))
             ->add('groupe', 'entity', array(
                 'required' => false,
                 'label' => 'Par groupe',
                 'class' => 'LarpManager\Entities\Groupe',
                 'choices' => $options['listeGroupes']
-//                'property' => 'label',
             ));
     }
 
@@ -78,6 +77,7 @@ class FiefForm extends AbstractType
         $resolver->setDefaults(
             array(
                 'listeGroupes'=>'',
+                'listePays'=>'',
             )
         );
     }
