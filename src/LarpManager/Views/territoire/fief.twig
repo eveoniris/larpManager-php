@@ -4,6 +4,8 @@
 
 {% block content %}
 
+	{% import "admin/filterMacros.html.twig" as macros %}
+
 	<div class="well well-sm clearfix">
 		<ol class="breadcrumb">
 			<li><a href="{{ path('homepage')  }}">Accueil</a></li>
@@ -47,12 +49,36 @@
 	<table class="table table-condensed">
 		<thead>
 			<tr>
-				<th>#</th>
-				<th>Fief</th>
-				<th>Province</th>
-				<th>Pays</th>
-				<th>ID groupe</th>
-				<th>Nom du groupe</th>
+				<th>
+					<a href="{{ path('territoire.fief', {'order_by': 'id', 'order_dir': macros.getDirection(app,'id')|trim})~optionalParameters }}">
+						# {{ macros.getCaret(app,'id') }}
+					</a>
+				</th>
+				<th>
+					<a href="{{ path('territoire.fief', {'order_by': 'nom', 'order_dir': macros.getDirection(app,'nom')|trim})~optionalParameters }}">
+						Fief {{ macros.getCaret(app,'nom') }}
+					</a>
+				</th>
+				<th>
+					<a href="{{ path('territoire.fief', {'order_by': 'tpr.nom', 'order_dir': macros.getDirection(app,'tpr.nom')|trim})~optionalParameters }}">
+						Province {{ macros.getCaret(app,'tpr.nom') }}
+					</a>
+				</th>
+				<th>
+					<a href="{{ path('territoire.fief', {'order_by': 'tp.nom', 'order_dir': macros.getDirection(app,'tp.nom')|trim})~optionalParameters }}">
+						Pays {{ macros.getCaret(app,'tp.nom') }}
+					</a>
+				</th>
+				<th>
+					<a href="{{ path('territoire.fief', {'order_by': 'groupe', 'order_dir': macros.getDirection(app,'groupe')|trim})~optionalParameters }}">
+						ID groupe {{ macros.getCaret(app,'groupe') }}
+					</a>
+				</th>
+				<th>
+					<a href="{{ path('territoire.fief', {'order_by': 'tgr.nom', 'order_dir': macros.getDirection(app,'tgr.nom')|trim})~optionalParameters }}">
+						Nom du groupe {{ macros.getCaret(app,'tgr.nom') }}
+					</a>
+				</th>
 				<th>Nbr de joueurs</th>
 		</thead>
 		<tbody>

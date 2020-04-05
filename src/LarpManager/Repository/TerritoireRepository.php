@@ -89,9 +89,9 @@ class TerritoireRepository extends EntityRepository
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
 
-        $qb->select('distinct t');
+        $qb->select('distinct t, tpr, tp, tgr');
         $qb->from('LarpManager\Entities\Territoire','t');
-        if(array_key_exists("groupe",$criteria)) $qb->join('t.groupe','tgr');
+        $qb->join('t.groupe','tgr');
         $qb->join('t.territoire','tpr');
         $qb->join('tpr.territoire','tp');
         $qb->andWhere('t.territoire IS NOT NULL');
@@ -104,7 +104,8 @@ class TerritoireRepository extends EntityRepository
 
         $qb->setFirstResult($offset);
         $qb->setMaxResults($limit);
-        $qb->orderBy('t.'.$order['by'], $order['dir']);
+        $defaultEntityAlias = strstr($order['by'],'.') ? '' : 't.';
+        $qb->orderBy($defaultEntityAlias.$order['by'], $order['dir']);
 
         return $qb->getQuery()->getResult();
     }

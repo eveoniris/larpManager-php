@@ -3,31 +3,8 @@
 {% block title %}Personnages{% endblock title %}
 
 {% block content %}
-	{% macro getCaret(app,type) %}
-		{% if app.request.get('order_by') == type  %}
-			{% if app.request.get('order_dir') == 'ASC' %}
-				<span class="caret"></span>
-			{%else%}
-				<span class="dropup">
-					<span class="caret"></span>
-				</span>
-			{% endif %}
-		{% endif %}
-	{% endmacro %}
 
-	{% macro getDirection(app,type)  %}
-		{% if app.request.get('order_by') == type  %}
-			{% if app.request.get('order_dir') == 'ASC' %}
-				{{ 'DESC' }}
-			{%else%}
-				{{ 'ASC' }}
-			{% endif %}
-		{% else %}
-			{{ 'ASC' }}
-		{% endif %}
-	{% endmacro %}
-
-	{% import _self as macros %}
+	{% import "admin/filterMacros.html.twig" as macros %}
 
 	<ol class="breadcrumb">
 		<li><a href="{{ path('homepage') }}">Accueil</a></li>
@@ -105,7 +82,7 @@
 					Utilisateur
 				</th>
 				<th>
-					Points d'expériences
+					Points d'expérience
 				</th>
 				<th style="text-align:middle;" title="Anomalie">
 					Ano.
