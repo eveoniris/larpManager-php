@@ -1590,7 +1590,7 @@ class GroupeController
 		}
 		else
 		{
-			$app['session']->getFlashBag()->add('error', 'Le groupe n\'a pas été trouvée.');
+			$app['session']->getFlashBag()->add('error', 'Le groupe n\'a pas été trouvé.');
 			return $app->redirect($app['url_generator']->generate('groupe'));
 		}
 	}
