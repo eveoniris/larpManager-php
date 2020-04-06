@@ -102,7 +102,17 @@ class BackgroundController
 	 */
 	public function printAction(Request $request, Application $app)
 	{
-		$backgrounds = $app['orm.em']->getRepository('\LarpManager\Entities\Background')->findBackgrounds(2);
+	    $gns = $app['orm.em']->getRepository('\LarpManager\Entities\Gn')->findActive();
+	    if(count($gns)==0)
+        {
+            echo "Erreur : Aucun GN actif trouvé. Veuillez activer le GN en préparation.";die;
+        }
+	    elseif (count($gns)>1)
+        {
+            echo "Erreur : Il ne peut pas y avoir plus d'un GN actif à la fois. Merci de désactiver le GN précédent.";die;
+        }
+
+		$backgrounds = $app['orm.em']->getRepository('\LarpManager\Entities\Background')->findBackgrounds($gns[0]->getId());
 			
 		return $app['twig']->render('admin/background/print.twig', array(
 			'backgrounds' => $backgrounds,	
@@ -116,8 +126,17 @@ class BackgroundController
 	 * @param Application $app
 	 */
 	public function personnagePrintAction(Request $request, Application $app)
-	{		
-		$groupeGns = $app['orm.em']->getRepository('\LarpManager\Entities\GroupeGn')->findByGn(2);
+	{
+	    $gns = $app['orm.em']->getRepository('\LarpManager\Entities\Gn')->findActive();
+        if(count($gns)==0)
+        {
+            echo "Erreur : Aucun GN actif trouvé. Veuillez activer le GN en préparation.";die;
+        }
+        elseif (count($gns)>1)
+        {
+            echo "Erreur : Il ne peut pas y avoir plus d'un GN actif à la fois. Merci de désactiver le GN précédent.";die;
+        }
+		$groupeGns = $app['orm.em']->getRepository('\LarpManager\Entities\GroupeGn')->findByGn($gns[0]->getId());
 		
 		return $app['twig']->render('admin/background/personnagePrint.twig', array(
 				'groupeGns' => $groupeGns,

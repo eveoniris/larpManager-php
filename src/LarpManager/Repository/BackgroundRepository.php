@@ -55,7 +55,7 @@ class BackgroundRepository extends EntityRepository
 	{
 		
 		$backgrounds = $this->getEntityManager()
-			->createQuery('SELECT b FROM LarpManager\Entities\Background b JOIN b.gn gn JOIN b.groupe g WHERE gn.id = 2 ORDER BY g.numero ASC')
+			->createQuery("SELECT b FROM LarpManager\Entities\Background b JOIN b.gn gn JOIN b.groupe g WHERE gn.id = $gnId ORDER BY g.numero ASC")
 			->getResult();
 		
 		return $backgrounds;
