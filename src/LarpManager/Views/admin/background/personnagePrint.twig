@@ -17,7 +17,7 @@ body {
 		
 			{% set backgrounds = participant.personnage.personnageBackgrounds %}
 			{% for background in backgrounds if date(background.creationDate) < date('-8 month')%}
-				<h2>#{{ groupeGn.groupe.numero }} {{ groupeGn.groupe.nom }}</h2>
+				<h2>#{{ groupeGn.groupe.numero }} {{ groupeGn.groupe.nom }} ({{ background.gn.label }})</h2>
 				<h3>#{{ background.personnage.id }} {{ background.personnage.nom }}{% if background.personnage.surnom %} alias {{ background.personnage.surnom }}{% endif %}
 						
 				{{ background.text|markdown }}

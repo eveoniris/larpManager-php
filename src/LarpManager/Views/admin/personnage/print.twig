@@ -33,6 +33,7 @@ table tr td {
 						{% for participantHasRestauration in participant.participantHasRestaurations %}
 							{{ participantHasRestauration.restauration.label }}<br />
 						{% endfor %}
+						<strong>GN : {{ participant.gn.label }}</strong><br />
 						<strong>Personnage Secondaire : </strong>
 						{% if participant.personnageSecondaire %}
 							{{ participant.personnageSecondaire.classe.label }}
@@ -108,7 +109,7 @@ table tr td {
 	<table>
 		<thead>
 			<tr>
-				<th>Dommaines de magie</th>
+				<th>Domaines de magie</th>
 				<th>Inventaire</th>
 				<th>Groupe secondaires</th>
 			</tr>
