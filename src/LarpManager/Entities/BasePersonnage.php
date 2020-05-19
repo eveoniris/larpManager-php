@@ -291,6 +291,7 @@ class BasePersonnage
      *     joinColumns={@JoinColumn(name="personnage_id", referencedColumnName="id", nullable=false)},
      *     inverseJoinColumns={@JoinColumn(name="sort_id", referencedColumnName="id", nullable=false)}
      * )
+     * @OrderBy({"label" = "ASC", "niveau" = "ASC",})
      */
     protected $sorts;
 
