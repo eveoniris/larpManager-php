@@ -29,6 +29,7 @@ namespace LarpManager\Entities;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use LarpManager\Entities\BasePersonnage;
+use Doctrine\Common\Annotations\Annotation\Attribute;
 
 /**
  * LarpManager\Entities\Personnage
@@ -92,7 +93,8 @@ class Personnage extends BasePersonnage
 		{
 			if ( $participant = $this->getUser()->getParticipant($gn))
 			{
-				if ( $participant->getBillet())
+				if ( $participant->getBillet()
+					&& $participant->getPersonnage() == $this) 
 				{
 					return true;
 				}
@@ -218,6 +220,48 @@ class Personnage extends BasePersonnage
 			if ( $potion == $p ) return true;
 		}
 		return false;
+	}
+	
+	/**
+	 * Contrôle si le personnage connait le bon nombre de potion
+	 * @return non vide ,si il y a une anomalie
+	 */
+	public function getPotionAnomalieMessage()
+	{
+	    $countByLevel = array(0, 0, 0, 0);
+	    foreach ($this->getPotions() as $potion)
+	    {
+	        $countByLevel[$potion->getNiveau()-1] += 1;
+	    }
+	    
+	    $litteratureApprenti = null;
+	    $expectedByLevel = array(0, 0, 0, 0);
+	    foreach ( $this->getCompetences() as $competence)
+	    {
+	        for($i=0;$i < 4;$i++) {
+	            $v = $competence->getAttributeValue(AttributeType::$POTIONS[$i]);
+	            if($v != null) {
+	                $expectedByLevel[$i] += $v;
+	            }
+	        }
+	        if($competence->getCompetenceFamily()->getLabel() == CompetenceFamily::$LITTERATURE
+	            && $competence->getLevel()->getIndex() == 1) {
+	            $litteratureApprenti = $competence;
+	        }
+	    }
+	    
+	    for($i = 0; $i < 4;$i++) {
+	        error_log("PA " . $expectedByLevel[$i] . " " . $countByLevel[$i]);
+	        if($litteratureApprenti == null && $expectedByLevel[$i] < $countByLevel[$i]) {
+	            return ($countByLevel[$i] - $expectedByLevel[$i]) . " potion(s) de niveau " . ($i+1) . " en trop ";
+	        }
+	        
+	        if($expectedByLevel[$i] > $countByLevel[$i]) {
+	            return ($expectedByLevel[$i] - $countByLevel[$i]) . " potion(s) de niveau " . ($i+1) . " manquante";
+	        }
+	    }
+	    
+	    return "";
 	}	
 
 	/**
@@ -233,7 +277,90 @@ class Personnage extends BasePersonnage
 			if ( $sort == $s ) return true;
 		}
 		return false;
-	}
+    }
+
+    /**
+     *
+     * @return
+     */
+    public function getSortAnomalieMessage()
+    {
+        
+        $countByLevel = array(0, 0, 0, 0);
+        foreach ($this->getSorts() as $sort)
+        {
+            $countByLevel[$sort->getNiveau()-1] += 1;
+        }
+        
+        $litteratureApprenti = null;
+        
+        // On cumule dans $expectedByLevel , le nombre de sorts attendu
+        $expectedByLevel = array(0, 0, 0, 0);       
+        foreach ( $this->getCompetences() as $competence)
+        {
+            for($i=0;$i < 4;$i++) {
+                $v = $competence->getAttributeValue(AttributeType::$SORTS[$i]);
+                if($v != null) {
+                    $expectedByLevel[$i] += $v;
+                }
+                
+                if($competence->getCompetenceFamily()->getLabel() == CompetenceFamily::$LITTERATURE
+                    && $competence->getLevel()->getIndex() == 1) {
+                        $litteratureApprenti = $competence;
+                }
+            }            
+        }
+        
+        for($i = 0; $i < 4;$i++) {
+            if($litteratureApprenti == null && $expectedByLevel[$i] < $countByLevel[$i]) {
+                return ($countByLevel[$i] - $expectedByLevel[$i]) . " sort(s) de niveau " . ($i+1) . " en trop";
+            }
+            
+            if($expectedByLevel[$i] > $countByLevel[$i]) {
+                return ($expectedByLevel[$i] - $countByLevel[$i]) . " sort(s) de niveau " . ($i+1) . " manquant";
+            }
+        }
+        
+        return "";
+    }
+    
+    /**
+     * Contrôle si il y a une anomalie dans le nombre de prière 
+     * @return non vide ,si il y a une anomalie
+     */
+    public function getPrieresAnomalieMessage()
+    {
+        
+        $countByLevel = array(0, 0, 0, 0);
+        foreach ($this->getPrieres() as $sort)
+        {
+            $countByLevel[$sort->getNiveau()-1] += 1;
+        }
+        
+        // On cumule dans $expectedByLevel , le nombre de sorts attendu
+        $expectedByLevel = array(0, 0, 0, 0);
+        foreach ( $this->getCompetences() as $competence)
+        {
+            for($i=0;$i < 4;$i++) {
+                $v = $competence->getAttributeValue(AttributeType::$PRIERES[$i]);
+                if($v != null) {
+                    $expectedByLevel[$i] += $v;
+                }
+            }
+        }
+        
+        for($i = 0; $i < 4;$i++) {
+            if($expectedByLevel[$i] < $countByLevel[$i]) {
+                return ($countByLevel[$i] - $expectedByLevel[$i]) . " prière(s) de niveau " . ($i+1) . " en trop";
+            }
+            
+            if($expectedByLevel[$i] > $countByLevel[$i]) {
+                return ($expectedByLevel[$i] - $countByLevel[$i]) . " prière(s) de niveau " . ($i+1) . " manquant";
+            }
+        }
+        
+        return "";
+    }
 	
 	/**
 	 * Vérifie si le personnage connait ce domaine de magie
@@ -290,6 +417,69 @@ class Personnage extends BasePersonnage
 		}
 		return $languages;
 	}
+
+    /**
+     * Retourne les anomalies entre le nombre de langue autorisé et le nombre de langue affectés.
+     *
+     * @return \Doctrine\Common\Collections\Collection|NULL
+     */
+    public function getLanguesAnomaliesMessage()
+    {
+        
+
+        // On compte les langues connues
+        $compteLangue = 0;
+        $compteLangueAncienne = 0;
+        $label = "";
+        foreach ($this->getPersonnageLangues() as $personnageLangue)
+        {
+            $label = $label . " " . $personnageLangue->getLangue();
+            if (strpos($personnageLangue->getLangue(), "Ancien:") === 0)
+            {
+                $compteLangueAncienne += 1;
+            } else
+            {
+                $compteLangue += 1;
+            }
+        }
+
+        // On parcourt les compétences pour compter le nombre de langues & langues anciennes qui devrait être connue.
+        $maxLangueConnue = 2;
+        $maxLangueAncienneConnue = 0;
+        foreach ($this->getCompetences() as $competence)
+        {
+            $lc = $competence->getAttributeValue(AttributeType::$LANGUE); 
+            if ($lc != null)
+            {
+                $maxLangueConnue += $lc;
+            }
+
+            $lc = $competence->getAttributeValue(AttributeType::$LANGUE_ANCIENNE);
+            if ($lc != null)
+            {
+                $maxLangueAncienneConnue += $lc;
+            }
+        }
+
+        // On génère le message de restitution de l'anomalie.
+        if ($compteLangue > $maxLangueConnue)
+        {
+            return ($compteLangue - $maxLangueConnue) . " langue(s) en trop";
+        } else if ($compteLangue < $maxLangueConnue)
+        {
+            return ($maxLangueConnue - $compteLangue) . " langue(s) manquante(s)";
+        }
+
+        if ($maxLangueAncienneConnue < $compteLangueAncienne)
+        {
+            return ($compteLangueAncienne - $maxLangueAncienneConnue) . " langue(s) ancienne(s) en trop";
+        } else if ($maxLangueAncienneConnue > $compteLangueAncienne)
+        {
+            return ($maxLangueAncienneConnue - $compteLangueAncienne) . " langue(s) ancienne(s) en manquante(s)";
+	    }
+	    return "";
+	}
+	
 	
 	/**
 	 * Fourni le language
@@ -354,7 +544,7 @@ class Personnage extends BasePersonnage
 		}
 		return $niveau;
 	}
-	
+		
 	/**
 	 * Fourni le niveau d'une compétence pour le score de pugilat
 	 * @param unknown $label
@@ -685,5 +875,25 @@ class Personnage extends BasePersonnage
 		$groupe->removePersonnage($this);
 		$this->setGroupe(null);
 	}
-				
+	
+	public function getResumeParticipations() {
+	    $s = $this->getNom() ;
+	    
+	    if ( $this->getUser() ) {
+	       $first = true;
+    	    foreach ($this->getUser()->getParticipants() as $participant) {
+    	        if($participant->getPersonnage() != null && $participant->getPersonnage()->getId() == $this->getId()) {
+    	            if($first) {
+    	                $s = $s . " (";
+    	                $first = false;
+    	            }
+    	           $s = $s . " " . $participant->getGn()->getLabel();
+    	        }
+    	    }
+    	    if ( !$first ) {
+    	        $s = $s . " )";
+    	    }
+	    }
+	    return $s; 
+	}
 }

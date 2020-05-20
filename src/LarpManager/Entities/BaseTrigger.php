@@ -13,7 +13,7 @@ namespace LarpManager\Entities;
  * LarpManager\Entities\Trigger
  *
  * @Entity()
- * @Table(name="`trigger`", indexes={@Index(name="fk_trigger_personnage1_idx", columns={"personnage_id"})})
+ * @Table(name="`trigger`", indexes={@Index(name="fk_trigger_idx", columns={"personnage_id"})})
  * @InheritanceType("SINGLE_TABLE")
  * @DiscriminatorColumn(name="discr", type="string")
  * @DiscriminatorMap({"base":"BaseTrigger", "extended":"Trigger"})

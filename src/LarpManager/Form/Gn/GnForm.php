@@ -79,6 +79,14 @@ class GnForm extends AbstractType
 							'row' => 9,
 						),
 				))
+				->add('conditionsInscription','textarea', array(
+				    'label' => 'Conditions d\'inscription',
+				    'required' => false,
+				    'attr' => array(
+				        'class' => 'tinymce',
+				        'rows' => 18,
+				    ),
+				))
 				->add('billetterie','textarea', array(
 						'label' => 'Code de la billetterie',
 						'required' => false,

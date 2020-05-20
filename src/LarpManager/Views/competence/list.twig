@@ -20,17 +20,21 @@
 			</small>
 		</blockquote>
 		
+		<input type="text" class="form-control filter-field" placeholder="Filtre de compétence" /> 
+		
 		{% if is_granted('ROLE_REGLE', app.user) %}
 			<div class="pull-right">
 				<a class="btn btn-primary" href="{{ path('competence.add') }}">Ajouter une compétence</a>
 			</div>
 		{% endif %}
 	</div>
+	
+	
 		
 	<div class="row">
 		{% for competence in competences %}
-			<div class="col-sm-4 col-md-4">
-				<div class="panel panel-default fixed-height">
+			<div class="col-sm-4 col-md-4 panel-competence">
+				<div class="panel panel-default fixed-height ">
 					<div class="header">
 						<h5>{{ competence.competenceFamily.label }}</h5>
 					</div>
@@ -43,12 +47,34 @@
 		      			
 		      			{% if is_granted('ROLE_REGLE', app.user) %}
 		      				<a href="{{ path('competence.update', {'competence':competence.id}) }}">Modifier</a><br />
-							<a href="{{ path('competence.delete', {'competence':competence.id}) }}">Supprimer</a>
+							<!--
+								Désactivé car ce lien ne fonctionnait pas. Vous pouvez toujours supprimer la compétence depuis l'écran de détail  
+								<a href="{{ path('competence.delete', {'competence':competence.id}) }}">Supprimer</a> 
+							-->
+							
 						{% endif %}
 		    		</div>
 		  		</div>
 		  	</div>
 		{% endfor %}
-	</div>
+	</div>	
 
 {% endblock content %}
+
+{% block javascript %}
+	<script>
+		$("input.filter-field").on("keypress", (e)=> {		
+			var filterText = $(e.target).val().toUpperCase();
+			console.log(filterText);
+			if(filterText == "") {
+				$(".panel-competence").css("visibility", "visible");
+			} else {
+				$(".panel-competence").each((idx,div)=> {					
+					var $div = $(div);
+					var visibleStat = $div.find('.header').text().toUpperCase().indexOf(filterText) > 0 ? "block" : "none";					
+					$div.css("display", visibleStat);
+				})
+			}
+		});
+	</script>
+{% endblock javascript %}

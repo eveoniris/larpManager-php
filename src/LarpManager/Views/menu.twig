@@ -117,9 +117,11 @@
 					<li><a href="{{ path('rules') }}">Règles</a></li>
 					<li><a href="{{ path('competence') }}">Compétences</a></li>
 					<li><a href="{{ path('classe') }}">Classes</a></li>
+					
 					{% if is_granted('ROLE_REGLE', app.user) %}
 						<hr />
 						<li><a href="{{ path('competence.family') }}">Famille de compétences</a></li>
+						<li><a href="{{ path('attribute.type') }}">Attributs de compétences</a></li>
 						<li><a href="{{ path('level') }}">Niveaux</a></li>
 						<li><a href="{{ path('age') }}">Ages</a></li>
 						<li><a href="{{ path('genre') }}">Genres</a></li>

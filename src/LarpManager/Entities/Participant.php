@@ -105,4 +105,8 @@ class Participant extends BaseParticipant
 		return $this->getUser()->getDisplayName() .' '. $this->getUser()->getEmail();
 		
 	}
+	
+	public function getBesoinValidationCi() {
+	   return $this->getGn()->getBesoinValidationCi() && $this->getValideCiLe() == null;
+	}
 }

@@ -25,6 +25,7 @@ use Silex\Application;
 
 use LarpManager\Form\CompetenceForm;
 use LarpManager\Entities\Competence;
+use LarpManager\Repository\AttributeTypeRepository;
 
 /**
  * LarpManager\Controllers\CompetenceController
@@ -193,8 +194,8 @@ class CompetenceController
 	 */
 	public function updateAction(Request $request, Application $app)
 	{
-		$competence = $request->get('competence');
-				
+		$competence = $request->get('competence');			
+		$attributeRepos = $app['orm.em']->getRepository('\LarpManager\Entities\AttributeType');					
 		$form = $app['form.factory']->createBuilder(new CompetenceForm(), $competence)
 			->add('update','submit', array('label' => "Sauvegarder"))
 			->add('delete','submit', array('label' => "Supprimer"))
@@ -229,7 +230,9 @@ class CompetenceController
 			
 				
 			if ($form->get('update')->isClicked())
-			{	
+			{
+			    $competence->setCompetenceAttributesAsString($request->get('competenceAttributesAsString'), $app['orm.em'], $attributeRepos);
+
 				$app['orm.em']->persist($competence);
 				$app['orm.em']->flush();
 				$app['session']->getFlashBag()->add('success', 'La compétence a été mise à jour.');
@@ -252,6 +255,7 @@ class CompetenceController
 		return $app['twig']->render('admin/competence/update.twig', array(
 				'competence' => $competence,
 				'form' => $form->createView(),
+		        'available_attributes' => $attributeRepos->findAllOrderedByLabel()
 		));
 	}
 	

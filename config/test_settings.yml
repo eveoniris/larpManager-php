@@ -1,8 +1,8 @@
 env:
-	env: prod
-	
+    env: prod
+    
 database:
-    driver: pdo_mysql #TODO resoudre le probleme de creation d'index pour passer en sqlite
+    driver: pdo_mysql
     host: 127.0.0.1
     dbname: db_test
     user: root

@@ -6,25 +6,45 @@
 <div class="jumbotron">
 	<h1><i class="fa fa-thumbs-up" aria-hidden="true"></i> Participer à un jeu</h1>
 	<hr />
-	<div class="row">
-	  	<div class="col-md-6">
-	  		<p>Vous avez choisi de participer à {{ gn.label }}</p>
-	  		<p>{{ gn.description|markdown }}</p>
-	  	</div>
-	  	<div class="col-md-6">
-		  	<form class="form" action="{{ path('user.gn.participe', {'gn': gn.id}) }}" method="POST" {{ form_enctype(form) }}>
-				{% form_theme form 'Form/bootstrap_3_horizontal_layout.html.twig' %}
-				{{ form_widget(form) }}
-				 <div class="clearfix">
-				  	<div class="pull-right">
-				  		<p>
-				  			<a class="btn btn-primary btn-lg" href="{{ path('homepage') }}" role="button"><i class="fa fa-angle-double-left" aria-hidden="true"></i> Annuler</a>
-				  			<button type="submit" class="btn btn-primary btn-lg" >Je participe <i class="fa fa-exclamation" aria-hidden="true"></i></button>
-				  		</p>
-			  		</div>
-				</div>
-			</form>
+	<form class="form" action="{{ path('user.gn.participe', {'gn': gn.id}) }}" method="POST" {{ form_enctype(form) }}>
+		{% form_theme form 'Form/bootstrap_3_horizontal_layout.html.twig' %}
+		{{ form_widget(form) }}
+		<div class="row">
+		  	<div class="col-md-12">
+		  		<p>Vous avez choisi de participer à {{ gn.label }}</p>
+		  		<p>{{ gn.description|markdown }}</p>
+		  		<div></div>
+		  		
+		  		{% if gn.conditionsInscription %}
+			  		<p>{{ gn.conditionsInscription|markdown}}</p>		  		
+		  		{% endif %}
+		  	</div>	  		  	
 		</div>
-	</div>
+	
+		
+		{% if gn.conditionsInscription %}
+			<hr />
+			<div class="row">		
+				<div class="col-md-12">
+						<div class="checkbox">
+						  <label><input type="checkbox" name="acceptCi" value="ok" required="required">En cochant cette case, vous confirmez avoir pris connaissance des conditions d'inscription et vous les acceptez</label>
+						</div>
+				</div>
+			</div>
+		{% endif %}
+		<div class="row">		
+			<div class="col-md-12">				
+					 <div class="clearfix">
+					  	<div class="pull-right">
+					  		<p>
+					  			<a class="btn btn-primary btn-lg" href="{{ path('homepage') }}" role="button"><i class="fa fa-angle-double-left" aria-hidden="true"></i> Annuler</a>
+					  			<button type="submit" class="btn btn-primary btn-lg" >Je participe <i class="fa fa-exclamation" aria-hidden="true"></i></button>
+					  		</p>
+				  		</div>
+					</div>
+	
+			</div>
+		</div>			
+	</form>
 </div>
 {% endblock content %}

@@ -78,16 +78,6 @@ class GroupeControllerProvider implements ControllerProviderInterface
 		};
 		
 		/**
-		 * Vérifie que l'utilisateur est membre du groupe
-		 * @var unknown $mustBeMember
-		 */
-		$mustBeMember = function(Request $request) use ($app) {
-			if (!$app['security.authorization_checker']->isGranted('GROUPE_MEMBER', $request->get('index'))) {
-				throw new AccessDeniedException();
-			}
-		};
-		
-		/**
 		 * Vérifie que l'utilisateur est responsable du groupe
 		 * @var unknown $mustBeResponsable
 		 */

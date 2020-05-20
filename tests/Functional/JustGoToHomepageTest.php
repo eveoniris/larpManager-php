@@ -1,8 +1,8 @@
 <?php
-namespace LarpManager\Tests\Controller;
+namespace Tests\Functional;
 
-require_once(__DIR__ . "\..\BaseTestCase.php");
-use LarpManager\Tests\BaseTestCase;
+require_once(__DIR__ . "/../BaseTestCase.php");
+use Tests\BaseTestCase;
 
 
 class JustGoToHomepageTest extends BaseTestCase
@@ -12,6 +12,6 @@ class JustGoToHomepageTest extends BaseTestCase
 		$client = static::createClient();
 		$crawler = $client->request('GET','/');
 		$this->assertTrue($client->getResponse()->isOk());
-		$this->assertCount(1,$crawler->filter('h1:contains("LarpManager")'));
+		$this->assertCount(1,$crawler->filter('a:contains("LarpManager")'));
 	}
 }

@@ -562,4 +562,18 @@ class User extends BaseUser implements AdvancedUserInterface, \Serializable
 	
 		return $errors;
 	}
+	
+	public function getLastPersonnage() {
+	    $last = null;
+	    foreach($this->getParticipants() as $participant) {
+		if($participant->getPersonnage() != null) {
+			if($last == null || $participant->getId() > $last->getId()) {
+			    // On conserve la dernière participation avec un personnage
+			    $last = $participant;
+			}
+		}
+	    }
+
+	    return $last->getPersonnage();
+	}
 }

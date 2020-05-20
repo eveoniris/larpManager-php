@@ -13,7 +13,7 @@ namespace LarpManager\Entities;
  * LarpManager\Entities\PersonnageSecondairesSkills
  *
  * @Entity()
- * @Table(name="personnage_secondaires_skills", indexes={@Index(name="fk_personnage_secondaires_competences_personnage_secondaire_idx", columns={"personnage_secondaire_id"}), @Index(name="fk_personnage_secondaires_competences_competence1_idx", columns={"competence_id"})})
+ * @Table(name="personnage_secondaires_skills", indexes={@Index(name="fk_personnage_secondaire_skills_personnage_secondaire_idx", columns={"personnage_secondaire_id"}), @Index(name="fk_personnage_secondaire_skills_competence1_idx", columns={"competence_id"})})
  * @InheritanceType("SINGLE_TABLE")
  * @DiscriminatorColumn(name="discr", type="string")
  * @DiscriminatorMap({"base":"BasePersonnageSecondairesSkills", "extended":"PersonnageSecondairesSkills"})

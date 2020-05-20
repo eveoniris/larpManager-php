@@ -1,0 +1,45 @@
+{% extends "layout.twig" %}
+
+{% block title %}Participer à un jeu{% endblock title %}
+
+{% block content %}
+<div class="jumbotron">
+	<h1>Validation des conditions d'inscription</h1>
+	<hr />
+	<form class="form" action="{{ path('user.gn.validationci', {'gn': gn.id}) }}" method="POST" {{ form_enctype(form) }}>
+		{% form_theme form 'Form/bootstrap_3_horizontal_layout.html.twig' %}
+		{{ form_widget(form) }}
+		<div class="row">
+		  	<div class="col-md-12">
+		  		<p>Avant de poursuivre, vous devez valider les conditions d'inscription de {{ gn.label }}</p>
+		  				  				  		
+			  	<p>{{ gn.conditionsInscription|markdown}}</p>		  				  		
+		  	</div>	  		  	
+		</div>
+	
+		
+		{% if gn.conditionsInscription %}
+			<hr />
+			<div class="row">		
+				<div class="col-md-12">
+						<div class="checkbox">
+						  <label><input type="checkbox" name="acceptCi" value="ok" required="required">En cochant cette case, vous confirmez avoir pris connaissance des conditions d'inscription et vous les acceptez</label>
+						</div>
+				</div>
+			</div>
+		{% endif %}
+		<div class="row">		
+			<div class="col-md-12">				
+					 <div class="clearfix">
+					  	<div class="pull-right">
+					  		<p>
+					  			<a class="btn btn-primary btn-lg" href="{{ path('homepage') }}" role="button"><i class="fa fa-angle-double-left" aria-hidden="true"></i> Annuler</a>
+					  			<button type="submit" class="btn btn-primary btn-lg" >J'accepte les conditions d'inscription<i class="fa fa-exclamation" aria-hidden="true"></i></button>
+					  		</p>
+				  		</div>
+					</div>	
+			</div>
+		</div>			
+	</form>
+</div>
+{% endblock content %}
