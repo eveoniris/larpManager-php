@@ -34,10 +34,8 @@
 
 <strong>Lié aux langues : </strong>
 <ul>
-	{% for personnageLangue in personnage.personnageLangues %}
-		{% if personnageLangue.langue.diffusion == 2 %}
-			<li><strong>{{ personnageLangue.langue.label }}</strong></li>
-		{% endif %}
+	{% for materiel in langueMateriel %}
+		<li><strong>{{ materiel }}</strong></li>
 	{% else %}
 		<li>Aucun matériel</li>
 	{% endfor %}
