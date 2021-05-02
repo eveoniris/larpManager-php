@@ -269,5 +269,9 @@ class Gn extends BaseGn
 		}
 		
 		return $result;
-	}	public function getBesoinValidationCi() {	    return $this->getConditionsInscription() != '' && $this->getConditionsInscription() != null;	}
+	}	
+	public function getBesoinValidationCi() 
+	{
+          return $this->getConditionsInscription() != '' && $this->getConditionsInscription() != null;	
+	}
 }

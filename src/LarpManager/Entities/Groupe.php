@@ -32,9 +32,9 @@ use LarpManager\Entities\BaseGroupe;
 
 /**
  * Je définie les relations ManyToMany içi au lieu de le faire dans Mysql Workbench
- * car l'exporteur ne sait pas gérer correctement les relations ManyToMany ayant des 
+ * car l'exporteur ne sait pas gérer correctement les relations ManyToMany ayant des
  * paramètres autre que les identifiant des tables concernés (c'est dommage ...)
- * 
+ *
  * LarpManager\Entities\Groupe
  *
  * @Entity(repositoryClass="LarpManager\Repository\GroupeRepository")
@@ -43,26 +43,26 @@ class Groupe extends BaseGroupe
 {
 	/**
 	 * Contructeur.
-	 * 
+	 *
 	 * Défini le nombre de place disponible à 0
 	 */
 	public function __construct()
-	{		
+	{
 		$this->setClasseOpen(0);
 		$this->setLock(false);
 		parent::__construct();
 	}
-	
+
 	/**
 	 * méthode magique transtypage en string
-	 * 
+	 *
 	 * @return string
 	 */
 	public function __toString()
 	{
-		return $this->getNom();	
+		return $this->getNom();
 	}
-	
+
 	/**
 	 * Fourni la session d'un groupe relatif à un GN
 	 * @param Gn $gn
@@ -78,7 +78,7 @@ class Groupe extends BaseGroupe
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Fourni la prochaine session de jeu
 	 */
@@ -86,10 +86,10 @@ class Groupe extends BaseGroupe
 	{
 		return $this->getGroupeGns()->last();
 	}
-	
+
 	/**
 	 * Fourni les informations pour une session de jeu
-	 * 
+	 *
 	 * @param Gn $gn
 	 */
 	public function getGroupeGn(Gn $gn)
@@ -103,7 +103,7 @@ class Groupe extends BaseGroupe
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Fourni les informations pour une session de jeu
 	 *
@@ -120,7 +120,7 @@ class Groupe extends BaseGroupe
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Toutes les importations du groupe
 	 */
@@ -133,7 +133,7 @@ class Groupe extends BaseGroupe
 		}
 		return $ressources;
 	}
-	
+
 	/**
 	 * Toutes les exporations du groupe
 	 */
@@ -146,7 +146,7 @@ class Groupe extends BaseGroupe
 		}
 		return $ressources;
 	}
-	
+
 	/**
 	 * Fourni tous les ingrédients obtenu par le groupe grace à ses territoires
 	 */
@@ -159,7 +159,7 @@ class Groupe extends BaseGroupe
 		}
 		return $ingredients;
 	}
-	
+
 	/**
 	 * Fourni une version imprimable du matériel
 	 */
@@ -167,16 +167,16 @@ class Groupe extends BaseGroupe
 	{
 		return html_entity_decode(strip_tags($this->getMateriel()));
 	}
-	
+
 	/**
 	 * Fourni la liste des ressources necessaires à un groupe
-	 * 
+	 *
 	 * @param unknown $rarete
 	 */
 	public function getRessourcesNeeded($rarete = null)
 	{
 		$ressources = new ArrayCollection();
-		
+
 		foreach ($this->getTerritoires() as $territoire )
 		{
 			$ressources = new ArrayCollection(
@@ -185,10 +185,10 @@ class Groupe extends BaseGroupe
 					)
 			);
 		}
-		
+
 		return $ressources;
 	}
-	
+
 	/**
 	 * Vérifie si un groupe dispose de ressources
 	 */
@@ -200,7 +200,7 @@ class Groupe extends BaseGroupe
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Vérifie si un groupe dispose de richesses
 	 */
@@ -210,9 +210,9 @@ class Groupe extends BaseGroupe
 		{
 			if ( $territoire->getTresor() > 0 ) return true;
 		}
-		return false;		
+		return false;
 	}
-	
+
 	/**
 	 * Fourni la richesse totale du groupe (territoire + richesse perso)
 	 */
@@ -225,7 +225,7 @@ class Groupe extends BaseGroupe
 		}
 		return $richesse;
 	}
-	
+
 	/**
 	 * Vérifie si un groupe dispose d'ingrédients
 	 */
@@ -237,7 +237,7 @@ class Groupe extends BaseGroupe
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Fourni les backgrounds du groupe en fonction de la visibilitée
 	 * @param unknown $visibility
@@ -258,11 +258,11 @@ class Groupe extends BaseGroupe
 			{
 				$backgrounds[] = $background;
 			}
-	
+
 		}
 		return $backgrounds;
 	}
-	
+
 	/**
 	 * Determine si un groupe est allié avec ce groupe
 	 * @param Groupe $groupe
@@ -279,7 +279,7 @@ class Groupe extends BaseGroupe
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Determine si un groupe est en attente d'alliance avec ce groupe
 	 * @param Groupe $groupe
@@ -297,7 +297,7 @@ class Groupe extends BaseGroupe
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Determine si un groupe est ennemi avec ce groupe
 	 * @param Groupe $groupe
@@ -314,7 +314,7 @@ class Groupe extends BaseGroupe
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Determine si un groupe est ennemi avec ce groupe
 	 * @param Groupe $groupe
@@ -331,14 +331,14 @@ class Groupe extends BaseGroupe
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Fourni la liste des toutes les alliances de ce groupe
 	 */
 	public function getAlliances()
 	{
 		$alliances = new ArrayCollection();
-		
+
 		foreach ( $this->groupeAllieRelatedByGroupeIds as $alliance)
 		{
 			if ( $alliance->getGroupeAccepted() && $alliance->getGroupeAllieAccepted() )
@@ -346,7 +346,7 @@ class Groupe extends BaseGroupe
 				$alliances[] = $alliance;
 			}
 		}
-		
+
 		foreach ( $this->groupeAllieRelatedByGroupeAllieIds as $alliance)
 		{
 			if ( $alliance->getGroupeAccepted() && $alliance->getGroupeAllieAccepted() )
@@ -354,17 +354,17 @@ class Groupe extends BaseGroupe
 				$alliances[] = $alliance;
 			}
 		}
-		
+
 		return $alliances;
 	}
-	
+
 	/**
-	 * Fourni la liste de toutes les alliances en cours de négotiation 
+	 * Fourni la liste de toutes les alliances en cours de négotiation
 	 */
 	public function getWaitingAlliances()
 	{
 		$alliances = new ArrayCollection();
-		
+
 		foreach ( $this->groupeAllieRelatedByGroupeIds as $alliance)
 		{
 			if ( ! $alliance->getGroupeAccepted() || ! $alliance->getGroupeAllieAccepted() )
@@ -372,7 +372,7 @@ class Groupe extends BaseGroupe
 				$alliances[] = $alliance;
 			}
 		}
-		
+
 		foreach ( $this->groupeAllieRelatedByGroupeAllieIds as $alliance)
 		{
 			if ( ! $alliance->getGroupeAccepted() || ! $alliance->getGroupeAllieAccepted() )
@@ -380,61 +380,61 @@ class Groupe extends BaseGroupe
 				$alliances[] = $alliance;
 			}
 		}
-		
+
 		return $alliances;
 	}
-	
+
 	/**
 	 * Fourni la liste de toutes les demandes d'alliances
 	 */
 	public function getRequestedAlliances()
 	{
 		$alliances = new ArrayCollection();
-		
+
 		foreach ( $this->groupeAllieRelatedByGroupeAllieIds as $alliance)
 		{
 			if ( ! $alliance->getGroupeAllieAccepted() )
 			{
 				$alliances[] = $alliance;
 			}
-				
+
 		}
 		return $alliances;
 	}
-	
+
 	/**
 	 * Fourni la liste de toutes les alliances demandés
 	 */
 	public function getSelfRequestedAlliances()
 	{
 		$alliances = new ArrayCollection();
-		
+
 		foreach ( $this->groupeAllieRelatedByGroupeIds as $alliance)
 		{
 			if ( ! $alliance->getGroupeAllieAccepted() )
 			{
 				$alliances[] = $alliance;
 			}
-		
+
 		}
-		return $alliances;		
+		return $alliances;
 	}
-	
+
 	/**
 	 * Fourni tous les ennemis du groupe
 	 */
 	public function getEnnemies()
 	{
 		$enemies = new ArrayCollection();
-		
+
 		foreach ( $this->groupeEnemyRelatedByGroupeIds as $enemy)
 		{
 			if ( $enemy->getGroupePeace() == false || $enemy->getGroupeEnemyPeace() == false )
 			{
 				$enemies[] = $enemy;
-			}			
+			}
 		}
-		
+
 		foreach ( $this->groupeEnemyRelatedByGroupeEnemyIds as $enemy)
 		{
 			if ( $enemy->getGroupePeace() == false || $enemy->getGroupeEnemyPeace() == false )
@@ -442,17 +442,17 @@ class Groupe extends BaseGroupe
 				$enemies[] = $enemy;
 			}
 		}
-		
+
 		return $enemies;
 	}
-	
+
 	/**
 	 * Fourni la liste des anciens ennemis
 	 */
 	public function getOldEnemies()
 	{
 		$enemies = new ArrayCollection();
-		
+
 		foreach ( $this->groupeEnemyRelatedByGroupeIds as $enemy)
 		{
 			if ( $enemy->getGroupePeace() == true && $enemy->getGroupeEnemyPeace() == true )
@@ -460,7 +460,7 @@ class Groupe extends BaseGroupe
 				$enemies[] = $enemy;
 			}
 		}
-		
+
 		foreach ( $this->groupeEnemyRelatedByGroupeEnemyIds as $enemy)
 		{
 			if ( $enemy->getGroupePeace() == true && $enemy->getGroupeEnemyPeace() == true )
@@ -468,17 +468,17 @@ class Groupe extends BaseGroupe
 				$enemies[] = $enemy;
 			}
 		}
-		
+
 		return $enemies;
 	}
-	
+
 	/**
 	 * Fournie toutes les negociation de paix en cours
 	 */
 	public function getWaitingPeace()
 	{
 		$enemies = new ArrayCollection();
-		
+
 		foreach ( $this->groupeEnemyRelatedByGroupeIds as $enemy)
 		{
 			if ( ( $enemy->getGroupePeace() == true || $enemy->getGroupeEnemyPeace() == true)
@@ -487,7 +487,7 @@ class Groupe extends BaseGroupe
 				$enemies[] = $enemy;
 			}
 		}
-		
+
 		foreach ( $this->groupeEnemyRelatedByGroupeEnemyIds as $enemy)
 		{
 			if ( ( $enemy->getGroupePeace() == true || $enemy->getGroupeEnemyPeace() == true)
@@ -496,13 +496,13 @@ class Groupe extends BaseGroupe
 				$enemies[] = $enemy;
 			}
 		}
-		
+
 		return $enemies;
 	}
-	
+
 	/**
 	 * Trouve le personnage de l'utilisateur dans ce groupe
-	 * 
+	 *
 	 * @param User $user
 	 */
 	public function getPersonnage(User $user)
@@ -514,26 +514,26 @@ class Groupe extends BaseGroupe
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Fourni le nombre de place disponible pour un groupe
 	 * en fonction des territoires qu'il controle
 	 */
 	public function getPlaceTotal()
 	{
-		return 10 + ( 2 *  count($this->getTerritoires()));
+		return 12 + ( 2 *  count($this->getTerritoires()));
 	}
-	
+
 	/**
 	 * Vérifie si le groupe dispose de suffisement de place disponible
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public function hasEnoughPlace()
 	{
 		return $this->getClasseOpen() > count($this->getPersonnages());
 	}
-	
+
 	/**
 	 * Vérifie si le groupe dispose de suffisement de classe disponible
 	 */
@@ -541,23 +541,23 @@ class Groupe extends BaseGroupe
 	{
 		return  ( count($this->getAvailableClasses($gn)) > 0 );
 	}
-	
+
 	/**
 	 * Fourni la liste des classes disponibles (non actuellement utilisé par un personnage)
 	 * Ce type de liste est utile pour le formulaire de création d'un personnage
-	 * 
+	 *
 	 * @return Collection LarpManager\Entities\Classe
 	 */
 	public function getAvailableClasses(Gn $gn)
-	{		
+	{
 		$groupeGn = $this->getGroupeGn($gn);
 		$groupeClasses = $this->getGroupeClasses();
 		$base = clone $groupeClasses;
-		
+
 		foreach ( $groupeGn->getPersonnages() as $personnage)
 		{
 			$id = $personnage->getClasse()->getId();
-			
+
 			foreach (  $base as $key => $groupeClasse)
 			{
 				if ( $groupeClasse->getClasse()->getId() == $id )
@@ -569,15 +569,15 @@ class Groupe extends BaseGroupe
 		}
 
 		$availableClasses = array();
-		
+
 		foreach ( $base as $groupeClasse)
 		{
 			$availableClasses[] = $groupeClasse->getClasse();
 		}
 
-		return $availableClasses;	
-	}			
-	
+		return $availableClasses;
+	}
+
 	/**
 	 * Get User entity related by `scenariste_id` (many to one).
 	 *
@@ -587,7 +587,7 @@ class Groupe extends BaseGroupe
 	{
 		return $this->getUserRelatedByScenaristeId();
 	}
-	
+
 	/**
 	 * Set User entity related by `scenariste_id` (many to one).
 	 *
@@ -598,10 +598,10 @@ class Groupe extends BaseGroupe
 	{
 		return $this->setUserRelatedByScenaristeId($user);
 	}
-	
+
 	/**
 	 * Fourni la liste des classes
-	 * 
+	 *
 	 * @return Array LarpManager\Entities\Classe
 	 */
 	public function getClasses()
@@ -614,17 +614,17 @@ class Groupe extends BaseGroupe
 		}
 		return $classes;
 	}
-	
+
 	/**
 	 * Ajoute une classe dans le groupe
-	 * 
+	 *
 	 * @param GroupeClasse $groupeClasse
 	 */
 	public function addGroupeClass(GroupeClasse $groupeClasse)
 	{
 		return $this->addGroupeClasse($groupeClasse);
 	}
-	
+
 	/**
 	 * Retire une classe du groupe
 	 * @param GroupeClasse $groupeClasse
@@ -633,5 +633,5 @@ class Groupe extends BaseGroupe
 	{
 		return $this->removeGroupeClasse($groupeClasse);
 	}
-	
+
 }
