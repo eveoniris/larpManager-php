@@ -144,7 +144,7 @@ class TerritoireRepository extends EntityRepository
         $qb->leftJoin('LarpManager\Entities\Territoire','t','WITH','tpr.id = t.territoire');
         $qb->join('tpr.territoire','tp');
         $qb->andWhere('tpr.territoire IS NOT NULL');
-        $qb->andWhere('tp.territoire IS NULL');//echo $qb->getQuery()->getSQL();die;
+        $qb->andWhere('tp.territoire IS NULL');
         $qb->orderBy('tpr.nom', 'ASC');
 
         return $qb->getQuery()->getResult();

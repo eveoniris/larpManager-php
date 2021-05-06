@@ -114,7 +114,7 @@ class TerritoireController
         $listeGroupes = $app['orm.em']->getRepository('\LarpManager\Entities\Groupe')->findList(null,null,['by'=>'nom','dir'=>'ASC'],1000,0);
         $listePays = $app['orm.em']->getRepository('\LarpManager\Entities\Territoire')->findRoot();
         $listeProvinces = $app['orm.em']->getRepository('\LarpManager\Entities\Territoire')->findProvinces();
-        //echo count($listeProvinces);die;
+
         $form = $app['form.factory']->createBuilder(
             new FiefForm(),
             null,
