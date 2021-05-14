@@ -63,6 +63,20 @@ class LangueControllerProvider implements ControllerProviderInterface
 			->assert('index', '\d+')
 			->bind("langue.detail")
 			->method('GET');
+		
+		$controllers->match('/group/add','LarpManager\Controllers\LangueController::addGroupAction')
+			->bind("langue.addGroup")
+			->method('GET|POST');
+		
+		$controllers->match('/group/{index}/update','LarpManager\Controllers\LangueController::updateGroupAction')
+			->assert('index', '\d+')
+			->bind("langue.updateGroup")
+			->method('GET|POST');
+		
+		$controllers->match('/group/{index}','LarpManager\Controllers\LangueController::detailGroupAction')
+			->assert('index', '\d+')
+			->bind("langue.detailGroup")
+			->method('GET');
 					
 		return $controllers;
 	}

@@ -26,12 +26,12 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Doctrine\ORM\EntityRepository;
 
 /**
- * LarpManager\Form\LangueForm
+ * LarpManager\Form\GroupeLangueForm
  *
  * @author kevin
  *
  */
-class LangueForm extends AbstractType
+class GroupeLangueForm extends AbstractType
 {
 	/**
 	 * Construction du formulaire
@@ -45,25 +45,9 @@ class LangueForm extends AbstractType
 					'label' => 'Label',
 					'required' => true,
 				))
-				->add('description','textarea', array(
-					'label' => 'Description',
-					'required' => false,
-					'attr' => array('rows' => 10),
-				))
-				->add('diffusion','integer', array(
-						'label' => 'Degrés de diffusion (de 0 à 2 : ancien, courant, très répandu)',
-						'required' => false,
-				))
-				->add('groupeLangue','entity', array(
-					'label' => "Choisissez le groupe de langue associé",
-					'multiple' => false,
-					'expanded' => true,
+				->add('couleur','text', array(
+					'label' => 'Couleur',
 					'required' => true,
-					'class' => 'LarpManager\Entities\GroupeLangue',
-					'property' => 'label',
-					'query_builder' => function(EntityRepository $er) {
-						return $er->createQueryBuilder('i')->orderBy('i.id', 'ASC');
-					},
 				));
 	}
 	
@@ -75,7 +59,7 @@ class LangueForm extends AbstractType
 	public function configureOptions(OptionsResolver $resolver)
 	{
 		$resolver->setDefaults(array(
-				'data_class' => 'LarpManager\Entities\Langue',
+				'data_class' => 'LarpManager\Entities\GroupeLangue',
 		));
 	}
 	
@@ -84,6 +68,6 @@ class LangueForm extends AbstractType
 	 */
 	public function getName()
 	{
-		return 'langue';
+		return 'groupeLangue';
 	}
 }

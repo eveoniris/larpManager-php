@@ -1,0 +1,19 @@
+<ul class="list-group">
+	{%  if add != false %}
+		<a href="{{ path('langue.addGroup') }}" class="list-group-item active">
+			<span class="badge"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></span>
+			<h4 class="list-group-item-heading">Ajouter un groupe de langues</h4>
+		</a>
+	{%  endif %}
+	{%  for groupeLangue in groupeLangues %}
+	<li class="list-group-item">
+		<h4 class="list-group-item-heading">
+			{{ groupeLangue.label }}
+			<div class="btn-group pull-right" role="group" aria-label="...">
+				<a href="{{ path('langue.detailGroup', {index: groupeLangue.id}) }}" class="btn btn-primary" role="button">Détail</a>
+			    <a href="{{ path('langue.updateGroup', {index: groupeLangue.id}) }}" class="btn btn-default" role="button">Modifier</a>
+			</div>
+		</h4>
+	</li>
+	{%  endfor %}
+</ul>

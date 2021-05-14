@@ -334,11 +334,27 @@ class PersonnageController
 				'form' => $form->createView(),
 		));
 	}
+
+	public function getLangueMateriel(Personnage $personnage)
+	{
+		$langueMateriel = array();
+		foreach($personnage->getPersonnageLangues() as $langue) {
+
+			if(!in_array('Bracelet '.$langue->getLangue()->getGroupeLangue()->getCouleur(),$langueMateriel)) {
+				array_push($langueMateriel, 'Bracelet '.$langue->getLangue()->getGroupeLangue()->getCouleur());
+			}
+			if($langue->getLangue()->getDiffusion() === 0) {
+				array_push($langueMateriel, 'Alphabet '.$langue->getLangue()->getLabel());
+			}
+		}
+		return $langueMateriel;
+	}
 	
 	public function enveloppePrintAction(Request $request, Application $app, Personnage $personnage)
 	{
 		return $app['twig']->render('admin/personnage/enveloppe.twig', array(
 				'personnage' => $personnage,
+				'langueMateriel' => $this->getLangueMateriel($personnage),
 		));
 	}
 	
@@ -559,7 +575,9 @@ class PersonnageController
 	public function adminDetailAction(Request $request, Application $app)
 	{
 		$personnage = $request->get('personnage');
-		return $app['twig']->render('admin/personnage/detail.twig', array('personnage' => $personnage));
+		$personnageLangues = $personnage->getPersonnageLangues();
+
+		return $app['twig']->render('admin/personnage/detail.twig', array('personnage' => $personnage,'langueMateriel' => $this->getLangueMateriel($personnage)));
 	}
 	
 	/**
