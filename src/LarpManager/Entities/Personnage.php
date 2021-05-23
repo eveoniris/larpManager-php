@@ -47,10 +47,10 @@ class Personnage extends BasePersonnage
 		$this->setXp(0);
 		$this->setVivant(true);
 	}
-	
+
 	/**
 	 * Vérifie si un personnage connait une priere
-	 * 
+	 *
 	 * @param unknown $priere
 	 */
 	public function hasPriere(Priere $priere)
@@ -61,14 +61,14 @@ class Personnage extends BasePersonnage
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Fourni tous les gns auquel participe un personnage
 	 */
 	public function getGns()
 	{
 		$gns = new ArrayCollection();
-		
+
 		if ( $this->getUser() )
 		{
 			foreach ( $this->getUser()->getParticipants() as $participant )
@@ -81,10 +81,10 @@ class Personnage extends BasePersonnage
 		}
 		return $gns;
 	}
-	
+
 	/**
 	 * Détermine si le personnage participe à un GN
-	 * 
+	 *
 	 * @param Gn $gn
 	 */
 	public function participeTo(Gn $gn)
@@ -102,10 +102,10 @@ class Personnage extends BasePersonnage
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Détermine si le personnage participe à un GN
-	 * 
+	 *
 	 * @param unknown $gnLabel
 	 */
 	public function participeToByLabel($gnLabel)
@@ -114,8 +114,8 @@ class Personnage extends BasePersonnage
 		{
 			foreach ( $this->getUser()->getParticipants() as $participant )
 			{
-				if( $participant->getBillet() 
-				 && $participant->getGn()->getLabel() == $gnLabel 
+				if( $participant->getBillet()
+				 && $participant->getGn()->getLabel() == $gnLabel
 				 && $participant->getPersonnage() == $this )
 				{
 					return true;
@@ -124,18 +124,18 @@ class Personnage extends BasePersonnage
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Retire le personnage de son groupe
 	 */
 	public function setGroupeNull()
 	{
 		$this->groupe = null;
-		
+
 		return $this;
 	}
-	
-	
+
+
 	/**
 	 * Affichage
 	 */
@@ -143,7 +143,7 @@ class Personnage extends BasePersonnage
 	{
 		return $this->getPublicName();
 	}
-	
+
 	/**
 	 * Fourni l'origine du personnage
 	 */
@@ -151,22 +151,22 @@ class Personnage extends BasePersonnage
 	{
 		return $this->getTerritoire();
 	}
-	
+
 	/**
 	 * Détermine si du matériel est necessaire pour ce personnage
 	 */
 	public function hasMateriel()
 	{
 		if ( $this->getRenomme() > 0 ) return true;
-		
+
 		foreach ( $this->getCompetences() as $competence)
 		{
 			if ( $competence->getMateriel() ) return true;
-		}		
+		}
 		return false;
-					
+
 	}
-	
+
 	/**
 	 * Fourni les backgrounds du personnage en fonction de la visibilitée
 	 * @param unknown $visibility
@@ -187,14 +187,14 @@ class Personnage extends BasePersonnage
 			{
 				$backgrounds[] = $background;
 			}
-				
+
 		}
 		return $backgrounds;
 	}
-	
+
 	/**
 	 * Vérifie si le personnage connait cette priere
-	 * 
+	 *
 	 * @param Priere $priere
 	 * @return boolean
 	 */
@@ -205,11 +205,11 @@ class Personnage extends BasePersonnage
 			if ( $priere == $p ) return true;
 		}
 		return false;
-	}	
-			
+	}
+
 	/**
 	 * Vérifie si le personnage connait cette potion
-	 * 
+	 *
 	 * @param Potion $priere
 	 * @return boolean
 	 */
@@ -221,7 +221,7 @@ class Personnage extends BasePersonnage
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Contrôle si le personnage connait le bon nombre de potion
 	 * @return non vide ,si il y a une anomalie
@@ -233,7 +233,7 @@ class Personnage extends BasePersonnage
 	    {
 	        $countByLevel[$potion->getNiveau()-1] += 1;
 	    }
-	    
+
 	    $litteratureApprenti = null;
 	    $expectedByLevel = array(0, 0, 0, 0);
 	    foreach ( $this->getCompetences() as $competence)
@@ -249,24 +249,24 @@ class Personnage extends BasePersonnage
 	            $litteratureApprenti = $competence;
 	        }
 	    }
-	    
+
 	    for($i = 0; $i < 4;$i++) {
 	        error_log("PA " . $expectedByLevel[$i] . " " . $countByLevel[$i]);
 	        if($litteratureApprenti == null && $expectedByLevel[$i] < $countByLevel[$i]) {
-	            return ($countByLevel[$i] - $expectedByLevel[$i]) . " potion(s) de niveau " . ($i+1) . " en trop ";
+	            return ($countByLevel[$i] - $expectedByLevel[$i]) . " potion(s) de niveau " . ($i+1) . " en trop à vérifier ";
 	        }
-	        
+
 	        if($expectedByLevel[$i] > $countByLevel[$i]) {
 	            return ($expectedByLevel[$i] - $countByLevel[$i]) . " potion(s) de niveau " . ($i+1) . " manquante";
 	        }
 	    }
-	    
+
 	    return "";
-	}	
+	}
 
 	/**
 	 * Vérifie si le personnage connait ce sort
-	 * 
+	 *
 	 * @param Sort $sort
 	 * @return boolean
 	 */
@@ -285,17 +285,17 @@ class Personnage extends BasePersonnage
      */
     public function getSortAnomalieMessage()
     {
-        
+
         $countByLevel = array(0, 0, 0, 0);
         foreach ($this->getSorts() as $sort)
         {
             $countByLevel[$sort->getNiveau()-1] += 1;
         }
-        
+
         $litteratureApprenti = null;
-        
+
         // On cumule dans $expectedByLevel , le nombre de sorts attendu
-        $expectedByLevel = array(0, 0, 0, 0);       
+        $expectedByLevel = array(0, 0, 0, 0);
         foreach ( $this->getCompetences() as $competence)
         {
             for($i=0;$i < 4;$i++) {
@@ -303,40 +303,40 @@ class Personnage extends BasePersonnage
                 if($v != null) {
                     $expectedByLevel[$i] += $v;
                 }
-                
+
                 if($competence->getCompetenceFamily()->getLabel() == CompetenceFamily::$LITTERATURE
                     && $competence->getLevel()->getIndex() == 1) {
                         $litteratureApprenti = $competence;
                 }
-            }            
+            }
         }
-        
+
         for($i = 0; $i < 4;$i++) {
             if($litteratureApprenti == null && $expectedByLevel[$i] < $countByLevel[$i]) {
-                return ($countByLevel[$i] - $expectedByLevel[$i]) . " sort(s) de niveau " . ($i+1) . " en trop";
+                return ($countByLevel[$i] - $expectedByLevel[$i]) . " sort(s) de niveau " . ($i+1) . " en trop à vérifier ";
             }
-            
+
             if($expectedByLevel[$i] > $countByLevel[$i]) {
                 return ($expectedByLevel[$i] - $countByLevel[$i]) . " sort(s) de niveau " . ($i+1) . " manquant";
             }
         }
-        
+
         return "";
     }
-    
+
     /**
-     * Contrôle si il y a une anomalie dans le nombre de prière 
+     * Contrôle si il y a une anomalie dans le nombre de prière
      * @return non vide ,si il y a une anomalie
      */
     public function getPrieresAnomalieMessage()
     {
-        
+
         $countByLevel = array(0, 0, 0, 0);
         foreach ($this->getPrieres() as $sort)
         {
             $countByLevel[$sort->getNiveau()-1] += 1;
         }
-        
+
         // On cumule dans $expectedByLevel , le nombre de sorts attendu
         $expectedByLevel = array(0, 0, 0, 0);
         foreach ( $this->getCompetences() as $competence)
@@ -348,23 +348,23 @@ class Personnage extends BasePersonnage
                 }
             }
         }
-        
+
         for($i = 0; $i < 4;$i++) {
             if($expectedByLevel[$i] < $countByLevel[$i]) {
-                return ($countByLevel[$i] - $expectedByLevel[$i]) . " prière(s) de niveau " . ($i+1) . " en trop";
+                return ($countByLevel[$i] - $expectedByLevel[$i]) . " prière(s) de niveau " . ($i+1) . " en trop à vérifier ";
             }
-            
+
             if($expectedByLevel[$i] > $countByLevel[$i]) {
                 return ($expectedByLevel[$i] - $countByLevel[$i]) . " prière(s) de niveau " . ($i+1) . " manquant";
             }
         }
-        
+
         return "";
     }
-	
+
 	/**
 	 * Vérifie si le personnage connait ce domaine de magie
-	 * 
+	 *
 	 * @param Domaine $d
 	 */
 	public function isKnownDomaine(Domaine $d)
@@ -375,10 +375,10 @@ class Personnage extends BasePersonnage
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Vérifie si le personnage connait cette competence
-	 * 
+	 *
 	 * @param Competence $competence
 	 * @return boolean
 	 */
@@ -390,8 +390,8 @@ class Personnage extends BasePersonnage
 		}
 		return false;
 	}
-	
-	
+
+
 	/**
 	 * Vérifie si le personnage connait cette langue
 	 * @param unknown $langue
@@ -404,7 +404,7 @@ class Personnage extends BasePersonnage
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Fourni la liste des langues connues
 	 */
@@ -425,7 +425,7 @@ class Personnage extends BasePersonnage
      */
     public function getLanguesAnomaliesMessage()
     {
-        
+
 
         // On compte les langues connues
         $compteLangue = 0;
@@ -448,7 +448,7 @@ class Personnage extends BasePersonnage
         $maxLangueAncienneConnue = 0;
         foreach ($this->getCompetences() as $competence)
         {
-            $lc = $competence->getAttributeValue(AttributeType::$LANGUE); 
+            $lc = $competence->getAttributeValue(AttributeType::$LANGUE);
             if ($lc != null)
             {
                 $maxLangueConnue += $lc;
@@ -464,7 +464,7 @@ class Personnage extends BasePersonnage
         // On génère le message de restitution de l'anomalie.
         if ($compteLangue > $maxLangueConnue)
         {
-            return ($compteLangue - $maxLangueConnue) . " langue(s) en trop";
+            return ($compteLangue - $maxLangueConnue) . " langue(s) en trop à vérifier ";
         } else if ($compteLangue < $maxLangueConnue)
         {
             return ($maxLangueConnue - $compteLangue) . " langue(s) manquante(s)";
@@ -472,15 +472,15 @@ class Personnage extends BasePersonnage
 
         if ($maxLangueAncienneConnue < $compteLangueAncienne)
         {
-            return ($compteLangueAncienne - $maxLangueAncienneConnue) . " langue(s) ancienne(s) en trop";
+            return ($compteLangueAncienne - $maxLangueAncienneConnue) . " langue(s) ancienne(s) en trop à vérifier ";
         } else if ($maxLangueAncienneConnue > $compteLangueAncienne)
         {
             return ($maxLangueAncienneConnue - $compteLangueAncienne) . " langue(s) ancienne(s) en manquante(s)";
 	    }
 	    return "";
 	}
-	
-	
+
+
 	/**
 	 * Fourni le language
 	 * @param unknown $langue
@@ -493,8 +493,8 @@ class Personnage extends BasePersonnage
 		}
 		return null;
 	}
-	
-	
+
+
 	/**
 	 * Vérifie si le personnage dispose d'un trigger
 	 * @param unknown $tag
@@ -510,7 +510,7 @@ class Personnage extends BasePersonnage
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Vérifie si le personnage dispose d'une compétence (quelque soit son niveau)
 	 * @param unknown $label
@@ -526,7 +526,7 @@ class Personnage extends BasePersonnage
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Fourni le niveau d'une compétence d'un personnage
 	 * @param unknown $label
@@ -544,7 +544,7 @@ class Personnage extends BasePersonnage
 		}
 		return $niveau;
 	}
-		
+
 	/**
 	 * Fourni le niveau d'une compétence pour le score de pugilat
 	 * @param unknown $label
@@ -561,14 +561,14 @@ class Personnage extends BasePersonnage
 		}
 		return $niveau;
 	}
-	
+
 	/**
 	 * Fourni le score de pugilat
 	 */
 	public function getPugilat()
 	{
 		$pugilat = 0;
-		
+
 		$pugilat = $this->getCompetencePugilat('Agilité')
 			+ $this->getCompetencePugilat('Armes à distance')
 			+ $this->getCompetencePugilat('Armes à 1 main')
@@ -581,22 +581,22 @@ class Personnage extends BasePersonnage
 			+ $this->getCompetencePugilat('Sauvagerie')
 			+ $this->getCompetencePugilat('Stratégie')
 			+ $this->getCompetencePugilat('Survie');
-		
+
 		// armurerie au niveau initié ajoute 5 points
 		if ( $this->getCompetenceNiveau('Armurerie') >= 2 )
 		{
 			$pugilat = $pugilat + 5;
 		}
-		
+
 		// sauvegerie au niveau initié ajoute 5 points
 		if ( $this->getCompetenceNiveau('Sauvagerie') >= 2 )
 		{
 			$pugilat = $pugilat + 5;
 		}
-		
+
 		return $pugilat;
 	}
-	
+
 	/**
 	 * Fourni le trigger correspondant au tag
 	 * @param unknown $tag
@@ -612,7 +612,7 @@ class Personnage extends BasePersonnage
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Fourni le surnom si celui-ci a été précisé
 	 * sinon fourni le nom
@@ -622,20 +622,20 @@ class Personnage extends BasePersonnage
 		if ( $this->getSurnom() ) return $this->getSurnom();
 		return $this->getNom();
 	}
-	
+
 	/**
 	 * Fourni l'identité complete d'un personnage
 	 */
 	public function getIdentity()
 	{
 		$groupe = $this->getGroupe();
-		
+
 		$identity = $this->getNom().' '.$this->getSurnom().' (';
 		if ( $groupe ) $identity .= $groupe->getNom();
 		$identity .= ')';
 		return $identity;
 	}
-	
+
 	public function getGroupeByLabel($gnLabel)
 	{
 		if ( $this->getUser() )
@@ -652,7 +652,7 @@ class Personnage extends BasePersonnage
 		}
 		return null;
 	}
-	
+
 	public function getIdentityByLabel($gnLabel)
 	{
 		$groupeLabel = null;
@@ -669,13 +669,13 @@ class Personnage extends BasePersonnage
 				}
 			}
 		}
-		
+
 		$identity = $this->getNom().' '.$this->getSurnom().' (';
 		if ( $groupeLabel ) $identity .= $groupeLabel;
 		$identity .= ')';
 		return $identity;
 	}
-	
+
 	/**
 	 * Indique si le personnage est un Fanatique
 	 */
@@ -691,7 +691,7 @@ class Personnage extends BasePersonnage
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Indique si le personnage est un Fervent
 	 */
@@ -707,7 +707,7 @@ class Personnage extends BasePersonnage
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Indique si le personnage est Croyant dans une religion
 	 */
@@ -720,7 +720,7 @@ class Personnage extends BasePersonnage
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Fourni la religion principale du personnage
 	 */
@@ -745,11 +745,11 @@ class Personnage extends BasePersonnage
 				}
 			}
 		}
-		
+
 		return $religion;
-		
+
 	}
-	
+
 	/**
 	 * Fourni la liste des groupes secondaires pour lesquel ce personnage est chef
 	 */
@@ -757,7 +757,7 @@ class Personnage extends BasePersonnage
 	{
 		return $this->getSecondaryGroups();
 	}
-	
+
 	/**
 	 * Fourni la description du membre correspondant au groupe passé en paramètre
 	 * @param SecondaryGroup $groupe
@@ -771,10 +771,10 @@ class Personnage extends BasePersonnage
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Ajoute des points d'experience à un personnage
-	 *  
+	 *
 	 * @param integer $xp
 	 */
 	public function addXp($xp)
@@ -782,7 +782,7 @@ class Personnage extends BasePersonnage
 		$this->setXp($this->getXp() + $xp);
 		return $this;
 	}
-	
+
 	/**
 	 * Retire des points d'expérience à un personnage
 	 * @param integer $xp
@@ -792,7 +792,7 @@ class Personnage extends BasePersonnage
 		$this->setXp($this->getXp() - $xp);
 		return $this;
 	}
-	
+
 	public function getXpTotal()
 	{
 		$total = 0;
@@ -805,9 +805,9 @@ class Personnage extends BasePersonnage
 			}
 		}
 		return $total;
-		
+
 	}
-	
+
 	/**
 	 * Ajoute des points d'héroisme à un personnage
 	 * @param unknown $heroisme
@@ -817,7 +817,7 @@ class Personnage extends BasePersonnage
 		$this->setHeroisme($this->getHeroisme() + $heroisme);
 		return $this;
 	}
-	
+
 	/**
 	 * Ajoute des points de renomme à un personnage
 	 * @param unknown $renomme
@@ -827,7 +827,7 @@ class Personnage extends BasePersonnage
 		$this->setRenomme($this->getRenomme() + $renomme);
 		return $this;
 	}
-	
+
 	/**
 	 * Retire des points de renomme à un personnage
 	 * @param unknown $renomme
@@ -837,9 +837,9 @@ class Personnage extends BasePersonnage
 		$this->setRenomme($this->getRenomme() - $renomme);
 		return $this;
 	}
-	
+
 	/**
-	 * Recupère le nom de classe genrifié du personnage 
+	 * Recupère le nom de classe genrifié du personnage
 	 * @todo : Evoluer vers un modèle de données ou les libélés de ressource sont variable en fonction du genre
 	 */
 	public function getClasseName()
@@ -849,8 +849,8 @@ class Personnage extends BasePersonnage
 		{
 			$lGenreMasculin = $this->getGenre()->getLabel() == "Masculin";
 		}
-		
-		if($this->getClasse() == null) 
+
+		if($this->getClasse() == null)
 		{
 			return '';
 		}
@@ -858,16 +858,16 @@ class Personnage extends BasePersonnage
 		{
 			return $this->getClasse()->getLabelMasculin();
 		}
-		else 
+		else
 		{
 			return $this->getClasse()->getLabelFeminin();
 		}
-		
+
 	}
-	
+
 	/**
 	 * Retire un personnage d'un groupe
-	 * 
+	 *
 	 * @param Groupe $groupe
 	 */
 	public function removeGroupe(Groupe $groupe)

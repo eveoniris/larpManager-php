@@ -1,14 +1,14 @@
-<div class="row">   	
-	{% for session in groupe.groupeGns %}
+<div class="row">
+	{% for session in groupe.groupeGns|reverse %}
 		<div class="col-md-4">
 	   		<h6><i class="fa fa-circle"></i> {{ session.gn }}</h6>
-	   		
+
 	   		<div class="white-box">
 	   		{% for participant in session.participants %}
 	   			{{ participant.user.email }},&nbsp;
 	   		{% endfor %}
 	   		</div>
-	   		
+
 	   		<ul class="media-list">
 			{% for participant in session.participants %}
 				<li class="media">
@@ -34,7 +34,7 @@
 							{% endif %}
 							-- {{ participant.user.email }}
 						</h6>
-				
+
 						<p>
 							{% if participant.personnage %}
 								{{ participant.personnage.nom }} {{ participant.personnage.surnom }}</a>
@@ -54,7 +54,7 @@
 							{% if session in participant.groupeGns %}
 								<span class="text-success">Chef de groupe</span>
 							{% endif %}
-						</p>		
+						</p>
 		    		</div>
 		    	</li>
 			{% endfor %}

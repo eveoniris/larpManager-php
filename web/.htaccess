@@ -1,27 +1,30 @@
-# contrÃ´le du cache navigateur - Expire headers
-<IfModule mod_expires.c>
-	ExpiresActive On
-	ExpiresByType image/jpg 			"access plus 1 week"
-	ExpiresByType image/jpeg 			"access plus 1 week"
-	ExpiresByType image/png 			"access plus 1 week"
-	ExpiresByType image/gif 			"access plus 1 week"
-	ExpiresByType image/svg+xml			"access plus 1 week"
-	AddType image/x-icon .ico
-	ExpiresByType image/ico 			"access plus 1 week"
-	ExpiresByType image/icon 			"access plus 1 week"
-	ExpiresByType image/x-icon 			"access plus 1 week"
-	ExpiresByType text/css 				"access plus 1 week"
-	ExpiresByType text/javascript 		"access plus 1 week"
-	ExpiresByType application/javascript 	"access plus 1 week"
-	ExpiresByType application/x-javascript 	"access plus 1 week"
-	ExpiresByType application/x-shockwave-flash "access plus 1 week"
-</IfModule>
+# contrôle du cache navigateur - Expire headers
+#<IfModule mod_expires.c>
+#	ExpiresActive On
+#	ExpiresByType image/jpg 			"access plus 1 week"
+#	ExpiresByType image/jpeg 			"access plus 1 week"
+#	ExpiresByType image/png 			"access plus 1 week"
+#	ExpiresByType image/gif 			"access plus 1 week"
+#	ExpiresByType image/svg+xml			"access plus 1 week"
+#	AddType image/x-icon .ico
+#	ExpiresByType image/ico 			"access plus 1 week"
+#	ExpiresByType image/icon 			"access plus 1 week"
+#	ExpiresByType image/x-icon 			"access plus 1 week"
+#	ExpiresByType text/css 				"access plus 1 week"
+#	ExpiresByType text/javascript 		"access plus 1 week"
+#	ExpiresByType application/javascript 	"access plus 1 week"
+#	ExpiresByType application/x-javascript 	"access plus 1 week"
+#	ExpiresByType application/x-shockwave-flash "access plus 1 week"
+#</IfModule>
 
 <IfModule mod_rewrite.c>
     Options -MultiViews
-
     RewriteEngine On
-	RewriteBase /larp-manager-php/
+    #RewriteBase /larpmanager/web
+    
+    RewriteCond %{SERVER_PORT} 80
+    RewriteRule .* https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [QSA,L]
 </IfModule>

@@ -58,7 +58,7 @@ class GnController
             // L'utilisateur n'a pas validé les CG.
             return $app->redirect($app['url_generator']->generate('user.gn.validationci', array(
                 'gn' => $gn->getId()
-            )), 301);            
+            )), 307);            
         }
                 
         $repo = $app['orm.em']->getRepository('LarpManager\Entities\Question');
