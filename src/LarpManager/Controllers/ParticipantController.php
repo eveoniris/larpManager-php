@@ -2816,14 +2816,14 @@ class ParticipantController
 					case 1: // 2 langues très répandue supplémentaires de son choix
 						$trigger = new \LarpManager\Entities\PersonnageTrigger();
 						$trigger->setPersonnage($personnage);
-						$trigger->setTag('LANGUE COMMUNE');
+						$trigger->setTag('LANGUE COURANTE');
 						$trigger->setDone(false);
 						$app['orm.em']->persist($trigger);
 						$app['orm.em']->flush();
 						
 						$trigger = new \LarpManager\Entities\PersonnageTrigger();
 						$trigger->setPersonnage($personnage);
-						$trigger->setTag('LANGUE COMMUNE');
+						$trigger->setTag('LANGUE COURANTE');
 						$trigger->setDone(false);
 						$app['orm.em']->persist($trigger);
 						$app['orm.em']->flush();
