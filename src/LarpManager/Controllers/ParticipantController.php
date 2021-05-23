@@ -2887,7 +2887,7 @@ class ParticipantController
 						$trigger->setDone(false);
 						$app['orm.em']->persist($trigger);
 						$app['orm.em']->flush();
-						
+						 
 						$trigger = new \LarpManager\Entities\PersonnageTrigger();
 						$trigger->setPersonnage($personnage);
 						$trigger->setTag('LANGUE COURANTE');
