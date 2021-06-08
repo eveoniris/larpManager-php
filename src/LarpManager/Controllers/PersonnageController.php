@@ -182,7 +182,6 @@ class PersonnageController
 		{
 			$personnage = $form->getData();
 			$app['user']->addPersonnage($personnage);
-			
 			$app['orm.em']->persist($app['user']);
 			$app['orm.em']->persist($personnage);
 			$app['orm.em']->flush();
@@ -634,7 +633,7 @@ class PersonnageController
 		$personnage = new \LarpManager\Entities\Personnage();
 		
 		$participant = $request->get('participant');
-		if ( ! $participant ) {
+		if ( !$participant ) {
 			$participant = $app['user']->getParticipant();
 		}
 		else {
@@ -684,7 +683,7 @@ class PersonnageController
 					$app['orm.em']->persist($firstCompetence);
 				}
 			}
-			
+
 			// Ajout des points d'expérience gagné grace à l'age
 			$xpAgeBonus = $personnage->getAge()->getBonus();
 			if ( $xpAgeBonus )
@@ -967,7 +966,7 @@ class PersonnageController
 	}
 	
 	/**
-	 * Modification de l'héroisme d'un personnage
+	 * Modification de l'Héroïsme d'un personnage
 	 * 
 	 * @param Request $request
 	 * @param Application $app
@@ -1201,7 +1200,7 @@ class PersonnageController
 		$form = $app['form.factory']->createBuilder()
 			->add('langues','entity', array(
 					'required' => true,
-					'label' => 'Choisissez les languages',
+					'label' => 'Choisissez les langages',
 					'multiple' => true,
 					'expanded' => true,
 					'class' => 'LarpManager\Entities\Langue',
