@@ -13,7 +13,7 @@
 	<div class="well well-sm">
 		<div class="btn-toolbar" role="toolbar" aria-label="...">
 			<div class="btn-group" role="group" aria-label="...">
-				<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Liste des groupes secondaire" href="{{ path('participant.groupeSecondaire.list', {'participant': participant.id}) }}"><i class="fa fa-user-secret" aria-hidden="true"></i></a>
+				<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Liste des groupes secondaires" href="{{ path('participant.groupeSecondaire.list', {'participant': participant.id}) }}"><i class="fa fa-user-secret" aria-hidden="true"></i></a>
 				<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Choisir une nouvelle religion" href="{{ path('participant.religion.add',{'participant': participant.id}) }}"><i class="fa fa-cloud" aria-hidden="true"></i></a>
 				<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Acheter une compétence" href="{{ path('participant.competence.add', {'participant': participant.id}) }}"><i class="fa fa-graduation-cap" aria-hidden="true"></i></a>
 				<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Modifier votre personnage" href="{{ path('participant.personnage.edit', {'participant': participant.id}) }}"><i class="fa fa-pencil" aria-hidden="true"></i></a>
@@ -42,16 +42,16 @@
 								<li class="list-group-item"><a href="{{ path('participant.personnage.langueAncienne', {'participant': participant.id}) }}">Choisir une langue ancienne supplémentaire</a></li>
 							{% endif %}
 							{% if trigger.tag == 'ALCHIMIE APPRENTI' %}
-								<li class="list-group-item"><a href="{{ path('participant.personnage.potion', {'niveau' : 1, 'participant' : participant.id}) }}">Choisir une nouvelle potion de niveau apprenti</a></li>
+								<li class="list-group-item"><a href="{{ path('participant.personnage.potion', {'niveau' : 1, 'participant' : participant.id}) }}">Choisir une nouvelle potion de niveau Apprenti</a></li>
 							{% endif %}
 							{% if trigger.tag == 'ALCHIMIE INITIE' %}
-								<li class="list-group-item"><a href="{{ path('participant.personnage.potion', {'niveau' : 2, 'participant' : participant.id}) }}">Choisir une nouvelle potion de niveau innitié</a></li>
+								<li class="list-group-item"><a href="{{ path('participant.personnage.potion', {'niveau' : 2, 'participant' : participant.id}) }}">Choisir une nouvelle potion de niveau Initié</a></li>
 							{% endif %}
 							{% if trigger.tag == 'ALCHIMIE EXPERT' %}
-								<li class="list-group-item"><a href="{{ path('participant.personnage.potion', {'niveau' : 3, 'participant' : participant.id}) }}">Choisir une nouvelle potion de niveau expert</a></li>
+								<li class="list-group-item"><a href="{{ path('participant.personnage.potion', {'niveau' : 3, 'participant' : participant.id}) }}">Choisir une nouvelle potion de niveau Expert</a></li>
 							{% endif %}
 							{% if trigger.tag == 'ALCHIMIE MAITRE' %}
-								<li class="list-group-item"><a href="{{ path('participant.personnage.potion', {'niveau' : 4, 'participant' : participant.id}) }}">Choisir une nouvelle potion de niveau maitre</a></li>
+								<li class="list-group-item"><a href="{{ path('participant.personnage.potion', {'niveau' : 4, 'participant' : participant.id}) }}">Choisir une nouvelle potion de niveau Maitre</a></li>
 							{% endif %}
 							{% if trigger.tag == 'DOMAINE MAGIE' %}
 								<li class="list-group-item"><a href="{{ path('participant.personnage.domaine', {'participant': participant.id}) }}">Choisir un domaine de magie</a></li>
@@ -95,7 +95,7 @@
 						{% endif %}
 						<div class="caption">
 			        		<h3>Votre photo</h3>
-			        		<p>Si ce n'est pas déjà fait, Téléversez votre photo. Elle sera utilisé pour les différents trombinoscope des groupes auquels vous appartenez afin que les autres joueurs puissent vous reconnaitre.</p>
+			        		<p>Si ce n'est pas déjà fait, Téléversez votre photo. Elle sera utilisée pour les différents trombinoscope des groupes auquels vous appartenez afin que les autres joueurs puissent vous reconnaitre.</p>
 							<p><a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Modifier votre photo" href="{{ path('participant.personnage.trombine', {'participant': participant.id, 'personnage': participant.personnage.id}) }}"><i class="fa fa-camera" aria-hidden="true"></i></a></p>
 						</div>
 					</div>
