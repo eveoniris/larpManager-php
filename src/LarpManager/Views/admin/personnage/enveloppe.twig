@@ -7,18 +7,17 @@
 </div>
 
 {% if personnage.user %}
-	{% for participant in personnage.user.participants %}
 		<strong>Personnage Secondaire : </strong>
-		{% if participant.personnageSecondaire %}
+		{% if personnage.prochaineParticipation != null and personnage.prochaineParticipation.personnageSecondaire != null %}
 			{{ participant.personnageSecondaire.classe.label }}
 		{% else %}
 			PAS DE PERSONNAGE SECONDAIRE
 		{% endif %}
-	{% endfor %}
+	
 {% endif %}
 	
 <strong>Renommée :</strong> {{ personnage.renomme|default(0) }}<br />
-<strong>Héroisme :</strong> {{ personnage.heroisme|default(0) }}<br />
+<strong>Héroïsme :</strong> {{ personnage.heroisme|default(0) }}<br />
 <strong>Richesse :</strong> {{ personnage.richesse|default(0) }} PA<br />
 <strong>Lié aux compétences : </strong>
 <ul>	
