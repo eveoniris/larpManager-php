@@ -93,7 +93,8 @@ class Personnage extends BasePersonnage
 		{
 			if ( $participant = $this->getUser()->getParticipant($gn))
 			{
-				if ( $participant->getBillet())
+				if ( $participant->getBillet()
+					&& $participant->getPersonnage() == $this) 
 				{
 					return true;
 				}
@@ -808,7 +809,7 @@ class Personnage extends BasePersonnage
 	}
 
 	/**
-	 * Ajoute des points d'héroisme à un personnage
+	 * Ajoute des points d'Héroïsme à un personnage
 	 * @param unknown $heroisme
 	 */
 	public function addHeroisme($heroisme)
@@ -874,5 +875,25 @@ class Personnage extends BasePersonnage
 		$groupe->removePersonnage($this);
 		$this->setGroupe(null);
 	}
-
+	
+	public function getResumeParticipations() {
+	    $s = $this->getNom() ;
+	    
+	    if ( $this->getUser() ) {
+	       $first = true;
+    	    foreach ($this->getUser()->getParticipants() as $participant) {
+    	        if($participant->getPersonnage() != null && $participant->getPersonnage()->getId() == $this->getId()) {
+    	            if($first) {
+    	                $s = $s . " (";
+    	                $first = false;
+    	            }
+    	           $s = $s . " " . $participant->getGn()->getLabel();
+    	        }
+    	    }
+    	    if ( !$first ) {
+    	        $s = $s . " )";
+    	    }
+	    }
+	    return $s; 
+	}
 }
