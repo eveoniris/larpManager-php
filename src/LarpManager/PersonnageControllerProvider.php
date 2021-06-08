@@ -219,7 +219,7 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 			->before($mustBeOrga);
 
 		/**
-		 * Modification de l'héroisme d'un personnage (orga)
+		 * Modification de l'Héroïsme d'un personnage (orga)
 		 */
 		$controllers->match('/admin/{personnage}/update/heroisme','LarpManager\Controllers\PersonnageController::adminUpdateHeroismeAction')
 			->assert('personnage', '\d+')
