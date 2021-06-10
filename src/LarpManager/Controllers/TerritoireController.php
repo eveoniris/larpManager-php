@@ -147,24 +147,24 @@ class TerritoireController
             {
                 switch ($type){
                     case 'idFief':
-                        $criteria[$type] = "t.id LIKE '%$value%'";
+                        $criteria["t.id"] = $value;
                         break;
                     case 'nomFief':
-                        $criteria[$type] = "t.nom LIKE '%$value%'";
+                        $criteria["t.nom"] = $value;
                         break;
                 }
             }
         }
         if($groupe){
-            $criteria["groupe"] = "tgr.id = {$groupe->getId()}";
+            $criteria["tgr.id"] = $groupe->getId();
             $optionalParameters .= "&fief[groupe]={$groupe->getId()}";
         }
         if($pays){
-            $criteria["pays"] = "tp.id = {$pays->getId()}";
+            $criteria["tp.id"] = $pays->getId();
             $optionalParameters .= "&fief[pays]={$pays->getId()}";
         }
         if($province){
-            $criteria["province"] = "tpr.id = {$province->getId()}";
+            $criteria["tpr.id"] = $province->getId();
             $optionalParameters .= "&fief[province]={$province->getId()}";
         }
 
@@ -177,7 +177,7 @@ class TerritoireController
             $offset
         );
 
-        $numResults = $repo->findFiefsCount($criteria);
+        $numResults = count($fiefs);
 
         $paginator = new Paginator($numResults, $limit, $page,
             $app['url_generator']->generate('territoire.fief') . '?page=(:num)&limit=' . $limit . '&order_by=' . $order_by . '&order_dir=' . $order_dir . $optionalParameters

@@ -89,17 +89,28 @@ class TerritoireRepository extends EntityRepository
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
 
-        $qb->select('distinct t, tpr, tp, tgr');
+        $qb->select('distinct t');
         $qb->from('LarpManager\Entities\Territoire','t');
-        $qb->join('t.groupe','tgr');
+        if(array_key_exists("tgr.id",$criteria)) $qb->join('t.groupe','tgr');
         $qb->join('t.territoire','tpr');
         $qb->join('tpr.territoire','tp');
         $qb->andWhere('t.territoire IS NOT NULL');
         $qb->andWhere('tp.territoire IS NULL');
 
-        foreach ( $criteria as $critere )
+        $count = 0;
+        foreach ( $criteria as $key => $value )
         {
-            $qb->andWhere($critere);
+            if($key == "t.nom")
+            {
+                $qb->andWhere($key." LIKE %?$count%")
+                    ->setParameter("$count", $value);
+            }
+            else
+            {
+                $qb->andWhere($key." = ?$count")
+                    ->setParameter("$count", $value);
+            }
+            $count++;
         }
 
         $qb->setFirstResult($offset);
@@ -127,9 +138,20 @@ class TerritoireRepository extends EntityRepository
         $qb->andWhere('t.territoire IS NOT NULL');
         $qb->andWhere('tp.territoire IS NULL');
 
-        foreach ( $criteria as $critere )
+        $count = 0;
+        foreach ( $criteria as $key => $value )
         {
-            $qb->andWhere($critere);
+            if($key == "t.nom")
+            {
+                $qb->andWhere($key." LIKE %?$count%")
+                    ->setParameter("$count", $value);
+            }
+            else
+            {
+                $qb->andWhere($key." = ?$count")
+                    ->setParameter("$count", $value);
+            }
+            $count++;
         }
 
         return $qb->getQuery()->getSingleScalarResult();
