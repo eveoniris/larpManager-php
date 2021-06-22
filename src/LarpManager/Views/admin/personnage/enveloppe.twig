@@ -17,7 +17,7 @@
 {% endif %}
 	
 <strong>Renommée :</strong> {{ personnage.renomme|default(0) }}<br />
-<strong>Héroisme :</strong> {{ personnage.heroisme|default(0) }}<br />
+<strong>Héroïsme :</strong> {{ personnage.heroisme|default(0) }}<br />
 <strong>Richesse :</strong> {{ personnage.richesse|default(0) }} PA<br />
 <strong>Lié aux compétences : </strong>
 <ul>	
@@ -42,7 +42,7 @@
 </ul>
 																
 {# documents #}
-<strong>Document</strong>
+<strong>Documents</strong>
 <ul>
 {% for document in personnage.documents %}
 	<li><strong>{{ document.code }}</strong>&nbsp;{{ document.titre }}</li>

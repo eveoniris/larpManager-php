@@ -53,7 +53,7 @@
 												<li><a href="{{ path('personnage.admin.statut', {'personnage':personnage.id}) }}">Modifier le statut (vivant/mort)</a></li>
 												<li><a href="{{ path('personnage.admin.update.age',{'personnage': personnage.id}) }}">Modifier l'age</a></li>
 												<li><a href="{{ path('personnage.admin.update', {'personnage':personnage.id}) }}">Modifier (nom/surnom/etc ...)</a></li>
-												<li><a href="{{ path('personnage.admin.transfert', {'personnage':personnage.id}) }}">Transferer à un autre joueur</a></li>
+												<li><a href="{{ path('personnage.admin.transfert', {'personnage':personnage.id}) }}">Transférer à un autre joueur</a></li>
 												<li><a href="{{ path('personnage.export', {'personnage':personnage.id}) }}">Imprimer</a></li>
 												<li><a href="{{ path('personnage.admin.delete', {'personnage':personnage.id}) }}">Supprimer</a></li>
 											</ul>
@@ -116,12 +116,12 @@
 								      			<span class="caret"></span>
 								    		</a>
 											<ul class="dropdown-menu">
-												<li><a href="{{ path('personnage.admin.update.renomme', {'personnage': personnage.id}) }}">Modifier la renommée</a></li>
-												<li><a href="{{ path('personnage.admin.update.heroisme', {'personnage': personnage.id}) }}">Modifier l'héroisme</a></li>
+												<li><a href="{{ path('personnage.admin.update.renomme', {'personnage': personnage.id}) }}">Modifier la Renommée</a></li>
+												<li><a href="{{ path('personnage.admin.update.heroisme', {'personnage': personnage.id}) }}">Modifier l'Héroïsme</a></li>
 												<li><a href="{{ path('personnage.admin.update.domaine', {'personnage': personnage.id}) }}">Modifier la liste des domaines de magie</a></li>
 												<li><a href="{{ path('personnage.admin.religion.add', {'personnage': personnage.id}) }}">Ajouter une religion</a></li>
 												<li><a href="{{ path('personnage.admin.origine.update', {'personnage': personnage.id}) }}">Modifier l'origine</a></li>
-												<li><a href="{{ path('personnage.admin.update.langue', {'personnage': personnage.id}) }}">Modifier les languages</a></li>
+												<li><a href="{{ path('personnage.admin.update.langue', {'personnage': personnage.id}) }}">Modifier les langages</a></li>
 												<li><a href="{{ path('personnage.admin.update.sort', {'personnage': personnage.id}) }}">Modifier la liste des sorts</a></li>
 												<li><a href="{{ path('personnage.admin.update.potion', {'personnage': personnage.id}) }}">Modifier la liste des potions</a></li>
 												<li><a href="{{ path('personnage.admin.update.priere', {'personnage': personnage.id}) }}">Modifier la liste des prieres</a></li>
@@ -147,7 +147,7 @@
 									{% endfor %}
 								</div>
 							</div>
-							<p>Héroisme : <strong class="text-success">{{ personnage.heroisme|default(0) }}</strong>
+							<p>Héroïsme : <strong class="text-success">{{ personnage.heroisme|default(0) }}</strong>
 								<a role="button" data-toggle="collapse" href="#heroismeHistory" aria-expanded="false" aria-controls="collapseExample">
 									<i class="fa fa-history" aria-hidden="true"></i>
 								</a>
@@ -168,14 +168,14 @@
 								{% endfor %}
 							</div>
 								
-							<h6>Religion(s)</h6>
+							<h6>Religions</h6>
 							<div class="list-group">
 								{% for personnageReligion in personnage.personnagesReligions %}
 									<div class="list-group-item">{{ personnageReligion.religion.label }} - {{ personnageReligion.religionLevel.label }} - <a href="{{ path('personnage.admin.religion.delete', {'personnage': personnage.id, 'personnageReligion': personnageReligion.id }) }}">Supprimer</a></div>
 								{% endfor %}
 							</div>
 							
-							<h6>Langages connus </h6>
+							<h6>Langages connus</h6>
 							{% set languesAnomalie = personnage.getLanguesAnomaliesMessage() %}
 							{% if languesAnomalie != "" %}
 							<div class="text-warning">{{languesAnomalie}}</div>
@@ -227,7 +227,7 @@
 							</div>
 							
 							<div class="list-group-item">
-								<h6 class="list-group-item-heading">Prières</h6>
+								<h6 class="list-group-item-heading">Prières :</h6>
 								{% set sortAnomalie = personnage.getPrieresAnomalieMessage() %}
 								{% if sortAnomalie != "" %}
 								<div class="text-warning">{{sortAnomalie}}</div>
@@ -341,7 +341,7 @@
 								      			<span class="caret"></span>
 								    		</a>
 											<ul class="dropdown-menu">
-												<li><a href=" {{ path('personnage.documents', {'personnage': personnage.id}) }}">Modifier la liste de documents</a></li>
+												<li><a href=" {{ path('personnage.documents', {'personnage': personnage.id}) }}">Modifier la liste des documents</a></li>
 												<li><a href=" {{ path('personnage.items', {'personnage': personnage.id}) }}">Modifier la liste des objets</a></li>
 												<li><a href="{{ path('personnage.admin.update.ingredient', {'personnage': personnage.id}) }}">Modifier la liste des ingrédients</a></li>
 												<li><a href="{{ path('personnage.admin.update.ressource', {'personnage': personnage.id}) }}">Modifier la liste des ressources</a></li>
@@ -359,11 +359,11 @@
 							<div class="list-group">
 							
 								<div class="list-group-item">
-									<h6 class="list-group-item-heading">Point de renommée : {{ personnage.renomme|default(0) }}</h6>
+									<h6 class="list-group-item-heading">Renommée : {{ personnage.renomme|default(0) }}</h6>
 								</div>
 								
 								<div class="list-group-item">
-									<h6 class="list-group-item-heading">Point d'héroisme : {{ personnage.heroisme|default(0) }}</h6>
+									<h6 class="list-group-item-heading">Héroïsme : {{ personnage.heroisme|default(0) }}</h6>
 								</div>
 								
 								<div class="list-group-item">
@@ -382,7 +382,7 @@
 								</div>
 								
 								<div class="list-group-item">
-									<h6 class="list-group-item-heading">Lié aux langages</h6>
+									<h6 class="list-group-item-heading">Lié aux langages :</h6>
 									{% for materiel in langueMateriel %}
 											<div class="list-group-item-text"><strong>{{ materiel }}</strong></div>
 									{% else %}
