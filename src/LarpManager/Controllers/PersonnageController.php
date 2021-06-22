@@ -263,7 +263,7 @@ class PersonnageController
 			}
 			$app['orm.em']->flush();
 			
-			$app['session']->getFlashBag()->add('success', 'tous les personnages ont reçut un jeton vieillesse.');
+			$app['session']->getFlashBag()->add('success', 'Tous les personnages ont reçut un jeton vieillesse.');
 			return $app->redirect($app['url_generator']->generate('homepage'),301);
 		}
 		
