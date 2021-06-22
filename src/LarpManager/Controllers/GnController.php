@@ -24,6 +24,8 @@ use LarpManager\Form\PersonnageFindForm;
 use LarpManager\Entities\Gn;
 use JasonGrimes\Paginator;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Query\AST\LikeExpression;
+use LarpManager\Repository\EqualExpression;
 
 /**
  * * LarpManager\Controllers\GnController * * @author kevin *
@@ -116,10 +118,10 @@ class GnController
             $value = $data['value'];
             switch ($type) {
                 case 'nom':
-                    $criteria[] = "p.nom LIKE '%$value%'";
+                    $criteria[] = new LikeExpression("p.name", "%$value%");
                     break;
                 case 'id':
-                    $criteria[] = "p.id = $value";
+                    $criteria[] = new EqualExpression("p.id", "%$value%"); 
             }
         }
         $repo = $app['orm.em']->getRepository('\LarpManager\Entities\Personnage');
