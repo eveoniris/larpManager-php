@@ -498,7 +498,6 @@ class PersonnageController
 	 */
 	public function adminListAction(Request $request, Application $app)
 	{
-	    error_log("adminListAction ");
 		$order_by = $request->get('order_by') ?: 'id';
 		$order_dir = $request->get('order_dir') == 'DESC' ? 'DESC' : 'ASC';
 		$limit = (int)($request->get('limit') ?: 50);
@@ -1204,7 +1203,7 @@ class PersonnageController
 		$form = $app['form.factory']->createBuilder()
 			->add('langues','entity', array(
 					'required' => true,
-					'label' => 'Choisissez les languages',
+					'label' => 'Choisissez les langages',
 					'multiple' => true,
 					'expanded' => true,
 					'class' => 'LarpManager\Entities\Langue',
@@ -1673,7 +1672,7 @@ class PersonnageController
 		// refuser la demande si le personnage est Fanatique
 		if ( $personnage->isFanatique() )
 		{
-			$app['session']->getFlashBag()->add('error','Désolé, le personnage êtes un Fanatique, il vous est impossible de choisir une nouvelle religion. (supprimer la religion fanatique qu\'il possède avant)' );
+			$app['session']->getFlashBag()->add('error','Désolé, le personnage est un Fanatique, il vous est impossible de choisir une nouvelle religion. (Supprimer la religion fanatique qu\'il possède avant)' );
 			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
 		}
 		
@@ -1685,7 +1684,7 @@ class PersonnageController
 		
 		if ( $availableReligions->count() == 0 )
 		{
-			$app['session']->getFlashBag()->add('error','Désolé, il n\'y a plus de religion disponibles');
+			$app['session']->getFlashBag()->add('error','Désolé, il n\'y a plus de religion disponible');
 			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
 		}
 		
@@ -1997,7 +1996,7 @@ class PersonnageController
 				
 			if ( $xp - $cout < 0 )
 			{
-				$app['session']->getFlashBag()->add('error','Vos n\'avez pas suffisement de point d\'expérience pour acquérir cette compétence.');
+				$app['session']->getFlashBag()->add('error','Vos n\'avez pas suffisement de points d\'expérience pour acquérir cette compétence.');
 				return $app->redirect($app['url_generator']->generate('homepage'),301);
 			}
 			$personnage->setXp($xp - $cout);
