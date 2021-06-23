@@ -24,7 +24,7 @@ use LarpManager\Form\PersonnageFindForm;
 use LarpManager\Entities\Gn;
 use JasonGrimes\Paginator;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\Query\AST\LikeExpression;
+use LarpManager\Repository\LikeExpression;
 use LarpManager\Repository\EqualExpression;
 
 /**
