@@ -116,7 +116,7 @@ class ForumController
 			
 			$app['session']->getFlashBag()->add('success', 'Le forum a été ajouté.');
 			
-			return $app->redirect($app['url_generator']->generate('forum'),301);
+			return $app->redirect($app['url_generator']->generate('forum'),303);
 		}
 		
 		return $app['twig']->render('forum/forum_add.twig', array(
@@ -186,7 +186,7 @@ class ForumController
 			
 			$app['session']->getFlashBag()->add('success', 'Le message a été ajouté.');
 			
-			return $app->redirect($app['url_generator']->generate('forum.topic',array('index'=> $topic->getId())),301);
+			return $app->redirect($app['url_generator']->generate('forum.topic',array('index'=> $topic->getId())),303);
 		}
 			
 		return $app['twig']->render('forum/post_add.twig', array(
@@ -292,7 +292,7 @@ class ForumController
 				
 			$app['session']->getFlashBag()->add('success', 'Le message a été ajouté.');
 				
-			return $app->redirect($app['url_generator']->generate('forum.post',array('index'=> $postToResponse->getId())),301);
+			return $app->redirect($app['url_generator']->generate('forum.post',array('index'=> $postToResponse->getId())),303);
 		}
 	
 		return $app['twig']->render('forum/post_response.twig', array(
@@ -330,7 +330,7 @@ class ForumController
 	
 			$app['session']->getFlashBag()->add('success', 'Le message a été modifié.');
 	
-			return $app->redirect($app['url_generator']->generate('forum.post',array('index'=> $post->getId())),301);
+			return $app->redirect($app['url_generator']->generate('forum.post',array('index'=> $post->getId())),303);
 		}
 	
 		return $app['twig']->render('forum/post_update.twig', array(
@@ -357,7 +357,7 @@ class ForumController
 		$app['orm.em']->flush();
 		
 		$app['session']->getFlashBag()->add('success', 'Les notifications sont maintenant activées.');
-		return $app->redirect($app['url_generator']->generate('forum.post',array('index'=> $post->getId())),301);
+		return $app->redirect($app['url_generator']->generate('forum.post',array('index'=> $post->getId())),303);
 	}
 	
 	/**
@@ -378,7 +378,7 @@ class ForumController
 		$app['orm.em']->flush();
 	
 		$app['session']->getFlashBag()->add('success', 'Les notifications sont maintenant desactivées.');
-		return $app->redirect($app['url_generator']->generate('forum.post',array('index'=> $post->getId())),301);
+		return $app->redirect($app['url_generator']->generate('forum.post',array('index'=> $post->getId())),303);
 	}
 	
 	/**
@@ -438,7 +438,7 @@ class ForumController
 			
 			$app['session']->getFlashBag()->add('success', 'Le message a été supprimé.');
 			
-			return $app->redirect($url,301);
+			return $app->redirect($url,303);
 		}
 		
 		return $app['twig']->render('forum/post_delete.twig', array(
@@ -481,7 +481,7 @@ class ForumController
 		
 			$app['session']->getFlashBag()->add('success', 'Le forum a été ajouté.');
 		
-			return $app->redirect($app['url_generator']->generate('forum.topic',array('index'=> $topic->getId())),301);
+			return $app->redirect($app['url_generator']->generate('forum.topic',array('index'=> $topic->getId())),303);
 		}
 		
 		return $app['twig']->render('forum/topic_add.twig', array(
@@ -527,7 +527,7 @@ class ForumController
 	
 			$app['session']->getFlashBag()->add('success', 'Le forum a été modifié.');
 	
-			return $app->redirect($app['url_generator']->generate('forum.topic',array('index'=> $topic->getId())),301);
+			return $app->redirect($app['url_generator']->generate('forum.topic',array('index'=> $topic->getId())),303);
 		}
 	
 		return $app['twig']->render('forum/topic_update.twig', array(
