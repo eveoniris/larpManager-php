@@ -2796,8 +2796,8 @@ class ParticipantController
 						$trigger->setDone(false);
 						$app['orm.em']->persist($trigger);
 						$app['orm.em']->flush();
-					case 4:
 						break;
+					case 4:
 						// il obtient aussi la possibilité de choisir un sort de niveau 4
 						$trigger = new \LarpManager\Entities\PersonnageTrigger();
 						$trigger->setPersonnage($personnage);
@@ -2805,6 +2805,7 @@ class ParticipantController
 						$trigger->setDone(false);
 						$app['orm.em']->persist($trigger);
 						$app['orm.em']->flush();
+						break;
 				}
 			}
 				
