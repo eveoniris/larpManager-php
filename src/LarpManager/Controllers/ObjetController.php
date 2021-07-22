@@ -224,7 +224,7 @@ class ObjetController
 			$identification = $item->getIdentification();
 			switch ($identification){
 				case 1:
-					$identification = mt_rand(1,10);
+					$identification = sprintf('%02d',mt_rand(1,10));
 					$item->setIdentification($identification);
 					break;
 				case 11:
@@ -287,7 +287,7 @@ class ObjetController
 			$identification = $item->getIdentification();
 			switch ($identification){
 				case 1:
-					$identification = mt_rand(1,10);
+					$identification = sprintf('%02d',mt_rand(1,10));
 					$item->setIdentification($identification);
 					break;
 				case 11:
