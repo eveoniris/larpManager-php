@@ -19,7 +19,7 @@
 				<strong>Classe :</strong> {{ personnage.classeName }}
 			</li>
 			<li class="list-group-item">
-				<strong>Age :</strong> {{ personnage.age }}
+				<strong>Age :</strong> {{ personnage.ageReel|default('x') }} ans ({{ personnage.age }})
 			</li>
 			<li class="list-group-item">
 				<strong>Genre :</strong> {{ personnage.genre }}
