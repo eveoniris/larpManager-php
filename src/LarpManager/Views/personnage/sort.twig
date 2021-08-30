@@ -51,14 +51,14 @@
 						<tr>
 							<th>Coût en mana en dehors du domaine du mage</th>
 							<td>2</td>
+							<td>3</td>
 							<td>4</td>
-							<td>6</td>
-							<td>8</td>
+							<td>5</td>
 						</tr>
 					</tbody>
 				</table>
 				
-				<p>Example : Un sortilège de niveau 2 coutera 2 point de Mana au mage connaissant le domaine de magie du sortilège, et 4 points de mana au mage ne connaissant pas le domaine de magie.</p> 
+				<p>Exemple : Un sort de niveau 2 coutera 2 points de Mana au mage connaissant le domaine de magie du sort, et 3 points de mana au mage ne connaissant pas le domaine de magie.</p> 
 			</div>
 	
 	{% for sort in sorts %}
@@ -71,7 +71,7 @@
 					<p>
 						Cout en mana
 						{% if sort.domaine in personnage.domaines %} {{ sort.niveau }}
-						{% else %} {{ sort.niveau * 2 }}
+						{% else %} {{ sort.niveau + 1 }}
 						{% endif %}
 					</p>
 				</div>

@@ -7,13 +7,13 @@
 	<ol class="breadcrumb">
 		<li><a href="{{ path('homepage') }}">Page d'accueil</a></li>
 		<li><a href="{{ path('gn.detail', {'gn' : participant.gn.id}) }}">{{ participant.gn.label }}</a></li>
-		<li class="active">{{ personnage.nom }} {{ personnage.surnom }}</li>
+		<li class="active">{{ personnage.nom }} - {{ personnage.surnom }}</li>
 	</ol>
 	
 	<div class="well well-sm">
 		<div class="btn-toolbar" role="toolbar" aria-label="...">
 			<div class="btn-group" role="group" aria-label="...">
-				<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Liste des groupes secondaire" href="{{ path('participant.groupeSecondaire.list', {'participant': participant.id}) }}"><i class="fa fa-user-secret" aria-hidden="true"></i></a>
+				<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Liste des groupes secondaires" href="{{ path('participant.groupeSecondaire.list', {'participant': participant.id}) }}"><i class="fa fa-user-secret" aria-hidden="true"></i></a>
 				<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Choisir une nouvelle religion" href="{{ path('participant.religion.add',{'participant': participant.id}) }}"><i class="fa fa-cloud" aria-hidden="true"></i></a>
 				<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Acheter une compétence" href="{{ path('participant.competence.add', {'participant': participant.id}) }}"><i class="fa fa-graduation-cap" aria-hidden="true"></i></a>
 				<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Modifier votre personnage" href="{{ path('participant.personnage.edit', {'participant': participant.id}) }}"><i class="fa fa-pencil" aria-hidden="true"></i></a>
@@ -95,11 +95,12 @@
 						{% endif %}
 						<div class="caption">
 			        		<h3>Votre photo</h3>
-			        		<p>Si ce n'est pas déjà fait, Téléversez votre photo. Elle sera utilisé pour les différents trombinoscope des groupes auquels vous appartenez afin que les autres joueurs puissent vous reconnaitre.</p>
+			        		<p>Si ce n'est pas déjà fait, Téléversez votre photo. Elle sera utilisée pour les différents trombinoscopes des groupes auxquels vous appartenez afin que les autres joueurs puissent vous reconnaitre.</p>
 							<p><a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Modifier votre photo" href="{{ path('participant.personnage.trombine', {'participant': participant.id, 'personnage': participant.personnage.id}) }}"><i class="fa fa-camera" aria-hidden="true"></i></a></p>
 						</div>
 					</div>
 				
+					{% include 'public/personnage/fragment/groupe.twig' with {'personnage': personnage, 'participant': participant} %}
 					{% include 'public/personnage/fragment/groupeSecondaireChef.twig' with {'personnage': personnage, 'participant': participant} %}
 					{% include 'public/personnage/fragment/groupeSecondaireMembre.twig' with {'personnage': personnage, 'participant': participant} %}
 					{% include 'public/personnage/fragment/religion.twig' with {'personnage': personnage, 'participant': participant} %}

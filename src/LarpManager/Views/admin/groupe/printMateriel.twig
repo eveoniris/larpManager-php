@@ -29,9 +29,9 @@ body {
 		
 	
 	<strong>Renommée :</strong> {{ participant.personnage.renomme|default(0) }}<br />
-	<strong>Héroisme :</strong> {{ participant.personnage.heroisme|default(0) }}<br />
+	<strong>Héroïsme :</strong> {{ participant.personnage.heroisme|default(0) }}<br />
 	<strong>Richesse :</strong> {{ participant.personnage.richesse|default(0) }} PA<br />
-	<strong>Lié aux compétences: </strong>
+	<strong>Lié aux compétences :</strong>
 	<ul>	
 	{% for competence in participant.personnage.competences %}
 		{% if competence.materiel %}
@@ -56,7 +56,7 @@ body {
 	</ul>
 																	
 	{# documents #}
-	<strong>Document</strong>
+	<strong>Documents</strong>
 	<ul>
 	{% for document in participant.personnage.documents %}
 		<li><strong>{{ document.code }}</strong>&nbsp;{{ document.titre }}</li>
@@ -88,7 +88,7 @@ body {
 		{% endfor %}
 	</ul>
 		
-	<strong>Technologie</strong>
+	<strong>Technologies</strong>
 	<ul>
 	{% for technologie in participant.personnage.technologies %}
 		<li>{{ technologie.label }}</li>
