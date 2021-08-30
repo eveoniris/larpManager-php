@@ -37,7 +37,7 @@ class PersonnageRepository extends EntityRepository
 	 * @param array $criteria
 	 * @param array $options
 	 */
-	public function findCount(array $criteria = array())
+    public function findCount(array $criteria = array())
 	{
 		$qb = $this->getEntityManager()->createQueryBuilder();
 	
@@ -48,10 +48,9 @@ class PersonnageRepository extends EntityRepository
 	
 		foreach ( $criteria as $critere )
 		{
-			$qb->andWhere($critere);
-			
+		    $critere->apply($qb);			
 		}
-	
+			
 		return $qb->getQuery()->getSingleScalarResult();
 	}
 	
@@ -74,7 +73,7 @@ class PersonnageRepository extends EntityRepository
 		
 		foreach ( $criteria as $critere )
 		{
-			$qb->andWhere($critere);
+		    $critere->apply($qb);
 		}
 		
 		$qb->setFirstResult($offset);

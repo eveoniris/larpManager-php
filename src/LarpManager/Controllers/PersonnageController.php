@@ -58,6 +58,8 @@ use LarpManager\Form\PersonnageStatutForm;
 use LarpManager\Form\PersonnageDeleteForm;
 use LarpManager\Form\PersonnageXpForm;
 use LarpManager\Form\TrombineForm;
+use LarpManager\Repository\LikeExpression;
+use LarpManager\Repository\EqualExpression;
 
 
 /**
@@ -514,10 +516,11 @@ class PersonnageController
 			$value = $data['value'];
 			switch ($type){
 				case 'nom':
-					$criteria[] = "p.nom LIKE '%$value%'";
+				    $criteria[] = new LikeExpression("p.nom", "%$value%");
+				    					
 					break;
 				case 'id':
-					$criteria[] = "p.id = $value";
+				    $criteria[] = new EqualExpression("p.id", $value);									
 			}
 		}
 		
