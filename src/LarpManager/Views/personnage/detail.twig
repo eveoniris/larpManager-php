@@ -23,7 +23,7 @@
 						<strong>Surnom :</strong> {{ personnage.surnom }}
 					</p>
 					<p class="list-group-item-text">
-						<strong>Age : </strong>{{ personnage.ageReel|default('non défini') }} ({{ personnage.age }}) <a data-toggle="tooltip" data-placement="right" title="Modifier" href="{{ path('personnage.admin.update.age',{'personnage': personnage.id}) }}"><i class="fa fa-edit"></i></a>
+						<strong>Age :</strong> {{ personnage.ageReel|default('x') }} ans ({{ personnage.age }}) <a data-toggle="tooltip" data-placement="right" title="Modifier" href="{{ path('personnage.admin.update.age',{'personnage': personnage.id}) }}"><i class="fa fa-edit"></i></a>
 					</p>
 					<p class="list-group-item-text">
 						<strong>Genre :</strong> {{ personnage.genre }}

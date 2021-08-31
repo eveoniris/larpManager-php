@@ -7,7 +7,7 @@
 	<ol class="breadcrumb">
 		<li><a href="{{ path('homepage') }}">Page d'accueil</a></li>
 		<li><a href="{{ path('gn.detail', {'gn' : participant.gn.id}) }}">{{ participant.gn.label }}</a></li>
-		<li class="active">{{ personnage.nom }} {{ personnage.surnom }}</li>
+		<li class="active">{{ personnage.nom }} - {{ personnage.surnom }}</li>
 	</ol>
 	
 	<div class="well well-sm">
