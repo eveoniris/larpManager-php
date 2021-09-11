@@ -236,6 +236,7 @@ class BasePersonnage
      *     joinColumns={@JoinColumn(name="personnage_id", referencedColumnName="id", nullable=false)},
      *     inverseJoinColumns={@JoinColumn(name="item_id", referencedColumnName="id", nullable=false)}
      * )
+     * @OrderBy({"numero" = "ASC",})
      */
     protected $items;
 
@@ -245,6 +246,7 @@ class BasePersonnage
      *     joinColumns={@JoinColumn(name="personnage_id", referencedColumnName="id", nullable=false)},
      *     inverseJoinColumns={@JoinColumn(name="technologie_id", referencedColumnName="id", nullable=false)}
      * )
+     * @OrderBy({"label" = "ASC",})
      */
     protected $technologies;
 
@@ -254,6 +256,7 @@ class BasePersonnage
      *     joinColumns={@JoinColumn(name="personnage_id", referencedColumnName="id", nullable=false)},
      *     inverseJoinColumns={@JoinColumn(name="religion_id", referencedColumnName="id", nullable=false)}
      * )
+     * @OrderBy({"label" = "ASC",})
      */
     protected $religions;
 
@@ -268,6 +271,7 @@ class BasePersonnage
      *     joinColumns={@JoinColumn(name="personnage_id", referencedColumnName="id", nullable=false)},
      *     inverseJoinColumns={@JoinColumn(name="domaine_id", referencedColumnName="id", nullable=false)}
      * )
+     * @OrderBy({"label" = "ASC",})
      */
     protected $domaines;
 
@@ -277,11 +281,13 @@ class BasePersonnage
      *     joinColumns={@JoinColumn(name="personnage_id", referencedColumnName="id", nullable=false)},
      *     inverseJoinColumns={@JoinColumn(name="potion_id", referencedColumnName="id", nullable=false)}
      * )
+     * @OrderBy({"label" = "ASC", "niveau" = "ASC",})
      */
     protected $potions;
 
     /**
      * @ManyToMany(targetEntity="Priere", mappedBy="personnages")
+     * @OrderBy({"label" = "ASC", "niveau" = "ASC",})
      */
     protected $prieres;
 
@@ -1052,7 +1058,12 @@ class BasePersonnage
      */
     public function getPersonnagesReligions()
     {
-        return $this->personnagesReligions;
+        $iterator = $this->personnagesReligions->getIterator();
+        $iterator->uasort(function (PersonnagesReligions $a, PersonnagesReligions $b) {
+            return $a->getReligionLevel() <=> $b->getReligionLevel();
+        });
+        return new ArrayCollection(iterator_to_array($iterator));
+        // return $this->personnagesReligions;
     }
 
     /**
@@ -1522,7 +1533,12 @@ class BasePersonnage
      */
     public function getCompetences()
     {
-        return $this->competences;
+        $iterator = $this->competences->getIterator();
+        $iterator->uasort(function (Competence $a, Competence $b) {
+            return $a->getCompetenceFamily()->getLabel() <=> $b->getCompetenceFamily()->getLabel();
+        });
+        return new ArrayCollection(iterator_to_array($iterator));
+        // return $this->competences;
     }
 
     /**
