@@ -120,7 +120,7 @@ class PersonnageManager
 	
 		foreach ( $competences as $competence)
 		{
-			if ( $competence->getCompetenceFamily() == $competenceFamily)
+			if ( $competence->getCompetenceFamily() === $competenceFamily)
 			{
 				return true;
 			}
