@@ -65,6 +65,8 @@ class BaseCompetence
     /**
      * @ManyToOne(targetEntity="CompetenceFamily", inversedBy="competences", cascade={"persist"})
      * @JoinColumn(name="competence_family_id", referencedColumnName="id", nullable=false)
+     * @JoinColumn(name="competence_family_label", referencedColumnName="label", nullable=false)
+     * @OrderBy({"competence_family_label" = "ASC",})
      */
     protected $competenceFamily;
 

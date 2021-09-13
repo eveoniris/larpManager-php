@@ -9,7 +9,8 @@
 	
 	{% for competence in personnage.competences %}
 		<li class="list-group-item">
-			<strong>{{ competence.competenceFamily.label }}</strong>&nbsp({{ competence.level.label }}) : {{ competence.description|markdown }}
+			<strong>{{ competence.competenceFamily.label }}</strong>&nbsp({{ competence.level.label }}) :<br />
+			{{ competence.description|markdown }}
 				<p class="list-group-item-text">
     				{% if competence.documentUrl %}
     					<a class="btn btn-default btn-sm" href="{{ path('participant.competence.detail',{'participant': participant.id, 'competence' : competence.id}) }}">

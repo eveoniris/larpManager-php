@@ -419,13 +419,12 @@ class Personnage extends BasePersonnage
 	}
 
     /**
-     * Retourne les anomalies entre le nombre de langue autorisé et le nombre de langue affectés.
+     * Retourne les anomalies entre le nombre de langues autorisées et le nombre de langues affectées.
      *
      * @return \Doctrine\Common\Collections\Collection|NULL
      */
     public function getLanguesAnomaliesMessage()
     {
-
 
         // On compte les langues connues
         $compteLangue = 0;
@@ -443,7 +442,7 @@ class Personnage extends BasePersonnage
             }
         }
 
-        // On parcourt les compétences pour compter le nombre de langues & langues anciennes qui devrait être connue.
+        // On parcourt les compétences pour compter le nombre de langues & langues anciennes qui devraient être connues.
         $maxLangueConnue = 2;
         $maxLangueAncienneConnue = 0;
         foreach ($this->getCompetences() as $competence)
@@ -464,7 +463,7 @@ class Personnage extends BasePersonnage
         // On génère le message de restitution de l'anomalie.
         if ($compteLangue > $maxLangueConnue)
         {
-            return ($compteLangue - $maxLangueConnue) . " langue(s) en trop à vérifier ";
+            return ($compteLangue - $maxLangueConnue) . " langue(s) en trop à vérifier";
         } else if ($compteLangue < $maxLangueConnue)
         {
             return ($maxLangueConnue - $compteLangue) . " langue(s) manquante(s)";
@@ -472,7 +471,7 @@ class Personnage extends BasePersonnage
 
         if ($maxLangueAncienneConnue < $compteLangueAncienne)
         {
-            return ($compteLangueAncienne - $maxLangueAncienneConnue) . " langue(s) ancienne(s) en trop à vérifier ";
+            return ($compteLangueAncienne - $maxLangueAncienneConnue) . " langue(s) ancienne(s) en trop à vérifier";
         } else if ($maxLangueAncienneConnue > $compteLangueAncienne)
         {
             return ($maxLangueAncienneConnue - $compteLangueAncienne) . " langue(s) ancienne(s) en manquante(s)";
@@ -582,13 +581,13 @@ class Personnage extends BasePersonnage
 			+ $this->getCompetencePugilat('Stratégie')
 			+ $this->getCompetencePugilat('Survie');
 
-		// armurerie au niveau initié ajoute 5 points
+		// Armurerie au niveau Initié ajoute 5 points
 		if ( $this->getCompetenceNiveau('Armurerie') >= 2 )
 		{
 			$pugilat = $pugilat + 5;
 		}
 
-		// sauvegerie au niveau initié ajoute 5 points
+		// Sauvegerie au niveau Initié ajoute 5 points
 		if ( $this->getCompetenceNiveau('Sauvagerie') >= 2 )
 		{
 			$pugilat = $pugilat + 5;
@@ -630,7 +629,7 @@ class Personnage extends BasePersonnage
 	{
 		$groupe = $this->getGroupe();
 
-		$identity = $this->getNom().' '.$this->getSurnom().' (';
+		$identity = $this->getNom().' - '.$this->getSurnom().' (';
 		if ( $groupe ) $identity .= $groupe->getNom();
 		$identity .= ')';
 		return $identity;
@@ -670,7 +669,7 @@ class Personnage extends BasePersonnage
 			}
 		}
 
-		$identity = $this->getNom().' '.$this->getSurnom().' (';
+		$identity = $this->getNom().' - '.$this->getSurnom().' (';
 		if ( $groupeLabel ) $identity .= $groupeLabel;
 		$identity .= ')';
 		return $identity;
