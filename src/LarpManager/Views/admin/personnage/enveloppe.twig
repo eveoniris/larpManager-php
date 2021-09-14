@@ -3,23 +3,25 @@
 {% block content %}
 
 <div class="print-center">
-	{{ personnage.nom }} <small>alias {{ personnage.surnom }}</small>
+	{{ personnage.nom }} {% if personnage.surnom %}<small>alias {{ personnage.surnom }}</small>{% endif %}
 </div>
-
+<br />
 {% if personnage.user %}
+	{% set participant = personnage.user.participants|last %}
 		<strong>Personnage Secondaire : </strong>
-		{% if personnage.prochaineParticipation != null and personnage.prochaineParticipation.personnageSecondaire != null %}
+		{% if participant.personnageSecondaire %}
 			{{ participant.personnageSecondaire.classe.label }}
 		{% else %}
 			PAS DE PERSONNAGE SECONDAIRE
 		{% endif %}
-	
+		
 {% endif %}
-	
+<br/>
 <strong>Renommée :</strong> {{ personnage.renomme|default(0) }}<br />
 <strong>Héroïsme :</strong> {{ personnage.heroisme|default(0) }}<br />
-<strong>Richesse :</strong> {{ personnage.richesse|default(0) }} PA<br />
-<strong>Lié aux compétences : </strong>
+<strong>Richesse :</strong> {{ personnage.richesse|default(0) }} pièces d'argent<br />
+<br />
+<strong>Lié aux compétences</strong>
 <ul>	
 {% for competence in personnage.competences %}
 	{% if competence.materiel %}
@@ -32,7 +34,7 @@
 {% endfor %}
 </ul>
 
-<strong>Lié aux langues : </strong>
+<strong>Lié aux langues</strong>
 <ul>
 	{% for materiel in langueMateriel %}
 		<li><strong>{{ materiel }}</strong></li>
