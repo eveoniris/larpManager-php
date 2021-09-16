@@ -33,7 +33,12 @@
 	<li>Aucun matériel</li>
 {% endfor %}
 </ul>
-
+{% for religion in personnage.personnagesReligions %}
+{% if religion.religionLevel.index >= 2 %}
+	<strong>Divinité principale : </strong>{{ religion.religion }} ({{ religion.religionLevel.label }})<br />
+{% endif %}
+{% endfor %}
+<br />
 <strong>Lié aux langues</strong>
 <ul>
 	{% for materiel in langueMateriel %}
