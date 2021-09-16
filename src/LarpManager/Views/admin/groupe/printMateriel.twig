@@ -61,7 +61,7 @@ body {
 	<ul>
 		{% for personnageLangue in participant.personnage.personnageLangues %}
 			{% if personnageLangue.langue.diffusion == 2 %}
-				<li><strong>{{ personnageLangue.langue.groupeLangue.couleur }}</strong>({{ personnageLangue.langue.label }})</li>
+				<li><strong>{{ personnageLangue.langue.groupeLangue.couleur }}</strong> ({{ personnageLangue.langue.label }})</li>
 			{% endif %}
 		{% else %}
 			<li>Aucun matériel</li>
