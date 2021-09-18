@@ -340,7 +340,6 @@ class PersonnageController
 	{
 		$langueMateriel = array();
 		foreach($personnage->getPersonnageLangues() as $langue) {
-
 			if(!in_array('Bracelet '.$langue->getLangue()->getGroupeLangue()->getCouleur(),$langueMateriel)) {
 				array_push($langueMateriel, 'Bracelet '.$langue->getLangue()->getGroupeLangue()->getCouleur());
 			}
@@ -1249,7 +1248,7 @@ class PersonnageController
 					$found = false;
 					foreach ( $langues as $l)
 					{
-						if ($l == $langue) $found = true;
+						if ($l === $langue) $found = true;
 					}
 					
 					if ( ! $found )

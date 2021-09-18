@@ -400,7 +400,7 @@ class Personnage extends BasePersonnage
 	{
 		foreach ( $this->getPersonnageLangues() as $personnageLangue)
 		{
-			if ( $personnageLangue->getLangue() == $langue ) return true;
+			if ( $personnageLangue->getLangue() === $langue ) return true;
 		}
 		return false;
 	}
