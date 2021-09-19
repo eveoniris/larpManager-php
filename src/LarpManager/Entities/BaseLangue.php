@@ -75,6 +75,11 @@ class BaseLangue
     }
 
     /**
+     * @Column(type="boolean", nullable=false, options={"default":0})
+     */
+    protected $secret;
+
+    /**
      * Set the value of id.
      *
      * @param integer $id
@@ -297,8 +302,31 @@ class BaseLangue
         return $this->documents;
     }
 
+    /**
+     * Set the value of secret.
+     *
+     * @param boolean $secret
+     * @return \LarpManager\Entities\Potion
+     */
+    public function setSecret($secret)
+    {
+        $this->secret = $secret;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of secret.
+     *
+     * @return boolean
+     */
+    public function getSecret()
+    {
+        return $this->secret;
+    }
+
     public function __sleep()
     {
-        return array('id', 'label', 'description', 'diffusion', 'groupe_langue_id');
+        return array('id', 'label', 'description', 'diffusion', 'groupe_langue_id', 'secret');
     }
 }
