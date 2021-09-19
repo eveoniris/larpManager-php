@@ -43,13 +43,13 @@
 	{% if religion.religionLevel.index >= 2 %}
 		{% set enoughReligion = 1 %}
 		<strong>Divinité principale : </strong>{{ religion.religion }} ({{ religion.religionLevel.label }})<br />
+		<br />
 	{% endif %}
 	{% endfor %}
 	{% if enoughReligion == 0 %}
 		CE PRÊTRE N'A PAS ASSEZ DE FERVEUR
 	{% endif %}
 {% endif %}
-<br />
 <strong>Lié aux langues</strong>
 <ul>
 	{% for materiel in langueMateriel %}
