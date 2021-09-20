@@ -64,8 +64,9 @@ class SortForm extends AbstractType
 					'required' => false,
 					'label' => 'Description',
 					'attr' => array(
-					'class' => 'tinymce',
-					'rows' => 9),
+						'class' => 'tinymce',
+						'rows' => 9
+					),
 				))
 				->add('secret', 'choice', array(
 					'required' => true,
