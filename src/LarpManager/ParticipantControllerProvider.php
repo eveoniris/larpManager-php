@@ -581,7 +581,7 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 		/**
 		 * Obtenir le document lié à une compétence
 		 */
-		$controllers->match('/{participant}/competence/{competence}/document','LarpManager\Controllers\ParticipantController::competenceDocumentAction')
+		$controllers->match('/{participant}/competence/{competence}/document/{filename}','LarpManager\Controllers\ParticipantController::competenceDocumentAction')
 			->assert('participant', '\d+')
 			->convert('participant', 'converter.participant:convert')
 			->assert('competence', '\d+')

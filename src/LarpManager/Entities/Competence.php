@@ -76,6 +76,11 @@ class Competence extends BaseCompetence
 		$label .= ' - ' . $this->getLevel()->getLabel();
 		return $label;
 	}
+
+	public function getPrintLabel()
+	{
+		return preg_replace('/[^a-z0-9]+/', '_', strtolower($this->getLabel()));
+	}
 	
 	public function getMaterielRaw()
 	{
