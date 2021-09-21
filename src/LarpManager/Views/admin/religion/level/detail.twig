@@ -1,0 +1,31 @@
+{% extends "layout.twig" %}
+
+{% block title %}Fanatisme{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+        <li><a href="{{ path('religion.level') }}">Liste des niveaux de religion</a></li>
+		<li class="active">Détail d'un niveau de religion</li>
+	</ol>
+
+	<div class="list-group">
+		<div class="list-group-item">
+			<div class="list-group-item-heading"><h6>Label</h6></div>
+			<div class="list-group-item-text">{{ religionLevel.label }}</strong></div>
+		</div>
+		<div class="list-group-item">
+			<div class="list-group-item-heading"><h6>Index</h6></div>
+			<div class="list-group-item-text">{{ religionLevel.id }}</strong></div>
+		</div>
+	</div>
+	
+	<div class="panel panel-default">
+		<div class="panel-heading"><h4>Description</h4></div>
+		<div class="panel-body">
+			<p>{{ religionLevel.description|markdown }}</p>
+		</div>
+	</div>
+		
+{% endblock content %}
