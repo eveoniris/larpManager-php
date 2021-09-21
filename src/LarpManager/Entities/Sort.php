@@ -40,4 +40,9 @@ class Sort extends BaseSort
 	{
 		return $this->getLabel() .' - '. $this->getDomaine()->getLabel() .' Niveau '. $this->getNiveau();
 	}
+
+	public function getPrintLabel()
+	{
+		return preg_replace('/[^a-z0-9]+/', '_', strtolower($this->getLabel() .'_'. $this->getDomaine()->getLabel() .'_'. $this->getNiveau()));
+	}	
 }

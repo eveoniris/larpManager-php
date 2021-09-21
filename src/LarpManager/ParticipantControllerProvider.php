@@ -479,7 +479,7 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 		/**
 		 * Obtenir le document lié à une prière
 		 */
-		$controllers->match('/{participant}/priere/{priere}/document', 'LarpManager\Controllers\ParticipantController::priereDocumentAction')
+		$controllers->match('/{participant}/priere/{priere}/document/{filename}', 'LarpManager\Controllers\ParticipantController::priereDocumentAction')
 			->assert('participant', '\d+')
 			->convert('participant', 'converter.participant:convert')
 			->assert('priere', '\d+')
@@ -503,7 +503,7 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 		/**
 		 * Obtenir le document lié à une potion
 		 */
-		$controllers->match('/{participant}/potion/{potion}/document', 'LarpManager\Controllers\ParticipantController::potionDocumentAction')
+		$controllers->match('/{participant}/potion/{potion}/document/{filename}', 'LarpManager\Controllers\ParticipantController::potionDocumentAction')
 			->assert('participant', '\d+')
 			->convert('participant', 'converter.participant:convert')
 			->assert('potion', '\d+')
@@ -527,7 +527,7 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 		/**
 		 * Obtenir le document lié à un sort
 		 */
-		$controllers->match('/{participant}/sort/{sort}/document', 'LarpManager\Controllers\ParticipantController::sortDocumentAction')
+		$controllers->match('/{participant}/sort/{sort}/document/{filename}', 'LarpManager\Controllers\ParticipantController::sortDocumentAction')
 			->assert('participant', '\d+')
 			->convert('participant', 'converter.participant:convert')
 			->assert('sort', '\d+')

@@ -1444,7 +1444,7 @@ class ParticipantController
 		return $app['twig']->render('public/priere/detail.twig', array(
 				'priere' => $priere,
 				'participant' => $participant,
-				
+				'filename' => $priere->getPrintLabel()				
 		));
 	}
 	
@@ -1504,7 +1504,7 @@ class ParticipantController
 		return $app['twig']->render('public/potion/detail.twig', array(
 				'potion' => $potion,
 				'participant' => $participant,
-	
+				'filename' => $potion->getPrintLabel()
 		));
 	}
 	
@@ -2073,7 +2073,7 @@ class ParticipantController
 		return $app['twig']->render('public/sort/detail.twig', array(
 				'sort' => $sort,
 				'participant' => $participant,
-	
+				'filename' => $sort->getPrintLabel()	
 		));
 	}
 	
