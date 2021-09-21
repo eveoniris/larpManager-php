@@ -4,7 +4,7 @@
 	<div class="container-fluid">
 		<div class="row">
 			<div class="col-xs-12 col-md-8">
-				{{ include("religion/fragment/form.twig",{
+				{{ include("admin/religion/fragment/form.twig",{
 					'legend': 'Modification d\'un niveau de religion',
 					'action': path('religion.level.update',{'index': religionLevel.id}),
 					'form' : form}) }}
