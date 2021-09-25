@@ -56,6 +56,11 @@ class BaseSort
     protected $domaine;
 
     /**
+     * @Column(type="boolean", nullable=false, options={"default":0})
+     */
+    protected $secret;
+
+    /**
      * @ManyToMany(targetEntity="Personnage", mappedBy="sorts")
      */
     protected $personnages;
@@ -238,6 +243,30 @@ class BaseSort
     {
         return $this->personnages;
     }
+
+    /**
+     * Set the value of secret.
+     *
+     * @param boolean $secret
+     * @return \LarpManager\Entities\Sort
+     */
+    public function setSecret($secret)
+    {
+        $this->secret = $secret;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of secret.
+     *
+     * @return boolean
+     */
+    public function getSecret()
+    {
+        return $this->secret;
+    }
+
 
     public function __sleep()
     {

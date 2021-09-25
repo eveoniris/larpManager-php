@@ -306,7 +306,7 @@ class BaseLangue
      * Set the value of secret.
      *
      * @param boolean $secret
-     * @return \LarpManager\Entities\Potion
+     * @return \LarpManager\Entities\Langue
      */
     public function setSecret($secret)
     {
