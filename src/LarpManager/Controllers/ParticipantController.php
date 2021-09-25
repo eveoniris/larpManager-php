@@ -1444,7 +1444,7 @@ class ParticipantController
 		return $app['twig']->render('public/priere/detail.twig', array(
 				'priere' => $priere,
 				'participant' => $participant,
-				
+				'filename' => $priere->getPrintLabel()				
 		));
 	}
 	
@@ -1504,7 +1504,7 @@ class ParticipantController
 		return $app['twig']->render('public/potion/detail.twig', array(
 				'potion' => $potion,
 				'participant' => $participant,
-	
+				'filename' => $potion->getPrintLabel()
 		));
 	}
 	
@@ -2073,7 +2073,7 @@ class ParticipantController
 		return $app['twig']->render('public/sort/detail.twig', array(
 				'sort' => $sort,
 				'participant' => $participant,
-	
+				'filename' => $sort->getPrintLabel()	
 		));
 	}
 	
@@ -2158,7 +2158,6 @@ class ParticipantController
 	public function competenceDetailAction(Request $request, Application $app, Participant $participant, Competence $competence)
 	{
 		$personnage = $participant->getPersonnage();
-	
 		if ( ! $personnage )
 		{
 			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créer un personnage !');
@@ -2174,7 +2173,7 @@ class ParticipantController
 		return $app['twig']->render('public/competence/detail.twig', array(
 				'competence' => $competence,
 				'participant' => $participant,
-	
+				'filename' => $competence->getPrintLabel()
 		));
 	}
 
