@@ -39,6 +39,7 @@ use LarpManager\Form\Personnage\PersonnageOriginForm;
 use LarpManager\Form\Personnage\PersonnageReligionForm;
 use LarpManager\Form\Personnage\PersonnageUpdateRenommeForm;
 use LarpManager\Form\Personnage\PersonnageUpdateHeroismeForm;
+use LarpManager\Form\Personnage\PersonnageUpdatePugilatForm;
 use LarpManager\Form\Personnage\PersonnageTechnologieForm;
 
 use LarpManager\Form\PersonnageFindForm;
@@ -1007,6 +1008,47 @@ class PersonnageController
 				'personnage' => $personnage));
 	}
 	
+	
+	/**
+	 * Modification du pugilat d'un personnage
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Personnage $personnage
+	 */
+	public function adminUpdatePugilatAction(Request $request, Application $app, Personnage $personnage)
+	{
+		$form = $app['form.factory']->createBuilder(new PersonnageUpdatePugilatForm())
+			->add('save','submit', array('label' => 'Valider les modifications'))
+			->getForm();
+		
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$pugilat = $form->get('pugilat')->getData();
+			$explication = $form->get('explication')->getData();
+				
+			$pugilat_history = new \LarpManager\Entities\PugilatHistory();
+				
+			$pugilat_history->setPugilat($pugilat);
+			$pugilat_history->setExplication($explication);
+			$pugilat_history->setPersonnage($personnage);
+			$personnage->addPugilat($pugilat);
+		
+			$app['orm.em']->persist($pugilat_history);
+			$app['orm.em']->persist($personnage);
+			$app['orm.em']->flush();
+		
+			$app['session']->getFlashBag()->add('success','Le personnage a été sauvegardé.');
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
+		}
+		
+		return $app['twig']->render('admin/personnage/updatePugilat.twig', array(
+				'form' => $form->createView(),
+				'personnage' => $personnage));
+	}
+	
 	/**
 	 * Ajoute un jeton vieillesse au personnage
 	 */
@@ -1191,7 +1233,7 @@ class PersonnageController
 	{
 		$personnage = $request->get('personnage');
 				
-		$langues = $app['orm.em']->getRepository('LarpManager\Entities\Langue')->findAll();
+		$langues = $app['orm.em']->getRepository('LarpManager\Entities\Langue')->findBy(array(), array('secret' => 'ASC', 'label' => 'ASC'));
 			
 		$originalLanguages = array();
 		foreach ( $personnage->getLanguages() as $languages)

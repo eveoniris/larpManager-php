@@ -18,80 +18,57 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace LarpManager\Form;
+namespace LarpManager\Form\Personnage;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Doctrine\ORM\EntityRepository;
 
 /**
- * LarpManager\Form\LangueForm
+ * LarpManager\Form\PersonnageUpdatePugilatForm
  *
  * @author kevin
  *
  */
-class LangueForm extends AbstractType
+class PersonnageUpdatePugilatForm extends AbstractType
 {
 	/**
 	 * Construction du formulaire
-	 * 
+	 * Seul les éléments ne dépendant pas des points d'expérience sont modifiables
+	 *
 	 * @param FormBuilderInterface $builder
 	 * @param array $options
 	 */
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
-		$builder->add('label','text', array(
-					'label' => 'Label',
+		$builder->add('pugilat','integer', array(
 					'required' => true,
+					'label' => 'Combien de points de Pugilat voulez-vous ajouter ? (indiquez une valeur négative pour retirer des points)',
+					'mapped' => false,
+					'attr' => array('max' => 6),
 				))
-				->add('description','textarea', array(
-					'label' => 'Description',
-					'required' => false,
-					'attr' => array('rows' => 10),
-				))
-				->add('diffusion','integer', array(
-						'label' => 'Degrés de diffusion (de 0 à 2 : ancien, courant, très répandu)',
-						'required' => false,
-				))
-				->add('groupeLangue','entity', array(
-					'label' => "Choisissez le groupe de langue associé",
-					'multiple' => false,
-					'expanded' => true,
+				->add('explication','textarea', array(
 					'required' => true,
-					'class' => 'LarpManager\Entities\GroupeLangue',
-					'property' => 'label',
-					'query_builder' => function(EntityRepository $er) {
-						return $er->createQueryBuilder('i')->orderBy('i.id', 'ASC');
-					},
-				))
-				->add('secret', 'choice', array(
-					'required' => true,
-					'choices' => array(
-							false => 'Langue visible',
-							true => 'Langue secrète',
-					),
-					'label' => 'Secret'
+					'mapped' => false,
+					'label' => 'Donnez une explication',
 				));
+
 	}
-	
+
 	/**
 	 * Définition de l'entité concerné
-	 * 
+	 *
 	 * @param OptionsResolver $resolver
 	 */
 	public function configureOptions(OptionsResolver $resolver)
 	{
-		$resolver->setDefaults(array(
-				'data_class' => 'LarpManager\Entities\Langue',
-		));
 	}
-	
+
 	/**
 	 * Nom du formulaire
 	 */
 	public function getName()
 	{
-		return 'langue';
+		return 'personnageUpdatePugilat';
 	}
 }

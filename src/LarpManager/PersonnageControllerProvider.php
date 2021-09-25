@@ -229,6 +229,16 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 			->before($mustBeOrga);
 			
 		/**
+		 * Modification du pugilat d'un personnage (orga)
+		 */
+		$controllers->match('/admin/{personnage}/update/pugilat','LarpManager\Controllers\PersonnageController::adminUpdatePugilatAction')
+			->assert('personnage', '\d+')
+			->bind("personnage.admin.update.pugilat")
+			->method('GET|POST')
+			->convert('personnage', 'converter.personnage:convert')
+			->before($mustBeOrga);
+			
+		/**
 		 * Ajout d'un jeton (orga)
 		 */
 		$controllers->match('/admin/{personnage}/token/add/{token}','LarpManager\Controllers\PersonnageController::adminTokenAddAction')

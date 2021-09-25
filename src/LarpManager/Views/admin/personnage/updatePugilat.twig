@@ -11,10 +11,10 @@
 	</ol>
 
 	<div class="well bs-component">	
-		<form action="{{ path('personnage.admin.update.renomme', {'personnage': personnage.id}) }}" method="POST" {{ form_enctype(form) }}>
+		<form action="{{ path('personnage.admin.update.pugilat', {'personnage': personnage.id}) }}" method="POST" {{ form_enctype(form) }}>
 			<fieldset>
 				<legend>Modification de {{ personnage.publicName }}</legend>
-				<p><strong>Ce personnage a {{ personnage.renomme|default(0) }} points de Renommée.</strong></p>
+				<p><strong>Ce personnage a {{ personnage.pugilat|default(0) }} points de Pugilat.</strong></p>
 				{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
 	
 				{{ form(form) }}

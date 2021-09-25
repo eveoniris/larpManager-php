@@ -43,7 +43,7 @@ class PersonnageUpdateRenommeForm extends AbstractType
 	{
 		$builder->add('renomme','integer', array(
 					'required' => true,
-					'label' => 'Combien de points de renommé voulez-vous ajouter ? (indiquez une valeur négative pour retirer des points)',
+					'label' => 'Combien de points de Renommée voulez-vous ajouter ? (indiquez une valeur négative pour retirer des points)',
 					'mapped' => false
 				))
 				->add('explication','textarea', array(
