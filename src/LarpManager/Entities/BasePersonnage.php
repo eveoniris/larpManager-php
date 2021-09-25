@@ -262,6 +262,7 @@ class BasePersonnage
 
     /**
      * @ManyToMany(targetEntity="Competence", mappedBy="personnages")
+     * @OrderBy({"competenceFamily" = "ASC", "level" = "ASC"})
      */
     protected $competences;
 
@@ -287,7 +288,7 @@ class BasePersonnage
 
     /**
      * @ManyToMany(targetEntity="Priere", mappedBy="personnages")
-     * @OrderBy({"label" = "ASC", "niveau" = "ASC",})
+     * @OrderBy({"sphere" = "ASC", "niveau" = "ASC",})
      */
     protected $prieres;
 
