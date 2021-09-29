@@ -140,6 +140,7 @@ class BasePersonnage
     /**
      * @OneToMany(targetEntity="PersonnageLangues", mappedBy="personnage")
      * @JoinColumn(name="id", referencedColumnName="personnage_id", nullable=false)
+     * @OrderBy({"langue" = "ASC"})
      */
     protected $personnageLangues;
 
@@ -302,6 +303,13 @@ class BasePersonnage
      */
     protected $sorts;
 
+    /**
+     * @OneToMany(targetEntity="PugilatHistory", mappedBy="personnage")
+     * @JoinColumn(name="id", referencedColumnName="personnage_id", nullable=false)
+     */
+    protected $pugilatHistories;
+
+
     public function __construct()
     {
         $this->experienceGains = new ArrayCollection();
@@ -329,6 +337,7 @@ class BasePersonnage
         $this->potions = new ArrayCollection();
         $this->prieres = new ArrayCollection();
         $this->sorts = new ArrayCollection();
+        $this->pugilatHistories = new ArrayCollection();
     }
 
     /**
@@ -631,6 +640,19 @@ class BasePersonnage
     }
 
     /**
+     * Set the value of pugilat.
+     *
+     * @param integer $pugilat
+     * @return \LarpManager\Entities\Personnage
+     */
+    public function setPugilat($pugilat)
+    {
+        $this->pugilat = $pugilat;
+
+        return $this;
+    }
+
+    /**
      * Add ExperienceGain entity to collection (one to many).
      *
      * @param \LarpManager\Entities\ExperienceGain $experienceGain
@@ -736,6 +758,43 @@ class BasePersonnage
     public function getHeroismeHistories()
     {
         return $this->heroismeHistories;
+    }
+
+
+    /**
+     * Add PugilatHistory entity to collection (one to many).
+     *
+     * @param \LarpManager\Entities\PugilatHistory $pugilatHistory
+     * @return \LarpManager\Entities\Personnage
+     */
+    public function addPugilatHistory(PugilatHistory $pugilatHistory)
+    {
+        $this->pugilatHistories[] = $pugilatHistory;
+
+        return $this;
+    }
+
+    /**
+     * Remove PugilatHistory entity from collection (one to many).
+     *
+     * @param \LarpManager\Entities\PugilatHistory $pugilatHistory
+     * @return \LarpManager\Entities\Personnage
+     */
+    public function removePugilatHistory(PugilatHistory $pugilatHistory)
+    {
+        $this->pugilatHistories->removeElement($pugilatHistory);
+
+        return $this;
+    }
+
+    /**
+     * Get PugilatHistory entity collection (one to many).
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getPugilatHistories()
+    {
+        return $this->pugilatHistories;
     }
 
     /**

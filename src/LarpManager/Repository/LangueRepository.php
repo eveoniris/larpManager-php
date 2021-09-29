@@ -30,13 +30,13 @@ use Doctrine\ORM\EntityRepository;
 class LangueRepository extends EntityRepository
 {
 	/**
-	 * Find all langues ordered by label
+	 * Find all visible langues ordered by label
 	 * @return ArrayCollection $langues
 	 */
 	public function findAllVisibleOrderedByLabel()
 	{
 		$langues = $this->getEntityManager()
-				->createQuery('SELECT l FROM LarpManager\Entities\Langue l Where (l.secret = 0 or l.secret IS NULL) ORDER BY l.label ASC')
+				->createQuery('SELECT l FROM LarpManager\Entities\Langue l WHERE (l.secret = 0 or l.secret IS NULL) ORDER BY l.label ASC')
 				->getResult();
 		
 		return $langues;
@@ -49,7 +49,7 @@ class LangueRepository extends EntityRepository
 	public function findAllOrderedByLabel()
 	{
 		$langues = $this->getEntityManager()
-				->createQuery('SELECT l FROM LarpManager\Entities\Langue l ORDER BY l.label ASC')
+				->createQuery('SELECT l FROM LarpManager\Entities\Langue l ORDER BY l.secret ASC, l.label ASC')
 				->getResult();
 		
 		return $langues;

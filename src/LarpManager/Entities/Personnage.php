@@ -593,6 +593,11 @@ class Personnage extends BasePersonnage
 			$pugilat = $pugilat + 5;
 		}
 
+		foreach ( $this->getPugilatHistories() as $pugilatHistory)
+		{
+			$pugilat = $pugilat + $pugilatHistory->getPugilat();
+		}		
+
 		return $pugilat;
 	}
 
@@ -814,6 +819,17 @@ class Personnage extends BasePersonnage
 	public function addHeroisme($heroisme)
 	{
 		$this->setHeroisme($this->getHeroisme() + $heroisme);
+		return $this;
+	}
+
+
+	/**
+	 * Ajoute des points de pugilat à un personnage
+	 * @param unknown $pugilat
+	 */
+	public function addPugilat($pugilat)
+	{
+		$this->setPugilat($this->getPugilat() + $pugilat);
 		return $this;
 	}
 

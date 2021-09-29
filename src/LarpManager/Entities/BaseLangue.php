@@ -67,17 +67,17 @@ class BaseLangue
      */
     protected $documents;
 
+    /**
+     * @Column(type="boolean", nullable=false, options={"default":0})
+     */
+    protected $secret;
+
     public function __construct()
     {
         $this->personnageLangues = new ArrayCollection();
         $this->territoires = new ArrayCollection();
         $this->documents = new ArrayCollection();
     }
-
-    /**
-     * @Column(type="boolean", nullable=false, options={"default":0})
-     */
-    protected $secret;
 
     /**
      * Set the value of id.
