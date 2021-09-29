@@ -2850,6 +2850,22 @@ class ParticipantController
 						$trigger->setDone(false);
 						$app['orm.em']->persist($trigger);
 						$app['orm.em']->flush();
+
+						// il obtient aussi la possibilité de choisir un sort de niveau 1
+						$trigger = new \LarpManager\Entities\PersonnageTrigger();
+						$trigger->setPersonnage($personnage);
+						$trigger->setTag('SORT APPRENTI');
+						$trigger->setDone(false);
+						$app['orm.em']->persist($trigger);
+						$app['orm.em']->flush();
+
+						$trigger = new \LarpManager\Entities\PersonnageTrigger();
+						$trigger->setPersonnage($personnage);
+						$trigger->setTag('ALCHIMIE APPRENTI');
+						$trigger->setDone(false);
+						$app['orm.em']->persist($trigger);
+						$app['orm.em']->flush();
+
 						break;
 					case 3: // Sait parler, lire et écrire un langage ancien ainsi que trois autres langues vivantes (courante ou très répandue) de son choix ainsi qu'une langue ancienne
 						$trigger = new \LarpManager\Entities\PersonnageTrigger();
@@ -2879,6 +2895,21 @@ class ParticipantController
 						$trigger->setDone(false);
 						$app['orm.em']->persist($trigger);
 						$app['orm.em']->flush();
+
+						// il obtient aussi la possibilité de choisir un sort et une potion de niveau 2
+						$trigger = new \LarpManager\Entities\PersonnageTrigger();
+						$trigger->setPersonnage($personnage);
+						$trigger->setTag('SORT INITIE');
+						$trigger->setDone(false);
+						$app['orm.em']->persist($trigger);
+						$app['orm.em']->flush();
+
+						$trigger = new \LarpManager\Entities\PersonnageTrigger();
+						$trigger->setPersonnage($personnage);
+						$trigger->setTag('ALCHIMIE INITIE');
+						$trigger->setDone(false);
+						$app['orm.em']->persist($trigger);
+						$app['orm.em']->flush();
 						break;
 					case 4: // Sait parler, lire et écrire un autre langage ancien ainsi que trois autres langues vivantes de son choix (courante ou très répandue) ainsi qu'une langue ancienne
 						$trigger = new \LarpManager\Entities\PersonnageTrigger();
@@ -2905,6 +2936,21 @@ class ParticipantController
 						$trigger = new \LarpManager\Entities\PersonnageTrigger();
 						$trigger->setPersonnage($personnage);
 						$trigger->setTag('LANGUE ANCIENNE');
+						$trigger->setDone(false);
+						$app['orm.em']->persist($trigger);
+						$app['orm.em']->flush();
+
+						// il obtient aussi la possibilité de choisir un sort et une potion de niveau 3
+						$trigger = new \LarpManager\Entities\PersonnageTrigger();
+						$trigger->setPersonnage($personnage);
+						$trigger->setTag('SORT EXPERT');
+						$trigger->setDone(false);
+						$app['orm.em']->persist($trigger);
+						$app['orm.em']->flush();
+
+						$trigger = new \LarpManager\Entities\PersonnageTrigger();
+						$trigger->setPersonnage($personnage);
+						$trigger->setTag('ALCHIMIE EXPERT');
 						$trigger->setDone(false);
 						$app['orm.em']->persist($trigger);
 						$app['orm.em']->flush();
