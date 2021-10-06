@@ -11,7 +11,7 @@ body {
 {% block content %}
 
 {% for background in backgrounds %}
-	<h2>#{{ background.groupe.numero }} {{ background.groupe.nom }}</h2>
+	<h2>#{{ background.groupe.numero }} {{ background.groupe.nom }} ({{ background.gn.label }})</h2>
 	<h3>{{ background.titre }}</h3>
 	
 	{{ background.text|markdown }}
