@@ -27,36 +27,48 @@ body {
 	{% endif %}
 	<br />
 		
-	
 	<strong>Renommée :</strong> {{ participant.personnage.renomme|default(0) }}<br />
-	<strong>Héroisme :</strong> {{ participant.personnage.heroisme|default(0) }}<br />
-	<strong>Richesse :</strong> {{ participant.personnage.richesse|default(0) }} PA<br />
-	<strong>Lié aux compétences: </strong>
-	<ul>	
+	<strong>Héroïsme :</strong> {{ participant.personnage.heroisme|default(0) }}<br />
+	<strong>Richesse :</strong> {{ participant.personnage.richesse|default(0) }} pièces d'argent<br />
+	<strong>Lié aux compétences :</strong>
+	<ul>
+	{% set displayReligion = 0 %}
 	{% for competence in participant.personnage.competences %}
+		{% if competence.id == 112 %}
+			{% set displayReligion = 1 %}
+		{% endif %}
 		{% if competence.materiel %}
-			<li><strong>{{ competence.competenceFamily.label }}&nbsp({{ competence.level.label }}) : </strong>
-				{{ competence.materielRaw }}
-			</li>
+			<li><strong>{{ competence.competenceFamily.label }}&nbsp({{ competence.level.label }}) : </strong>{{ competence.materielRaw }}</li>
 		{% endif %}
 	{% else %}
 		<li>Aucun matériel</li>
 	{% endfor %}
 	</ul>
-	
+	{% if displayReligion == 1 %}
+		{% set enoughReligion = 0 %}
+		{% for religion in participant.personnage.personnagesReligions %}
+			{% if religion.religionLevel.index >= 2 %}
+				{% set enoughReligion = 1 %}
+				<strong>Divinité principale : </strong>{{ religion.religion }} ({{ religion.religionLevel.label }})<br />
+				<br />
+			{% endif %}
+		{% endfor %}
+		{% if enoughReligion == 0 %}
+			CE PRÊTRE N'A PAS ASSEZ DE FERVEUR
+		{% endif %}
+	{% endif %}
 	<strong>Lié aux langues : </strong>
 	<ul>
 		{% for personnageLangue in participant.personnage.personnageLangues %}
 			{% if personnageLangue.langue.diffusion == 2 %}
-				<li><strong>{{ personnageLangue.langue.label }}</strong></li>
+				<li><strong>{{ personnageLangue.langue.groupeLangue.couleur }}</strong> ({{ personnageLangue.langue.label }})</li>
 			{% endif %}
 		{% else %}
 			<li>Aucun matériel</li>
 		{% endfor %}
 	</ul>
-																	
 	{# documents #}
-	<strong>Document</strong>
+	<strong>Documents</strong>
 	<ul>
 	{% for document in participant.personnage.documents %}
 		<li><strong>{{ document.code }}</strong>&nbsp;{{ document.titre }}</li>
@@ -88,7 +100,7 @@ body {
 		{% endfor %}
 	</ul>
 		
-	<strong>Technologie</strong>
+	<strong>Technologies</strong>
 	<ul>
 	{% for technologie in participant.personnage.technologies %}
 		<li>{{ technologie.label }}</li>

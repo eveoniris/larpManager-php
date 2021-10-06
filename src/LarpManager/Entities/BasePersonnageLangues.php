@@ -41,6 +41,7 @@ class BasePersonnageLangues
     /**
      * @ManyToOne(targetEntity="Langue", inversedBy="personnageLangues")
      * @JoinColumn(name="langue_id", referencedColumnName="id", nullable=false)
+     * @OrderBy({"secret" = "ASC", "label" = "ASC"})
      */
     protected $langue;
 

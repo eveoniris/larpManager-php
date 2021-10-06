@@ -43,7 +43,7 @@ class PersonnageUpdateHeroismeForm extends AbstractType
 	{
 		$builder->add('heroisme','integer', array(
 					'required' => true,
-					'label' => 'Combien de points d\'héroisme voulez-vous ajouter ? (indiquez une valeur négative pour retirer des points)',
+					'label' => 'Combien de points d\'Héroïsme voulez-vous ajouter ? (indiquez une valeur négative pour retirer des points)',
 					'mapped' => false,
 					'attr' => array('max' => 3),
 				))

@@ -1,15 +1,23 @@
 {% extends "layout.twig" %}
 
+{% block title %}Fanatisme{% endblock title %}
+
 {% block content %}
-	<div class="container-fluid">
-		<div class="row">
-			<div class="col-xs-12 col-md-8">
-				{{ include("religion/fragment/form.twig",{
-					'legend': 'Modification d\'un niveau de religion',
-					'action': path('religion.level.update',{'index': religionLevel.id}),
-					'form' : form}) }}
-			</div>
-		</div>
-	</div>
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path('religion.level') }}">Liste des niveaux de religion</a></li>
+		<li class="active">Modifier un niveau de religion</li>
+	</ol>
 	
+	<div class="well bs-component">
+		<form action="{{ path('religion.level.update',{'index': religionLevel.id}) }}" method="POST" {{ form_enctype(form) }} novalidate>
+			<fieldset>
+				<legend>Modification d'un niveau de religion</legend>
+					{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+					{{ form(form) }}
+			</fieldset>
+		</form>
+	</div>
+				
 {% endblock content %}

@@ -19,7 +19,7 @@
 				<strong>Classe :</strong> {{ personnage.classeName }}
 			</li>
 			<li class="list-group-item">
-				<strong>Age :</strong> {{ personnage.age }}
+				<strong>Age :</strong> {{ personnage.ageReel|default('x') }} ans ({{ personnage.age }})
 			</li>
 			<li class="list-group-item">
 				<strong>Genre :</strong> {{ personnage.genre }}
@@ -61,7 +61,7 @@
 				</div>
 			</li>
 			<li class="list-group-item">
-				<strong>Héroisme :</strong> {{ personnage.heroisme|default(0) }}
+				<strong>Héroïsme :</strong> {{ personnage.heroisme|default(0) }}
 				<a role="button" data-toggle="collapse" href="#heroismeHistory" aria-expanded="false" aria-controls="collapseExample">
 					<i class="fa fa-history" aria-hidden="true"></i>
 				</a>

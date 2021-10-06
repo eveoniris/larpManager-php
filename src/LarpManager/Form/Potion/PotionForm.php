@@ -61,7 +61,6 @@ class PotionForm extends AbstractType
 								
 						),
 						'label' => 'Secret'
-						
 				))
 				->add('document','file', array(
 						'label' => 'Téléversez un document',

@@ -40,4 +40,9 @@ class Priere extends BasePriere
 	{
 		return $this->getSphere()->getLabel() . " - " . $this->getNiveau() . " - " . $this->getLabel();
 	}
+
+	public function getPrintLabel()
+	{
+		return preg_replace('/[^a-z0-9]+/', '_', strtolower($this->fullLabel()));
+	}	
 }

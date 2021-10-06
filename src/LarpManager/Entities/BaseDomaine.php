@@ -42,6 +42,7 @@ class BaseDomaine
     /**
      * @OneToMany(targetEntity="Sort", mappedBy="domaine")
      * @JoinColumn(name="id", referencedColumnName="domaine_id", nullable=false)
+     * @OrderBy({"label" = "ASC", "niveau" = "ASC",})
      */
     protected $sorts;
 

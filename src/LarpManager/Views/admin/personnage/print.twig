@@ -45,10 +45,8 @@ table tr td {
 				<td>
 					{% if personnage.user %}
 						{% if personnage.user.etatCivil %}
-							Personne à contacter en cas d'urgence : {{ personnage.user.etatCivil.personneAPrevenir }}
-							<br />
-							Téléphone : {{ personnage.user.etatCivil.telPap }}
-							<br />
+							Personne à contacter en cas d'urgence : <br />{{ personnage.user.etatCivil.personneAPrevenir }}<br />
+							Téléphone : {{ personnage.user.etatCivil.telPap }}<br />
 							Problèmes médicaux : {{ personnage.user.etatCivil.problemeMedicaux }} 
 						{% endif %}
 					{% endif %}
@@ -61,7 +59,7 @@ table tr td {
 		<thead>
 			<tr>
 				<th>Renommée</th>
-				<th>Héroisme</th>
+				<th>Héroïsme</th>
 				<th>Pugilat</th>
 			</tr>
 		</thead>
@@ -76,7 +74,7 @@ table tr td {
 	<table>
 		<thead>
 			<tr>
-				<th>Compétences</th>
+				<th>Expérience</th>
 				<th>Religions</th>
 				<th>Langages</th>
 			</tr>
@@ -99,19 +97,20 @@ table tr td {
 		</tbody>
 	</table>		
 
-        <div style="border: 1px solid #000;padding: 5px;">
-        {% for competence in personnage.competences %}
-                <strong>{{ competence.competenceFamily.label }}&nbsp({{ competence.level.label }})</strong> :
-                {{ competence.descriptionRaw }}<br />
-        {% endfor %}
-        </div>
+	<div style="border: 1px solid #000;padding: 5px;">
+	<h3><strong>Compétences</strong></h3>
+	{% for competence in personnage.competences %}
+			<strong>{{ competence.competenceFamily.label }}&nbsp({{ competence.level.label }})</strong> :
+			{{ competence.descriptionRaw }}<br />
+	{% endfor %}
+	</div>
 	
 	<table>
 		<thead>
 			<tr>
 				<th>Domaines de magie</th>
 				<th>Inventaire</th>
-				<th>Groupe secondaires</th>
+				<th>Groupes secondaires</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -150,7 +149,7 @@ table tr td {
 					{% endfor %}
 					
 					{% for postulant in personnage.postulants %}
-						Candidature au groupe {{ postulant.secondaryGroup.label }} en attente de validation.<br />
+						{{ postulant.secondaryGroup.label }} en attente de validation.<br />
 					{% endfor %}
 				</td>
 			</tr>
@@ -160,7 +159,7 @@ table tr td {
 	<table>
 		<thead>
 			<tr>
-				<th>Sort</th>
+				<th>Sorts</th>
 				<th>Potions</th>
 				<th>Prières</th>
 			</tr>

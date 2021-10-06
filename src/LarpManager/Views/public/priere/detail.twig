@@ -7,8 +7,8 @@
 <ol class="breadcrumb">
 	<li><a href="{{ path('homepage')  }}">Accueil</a></li>
 	<li><a href="{{ path('gn.detail', {'gn' : participant.gn.id}) }}">{{ participant.gn.label }}</a></li>
-	<li><a href="{{ path('gn.personnage', {'gn': participant.gn.id}) }}">{{ participant.personnage.nom }} {{ participant.personnage.surnom }}</a></li>
-	<li class="active">{{ priere.label }}</li>
+	<li><a href="{{ path('gn.personnage', {'gn': participant.gn.id}) }}">{{ participant.personnage.nom }} - {{ participant.personnage.surnom }}</a></li>
+	<li class="active">{{ priere.sphere.label }} - Niveau {{ priere.niveau }} ({{ priere.label }})</li>
 </ol>
 
 
@@ -18,9 +18,8 @@
 	</div>
 		
 <object type="application/pdf" width="100%" height="1200px" >
-	<param name="src" value="{{ path('magie.priere.document',{'priere' :priere.id, 'document':priere.documentUrl}) }}" />
- 
-	<p>It appears your Web browser is not configured to display PDF files. No worries, just <a href="{{ path('magie.priere.document',{'priere' :priere.id, 'document':priere.documentUrl}) }}">click here to download the PDF file.</a></p>
+	<param name="src" value="{{ path('magie.priere.document',{'participant': participant.id, 'priere': priere.id, 'filename': filename}) }}" />
+	<p>Si le PDF n'apparait pas correctement dans votre navigateur, <a href="{{ path('magie.priere.document',{'participant': participant.id, 'priere': priere.id, 'filename': filename}) }}">cliquez ici</a> pour télécharger le fichier.</p>
 </object>
 
 </div>

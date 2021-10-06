@@ -36,7 +36,7 @@ class SortRepository extends EntityRepository
 	public function findByNiveau($niveau)
 	{
 		$sorts = $this->getEntityManager()
-				->createQuery('SELECT s FROM LarpManager\Entities\Sort s Where s.niveau = '.$niveau.' ORDER BY s.label ASC')
+				->createQuery('SELECT s FROM LarpManager\Entities\Sort s Where s.niveau = '.$niveau.' AND (s.secret = 0 OR s.secret IS NULL) ORDER BY s.label ASC')
 				->getResult();
 		
 		return $sorts;

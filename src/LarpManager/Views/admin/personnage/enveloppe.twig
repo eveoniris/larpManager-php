@@ -3,25 +3,31 @@
 {% block content %}
 
 <div class="print-center">
-	{{ personnage.nom }} <small>alias {{ personnage.surnom }}</small>
+	{{ personnage.nom }} {% if personnage.surnom %}<small>alias {{ personnage.surnom }}</small>{% endif %}
 </div>
-
+<br />
 {% if personnage.user %}
+	{% set participant = personnage.user.participants|last %}
 		<strong>Personnage Secondaire : </strong>
-		{% if personnage.prochaineParticipation != null and personnage.prochaineParticipation.personnageSecondaire != null %}
+		{% if participant.personnageSecondaire %}
 			{{ participant.personnageSecondaire.classe.label }}
 		{% else %}
 			PAS DE PERSONNAGE SECONDAIRE
 		{% endif %}
-	
+		
 {% endif %}
-	
+<br/>
 <strong>Renommée :</strong> {{ personnage.renomme|default(0) }}<br />
-<strong>Héroisme :</strong> {{ personnage.heroisme|default(0) }}<br />
-<strong>Richesse :</strong> {{ personnage.richesse|default(0) }} PA<br />
-<strong>Lié aux compétences : </strong>
-<ul>	
+<strong>Héroïsme :</strong> {{ personnage.heroisme|default(0) }}<br />
+<strong>Richesse :</strong> {{ personnage.richesse|default(0) }} pièces d'argent<br />
+<br />
+<strong>Lié aux compétences</strong>
+<ul>
+{% set displayReligion = 0 %}
 {% for competence in personnage.competences %}
+	{% if competence.id == 112 %}
+		{% set displayReligion = 1 %}
+	{% endif %}
 	{% if competence.materiel %}
 		<li><strong>{{ competence.competenceFamily.label }}&nbsp({{ competence.level.label }}) : </strong>
 			{{ competence.materielRaw }}
@@ -31,8 +37,20 @@
 	<li>Aucun matériel</li>
 {% endfor %}
 </ul>
-
-<strong>Lié aux langues : </strong>
+{% if displayReligion == 1 %}
+	{% set enoughReligion = 0 %}
+	{% for religion in personnage.personnagesReligions %}
+	{% if religion.religionLevel.index >= 2 %}
+		{% set enoughReligion = 1 %}
+		<strong>Divinité principale : </strong>{{ religion.religion }} ({{ religion.religionLevel.label }})<br />
+		<br />
+	{% endif %}
+	{% endfor %}
+	{% if enoughReligion == 0 %}
+		CE PRÊTRE N'A PAS ASSEZ DE FERVEUR
+	{% endif %}
+{% endif %}
+<strong>Lié aux langues</strong>
 <ul>
 	{% for materiel in langueMateriel %}
 		<li><strong>{{ materiel }}</strong></li>
@@ -42,7 +60,7 @@
 </ul>
 																
 {# documents #}
-<strong>Document</strong>
+<strong>Documents</strong>
 <ul>
 {% for document in personnage.documents %}
 	<li><strong>{{ document.code }}</strong>&nbsp;{{ document.titre }}</li>

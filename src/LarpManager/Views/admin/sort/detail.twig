@@ -11,6 +11,11 @@
 	</ol>
 
 	<div class="list-group">
+		{% if sort.secret %}
+		<div class="list-group-item">
+			<div class="list-group-item-heading"><h6><span style="color:red;">Sort secret</span></h6></div>
+		</div>
+		{% endif %}
 		<div class="list-group-item">
 			<div class="list-group-item-heading"><h6>Label</h6></div>
 			<div class="list-group-item-text">{{ sort.label }}</div>
@@ -34,9 +39,6 @@
 	    	</p>
     	</div>
 	</div>
-	
-	
-	
 	<div class="panel panel-default">
 		<div class="panel-heading"><h4>Description</h4></div>
 		<div class="panel-body">

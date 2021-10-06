@@ -19,6 +19,9 @@
 			<li class="list-group-item">
 				<div class="row">
 					<div class="col-md-8">
+						{% if sort.secret %}
+						<span style="color:red;">Sort secret</span><br />
+						{% endif %}
 						{{ sort.label }} -- {{ sort.niveau }}
 						{{ sort.description|markdown }}
 						{% if sort.documentUrl %}

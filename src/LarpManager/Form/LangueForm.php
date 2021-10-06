@@ -64,6 +64,14 @@ class LangueForm extends AbstractType
 					'query_builder' => function(EntityRepository $er) {
 						return $er->createQueryBuilder('i')->orderBy('i.id', 'ASC');
 					},
+				))
+				->add('secret', 'choice', array(
+					'required' => true,
+					'choices' => array(
+							false => 'Langue visible',
+							true => 'Langue secrète',
+					),
+					'label' => 'Secret'
 				));
 	}
 	

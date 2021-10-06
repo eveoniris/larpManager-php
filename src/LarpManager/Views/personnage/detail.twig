@@ -23,7 +23,7 @@
 						<strong>Surnom :</strong> {{ personnage.surnom }}
 					</p>
 					<p class="list-group-item-text">
-						<strong>Age : </strong>{{ personnage.ageReel|default('non défini') }} ({{ personnage.age }}) <a data-toggle="tooltip" data-placement="right" title="Modifier" href="{{ path('personnage.admin.update.age',{'personnage': personnage.id}) }}"><i class="fa fa-edit"></i></a>
+						<strong>Age :</strong> {{ personnage.ageReel|default('x') }} ans ({{ personnage.age }}) <a data-toggle="tooltip" data-placement="right" title="Modifier" href="{{ path('personnage.admin.update.age',{'personnage': personnage.id}) }}"><i class="fa fa-edit"></i></a>
 					</p>
 					<p class="list-group-item-text">
 						<strong>Genre :</strong> {{ personnage.genre }}
@@ -139,7 +139,7 @@
 						Titre : {{ app['personnage.manager'].titre(personnage) }}
 					</p>
 					<p class="list-group-item-text">
-						<a href="{{ path('personnage.admin.update.renomme', {'personnage': personnage.id}) }}">Modifier la renommée</a>
+						<a href="{{ path('personnage.admin.update.renomme', {'personnage': personnage.id}) }}">Modifier la Renommée</a>
 					</p>
 				</div>
 				
@@ -194,7 +194,7 @@
 						</p>
 					{% endfor %}
 					<p class="list-group-item-text">
-						<a href="{{ path('personnage.admin.update.priere', {'personnage': personnage.id}) }}">Modifier la liste des prieres</a>
+						<a href="{{ path('personnage.admin.update.priere', {'personnage': personnage.id}) }}">Modifier la liste des prières</a>
 					</p>
 				</div>
 				
@@ -221,14 +221,14 @@
 				</div>
 				
 				<div class="list-group-item">
-					<h6 class="list-group-item-heading">Languages connus</h6>
+					<h6 class="list-group-item-heading">Langages connus</h6>
 					<p class="list-group-item-text">
 						<ul>
 						{% for personnageLangue in personnage.personnageLangues %}
 							<li><strong>{{ personnageLangue.langue}}</strong> ({{ personnageLangue.source }})  - <a href="{{ path('personnage.admin.langue.delete', {'personnage': personnage.id, 'personnageLangue' : personnageLangue.id }) }}">Supprimer</a></li>
 						{% endfor %}
 						</ul>
-						<a href="{{ path('personnage.admin.update.langue', {'personnage': personnage.id}) }}">Modifier les languages</a>
+						<a href="{{ path('personnage.admin.update.langue', {'personnage': personnage.id}) }}">Modifier les langages</a>
 					</p>
 				</div>
 				
