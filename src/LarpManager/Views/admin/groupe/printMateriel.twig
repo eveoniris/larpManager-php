@@ -59,9 +59,14 @@ body {
 	{% endif %}
 	<strong>Lié aux langues : </strong>
 	<ul>
+		{% set bracelets = [] %}
 		{% for personnageLangue in participant.personnage.personnageLangues %}
-			{% if personnageLangue.langue.diffusion == 2 %}
-				<li><strong>{{ personnageLangue.langue.groupeLangue.couleur }}</strong> ({{ personnageLangue.langue.label }})</li>
+			{% if personnageLangue.langue.diffusion > 0 and personnageLangue.langue.secret == 0 %}
+				{% set mykey = personnageLangue.langue.groupeLangue.couleur %}
+				{% if mykey not in bracelets|keys %}
+					{% set bracelets = bracelets|merge({(mykey): (personnageLangue.langue.label)}) %}
+					<li>{{ personnageLangue.langue.groupeLangue.couleur }} ({{ personnageLangue.langue.label }})</li>
+				{% endif %}
 			{% endif %}
 		{% else %}
 			<li>Aucun matériel</li>
