@@ -647,7 +647,11 @@ class Personnage extends BasePersonnage
 		}
 
 		$identity = $this->getNom().' - '.$this->getSurnom().' (';
-		if ( $groupeLabel ) $identity .= $nomGn.' - '.$groupeLabel;
+		if ( $groupeLabel ){
+			if ( !$nomGn ) $nomGN = '???';
+			$identity .= $nomGn.' - '.$groupeLabel;
+		} 
+		else $identity .= '*** GROUPE NON INDENTIFIABLE ***';
 		$identity .= ')';
 		return $identity;
 	}
