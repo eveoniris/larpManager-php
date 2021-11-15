@@ -22,6 +22,7 @@
 namespace LarpManager\Controllers;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Silex\Application;
 use Doctrine\Common\Collections\ArrayCollection;
 
@@ -173,7 +174,7 @@ class ParticipantController
 			$app['orm.em']->persist($participant);
 			$app['orm.em']->flush();
 			
-			$app['session']->getFlashBag()->add('success', 'Vos modifications ont été enregistré.');
+			$app['session']->getFlashBag()->add('success', 'Vos modifications ont été enregistrées.');
 			return $app->redirect($app['url_generator']->generate('user.admin.list', array()),301);
 		}
 		
@@ -205,7 +206,7 @@ class ParticipantController
 			$app['orm.em']->persist($participant);
 			$app['orm.em']->flush();
 		
-			$app['session']->getFlashBag()->add('success', 'Vos modifications ont été enregistré.');
+			$app['session']->getFlashBag()->add('success', 'Vos modifications ont été enregistrées.');
 			return $app->redirect($app['url_generator']->generate('gn.participants', array('gn' => $participant->getGn()->getId())),301);
 		}
 		
@@ -268,7 +269,7 @@ class ParticipantController
 			$app['orm.em']->remove($participant);
 			$app['orm.em']->flush();
 		
-			$app['session']->getFlashBag()->add('success', 'Vos modifications ont été enregistré.');
+			$app['session']->getFlashBag()->add('success', 'Vos modifications ont été enregistrées.');
 			return $app->redirect($app['url_generator']->generate('gn.participants', array('gn' => $participant->getGn()->getId())),301);
 		}
 		
@@ -302,7 +303,7 @@ class ParticipantController
 				
 			$app['notify']->newBillet($participant->getUser(), $participant->getBillet());
 			
-			$app['session']->getFlashBag()->add('success', 'Vos modifications ont été enregistré.');
+			$app['session']->getFlashBag()->add('success', 'Vos modifications ont été enregistrées.');
 			return $app->redirect($app['url_generator']->generate('gn.participants', array('gn' => $participant->getGn()->getId())),301);
 		}
 		
@@ -361,7 +362,7 @@ class ParticipantController
 			$app['orm.em']->persist($participant);
 			$app['orm.em']->flush();
 	
-			$app['session']->getFlashBag()->add('success', 'Vos modifications ont été enregistrés.');
+			$app['session']->getFlashBag()->add('success', 'Vos modifications ont été enregistrées.');
 			return $app->redirect($app['url_generator']->generate('gn.participants', array('gn' => $participant->getGn()->getId())),301);
 		}
 		
@@ -591,7 +592,7 @@ class ParticipantController
 		
 		if ( $groupeGn->getGroupe()->getLock() == true)
 		{
-			$app['session']->getFlashBag()->add('error','Désolé, ce groupe est fermé. La création de personnage est temporairement désactivé.');
+			$app['session']->getFlashBag()->add('error','Désolé, ce groupe est fermé. La création de personnage est temporairement désactivée.');
 			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $groupeGn->getGn()->getId())),301);
 		}
 		
@@ -745,7 +746,7 @@ class ParticipantController
 
 		if ( $groupeGn->getGroupe()->getLock() == true)
 		{
-			$app['session']->getFlashBag()->add('error','Désolé, ce groupe est fermé. La création de personnage est temporairement désactivé.');
+			$app['session']->getFlashBag()->add('error','Désolé, ce groupe est fermé. La création de personnage est temporairement désactivée.');
 			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $groupeGn->getGn()->getId())),301);
 		}
 	
@@ -1329,13 +1330,13 @@ class ParticipantController
 		
 		if ( ! $personnage )
 		{
-			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créer un personnage avant de choisir une religion !');
+			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créé un personnage avant de choisir une religion !');
 			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),301);
 		}
 				
 		if ( $participant->getGroupeGn()->getGroupe()->getLock() == true)
 		{
-			$app['session']->getFlashBag()->add('error','Désolé, il n\'est plus possible de modifier ce personnage. Le groupe est verouillé. Contacter votre scénariste si vous pensez que cela est une erreur');
+			$app['session']->getFlashBag()->add('error','Désolé, il n\'est plus possible de modifier ce personnage. Le groupe est verouillé. Contactez votre scénariste si vous pensez que cela est une erreur');
 			return $app->redirect($app['url_generator']->generate('gn.personnage', array('gn' => $participant->getGn()->getId())),301);
 		}
 	
@@ -1431,7 +1432,7 @@ class ParticipantController
 		
 		if ( ! $personnage )
 		{
-			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créer un personnage !');
+			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créé un personnage !');
 			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),301);
 		}
 		
@@ -1462,7 +1463,7 @@ class ParticipantController
 		
 		if ( ! $personnage )
 		{
-			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créer un personnage !');
+			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créé un personnage !');
 			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),301);
 		}
 		
@@ -1473,7 +1474,8 @@ class ParticipantController
 		}
 			
 		$file = __DIR__.'/../../../private/doc/'.$priere->getDocumentUrl();
-		return $app->sendFile($file);
+		return $app->sendFile($file)
+			   ->setContentDisposition(ResponseHeaderBag::DISPOSITION_INLINE, $priere->getPrintLabel().'.pdf');;
 	}
 	
 	
@@ -1491,7 +1493,7 @@ class ParticipantController
 	
 		if ( ! $personnage )
 		{
-			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créer un personnage !');
+			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créé un personnage !');
 			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),301);
 		}
 	
@@ -1522,7 +1524,7 @@ class ParticipantController
 	
 		if ( ! $personnage )
 		{
-			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créer un personnage !');
+			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créé un personnage !');
 			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),301);
 		}
 	
@@ -1533,7 +1535,8 @@ class ParticipantController
 		}
 			
 		$file = __DIR__.'/../../../private/doc/'.$potion->getDocumentUrl();
-		return $app->sendFile($file);
+		return $app->sendFile($file)
+			   ->setContentDisposition(ResponseHeaderBag::DISPOSITION_INLINE, $potion->getPrintLabel().'.pdf');;
 	}
 
 	/**
@@ -1548,7 +1551,7 @@ class ParticipantController
 		
 		if ( ! $personnage )
 		{
-			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créer un personnage !');
+			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créé un personnage !');
 			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),301);
 		}
 		
@@ -1639,7 +1642,7 @@ class ParticipantController
 		
 		if ( ! $personnage )
 		{
-			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créer un personnage !');
+			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créé un personnage !');
 			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),301);
 		}
 		
@@ -1702,7 +1705,7 @@ class ParticipantController
 	
 		if ( ! $personnage )
 		{
-			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créer un personnage !');
+			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créé un personnage !');
 			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),301);
 		}
 	
@@ -1769,7 +1772,7 @@ class ParticipantController
 		
 		if ( ! $personnage )
 		{
-			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créer un personnage !');
+			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créé un personnage !');
 			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),301);
 		}
 	
@@ -1836,7 +1839,7 @@ class ParticipantController
 	
 		if ( ! $personnage )
 		{
-			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créer un personnage !');
+			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créé un personnage !');
 			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),301);
 		}
 	
@@ -1902,7 +1905,7 @@ class ParticipantController
 	
 		if ( ! $personnage )
 		{
-			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créer un personnage !');
+			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créé un personnage !');
 			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),301);
 		}
 	
@@ -1969,7 +1972,7 @@ class ParticipantController
 	
 		if ( ! $personnage )
 		{
-			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créer un personnage !');
+			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créé un personnage !');
 			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),301);
 		}
 		
@@ -2060,7 +2063,7 @@ class ParticipantController
 	
 		if ( ! $personnage )
 		{
-			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créer un personnage !');
+			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créé un personnage !');
 			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),301);
 		}
 	
@@ -2091,7 +2094,7 @@ class ParticipantController
 	
 		if ( ! $personnage )
 		{
-			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créer un personnage !');
+			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créé un personnage !');
 			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),301);
 		}
 	
@@ -2102,7 +2105,8 @@ class ParticipantController
 		}
 			
 		$file = __DIR__.'/../../../private/doc/'.$sort->getDocumentUrl();
-		return $app->sendFile($file);
+		return $app->sendFile($file)
+			    ->setContentDisposition(ResponseHeaderBag::DISPOSITION_INLINE, $sort->getPrintLabel().'.pdf');
 	}
 	
 	/**
@@ -2118,7 +2122,7 @@ class ParticipantController
 
 		if ( ! $personnage )
 		{
-			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créer un personnage !');
+			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créé un personnage !');
 			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),301);
 		}
 		
@@ -2160,13 +2164,13 @@ class ParticipantController
 		$personnage = $participant->getPersonnage();
 		if ( ! $personnage )
 		{
-			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créer un personnage !');
+			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créé un personnage !');
 			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),301);
 		}
 	
 		if ( ! $personnage->isKnownCompetence($competence) )
 		{
-			$app['session']->getFlashBag()->add('error', 'Vous ne connaissez pas cette competence !');
+			$app['session']->getFlashBag()->add('error', 'Vous ne connaissez pas cette compétence !');
 			return $app->redirect($app['url_generator']->generate('gn.personnage', array('gn' => $participant->getGn()->getId())),301);
 		}
 	
@@ -2208,18 +2212,19 @@ class ParticipantController
 	
 		if ( ! $personnage )
 		{
-			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créer un personnage !');
+			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créé un personnage !');
 			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),301);
 		}
 	
 		if ( ! $personnage->isKnownCompetence($competence) )
 		{
-			$app['session']->getFlashBag()->add('error', 'Vous ne connaissez pas cette competence !');
+			$app['session']->getFlashBag()->add('error', 'Vous ne connaissez pas cette compétence !');
 			return $app->redirect($app['url_generator']->generate('gn.personnage', array('gn' => $participant->getGn()->getId())),301);
 		}
 			
 		$file = __DIR__.'/../../../private/doc/'.$competence->getDocumentUrl();
-		return $app->sendFile($file);
+		return $app->sendFile($file)
+			   ->setContentDisposition(ResponseHeaderBag::DISPOSITION_INLINE, $competence->getPrintLabel().'.pdf');;
 	}
 	
 	/**
@@ -2255,7 +2260,7 @@ class ParticipantController
 	
 		if ( ! $personnage )
 		{
-			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créer un personnage avant de postuler à un groupe secondaire!');
+			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créé un personnage avant de postuler à un groupe secondaire!');
 			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),301);
 		}
 	
@@ -2264,7 +2269,7 @@ class ParticipantController
 		 */
 		if ( $groupeSecondaire->isPostulant($personnage) )
 		{
-			$app['session']->getFlashBag()->add('error', 'Votre avez déjà postulé dans ce groupe. Inutile d\'en refaire la demande.');
+			$app['session']->getFlashBag()->add('error', 'Vous avez déjà postulé dans ce groupe. Inutile d\'en refaire la demande.');
 			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),301);
 		}
 	
@@ -2339,7 +2344,7 @@ class ParticipantController
 		
 		if ( ! $personnage )
 		{
-			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créer un personnage !');
+			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créé un personnage !');
 			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),301);
 		}
 		
@@ -2526,13 +2531,13 @@ class ParticipantController
 	
 		if ( ! $personnage )
 		{
-			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créer un personnage !');
+			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créé un personnage !');
 			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),301);
 		}
 		
 		if ( $participant->getGroupeGn()->getGroupe()->getLock() == true)
 		{
-			$app['session']->getFlashBag()->add('error','Désolé, il n\'est plus possible de modifier ce personnage. Le groupe est verouillé. Contacter votre scénariste si vous pensez que cela est une erreur');
+			$app['session']->getFlashBag()->add('error','Désolé, il n\'est plus possible de modifier ce personnage. Le groupe est verouillé. Contactez votre scénariste si vous pensez que cela est une erreur');
 			return $app->redirect($app['url_generator']->generate('gn.personnage', array('gn' => $participant->getGn()->getId())),301);
 		}
 	
@@ -2573,7 +2578,7 @@ class ParticipantController
 				
 			if ( $xp - $cout < 0 )
 			{
-				$app['session']->getFlashBag()->add('error','Vos n\'avez pas suffisement de point d\'expérience pour acquérir cette compétence.');
+				$app['session']->getFlashBag()->add('error','Vos n\'avez pas suffisement de points d\'expérience pour acquérir cette compétence.');
 				return $app->redirect($app['url_generator']->generate('homepage'),301);
 			}
 			$personnage->setXp($xp - $cout);
@@ -3301,7 +3306,7 @@ class ParticipantController
 				
 			$app['user.mailer']->sendRequestAlliance($alliance);
 				
-			$app['session']->getFlashBag()->add('success', 'Votre demande a été envoyé.');
+			$app['session']->getFlashBag()->add('success', 'Votre demande a été envoyée.');
 			return $app->redirect($app['url_generator']->generate('groupeGn.groupe', array('groupeGn' => $groupeGn->getId())));
 		}
 	
@@ -3583,7 +3588,7 @@ class ParticipantController
 				
 			$app['user.mailer']->sendDeclareWar($war);
 				
-			$app['session']->getFlashBag()->add('success', 'Votre déclaration de guerre vient d\'être envoyé.');
+			$app['session']->getFlashBag()->add('success', 'Votre déclaration de guerre vient d\'être envoyée.');
 			return $app->redirect($app['url_generator']->generate('groupeGn.groupe', array('groupeGn' => $groupeGn->getId())));
 	
 		}
@@ -3638,7 +3643,7 @@ class ParticipantController
 				
 			$app['user.mailer']->sendRequestPeace($war, $groupe);
 				
-			$app['session']->getFlashBag()->add('success', 'Votre demande de paix vient d\'être envoyé.');
+			$app['session']->getFlashBag()->add('success', 'Votre demande de paix vient d\'être envoyée.');
 			return $app->redirect($app['url_generator']->generate('groupeGn.groupe', array('groupeGn' => $groupeGn->getId())));
 		}
 	
