@@ -554,11 +554,11 @@ class PersonnageController
 			switch ($type){
 				case 'nom':
 				    // $criteria[] = new LikeExpression("p.nom", "%$value%");
-				    $criteria["nom"] = "p.nom like '%$value%'";
+				    $criteria["nom"] = "p.nom like '%".preg_replace('/[^a-zA-Z0-9\s]/', '', $value)."%'";
 					break;
 				case 'id':
 				    // $criteria[] = new EqualExpression("p.id", $value);
-				    $criteria["id"] = "p.id = $value";
+				    $criteria["id"] = "p.id = ".preg_replace('/[^0-9]/', '', $value);
 					break;								
 			}
 		}
