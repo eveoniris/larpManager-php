@@ -73,7 +73,7 @@
 								{% if personnage.user %}
 									{% for participant in personnage.user.participants %}
 										{% if participant.groupeGn %}
-											<a class="list-group-item" href="{{ path('groupe.detail', {'index': participant.groupeGn.groupe.id}) }}">{{participant.groupeGn.gn.label}} - #{{ participant.groupeGn.groupe.numero }} {{ participant.groupeGn.groupe.nom }}</a>
+											<a class="list-group-item" href="{{ path('groupe.detail', {'index': participant.groupeGn.groupe.id}) }}">{{ participant.personnage }} - {{participant.groupeGn.gn.label}} - #{{ participant.groupeGn.groupe.numero }} {{ participant.groupeGn.groupe.nom }}</a>
 										{% else %}
 											N'est pas lié à un groupe
 										{% endif %}										
@@ -86,15 +86,18 @@
 							<h6>Groupe(s) secondaire(s)</h6>
 							<ul class="list-group">
 								{% for groupeSecondaire in personnage.secondaryGroups %}
-										<li class="list-group-item">{{ groupeSecondaire.label }}</li>
+										<li class="list-group-item">{{ groupeSecondaire.label }} (Chef)</li>
+								{% endfor %}
+								{% for membre in personnage.membres %}
+										<li class="list-group-item">{{ membre.secondaryGroup.label }}</li>
 								{% endfor %}
 							</ul>
 	
-							<h6>Postule à </h6>
+							<h6>Postulation(s)</h6>
 							{% if personnage.postulants|length > 0 %}
 								<ul class="list-group">
 								{% for postulant in personnage.postulants %}
-									<li class="list-group-item">candidature au groupe {{ postulant.secondaryGroup.label }} en attente de validation.</li>
+									<li class="list-group-item">{{ postulant.secondaryGroup.label }} en attente de validation.</li>
 								{% endfor %}
 								</ul>
 							{% endif %}
