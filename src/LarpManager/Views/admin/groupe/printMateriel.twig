@@ -34,9 +34,6 @@ body {
 	<ul>
 	{% set displayReligion = 0 %}
 	{% for competence in participant.personnage.competences %}
-		{% if competence.id == 112 %}
-			{% set displayReligion = 1 %}
-		{% endif %}
 		{% if competence.materiel %}
 			<li><strong>{{ competence.competenceFamily.label }}&nbsp({{ competence.level.label }}) : </strong>{{ competence.materielRaw }}</li>
 		{% endif %}
@@ -44,7 +41,7 @@ body {
 		<li>Aucun matériel</li>
 	{% endfor %}
 	</ul>
-	{% if displayReligion == 1 %}
+	{% if personnage.hasCompetence('Prêtrise') %}
 		{% set enoughReligion = 0 %}
 		{% for religion in participant.personnage.personnagesReligions %}
 			{% if religion.religionLevel.index >= 2 %}
