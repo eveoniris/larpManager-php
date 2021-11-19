@@ -1,0 +1,17 @@
+	<div class="header">
+		<h5>Vos objets</h5>
+	</div>
+	
+	<div class="row">
+		<div class="col-sm-12">
+		
+			<div class="list-group">
+			{% for item in personnage.items %}
+				<div class="list-group-item">
+					<div class="list-group-item-text"><strong>{{ item.numero }}</strong> - {{ item.label }}</div>
+				</div>
+			{% endfor %}
+			</div>
+			
+		</div>
+	</div>

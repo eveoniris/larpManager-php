@@ -95,24 +95,28 @@
 						{% endif %}
 						<div class="caption">
 			        		<h3>Votre photo</h3>
-			        		<p>Si ce n'est pas déjà fait, Téléversez votre photo. Elle sera utilisée pour les différents trombinoscopes des groupes auxquels vous appartenez afin que les autres joueurs puissent vous reconnaitre.</p>
+			        		<p>Si ce n'est pas déjà fait, téléversez votre photo. Elle sera utilisée pour les différents trombinoscopes des groupes auxquels vous appartenez afin que les autres joueurs puissent vous reconnaitre.</p>
 							<p><a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Modifier votre photo" href="{{ path('participant.personnage.trombine', {'participant': participant.id, 'personnage': participant.personnage.id}) }}"><i class="fa fa-camera" aria-hidden="true"></i></a></p>
 						</div>
 					</div>
-				
+
+					{% include 'public/personnage/fragment/groupe.twig' with {'personnage': personnage, 'participant': participant} %}				
 					{% include 'public/personnage/fragment/groupeSecondaireChef.twig' with {'personnage': personnage, 'participant': participant} %}
 					{% include 'public/personnage/fragment/groupeSecondaireMembre.twig' with {'personnage': personnage, 'participant': participant} %}
-					{% include 'public/personnage/fragment/religion.twig' with {'personnage': personnage, 'participant': participant} %}
-					{% include 'public/personnage/fragment/priere.twig' with {'personnage': personnage, 'participant': participant} %}
 					{% include 'public/personnage/fragment/alchimie.twig' with {'personnage': personnage, 'participant': participant} %}
 					{% include 'public/personnage/fragment/magie.twig' with {'personnage': personnage, 'participant': participant} %}
 					{% include 'public/personnage/fragment/language.twig' with {'personnage': personnage, 'participant': participant} %}
 					{% if personnage.technologies|length > 0 %}
 						{% include 'public/personnage/fragment/technologie.twig' with {'personnage': personnage, 'participant': participant} %}
 					{% endif %}
+					{% if personnage.items|length > 0 %}
+						{% include 'public/personnage/fragment/item.twig' with {'personnage': personnage, 'participant': participant} %}
+					{% endif %}
 					{% if personnage.hasCompetence('Politique') %}
 						{% include 'public/personnage/fragment/politique.twig' with {'personnage': personnage, 'participant': participant, 'lois': lois} %}
 					{% endif %}
+					{% include 'public/personnage/fragment/priere.twig' with {'personnage': personnage, 'participant': participant} %}
+					{% include 'public/personnage/fragment/religion.twig' with {'personnage': personnage, 'participant': participant} %}					
 				</div>
 			</div>
 			
