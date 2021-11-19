@@ -632,10 +632,26 @@ class Personnage extends BasePersonnage
 	 */
 	public function getIdentity()
 	{
-		$groupe = $this->getGroupe();
+		$groupeLabel = null;
+		if ( $this->getUser() )
+		{
+			foreach ( $this->getUser()->getParticipants() as $participant )
+			{
+				if( $participant->getPersonnage() == $this )
+				{
+					$groupeGn = $participant->getGroupeGn();
+					$groupeLabel = $groupeGn->getGroupe()->getNom();
+					$nomGn = $participant->getGn();
+				}
+			}
+		}
 
 		$identity = $this->getNom().' - '.$this->getSurnom().' (';
-		if ( $groupe ) $identity .= $groupe->getNom();
+		if ( $groupeLabel ){
+			if ( !$nomGn ) $nomGN = '???';
+			$identity .= $nomGn.' - '.$groupeLabel;
+		} 
+		else $identity .= '*** GROUPE NON INDENTIFIABLE ***';
 		$identity .= ')';
 		return $identity;
 	}

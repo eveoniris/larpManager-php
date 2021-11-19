@@ -134,7 +134,17 @@ class MagieControllerProvider implements ControllerProviderInterface
 			->convert('sort', 'converter.sort:convert')
 			->before($mustBeScenariste)
 			->method('GET');
-		
+
+		/**
+		 * Obtenir les personnages possédant ce sort
+		 */
+		$controllers->match('/sort/{sort}/personnages','LarpManager\Controllers\MagieController::sortPersonnagesAction')
+			->assert('sort', '\d+')
+			->bind("magie.sort.personnages")
+			->convert('sort', 'converter.sort:convert')
+			->before($mustBeScenariste)
+			->method('GET');
+			
 		/**
 		 * Ajouter un sortilège
 		 */
@@ -254,7 +264,17 @@ class MagieControllerProvider implements ControllerProviderInterface
 			->convert('priere', 'converter.priere:convert')
 			->before($mustBeScenariste)
 			->method('GET');
-			
+	
+		/**
+		 * Obtenir les personnages possédant cette prière
+		 */
+		$controllers->match('/priere/{priere}/personnages','LarpManager\Controllers\MagieController::prierePersonnagesAction')
+		->assert('priere', '\d+')
+		->bind("magie.priere.personnages")
+		->convert('priere', 'converter.priere:convert')
+		->before($mustBeScenariste)
+		->method('GET');
+
 		/**
 		 * Ajouter une priere
 		 */

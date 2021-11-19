@@ -1,12 +1,12 @@
 {% extends "layout.twig" %}
 
-{% block title %}Sortilèges{% endblock title %}
+{% block title %}Sorts{% endblock title %}
 
 {% block content %}
 
 	<ol class="breadcrumb">
 		<li><a href="{{ path('homepage') }}">Accueil</a></li>
-		<li class="active">Liste des sortilèges</li>
+		<li class="active">Liste des sorts</li>
 	</ol>
 	
 	<div class="well well-sm">
@@ -33,6 +33,7 @@
 					<div class="col-md-4">
 						<a href="{{ path('magie.sort.update',{'sort':sort.id}) }}"><i class="fa fa-pencil"></i> Modifier</a>&nbsp;|&nbsp;
 						<a href="{{ path('magie.sort.detail',{'sort':sort.id}) }}"><i class="fa fa-eye"></i> Detail</a>&nbsp;|&nbsp;
+						<a href="{{ path('magie.sort.personnages',{'sort':sort.id}) }}"><i class="fa fa-eye"></i> Personnages</a>&nbsp;|&nbsp;
 						<a href="{{ path('magie.sort.delete',{'sort':sort.id}) }}"><i class="fa fa-eraser"></i> Supprimer</a>
 					</div>
 				</div>
