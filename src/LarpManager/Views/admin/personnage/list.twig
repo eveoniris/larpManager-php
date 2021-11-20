@@ -96,10 +96,21 @@
 					<td><a href="{{ path('personnage.admin.detail', {'personnage':personnage.id}) }}">{{ personnage.nom }} - {{ personnage.surnom }}</a></td>
 					<td>{{ personnage.classe }}</td>
 					<td>{{ personnage.renomme|default(0) }}</td>
-					<td>{{ personnage.groupe }}</td>
+					<td>
+						{% set gn = 'LH1' %}
+						{% for participant in personnage.participants %}
+							{% set gn = participant.gn %}
+						{% endfor %}
+						{{ gn }} -
+						{% if personnage.groupe %}
+							{{ personnage.groupe }}
+						{% else %}
+							N'est pas lié à un groupe
+						{% endif %}
+					</td>
 					<td>
 						{% for participant in personnage.participants %}
-							<strong>{{ participant.gn.label }}</strong>&nbsp;
+							<strong>{{ participant.gn.label }}</strong>&nbsp;-&nbsp;
 							{{ participant.user.etatCivil.nom }} {{ participant.user.etatCivil.prenom }}<br />
 						{% endfor %}
 					</td>
