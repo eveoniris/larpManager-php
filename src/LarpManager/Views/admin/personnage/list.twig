@@ -103,6 +103,8 @@
 							{% set gn = participant.gn %}
 							{% if participant.groupeGn %}
 								{% set groupe = participant.groupeGn.groupe.nom %}
+							{% else %}
+								{% set groupe = 'N\'est pas lié à un groupe' %}
 							{% endif %}
 						{% endfor %}
 						{{ gn }} - {{ groupe }}
