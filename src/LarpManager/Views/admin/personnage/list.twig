@@ -98,15 +98,14 @@
 					<td>{{ personnage.renomme|default(0) }}</td>
 					<td>
 						{% set gn = 'LH1' %}
+						{% set groupe = 'N\'est pas lié à un groupe' %}
 						{% for participant in personnage.participants %}
 							{% set gn = participant.gn %}
+							{% if participant.groupeGn %}
+								{% set groupe = participant.groupeGn.groupe.nom %}
+							{% endif %}
 						{% endfor %}
-						{{ gn }} -
-						{% if personnage.groupe %}
-							{{ personnage.groupe }}
-						{% else %}
-							N'est pas lié à un groupe
-						{% endif %}
+						{{ gn }} - {{ groupe }}
 					</td>
 					<td>
 						{% for participant in personnage.participants %}
