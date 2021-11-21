@@ -45,6 +45,10 @@ class ForumController
 	 */
 	public function forumAction(Request $request, Application $app)
 	{
+        if ( $app['user'] == null ) {
+            return $app->redirect($app['url_generator']->generate('user.login', 307));   
+		}
+		
 		$topics = $app['orm.em']->getRepository('\LarpManager\Entities\Topic')
 					->findAllRoot();
 		
@@ -133,6 +137,9 @@ class ForumController
 	 */
 	public function topicAction(Request $request, Application $app)
 	{
+        if ( $app['user'] == null ) {
+            return $app->redirect($app['url_generator']->generate('user.login', 307));   
+		}
 		$id = $request->get('index');
 
 		$topic = $app['orm.em']->getRepository('\LarpManager\Entities\Topic')->find($id);
@@ -204,6 +211,9 @@ class ForumController
 	 */
 	public function postAction(Request $request, Application $app)
 	{
+        if ( $app['user'] == null ) {
+            return $app->redirect($app['url_generator']->generate('user.login', 307));
+		}
 		$postId = $request->get('index');
 		
 		$post = $app['orm.em']->getRepository('\LarpManager\Entities\Post')
