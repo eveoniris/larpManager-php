@@ -69,6 +69,7 @@
 					<a class="btn btn-danger" 
 						href="{{ path('participant.groupeSecondaire.reject', {'participant': participant.id, 'groupeSecondaire': groupeSecondaire.id, 'postulant': postulant.id }) }}">
 						Rejeter</a>
+					<br />
 				</div>
 			{% endfor %}
 			</ul>
@@ -120,14 +121,23 @@
 		
 		<div class="row">
 		{% for membre in groupeSecondaire.membres %}
-			<div class="col-xs-6 col-md-3">
-				{% if membre.personnage.trombineUrl %}
-					<img width="160" src="{{ path('personnage.trombine', {'personnage' : membre.personnage.id }) }}" />
+			{% if membre.personnage.participeTo(participant.gn) %}
+				<div class="col-xs-6 col-md-3">
+					{% if membre.personnage.trombineUrl %}
+						<img width="160" src="{{ path('personnage.trombine', {'personnage' : membre.personnage.id }) }}" />
+					{% endif %}
 					<div class="caption">
 						{{ membre.personnage.publicName }}
+						{% if groupeSecondaire.responsable %}
+							{% if groupeSecondaire.secondaryGroupType.label == 'Religion' %}
+								{% for personnageReligion in membre.personnage.personnagesReligions %}
+									<li>{{ personnageReligion.religion.label }} - {{ personnageReligion.religionLevel.label }}</li>
+								{% endfor %}
+							{% endif %}
+						{% endif %}
 					</div>
-				{% endif %}
-			</div>
+				</div>
+			{% endif %}
 		{% endfor %}
 		</div>
 		

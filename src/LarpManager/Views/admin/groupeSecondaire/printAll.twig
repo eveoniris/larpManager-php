@@ -11,7 +11,7 @@
 	<h6>Liste des membres</h6>
 	<ul>
 	{% for membre in groupeSecondaire.membres %}
-		<li>{{ membre.personnage.identity }}</li>
+		<li>{{ membre.personnage.publicidentity }}</li>
 	{% endfor %}
 	</ul>
 

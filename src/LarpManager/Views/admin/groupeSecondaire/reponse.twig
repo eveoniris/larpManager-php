@@ -15,7 +15,7 @@
 		
 		<form action="{{ path('groupeSecondaire.admin.reponse', {'index': groupeSecondaire.id, 'postulantId': postulant.id}) }}" method="POST" {{ form_enctype(form) }} novalidate>
 			<fieldset>
-				<legend>Accepter ou refuser la candidature de {{ postulant.personnage.identity }}</legend>
+				<legend>Accepter ou refuser la candidature de {{ postulant.personnage.publicidentity }}</legend>
 					{{ postulant.explanation|markdown }}
 					{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
 					{{ form(form) }}
