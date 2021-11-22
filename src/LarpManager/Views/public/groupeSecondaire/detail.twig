@@ -124,7 +124,9 @@
 			{% if membre.personnage.participeTo(participant.gn) %}
 				<div class="col-xs-6 col-md-3">
 					{% if membre.personnage.trombineUrl %}
-						<img width="160" src="{{ path('personnage.trombine', {'personnage' : membre.personnage.id }) }}" />
+						<img class="media-object" width="160" src="{{ path('personnage.trombine', {'personnage' : membre.personnage.id }) }}" />
+					{% else %}
+						<img class="media-object" width="160" src="{{ app.request.basepath }}/img/no_trombine.png" />
 					{% endif %}
 					<div class="caption">
 						{{ membre.personnage.publicName }}
