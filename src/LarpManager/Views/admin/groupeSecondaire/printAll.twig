@@ -3,12 +3,11 @@
 {% block content %}
 
 {% for groupeSecondaire in groupeSecondaires %}
-	<h2>Groupe {{ groupeSecondaire.label }}</h2>
+	<h2>Groupe {% if groupeSecondaire.secret%}secret{% endif %} : {{ groupeSecondaire.label }}</h2>
 	{% if groupeSecondaire.responsable %}
 	<strong>Responsable : {{ groupeSecondaire.responsable }}</strong>
 	{% endif %}
-	
-	<h6>Liste des membres</h6>
+	<h4>Liste des membres</h4>
 	<ul>
 	{% for membre in groupeSecondaire.membres %}
 		<li>{{ membre.personnage.publicidentity }}</li>
