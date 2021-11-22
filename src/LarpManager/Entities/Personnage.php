@@ -633,25 +633,54 @@ class Personnage extends BasePersonnage
 	public function getIdentity()
 	{
 		$groupeLabel = null;
+		$nomGn = '???';
 		if ( $this->getUser() )
 		{
 			foreach ( $this->getUser()->getParticipants() as $participant )
 			{
 				if( $participant->getPersonnage() == $this )
 				{
+					$nomGn = $this->getGns()->last();
 					$groupeGn = $participant->getGroupeGn();
-					$groupeLabel = $groupeGn->getGroupe()->getNom();
-					$nomGn = $participant->getGn();
+					if ($groupeGn != null)
+						$groupeLabel = $groupeGn->getGroupe()->getNom();
 				}
 			}
 		}
-
 		$identity = $this->getNom().' - '.$this->getSurnom().' (';
-		if ( $groupeLabel ){
-			if ( !$nomGn ) $nomGN = '???';
+		if ( $groupeLabel )
 			$identity .= $nomGn.' - '.$groupeLabel;
-		} 
-		else $identity .= '*** GROUPE NON INDENTIFIABLE ***';
+		else 
+			$identity .= $nomGn.' - *** GROUPE NON INDENTIFIABLE ***';
+		$identity .= ')';
+		return $identity;
+	}
+
+	/**
+	 * Fourni l'identité publique d'un personnage
+	 */
+	public function getPublicIdentity()
+	{
+		$groupeLabel = null;
+		$nomGn = '???';
+		if ( $this->getUser() )
+		{
+			foreach ( $this->getUser()->getParticipants() as $participant )
+			{
+				if( $participant->getPersonnage() == $this )
+				{
+					$nomGn = $this->getGns()->last();
+					$groupeGn = $participant->getGroupeGn();
+					if ($groupeGn != null)
+						$groupeLabel = $groupeGn->getGroupe()->getNom();
+				}
+			}
+		}
+		$identity = $this->getPublicName().' (';
+		if ( $groupeLabel )
+			$identity .= $nomGn.' - '.$groupeLabel;
+		else 
+			$identity .= $nomGn.' - *** GROUPE NON INDENTIFIABLE ***';
 		$identity .= ')';
 		return $identity;
 	}
@@ -676,6 +705,7 @@ class Personnage extends BasePersonnage
 	public function getIdentityByLabel($gnLabel)
 	{
 		$groupeLabel = null;
+		$nomGn = $gnLabel;
 		if ( $this->getUser() )
 		{
 			foreach ( $this->getUser()->getParticipants() as $participant )
@@ -685,13 +715,16 @@ class Personnage extends BasePersonnage
 					&& $participant->getPersonnage() == $this )
 				{
 					$groupeGn = $participant->getGroupeGn();
-					$groupeLabel = $groupeGn->getGroupe()->getNom();
+					if ($groupeGn != null)
+						$groupeLabel = $groupeGn->getGroupe()->getNom();
 				}
 			}
 		}
-
-		$identity = $this->getNom().' - '.$this->getSurnom().' (';
-		if ( $groupeLabel ) $identity .= $groupeLabel;
+		$identity = $this->getPublicName().' (';
+		if ( $groupeLabel )
+			$identity .= $nomGn.' - '.$groupeLabel;
+		else 
+			$identity .= $nomGn.' - *** GROUPE NON INDENTIFIABLE ***';
 		$identity .= ')';
 		return $identity;
 	}
