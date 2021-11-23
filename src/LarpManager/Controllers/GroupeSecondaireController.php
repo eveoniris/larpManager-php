@@ -52,24 +52,51 @@ class GroupeSecondaireController
 	 */
 	public function adminListAction(Request $request, Application $app)
 	{
-		$order_by = $request->get('order_by') ?: 'label';
+		$order_by = $request->get('order_by') ?: 'id';
 		$order_dir = $request->get('order_dir') == 'DESC' ? 'DESC' : 'ASC';
 		$limit = (int)($request->get('limit') ?: 50);
 		$page = (int)($request->get('page') ?: 1);
 		$offset = ($page - 1) * $limit;
+		$criteria = array();
 		
-		$form = $app['form.factory']->createBuilder(new SecondaryGroupFindForm())
+		$form = $app['form.factory']->createBuilder(
+				new SecondaryGroupFindForm(),
+				null,
+				array(
+					'method' => 'get',
+					'csrf_protection' => false
+				)
+			)
 			->add('find','submit', array('label' => 'Rechercher'))
 			->getForm();
 		
-		$criteria = array();
-		
+		$form->handleRequest($request);
+
+		if ( $form->isValid() )
+		{
+			$data = $form->getData();
+			$type = $data['type'];
+			$value = $data['value'];
+			switch ($type){
+				case 'nom':
+				    // $criteria[] = new LikeExpression("p.nom", "%$value%");
+				    $criteria["nom"] = "g.label like '%".preg_replace('/[\'"<>=*;]/', '', $value)."%'";
+					break;
+				case 'id':
+				    // $criteria[] = new EqualExpression("p.id", $value);
+				    $criteria["id"] = "g.id = ".preg_replace('/[^\d]/', '', $value);
+					break;								
+			}
+		}
+
+		/* @var SecondaryGroupRepository $repo */
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\SecondaryGroup');
-		$groupeSecondaires = $repo->findBy(
+		$groupeSecondaires = $repo->findList(
 				$criteria,
-				array( $order_by => $order_dir),
+				array( 'by' =>  $order_by, 'dir' => $order_dir),
 				$limit,
-				$offset);
+				$offset
+		);
 		
 		$numResults = $repo->findCount($criteria);
 		

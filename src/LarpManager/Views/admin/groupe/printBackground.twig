@@ -25,7 +25,7 @@
 
 <h3>Background des personnages</h3>
 {% for personnage in groupe.personnages %}
-	<h4>{{ personnage.nom }} {{ personnage.surnom }}</h4>
+	<h4>{{ personnage.identity }}</h4>
 	{% for background in personnage.backgrounds('OWNER') %}
 		{{ background.text|markdown }}
 	{% endfor %}

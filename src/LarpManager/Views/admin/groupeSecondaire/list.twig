@@ -32,8 +32,7 @@
 		   	</li>
 		   	<li class="list-group-item">
 		   		<div class="list-group-item"><h6>Rechercher</h6></div>
-		   		
-		   		<form class="form" action="{{ path('groupeSecondaire.admin.list') }}" method="POST" {{ form_enctype(form) }}>
+		   		<form class="form" action="{{ path('groupeSecondaire.admin.list') }}" method="GET" {{ form_enctype(form) }}>
 					{% form_theme form 'Form/bootstrap_3_horizontal_layout.html.twig' %}
 					{{ form(form) }}
 		   		</form>
