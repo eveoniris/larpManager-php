@@ -102,13 +102,13 @@ class TerritoireRepository extends EntityRepository
         {
             if($key == "t.nom")
             {
-                $qb->andWhere($key." LIKE %?$count%")
-                    ->setParameter("$count", $value);
+                $qb->andWhere("LOWER($key) LIKE ?".$count)
+                    ->setParameter($count, "%".preg_replace('/[\'"<>=*;]/', '', strtolower($value))."%");
             }
             else
             {
-                $qb->andWhere($key." = ?$count")
-                    ->setParameter("$count", $value);
+                $qb->andWhere($key." = ?".$count)
+                    ->setParameter($count, $value);
             }
             $count++;
         }
@@ -117,7 +117,6 @@ class TerritoireRepository extends EntityRepository
         $qb->setMaxResults($limit);
         $defaultEntityAlias = strstr($order['by'],'.') ? '' : 't.';
         $qb->orderBy($defaultEntityAlias.$order['by'], $order['dir']);
-
         return $qb->getQuery()->getResult();
     }
     /**

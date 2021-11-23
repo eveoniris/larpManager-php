@@ -93,30 +93,39 @@
 			{% for personnage in personnages %}
 				<tr>
 					<td>{{ personnage.id }}</td>
-					<td><a href="{{ path('personnage.admin.detail', {'personnage':personnage.id}) }}">{{ personnage.nom }} {{ personnage.surnom }}</a></td>
+					<td><a href="{{ path('personnage.admin.detail', {'personnage':personnage.id}) }}">{{ personnage.nom }} - {{ personnage.surnom }}</a></td>
 					<td>{{ personnage.classe }}</td>
 					<td>{{ personnage.renomme|default(0) }}</td>
-					<td>{{ personnage.groupe }}</td>
-					
+					<td>
+						{% set gn = 'LH1' %}
+						{% set groupe = 'N\'est pas lié à un groupe' %}
+						{% for participant in personnage.participants %}
+							{% set gn = participant.gn %}
+							{% if participant.groupeGn %}
+								{% set groupe = participant.groupeGn.groupe.nom %}
+							{% else %}
+								{% set groupe = 'N\'est pas lié à un groupe' %}
+							{% endif %}
+						{% endfor %}
+						{{ gn }} - {{ groupe }}
+					</td>
 					<td>
 						{% for participant in personnage.participants %}
-							<strong>{{ participant.gn.label }}</strong>&nbsp;
+							<strong>{{ participant.gn.label }}</strong>&nbsp;-&nbsp;
 							{{ participant.user.etatCivil.nom }} {{ participant.user.etatCivil.prenom }}<br />
 						{% endfor %}
 					</td>
 					<td>
 						<a href="{{ path('personnage.admin.xp', {'personnage': personnage.id}) }}">Points d'expériences</a>
 					</td>
-					<td>						
-						
-							{% set languesAnomalie = personnage.getLanguesAnomaliesMessage() %}
-							{% set potionAnomalie = personnage.getPotionAnomalieMessage() %}
-							{% set sortAnomalie = personnage.getSortAnomalieMessage() %}
-							{% set priereAnomalie = personnage.getPrieresAnomalieMessage() %}
-							{% if languesAnomalie != "" or potionAnomalie != "" or sortAnomalie != "" or priereAnomalie != "" %}
+					<td>
+						{% set languesAnomalie = personnage.getLanguesAnomaliesMessage() %}
+						{% set potionAnomalie = personnage.getPotionAnomalieMessage() %}
+						{% set sortAnomalie = personnage.getSortAnomalieMessage() %}
+						{% set priereAnomalie = personnage.getPrieresAnomalieMessage() %}
+						{% if languesAnomalie != "" or potionAnomalie != "" or sortAnomalie != "" or priereAnomalie != "" %}
 							<div style="margin:auto;" class="pastille-orange" title='{{languesAnomalie}} {{potionAnomalie}} {{sortAnomalie}} {{priereAnomalie}}'>&nbsp;</div>
-							{% endif %}
-																
+						{% endif %}					
 					</td>
 				</tr>
 			{% endfor %}

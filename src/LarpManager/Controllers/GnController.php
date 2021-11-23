@@ -117,11 +117,14 @@ class GnController
             $type = $data['type'];
             $value = $data['value'];
             switch ($type) {
-                case 'nom':
-                    $criteria[] = new LikeExpression("p.name", "%$value%");
-                    break;
-                case 'id':
-                    $criteria[] = new EqualExpression("p.id", "%$value%"); 
+				case 'nom':
+				    // $criteria[] = new LikeExpression("p.nom", "%$value%");
+				    $criteria["nom"] = "LOWER(p.nom) LIKE '%".preg_replace('/[\'"<>=*;]/', '', strtolower($value))."%'";
+					break;
+				case 'id':
+				    // $criteria[] = new EqualExpression("p.id", $value);
+				    $criteria["id"] = "p.id = ".preg_replace('/[^\d]/', '', $value);
+					break;	
             }
         }
         $repo = $app['orm.em']->getRepository('\LarpManager\Entities\Personnage');
