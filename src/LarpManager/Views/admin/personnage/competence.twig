@@ -9,14 +9,14 @@
 	<ol class="breadcrumb">
 		<li><a href="{{ path('homepage') }}">Accueil</a></li>
 		<li><a href="{{ path('personnage.admin.list') }}">Liste des personnages</a></li>
-		<li><a href="{{ path('personnage.admin.detail', {'personnage':personnage.id}) }}">Détail de {{ personnage.nom }} {{ personnage.surnom }}</a></li>
+		<li><a href="{{ path('personnage.admin.detail', {'personnage':personnage.id}) }}">Détail de {{ personnage.publicName }}</a></li>
 		<li class="active">Modification de {{ personnage.publicName }}</li>
 	</ol>
 	
 	<div class="well bs-component">
 		<form action="{{ path('personnage.admin.competence.add',{'personnage':personnage.id}) }}" method="POST" {{ form_enctype(form) }}>
 			<fieldset>
-				<legend>{{ personnage.nom }} {{ personnage.surnom }} - <small>Achat d'une compétence</small></legend>
+				<legend>{{ personnage.nom }} - <small>Achat d'une compétence</small></legend>
 				
 				<ul class="list-group">
 					<li class="list-group-item">Vous disposez de <strong>{{ personnage.xp }}</strong> Points d'expériences.</li>

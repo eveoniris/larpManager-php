@@ -80,7 +80,7 @@
 					{% if postulant.personnage.participeTo(gn) %}
 						<div class="list-group-item">
 							<h6 class="list-group-item-heading">
-								<a href="{{ path('personnage.admin.detail', {'personnage':postulant.personnage.id}) }}">{{ postulant.personnage.nom }}&nbsp;{{ postulant.personnage.surnom }}</a>
+								<a href="{{ path('personnage.admin.detail', {'personnage':postulant.personnage.id}) }}">{{ postulant.personnage.publicname }}</a>
 							</h6>
 							{% if postulant.personnage.groupe %}<p class="list-group-item-text">Groupe : <a href="{{ path('groupe.detail', {'index': postulant.personnage.groupe.id}) }}">{{ postulant.personnage.groupe.nom }}</a></p>{% endif %}
 							{% if postulant.personnage.user %}<p class="list-group-item-text">Utilisateur : <a href="{{ path('user.view', {'id': postulant.personnage.user.id}) }}">{{ postulant.personnage.user.username }}</a></p>{% endif %}

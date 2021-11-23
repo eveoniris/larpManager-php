@@ -7,11 +7,10 @@
 	<ol class="breadcrumb">
 		<li><a href="{{ path('homepage') }}">Accueil</a></li>
 		<li><a href="{{ path('gn.detail', {'gn' : participant.gn.id}) }}">{{ participant.gn.label }}</a></li>
-		<li><a href="{{ path('gn.personnage', {'gn': participant.gn.id}) }}">{{ participant.personnage.nom }} {{ participant.personnage.surnom }}</a></li>
+		<li><a href="{{ path('gn.personnage', {'gn': participant.gn.id}) }}">{{ participant.personnage.nom }}</a></li>
 		<li><a href="{{ path("participant.groupeSecondaire.detail", {'participant': participant.id, 'groupeSecondaire':groupeSecondaire.id}) }}">{{ groupeSecondaire.label }}</a></li>
 		<li class="active">Acceptation d'un postulant</li>
 	</ol>
-	
 		
 	<div class="well bs-component">
 		<form action="{{ path('participant.groupeSecondaire.accept', {'participant': participant.id, 'groupeSecondaire': groupeSecondaire.id, 'postulant': postulant.id}) }}" method="POST" {{ form_enctype(form) }}>
@@ -29,11 +28,9 @@
 					</div>
 				</div>
 				
-				
-				
 				{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
 				<p>Le message suivant sera envoyé au postulant</p>
-				<p><em>"Vous faites désormais partie du groupe {{ groupeSecondaire.label }} ! Vous avez accès au forum du groupe."</em></p>
+				<p><em>"Vous faites désormais partie du groupe {{ groupeSecondaire.label }} et vous avez accès au forum associé."</em></p>
 				
 				{{ form(form) }}
 			</fieldset>

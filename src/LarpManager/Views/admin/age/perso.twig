@@ -9,7 +9,6 @@
 		<li><a href="{{ path('age') }}">Liste des ages</a></li>
 		<li class="active">Personnages ayant cet age</li>
 	</ol>
-	
 
 <div class="container-fluid">
 	<div class="row">
@@ -25,7 +24,7 @@
 
 			<div class="list-group">
 				{% for personnage in age.personnages %}
-					<a class="list-group-item" href="{{ path('personnage.admin.detail',{'personnage':personnage.id}) }}">#{{ personnage.id }} - {{ personnage.nom }}&nbsp;{{ personnage.surnom }} - {{ personnage.classeName }}</a>
+					<a class="list-group-item" href="{{ path('personnage.admin.detail',{'personnage':personnage.id}) }}">#{{ personnage.id }} - {{ personnage.nom }}{% if personnage.surnom %} ({{ personnage.surnom }}){% endif %} -- {{ personnage.classeName }}</a>
 				{% endfor %}
 			</div>
 		</div>

@@ -6,7 +6,7 @@
 
 
 <ol class="breadcrumb">
-	<li><a href="{{ path('homepage')  }}">Accueil</a></li>
+	<li><a href="{{ path('homepage') }}">Accueil</a></li>
 	<li class="active">Interface de gestion de {{ gn.label }}</li>
 </ol>
 
@@ -29,7 +29,7 @@
 				<li class="list-group-item">
 					{% if participant.personnage %}
 						<a href="{{ path('participant.personnage', {'participant': participant.id}) }}"><i class="fa fa-user" aria-hidden="true"></i>&nbsp;
-    						{{ participant.personnage.nom }} {{ participant.personnage.surnom }}&nbsp;--&nbsp;{{ participant.personnage.classeName }}
+    						{{ participant.personnage.nom }}&nbsp;--&nbsp;{{ participant.personnage.classeName }}
     					</a>
 					{% else %}
 						<a href="{{ path('participant.personnage.new', {'participant': participant.id}) }}"><i class="fa fa-plus" aria-hidden="true"></i> Créer un personnage</a>&nbsp;/&nbsp;

@@ -93,7 +93,7 @@
 			{% for personnage in personnages %}
 				<tr>
 					<td>{{ personnage.id }}</td>
-					<td><a href="{{ path('personnage.admin.detail', {'personnage':personnage.id}) }}">{{ personnage.nom }} - {{ personnage.surnom }}</a></td>
+					<td><a href="{{ path('personnage.admin.detail', {'personnage':personnage.id}) }}">{{ personnage.nom }}{% if personnage.surnom %} ({{ personnage.surnom }}){% endif %}</a></td>
 					<td>{{ personnage.classe }}</td>
 					<td>{{ personnage.renomme|default(0) }}</td>
 					<td>

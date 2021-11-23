@@ -7,7 +7,7 @@
 	<ol class="breadcrumb">
 		<li><a href="{{ path('homepage')  }}">Accueil</a></li>
 		<li><a href="{{ path('gn.detail', {'gn' : participant.gn.id}) }}">{{ participant.gn.label }}</a></li>
-		<li><a href="{{ path('gn.personnage', {'gn': participant.gn.id}) }}">{{ personnage.nom }} {{ personnage.surnom }}</a></li>
+		<li><a href="{{ path('gn.personnage', {'gn': participant.gn.id}) }}">{{ personnage.nom }}</a></li>
 		<li class="active">Choix d'une origine</li>
 	</ol>
 	
@@ -15,7 +15,7 @@
 		<form action="{{ path('participant.origine',{'participant':participant.id}) }}" method="POST" {{ form_enctype(form) }}>
 			<fieldset>
 				<legend>{{ personnage.publicName }} - <small>Choix d'une origine</small></legend>
-				<p>Choisissez l'origine de votre personnage, en général, les personnages sont issus du même pays que celui de leur groupe !</p>
+				<p>Choisissez l'origine de votre personnage. En général, les personnages sont issus du même pays que celui de leur groupe !</p>
 				<p>Attention ! une fois votre origine choisie, vous ne pourrez plus revenir sur votre choix.</p>
 				{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
 	
