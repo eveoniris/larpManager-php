@@ -18,22 +18,18 @@ table tr td {
 			<tr>
 				<td style="width:33%;">
 					<strong>#{{ personnage.id }}</strong><br />
-					<strong>{{ personnage.nom }} {% if personnage.surnom %}<small>alias {{ personnage.surnom }}</small>{% endif %}</strong>
-					<br />
-					Origine : {{ personnage.territoire|default("non définie") }}
-					<br />
-					{{ personnage.classeName }}, {{ personnage.genre }}, <small>{{ personnage.ageReel|default('x') }} ans ({{ personnage.age }})</small>
-					<br />
+					<strong>{{ personnage.nom }} {% if personnage.surnom %}<small>alias {{ personnage.surnom }}</small>{% endif %}</strong><br />
+					Origine : {{ personnage.territoire|default("non définie") }}<br />
+					{{ personnage.classeName }}, {{ personnage.genre }}, <small>{{ personnage.ageReel|default('x') }} ans ({{ personnage.age }})</small><br />
 					{% if personnage.user %}{{ personnage.user.etatCivil.nom }} {{ personnage.user.etatCivil.prenom }}{% else %}Ce personnage n'est pas lié à un joueur{% endif %}. {% if personnage.intrigue %}participe aux intrigues{% else %}ne participe pas aux intrigues{% endif %}	
 				</td>
 				<td>
 					<strong>{% if groupe %}Groupe #{{ groupe.numero }} {{ groupe.nom }}{% else %}PAS DE GROUPE{% endif %}</strong><br />
-					 
 					{% if participant %}
+						<strong>GN : {{ participant.gn.label }}</strong><br />
 						{% for participantHasRestauration in participant.participantHasRestaurations %}
 							{{ participantHasRestauration.restauration.label }}<br />
 						{% endfor %}
-						<strong>GN : {{ participant.gn.label }}</strong><br />
 						<strong>Personnage Secondaire : </strong>
 						{% if participant.personnageSecondaire %}
 							{{ participant.personnageSecondaire.classe.label }}
