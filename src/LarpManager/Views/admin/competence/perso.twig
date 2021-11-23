@@ -7,7 +7,7 @@
 	<ol class="breadcrumb">
 		<li><a href="{{ path('homepage') }}">Accueil</a></li>
 		<li><a href="{{ path('competence') }}">Liste des compétences</a></li>
-		<li class="active">Personnages ayant cette compétence (pour le prochain GN)</li>
+		<li class="active">Personnages ayant cette compétence</li>
 	</ol>
 	
 
@@ -25,7 +25,7 @@
 
 			<div class="list-group">
 				{% for participant in competence.personnagesGn(app['larp.manager'].getGnActif.id) %}
-					<a class="list-group-item" href="{{ path('personnage.admin.detail',{'personnage':participant.personnage.id}) }}">#{{ participant.personnage.id }} - {{ participant.personnage.nom }}&nbsp;{{ participant.personnage.surnom }} - {{ participant.personnage.classeName }}</a>
+					<a class="list-group-item" href="{{ path('personnage.admin.detail',{'personnage':participant.personnage.id}) }}">#{{ participant.personnage.id }} - {{ participant.personnage.nom }}{% if participant.personnage.surnom %} ({{ participant.personnage.surnom }}){% endif %} -- {{ participant.personnage.classeName }}</a>
 				{% endfor %}
 			</div>
 		</div>

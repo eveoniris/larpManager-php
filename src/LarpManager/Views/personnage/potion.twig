@@ -9,7 +9,7 @@
 	<ol class="breadcrumb">
 		<li><a href="{{ path('homepage')  }}">Accueil</a></li>
 		<li><a href="{{ path('gn.detail', {'gn' : participant.gn.id}) }}">{{ participant.gn.label }}</a></li>
-		<li><a href="{{ path('gn.personnage', {'gn': participant.gn.id}) }}">{{ participant.personnage.nom }} {{ participant.personnage.surnom }}</a></li>
+		<li><a href="{{ path('gn.personnage', {'gn': participant.gn.id}) }}">{{ participant.personnage.nom }}</a></li>
 		<li class="active">Choix d'une nouvelle potion</li>
 	</ol>
 	
@@ -26,13 +26,12 @@
 	</div>
 		
 	{% for potion in potions %}
-			
-				<div class="well well-sm">
-					<div class="header">
-						<h5>{{ potion.label }} - Niveau {{ potion.niveau }}</h5>
-					</div>
-					<p>{{ potion.description|markdown }}</p>
-				</div>
+		<div class="well well-sm">
+			<div class="header">
+				<h5>{{ potion.label }} - Niveau {{ potion.niveau }}</h5>
+			</div>
+			<p>{{ potion.description|markdown }}</p>
+		</div>
 	{% endfor %}
 </div>
 

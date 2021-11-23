@@ -12,7 +12,7 @@
 		
 	<div class="well well-sm">
 		<h3>
-			{{ personnage.nom }} <small>alias {{ personnage.surnom }}</small>
+			{{ personnage.nom }}{% if personnage.surnom %} <small>({{ personnage.surnom }})</small>{% endif %}
 			
 			{% if personnage.genre == 'Masculin' %}
 				<i class="fa fa-mars" aria-hidden="true"></i>
@@ -72,10 +72,14 @@
 							<div class="list-group">									
 								{% if personnage.user %}
 									{% for participant in personnage.user.participants %}
-										{% if participant.groupeGn %}
-											<a class="list-group-item" href="{{ path('groupe.detail', {'index': participant.groupeGn.groupe.id}) }}">{{ participant.personnage.nom }} - {{ participant.gn }} - #{{ participant.groupeGn.groupe.numero }} {{ participant.groupeGn.groupe.nom }}</a>
+										{% if participant.personnage %}
+											{% if participant.groupeGn %}
+												<a class="list-group-item" href="{{ path('groupe.detail', {'index': participant.groupeGn.groupe.id}) }}">{{ participant.personnage.nom }} - {{ participant.gn }} - #{{ participant.groupeGn.groupe.numero }} {{ participant.groupeGn.groupe.nom }}</a>
+											{% else %}
+												<a class="list-group-item">{{ participant.personnage.nom }} - {{ participant.gn }} - N'est pas lié à un groupe</a>
+											{% endif %}
 										{% else %}
-											<a class="list-group-item">{{ participant.personnage.nom }} - {{ participant.gn }} - N'est pas lié à un groupe</a>
+											<a class="list-group-item">Pas de personnage sur le {{ participant.gn }} (#{{ participant.groupeGn.groupe.numero }} {{ participant.groupeGn.groupe.nom }})</a>
 										{% endif %}
 									{% endfor %}
 								{% else %}

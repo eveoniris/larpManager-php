@@ -7,11 +7,11 @@
 	<ol class="breadcrumb">
 		<li><a href="{{ path('homepage') }}">Page d'accueil</a></li>
 			<li><a href="{{ path('gn.detail', {'gn' : participant.gn.id}) }}">{{ participant.gn.label }}</a></li>
-			{% if participant.personnage %}<li><a href="{{ path('gn.personnage', {'gn': participant.gn.id}) }}">{{ participant.personnage.nom }} {{ participant.personnage.surnom }}</a></li>{% endif %}
+			{% if participant.personnage %}<li><a href="{{ path('gn.personnage', {'gn': participant.gn.id}) }}">{{ participant.personnage.nom }}</a></li>{% endif %}
 		<li class="active">Groupes secondaires</li>
 	</ol>
 	
-		<div class="row">
+	<div class="row">
 		<div class="col-xs-12 col-md-8">
 			<div class="well well-sm">
 				<h4>
@@ -41,7 +41,5 @@
 			</ul>
 		</div>
 	</div>
-
-
 	
 {% endblock %}

@@ -14,8 +14,8 @@
 	<div class="well well-sm">
 		<form action="{{ path('participant.personnage.remove',{'participant': participant.id, 'personnage': personnage.id}) }}" method="POST">
 			<p>{{ participant.user.etatCivil.nom }} {{ participant.user.etatCivil.prenom }}</p>
-			<p>{{ personnage.nom }} {{ personnage.surnom }} -- {{ personnage.classeName }}</p>
-			<p>Le joueur n'aura plus de personnage lié à sa participant au jeu. Cela va lui permettre de créer un nouveau personnage ou de récupérer l'un de ses anciens personnages</p>
+			<p>#{{ personnage.id }} - {{ personnage.nom }}{% if personnage.surnom %} ({{ personnage.surnom }}){% endif %} -- {{ personnage.classeName }}</p>
+			<p>Le joueur n'aura plus de personnage lié à sa participation au jeu. Cela va lui permettre de créer un nouveau personnage ou de récupérer l'un de ses anciens personnages.</p>
 			<p>Le joueur restera dans le groupe.</p>
 			{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}		
 			{{ form(form) }}

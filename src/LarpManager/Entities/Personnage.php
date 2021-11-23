@@ -640,7 +640,7 @@ class Personnage extends BasePersonnage
 			{
 				if( $participant->getPersonnage() == $this )
 				{
-					$nomGn = $this->getGns()->last();
+					$nomGn = $participant->getGn()->getLabel();
 					$groupeGn = $participant->getGroupeGn();
 					if ($groupeGn != null)
 						$groupeLabel = $groupeGn->getGroupe()->getNom();
@@ -669,7 +669,7 @@ class Personnage extends BasePersonnage
 			{
 				if( $participant->getPersonnage() == $this )
 				{
-					$nomGn = $this->getGns()->last();
+					$nomGn = $participant->getGn()->getLabel();
 					$groupeGn = $participant->getGroupeGn();
 					if ($groupeGn != null)
 						$groupeLabel = $groupeGn->getGroupe()->getNom();

@@ -22,7 +22,7 @@ table tr td {
 			<tr>
 				<td style="width:33%;">
 					<strong>#{{ personnage.id }}</strong><br />
-					<strong>{{ personnage.nom }} {% if personnage.surnom %}<small>alias {{ personnage.surnom }}</small>{% endif %}</strong><br />
+					<strong>{{ personnage.nom }}{% if personnage.surnom %} (<small>{{ personnage.surnom }}</small>){% endif %}</strong><br />
 					Origine : {{ personnage.territoire|default("non définie") }}<br />
 					{{ personnage.classeName }}, {{ personnage.genre }}, <small>{{ personnage.ageReel|default('x') }} ans ({{ personnage.age }})</small><br />
 					{% if personnage.user %}{{ personnage.user.etatCivil.nom }} {{ personnage.user.etatCivil.prenom }}{% else %}Ce personnage n'est pas lié à un joueur{% endif %}. {% if personnage.intrigue %}participe aux intrigues{% else %}ne participe pas aux intrigues{% endif %}	
@@ -188,7 +188,7 @@ table tr td {
 	<div class="print-center">
 		<span style="font-size:12px;">Partie à découper et à remettre au PC Joueur par votre meurtrier en cas de mort du personnage</span>
 		<h4>Personnage ID : {{ personnage.id }}
-		{{ personnage.nom }} {% if personnage.surnom %}<small>alias {{ personnage.surnom }}</small>{% endif %}<br />
+		{{ personnage.nom }}<br />
 		MORT</h4>
 	</div>
 	

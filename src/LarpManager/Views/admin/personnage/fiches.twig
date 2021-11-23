@@ -19,15 +19,13 @@
     			<table>
     				<tbody>
     					<tr>
-    						<td><strong>{{ personnage.nom }} {{ personnage.surnom }}</strong></td>
+    						<td><strong>{{ personnage.nom }}{% if personnage.surnom %} ({{ personnage.surnom }}){% endif %}</strong></td>
     						<td>{{ personnage.classeName }}</td>
     						<td>{{ personnage.age }} / {{ personnage.genre }}</td>
     						<td>Origine : {{ personnage.territoire|default("non définie") }}</td>
     					</tr>
     				</tbody>
     			</table>
-    			
-    			
 				
 				<table>
 					<thead>

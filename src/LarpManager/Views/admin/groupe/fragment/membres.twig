@@ -37,7 +37,7 @@
 
 						<p>
 							{% if participant.personnage %}
-								{{ participant.personnage.nom }} {{ participant.personnage.surnom }}</a>
+								{{ participant.personnage.nom }}{% if participant.personnage.surnom %} ({{ participant.personnage.surnom }}){% endif %}</a>
 								-- {{ participant.personnage.classeName }} <a href="{{ path('participant.personnage.remove', {'participant': participant.id, 'personnage': participant.personnage.id}) }}">Retirer le personnage (cela ne retirera pas le joueur du groupe)</a>
 							{% else %}
 								N'a pas encore créé son personnage
