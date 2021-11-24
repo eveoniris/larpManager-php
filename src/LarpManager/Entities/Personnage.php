@@ -601,6 +601,29 @@ class Personnage extends BasePersonnage
 		return $pugilat;
 	}
 
+
+	/**
+	 * Fourni le score d'héroïsme'
+	 */
+	public function getHeroisme()
+	{
+		$heroisme = 0;
+
+		if ( $this->getCompetenceNiveau('Agilité') >= 2 ) $heroisme = $heroisme + 1;
+		if ( $this->getCompetenceNiveau('Armes à 1 main') >= 3 ) $heroisme = $heroisme + 1;
+		if ( $this->getCompetenceNiveau('Armes à 2 mains') >= 3 ) $heroisme = $heroisme + 1;
+		if ( $this->getCompetenceNiveau('Armurerie') >= 4 ) $heroisme = $heroisme + 1;
+		if ( $this->getCompetenceNiveau('Protection') >= 4 ) $heroisme = $heroisme + 1;
+		if ( $this->getCompetenceNiveau('Sauvagerie') >= 1 ) $heroisme = $heroisme + 1;
+
+		foreach ( $this->getHeroismeHistories() as $heroismeHistory)
+		{
+			$heroisme = $heroisme + $heroismeHistory->getHeroisme();
+		}		
+
+		return $heroisme;
+	}
+
 	/**
 	 * Fourni le trigger correspondant au tag
 	 * @param unknown $tag

@@ -41,7 +41,7 @@
 					<div class="list-group-item-heading">
 						<strong>{{ postulant.personnage.publicName }}</strong>
 						{% if groupeSecondaire.secondaryGroupType.label == 'Religion' %}
-							Religion(s) du postulant :
+							Religions du postulant :
 							<ul>
 							{% for personnageReligion in postulant.personnage.personnagesReligions %}
 								<li>{{ personnageReligion.religion.label }} - {{ personnageReligion.religionLevel.label }}</li>
