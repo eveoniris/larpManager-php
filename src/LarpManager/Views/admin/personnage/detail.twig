@@ -68,7 +68,7 @@
 		  					<p>Ce personnage <strong class="text-success">{% if personnage.intrigue %}participe aux intrigues{% else %}ne participe pas aux intrigues{% endif %}</strong></p>
 		  					
 		  					{# Liste des groupes auquel fait partit ce personnage #}
-							<h6>Groupe(s)</h6>
+							<h6>Groupes</h6>
 							<div class="list-group">									
 								{% if personnage.user %}
 									{% for participant in personnage.user.participants %}
@@ -87,7 +87,7 @@
 								{% endif %}
 							</div>
 							
-							<h6>Groupe(s) secondaire(s)</h6>
+							<h6>Groupes secondaires</h6>
 							<ul class="list-group">
 								{% for groupeSecondaire in personnage.secondaryGroups %}
 										<li class="list-group-item">{{ groupeSecondaire.label }} (Chef)</li>
@@ -150,7 +150,7 @@
 								<h6>Historique</h6>
 								<div class="list-group">
 									{% for historique in personnage.renommeHistories %}
-										<div class="list-group-item">{{ historique.date|date("Y-m-d h:i:s") }} : {% if historique.renomme > 0 %}+{% endif %}{{ historique.renomme }}  {% if historique.explication %} pour la raison suivante : "{{ historique.explication }}"{% endif %}.</div>
+										<div class="list-group-item">{{ historique.date|date("Y-m-d") }} : {% if historique.renomme > 0 %}+{% endif %}{{ historique.renomme }} {% if historique.explication %} pour la raison suivante : "{{ historique.explication }}"{% endif %}.</div>
 									{% endfor %}
 								</div>
 							</div>
@@ -162,7 +162,7 @@
 								<h6>Historique</h6>		
 								<div class="list-group">
 									{% for historique in personnage.heroismeHistories %}
-										<div class="list-group-item">{{ historique.date|date("Y-m-d h:i:s") }} : {% if historique.heroisme > 0 %}+{% endif %}{{ historique.heroisme }}  {% if historique.explication %} pour la raison suivante : "{{ historique.explication }}"{% endif %}.</div>
+										<div class="list-group-item">{{ historique.date|date("Y-m-d") }} : {% if historique.heroisme > 0 %}+{% endif %}{{ historique.heroisme }} {% if historique.explication %} pour la raison suivante : "{{ historique.explication }}"{% endif %}.</div>
 									{% endfor %}
 								</div>
 							</div>
@@ -174,7 +174,7 @@
 								<h6>Historique</h6>		
 								<div class="list-group">
 									{% for historique in personnage.pugilatHistories %}
-										<div class="list-group-item">{{ historique.date|date("Y-m-d h:i:s") }} : {% if historique.pugilat > 0 %}+{% endif %}{{ historique.pugilat }}  {% if historique.explication %} pour la raison suivante : "{{ historique.explication }}"{% endif %}.</div>
+										<div class="list-group-item">{{ historique.date|date("Y-m-d") }} : {% if historique.pugilat > 0 %}+{% endif %}{{ historique.pugilat }} {% if historique.explication %} pour la raison suivante : "{{ historique.explication }}"{% endif %}.</div>
 									{% endfor %}
 								</div>
 							</div>														
@@ -208,16 +208,13 @@
 								{% for groupeSecondaire in personnage.secondaryGroups %}
 									<a class="list-group-item" href="{{ path('groupeSecondaire.admin.detail', {'groupe':groupeSecondaire.id}) }}">{{ groupeSecondaire.label }}</a>
 								{% endfor %}
-								
-								
 								{% for postulant in personnage.postulants %}
-									<p class="list-group-item">Candidature au groupe {{ postulant.secondaryGroup.label }} en attente de validation.</p>
+									<p class="list-group-item">{{ postulant.secondaryGroup.label }} en attente de validation.</p>
 								{% endfor %}
 							</div>
-
-
-							<div class="list-group-item">
+							
 							<h6 class="list-group-item-heading">Sorts :</h6>
+							<div class="list-group-item">
 								{% set sortAnomalie = personnage.getSortAnomalieMessage() %}
 								{% if sortAnomalie != "" %}
 								<div class="text-warning">{{sortAnomalie}}</div>
@@ -229,9 +226,9 @@
 									<div class="list-group-item-text">Aucun</div>
 								{% endfor %}
 							</div>
-							
-							<div class="list-group-item">	
-								<h6 class="list-group-item-heading">Potions :</h6>
+
+							<h6 class="list-group-item-heading">Potions :</h6>
+							<div class="list-group-item">
 								{% set potionsAnomalie = personnage.getPotionAnomalieMessage() %}
 								{% if potionsAnomalie != "" %}
 								<div class="text-warning">{{potionsAnomalie}}</div>
@@ -242,14 +239,13 @@
 									<div class="list-group-item-text">Aucune</div>
 								{% endfor %}
 							</div>
-							
+
+							<h6 class="list-group-item-heading">Prières :</h6>
 							<div class="list-group-item">
-								<h6 class="list-group-item-heading">Prières :</h6>
 								{% set sortAnomalie = personnage.getPrieresAnomalieMessage() %}
 								{% if sortAnomalie != "" %}
 								<div class="text-warning">{{sortAnomalie}}</div>
 								{% endif %}
-								
 								{% for priere in personnage.prieres %}
 									<p class="list-group-item-text">
 										{{ priere.sphere.label }} - Niveau {{ priere.niveau }} ({{ priere.label }})
