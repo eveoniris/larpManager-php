@@ -603,7 +603,7 @@ class Personnage extends BasePersonnage
 
 
 	/**
-	 * Fourni le score d'héroïsme'
+	 * Fourni le score d'héroïsme
 	 */
 	public function getHeroisme()
 	{
