@@ -24,7 +24,7 @@
 		
 		<p class="list-group-item-text">
 			{%  if langue.territoires|length > 0 %}
-				Cette langue est la langue principale des territoires suivants : {{ langue.territoires|join(', ') }}				
+				Cette langue est la langue principale des territoires suivants : {{ langue.territoires|join(', ') }}.
 			{% else %}
 				Cette langue n'est la langue principale d'aucun territoire.	
 			{% endif %}
@@ -32,11 +32,27 @@
 		
 		<p class="list-group-item-text">
 			{%  if langue.territoireSecondaires|length > 0 %}
-				Cette langue est parlée dans les territoires suivants : {{ langue.territoireSecondaires|join(', ') }}
+				Cette langue est parlée dans les territoires suivants : {{ langue.territoireSecondaires|join(', ') }}.
 			{% else %}
 				Cette langue n'est la langue secondaire d'aucun territoire.
 			{% endif %}
 		</p>
+
+		<p class="list-group-item-text">
+			{%  if langue.documents|length > 0 %}
+				Cette langue est utilisée dans {{ langue.documents|length }} document{%  if langue.documents|length > 1 %}s{% endif %}.
+			{% else %}
+				Cette langue n'est utilisée dans aucun document.
+			{% endif %}
+		</p>
+
+		<p class="list-group-item-text">
+			{% if langue.documentUrl %}
+				<strong>Abécédaire : </strong><a href="{{ path('langue.admin.document',{'langue': langue.id}) }}">Téléchargez l'abécédaire</a>.
+			{% else %}
+				Aucun abécédaire n'est disponible.
+			{% endif %}
+    	</p>		
 	</li>
 	{%  endfor %}
 </ul>

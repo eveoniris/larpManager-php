@@ -72,6 +72,11 @@ class BaseLangue
      */
     protected $secret;
 
+    /**
+     * @Column(type="string", length=45, nullable=true)
+     */
+    protected $documentUrl;
+
     public function __construct()
     {
         $this->personnageLangues = new ArrayCollection();
@@ -323,6 +328,29 @@ class BaseLangue
     public function getSecret()
     {
         return $this->secret;
+    }
+
+    /**
+     * Set the value of documentUrl.
+     *
+     * @param boolean $documentUrl
+     * @return \LarpManager\Entities\Langue
+     */
+    public function setDocumentUrl($documentUrl)
+    {
+        $this->documentUrl = $documentUrl;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of sedocumentUrlcret.
+     *
+     * @return boolean
+     */
+    public function getDocumentUrl()
+    {
+        return $this->documentUrl;
     }
 
     public function __sleep()

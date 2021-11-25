@@ -72,7 +72,13 @@ class LangueForm extends AbstractType
 							true => 'Langue secrète',
 					),
 					'label' => 'Secret'
-				));
+				))
+				->add('document','file', array(
+					'label' => 'Téléversez un document',
+					'required' => false,
+					'mapped' => false
+				))
+			;
 	}
 	
 	/**

@@ -416,9 +416,6 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 			->convert('groupeSecondaire', 'converter.secondaryGroup:convert')
 			->convert('postulant', 'converter.postulant:convert')
 			->before($mustBeResponsable);
-
-			
-			
 			
 		/**
 		 * Liste des religions
@@ -587,6 +584,18 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 			->assert('competence', '\d+')
 			->convert('competence', 'converter.competence:convert')
 			->bind("participant.competence.document")
+			->method('GET')
+			->before($mustOwnParticipant);
+
+		/**
+		 * Obtenir le document lié à une langue
+		 */
+		$controllers->match('/{participant}/langue/{langue}/document/{filename}','LarpManager\Controllers\ParticipantController::langueDocumentAction')
+			->assert('participant', '\d+')
+			->convert('participant', 'converter.participant:convert')
+			->assert('langue', '\d+')
+			->convert('langue', 'converter.langue:convert')
+			->bind("participant.langue.document")
 			->method('GET')
 			->before($mustOwnParticipant);
 			
