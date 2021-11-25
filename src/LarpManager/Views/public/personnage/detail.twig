@@ -9,7 +9,7 @@
 		<li><a href="{{ path('gn.detail', {'gn' : participant.gn.id}) }}">{{ participant.gn.label }}</a></li>
 		<li class="active">{{ personnage.nom }}</li>
 	</ol>
-	
+
 	<div class="well well-sm">
 		<div class="btn-toolbar" role="toolbar" aria-label="...">
 			<div class="btn-group" role="group" aria-label="...">
@@ -20,7 +20,7 @@
 				{% if personnage.hasCompetence('Magie') %}
 					<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Découvrir la magie" href="{{ path('participant.magie', {'participant': participant.id}) }}"><i class="fa fa-magic" aria-hidden="true"></i></a>
 				{% endif %}
-				
+				<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Imprimer votre personnage" href="{{ path('personnage.export', {'personnage':participant.personnage.id}) }}"><i class="fa fa-print" aria-hidden="true"></i></a>
 			</div>
 		</div>
 	</div>	
@@ -34,7 +34,7 @@
 						{% for trigger in personnage.personnageTriggers %}
 							{% if trigger.tag == 'LANGUE COMMUNE' %}
 								<li class="list-group-item"><a href="{{ path('participant.personnage.langueCommune', {'participant': participant.id}) }}">Choisir une langue commune supplémentaire</a></li>
-							{% endif %}								
+							{% endif %}
 							{% if trigger.tag == 'LANGUE COURANTE' %}
 								<li class="list-group-item"><a href="{{ path('participant.personnage.langueCourante', {'participant': participant.id}) }}">Choisir une langue courante supplémentaire</a></li>
 							{% endif %}
@@ -55,7 +55,7 @@
 							{% endif %}
 							{% if trigger.tag == 'DOMAINE MAGIE' %}
 								<li class="list-group-item"><a href="{{ path('participant.personnage.domaine', {'participant': participant.id}) }}">Choisir un domaine de magie</a></li>
-							{% endif %}							
+							{% endif %}
 							{% if trigger.tag == 'SORT APPRENTI' %}
 								<li class="list-group-item"><a href="{{ path('participant.personnage.sort', {'participant': participant.id, 'niveau' : 1}) }}">Choisir un sortilège de niveau Apprenti</a></li>
 							{% endif %}
@@ -71,7 +71,7 @@
 							{% if trigger.tag == 'PRETRISE INITIE' %}
 								<li class="list-group-item"><a href="{{ path('participant.personnage.religionDescription', {'participant': participant.id}) }}">Choisir une description de religion</a></li>
 							{% endif %}
-						{% endfor %}	
+						{% endfor %}
 						</ul>
 					{% endif %}
 						
@@ -79,11 +79,9 @@
 					{% include 'public/personnage/fragment/origine.twig' with {'personnage': personnage, 'participant': participant} %}
 					{% include 'public/personnage/fragment/pugilat.twig' with {'personnage': personnage} %}
 					{% include 'public/personnage/fragment/competence.twig' with {'personnage': personnage, 'participant': participant} %}
-
 				</div>
 				
 			</div>
-			
 			
 			<div class="col-sm-6">
 				<div class="well well-sm">
@@ -100,7 +98,7 @@
 						</div>
 					</div>
 
-					{% include 'public/personnage/fragment/groupe.twig' with {'personnage': personnage, 'participant': participant} %}				
+					{% include 'public/personnage/fragment/groupe.twig' with {'personnage': personnage, 'participant': participant} %}
 					{% include 'public/personnage/fragment/groupeSecondaireChef.twig' with {'personnage': personnage, 'participant': participant} %}
 					{% include 'public/personnage/fragment/groupeSecondaireMembre.twig' with {'personnage': personnage, 'participant': participant} %}
 					{% include 'public/personnage/fragment/alchimie.twig' with {'personnage': personnage, 'participant': participant} %}
@@ -116,22 +114,10 @@
 						{% include 'public/personnage/fragment/politique.twig' with {'personnage': personnage, 'participant': participant, 'lois': lois} %}
 					{% endif %}
 					{% include 'public/personnage/fragment/priere.twig' with {'personnage': personnage, 'participant': participant} %}
-					{% include 'public/personnage/fragment/religion.twig' with {'personnage': personnage, 'participant': participant} %}					
+					{% include 'public/personnage/fragment/religion.twig' with {'personnage': personnage, 'participant': participant} %}
 				</div>
 			</div>
-			
-			
-		</div>		
 
-
-		{# Autre 
-		<div class="header">
-			<h5>Autre</h5>
 		</div>
-		
-		<h6>Téléchargement</h6>
-		<a class="btn btn-default" href="{{ path('personnage.export', {'personnage':personnage.id}) }}">Télécharger le pdf</a>
-		#}	
-	
 	
 {% endblock content %}

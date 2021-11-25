@@ -182,14 +182,31 @@ table tr td {
 		</tbody>
 	</table>
 					
-	<hr />	
-	<br /><br />
-	
+	{% if participant.personnageSecondaire %}
+		<br />
+		<hr />
+		<br />
+		<div class="print-center">
+			<h3>Personnage secondaire<br />
+			{{ participant.personnageSecondaire.classe.label }}
+			</h3>
+		</div>
+
+		<div style="border: 1px solid #000;padding: 5px;">
+		<h3><strong>Compétences</strong></h3>
+		{% for competence in participant.personnageSecondaire.competences %}
+				<strong>{{ competence.competenceFamily.label }}&nbsp({{ competence.level.label }})</strong> : {{ competence.descriptionRaw }}<br />
+		{% endfor %}
+		</div>
+	{% endif %}
+	<br />
+	<hr />
+	<br />
 	<div class="print-center">
-		<span style="font-size:12px;">Partie à découper et à remettre au PC Joueur par votre meurtrier en cas de mort du personnage</span>
-		<h4>Personnage ID : {{ personnage.id }}
-		{{ personnage.nom }}<br />
-		MORT</h4>
+		<p>Partie à découper et à remettre au PC Joueur par votre meurtrier en cas de mort du personnage.</p>
+		<strong>Numéro du personnage :</strong> #{{ personnage.id }}<br />
+		<strong>Identité du personnage :</strong> {{ personnage.identity }}<br />
+		<h3>MORT</h3>
 	</div>
 	
 	<div class="print-page-break"></div>
