@@ -75,6 +75,7 @@ use LarpManager\Entities\Groupe;
 use LarpManager\Entities\Rule;
 use LarpManager\Entities\Question;
 use LarpManager\Entities\Reponse;
+use LarpManager\Entities\Langue;
 
 
 /**
@@ -1891,6 +1892,35 @@ class ParticipantController
 				'personnage' => $personnage,
 				'participant' => $participant,
 		));
+	}
+
+	/**
+	 * Obtenir le document lié à une langue
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Participant $participant
+	 * @param Langue $langue
+	 */
+	public function langueDocumentAction(Request $request, Application $app, Participant $participant, Langue $langue)
+	{
+		$personnage = $participant->getPersonnage();
+	
+		if ( ! $personnage )
+		{
+			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créé un personnage !');
+			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),301);
+		}
+	
+		if ( ! $personnage->isKnownLanguage($langue) )
+		{
+			$app['session']->getFlashBag()->add('error', 'Vous ne connaissez pas cette langue !');
+			return $app->redirect($app['url_generator']->generate('gn.personnage', array('gn' => $participant->getGn()->getId())),301);
+		}
+			
+		$file = __DIR__.'/../../../private/doc/'.$langue->getDocumentUrl();
+		return $app->sendFile($file)
+			    ->setContentDisposition(ResponseHeaderBag::DISPOSITION_INLINE, $langue->getPrintLabel().'.pdf');
 	}
 	
 	/**

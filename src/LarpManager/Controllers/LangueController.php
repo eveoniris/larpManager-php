@@ -85,6 +85,26 @@ class LangueController
 		if ( $form->isValid() )
 		{
 			$langue = $form->getData();
+			$files = $request->files->get($form->getName());
+			// Si un document est fourni, l'enregistrer
+			if ( $files['document'] != null )
+			{
+				$path = __DIR__.'/../../../private/doc/';
+				$filename = $files['document']->getClientOriginalName();
+				$extension = 'pdf';
+
+				if (!$extension || ! in_array($extension, array('pdf'))) {
+					$app['session']->getFlashBag()->add('error','Désolé, votre document ne semble pas valide (vérifiez le format de votre document)');
+					return $app->redirect($app['url_generator']->generate('langue.add'),301);
+				}
+
+				$documentFilename = hash('md5',$langue->getLabel().$filename . time()).'.'.$extension;
+
+				$files['document']->move($path,$documentFilename);
+
+				$langue->setDocumentUrl($documentFilename);
+			}
+
 			$app['orm.em']->persist($langue);
 			$app['orm.em']->flush();
 			
@@ -135,10 +155,28 @@ class LangueController
 		
 			if ( $form->get('update')->isClicked())
 			{
+				$files = $request->files->get($form->getName());
+				// Si un document est fourni, l'enregistrer
+				if ( $files['document'] != null )
+				{
+					$path = __DIR__.'/../../../private/doc/';
+					$filename = $files['document']->getClientOriginalName();
+					$extension = 'pdf';
+
+					if (!$extension || ! in_array($extension, array('pdf'))) {
+						$app['session']->getFlashBag()->add('error','Désolé, votre document ne semble pas valide (vérifiez le format de votre document)');
+						return $app->redirect($app['url_generator']->generate('langue.detail',array('index' => $id)),301);
+					}
+						
+					$documentFilename = hash('md5',$langue->getLabel().$filename . time()).'.'.$extension;
+
+					$files['document']->move($path,$documentFilename);
+					$langue->setDocumentUrl($documentFilename);
+				}
 				$app['orm.em']->persist($langue);
 				$app['orm.em']->flush();
 				$app['session']->getFlashBag()->add('success', 'La langue a été mise à jour.');
-		
+
 				return $app->redirect($app['url_generator']->generate('langue.detail',array('index' => $id)),301);
 			}
 			else if ( $form->get('delete')->isClicked())
@@ -262,4 +300,28 @@ class LangueController
 				'form' => $form->createView(),
 		));
 	}
+	
+	/**
+	 * Obtenir le document lié a une langue
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function adminDocumentAction(Request $request, Application $app)
+	{
+		$document = $request->get('document');
+		$langue = $request->get('langue');
+	
+		$file = __DIR__.'/../../../private/doc/'.$document;
+	
+		$stream = function () use ($file) {
+			readfile($file);
+		};
+	
+		return $app->stream($stream, 200, array(
+				'Content-Type' => 'text/pdf',
+				'Content-length' => filesize($file),
+				'Content-Disposition' => 'attachment; filename="'.$langue->getPrintLabel().'.pdf"'
+		));
+	}	
 }

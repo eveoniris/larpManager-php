@@ -98,4 +98,9 @@ class Langue extends BaseLangue
 			default : return 'Inconnue';
 		}
 	}
+
+	public function getPrintLabel()
+	{
+		return preg_replace('/[^a-z0-9]+/', '_', strtolower($this->getLabel()));
+	}	
 }
