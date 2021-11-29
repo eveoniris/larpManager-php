@@ -293,7 +293,7 @@ class BasePersonnage
      *     joinColumns={@JoinColumn(name="personnage_id", referencedColumnName="id", nullable=false)},
      *     inverseJoinColumns={@JoinColumn(name="priere_id", referencedColumnName="id", nullable=false)}
      * )
-     * @OrderBy({"sphere" = "ASC", "diffusion" = "DESC", "niveau" = "ASC",})
+     * @OrderBy({"sphere" = "ASC", "niveau" = "ASC",})
      */
     protected $prieres;
 
