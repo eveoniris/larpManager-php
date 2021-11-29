@@ -23,6 +23,7 @@ namespace LarpManager\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Doctrine\ORM\EntityRepository;
 
 /**
  * LarpManager\Form\PersonnageUpdateSortForm
@@ -47,7 +48,10 @@ class PersonnageUpdateSortForm extends AbstractType
 				'expanded' => true,
 				'class' => 'LarpManager\Entities\Sort',
 				'choice_label' => 'fullLabel',
-				'label' => 'Choisissez les sortilèges du personnage'
+				'label' => 'Choisissez les sorts du personnage',
+				'query_builder' => function(EntityRepository $repository) { 
+					return $repository->createQueryBuilder('s')->addOrderBy('s.label', 'ASC')->addOrderBy('s.niveau', 'ASC');
+				}
 		));
 
 	}

@@ -289,7 +289,11 @@ class BasePersonnage
 
     /**
      * @ManyToMany(targetEntity="Priere", mappedBy="personnages")
-     * @OrderBy({"sphere" = "ASC", "niveau" = "ASC",})
+     * @JoinTable(name="personnages_prieres",
+     *     joinColumns={@JoinColumn(name="personnage_id", referencedColumnName="id", nullable=false)},
+     *     inverseJoinColumns={@JoinColumn(name="priere_id", referencedColumnName="id", nullable=false)}
+     * )
+     * @OrderBy({"sphere" = "ASC", "diffusion" = "DESC", "niveau" = "ASC",})
      */
     protected $prieres;
 

@@ -15,8 +15,7 @@
 	<div class="well bs-component">
 		<form action="{{ path('personnage.admin.update.priere',{'personnage':personnage.id}) }}" method="POST" {{ form_enctype(form) }}>
 			<fieldset>
-				<legend>{{ personnage.publicName }} - <small>Choix des prieres</small></legend>
-				<p>Choisissez les prieres du personnage</p>
+				<legend>Choix des prières</legend>
 				{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
 	
 				{{ form_row(form.prieres) }}

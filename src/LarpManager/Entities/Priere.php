@@ -36,13 +36,13 @@ use LarpManager\Entities\BasePriere;
  */
 class Priere extends BasePriere
 {
-	public function fullLabel()
+	public function getFullLabel()
 	{
 		return $this->getSphere()->getLabel() . " - " . $this->getNiveau() . " - " . $this->getLabel();
 	}
 
 	public function getPrintLabel()
 	{
-		return preg_replace('/[^a-z0-9]+/', '_', strtolower($this->fullLabel()));
+		return preg_replace('/[^a-z0-9]+/', '_', strtolower($this->getFullLabel()));
 	}	
 }

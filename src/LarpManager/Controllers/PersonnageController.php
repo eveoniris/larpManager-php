@@ -1287,7 +1287,7 @@ class PersonnageController
 	{
 		$personnage = $request->get('personnage');
 				
-		$langues = $app['orm.em']->getRepository('LarpManager\Entities\Langue')->findBy(array(), array('secret' => 'ASC', 'label' => 'ASC'));
+		$langues = $app['orm.em']->getRepository('LarpManager\Entities\Langue')->findBy(array(), array('secret' => 'ASC', 'diffusion' => 'DESC', 'label' => 'ASC'));
 			
 		$originalLanguages = array();
 		foreach ( $personnage->getLanguages() as $languages)
@@ -1298,7 +1298,7 @@ class PersonnageController
 		$form = $app['form.factory']->createBuilder()
 			->add('langues','entity', array(
 					'required' => true,
-					'label' => 'Choisissez les langages',
+					'label' => 'Choisissez les langues du personnage',
 					'multiple' => true,
 					'expanded' => true,
 					'class' => 'LarpManager\Entities\Langue',
@@ -1377,7 +1377,7 @@ class PersonnageController
 	public function adminUpdatePriereAction(Request $request, Application $app)
 	{
 		$personnage = $request->get('personnage');
-			
+
 		$originalPrieres = new ArrayCollection();
 		foreach ( $personnage->getPrieres() as $priere)
 		{
@@ -1393,7 +1393,7 @@ class PersonnageController
 		if ( $form->isValid() )
 		{
 			$personnage = $form->getData();
-			
+
 			foreach($personnage->getPrieres() as $priere)
 			{
 				if ( ! $originalPrieres->contains($priere))
