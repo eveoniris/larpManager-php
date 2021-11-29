@@ -13,7 +13,7 @@
 	{% endfor %}
 	</div>
 	
-	<h6>Liste de vos sortilèges</h6>
+	<h6>Liste de vos sorts</h6>
 	<div class="list-group">
 		{% for sort in personnage.sorts %}
 			<a class="list-group-item" href="{{ path('participant.sort.detail', {'participant': participant.id, 'sort': sort.id}) }}">

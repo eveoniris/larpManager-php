@@ -877,7 +877,7 @@ class MagieController
 			$app['orm.em']->persist($sort);
 			$app['orm.em']->flush();
 				
-			$app['session']->getFlashBag()->add('success','Le sortilège a été sauvegardé');
+			$app['session']->getFlashBag()->add('success','Le sort a été sauvegardé');
 			return $app->redirect($app['url_generator']->generate('magie.sort.detail',array('sort'=>$sort->getId())),301);
 		}
 	

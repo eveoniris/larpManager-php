@@ -57,16 +57,16 @@
 								<li class="list-group-item"><a href="{{ path('participant.personnage.domaine', {'participant': participant.id}) }}">Choisir un domaine de magie</a></li>
 							{% endif %}
 							{% if trigger.tag == 'SORT APPRENTI' %}
-								<li class="list-group-item"><a href="{{ path('participant.personnage.sort', {'participant': participant.id, 'niveau' : 1}) }}">Choisir un sortilège de niveau Apprenti</a></li>
+								<li class="list-group-item"><a href="{{ path('participant.personnage.sort', {'participant': participant.id, 'niveau' : 1}) }}">Choisir un sort de niveau Apprenti</a></li>
 							{% endif %}
 							{% if trigger.tag == 'SORT INITIE' %}
-								<li class="list-group-item"><a href="{{ path('participant.personnage.sort', {'participant': participant.id, 'niveau' : 2}) }}">Choisir un sortilège de niveau Initié</a></li>
+								<li class="list-group-item"><a href="{{ path('participant.personnage.sort', {'participant': participant.id, 'niveau' : 2}) }}">Choisir un sort de niveau Initié</a></li>
 							{% endif %}
 							{% if trigger.tag == 'SORT EXPERT' %}
-								<li class="list-group-item"><a href="{{ path('participant.personnage.sort', {'participant': participant.id, 'niveau' : 3}) }}">Choisir un sortilège de niveau Expert</a></li>
+								<li class="list-group-item"><a href="{{ path('participant.personnage.sort', {'participant': participant.id, 'niveau' : 3}) }}">Choisir un sort de niveau Expert</a></li>
 							{% endif %}
 							{% if trigger.tag == 'SORT MAITRE' %}
-								<li class="list-group-item"><a href="{{ path('participant.personnage.sort', {'participant': participant.id, 'niveau' : 4}) }}">Choisir un sortilège de niveau Maitre</a></li>
+								<li class="list-group-item"><a href="{{ path('participant.personnage.sort', {'participant': participant.id, 'niveau' : 4}) }}">Choisir un sort de niveau Maitre</a></li>
 							{% endif %}
 							{% if trigger.tag == 'PRETRISE INITIE' %}
 								<li class="list-group-item"><a href="{{ path('participant.personnage.religionDescription', {'participant': participant.id}) }}">Choisir une description de religion</a></li>

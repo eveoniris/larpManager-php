@@ -1,20 +1,20 @@
 {% extends "layout.twig" %}
 
-{% block title %}Sortilèges{% endblock title %}
+{% block title %}Sorts{% endblock title %}
 
 {% block content %}
 
 	<ol class="breadcrumb">
 		<li><a href="{{ path('homepage') }}">Accueil</a></li>
-		<li><a href="{{ path('magie.sort.list') }}">Liste des sortilèges</a></li>
-		<li class="active">Modifier un sortilèges</li>
+		<li><a href="{{ path('magie.sort.list') }}">Liste des sorts</a></li>
+		<li class="active">Modifier un sort</li>
 	</ol>
 	
 	
 	<div class="well bs-component">
 		<form action="{{ path('magie.sort.update', {'sort': sort.id}) }}" method="POST" {{ form_enctype(form) }} novalidate>
 			<fieldset>
-				<legend>Modification d'un sortilège</legend>
+				<legend>Modification d'un sort</legend>
 					{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
 					{{ form(form) }}
 			</fieldset>

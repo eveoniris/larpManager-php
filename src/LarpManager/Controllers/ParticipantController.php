@@ -2013,7 +2013,7 @@ class ParticipantController
 				&& ! $personnage->hasTrigger('SORT EXPERT')
 				&& ! $personnage->hasTrigger('SORT MAITRE') )
 		{
-			$app['session']->getFlashBag()->add('error','Désolé, vous ne pouvez pas choisir de sortilèges supplémentaires.');
+			$app['session']->getFlashBag()->add('error','Désolé, vous ne pouvez pas choisir de sorts supplémentaires.');
 			return $app->redirect($app['url_generator']->generate('gn.personnage', array('gn' => $participant->getGn()->getId())),301);
 		}
 		
@@ -2022,14 +2022,14 @@ class ParticipantController
 		$form = $app['form.factory']->createBuilder()
 			->add('sorts','entity', array(
 					'required' => true,
-					'label' => 'Choisissez votre sortilège',
+					'label' => 'Choisissez votre sort',
 					'multiple' => false,
 					'expanded' => true,
 					'class' => 'LarpManager\Entities\Sort',
 					'choices' => $sorts,
 					'choice_label' => 'label'
 			))
-			->add('save','submit', array('label' => 'Valider votre sortilège'))
+			->add('save','submit', array('label' => 'Valider votre sort'))
 			->getForm();
 	
 		$form->handleRequest($request);
