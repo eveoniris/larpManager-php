@@ -15,8 +15,7 @@
 	<div class="well bs-component">
 		<form action="{{ path('personnage.admin.update.sort',{'personnage':personnage.id}) }}" method="POST" {{ form_enctype(form) }}>
 			<fieldset>
-				<legend>{{ personnage.publicName }} - <small>Choix des sortilèges</small></legend>
-				<p>Choisissez les sorts du personnage</p>
+				<legend>Choix des sorts</legend>
 				{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
 	
 				{{ form_row(form.sorts) }}

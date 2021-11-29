@@ -20,7 +20,7 @@
 		        </div>
 	        
 		        <div class="text-muted">
-		            Registered {{ user.creationDate|date('F j, Y') }}
+		            Enregistré.e le {{ user.creationDate|date('d/m/Y') }}
 		        </div>
 		        <div class="text-muted">
 		        	{{ user.coeur|default(0) }} coeur(s) reçu(s).
@@ -75,9 +75,9 @@
 			        		<div>
 								Personnage : 
 								{% if is_granted('ROLE_ORGA', app.user) %}
-									<a href="{{ path('personnage.admin.detail',{'personnage': participant.personnage.id}) }}">{{ participant.personnage.publicName }}</a>
+									<a href="{{ path('personnage.admin.detail',{'personnage': participant.personnage.id}) }}">{{ participant.personnage.identity }}</a>
 								{% else %}
-									<a href="{{ path('gn.personnage',{'gn': participant.gn.id}) }}">{{ participant.personnage.publicName }}</a>
+									<a href="{{ path('gn.personnage',{'gn': participant.gn.id}) }}">{{ participant.personnage.identity }}</a>
 								{% endif %}
 							</div>	        		
 			        	{% endif %}
