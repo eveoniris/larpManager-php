@@ -710,13 +710,13 @@ class PersonnageController
 		if ( $form->isValid() )
 		{
 			$personnage = $form->getData();
+/*			
 			$participant->setPersonnage($personnage);
-
 			if ( $participant->getGroupeGn() )
 			{
 				$personnage->setGroupe($participant->getGroupeGn());
 			}
-
+*/
 			$personnage->setXp($app['larp.manager']->getGnActif()->getXpCreation());
 				
 			// historique
@@ -757,21 +757,24 @@ class PersonnageController
 			$app['orm.em']->flush();
 			
 			$app['session']->getFlashBag()->add('success','Votre personnage a été sauvegardé.');
-
+/*
 			if ( $participant->getGroupeGn())
 			{
-				return $app->redirect($app['url_generator']->generate('groupe.detail', array('index' => $participant->getGroupe()->getId())), 301);
+				return $app->redirect($app['url_generator']->generate('groupe.detail', array('index' => $participant->getGroupeGn()->getId())), 301);
 			}
 			else
 			{
 				return $app->redirect($app['url_generator']->generate('homepage'), 301);
 			}
+*/
+			return $app->redirect($app['url_generator']->generate('homepage'), 301);
 		}
 		
 		return $app['twig']->render('admin/personnage/add.twig', array(
 				'form' => $form->createView(),
 				'participant' => $participant,
 		));
+
 	}
 			
 	/**
