@@ -48,7 +48,7 @@ class HomepageControllerProvider implements ControllerProviderInterface
 		
 		/** Affichage de la page d'acceuil */
 		$controllers->match('/','LarpManager\Controllers\HomepageController::indexAction')
-					->method('GET')
+					->method('GET|POST')
 					->bind('homepage');
 					
 		/**

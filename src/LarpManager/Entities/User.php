@@ -123,7 +123,19 @@ class User extends BaseUser implements AdvancedUserInterface, \Serializable
 		}
 		return null;
 	}
-		
+	
+	/**
+	 * Fourni les informations de participation
+	 */
+	public function getLastParticipant()
+	{
+		$participant = null;
+		foreach ( $this->getParticipants() as $participant )
+		{
+			$participant = $participant;
+		}
+		return $participant;
+	}
 	
 	/**
 	 * Fourni tous les billets d'un utilisateur

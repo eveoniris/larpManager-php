@@ -688,15 +688,13 @@ class PersonnageController
 	public function adminAddAction(Request $request, Application $app)
 	{
 		$personnage = new \LarpManager\Entities\Personnage();
-		
 		$participant = $request->get('participant');
 		if ( !$participant ) {
-			$participant = $app['user']->getParticipant();
+			$participant = $app['user']->getLastParticipant();
 		}
 		else {
 			$participant = $app['orm.em']->getRepository('\LarpManager\Entities\Participant')->find($participant);
 		}
-		
 		
 		$form = $app['form.factory']->createBuilder(new PersonnageForm(), $personnage)
 			->add('classe','entity', array(
@@ -713,12 +711,12 @@ class PersonnageController
 		{
 			$personnage = $form->getData();
 			$participant->setPersonnage($personnage);
-			
-			if ( $participant->getGroupe())
+
+			if ( $participant->getGroupeGn() )
 			{
-				$personnage->setGroupe($participant->getGroupe());
+				$personnage->setGroupe($participant->getGroupeGn());
 			}
-			
+
 			$personnage->setXp($app['larp.manager']->getGnActif()->getXpCreation());
 				
 			// historique
@@ -754,19 +752,19 @@ class PersonnageController
 				$app['orm.em']->persist($historique);
 			}
 			
-			
 			$app['orm.em']->persist($personnage);
-			$app['orm.em']->persist($participant);
+			// $app['orm.em']->persist($participant);
 			$app['orm.em']->flush();
 			
 			$app['session']->getFlashBag()->add('success','Votre personnage a été sauvegardé.');
-			if ( $participant->getGroupe())
+
+			if ( $participant->getGroupeGn())
 			{
-				return $app->redirect($app['url_generator']->generate('groupe.detail', array('index' => $participant->getGroupe()->getId())),301);
+				return $app->redirect($app['url_generator']->generate('groupe.detail', array('index' => $participant->getGroupe()->getId())), 301);
 			}
 			else
 			{
-				return $app->redirect($app['url_generator']->generate('homepage'),301);
+				return $app->redirect($app['url_generator']->generate('homepage'), 301);
 			}
 		}
 		
