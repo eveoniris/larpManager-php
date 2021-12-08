@@ -60,7 +60,7 @@ class GnController
             // L'utilisateur n'a pas validé les CG.
             return $app->redirect($app['url_generator']->generate('user.gn.validationci', array(
                 'gn' => $gn->getId()
-            )), 307);            
+            )), 303);            
         }
                 
         $repo = $app['orm.em']->getRepository('LarpManager\Entities\Question');
@@ -87,7 +87,7 @@ class GnController
             $app['session']->getFlashBag()->add('error', 'Vous n\'avez pas encore de personnage.');
             return $app->redirect($app['url_generator']->generate('gn.detail', array(
                 'gn' => $gn->getId()
-            )), 301);
+            )), 303);
         }
         $lois = $app['orm.em']->getRepository('LarpManager\Entities\Loi')->findAll();
         return $app['twig']->render('public/personnage/detail.twig', array(
@@ -256,7 +256,7 @@ class GnController
             $app['orm.em']->persist($gn);
             $app['orm.em']->flush();
             $app['session']->getFlashBag()->add('success', 'Le gn a été ajouté.');
-            return $app->redirect($app['url_generator']->generate('gn.list'), 301);
+            return $app->redirect($app['url_generator']->generate('gn.list'), 303);
         }
         return $app['twig']->render('gn/add.twig', array(
             'form' => $form->createView()
