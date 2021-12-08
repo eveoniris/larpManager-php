@@ -7,7 +7,7 @@
 <ol class="breadcrumb">
 	<li><a href="{{ path('homepage')  }}">Accueil</a></li>
 	<li><a href="{{ path('gn.detail', {'gn' : participant.gn.id}) }}">{{ participant.gn.label }}</a></li>
-	<li><a href="{{ path('gn.personnage', {'gn': participant.gn.id}) }}">{{ participant.personnage.nom }} {{ participant.personnage.surnom }}</a></li>
+	<li><a href="{{ path('gn.personnage', {'gn': participant.gn.id}) }}">{{ participant.personnage.nom }}</a></li>
 	<li class="active">La magie</li>
 </ol>
 	
@@ -22,7 +22,7 @@
 			<table class="table table-condensed table-bordered">
 				<thead>
 					<tr>
-						<th>Niveau du sortilège</th>
+						<th>Niveau du sort</th>
 						<th>1</th>
 						<th>2</th>
 						<th>3</th>
@@ -47,7 +47,7 @@
 				</tbody>
 			</table>
 				
-			<p>Exemple : Un sort de niveau 2 coutera 2 points de Mana au mage connaissant le domaine de magie du sort, et 3 points de mana au mage ne connaissant pas le domaine de magie.</p>
+			<p>Example : Un sort de niveau 2 coutera 2 points de Mana au mage connaissant le domaine de magie du sort, et 3 points de mana au mage ne connaissant pas le domaine de magie.</p> 
 		</div>
 		
 			
@@ -74,5 +74,4 @@
 		{% endfor %}
 	</div>
 </div> <!-- end row -->
-		
 {% endblock content %}

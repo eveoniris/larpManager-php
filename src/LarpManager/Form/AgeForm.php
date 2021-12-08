@@ -54,6 +54,10 @@ class AgeForm extends AbstractType
 				->add('bonus','integer', array(
 					'label' => 'XP en bonus',
 					'required' => true,	
+				))
+				->add('minimumValue','integer', array(
+					'label' => 'Age de départ',
+					'required' => true,	
 				));
 	}
 	

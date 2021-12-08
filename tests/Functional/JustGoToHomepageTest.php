@@ -1,8 +1,8 @@
 <?php
-namespace LarpManager\Tests\Controller;
+namespace Tests\Functional;
 
-require_once(__DIR__ . "\..\BaseTestCase.php");
-use LarpManager\Tests\BaseTestCase;
+require_once(__DIR__ . "/../BaseTestCase.php");
+use Tests\BaseTestCase;
 
 
 class JustGoToHomepageTest extends BaseTestCase

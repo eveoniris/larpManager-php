@@ -1,0 +1,14 @@
+{# Groupe principal #}
+<div class="header">
+	<h5>Groupe principal</h5>
+</div>
+
+<div class="row">
+	<div class="col-sm-6">
+		<ul class="list-group">
+			{% if personnage.groupe %}
+				<li class="list-group-item"><a href="{{ path('participant.groupeGn.groupe', {'groupeGn': participant.session.id}) }}">{{ participant.session.groupe.nom }}</a></li>
+			{% endif %}			
+		</ul>
+	</div>
+</div>

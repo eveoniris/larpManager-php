@@ -1,0 +1,19 @@
+{% macro getCaret(app,type) %}
+    {% if app.request.get('order_by') == type  %}
+        {% if app.request.get('order_dir') == 'ASC' %}
+            <span class="caret"></span>
+        {%else%}
+            <span class="dropup">
+					<span class="caret"></span>
+				</span>
+        {% endif %}
+    {% endif %}
+{% endmacro %}
+
+{% macro getDirection(app,type)  %}
+    {% if app.request.get('order_by') == type and app.request.get('order_dir') == 'ASC' %}
+        {{ 'DESC' }}
+    {% else %}
+        {{ 'ASC' }}
+    {% endif %}
+{% endmacro %}

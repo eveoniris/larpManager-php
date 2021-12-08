@@ -40,4 +40,9 @@ class Potion extends BasePotion
 	{
 		return $this->getNumero() .' - '. $this->getLabel() .' - Niveau '. $this->getNiveau();
 	}
+
+	public function getPrintLabel()
+	{
+		return preg_replace('/[^a-z0-9]+/', '_', strtolower($this->getNumero() .'_'. $this->getLabel() .'_'. $this->getNiveau()));
+	}
 }

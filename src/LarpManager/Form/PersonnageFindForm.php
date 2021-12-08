@@ -22,7 +22,7 @@ namespace LarpManager\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * LarpManager\Form\PersonnageFindForm
@@ -63,7 +63,7 @@ class PersonnageFindForm extends AbstractType
 					'required' => false,
 					'label' => 'Par religion',
 					'class' => 'LarpManager\Entities\Religion',
-					'property' => 'label',
+					'property' => 'label'
 				))
 				->add('competence', 'entity', array(
 					'required' => false,
@@ -80,11 +80,11 @@ class PersonnageFindForm extends AbstractType
 	}
 	
 	/**
-	 * Définition de l'entité concerné
+	 * Définition de l'entité concernée
 	 * 
-	 * @param OptionsResolverInterface $resolver
+	 * @param OptionsResolver $resolver
 	 */
-	public function setDefaultOptions(OptionsResolverInterface $resolver)
+	public function configureOptions(OptionsResolver $resolver)
 	{
 	}
 	

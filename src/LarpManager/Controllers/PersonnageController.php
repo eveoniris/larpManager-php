@@ -20,6 +20,7 @@
  
 namespace LarpManager\Controllers;
 
+use LarpManager\Repository\PersonnageRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Common\Collections\ArrayCollection;
 
@@ -39,6 +40,7 @@ use LarpManager\Form\Personnage\PersonnageOriginForm;
 use LarpManager\Form\Personnage\PersonnageReligionForm;
 use LarpManager\Form\Personnage\PersonnageUpdateRenommeForm;
 use LarpManager\Form\Personnage\PersonnageUpdateHeroismeForm;
+use LarpManager\Form\Personnage\PersonnageUpdatePugilatForm;
 use LarpManager\Form\Personnage\PersonnageTechnologieForm;
 
 use LarpManager\Form\PersonnageFindForm;
@@ -58,6 +60,8 @@ use LarpManager\Form\PersonnageStatutForm;
 use LarpManager\Form\PersonnageDeleteForm;
 use LarpManager\Form\PersonnageXpForm;
 use LarpManager\Form\TrombineForm;
+use LarpManager\Repository\LikeExpression;
+use LarpManager\Repository\EqualExpression;
 
 
 /**
@@ -182,7 +186,6 @@ class PersonnageController
 		{
 			$personnage = $form->getData();
 			$app['user']->addPersonnage($personnage);
-			
 			$app['orm.em']->persist($app['user']);
 			$app['orm.em']->persist($personnage);
 			$app['orm.em']->flush();
@@ -339,7 +342,6 @@ class PersonnageController
 	{
 		$langueMateriel = array();
 		foreach($personnage->getPersonnageLangues() as $langue) {
-
 			if(!in_array('Bracelet '.$langue->getLangue()->getGroupeLangue()->getCouleur(),$langueMateriel)) {
 				array_push($langueMateriel, 'Bracelet '.$langue->getLangue()->getGroupeLangue()->getCouleur());
 			}
@@ -488,7 +490,25 @@ class PersonnageController
 				'form' => $form->createView(),
 		));
 	}
-	
+    private function getErrorMessages(\Symfony\Component\Form\Form $form) {
+        $errors = array();
+
+        foreach ($form->getErrors() as $key => $error) {
+            if ($form->isRoot()) {
+                $errors['#'][] = $error->getMessage();
+            } else {
+                $errors[] = $error->getMessage();
+            }
+        }
+
+        foreach ($form->all() as $child) {
+            if (!$child->isValid()) {
+                $errors[$child->getName()] = $this->getErrorMessages($child);
+            }
+        }
+
+        return $errors;
+    }
 	/**
 	 * Liste des personnages
 	 * 
@@ -503,11 +523,29 @@ class PersonnageController
 		$page = (int)($request->get('page') ?: 1);
 		$offset = ($page - 1) * $limit;
 		$criteria = array();
-		
-		$form = $app['form.factory']->createBuilder(new PersonnageFindForm())->getForm();
-		
+
+		$formData = $request->query->get('personnageFind');
+        $religion = isset($formData['religion'])?$app['orm.em']->find('LarpManager\Entities\Religion',$formData['religion']):null;
+        $competence = isset($formData['competence'])?$app['orm.em']->find('LarpManager\Entities\Competence',$formData['competence']):null;
+        $classe = isset($formData['classe'])?$app['orm.em']->find('LarpManager\Entities\Classe',$formData['classe']):null;
+        $optionalParameters = "";
+
+		$form = $app['form.factory']->createBuilder(
+		    new PersonnageFindForm(),
+            null,
+            array(
+                'data' => [
+                    'religion' => $religion,
+                    'classe' => $classe,
+                    'competence' => $competence,
+                ],
+                'method' => 'get',
+                'csrf_protection' => false
+            )
+        )->getForm();
+
 		$form->handleRequest($request);
-			
+
 		if ( $form->isValid() )
 		{
 			$data = $form->getData();
@@ -515,30 +553,48 @@ class PersonnageController
 			$value = $data['value'];
 			switch ($type){
 				case 'nom':
-					$criteria[] = "p.nom LIKE '%$value%'";
+				    // $criteria[] = new LikeExpression("p.nom", "%$value%");
+				    $criteria["nom"] = "LOWER(p.nom) LIKE '%".preg_replace('/[\'"<>=*;]/', '', strtolower($value))."%'";
 					break;
 				case 'id':
-					$criteria[] = "p.id = $value";
+				    // $criteria[] = new EqualExpression("p.id", $value);
+				    $criteria["id"] = "p.id = ".preg_replace('/[^\d]/', '', $value);
+					break;								
 			}
 		}
-		
+        if($religion){
+            $criteria["religion"] = "pr.id = {$religion->getId()}";
+            $optionalParameters .= "&personnageFind[religion]={$religion->getId()}";
+        }
+        if($competence){
+            $criteria["competence"] = "cmp.id = {$competence->getId()}";
+            $optionalParameters .= "&personnageFind[competence]={$competence->getId()}";
+        }
+        if($classe){
+            $criteria["classe"] = "cl.id = {$classe->getId()}";
+            $optionalParameters .= "&personnageFind[classe]={$classe->getId()}";
+        }
+
+        /* @var PersonnageRepository $repo */
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Personnage');
 		$personnages = $repo->findList(
-				$criteria,
-				array( 'by' =>  $order_by, 'dir' => $order_dir),
-				$limit,
-				$offset);
+            $criteria,
+            array( 'by' =>  $order_by, 'dir' => $order_dir),
+            $limit,
+            $offset
+        );
 		
 		$numResults = $repo->findCount($criteria);
 		
 		$paginator = new Paginator($numResults, $limit, $page,
-				$app['url_generator']->generate('personnage.admin.list') . '?page=(:num)&limit=' . $limit . '&order_by=' . $order_by . '&order_dir=' . $order_dir
+				$app['url_generator']->generate('personnage.admin.list') . '?page=(:num)&limit=' . $limit . '&order_by=' . $order_by . '&order_dir=' . $order_dir . $optionalParameters
 				);
 		
 		return $app['twig']->render('admin/personnage/list.twig', array(
-				'personnages' => $personnages,
-				'paginator' => $paginator,
-				'form' => $form->createView(),
+            'personnages' => $personnages,
+            'paginator' => $paginator,
+            'form' => $form->createView(),
+            'optionalParameters' => $optionalParameters
 		));
 	}
 	
@@ -634,7 +690,7 @@ class PersonnageController
 		$personnage = new \LarpManager\Entities\Personnage();
 		
 		$participant = $request->get('participant');
-		if ( ! $participant ) {
+		if ( !$participant ) {
 			$participant = $app['user']->getParticipant();
 		}
 		else {
@@ -684,7 +740,7 @@ class PersonnageController
 					$app['orm.em']->persist($firstCompetence);
 				}
 			}
-			
+
 			// Ajout des points d'expérience gagné grace à l'age
 			$xpAgeBonus = $personnage->getAge()->getBonus();
 			if ( $xpAgeBonus )
@@ -1006,6 +1062,47 @@ class PersonnageController
 				'personnage' => $personnage));
 	}
 	
+	
+	/**
+	 * Modification du pugilat d'un personnage
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Personnage $personnage
+	 */
+	public function adminUpdatePugilatAction(Request $request, Application $app, Personnage $personnage)
+	{
+		$form = $app['form.factory']->createBuilder(new PersonnageUpdatePugilatForm())
+			->add('save','submit', array('label' => 'Valider les modifications'))
+			->getForm();
+		
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$pugilat = $form->get('pugilat')->getData();
+			$explication = $form->get('explication')->getData();
+				
+			$pugilat_history = new \LarpManager\Entities\PugilatHistory();
+				
+			$pugilat_history->setPugilat($pugilat);
+			$pugilat_history->setExplication($explication);
+			$pugilat_history->setPersonnage($personnage);
+			$personnage->addPugilat($pugilat);
+		
+			$app['orm.em']->persist($pugilat_history);
+			$app['orm.em']->persist($personnage);
+			$app['orm.em']->flush();
+		
+			$app['session']->getFlashBag()->add('success','Le personnage a été sauvegardé.');
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
+		}
+		
+		return $app['twig']->render('admin/personnage/updatePugilat.twig', array(
+				'form' => $form->createView(),
+				'personnage' => $personnage));
+	}
+	
 	/**
 	 * Ajoute un jeton vieillesse au personnage
 	 */
@@ -1190,7 +1287,7 @@ class PersonnageController
 	{
 		$personnage = $request->get('personnage');
 				
-		$langues = $app['orm.em']->getRepository('LarpManager\Entities\Langue')->findAll();
+		$langues = $app['orm.em']->getRepository('LarpManager\Entities\Langue')->findBy(array(), array('secret' => 'ASC', 'diffusion' => 'DESC', 'label' => 'ASC'));
 			
 		$originalLanguages = array();
 		foreach ( $personnage->getLanguages() as $languages)
@@ -1201,7 +1298,7 @@ class PersonnageController
 		$form = $app['form.factory']->createBuilder()
 			->add('langues','entity', array(
 					'required' => true,
-					'label' => 'Choisissez les languages',
+					'label' => 'Choisissez les langues du personnage',
 					'multiple' => true,
 					'expanded' => true,
 					'class' => 'LarpManager\Entities\Langue',
@@ -1247,7 +1344,7 @@ class PersonnageController
 					$found = false;
 					foreach ( $langues as $l)
 					{
-						if ($l == $langue) $found = true;
+						if ($l === $langue) $found = true;
 					}
 					
 					if ( ! $found )
@@ -1280,7 +1377,7 @@ class PersonnageController
 	public function adminUpdatePriereAction(Request $request, Application $app)
 	{
 		$personnage = $request->get('personnage');
-			
+
 		$originalPrieres = new ArrayCollection();
 		foreach ( $personnage->getPrieres() as $priere)
 		{
@@ -1296,7 +1393,7 @@ class PersonnageController
 		if ( $form->isValid() )
 		{
 			$personnage = $form->getData();
-			
+
 			foreach($personnage->getPrieres() as $priere)
 			{
 				if ( ! $originalPrieres->contains($priere))
@@ -1994,7 +2091,7 @@ class PersonnageController
 				
 			if ( $xp - $cout < 0 )
 			{
-				$app['session']->getFlashBag()->add('error','Vos n\'avez pas suffisement de point d\'expérience pour acquérir cette compétence.');
+				$app['session']->getFlashBag()->add('error','Vos n\'avez pas suffisement de points d\'expérience pour acquérir cette compétence.');
 				return $app->redirect($app['url_generator']->generate('homepage'),303);
 			}
 			$personnage->setXp($xp - $cout);

@@ -26,7 +26,7 @@ table tr td {
 	<ul>
 	{% for participant in groupe.nextSession.participants %}
 		{% if participant.personnage %}
-			<li>#{{ participant.personnage.id }} {{ participant.personnage.nom }} {{ participant.personnage.surnom }}</li>
+			<li>#{{ participant.personnage.id }} - {{ participant.personnage.nom }}{% if participant.personnage.surnom %} ({{ participant.personnage.surnom }}){% endif %}</li>
 		{% else %}
 			<li>Attention le participant {{ participant.user.username }} / {{ participant.user.email }} n'a pas de personnage</li>
 		{% endif %}
@@ -116,9 +116,6 @@ table tr td {
 	</div>
 
 	<div class="print-page-break"></div>
-	
-	
-	
 	
 {% endfor %}
 

@@ -4,6 +4,8 @@
 
 {% block content %}
 
+	{% import "admin/filterMacros.html.twig" as macros %}
+
 	<ol class="breadcrumb">
 		<li><a href="{{ path('homepage') }}">Accueil</a></li>
 		<li class="active">Liste des personnages</li>
@@ -28,7 +30,7 @@
 					<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Télécharger la liste (CSV)" href="{{ path('personnage.admin.download') }}"><i class="fa fa-download"></i></a>
 				</div>
 				
-				<form class="form-inline" action="{{ path('personnage.admin.list') }}" method="POST" {{ form_enctype(form) }}>
+				<form class="form-inline" action="{{ path('personnage.admin.list') }}" method="GET" {{ form_enctype(form) }}>
 					{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
 
 					<div class="form-group">
@@ -49,67 +51,29 @@
 		   		
 	   			
 			</div>
-			{{ paginator|raw }}	
-	
-		
+			{{ paginator|raw }}
+
+
 	<table class="table table-striped table-bordered table-condensed table-hover">
 		<thead>
 			<tr>
 				<th>
-					{% if app.request.get('order_dir') == 'ASC' and app.request.get('order_by') == 'id' %}
-						<a href="{{ path('personnage.admin.list', {'order_by': 'id', 'order_dir': 'DESC'}) }}">
-					{%  else %}
-						<a href="{{ path('personnage.admin.list', {'order_by': 'id', 'order_dir': 'ASC'}) }}">
-					{% endif %}
-						#	
-					{% if app.request.get('order_by') == 'id'  %}
-						{% if app.request.get('order_dir') == 'ASC' %}
-							<span class="caret"></span>
-						{%else%}
-							<span class="dropup">
- 									<span class="caret"></span>
-							</span>
-						{% endif %}
-					{% endif %}
+					<a href="{{ path('personnage.admin.list', {'order_by': 'id', 'order_dir': macros.getDirection(app,'id')|trim})~optionalParameters }}">
+						# {{ macros.getCaret(app,'id') }}
 					</a>
 				</th>
 				<th>
-					{% if app.request.get('order_dir') == 'ASC' and app.request.get('order_by') == 'nom' %}
-						<a href="{{ path('personnage.admin.list', {'order_by': 'nom', 'order_dir': 'DESC'}) }}">
-					{%  else %}
-						<a href="{{ path('personnage.admin.list', {'order_by': 'nom', 'order_dir': 'ASC'}) }}">
-					{% endif %}
-						Nom	
-					{% if app.request.get('order_by') == 'nom'  %}
-						{% if app.request.get('order_dir') == 'ASC' %}
-							<span class="caret"></span>
-						{%else%}
-							<span class="dropup">
- 									<span class="caret"></span>
-							</span>
-						{% endif %}
-					{% endif %}
+					<a href="{{ path('personnage.admin.list', {'order_by': 'nom', 'order_dir': macros.getDirection(app,'nom')|trim})~optionalParameters }}">
+						Nom {{ macros.getCaret(app,'nom') }}
 					</a>
 				</th>
 				<th>
 					Classe
 				</th>
 				<th>
-					{% if app.request.get('order_dir') == 'ASC' and app.request.get('order_by') == 'renomme' %}
-						<a href="{{ path('personnage.admin.list', {'order_by': 'renomme', 'order_dir': 'DESC'}) }}">
-					{%  else %}
-						<a href="{{ path('personnage.admin.list', {'order_by': 'renomme', 'order_dir': 'ASC'}) }}">
-					{% endif %}
-					Renomme
-					{% if app.request.get('order_by') == 'renomme'  %}
-						{% if app.request.get('order_dir') == 'ASC' %}
-							<span class="caret"></span>
-						{%else%}
-							<span class="dropup">
- 									<span class="caret"></span>
-							</span>
-						{% endif %}
-					{% endif %}
+					<a href="{{ path('personnage.admin.list', {'order_by': 'renomme', 'order_dir': macros.getDirection(app,'renomme')|trim})~optionalParameters }}">
+						Renommée {{ macros.getCaret(app,'renomme') }}
+					</a>
 				</th>
 				<th>
 					Groupe
@@ -118,7 +82,7 @@
 					Utilisateur
 				</th>
 				<th>
-					Points d'expériences
+					Points d'expérience
 				</th>
 				<th style="text-align:middle;" title="Anomalie">
 					Ano.
@@ -129,30 +93,39 @@
 			{% for personnage in personnages %}
 				<tr>
 					<td>{{ personnage.id }}</td>
-					<td><a href="{{ path('personnage.admin.detail', {'personnage':personnage.id}) }}">{{ personnage.nom }} {{ personnage.surnom }}</a></td>
+					<td><a href="{{ path('personnage.admin.detail', {'personnage':personnage.id}) }}">{{ personnage.nom }}{% if personnage.surnom %} ({{ personnage.surnom }}){% endif %}</a></td>
 					<td>{{ personnage.classe }}</td>
 					<td>{{ personnage.renomme|default(0) }}</td>
-					<td>{{ personnage.groupe }}</td>
-					
+					<td>
+						{% set gn = 'LH1' %}
+						{% set groupe = 'N\'est pas lié à un groupe' %}
+						{% for participant in personnage.participants %}
+							{% set gn = participant.gn %}
+							{% if participant.groupeGn %}
+								{% set groupe = participant.groupeGn.groupe.nom %}
+							{% else %}
+								{% set groupe = 'N\'est pas lié à un groupe' %}
+							{% endif %}
+						{% endfor %}
+						{{ gn }} - {{ groupe }}
+					</td>
 					<td>
 						{% for participant in personnage.participants %}
-							<strong>{{ participant.gn.label }}</strong>&nbsp;
+							<strong>{{ participant.gn.label }}</strong>&nbsp;-&nbsp;
 							{{ participant.user.etatCivil.nom }} {{ participant.user.etatCivil.prenom }}<br />
 						{% endfor %}
 					</td>
 					<td>
 						<a href="{{ path('personnage.admin.xp', {'personnage': personnage.id}) }}">Points d'expériences</a>
 					</td>
-					<td>						
-						
-							{% set languesAnomalie = personnage.getLanguesAnomaliesMessage() %}
-							{% set potionAnomalie = personnage.getPotionAnomalieMessage() %}
-							{% set sortAnomalie = personnage.getSortAnomalieMessage() %}
-							{% set priereAnomalie = personnage.getPrieresAnomalieMessage() %}
-							{% if languesAnomalie != "" or potionAnomalie != "" or sortAnomalie != "" or priereAnomalie != "" %}
+					<td>
+						{% set languesAnomalie = personnage.getLanguesAnomaliesMessage() %}
+						{% set potionAnomalie = personnage.getPotionAnomalieMessage() %}
+						{% set sortAnomalie = personnage.getSortAnomalieMessage() %}
+						{% set priereAnomalie = personnage.getPrieresAnomalieMessage() %}
+						{% if languesAnomalie != "" or potionAnomalie != "" or sortAnomalie != "" or priereAnomalie != "" %}
 							<div style="margin:auto;" class="pastille-orange" title='{{languesAnomalie}} {{potionAnomalie}} {{sortAnomalie}} {{priereAnomalie}}'>&nbsp;</div>
-							{% endif %}
-																
+						{% endif %}					
 					</td>
 				</tr>
 			{% endfor %}

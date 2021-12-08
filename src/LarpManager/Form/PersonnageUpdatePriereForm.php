@@ -23,6 +23,7 @@ namespace LarpManager\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Doctrine\ORM\EntityRepository;
 
 /**
  * LarpManager\Form\PersonnageUpdatePriereForm
@@ -47,7 +48,10 @@ class PersonnageUpdatePriereForm extends AbstractType
 				'expanded' => true,
 				'class' => 'LarpManager\Entities\Priere',
 				'choice_label' => 'fullLabel',
-				'label' => 'Choisissez les prieres du personnage'
+				'label' => 'Choisissez les prières du personnage',
+				'query_builder' => function(EntityRepository $repository) { 
+					return $repository->createQueryBuilder('p')->addOrderBy('p.sphere', 'ASC')->addOrderBy('p.niveau', 'ASC');
+				}
 		));
 
 	}

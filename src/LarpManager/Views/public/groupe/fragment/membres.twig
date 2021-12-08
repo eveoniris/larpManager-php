@@ -1,6 +1,6 @@
 <div class="row">   	
 	{% for session in groupe.groupeGns if session.gn == participant.gn %}
-	<div class="col-md-4">
+	<div class="col-md-10">
 		<h6><i class="fa fa-circle"></i> {{ session.gn }}</h6>
 	
 		{% if participant.isResponsable(groupe) %}
@@ -35,7 +35,7 @@
 				
 						<p>
 							{% if joueur.personnage %}
-								{{ joueur.personnage.nom }} {{ joueur.personnage.surnom }}</a>
+								{{ joueur.personnage.nom }} ({{ joueur.personnage.surnom }})</a>
 								-- {{ joueur.personnage.classeName }}
 							{% else %}
 								N'a pas encore créé son personnage

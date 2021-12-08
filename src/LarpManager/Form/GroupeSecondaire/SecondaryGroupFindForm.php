@@ -40,14 +40,16 @@ class SecondaryGroupFindForm extends AbstractType
 	 */
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
-		$builder->add('search','text', array(
+		$builder->add('value','text', array(
 						'required' => true,
+						'label' => 'Valeur',
 				))
 				->add('type', 'choice', array(
 						'required' => true,
+						'label' => 'Type',
 						'choices' => array(
-							'numero' => 'Numéro',
-							'group_name' => 'Nom du groupe',
+							'id' => 'Numéro',
+							'nom' => 'Nom du groupe secondaire',
 						)
 				));
 	}

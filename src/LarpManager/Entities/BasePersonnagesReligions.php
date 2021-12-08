@@ -30,6 +30,8 @@ class BasePersonnagesReligions
     /**
      * @ManyToOne(targetEntity="Religion", inversedBy="personnagesReligions")
      * @JoinColumn(name="religion_id", referencedColumnName="id", nullable=false)
+     * @JoinColumn(name="religion_label", referencedColumnName="label", nullable=false)
+     * @OrderBy({"religion_label" = "ASC",})
      */
     protected $religion;
 

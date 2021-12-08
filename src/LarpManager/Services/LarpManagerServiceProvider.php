@@ -54,6 +54,7 @@ use LarpManager\Services\Converter\GroupeGnConverter;
 use LarpManager\Services\Converter\IngredientConverter;
 use LarpManager\Services\Converter\IntrigueConverter;
 use LarpManager\Services\Converter\ItemConverter;
+use LarpManager\Services\Converter\LangueConverter;
 use LarpManager\Services\Converter\LieuConverter;
 use LarpManager\Services\Converter\LoiConverter;
 use LarpManager\Services\Converter\MembreConverter;
@@ -295,6 +296,11 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 			return new ReligionConverter($app['orm.em']);
 		});
 		
+		// langue converter
+		$app['converter.langue'] = $app->share(function($app) {
+			return new LangueConverter($app['orm.em']);
+		});
+
 		// personnageLangue converter
 		$app['converter.personnageLangue'] = $app->share(function($app) {
 			return new PersonnageLangueConverter($app['orm.em']);

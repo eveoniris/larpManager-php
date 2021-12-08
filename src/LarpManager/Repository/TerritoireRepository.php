@@ -76,4 +76,98 @@ class TerritoireRepository extends EntityRepository
 	
 		return $result;
 	}
+
+    /**
+     * Trouve les fiefs correspondant aux critères de recherche
+     *
+     * @param array $criteria
+     * @param array $order
+     * @param unknown $limit
+     * @param unknown $offset
+     */
+    public function findFiefsList(array $criteria = array(), array $order = array(), $limit, $offset)
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+
+        $qb->select('distinct t');
+        $qb->from('LarpManager\Entities\Territoire','t');
+        if(array_key_exists("tgr.id",$criteria)) $qb->join('t.groupe','tgr');
+        $qb->join('t.territoire','tpr');
+        $qb->join('tpr.territoire','tp');
+        $qb->andWhere('t.territoire IS NOT NULL');
+        $qb->andWhere('tp.territoire IS NULL');
+
+        $count = 0;
+        foreach ( $criteria as $key => $value )
+        {
+            if($key == "t.nom")
+            {
+                $qb->andWhere("LOWER($key) LIKE ?".$count)
+                    ->setParameter($count, "%".preg_replace('/[\'"<>=*;]/', '', strtolower($value))."%");
+            }
+            else
+            {
+                $qb->andWhere($key." = ?".$count)
+                    ->setParameter($count, $value);
+            }
+            $count++;
+        }
+
+        $qb->setFirstResult($offset);
+        $qb->setMaxResults($limit);
+        $defaultEntityAlias = strstr($order['by'],'.') ? '' : 't.';
+        $qb->orderBy($defaultEntityAlias.$order['by'], $order['dir']);
+        return $qb->getQuery()->getResult();
+    }
+    /**
+     * Trouve le nombre de fiefs correspondant aux critères de recherche
+     *
+     * @param array $criteria
+     * @param array $options
+     */
+    public function findFiefsCount(array $criteria = array())
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+
+        $qb->select($qb->expr()->count('distinct t'));
+        $qb->from('LarpManager\Entities\Territoire','t');
+        if(array_key_exists("groupe",$criteria)) $qb->join('t.groupe','tgr');
+        $qb->join('t.territoire','tpr');
+        $qb->join('tpr.territoire','tp');
+        $qb->andWhere('t.territoire IS NOT NULL');
+        $qb->andWhere('tp.territoire IS NULL');
+
+        $count = 0;
+        foreach ( $criteria as $key => $value )
+        {
+            if($key == "t.nom")
+            {
+                $qb->andWhere($key." LIKE %?$count%")
+                    ->setParameter("$count", $value);
+            }
+            else
+            {
+                $qb->andWhere($key." = ?$count")
+                    ->setParameter("$count", $value);
+            }
+            $count++;
+        }
+
+        return $qb->getQuery()->getSingleScalarResult();
+    }
+
+    public function findProvinces()
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+
+        $qb->select('distinct tpr');
+        $qb->from('LarpManager\Entities\Territoire','tpr');
+        $qb->leftJoin('LarpManager\Entities\Territoire','t','WITH','tpr.id = t.territoire');
+        $qb->join('tpr.territoire','tp');
+        $qb->andWhere('tpr.territoire IS NOT NULL');
+        $qb->andWhere('tp.territoire IS NULL');
+        $qb->orderBy('tpr.nom', 'ASC');
+
+        return $qb->getQuery()->getResult();
+    }
 }

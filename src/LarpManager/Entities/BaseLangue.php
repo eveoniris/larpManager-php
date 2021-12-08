@@ -67,6 +67,16 @@ class BaseLangue
      */
     protected $documents;
 
+    /**
+     * @Column(type="boolean", nullable=false, options={"default":0})
+     */
+    protected $secret;
+
+    /**
+     * @Column(type="string", length=45, nullable=true)
+     */
+    protected $documentUrl;
+
     public function __construct()
     {
         $this->personnageLangues = new ArrayCollection();
@@ -297,8 +307,54 @@ class BaseLangue
         return $this->documents;
     }
 
+    /**
+     * Set the value of secret.
+     *
+     * @param boolean $secret
+     * @return \LarpManager\Entities\Langue
+     */
+    public function setSecret($secret)
+    {
+        $this->secret = $secret;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of secret.
+     *
+     * @return boolean
+     */
+    public function getSecret()
+    {
+        return $this->secret;
+    }
+
+    /**
+     * Set the value of documentUrl.
+     *
+     * @param boolean $documentUrl
+     * @return \LarpManager\Entities\Langue
+     */
+    public function setDocumentUrl($documentUrl)
+    {
+        $this->documentUrl = $documentUrl;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of sedocumentUrlcret.
+     *
+     * @return boolean
+     */
+    public function getDocumentUrl()
+    {
+        return $this->documentUrl;
+    }
+
     public function __sleep()
     {
-        return array('id', 'label', 'description', 'diffusion', 'groupe_langue_id');
+        return array('id', 'label', 'description', 'diffusion', 'groupe_langue_id', 'secret');
     }
 }

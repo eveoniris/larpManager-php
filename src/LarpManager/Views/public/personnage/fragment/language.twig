@@ -1,10 +1,17 @@
 {# languages connu #}
 <div class="header">
-	<h5>Languages connus</h5>
+	<h5>Langues connues</h5>
 </div>
 
 <ul class="list-group">
 	{% for personnageLangue in personnage.personnageLangues %}
-		<li class="list-group-item"><strong>{{ personnageLangue.langue }}</strong>&nbsp;<small>(obtenu grace à votre {{ personnageLangue.source }})</small>{{ personnageLangue.langue.description|markdown }}</li>
+		<li class="list-group-item"><strong>{{ personnageLangue.langue }}</strong>&nbsp;<small>(obtenu grace à votre {{ personnageLangue.source }})</small><br />
+		{{ personnageLangue.langue.description|markdown }}
+		{% if personnageLangue.langue.documentUrl %}
+		<a class="btn btn-default btn-sm" href="{{ path('participant.langue.document',{'participant': participant.id, 'langue' : personnageLangue.langue.id, 'filename': personnageLangue.langue.printlabel }) }}">
+			<i class="fa fa-file"></i> Voir l'abécédaire
+		</a>
+    	{% endif %}
+		</li>
 	{% endfor %}
 </ul>

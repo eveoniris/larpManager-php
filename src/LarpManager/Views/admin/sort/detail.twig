@@ -1,16 +1,21 @@
 {% extends "layout.twig" %}
 
-{% block title %}Sortilèges{% endblock title %}
+{% block title %}Sorts{% endblock title %}
 
 {% block content %}
 
 	<ol class="breadcrumb">
 		<li><a href="{{ path('homepage') }}">Accueil</a></li>
-		<li><a href="{{ path('magie.sort.list') }}">Liste des sortilèges</a></li>
-		<li class="active">Détail d'un sortilège</li>
+		<li><a href="{{ path('magie.sort.list') }}">Liste des sorts</a></li>
+		<li class="active">Détail d'un sort</li>
 	</ol>
 
 	<div class="list-group">
+		{% if sort.secret %}
+		<div class="list-group-item">
+			<div class="list-group-item-heading"><h6><span style="color:red;">Sort secret</span></h6></div>
+		</div>
+		{% endif %}
 		<div class="list-group-item">
 			<div class="list-group-item-heading"><h6>Label</h6></div>
 			<div class="list-group-item-text">{{ sort.label }}</div>
@@ -34,9 +39,6 @@
 	    	</p>
     	</div>
 	</div>
-	
-	
-	
 	<div class="panel panel-default">
 		<div class="panel-heading"><h4>Description</h4></div>
 		<div class="panel-body">

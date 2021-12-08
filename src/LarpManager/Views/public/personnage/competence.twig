@@ -9,7 +9,7 @@
 	<ol class="breadcrumb">
 		<li><a href="{{ path('homepage') }}">Page d'accueil</a></li>
 		<li><a href="{{ path('gn.detail', {'gn' : participant.gn.id}) }}">{{ participant.gn.label }}</a></li>
-		<li><a href="{{ path('gn.personnage', {'gn': participant.gn.id}) }}">{{ participant.personnage.nom }} {{ participant.personnage.surnom }}</a></li>
+		<li><a href="{{ path('gn.personnage', {'gn': participant.gn.id}) }}">{{ participant.personnage.nom }}</a></li>
 		<li class="active">Achat d'une compétence</li>
 	</ol>
 	
@@ -40,7 +40,7 @@
 	
 			<div class="well well-sm">
 				<div class="header">
-					<h5>Détail des competences accessibles</h5>
+					<h5>Détail des compétences accessibles</h5>
 				</div>
 				
 				<div class="list-group">

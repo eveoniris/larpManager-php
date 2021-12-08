@@ -1,15 +1,13 @@
 {% if personnage.hasCompetence('Prêtrise') %}
 	<div class="header">
-		<h5>Vos prières</h5>
+		<h5>Prêtrise</h5>
 	</div>
 	
-	<div class="row">
-		<div class="col-sm-12">
-			<div class="list-group">
-			{% for priere in personnage.prieres %}
-				<a class="list-group-item" href="{{ path('participant.priere.detail', {'participant': participant.id, 'priere': priere.id}) }}">{{ priere.sphere.label }} - Niveau {{ priere.niveau }} ({{ priere.label }})</a>
-			{% endfor %}
-			</div>
-		</div>
+	<h6>Liste de vos prières</h6>
+	<div class="list-group">
+		{% for priere in personnage.prieres %}
+			<a class="list-group-item" href="{{ path('participant.priere.detail', {'participant': participant.id, 'priere': priere.id}) }}">{{ priere.sphere.label }} - Niveau {{ priere.niveau }} ({{ priere.label }})</a>
+		{% endfor %}
 	</div>
+
 {% endif %}

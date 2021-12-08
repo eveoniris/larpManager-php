@@ -23,6 +23,7 @@ namespace LarpManager\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Doctrine\ORM\EntityRepository;
 
 /**
  * LarpManager\Form\PersonnageUpdateLangueForm
@@ -49,6 +50,9 @@ class PersonnageUpdateLangueForm extends AbstractType
 				'choice_label' => 'label',
 				'label' => 'Choisissez les langues du personnage',
 				'mapped' => false,
+				'query_builder' => function(EntityRepository $repository) { 
+					return $repository->createQueryBuilder('l')->addOrderBy('l.secret', 'ASC')->addOrderBy('l.diffusion', 'DESC')->addOrderBy('l.label', 'ASC');
+				}
 		));
 
 	}

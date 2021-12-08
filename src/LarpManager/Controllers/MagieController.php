@@ -33,6 +33,8 @@ use LarpManager\Form\PriereDeleteForm;
 use LarpManager\Form\SphereForm;
 use LarpManager\Form\SphereDeleteForm;
 use LarpManager\Entities\Potion;
+use LarpManager\Entities\Priere;
+use LarpManager\Entities\Sort;
 
 /**
  * LarpManager\Controllers\MagieController
@@ -384,6 +386,19 @@ class MagieController
 	}
 	
 	/**
+	 * Liste des personnages ayant cette prière
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function prierePersonnagesAction(Request $request, Application $app, Priere $priere)
+	{
+		return $app['twig']->render('admin/priere/personnages.twig', array(
+				'priere' => $priere,
+		));
+	}
+	
+	/**
 	 * Liste des potions
 	 * 
 	 * @param Request $request
@@ -412,7 +427,6 @@ class MagieController
 				'potion' => $potion,
 		));
 	}
-	
 	
 	/**
 	 * Liste des personnages ayant cette potion
@@ -863,7 +877,7 @@ class MagieController
 			$app['orm.em']->persist($sort);
 			$app['orm.em']->flush();
 				
-			$app['session']->getFlashBag()->add('success','Le sortilège a été sauvegardé');
+			$app['session']->getFlashBag()->add('success','Le sort a été sauvegardé');
 			return $app->redirect($app['url_generator']->generate('magie.sort.detail',array('sort'=>$sort->getId())),301);
 		}
 	
@@ -941,4 +955,19 @@ class MagieController
 				'Content-Disposition' => 'attachment; filename="'.$sort->getLabel().'.pdf"'
 		));
 	}
+	
+	/**
+	 * Liste des personnages ayant ce sort
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function sortPersonnagesAction(Request $request, Application $app, Sort $sort)
+	{
+		return $app['twig']->render('admin/sort/personnages.twig', array(
+				'sort' => $sort,
+		));
+	}
+	
+
 }

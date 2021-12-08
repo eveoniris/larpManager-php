@@ -21,11 +21,10 @@
 				</small>
 			</h4>
 	
-
 			<div class="list-group">
 				{% for personnageReligion in religion.personnagesReligions %}
 					<div class="list-group-item">
-					<a href="{{ path('personnage.admin.detail',{'personnage':personnageReligion.personnage.id}) }}">#{{ personnageReligion.personnage.id }} - {{ personnageReligion.personnage.nom }}&nbsp;{{ personnageReligion.personnage.surnom }} - {{ personnageReligion.personnage.classeName }} - <strong>{{ personnageReligion.religionLevel.label }}</strong></a>
+					<a href="{{ path('personnage.admin.detail',{'personnage':personnageReligion.personnage.id}) }}">#{{ personnageReligion.personnage.id }} - {{ personnageReligion.personnage.nom }} ({{ personnageReligion.personnage.surnom }}) - {{ personnageReligion.personnage.classeName }} - <strong>{{ personnageReligion.religionLevel.label }}</strong></a>
 					{% if personnageReligion.personnage.user %}
 						{{ personnageReligion.personnage.user.email }}
 					{% endif %}

@@ -204,24 +204,31 @@ class Territoire extends BaseTerritoire implements \JsonSerializable
 	}
 	
 	/**
-	 * Fourni le nombre de personnage noble rataché à ce territoire
+	 * Fourni le nombre de personnages nobles rattachés à ce territoire
 	 */
 	public function getNbrNoble()
 	{
-		$total = 0;
-		foreach ( $this->getGroupes() as $groupe)
+		$nobles= [];
+		foreach ( $this->getGroupesFull() as $groupe)
 		{
 			foreach ( $groupe->getPersonnages() as $personnage )
 			{
-				if ( $personnage->hasCompetence('Noblesse')) $total++;
+				if ( $personnage->hasCompetence('Noblesse')){
+					$nobles[] = $personnage->getId();
+				}
 			}
 		}
 		foreach ($this->getTerritoires() as $territoire)
 		{
-			$total = $total + $territoire->getNbrNoble();			
+			$nobles = array_unique(array_merge($nobles, $territoire->getNbrNoble()));
+			/*
+			echo "<pre>";
+			echo $territoire->getNom()." : ".count($territoire->getNbrNoble())."/".count($nobles);
+			echo "</pre>";
+			echo "<hr />";
+			*/
 		}
-		
-		return $total;
+		return array_unique($nobles);
 	}
 	
 	/**
@@ -518,6 +525,21 @@ class Territoire extends BaseTerritoire implements \JsonSerializable
 		return $this;
 	}
 	
+	public function getGroupesFull()
+	{
+		$groupes = array();
+		if ( $this->getGroupe() )
+		{
+			$groupes[] = $this->getGroupe();
+		}
+		foreach ( $this->getTerritoires() as $territoire )
+		{
+			$groupes = array_merge($groupes,$territoire->getGroupesFull());
+		}
+	
+		return array_unique($groupes);
+	}
+
 	/**
 	 * Fourni le nom de tous les groupes présents dans ce territoire
 	 */ 

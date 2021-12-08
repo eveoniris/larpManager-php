@@ -19,20 +19,18 @@
     			<table>
     				<tbody>
     					<tr>
-    						<td><strong>{{ personnage.nom }} {{ personnage.surnom }}</strong></td>
+    						<td><strong>{{ personnage.nom }}{% if personnage.surnom %} ({{ personnage.surnom }}){% endif %}</strong></td>
     						<td>{{ personnage.classeName }}</td>
     						<td>{{ personnage.age }} / {{ personnage.genre }}</td>
     						<td>Origine : {{ personnage.territoire|default("non définie") }}</td>
     					</tr>
     				</tbody>
     			</table>
-    			
-    			
 				
 				<table>
 					<thead>
 						<tr>
-							<th>Renommé</th>
+							<th>Renommée</th>
 							<th>Pugilat</th>
 							<th>Expérience</th>
 							<th>Expérience disponible</th>
@@ -81,7 +79,7 @@
 						</tr>
 						<tr>
 							<td colspan="4">
-								<strong>Languages</strong><br />
+								<strong>Langages</strong><br />
 								<ul>
 								{% for personnageLangue in personnage.personnageLangues %}
 									<li><strong>{{ personnageLangue.langue}}</strong> ({{ personnageLangue.source }})</li>

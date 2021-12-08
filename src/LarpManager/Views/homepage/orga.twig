@@ -44,17 +44,14 @@
 				</div>
 				<div class="panel-body">
 					<div class="list-group">
-						
 						{% for personnage in app.user.personnages %}
-							<a class="list-group-item" href="{{ path('personnage.admin.detail',{'personnage':personnage.id}) }}">#{{ personnage.id }} - {{ personnage.nom }}&nbsp;{{ personnage.surnom }} - {{ personnage.classeName }}</a>
+							<a class="list-group-item" href="{{ path('personnage.admin.detail',{'personnage':personnage.id}) }}">#{{ personnage.id }} - {{ personnage.nom }} -- {{ personnage.classeName }}</a>
 						{% else %}
 							<a class="list-group-item" href="{{ path('personnage.admin.add') }}">Créer un personnage</a>
 						{% endfor %}
 					</div>
 				</div>
 			</div>
-			
-			
 		</div>
 		
 		<div class="col-xs-12 col-md-6">

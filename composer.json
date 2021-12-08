@@ -48,5 +48,10 @@
 		"symfony/css-selector" : "^2.7",
 		"phpmetrics/phpmetrics" : "*",
 		"doctrine/data-fixtures" : "*"
+	},
+	"autoload-dev" : {
+		"psr-4" : {
+			"Tests\\" : "tests/"
+		}
 	}
 }

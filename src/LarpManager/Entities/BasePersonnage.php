@@ -140,6 +140,7 @@ class BasePersonnage
     /**
      * @OneToMany(targetEntity="PersonnageLangues", mappedBy="personnage")
      * @JoinColumn(name="id", referencedColumnName="personnage_id", nullable=false)
+     * @OrderBy({"langue" = "ASC"})
      */
     protected $personnageLangues;
 
@@ -236,6 +237,7 @@ class BasePersonnage
      *     joinColumns={@JoinColumn(name="personnage_id", referencedColumnName="id", nullable=false)},
      *     inverseJoinColumns={@JoinColumn(name="item_id", referencedColumnName="id", nullable=false)}
      * )
+     * @OrderBy({"numero" = "ASC",})
      */
     protected $items;
 
@@ -245,6 +247,7 @@ class BasePersonnage
      *     joinColumns={@JoinColumn(name="personnage_id", referencedColumnName="id", nullable=false)},
      *     inverseJoinColumns={@JoinColumn(name="technologie_id", referencedColumnName="id", nullable=false)}
      * )
+     * @OrderBy({"label" = "ASC",})
      */
     protected $technologies;
 
@@ -254,11 +257,13 @@ class BasePersonnage
      *     joinColumns={@JoinColumn(name="personnage_id", referencedColumnName="id", nullable=false)},
      *     inverseJoinColumns={@JoinColumn(name="religion_id", referencedColumnName="id", nullable=false)}
      * )
+     * @OrderBy({"label" = "ASC",})
      */
     protected $religions;
 
     /**
      * @ManyToMany(targetEntity="Competence", mappedBy="personnages")
+     * @OrderBy({"competenceFamily" = "ASC", "level" = "ASC"})
      */
     protected $competences;
 
@@ -268,6 +273,7 @@ class BasePersonnage
      *     joinColumns={@JoinColumn(name="personnage_id", referencedColumnName="id", nullable=false)},
      *     inverseJoinColumns={@JoinColumn(name="domaine_id", referencedColumnName="id", nullable=false)}
      * )
+     * @OrderBy({"label" = "ASC",})
      */
     protected $domaines;
 
@@ -277,11 +283,17 @@ class BasePersonnage
      *     joinColumns={@JoinColumn(name="personnage_id", referencedColumnName="id", nullable=false)},
      *     inverseJoinColumns={@JoinColumn(name="potion_id", referencedColumnName="id", nullable=false)}
      * )
+     * @OrderBy({"label" = "ASC", "niveau" = "ASC",})
      */
     protected $potions;
 
     /**
      * @ManyToMany(targetEntity="Priere", mappedBy="personnages")
+     * @JoinTable(name="personnages_prieres",
+     *     joinColumns={@JoinColumn(name="personnage_id", referencedColumnName="id", nullable=false)},
+     *     inverseJoinColumns={@JoinColumn(name="priere_id", referencedColumnName="id", nullable=false)}
+     * )
+     * @OrderBy({"sphere" = "ASC", "niveau" = "ASC",})
      */
     protected $prieres;
 
@@ -294,6 +306,13 @@ class BasePersonnage
      * @OrderBy({"label" = "ASC", "niveau" = "ASC",})
      */
     protected $sorts;
+
+    /**
+     * @OneToMany(targetEntity="PugilatHistory", mappedBy="personnage")
+     * @JoinColumn(name="id", referencedColumnName="personnage_id", nullable=false)
+     */
+    protected $pugilatHistories;
+
 
     public function __construct()
     {
@@ -322,6 +341,7 @@ class BasePersonnage
         $this->potions = new ArrayCollection();
         $this->prieres = new ArrayCollection();
         $this->sorts = new ArrayCollection();
+        $this->pugilatHistories = new ArrayCollection();
     }
 
     /**
@@ -618,9 +638,24 @@ class BasePersonnage
      *
      * @return integer
      */
+/*
     public function getHeroisme()
     {
         return $this->heroisme;
+    }
+*/
+
+    /**
+     * Set the value of pugilat.
+     *
+     * @param integer $pugilat
+     * @return \LarpManager\Entities\Personnage
+     */
+    public function setPugilat($pugilat)
+    {
+        $this->pugilat = $pugilat;
+
+        return $this;
     }
 
     /**
@@ -729,6 +764,43 @@ class BasePersonnage
     public function getHeroismeHistories()
     {
         return $this->heroismeHistories;
+    }
+
+
+    /**
+     * Add PugilatHistory entity to collection (one to many).
+     *
+     * @param \LarpManager\Entities\PugilatHistory $pugilatHistory
+     * @return \LarpManager\Entities\Personnage
+     */
+    public function addPugilatHistory(PugilatHistory $pugilatHistory)
+    {
+        $this->pugilatHistories[] = $pugilatHistory;
+
+        return $this;
+    }
+
+    /**
+     * Remove PugilatHistory entity from collection (one to many).
+     *
+     * @param \LarpManager\Entities\PugilatHistory $pugilatHistory
+     * @return \LarpManager\Entities\Personnage
+     */
+    public function removePugilatHistory(PugilatHistory $pugilatHistory)
+    {
+        $this->pugilatHistories->removeElement($pugilatHistory);
+
+        return $this;
+    }
+
+    /**
+     * Get PugilatHistory entity collection (one to many).
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getPugilatHistories()
+    {
+        return $this->pugilatHistories;
     }
 
     /**
@@ -1052,7 +1124,12 @@ class BasePersonnage
      */
     public function getPersonnagesReligions()
     {
-        return $this->personnagesReligions;
+        $iterator = $this->personnagesReligions->getIterator();
+        $iterator->uasort(function (PersonnagesReligions $a, PersonnagesReligions $b) {
+            return $a->getReligionLevel() <=> $b->getReligionLevel();
+        });
+        return new ArrayCollection(iterator_to_array($iterator));
+        // return $this->personnagesReligions;
     }
 
     /**
@@ -1522,7 +1599,12 @@ class BasePersonnage
      */
     public function getCompetences()
     {
-        return $this->competences;
+        $iterator = $this->competences->getIterator();
+        $iterator->uasort(function (Competence $a, Competence $b) {
+            return $a->getCompetenceFamily()->getLabel() <=> $b->getCompetenceFamily()->getLabel();
+        });
+        return new ArrayCollection(iterator_to_array($iterator));
+        // return $this->competences;
     }
 
     /**
@@ -1678,5 +1760,23 @@ class BasePersonnage
     public function __sleep()
     {
         return array('id', 'nom', 'surnom', 'intrigue', 'groupe_id', 'classe_id', 'age_id', 'genre_id', 'renomme', 'photo', 'xp', 'territoire_id', 'materiel', 'vivant', 'age_reel', 'trombineUrl', 'user_id', 'richesse', 'heroisme');
+    }
+    
+    /**
+     * @return la prochaine partipcipation
+     */
+    public function prochaineParticipation()
+    {
+        $now = new \DateTime();
+        $prochain = null;
+        
+        foreach ($this->participants as $p) {
+            if($now < $p->getGn()->getDateFin()) {
+                if($prochain == null || $prochain->getGn()->getDateDebut() > $p->getGn()->getDateDebut() ) {
+                    $prochain = $p;
+                }
+            }
+        }
+        return $prochain;
     }
 }

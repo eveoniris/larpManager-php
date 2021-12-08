@@ -416,9 +416,6 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 			->convert('groupeSecondaire', 'converter.secondaryGroup:convert')
 			->convert('postulant', 'converter.postulant:convert')
 			->before($mustBeResponsable);
-
-			
-			
 			
 		/**
 		 * Liste des religions
@@ -479,7 +476,7 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 		/**
 		 * Obtenir le document lié à une prière
 		 */
-		$controllers->match('/{participant}/priere/{priere}/document', 'LarpManager\Controllers\ParticipantController::priereDocumentAction')
+		$controllers->match('/{participant}/priere/{priere}/document/{filename}', 'LarpManager\Controllers\ParticipantController::priereDocumentAction')
 			->assert('participant', '\d+')
 			->convert('participant', 'converter.participant:convert')
 			->assert('priere', '\d+')
@@ -503,7 +500,7 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 		/**
 		 * Obtenir le document lié à une potion
 		 */
-		$controllers->match('/{participant}/potion/{potion}/document', 'LarpManager\Controllers\ParticipantController::potionDocumentAction')
+		$controllers->match('/{participant}/potion/{potion}/document/{filename}', 'LarpManager\Controllers\ParticipantController::potionDocumentAction')
 			->assert('participant', '\d+')
 			->convert('participant', 'converter.participant:convert')
 			->assert('potion', '\d+')
@@ -527,7 +524,7 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 		/**
 		 * Obtenir le document lié à un sort
 		 */
-		$controllers->match('/{participant}/sort/{sort}/document', 'LarpManager\Controllers\ParticipantController::sortDocumentAction')
+		$controllers->match('/{participant}/sort/{sort}/document/{filename}', 'LarpManager\Controllers\ParticipantController::sortDocumentAction')
 			->assert('participant', '\d+')
 			->convert('participant', 'converter.participant:convert')
 			->assert('sort', '\d+')
@@ -581,12 +578,24 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 		/**
 		 * Obtenir le document lié à une compétence
 		 */
-		$controllers->match('/{participant}/competence/{competence}/document','LarpManager\Controllers\ParticipantController::competenceDocumentAction')
+		$controllers->match('/{participant}/competence/{competence}/document/{filename}','LarpManager\Controllers\ParticipantController::competenceDocumentAction')
 			->assert('participant', '\d+')
 			->convert('participant', 'converter.participant:convert')
 			->assert('competence', '\d+')
 			->convert('competence', 'converter.competence:convert')
 			->bind("participant.competence.document")
+			->method('GET')
+			->before($mustOwnParticipant);
+
+		/**
+		 * Obtenir le document lié à une langue
+		 */
+		$controllers->match('/{participant}/langue/{langue}/document/{filename}','LarpManager\Controllers\ParticipantController::langueDocumentAction')
+			->assert('participant', '\d+')
+			->convert('participant', 'converter.participant:convert')
+			->assert('langue', '\d+')
+			->convert('langue', 'converter.langue:convert')
+			->bind("participant.langue.document")
 			->method('GET')
 			->before($mustOwnParticipant);
 			

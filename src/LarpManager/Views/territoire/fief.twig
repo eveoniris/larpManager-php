@@ -4,6 +4,8 @@
 
 {% block content %}
 
+	{% import "admin/filterMacros.html.twig" as macros %}
+
 	<div class="well well-sm clearfix">
 		<ol class="breadcrumb">
 			<li><a href="{{ path('homepage')  }}">Accueil</a></li>
@@ -11,28 +13,108 @@
 		</ol>
 		
 		<blockquote>
-			Voici la liste des fiefs, des groupes les possédants, et des pays dont ils font partit.
+			Voici la liste des fiefs, des groupes les possédant, et des pays dont ils font partie.
 		</blockquote>
-		
+
+
+		{% if paginator.totalItems == 1 %}
+			<strong>1</strong> fief trouvé.
+		{% else %}
+			<strong>{{ paginator.totalItems }}</strong> fiefs trouvés.
+		{% endif %}
+
+		Résultats affichés : <strong>{{ paginator.currentPageFirstItem }} - {{ paginator.currentPageLastItem }}</strong>.
+
+		<div class="btn-toolbar" role="toolbar" aria-label="...">
+			<div class="btn-group" role="group" aria-label="...">
+				<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Ajouter un territoire" href="{{ path('territoire.admin.add') }}"><i class="fa fa-plus"></i></a>
+				<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Imprimer la liste de tous les fiefs" href="{{ path('territoire.admin.print') }}"><i class="fa fa-print"></i></a>
+			</div><form class="form-inline" action="{{ path('territoire.fief') }}" method="GET" {{ form_enctype(form) }}>
+				{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+				<div class="form-group">
+					<div class="input-group">
+						{{ form_widget(form.value) }}
+					</div>
+					<div class="input-group">
+						{{ form_widget(form.type) }}
+						<div class="input-group-btn">
+							<button type="submit" class="btn btn-default" data-toggle="tooltup" data-placement="top" title="Lancer la recherche"><i class="fa fa-search"></i></button>
+							<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Reset" href="{{ path('territoire.fief') }}"><i class="fa fa-refresh"></i></a>
+						</div>
+					</div>
+				</div>
+				{{ form_rest(form) }}
+			</form>
+		</div>
+
+
+		{{ paginator|raw }}
 	</div>
 	
 	<table class="table table-condensed">
 		<thead>
 			<tr>
-				<th>Fief</th>
-				<th>Pays</th>
-				<th>Groupe</th>
+				<th>
+					<a href="{{ path('territoire.fief', {'order_by': 'id', 'order_dir': macros.getDirection(app,'id')|trim})~optionalParameters }}">
+						# {{ macros.getCaret(app,'id') }}
+					</a>
+				</th>
+				<th>
+					<a href="{{ path('territoire.fief', {'order_by': 'nom', 'order_dir': macros.getDirection(app,'nom')|trim})~optionalParameters }}">
+						Fief {{ macros.getCaret(app,'nom') }}
+					</a>
+				</th>
+				<th>
+					<a href="{{ path('territoire.fief', {'order_by': 'tpr.nom', 'order_dir': macros.getDirection(app,'tpr.nom')|trim})~optionalParameters }}">
+						Province {{ macros.getCaret(app,'tpr.nom') }}
+					</a>
+				</th>
+				<th>
+					<a href="{{ path('territoire.fief', {'order_by': 'tp.nom', 'order_dir': macros.getDirection(app,'tp.nom')|trim})~optionalParameters }}">
+						Pays {{ macros.getCaret(app,'tp.nom') }}
+					</a>
+				</th>
+				<th>
+					<a href="{{ path('territoire.fief', {'order_by': 'groupe', 'order_dir': macros.getDirection(app,'groupe')|trim})~optionalParameters }}">
+						ID groupe {{ macros.getCaret(app,'groupe') }}
+					</a>
+				</th>
+				<th>
+					<a href="{{ path('territoire.fief', {'order_by': 'tgr.nom', 'order_dir': macros.getDirection(app,'tgr.nom')|trim})~optionalParameters }}">
+						Nom du groupe {{ macros.getCaret(app,'tgr.nom') }}
+					</a>
+				</th>
 				<th>Nbr de joueurs</th>
 		</thead>
 		<tbody>
 		{% for fief in fiefs %}
 			<tr>
-				<td>{{ fief.nom }}</td>
-				<td>{{ fief.root.nom }}</td>
+				<td><a href="{{ path('territoire.admin.detail', {'territoire': fief.id}) }}">{{ fief.id }}</a></td>
+				<td><a href="{{ path('territoire.admin.detail', {'territoire': fief.id}) }}">{{ fief.nom }}</a></td>
+				<td>
+					{% if fief.territoire.territoire %}
+						<a href="{{ path('territoire.fief', {'order_by': 'id', 'order_dir': 'DESC','fief[province]': fief.territoire.id})~optionalParameters }}">
+							{{ fief.territoire.nom }}
+						</a>
+					{% else %}
+						-
+					{% endif %}
+				</td>
+				<td>
+					<a href="{{ path('territoire.fief', {'order_by': 'id', 'order_dir': 'DESC','fief[pays]': fief.root.id})~optionalParameters }}">
+						{{ fief.root.nom }}
+					</a>
+				</td>
 				<td>
 				{% if fief.groupe %}
-					<a href="{{ path('groupe.detail', {'index': fief.groupe.id}) }}">#{{  fief.groupe.numero }}&nbsp;{{ fief.groupe.nom }}</a>
+					<a href="{{ path('groupe.detail', {'index': fief.groupe.id}) }}">#{{  fief.groupe.numero }}</a></td>
+				</td>
+				<td>
+					<a href="{{ path('groupe.detail', {'index': fief.groupe.id}) }}">{{ fief.groupe.nom }}</a>
 				{% else %}
+					-
+				</td>
+				<td>
 					libre
 				{% endif %}
 				</td>

@@ -120,7 +120,7 @@ class PersonnageManager
 	
 		foreach ( $competences as $competence)
 		{
-			if ( $competence->getCompetenceFamily() == $competenceFamily)
+			if ( $competence->getCompetenceFamily() === $competenceFamily)
 			{
 				return true;
 			}
@@ -177,7 +177,7 @@ class PersonnageManager
 	}
 	
 	/**
-	 * Retourne la liste des toutes les religions inconnue d'un personnage
+	 * Retourne la liste des toutes les religions inconnues d'un personnage
 	 * @param Personnage $personnage
 	 */
 	public function getAvailableDescriptionReligion(Personnage $personnage)
@@ -216,7 +216,7 @@ class PersonnageManager
 			}
 		}
 	
-		// les compétences inconnue du personnage sont disponible au niveau 1
+		// les compétences inconnues du personnage sont disponibles au niveau 1
 		$competences = $this->getUnknownCompetences($personnage);
 	
 		foreach ($competences as $competence )
@@ -234,7 +234,7 @@ class PersonnageManager
 	}
 	
 	/**
-	 * Trouve toutes les langues non connus d'un personnages en fonction du niveau de diffusion voulu
+	 * Trouve toutes les langues non connues d'un personnages en fonction du niveau de diffusion voulu
 	 * @param Personnage $langue
 	 * @param unknown $diffusion
 	 */
@@ -243,29 +243,32 @@ class PersonnageManager
 		$availableLangues = new ArrayCollection();
 	
 		$repo = $this->app['orm.em']->getRepository('\LarpManager\Entities\Langue');
-		$langues = $repo->findAll();
+		$langues = $repo->findBy(array(),array('label' => 'ASC'));
 	
 		foreach ( $langues as $langue)
 		{
-			if ( $diffusion == 0 )
+			if ( $langue->getSecret() == 0)
 			{
-				if ( $langue->getDiffusion() == $diffusion
-				 && ! $personnage->isKnownLanguage($langue) )
+				if ( $diffusion == 0 )
+				{
+					if ( $langue->getDiffusion() == $diffusion
+					&& ! $personnage->isKnownLanguage($langue) )
+					{
+						$availableLangues[] = $langue;
+					}
+				}
+				else if ( $langue->getDiffusion() >= $diffusion
+						&& ! $personnage->isKnownLanguage($langue) )
 				{
 					$availableLangues[] = $langue;
 				}
-			}
-			else if ( $langue->getDiffusion() >= $diffusion
-					&& ! $personnage->isKnownLanguage($langue) )
-			{
-				$availableLangues[] = $langue;
 			}
 		}
 		return $availableLangues;
 	}
 
 	/**
-	 * Trouve tous les sorts non connus d'un personnage en fonction du niveau du sortilège
+	 * Trouve tous les sorts non connus d'un personnage en fonction du niveau du sort
 	 * @param Personnage $personnage
 	 * @param unknown $diffusion
 	 */
@@ -309,7 +312,7 @@ class PersonnageManager
 	}
 	
 	/**
-	 * Récupére la liste de toutes les religions non connue du personnage
+	 * Récupére la liste de toutes les religions non connues du personnage
 	 * @param Personnage $personnage
 	 */
 	public function getAvailableReligions(Personnage $personnage)

@@ -9,14 +9,14 @@
 	<ol class="breadcrumb">
 		<li><a href="{{ path('homepage') }}">Accueil</a></li>
 		<li><a href="{{ path('personnage.admin.list') }}">Liste des personnages</a></li>
-		<li><a href="{{ path('personnage.admin.detail', {'personnage':personnage.id}) }}">Détail de {{ personnage.nom }} {{ personnage.surnom }}</a></li>
+		<li><a href="{{ path('personnage.admin.detail', {'personnage':personnage.id}) }}">Détail de {{ personnage.publicName }}</a></li>
 		<li class="active">Transfert</li>
 	</ol>
 	
 	<div class="well bs-component">
 		<form action="{{ path('personnage.materiel.update',{'personnage':personnage.id}) }}" method="POST" {{ form_enctype(form) }}>
 			<fieldset>
-				<legend>Matériel de {{ personnage.nom }} {{ personnage.surnom }} - <small>appartient actuellement à {{ personnage.user }}</small></legend>
+				<legend>Matériel de {{ personnage.nom }}{% if personnage.surnom %} ({{ personnage.surnom }}){% endif %} - <small>appartient actuellement à {{ personnage.user }}</small></legend>
 						
 				{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
 	
