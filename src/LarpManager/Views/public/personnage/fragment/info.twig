@@ -67,7 +67,7 @@
 				</a>
 				<div class="collapse" id="heroismeHistory">
 					<div class="list-group">
-						{% for historique in personnage.heroismeHistories %}
+						{% for historique in personnage.displayHeroisme %}
 							<div class="list-group-item">{{ historique.date|date("Y-m-d h:i:s") }} : {% if historique.heroisme > 0 %}+{% endif %}{{ historique.heroisme }}  {% if historique.explication %} pour la raison suivante : "{{ historique.explication }}"{% endif %}.</div>
 						{% endfor %}
 					</div>

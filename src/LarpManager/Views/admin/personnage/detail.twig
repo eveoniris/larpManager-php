@@ -150,7 +150,7 @@
 								<h6>Historique</h6>
 								<div class="list-group">
 									{% for historique in personnage.renommeHistories %}
-										<div class="list-group-item">{{ historique.date|date("Y-m-d") }} : {% if historique.renomme > 0 %}+{% endif %}{{ historique.renomme }} {% if historique.explication %} pour la raison suivante : "{{ historique.explication }}"{% endif %}.</div>
+										<div class="list-group-item">{{ historique.date|date("Y-m-d h:i:s") }} : {% if historique.renomme > 0 %}+{% endif %}{{ historique.renomme }} {% if historique.explication %} pour la raison suivante : "{{ historique.explication }}"{% endif %}.</div>
 									{% endfor %}
 								</div>
 							</div>
@@ -161,8 +161,8 @@
 							<div class="collapse" id="heroismeHistory">
 								<h6>Historique</h6>		
 								<div class="list-group">
-									{% for historique in personnage.heroismeHistories %}
-										<div class="list-group-item">{{ historique.date|date("Y-m-d") }} : {% if historique.heroisme > 0 %}+{% endif %}{{ historique.heroisme }} {% if historique.explication %} pour la raison suivante : "{{ historique.explication }}"{% endif %}.</div>
+									{% for historique in personnage.displayHeroisme %}
+										<div class="list-group-item">{{ historique.date|date("Y-m-d h:i:s") }} : {% if historique.heroisme > 0 %}+{% endif %}{{ historique.heroisme }} {% if historique.explication %} pour la raison suivante : "{{ historique.explication }}"{% endif %}.</div>
 									{% endfor %}
 								</div>
 							</div>
@@ -173,8 +173,8 @@
 							<div class="collapse" id="pugilatHistory">
 								<h6>Historique</h6>		
 								<div class="list-group">
-									{% for historique in personnage.pugilatHistories %}
-										<div class="list-group-item">{{ historique.date|date("Y-m-d") }} : {% if historique.pugilat > 0 %}+{% endif %}{{ historique.pugilat }} {% if historique.explication %} pour la raison suivante : "{{ historique.explication }}"{% endif %}.</div>
+									{% for historique in personnage.displayPugilat %}
+										<div class="list-group-item">{{ historique.date|date("Y-m-d h:i:s") }} : {% if historique.pugilat > 0 %}+{% endif %}{{ historique.pugilat }} {% if historique.explication %} pour la raison suivante : "{{ historique.explication }}"{% endif %}.</div>
 									{% endfor %}
 								</div>
 							</div>														
@@ -354,8 +354,8 @@
 								      			<span class="caret"></span>
 								    		</a>
 											<ul class="dropdown-menu">
-												<li><a href=" {{ path('personnage.documents', {'personnage': personnage.id}) }}">Modifier la liste des documents</a></li>
-												<li><a href=" {{ path('personnage.items', {'personnage': personnage.id}) }}">Modifier la liste des objets</a></li>
+												<li><a href="{{ path('personnage.documents', {'personnage': personnage.id}) }}">Modifier la liste des documents</a></li>
+												<li><a href="{{ path('personnage.items', {'personnage': personnage.id}) }}">Modifier la liste des objets</a></li>
 												<li><a href="{{ path('personnage.admin.update.ingredient', {'personnage': personnage.id}) }}">Modifier la liste des ingrédients</a></li>
 												<li><a href="{{ path('personnage.admin.update.ressource', {'personnage': personnage.id}) }}">Modifier la liste des ressources</a></li>
 												<li><a href="{{ path('personnage.admin.update.richesse', {'personnage': personnage.id}) }}">Modifier la richesse</a></li>

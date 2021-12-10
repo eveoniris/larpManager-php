@@ -13,8 +13,7 @@
 		<div class="collapse" id="pugilatHistory">
 			<h6>Historique</h6>		
 			<div class="list-group">
-				<div class="list-group-item">Vos niveaux cumulés des compétences martiales.</div>
-				{% for historique in personnage.pugilatHistories %}
+				{% for historique in personnage.displayPugilat %}
 					<div class="list-group-item">{{ historique.date|date("Y-m-d h:i:s") }} : {% if historique.pugilat > 0 %}+{% endif %}{{ historique.pugilat }}  {% if historique.explication %} pour la raison suivante : "{{ historique.explication }}"{% endif %}.</div>
 				{% endfor %}
 			</div>
