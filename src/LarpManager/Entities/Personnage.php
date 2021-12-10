@@ -29,6 +29,8 @@ namespace LarpManager\Entities;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use LarpManager\Entities\BasePersonnage;
+use LarpManager\Entities\PugilatHistory;
+use LarpManager\Entities\HeroismeHistory;
 use Doctrine\Common\Annotations\Annotation\Attribute;
 
 /**
@@ -601,6 +603,95 @@ class Personnage extends BasePersonnage
 		return $pugilat;
 	}
 
+	/**
+	 * Fourni le détail de pugilat à afficher
+	 */
+	public function getDisplayPugilat()
+	{
+		if ($this->getCompetencePugilat('Agilité') > 0){
+			$pugilat_history = new \LarpManager\Entities\PugilatHistory();
+			$pugilat_history->setPugilat($this->getCompetencePugilat('Agilité'));
+			$pugilat_history->setExplication('Compétence Agilité niveau '.$this->getCompetenceNiveau('Agilité'));
+			$this->addPugilatHistory($pugilat_history);
+		}
+		if ($this->getCompetencePugilat('Armes à distance') > 0){
+			$pugilat_history = new \LarpManager\Entities\PugilatHistory();
+			$pugilat_history->setPugilat($this->getCompetencePugilat('Armes à distance'));
+			$pugilat_history->setExplication('Compétence Armes à distance niveau '.$this->getCompetenceNiveau('Armes à distance'));
+			$this->addPugilatHistory($pugilat_history);
+		}
+		if ($this->getCompetencePugilat('Armes à 1 main') > 0){
+			$pugilat_history = new \LarpManager\Entities\PugilatHistory();
+			$pugilat_history->setPugilat($this->getCompetencePugilat('Armes à 1 main'));
+			$pugilat_history->setExplication('Compétence Armes à 1 main niveau '.$this->getCompetenceNiveau('Armes à 1 main'));
+			$this->addPugilatHistory($pugilat_history);
+		}
+		if ($this->getCompetencePugilat('Armes à 2 mains') > 0){
+			$pugilat_history = new \LarpManager\Entities\PugilatHistory();
+			$pugilat_history->setPugilat($this->getCompetencePugilat('Armes à 2 mains'));
+			$pugilat_history->setExplication('Compétence Armes à 2 mains niveau '.$this->getCompetenceNiveau('Armes à 2 mains'));
+			$this->addPugilatHistory($pugilat_history);
+		}
+		if ($this->getCompetencePugilat('Armes d\'hast') > 0){
+			$pugilat_history = new \LarpManager\Entities\PugilatHistory();
+			$pugilat_history->setPugilat($this->getCompetencePugilat('Armes d\'hast'));
+			$pugilat_history->setExplication('Compétence Armes d\'hast niveau '.$this->getCompetenceNiveau('Armes d\'hast'));
+			$this->addPugilatHistory($pugilat_history);
+		}
+		if ($this->getCompetencePugilat('Armure') > 0){
+			$pugilat_history = new \LarpManager\Entities\PugilatHistory();
+			$pugilat_history->setPugilat($this->getCompetencePugilat('Armure'));
+			$pugilat_history->setExplication('Compétence Armure niveau '.$this->getCompetenceNiveau('Armure'));
+			$this->addPugilatHistory($pugilat_history);
+		}
+		if ( $this->getCompetenceNiveau('Armurerie') >= 2 ) {
+			$pugilat_history = new \LarpManager\Entities\PugilatHistory();
+			$pugilat_history->setPugilat(5);
+			$pugilat_history->setExplication('Compétence Armurerie niveau '.$this->getCompetenceNiveau('Armurerie'));
+			$this->addPugilatHistory($pugilat_history);
+		}
+		if ($this->getCompetencePugilat('Attaque sournoise') > 0){
+			$pugilat_history = new \LarpManager\Entities\PugilatHistory();
+			$pugilat_history->setPugilat($this->getCompetencePugilat('Attaque sournoise'));
+			$pugilat_history->setExplication('Compétence Attaque sournoise niveau '.$this->getCompetenceNiveau('Attaque sournoise'));
+			$this->addPugilatHistory($pugilat_history);
+		}
+		if ($this->getCompetencePugilat('Protection') > 0){
+			$pugilat_history = new \LarpManager\Entities\PugilatHistory();
+			$pugilat_history->setPugilat($this->getCompetencePugilat('Protection'));
+			$pugilat_history->setExplication('Compétence Protection niveau '.$this->getCompetenceNiveau('Protection'));
+			$this->addPugilatHistory($pugilat_history);
+		}
+		if ($this->getCompetencePugilat('Résistance') > 0){
+			$pugilat_history = new \LarpManager\Entities\PugilatHistory();
+			$pugilat_history->setPugilat($this->getCompetencePugilat('Résistance'));
+			$pugilat_history->setExplication('Compétence Résistance niveau '.$this->getCompetenceNiveau('Résistance'));
+			$this->addPugilatHistory($pugilat_history);
+		}
+		if ($this->getCompetencePugilat('Sauvagerie') > 0){
+			$pugilat_history = new \LarpManager\Entities\PugilatHistory();
+			$extra = 0;
+			if ( $this->getCompetenceNiveau('Sauvagerie') >= 2 ) {
+				$extra = 5;
+			}
+			$pugilat_history->setPugilat($extra+$this->getCompetencePugilat('Sauvagerie'));
+			$pugilat_history->setExplication('Compétence Sauvagerie niveau '.$this->getCompetenceNiveau('Sauvagerie'));
+			$this->addPugilatHistory($pugilat_history);
+		}
+		if ($this->getCompetencePugilat('Stratégie') > 0){
+			$pugilat_history = new \LarpManager\Entities\PugilatHistory();
+			$pugilat_history->setPugilat($this->getCompetencePugilat('Stratégie'));
+			$pugilat_history->setExplication('Compétence Stratégie niveau '.$this->getCompetenceNiveau('Stratégie'));
+			$this->addPugilatHistory($pugilat_history);
+		}
+		if ($this->getCompetencePugilat('Survie') > 0){
+			$pugilat_history = new \LarpManager\Entities\PugilatHistory();
+			$pugilat_history->setPugilat($this->getCompetencePugilat('Survie'));
+			$pugilat_history->setExplication('Compétence Survie niveau '.$this->getCompetenceNiveau('Survie'));
+			$this->addPugilatHistory($pugilat_history);
+		}
+		return $this->getPugilatHistories();
+	}
 
 	/**
 	 * Fourni le score d'héroïsme
@@ -622,6 +713,51 @@ class Personnage extends BasePersonnage
 		}		
 
 		return $heroisme;
+	}
+
+	/**
+	 * Fourni le détail d'héroïsme à afficher
+	 */
+	public function getDisplayHeroisme()
+	{
+		if ( $this->getCompetenceNiveau('Agilité') >= 2 ) {
+			$heroisme_history = new \LarpManager\Entities\HeroismeHistory();
+			$heroisme_history->setHeroisme(1);
+			$heroisme_history->setExplication('Compétence Agilité niveau '.$this->getCompetenceNiveau('Agilité'));
+			$this->addHeroismeHistory($heroisme_history);
+		}
+		if ( $this->getCompetenceNiveau('Armes à 1 main') >= 3 ) {
+			$heroisme_history = new \LarpManager\Entities\HeroismeHistory();
+			$heroisme_history->setHeroisme(1);
+			$heroisme_history->setExplication('Compétence Armes à 1 main niveau '.$this->getCompetenceNiveau('Armes à 1 main'));
+			$this->addHeroismeHistory($heroisme_history);
+		}
+		if ( $this->getCompetenceNiveau('Armes à 2 mains') >= 3 ) {
+			$heroisme_history = new \LarpManager\Entities\HeroismeHistory();
+			$heroisme_history->setHeroisme(1);
+			$heroisme_history->setExplication('Compétence Armes à 2 mains niveau '.$this->getCompetenceNiveau('Armes à 2 mains'));
+			$this->addHeroismeHistory($heroisme_history);
+		}
+		if ( $this->getCompetenceNiveau('Armurerie') >= 4 ) {
+			$heroisme_history = new \LarpManager\Entities\HeroismeHistory();
+			$heroisme_history->setHeroisme(1);
+			$heroisme_history->setExplication('Compétence Armurerie niveau '.$this->getCompetenceNiveau('Armurerie'));
+			$this->addHeroismeHistory($heroisme_history);
+		}
+		if ( $this->getCompetenceNiveau('Protection') >= 4 ) {
+			$heroisme_history = new \LarpManager\Entities\HeroismeHistory();
+			$heroisme_history->setHeroisme(1);
+			$heroisme_history->setExplication('Compétence Protection niveau '.$this->getCompetenceNiveau('Protection'));
+			$this->addHeroismeHistory($heroisme_history);
+		}
+		if ( $this->getCompetenceNiveau('Sauvagerie') >= 1 ) {
+			$heroisme_history = new \LarpManager\Entities\HeroismeHistory();
+			$heroisme_history->setHeroisme(1);
+			$heroisme_history->setExplication('Compétence Sauvagerie niveau '.$this->getCompetenceNiveau('Sauvagerie'));
+			$this->addHeroismeHistory($heroisme_history);
+		}
+		
+		return $this->getHeroismeHistories();
 	}
 
 	/**
