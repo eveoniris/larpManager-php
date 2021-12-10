@@ -638,12 +638,12 @@ class BasePersonnage
      *
      * @return integer
      */
-/*
+
     public function getHeroisme()
     {
-        return $this->heroisme;
+        // return $this->heroisme;
+        return 0;
     }
-*/
 
     /**
      * Set the value of pugilat.
