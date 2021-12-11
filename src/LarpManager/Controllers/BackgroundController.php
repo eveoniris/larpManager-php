@@ -180,7 +180,7 @@ class BackgroundController
 			$app['orm.em']->flush();
 			
 			$app['session']->getFlashBag()->add('success', 'Le background a été ajouté.');
-			return $app->redirect($app['url_generator']->generate('groupe.detail', array('index' => $background->getGroupe()->getId())),301);
+			return $app->redirect($app['url_generator']->generate('groupe.detail', array('index' => $background->getGroupe()->getId())),303);
 		}
 		
 		return $app['twig']->render('admin/background/add.twig', array(
@@ -210,7 +210,7 @@ class BackgroundController
 			$app['orm.em']->flush();
 			
 			$app['session']->getFlashBag()->add('success', 'Le background a été supprimé.');
-			return $app->redirect($app['url_generator']->generate('groupe.detail', array('index' => $background->getGroupe()->getId())),301);
+			return $app->redirect($app['url_generator']->generate('groupe.detail', array('index' => $background->getGroupe()->getId())),303);
 		}
 		
 		return $app['twig']->render('admin/background/delete.twig', array(
@@ -247,7 +247,7 @@ class BackgroundController
 			$app['orm.em']->flush();
 				
 			$app['session']->getFlashBag()->add('success', 'Le background a été ajouté.');
-			return $app->redirect($app['url_generator']->generate('groupe.detail', array('index' => $background->getGroupe()->getId())),301);
+			return $app->redirect($app['url_generator']->generate('groupe.detail', array('index' => $background->getGroupe()->getId())),303);
 		}
 		
 		return $app['twig']->render('admin/background/update.twig', array(

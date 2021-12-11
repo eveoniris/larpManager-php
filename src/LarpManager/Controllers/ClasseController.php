@@ -73,11 +73,11 @@ class ClasseController
 		
 			if ( $form->get('save')->isClicked())
 			{
-				return $app->redirect($app['url_generator']->generate('classe'),301);
+				return $app->redirect($app['url_generator']->generate('classe'),303);
 			}
 			else if ( $form->get('save_continue')->isClicked())
 			{
-				return $app->redirect($app['url_generator']->generate('classe.add'),301);
+				return $app->redirect($app['url_generator']->generate('classe.add'),303);
 			}
 		}
 		

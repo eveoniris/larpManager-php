@@ -122,11 +122,11 @@ class TokenController
 			
 			if ( $form->get('save')->isClicked())
 			{
-				return $app->redirect($app['url_generator']->generate('token.list'),301);
+				return $app->redirect($app['url_generator']->generate('token.list'),303);
 			}
 			else if ( $form->get('save_continue')->isClicked())
 			{
-				return $app->redirect($app['url_generator']->generate('token.add'),301);
+				return $app->redirect($app['url_generator']->generate('token.add'),303);
 			}
 		}
 		
@@ -171,7 +171,7 @@ class TokenController
 				
 			$app['session']->getFlashBag()->add('success', 'Le jeton a été modifié.');
 				
-			return $app->redirect($app['url_generator']->generate('token.list'),301);
+			return $app->redirect($app['url_generator']->generate('token.list'),303);
 		}
 		return $app['twig']->render('admin/token/update.twig', array(
 				'token' => $token,
@@ -200,7 +200,7 @@ class TokenController
 			
 			$app['session']->getFlashBag()->add('success', 'Le jeton a été supprimé.');
 			
-			return $app->redirect($app['url_generator']->generate('token.list'),301);
+			return $app->redirect($app['url_generator']->generate('token.list'),303);
 		}
 		
 		return $app['twig']->render('admin/token/delete.twig', array(

@@ -87,7 +87,7 @@ class TitreController
 			$app['orm.em']->flush();
 	
 			$app['session']->getFlashBag()->add('success','Le titre a été ajouté');
-			return $app->redirect($app['url_generator']->generate('titre.admin.detail',array('titre'=>$titre->getId())),301);
+			return $app->redirect($app['url_generator']->generate('titre.admin.detail',array('titre'=>$titre->getId())),303);
 		}
 	
 		return $app['twig']->render('admin/titre/add.twig', array(
@@ -120,7 +120,7 @@ class TitreController
 			$app['orm.em']->flush();
 	
 			$app['session']->getFlashBag()->add('success','Le titre a été sauvegardé');
-			return $app->redirect($app['url_generator']->generate('titre.admin.detail',array('titre'=>$titre->getId())),301);
+			return $app->redirect($app['url_generator']->generate('titre.admin.detail',array('titre'=>$titre->getId())),303);
 		}
 	
 		return $app['twig']->render('admin/titre/update.twig', array(
@@ -153,7 +153,7 @@ class TitreController
 			$app['orm.em']->flush();
 	
 			$app['session']->getFlashBag()->add('success','Le titre a été suprimé');
-			return $app->redirect($app['url_generator']->generate('titre.admin.list'),301);
+			return $app->redirect($app['url_generator']->generate('titre.admin.list'),303);
 		}
 	
 		return $app['twig']->render('admin/titre/delete.twig', array(

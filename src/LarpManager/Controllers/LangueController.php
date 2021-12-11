@@ -95,7 +95,7 @@ class LangueController
 
 				if (!$extension || ! in_array($extension, array('pdf'))) {
 					$app['session']->getFlashBag()->add('error','Désolé, votre document ne semble pas valide (vérifiez le format de votre document)');
-					return $app->redirect($app['url_generator']->generate('langue.add'),301);
+					return $app->redirect($app['url_generator']->generate('langue.add'),303);
 				}
 
 				$documentFilename = hash('md5',$langue->getLabel().$filename . time()).'.'.$extension;
@@ -114,11 +114,11 @@ class LangueController
 			// vers le formulaire d'ajout d'une langue
 			if ( $form->get('save')->isClicked())
 			{
-				return $app->redirect($app['url_generator']->generate('langue'),301);
+				return $app->redirect($app['url_generator']->generate('langue'),303);
 			}
 			else if ( $form->get('save_continue')->isClicked())
 			{
-				return $app->redirect($app['url_generator']->generate('langue.add'),301);
+				return $app->redirect($app['url_generator']->generate('langue.add'),303);
 			}
 		}
 		
@@ -165,7 +165,7 @@ class LangueController
 
 					if (!$extension || ! in_array($extension, array('pdf'))) {
 						$app['session']->getFlashBag()->add('error','Désolé, votre document ne semble pas valide (vérifiez le format de votre document)');
-						return $app->redirect($app['url_generator']->generate('langue.detail',array('index' => $id)),301);
+						return $app->redirect($app['url_generator']->generate('langue.detail',array('index' => $id)),303);
 					}
 						
 					$documentFilename = hash('md5',$langue->getLabel().$filename . time()).'.'.$extension;
@@ -177,14 +177,14 @@ class LangueController
 				$app['orm.em']->flush();
 				$app['session']->getFlashBag()->add('success', 'La langue a été mise à jour.');
 
-				return $app->redirect($app['url_generator']->generate('langue.detail',array('index' => $id)),301);
+				return $app->redirect($app['url_generator']->generate('langue.detail',array('index' => $id)),303);
 			}
 			else if ( $form->get('delete')->isClicked())
 			{
 				$app['orm.em']->remove($langue);
 				$app['orm.em']->flush();
 				$app['session']->getFlashBag()->add('success', 'La langue a été supprimée.');
-				return $app->redirect($app['url_generator']->generate('langue'),301);
+				return $app->redirect($app['url_generator']->generate('langue'),303);
 			}
 		}		
 
@@ -239,11 +239,11 @@ class LangueController
 			// vers le formulaire d'ajout d'une langue
 			if ( $form->get('save')->isClicked())
 			{
-				return $app->redirect($app['url_generator']->generate('langue'),301);
+				return $app->redirect($app['url_generator']->generate('langue'),303);
 			}
 			else if ( $form->get('save_continue')->isClicked())
 			{
-				return $app->redirect($app['url_generator']->generate('langue.addGroup'),301);
+				return $app->redirect($app['url_generator']->generate('langue.addGroup'),303);
 			}
 		}
 		
@@ -284,14 +284,14 @@ class LangueController
 				$app['orm.em']->flush();
 				$app['session']->getFlashBag()->add('success', 'Le groupe de langue a été mise à jour.');
 		
-				return $app->redirect($app['url_generator']->generate('langue.detailGroup',array('index' => $id)),301);
+				return $app->redirect($app['url_generator']->generate('langue.detailGroup',array('index' => $id)),303);
 			}
 			else if ( $form->get('delete')->isClicked())
 			{
 				$app['orm.em']->remove($langue);
 				$app['orm.em']->flush();
 				$app['session']->getFlashBag()->add('success', 'Le groupe de langue a été supprimée.');
-				return $app->redirect($app['url_generator']->generate('langue'),301);
+				return $app->redirect($app['url_generator']->generate('langue'),303);
 			}
 		}		
 

@@ -131,11 +131,11 @@ class AgeController
 		 */
 		if ( $form->get('save')->isClicked())
 		{
-			return $app->redirect($app['url_generator']->generate('age'),301);
+			return $app->redirect($app['url_generator']->generate('age'),303);
 		}
 		
 		// renvoi vers le formulaire d'ajout d'un age
-		return $app->redirect($app['url_generator']->generate('age.add.view'),301);
+		return $app->redirect($app['url_generator']->generate('age.add.view'),303);
 	}
 	
 	/**

@@ -91,7 +91,7 @@ class PersonnageSecondaireController
 			$app['orm.em']->flush();
 			
 			$app['session']->getFlashBag()->add('success','Le personnage secondaire été sauvegardé');
-			return $app->redirect($app['url_generator']->generate('personnageSecondaire.list'),301);
+			return $app->redirect($app['url_generator']->generate('personnageSecondaire.list'),303);
 		}
 			
 		return $app['twig']->render('admin/personnageSecondaire/add.twig', array(
@@ -183,7 +183,7 @@ class PersonnageSecondaireController
 			$app['orm.em']->flush();
 				
 			$app['session']->getFlashBag()->add('success','Le personnage secondaire a été supprimé.');
-			return $app->redirect($app['url_generator']->generate('personnageSecondaire.list'),301);
+			return $app->redirect($app['url_generator']->generate('personnageSecondaire.list'),303);
 		}
 			
 		return $app['twig']->render('admin/personnageSecondaire/delete.twig', array(

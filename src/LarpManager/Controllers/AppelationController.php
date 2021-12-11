@@ -79,11 +79,11 @@ class AppelationController
 				
 			if ( $form->get('save')->isClicked())
 			{
-				return $app->redirect($app['url_generator']->generate('appelation'),301);
+				return $app->redirect($app['url_generator']->generate('appelation'),303);
 			}
 			else if ( $form->get('save_continue')->isClicked())
 			{
-				return $app->redirect($app['url_generator']->generate('appelation.add'),301);
+				return $app->redirect($app['url_generator']->generate('appelation.add'),303);
 			}
 		}
 		
@@ -116,14 +116,14 @@ class AppelationController
 				$app['orm.em']->flush();
 				$app['session']->getFlashBag()->add('success', 'L\'appelation a été mise à jour.');
 				
-				return $app->redirect($app['url_generator']->generate('appelation.detail',array('appelation' => $id)),301);
+				return $app->redirect($app['url_generator']->generate('appelation.detail',array('appelation' => $id)),303);
 			}
 			else if ( $form->get('delete')->isClicked())
 			{
 				$app['orm.em']->remove($appelation);
 				$app['orm.em']->flush();
 				$app['session']->getFlashBag()->add('success', 'L\'appelation a été supprimée.');
-				return $app->redirect($app['url_generator']->generate('appelation'),301);
+				return $app->redirect($app['url_generator']->generate('appelation'),303);
 			}
 		}
 

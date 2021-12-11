@@ -123,11 +123,11 @@ class RestrictionController
 				
 			if ( $form->get('save')->isClicked())
 			{
-				return $app->redirect($app['url_generator']->generate('restriction.list'),301);
+				return $app->redirect($app['url_generator']->generate('restriction.list'),303);
 			}
 			else if ( $form->get('save_continue')->isClicked())
 			{
-				return $app->redirect($app['url_generator']->generate('restriction.add'),301);
+				return $app->redirect($app['url_generator']->generate('restriction.add'),303);
 			}
 		}
 		
@@ -171,7 +171,7 @@ class RestrictionController
 			$app['orm.em']->flush();
 				
 			$app['session']->getFlashBag()->add('success', 'La restriction alimentaire a été modifié.');
-			return $app->redirect($app['url_generator']->generate('restriction.list'),301);
+			return $app->redirect($app['url_generator']->generate('restriction.list'),303);
 		}
 
 		return $app['twig']->render('admin/restriction/update.twig', array(
@@ -203,7 +203,7 @@ class RestrictionController
 			$app['orm.em']->flush();
 				
 			$app['session']->getFlashBag()->add('success', 'La restriction alimentaire a été supprimé.');
-			return $app->redirect($app['url_generator']->generate('restriction.list'),301);
+			return $app->redirect($app['url_generator']->generate('restriction.list'),303);
 		}
 
 		return $app['twig']->render('admin/restriction/delete.twig', array(
