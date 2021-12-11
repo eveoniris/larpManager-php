@@ -1095,7 +1095,7 @@ class PersonnageController
 			$app['orm.em']->flush();
 		
 			$app['session']->getFlashBag()->add('success','Le personnage a été sauvegardé.');
-			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),303);
 		}
 		
 		return $app['twig']->render('admin/personnage/updatePugilat.twig', array(

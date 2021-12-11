@@ -181,11 +181,11 @@ class GroupeSecondaireController
 	
 			if ( $form->get('save')->isClicked())
 			{
-				return $app->redirect($app['url_generator']->generate('groupeSecondaire.admin.list'),301);
+				return $app->redirect($app['url_generator']->generate('groupeSecondaire.admin.list'),303);
 			}
 			else if ( $form->get('save_continue')->isClicked())
 			{
-				return $app->redirect($app['url_generator']->generate('groupeSecondaire.admin.add'),301);
+				return $app->redirect($app['url_generator']->generate('groupeSecondaire.admin.add'),303);
 			}
 		}
 	
@@ -213,7 +213,7 @@ class GroupeSecondaireController
 			$app['orm.em']->flush();
 			$app['session']->getFlashBag()->add('success', 'Le groupe secondaire a été mis à jour.');
 			
-			return $app->redirect($app['url_generator']->generate('groupeSecondaire.admin.detail', array('groupe' => $groupeSecondaire->getId())),301);
+			return $app->redirect($app['url_generator']->generate('groupeSecondaire.admin.detail', array('groupe' => $groupeSecondaire->getId())),303);
 		}
 		
 		return $app['twig']->render('admin/groupeSecondaire/materiel.twig', array(
@@ -384,7 +384,7 @@ class GroupeSecondaireController
 			$app['orm.em']->flush();
 			
 			$app['session']->getFlashBag()->add('success', 'le personnage a été ajouté au groupe secondaire.');
-			return $app->redirect($app['url_generator']->generate('groupeSecondaire.admin.detail', array('groupe' => $groupeSecondaire->getId())),301);
+			return $app->redirect($app['url_generator']->generate('groupeSecondaire.admin.detail', array('groupe' => $groupeSecondaire->getId())),303);
 		}
 		
 		return $app['twig']->render('admin/groupeSecondaire/newMembre.twig', 

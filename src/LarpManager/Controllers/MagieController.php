@@ -99,7 +99,7 @@ class MagieController
 			$app['orm.em']->flush();
 				
 			$app['session']->getFlashBag()->add('success','La sphere a été ajouté');
-			return $app->redirect($app['url_generator']->generate('magie.sphere.detail',array('sphere'=>$sphere->getId())),301);
+			return $app->redirect($app['url_generator']->generate('magie.sphere.detail',array('sphere'=>$sphere->getId())),303);
 		}
 	
 		return $app['twig']->render('admin/sphere/add.twig', array(
@@ -133,7 +133,7 @@ class MagieController
 			$app['orm.em']->flush();
 				
 			$app['session']->getFlashBag()->add('success','La sphere a été sauvegardé');
-			return $app->redirect($app['url_generator']->generate('magie.sphere.detail',array('sphere'=>$sphere->getId())),301);
+			return $app->redirect($app['url_generator']->generate('magie.sphere.detail',array('sphere'=>$sphere->getId())),303);
 		}
 	
 		return $app['twig']->render('admin/sphere/update.twig', array(
@@ -166,7 +166,7 @@ class MagieController
 			$app['orm.em']->flush();
 				
 			$app['session']->getFlashBag()->add('success','La sphere a été suprimé');
-			return $app->redirect($app['url_generator']->generate('magie.sphere.list'),301);
+			return $app->redirect($app['url_generator']->generate('magie.sphere.list'),303);
 		}
 	
 		return $app['twig']->render('admin/sphere/delete.twig', array(
@@ -234,7 +234,7 @@ class MagieController
 					
 				if (!$extension || ! in_array($extension, array('pdf'))) {
 					$app['session']->getFlashBag()->add('error','Désolé, votre document ne semble pas valide (vérifiez le format de votre document)');
-					return $app->redirect($app['url_generator']->generate('magie.priere.list'),301);
+					return $app->redirect($app['url_generator']->generate('magie.priere.list'),303);
 				}
 					
 				$documentFilename = hash('md5',$priere->getLabel().$filename . time()).'.'.$extension;
@@ -248,7 +248,7 @@ class MagieController
 			$app['orm.em']->flush();
 	
 			$app['session']->getFlashBag()->add('success','La priere a été ajouté');
-			return $app->redirect($app['url_generator']->generate('magie.priere.detail',array('priere'=>$priere->getId())),301);
+			return $app->redirect($app['url_generator']->generate('magie.priere.detail',array('priere'=>$priere->getId())),303);
 		}
 	
 		return $app['twig']->render('admin/priere/add.twig', array(
@@ -290,7 +290,7 @@ class MagieController
 					
 				if (!$extension || ! in_array($extension, array('pdf'))) {
 					$app['session']->getFlashBag()->add('error','Désolé, votre document ne semble pas valide (vérifiez le format de votre document)');
-					return $app->redirect($app['url_generator']->generate('magie.priere.list'),301);
+					return $app->redirect($app['url_generator']->generate('magie.priere.list'),303);
 				}
 					
 				$documentFilename = hash('md5',$priere->getLabel().$filename . time()).'.'.$extension;
@@ -304,7 +304,7 @@ class MagieController
 			$app['orm.em']->flush();
 	
 			$app['session']->getFlashBag()->add('success','La priere a été sauvegardé');
-			return $app->redirect($app['url_generator']->generate('magie.priere.detail',array('priere'=>$priere->getId())),301);
+			return $app->redirect($app['url_generator']->generate('magie.priere.detail',array('priere'=>$priere->getId())),303);
 		}
 	
 		return $app['twig']->render('admin/priere/update.twig', array(
@@ -337,7 +337,7 @@ class MagieController
 			$app['orm.em']->flush();
 	
 			$app['session']->getFlashBag()->add('success','La priere a été suprimé');
-			return $app->redirect($app['url_generator']->generate('magie.priere.list'),301);
+			return $app->redirect($app['url_generator']->generate('magie.priere.list'),303);
 		}
 	
 		return $app['twig']->render('admin/priere/delete.twig', array(
@@ -470,7 +470,7 @@ class MagieController
 					
 				if (!$extension || ! in_array($extension, array('pdf'))) {
 					$app['session']->getFlashBag()->add('error','Désolé, votre document ne semble pas valide (vérifiez le format de votre document)');
-					return $app->redirect($app['url_generator']->generate('magie.potion.list'),301);
+					return $app->redirect($app['url_generator']->generate('magie.potion.list'),303);
 				}
 					
 				$documentFilename = hash('md5',$potion->getLabel().$filename . time()).'.'.$extension;
@@ -484,7 +484,7 @@ class MagieController
 			$app['orm.em']->flush();
 	
 			$app['session']->getFlashBag()->add('success','La potion a été ajouté');
-			return $app->redirect($app['url_generator']->generate('magie.potion.detail',array('potion'=>$potion->getId())),301);
+			return $app->redirect($app['url_generator']->generate('magie.potion.detail',array('potion'=>$potion->getId())),303);
 		}
 	
 		return $app['twig']->render('admin/potion/add.twig', array(
@@ -526,7 +526,7 @@ class MagieController
 					
 				if (!$extension || ! in_array($extension, array('pdf'))) {
 					$app['session']->getFlashBag()->add('error','Désolé, votre document ne semble pas valide (vérifiez le format de votre document)');
-					return $app->redirect($app['url_generator']->generate('magie.potion.list'),301);
+					return $app->redirect($app['url_generator']->generate('magie.potion.list'),303);
 				}
 					
 				$documentFilename = hash('md5',$potion->getLabel().$filename . time()).'.'.$extension;
@@ -540,7 +540,7 @@ class MagieController
 			$app['orm.em']->flush();
 	
 			$app['session']->getFlashBag()->add('success','La potion a été sauvegardé');
-			return $app->redirect($app['url_generator']->generate('magie.potion.detail',array('potion'=>$potion->getId())),301);
+			return $app->redirect($app['url_generator']->generate('magie.potion.detail',array('potion'=>$potion->getId())),303);
 		}
 	
 		return $app['twig']->render('admin/potion/update.twig', array(
@@ -573,7 +573,7 @@ class MagieController
 			$app['orm.em']->flush();
 	
 			$app['session']->getFlashBag()->add('success','La potion a été suprimé');
-			return $app->redirect($app['url_generator']->generate('magie.potion.list'),301);
+			return $app->redirect($app['url_generator']->generate('magie.potion.list'),303);
 		}
 	
 		return $app['twig']->render('admin/potion/delete.twig', array(
@@ -672,7 +672,7 @@ class MagieController
 			$app['orm.em']->flush();
 			
 			$app['session']->getFlashBag()->add('success','Le domaine de magie a été ajouté');
-			return $app->redirect($app['url_generator']->generate('magie.domaine.detail',array('domaine'=>$domaine->getId())),301);
+			return $app->redirect($app['url_generator']->generate('magie.domaine.detail',array('domaine'=>$domaine->getId())),303);
 		}
 		
 		return $app['twig']->render('admin/domaine/add.twig', array(
@@ -706,7 +706,7 @@ class MagieController
 			$app['orm.em']->flush();
 			
 			$app['session']->getFlashBag()->add('success','Le domaine de magie a été sauvegardé');
-			return $app->redirect($app['url_generator']->generate('magie.domaine.detail',array('domaine'=>$domaine->getId())),301);
+			return $app->redirect($app['url_generator']->generate('magie.domaine.detail',array('domaine'=>$domaine->getId())),303);
 		}
 		
 		return $app['twig']->render('admin/domaine/update.twig', array(
@@ -739,7 +739,7 @@ class MagieController
 			$app['orm.em']->flush();
 			
 			$app['session']->getFlashBag()->add('success','Le domaine de magie a été suprimé');
-			return $app->redirect($app['url_generator']->generate('magie.domaine.list'),301);
+			return $app->redirect($app['url_generator']->generate('magie.domaine.list'),303);
 		}
 		
 		return $app['twig']->render('admin/domaine/delete.twig', array(
@@ -808,7 +808,7 @@ class MagieController
 					
 				if (!$extension || ! in_array($extension, array('pdf'))) {
 					$app['session']->getFlashBag()->add('error','Désolé, votre document ne semble pas valide (vérifiez le format de votre document)');
-					return $app->redirect($app['url_generator']->generate('magie.sort.list'),301);
+					return $app->redirect($app['url_generator']->generate('magie.sort.list'),303);
 				}
 					
 				$documentFilename = hash('md5',$sort->getLabel().$filename . time()).'.'.$extension;
@@ -822,7 +822,7 @@ class MagieController
 			$app['orm.em']->flush();
 				
 			$app['session']->getFlashBag()->add('success','Le sortilége a été ajouté');
-			return $app->redirect($app['url_generator']->generate('magie.sort.detail',array('sort'=>$sort->getId())),301);
+			return $app->redirect($app['url_generator']->generate('magie.sort.detail',array('sort'=>$sort->getId())),303);
 		}
 	
 		return $app['twig']->render('admin/sort/add.twig', array(
@@ -864,7 +864,7 @@ class MagieController
 					
 				if (!$extension || ! in_array($extension, array('pdf'))) {
 					$app['session']->getFlashBag()->add('error','Désolé, votre document ne semble pas valide (vérifiez le format de votre document)');
-					return $app->redirect($app['url_generator']->generate('magie.sort.list'),301);
+					return $app->redirect($app['url_generator']->generate('magie.sort.list'),303);
 				}
 					
 				$documentFilename = hash('md5',$sort->getLabel().$filename . time()).'.'.$extension;
@@ -878,7 +878,7 @@ class MagieController
 			$app['orm.em']->flush();
 				
 			$app['session']->getFlashBag()->add('success','Le sort a été sauvegardé');
-			return $app->redirect($app['url_generator']->generate('magie.sort.detail',array('sort'=>$sort->getId())),301);
+			return $app->redirect($app['url_generator']->generate('magie.sort.detail',array('sort'=>$sort->getId())),303);
 		}
 	
 		return $app['twig']->render('admin/sort/update.twig', array(
@@ -911,7 +911,7 @@ class MagieController
 			$app['orm.em']->flush();
 				
 			$app['session']->getFlashBag()->add('success','Le sortilège a été suprimé');
-			return $app->redirect($app['url_generator']->generate('magie.sort.list'),301);
+			return $app->redirect($app['url_generator']->generate('magie.sort.list'),303);
 		}
 	
 		return $app['twig']->render('admin/sort/delete.twig', array(

@@ -73,11 +73,11 @@ class GroupeSecondaireTypeController
 		
 			if ( $form->get('save')->isClicked())
 			{
-				return $app->redirect($app['url_generator']->generate('groupeSecondaire.admin.list'),301);
+				return $app->redirect($app['url_generator']->generate('groupeSecondaire.admin.list'),303);
 			}
 			else if ( $form->get('save_continue')->isClicked())
 			{
-				return $app->redirect($app['url_generator']->generate('groupeSecondaire.admin.type.add'),301);
+				return $app->redirect($app['url_generator']->generate('groupeSecondaire.admin.type.add'),303);
 			}
 		}
 		

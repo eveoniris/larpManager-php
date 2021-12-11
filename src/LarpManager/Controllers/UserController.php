@@ -142,7 +142,7 @@ class UserController
 			$app['notify']->newUser($user, $plainPassword);
 			
 			$app['session']->getFlashBag()->add('success', 'L\'utilisateur a été ajouté.');
-			return $app->redirect($app['url_generator']->generate('homepage'),301);
+			return $app->redirect($app['url_generator']->generate('homepage'),303);
 		}
 		return $app['twig']->render('admin/user/new.twig', array(
 				'form' => $form->createView()
@@ -160,7 +160,7 @@ class UserController
 		if ( ! $app['security.authorization_checker']->isGranted('ROLE_ADMIN') && ! $user == $app['user'])
 		{
 			$app['session']->getFlashBag()->add('error', 'Vous n\'avez pas les droits necessaires pour cette opération.');
-			return $app->redirect($app['url_generator']->generate('homepage'),301);
+			return $app->redirect($app['url_generator']->generate('homepage'),303);
 		}
 
 		$form = $app['form.factory']->createBuilder(new UserPersonnageDefaultForm(), $app['user'], array('user_id' => $user->getId()))
@@ -177,7 +177,7 @@ class UserController
 			$app['orm.em']->flush();
 			
 			$app['session']->getFlashBag()->add('success', 'Vos informations ont été enregistrées.');
-			return $app->redirect($app['url_generator']->generate('homepage'),301);
+			return $app->redirect($app['url_generator']->generate('homepage'),303);
 		}
 		return $app['twig']->render('public/user/personnageDefault.twig', array(
 				'form' => $form->createView(),
@@ -215,7 +215,7 @@ class UserController
 			$app['orm.em']->flush();
 			
 			$app['session']->getFlashBag()->add('success', 'Vos informations ont été enregistrées.');
-			return $app->redirect($app['url_generator']->generate('homepage'),301);
+			return $app->redirect($app['url_generator']->generate('homepage'),303);
 		}
 		
 		
@@ -251,7 +251,7 @@ class UserController
 			$app['orm.em']->flush();
 			
 			$app['session']->getFlashBag()->add('success', 'Vous participez maintenant à '.$gn->getLabel().' !');
-			return $app->redirect($app['url_generator']->generate('homepage'),301);
+			return $app->redirect($app['url_generator']->generate('homepage'),303);
 		}
 		
 		return $app['twig']->render('public/gn/participe.twig', array(
@@ -284,7 +284,7 @@ class UserController
 	        $app['orm.em']->flush();
 	        
 	        $app['session']->getFlashBag()->add('success', 'Vous avez validé les condition d\'inscription pour '.$gn->getLabel().' !');
-	        return $app->redirect($app['url_generator']->generate('homepage'),301);
+	        return $app->redirect($app['url_generator']->generate('homepage'),303);
 	    }
 	    
 	    return $app['twig']->render('public/gn/validation_ci.twig', array(
@@ -305,7 +305,7 @@ class UserController
 		if ( $userHasBillet->getUser() != $app['user'])
 		{
 			$app['session']->getFlashBag()->add('error','Vous ne pouvez pas acceder à cette information');
-			return $app->redirect($app['url_generator']->generate('homepage'),301);
+			return $app->redirect($app['url_generator']->generate('homepage'),303);
 		}
 		
 		return $app['twig']->render('public/userHasBillet/detail.twig', array(
@@ -373,7 +373,7 @@ class UserController
 			$app['orm.em']->flush();
 				
 			$app['session']->getFlashBag()->add('success', 'Vos informations ont été enregistrées.');
-			return $app->redirect($app['url_generator']->generate('homepage'),301);
+			return $app->redirect($app['url_generator']->generate('homepage'),303);
 		}
 	
 		return $app['twig']->render('public/user/etatCivil.twig', array(

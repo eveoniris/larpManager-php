@@ -95,11 +95,11 @@ class RessourceController
 		
 			if ( $form->get('save')->isClicked())
 			{
-				return $app->redirect($app['url_generator']->generate('ressource'),301);
+				return $app->redirect($app['url_generator']->generate('ressource'),303);
 			}
 			else if ( $form->get('save_continue')->isClicked())
 			{
-				return $app->redirect($app['url_generator']->generate('ressource.add'),301);
+				return $app->redirect($app['url_generator']->generate('ressource.add'),303);
 			}
 		}
 		

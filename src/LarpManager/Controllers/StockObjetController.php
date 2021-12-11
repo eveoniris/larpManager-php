@@ -292,15 +292,15 @@ class StockObjetController
 			
 			if ( $form->get('save')->isClicked())
 			{
-				return $app->redirect($app['url_generator']->generate('stock_homepage'),301);
+				return $app->redirect($app['url_generator']->generate('stock_homepage'),303);
 			}
 			else if ( $form->get('save_continue')->isClicked())
 			{
-				return $app->redirect($app['url_generator']->generate('stock_objet_add'),301);
+				return $app->redirect($app['url_generator']->generate('stock_objet_add'),303);
 			}
 			else if ( $form->get('save_clone')->isClicked())
 			{
-				return $app->redirect($app['url_generator']->generate('stock_objet_clone', array('objet' => $objet->getId())),301);
+				return $app->redirect($app['url_generator']->generate('stock_objet_clone', array('objet' => $objet->getId())),303);
 			}
 			
 		}
@@ -353,11 +353,11 @@ class StockObjetController
 				
 			if ( $form->get('save')->isClicked())
 			{
-				return $app->redirect($app['url_generator']->generate('stock_homepage'),301);
+				return $app->redirect($app['url_generator']->generate('stock_homepage'),303);
 			}
 			else
 			{
-				return $app->redirect($app['url_generator']->generate('stock_objet_clone', array('objet' => $newObjet->getId())),301);
+				return $app->redirect($app['url_generator']->generate('stock_objet_clone', array('objet' => $newObjet->getId())),303);
 			}
 		}
 		

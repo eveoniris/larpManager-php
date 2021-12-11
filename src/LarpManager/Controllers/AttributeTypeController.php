@@ -74,11 +74,11 @@ class AttributeTypeController
 	
 			if ( $form->get('save')->isClicked())
 			{
-				return $app->redirect($app['url_generator']->generate('attribute.type'),301);
+				return $app->redirect($app['url_generator']->generate('attribute.type'),303);
 			}
 			else if ( $form->get('save_continue')->isClicked())
 			{
-				return $app->redirect($app['url_generator']->generate('attribute.type.add'),301);
+				return $app->redirect($app['url_generator']->generate('attribute.type.add'),303);
 			}
 		}
 	

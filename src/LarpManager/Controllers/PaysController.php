@@ -45,11 +45,11 @@ class PaysController
 			
 			if ( $form->get('save')->isClicked())
 			{
-				return $app->redirect($app['url_generator']->generate('pays'),301);
+				return $app->redirect($app['url_generator']->generate('pays'),303);
 			}
 			else if ( $form->get('save_continue')->isClicked())
 			{
-				return $app->redirect($app['url_generator']->generate('pays.add'),301);
+				return $app->redirect($app['url_generator']->generate('pays.add'),303);
 			}
 		}
 		
