@@ -74,12 +74,20 @@
 									{% for participant in personnage.user.participants %}
 										{% if participant.personnage %}
 											{% if participant.groupeGn %}
-												<a class="list-group-item" href="{{ path('groupe.detail', {'index': participant.groupeGn.groupe.id}) }}">{{ participant.personnage.nom }} - {{ participant.gn }} - #{{ participant.groupeGn.groupe.numero }} {{ participant.groupeGn.groupe.nom }}</a>
+												{% if participant.groupeGn.groupe %}
+													<a class="list-group-item" href="{{ path('groupe.detail', {'index': participant.groupeGn.groupe.id}) }}">{{ participant.personnage.nom }} - {{ participant.gn }} - #{{ participant.groupeGn.groupe.numero }} {{ participant.groupeGn.groupe.nom }}</a>
+												{% else %}
+													<a class="list-group-item">{{ participant.personnage.nom }} - {{ participant.gn }} - Problème de groupe</a>
+												{% endif %}
 											{% else %}
 												<a class="list-group-item">{{ participant.personnage.nom }} - {{ participant.gn }} - N'est pas lié à un groupe</a>
 											{% endif %}
 										{% else %}
-											<a class="list-group-item">Pas de personnage sur le {{ participant.gn }} (#{{ participant.groupeGn.groupe.numero }} {{ participant.groupeGn.groupe.nom }})</a>
+											{% if participant.groupeGn %}
+												<a class="list-group-item">Problème de personnage {{ personnage.nom }} sur le {{ participant.gn }} - #{{ participant.groupeGn.groupe.numero }} {{ participant.groupeGn.groupe.nom }}</a>
+											{% else %}
+												<a class="list-group-item">Problème de personnage {{ personnage.nom }} sur le {{ participant.gn }} - Problème de groupe</a>
+											{% endif %}
 										{% endif %}
 									{% endfor %}
 								{% else %}
