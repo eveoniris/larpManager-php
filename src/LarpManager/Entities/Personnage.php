@@ -709,7 +709,7 @@ class Personnage extends BasePersonnage
 
 		if ( $this->getCompetenceNiveau('Agilité') >= 2 ) $heroisme++;
 		if ( $this->getCompetenceNiveau('Armes à 1 main') >= 3 ) $heroisme++;
-		if ( $this->getCompetenceNiveau('Armes à 2 mains') >= 3 ) $heroisme++;
+		if ( $this->getCompetenceNiveau('Armes à 2 mains') >= 2 ) $heroisme++;
 		if ( $this->getCompetenceNiveau('Armurerie') >= 4 ) $heroisme++;
 		if ( $this->getCompetenceNiveau('Protection') >= 4 ) $heroisme++;
 		if ( $this->getCompetenceNiveau('Sauvagerie') >= 1 ) $heroisme++;
@@ -747,7 +747,7 @@ class Personnage extends BasePersonnage
 			$heroismeHistory->setExplication('Compétence Armes à 1 main niveau '.$this->getCompetenceNiveau('Armes à 1 main'));
 			$heroismeHistories[] = $heroismeHistory;
 		}
-		if ( $this->getCompetenceNiveau('Armes à 2 mains') >= 3 ) {
+		if ( $this->getCompetenceNiveau('Armes à 2 mains') >= 2 ) {
 			$heroismeHistory = new \LarpManager\Entities\HeroismeHistory();
 			$heroismeHistory->setHeroisme(1);
 			$heroismeHistory->setExplication('Compétence Armes à 2 mains niveau '.$this->getCompetenceNiveau('Armes à 2 mains'));
