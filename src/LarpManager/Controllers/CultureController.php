@@ -61,7 +61,7 @@ class CultureController
 			$app['orm.em']->flush();
 			
 			$app['session']->getFlashBag()->add('success', 'La culture a été ajoutée.');
-			return $app->redirect($app['url_generator']->generate('culture'),301);
+			return $app->redirect($app['url_generator']->generate('culture'),303);
 		}
 		
 		return $app['twig']->render('admin\culture\add.twig', array(
@@ -104,7 +104,7 @@ class CultureController
 			$app['orm.em']->flush();
 				
 			$app['session']->getFlashBag()->add('success', 'La culture a été mise à jour.');
-			return $app->redirect($app['url_generator']->generate('culture'),301);
+			return $app->redirect($app['url_generator']->generate('culture'),303);
 		}
 		
 		return $app['twig']->render('admin\culture\update.twig', array(
@@ -135,7 +135,7 @@ class CultureController
 			$app['orm.em']->flush();
 				
 			$app['session']->getFlashBag()->add('success', 'La culture a été supprimée.');
-			return $app->redirect($app['url_generator']->generate('culture'),301);
+			return $app->redirect($app['url_generator']->generate('culture'),303);
 		}
 		
 		return $app['twig']->render('admin\culture\delete.twig', array(

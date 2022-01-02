@@ -62,7 +62,7 @@ class TechnologieController
 			$app['orm.em']->flush();
 			
 			$app['session']->getFlashBag()->add('success', 'La technologie a été ajoutée.');
-			return $app->redirect($app['url_generator']->generate('technologie'),301);
+			return $app->redirect($app['url_generator']->generate('technologie'),303);
 		}
 		
 		return $app['twig']->render('admin\technologie\add.twig', array(
@@ -106,7 +106,7 @@ class TechnologieController
 			$app['orm.em']->flush();
 				
 			$app['session']->getFlashBag()->add('success', 'La technologie a été mise à jour.');
-			return $app->redirect($app['url_generator']->generate('technologie'),301);
+			return $app->redirect($app['url_generator']->generate('technologie'),303);
 		}
 		
 		return $app['twig']->render('admin\technologie\update.twig', array(
@@ -138,7 +138,7 @@ class TechnologieController
 			$app['orm.em']->flush();
 				
 			$app['session']->getFlashBag()->add('success', 'La technologie a été supprimée.');
-			return $app->redirect($app['url_generator']->generate('technologie'),301);
+			return $app->redirect($app['url_generator']->generate('technologie'),303);
 		}
 		
 		return $app['twig']->render('admin\technologie\delete.twig', array(

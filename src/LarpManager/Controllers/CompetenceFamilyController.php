@@ -74,11 +74,11 @@ class CompetenceFamilyController
 	
 			if ( $form->get('save')->isClicked())
 			{
-				return $app->redirect($app['url_generator']->generate('competence.family'),301);
+				return $app->redirect($app['url_generator']->generate('competence.family'),303);
 			}
 			else if ( $form->get('save_continue')->isClicked())
 			{
-				return $app->redirect($app['url_generator']->generate('competence.family.add'),301);
+				return $app->redirect($app['url_generator']->generate('competence.family.add'),303);
 			}
 		}
 	

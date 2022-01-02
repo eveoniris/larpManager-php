@@ -130,7 +130,7 @@ class InstallController
 			
 			$app->mount('/', new \LarpManager\HomepageControllerProvider());
 			$app['session']->getFlashBag()->add('success', 'L\'installation c\'est déroulée avec succès.');
-			return $app->redirect($app['url_generator']->generate('homepage'),301);
+			return $app->redirect($app['url_generator']->generate('homepage'),303);
 		}
 		
 		return $app['twig']->render('install/installfirstuser.twig', array('form' => $form->createView()));

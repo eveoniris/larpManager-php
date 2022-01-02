@@ -7,7 +7,7 @@
 	<div class="col-sm-6">
 		<ul class="list-group">
 			{% if personnage.groupe %}
-				<li class="list-group-item"><a href="{{ path('participant.groupeGn.groupe', {'groupeGn': participant.session.id}) }}">{{ participant.session.groupe.nom }}</a></li>
+				<li class="list-group-item"><a href="{{ path('groupeGn.groupe', {'groupeGn': participant.session.id}) }}">{{ participant.session.groupe.nom }}</a></li>
 			{% endif %}			
 		</ul>
 	</div>

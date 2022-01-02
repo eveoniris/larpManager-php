@@ -74,7 +74,7 @@ class ConstructionController
 			
 			$app['session']->getFlashBag()->add('success', 'La construction a été ajoutée.');
 			
-			return $app->redirect($app['url_generator']->generate('construction.detail', array('construction' => $construction->getId())),301);
+			return $app->redirect($app['url_generator']->generate('construction.detail', array('construction' => $construction->getId())),303);
 		}
 				
 		return $app['twig']->render('admin/construction/add.twig', array(
@@ -108,7 +108,7 @@ class ConstructionController
 				
 			$app['session']->getFlashBag()->add('success', 'La construction a été modifié.');
 			
-			return $app->redirect($app['url_generator']->generate('construction.detail', array('construction' => $construction->getId())),301);
+			return $app->redirect($app['url_generator']->generate('construction.detail', array('construction' => $construction->getId())),303);
 		}
 		
 		return $app['twig']->render('admin/construction/update.twig', array(
@@ -142,7 +142,7 @@ class ConstructionController
 		
 			$app['session']->getFlashBag()->add('success', 'La construction a été supprimée.');
 				
-			return $app->redirect($app['url_generator']->generate('construction'),301);
+			return $app->redirect($app['url_generator']->generate('construction'),303);
 		}
 		
 		return $app['twig']->render('admin/construction/delete.twig', array(

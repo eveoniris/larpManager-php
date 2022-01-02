@@ -58,7 +58,7 @@ class HomepageController
 		
 		if ( ! $app['user']->getEtatCivil() )
 		{
-			return $app->redirect($app['url_generator']->generate('newUser.step1'),301);
+			return $app->redirect($app['url_generator']->generate('newUser.step1'),303);
 		}
 		
 		$repoAnnonce = $app['orm.em']->getRepository('LarpManager\Entities\Annonce');
@@ -116,7 +116,7 @@ class HomepageController
 			$app['orm.em']->persist($app['user']);
 			$app['orm.em']->flush();
 			
-			return $app->redirect($app['url_generator']->generate('newUser.step3'),301);
+			return $app->redirect($app['url_generator']->generate('newUser.step3'),303);
 		}
 		
 		return $app['twig']->render('public/newUser/step2.twig', array(
@@ -154,7 +154,7 @@ class HomepageController
 			$app['orm.em']->persist($user);
 			$app['orm.em']->flush();
 			
-			return $app->redirect($app['url_generator']->generate('newUser.step4'),301);
+			return $app->redirect($app['url_generator']->generate('newUser.step4'),303);
 				
 		}
 		return $app['twig']->render('public/newUser/step3.twig', array(

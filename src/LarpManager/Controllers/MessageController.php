@@ -122,7 +122,7 @@ class MessageController
 			$app['notify']->newMessage($destinataire, $message);
 				
 			$app['session']->getFlashBag()->add('success', 'Votre message a été envoyé.');
-			return $app->redirect($app['url_generator']->generate('homepage'),301);
+			return $app->redirect($app['url_generator']->generate('homepage'),303);
 		}
 	
 		return $app['twig']->render('public/message/new.twig', array(
@@ -196,7 +196,7 @@ class MessageController
 			$app['notify']->newMessage($destinataire, $message);
 		
 			$app['session']->getFlashBag()->add('success', 'Votre message a été envoyé.');
-			return $app->redirect($app['url_generator']->generate('homepage'),301);
+			return $app->redirect($app['url_generator']->generate('homepage'),303);
 		}
 		return $app['twig']->render('public/message/response.twig', array(
 				'message' => $message,

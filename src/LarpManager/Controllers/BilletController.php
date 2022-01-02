@@ -74,7 +74,7 @@ class BilletController
 			$app['orm.em']->flush();
 			
 			$app['session']->getFlashBag()->add('success', 'Le billet a été ajouté.');
-			return $app->redirect($app['url_generator']->generate('billet.list'),301);
+			return $app->redirect($app['url_generator']->generate('billet.list'),303);
 		}
 		
 		return $app['twig']->render('admin\billet\add.twig', array(
@@ -118,7 +118,7 @@ class BilletController
 			$app['orm.em']->flush();
 				
 			$app['session']->getFlashBag()->add('success', 'Le billet a été mis à jour.');
-			return $app->redirect($app['url_generator']->generate('billet.list'),301);
+			return $app->redirect($app['url_generator']->generate('billet.list'),303);
 		}
 		
 		return $app['twig']->render('admin\billet\update.twig', array(
@@ -149,7 +149,7 @@ class BilletController
 			$app['orm.em']->flush();
 				
 			$app['session']->getFlashBag()->add('success', 'Le billet a été supprimé.');
-			return $app->redirect($app['url_generator']->generate('billet.list'),301);
+			return $app->redirect($app['url_generator']->generate('billet.list'),303);
 		}
 		
 		return $app['twig']->render('admin\billet\delete.twig', array(

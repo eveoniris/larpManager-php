@@ -131,7 +131,7 @@ class DebriefingController
 			$app['orm.em']->flush();
 			
 			$app['session']->getFlashBag()->add('success', 'Le debriefing a été ajouté.');
-			return $app->redirect($app['url_generator']->generate('groupe.detail', array('index' => $debriefing->getGroupe()->getId())),301);
+			return $app->redirect($app['url_generator']->generate('groupe.detail', array('index' => $debriefing->getGroupe()->getId())),303);
 		}
 		
 		return $app['twig']->render('admin/debriefing/add.twig', array(
@@ -161,7 +161,7 @@ class DebriefingController
 			$app['orm.em']->flush();
 			
 			$app['session']->getFlashBag()->add('success', 'Le debriefing a été supprimé.');
-			return $app->redirect($app['url_generator']->generate('groupe.detail', array('index' => $debriefing->getGroupe()->getId())),301);
+			return $app->redirect($app['url_generator']->generate('groupe.detail', array('index' => $debriefing->getGroupe()->getId())),303);
 		}
 		
 		return $app['twig']->render('admin/debriefing/delete.twig', array(
@@ -198,7 +198,7 @@ class DebriefingController
 			$app['orm.em']->flush();
 				
 			$app['session']->getFlashBag()->add('success', 'Le debriefing a été ajouté.');
-			return $app->redirect($app['url_generator']->generate('groupe.detail', array('index' => $debriefing->getGroupe()->getId())),301);
+			return $app->redirect($app['url_generator']->generate('groupe.detail', array('index' => $debriefing->getGroupe()->getId())),303);
 		}
 		
 		return $app['twig']->render('admin/debriefing/update.twig', array(

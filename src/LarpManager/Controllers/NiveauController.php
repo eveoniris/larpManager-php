@@ -37,11 +37,11 @@ class NiveauController
 		
 			if ( $form->get('save')->isClicked())
 			{
-				return $app->redirect($app['url_generator']->generate('niveau'),301);
+				return $app->redirect($app['url_generator']->generate('niveau'),303);
 			}
 			else if ( $form->get('save_continue')->isClicked())
 			{
-				return $app->redirect($app['url_generator']->generate('niveau.add'),301);
+				return $app->redirect($app['url_generator']->generate('niveau.add'),303);
 			}
 		}
 		
