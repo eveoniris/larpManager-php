@@ -3,15 +3,11 @@
 	<h5>Groupes secondaires</h5>
 </div>
 
-<div class="row">
-	<div class="col-sm-6">
-		<ul class="list-group">
-			{% for membre in personnage.membres %}
-				<li class="list-group-item"><a href="{{ path('participant.groupeSecondaire.detail', {'participant': participant.id, 'groupeSecondaire': membre.secondaryGroup.id}) }}">{{ membre.secondaryGroup }}</a></li>
-			{% endfor %}
-			{% for postulant in personnage.postulants %}
-				<li class="list-group-item">{{ postulant.secondaryGroup.label }} -- En attente</li>
-			{% endfor %}
-		</ul>
-	</div>
-</div>
+<ul class="list-group">
+	{% for membre in personnage.membres %}
+		<a class="list-group-item" href="{{ path('participant.groupeSecondaire.detail', {'participant': participant.id, 'groupeSecondaire': membre.secondaryGroup.id}) }}">{{ membre.secondaryGroup }}</a>
+	{% endfor %}
+	{% for postulant in personnage.postulants %}
+		<div class="list-group-item">{{ postulant.secondaryGroup.label }} -- Postulation en attente de validation</div>
+	{% endfor %}
+</ul>

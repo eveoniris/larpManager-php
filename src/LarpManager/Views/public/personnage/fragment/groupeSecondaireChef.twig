@@ -4,14 +4,9 @@
 	<h5>Chef de groupe secondaire</h5>
 </div>
 
-<div class="row">
-	<div class="col-sm-6">
-		<ul class="list-group">
-		{% for groupeSecondaire in personnage.secondaryGroups %}
-				<li class="list-group-item">
-				<a href="{{ path('participant.groupeSecondaire.detail', {'participant': participant.id, 'groupeSecondaire':groupeSecondaire.id}) }}">{{ groupeSecondaire.label }}</a></li>
-		{% endfor %}
-		</ul>
-	</div>
-</div>
+<ul class="list-group">
+	{% for groupeSecondaire in personnage.secondaryGroups %}
+		<a class="list-group-item" href="{{ path('participant.groupeSecondaire.detail', {'participant': participant.id, 'groupeSecondaire':groupeSecondaire.id}) }}">{{ groupeSecondaire.label }}</a>
+	{% endfor %}
+</ul>
 {% endif %}
