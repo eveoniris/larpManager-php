@@ -21,24 +21,27 @@
 namespace LarpManager\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use LarpManager\Entities\Lignees;
 
 /**
- * LarpManager\Repository\AppelationRepository
+ * LarpManager\Repository\LigneesRepository
  *  
- * @author kevin
+ * @author Kevin F.
  */
-class AppelationRepository extends EntityRepository
+class LigneesRepository extends EntityRepository
 {
 	/**
-	 * Fourni la liste des appelations n'étant pas dépendante d'une autre appelation
-	 * @return \Doctrine\Common\Collections\Collection
+	 * Trouve tous les lignées classées par nom
+	 * 
+	 * @return ArrayCollection $lignees
 	 */
-	public function findRoot()
+	public function findAllOrderedByName()
 	{
-		$query = $this->app['orm.em']->createQuery('SELECT a FROM LarpManager\Entities\Appelation a WHERE a.appelation IS NULL');
-		$appelations = $query->getResult();
-	
-		return $appelations;
+		$lignees = $this->getEntityManager()
+				->createQuery('SELECT a FROM LarpManager\Entities\Lignee a ORDER BY a.nom ASC')
+				->getResult();
+		
+		return $lignees;
 	}
-}
 
+}

@@ -18,27 +18,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace LarpManager\Repository;
+namespace LarpManager\Entities;
 
-use Doctrine\ORM\EntityRepository;
+use LarpManager\Entities\BaseLignee;
 
 /**
- * LarpManager\Repository\AppelationRepository
- *  
- * @author kevin
+ * LarpManager\Entities\Lignee
+ *
+ * @Entity()
  */
-class AppelationRepository extends EntityRepository
+class Lignee extends BaseLignee
 {
-	/**
-	 * Fourni la liste des appelations n'étant pas dépendante d'une autre appelation
-	 * @return \Doctrine\Common\Collections\Collection
-	 */
-	public function findRoot()
+	public function __construct()
 	{
-		$query = $this->app['orm.em']->createQuery('SELECT a FROM LarpManager\Entities\Appelation a WHERE a.appelation IS NULL');
-		$appelations = $query->getResult();
-	
-		return $appelations;
 	}
 }
-

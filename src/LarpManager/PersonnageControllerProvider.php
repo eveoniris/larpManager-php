@@ -526,7 +526,7 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 			->before($mustBeOrga);	
 
 		/**
-		 * Ajoute un lignage au personnage
+		 * Ajoute une lignée au personnage
 		 * Accessible uniquement aux orgas
 		 */
 		$controllers->match('/admin/{personnage}/lignee/add','LarpManager\Controllers\PersonnageController::adminAddLigneeAction')

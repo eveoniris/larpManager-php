@@ -2177,7 +2177,7 @@ class PersonnageController
 			$app['orm.em']->flush();
 		
 			$app['session']->getFlashBag()->add('success','L\'évènement a été ajouté à la chronologie.');
-			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())), 303);
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),303);
 		}
 		
 		return $app['twig']->render('admin/personnage/updateChronologie.twig', array(
@@ -2223,7 +2223,7 @@ class PersonnageController
 	}
 
 	/**
-	 * Ajoute un lignage au personnage
+	 * Ajoute une lignée au personnage
 	 * 
 	 * @param Request $request
 	 * @param Application $app
@@ -2251,7 +2251,7 @@ class PersonnageController
 			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),303);
 		}
 		
-		return $app['twig']->render('admin/personnage/addLignee.twig', array(
+		return $app['twig']->render('admin/personnage/updateLignee.twig', array(
 				'form' => $form->createView(),
 				'personnage' => $personnage,
 				'lignee' => $lignee,
@@ -2259,7 +2259,7 @@ class PersonnageController
 	}
 
 	/**
-	 * Retire un lignage d'un personnage
+	 * Retire une lignée d'un personnage
 	 * 
 	 * @param Request $request
 	 * @param Application $app
