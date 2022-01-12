@@ -500,7 +500,55 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 			->method('GET|POST')
 			->convert('personnage', 'converter.personnage:convert')
 			->before($mustBeOrga);
-			
+
+		/**
+		 * Ajoute un evenement de chronologie au personnage
+		 * Accessible uniquement aux orgas
+		 */
+		$controllers->match('/admin/{personnage}/chronologie/add','LarpManager\Controllers\PersonnageController::adminAddChronologieAction')
+			->assert('personnage', '\d+')
+			->bind("personnage.admin.chronologie.add")
+			->method('GET|POST')
+			->convert('personnage', 'converter.personnage:convert')
+			->before($mustBeOrga);
+
+		/**
+		 * Supprime un evenement de chronologie au personnage
+		 * Accessible uniquement aux orgas
+		 */
+		$controllers->match('/admin/{personnage}/chronologie/{personnageChronologie}/delete','LarpManager\Controllers\PersonnageController::adminDeleteChronologieAction')
+			->assert('personnage', '\d+')
+			->assert('personnageChronologie', '\d+')
+			->bind("personnage.admin.chronologie.delete")
+			->method('GET|POST')
+			->convert('personnage', 'converter.personnage:convert')
+			->convert('personnageChronologie', 'converter.personnageChronologie:convert')
+			->before($mustBeOrga);	
+
+		/**
+		 * Ajoute un lignage au personnage
+		 * Accessible uniquement aux orgas
+		 */
+		$controllers->match('/admin/{personnage}/lignee/add','LarpManager\Controllers\PersonnageController::adminAddLigneeAction')
+			->assert('personnage', '\d+')
+			->bind("personnage.admin.lignee.add")
+			->method('GET|POST')
+			->convert('personnage', 'converter.personnage:convert')
+			->before($mustBeOrga);
+
+		/**
+		 * Supprime une lignée au personnage
+		 * Accessible uniquement aux orgas
+		 */
+		$controllers->match('/admin/{personnage}/lignee/{personnageLignee}/delete','LarpManager\Controllers\PersonnageController::adminDeleteLigneeAction')
+			->assert('personnage', '\d+')
+			->assert('personnageLignee', '\d+')
+			->bind("personnage.admin.lignee.delete")
+			->method('GET|POST')
+			->convert('personnage', 'converter.personnage:convert')
+			->convert('personnageLignee', 'converter.personnageLignee:convert')
+			->before($mustBeOrga);	
+
 		/**
 		 * Modifie le background d'un personnage
 		 * Accessible uniquement aux orgas

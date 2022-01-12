@@ -1,0 +1,25 @@
+{% extends "layout.twig" %}
+
+{% block title %}Personnage{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path('personnage.admin.list') }}">Liste des personnages</a></li>
+		<li class="active">Modification de {{ personnage.publicName }}</li>
+	</ol>
+
+	<div class="well bs-component">	
+		<form action="{{ path('personnage.admin.chronologie.add', {'personnage': personnage.id}) }}" method="POST" {{ form_enctype(form) }}>
+			<fieldset>
+				<legend>Modification de {{ personnage.publicName }}</legend>
+				<p><strong>Ajouter un évènement</strong></p>
+				{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+	
+				{{ form(form) }}
+			</fieldset>
+		</form>
+	</div>
+	
+{% endblock content %}
