@@ -41,6 +41,7 @@ use LarpManager\Form\Personnage\PersonnageReligionForm;
 use LarpManager\Form\Personnage\PersonnageUpdateRenommeForm;
 use LarpManager\Form\Personnage\PersonnageUpdateHeroismeForm;
 use LarpManager\Form\Personnage\PersonnageUpdatePugilatForm;
+use LarpManager\Form\Personnage\PersonnageTechnologieForm;
 use LarpManager\Form\Personnage\PersonnageChronologieForm;
 use LarpManager\Form\Personnage\PersonnageLigneeForm;
 
