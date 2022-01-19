@@ -2231,20 +2231,26 @@ class PersonnageController
 	public function adminAddLigneeAction(Request $request, Application $app)
 	{
 		$personnage = $request->get('personnage');
-		$lignee = new \LarpManager\Entities\PersonnageLignee();
-		$lignee->setPersonnage($personnage);
+		$personnageLignee = new \LarpManager\Entities\PersonnageLignee();
+		$personnageLignee->setPersonnage($personnage);
 		
-		$form = $app['form.factory']->createBuilder(new PersonnageLigneeForm(), $lignee)
+		$form = $app['form.factory']->createBuilder(new PersonnageLigneeForm(), $personnageLignee)
 			->add('save','submit', array('label' => 'Valider les modifications'))
 			->getForm();
-		
+
 		$form->handleRequest($request);
 			
 		if ( $form->isValid() )
 		{
-			$lignee = $form->getData();
-		
-			$app['orm.em']->persist($lignee);
+			$parent1 = $form->get('parent1')->getData();
+			$parent2 = $form->get('parent2')->getData();
+			$lignee = $form->get('lignee')->getData();
+
+			$personnageLignee->setParent1($parent1);
+			$personnageLignee->setParent2($parent2);
+			$personnageLignee->setLignee($lignee);
+
+			$app['orm.em']->persist($personnageLignee);
 			$app['orm.em']->flush();
 		
 			$app['session']->getFlashBag()->add('success','La lignée a été ajoutée.');
@@ -2254,7 +2260,7 @@ class PersonnageController
 		return $app['twig']->render('admin/personnage/updateLignee.twig', array(
 				'form' => $form->createView(),
 				'personnage' => $personnage,
-				'lignee' => $lignee,
+				'lignee' => $personnageLignee,
 			));
 	}
 
@@ -2270,7 +2276,7 @@ class PersonnageController
 		$personnageLignee = $request->get('personnageLignee');
 		
 		$form = $app['form.factory']->createBuilder()
-			->add('save','submit', array('label' => 'Retirer l\'évènement'))
+			->add('save','submit', array('label' => 'Retirer la lignée'))
 			->getForm();
 		
 		$form->handleRequest($request);

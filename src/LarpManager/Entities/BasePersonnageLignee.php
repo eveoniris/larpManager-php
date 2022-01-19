@@ -48,7 +48,6 @@ class BasePersonnageLignee
      */
     protected $lignee;
 
-
     public function __construct()
     {
     }
@@ -105,7 +104,7 @@ class BasePersonnageLignee
      * @param \LarpManager\Entities\Personnage $personnage
      * @return \LarpManager\Entities\PersonnageLignee
      */
-    public function setParent1(Personnage $parent1 = null)
+    public function setParent1(Personnage $parent1)
     {
         $this->parent1 = $parent1;
 

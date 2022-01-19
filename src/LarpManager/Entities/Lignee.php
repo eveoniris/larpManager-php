@@ -18,6 +18,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * 
+ * 
+ * 
+ * 
+ */
+
 namespace LarpManager\Entities;
 
 use LarpManager\Entities\BaseLignee;
@@ -25,11 +32,15 @@ use LarpManager\Entities\BaseLignee;
 /**
  * LarpManager\Entities\Lignee
  *
- * @Entity()
+ * @Entity(repositoryClass="LarpManager\Repository\LigneesRepository")
  */
 class Lignee extends BaseLignee
 {
-	public function __construct()
+	/**
+	 * Affichage
+	 */
+	public function __toString()
 	{
+		return $this->getNom();
 	}
 }

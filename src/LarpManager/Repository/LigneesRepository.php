@@ -21,7 +21,8 @@
 namespace LarpManager\Repository;
 
 use Doctrine\ORM\EntityRepository;
-use LarpManager\Entities\Lignees;
+use LarpManager\Entities\Lignee;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * LarpManager\Repository\LigneesRepository
@@ -31,17 +32,15 @@ use LarpManager\Entities\Lignees;
 class LigneesRepository extends EntityRepository
 {
 	/**
-	 * Trouve tous les lignées classées par nom
-	 * 
-	 * @return ArrayCollection $lignees
-	 */
-	public function findAllOrderedByName()
+	 * Trouve toutes les lignées
+	 */	
+	public function findAll()
 	{
-		$lignees = $this->getEntityManager()
-				->createQuery('SELECT a FROM LarpManager\Entities\Lignee a ORDER BY a.nom ASC')
-				->getResult();
+		$qb = $this->getEntityManager()->createQueryBuilder();
 		
-		return $lignees;
+		$qb->select('l');
+		$qb->from('LarpManager\Entities\Lignee','l');
+		$qb->orderBy('l.id','ASC');
+		return $qb->getQuery()->getResult();
 	}
-
 }

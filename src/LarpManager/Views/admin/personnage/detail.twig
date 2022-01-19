@@ -536,7 +536,12 @@
 									{% if lignage.lignee %}<div class="list-group-item">Lignee : {{ lignage.lignee.nom }}</div>{% endif %}
 									<div class="list-group-item">Parent : {{ lignage.parent1.nom }}</div>
 									{% if lignage.parent2 %}<div class="list-group-item">Parent : {{ lignage.parent2.nom }}</div>{% endif %}
-									<div class="list-group-item">TODO : boucle for sur d'éventuels lignage.enfant.nom</div>
+									{% for descendants in lignage.descendants %}
+										<li class="list-group-item">Enfant{% if descendants|length > 1 %}s{% endif %} : {{ descendants.nom }}</li>
+										{% for descendants2 in descendants.descendants %}
+										<li class="list-group-item">Petit{% if descendants2|length > 1 %}s{% endif %}-Enfant{% if descendants2|length > 1 %}s{% endif %} : {{ descendants2.nom }}</li>
+										{% endfor %}
+									{% endfor %}
 									<div class="list-group-item"><a href="{{ path('personnage.admin.lignee.delete', {'personnage': personnage.id, 'personnageLignee' : lignage.id }) }}">Supprimer</a></div>
 								{% endfor %}
 							</div>

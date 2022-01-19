@@ -23,7 +23,6 @@ namespace LarpManager\Form\Personnage;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Doctrine\ORM\EntityRepository;
 
 use LarpManager\Repository\LigneesRepository;
 use LarpManager\Repository\PersonnageRepository;
@@ -44,24 +43,35 @@ class PersonnageLigneeForm extends AbstractType
 	 */
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
-		$builder->add('parent1','entity', array(
+		$builder->add('parent1','entity', [
 					'label' => "Choisissez le Parent 1 du personnage",
 					'expanded' => false,
 					'required' => true,
 					'class' => 'LarpManager\Entities\Personnage',
 					'query_builder' => function(PersonnageRepository $pr) {
 						return $pr->createQueryBuilder('p')->orderBy('p.nom', 'ASC');
-					},
-				))
-				->add('parent2','entity', array(
+					}
+				])
+				->add('parent2','entity', [
 					'label' => "Choisissez le Parent 2 du personnage (optionnel)",
 					'expanded' => false,
 					'required' => false,
+					'empty_data' => null,
 					'class' => 'LarpManager\Entities\Personnage',
 					'query_builder' => function(PersonnageRepository $pr) {
 						return $pr->createQueryBuilder('p')->orderBy('p.nom', 'ASC');
-					},
-				))
+					}
+				])
+				->add('lignee','entity', [
+					'label' => "Choisissez la lignée de votre personnage (optionnel)",
+					'expanded' => false,
+					'required' => false,
+					'empty_data' => null,
+					'class' => 'LarpManager\Entities\Lignee',
+					'query_builder' => function(LigneesRepository $pr) {
+						return $pr->createQueryBuilder('p')->orderBy('p.nom', 'ASC');
+					}
+				])
 		;
 	}
 
