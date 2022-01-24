@@ -94,14 +94,14 @@
 									<li class="list-group-item">Ce personnage ne fait pas parti d'un groupe.</li>
 								{% endif %}
 							</div>
-							
+
 							<h6>Groupes secondaires</h6>
 							<ul class="list-group">
 								{% for groupeSecondaire in personnage.secondaryGroups %}
 										<li class="list-group-item">{{ groupeSecondaire.label }} (Chef)</li>
 								{% endfor %}
 								{% for membre in personnage.membres %}
-										<li class="list-group-item">{{ membre.secondaryGroup.label }}</li>
+										<a class="list-group-item" href="{{ path('groupeSecondaire.admin.detail', {'groupe': membre.secondaryGroup.id}) }}">{{ membre.secondaryGroup.label }}</a>
 								{% endfor %}
 							</ul>
 	
@@ -109,7 +109,7 @@
 							{% if personnage.postulants|length > 0 %}
 								<ul class="list-group">
 								{% for postulant in personnage.postulants %}
-									<li class="list-group-item">{{ postulant.secondaryGroup.label }} en attente de validation.</li>
+									<a class="list-group-item" href="{{ path('groupeSecondaire.admin.detail', {'groupe': postulant.secondaryGroup.id}) }}">{{ postulant.secondaryGroup.label }} en attente de validation.</a>
 								{% endfor %}
 								</ul>
 							{% endif %}
@@ -207,20 +207,10 @@
 							{% endif %}
 							<div class="list-group">
 								{% for personnageLangue in personnage.personnageLangues %}
-									<div class="list-group-item"><strong>{{ personnageLangue.langue}}</strong> ({{ personnageLangue.source }})  - <a href="{{ path('personnage.admin.langue.delete', {'personnage': personnage.id, 'personnageLangue' : personnageLangue.id }) }}">Supprimer</a></div>
+									<div class="list-group-item"><strong>{{ personnageLangue.langue}}</strong> ({{ personnageLangue.source }}) - <a href="{{ path('personnage.admin.langue.delete', {'personnage': personnage.id, 'personnageLangue' : personnageLangue.id }) }}">Supprimer</a></div>
 								{% endfor %}
 							</div>
-								
-							<h6>Groupes secondaires</h6>
-							<div class="list-group">
-								{% for groupeSecondaire in personnage.secondaryGroups %}
-									<a class="list-group-item" href="{{ path('groupeSecondaire.admin.detail', {'groupe':groupeSecondaire.id}) }}">{{ groupeSecondaire.label }}</a>
-								{% endfor %}
-								{% for postulant in personnage.postulants %}
-									<p class="list-group-item">{{ postulant.secondaryGroup.label }} en attente de validation.</p>
-								{% endfor %}
-							</div>
-							
+		
 							<h6 class="list-group-item-heading">Sorts :</h6>
 							<div class="list-group-item">
 								{% set sortAnomalie = personnage.getSortAnomalieMessage() %}
@@ -514,6 +504,87 @@
 							</div>
 						</div>
 					</div>
+
+					{% if personnage.personnageLignee %}
+					<div class="panel panel-default">
+						<nav class="navbar navbar-default" style="margin-bottom: 0px;">
+	  						<div class="container-fluid">
+	  							<div class="navbar-header">
+	  								<span class="navbar-brand">Lignée</span>
+	  							</div>
+								{% if not personnage.personnageLignee %}
+	  							<div class="collapse navbar-collapse">
+	  								<ul class="nav navbar-nav navbar-right">
+		  								<li class="dropdown">
+		  								 	<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+								      			Action
+								      			<span class="caret"></span>
+								    		</a>
+											<ul class="dropdown-menu">
+												<li><a href="{{ path('personnage.admin.lignee.add', {'personnage': personnage.id}) }}">Ajouter une lignée</a></li>
+											</ul>
+										</li>
+	  								</ul>
+	  							</div>
+								{% endif %}
+	  						</div>
+	  					</nav>
+	  					<div class="panel-body">
+							<div class="list-group">
+								{# Gestion de la lignée du personnage #}
+								{% for lignage in personnage.personnageLignee %}
+									{% if lignage.lignee %}<div class="list-group-item">Lignee : {{ lignage.lignee.nom }}</div>{% endif %}
+									<div class="list-group-item">Parent : {{ lignage.parent1.nom }}</div>
+									{% if lignage.parent2 %}<div class="list-group-item">Parent : {{ lignage.parent2.nom }}</div>{% endif %}
+									{% for descendants in lignage.descendants %}
+										<li class="list-group-item">Enfant{% if descendants|length > 1 %}s{% endif %} : {{ descendants.nom }}</li>
+										{% for descendants2 in descendants.descendants %}
+										<li class="list-group-item">Petit{% if descendants2|length > 1 %}s{% endif %}-Enfant{% if descendants2|length > 1 %}s{% endif %} : {{ descendants2.nom }}</li>
+										{% endfor %}
+									{% endfor %}
+									<div class="list-group-item"><a href="{{ path('personnage.admin.lignee.delete', {'personnage': personnage.id, 'personnageLignee' : lignage.id }) }}">Supprimer</a></div>
+								{% endfor %}
+							</div>
+						</div>
+					</div>
+					{% endif %}
+
+					<div class="panel panel-default">
+						<nav class="navbar navbar-default" style="margin-bottom: 0px;">
+	  						<div class="container-fluid">
+	  							<div class="navbar-header">
+	  								<span class="navbar-brand">Chronologie</span>
+	  							</div>
+	  							<div class="collapse navbar-collapse">
+	  								<ul class="nav navbar-nav navbar-right">
+		  								<li class="dropdown">
+		  								 	<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+								      			Action
+								      			<span class="caret"></span>
+								    		</a>
+											<ul class="dropdown-menu">
+												<li><a href="{{ path('personnage.admin.chronologie.add', {'personnage': personnage.id}) }}">Ajouter un evenement</a></li>
+											</ul>
+										</li>
+	  								</ul>
+	  							</div>
+	  						</div>
+	  					</nav>
+	  					<div class="panel-body">
+							<div class="list-group">
+								{# Gestion de la chronologie du personnage #}
+								{% if personnage.personnageChronologie|length > 0 %}
+									{% for personnageChronologie in personnage.personnageChronologie %}
+										<div class="list-group-item">{{ personnageChronologie.annee }} : {{ personnageChronologie.evenement }} - <a href="{{ path('personnage.admin.chronologie.delete', {'personnage': personnage.id, 'personnageChronologie' : personnageChronologie.id }) }}">Supprimer</a></div>
+									{% endfor %}
+								{% else %}
+									<p class="list-group-item-text">
+										Ce personnage n'a pas de chronologie.
+									</p>
+								{% endif %}
+							</div>
+						</div>
+					</div>
 					
 					<div class="panel panel-default">
 						<nav class="navbar navbar-default" style="margin-bottom: 0px;">
@@ -537,7 +608,6 @@
 	  						</div>
 	  					</nav>
 	  					<div class="panel-body">
-					
 							<div class="list-group">
 								<div class="list-group-item">
 									{# Gestion du background du personnage #}

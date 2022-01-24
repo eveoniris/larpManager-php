@@ -21,24 +21,26 @@
 namespace LarpManager\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use LarpManager\Entities\Lignee;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * LarpManager\Repository\AppelationRepository
+ * LarpManager\Repository\LigneesRepository
  *  
- * @author kevin
+ * @author Kevin F.
  */
-class AppelationRepository extends EntityRepository
+class LigneesRepository extends EntityRepository
 {
 	/**
-	 * Fourni la liste des appelations n'étant pas dépendante d'une autre appelation
-	 * @return \Doctrine\Common\Collections\Collection
-	 */
-	public function findRoot()
+	 * Trouve toutes les lignées
+	 */	
+	public function findAll()
 	{
-		$query = $this->app['orm.em']->createQuery('SELECT a FROM LarpManager\Entities\Appelation a WHERE a.appelation IS NULL');
-		$appelations = $query->getResult();
-	
-		return $appelations;
+		$qb = $this->getEntityManager()->createQueryBuilder();
+		
+		$qb->select('l');
+		$qb->from('LarpManager\Entities\Lignee','l');
+		$qb->orderBy('l.id','ASC');
+		return $qb->getQuery()->getResult();
 	}
 }
-

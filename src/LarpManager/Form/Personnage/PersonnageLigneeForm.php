@@ -24,33 +24,55 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+use LarpManager\Repository\LigneesRepository;
+use LarpManager\Repository\PersonnageRepository;
+
 /**
- * LarpManager\Form\PersonnageUpdatePugilatForm
+ * LarpManager\Form\PersonnageLigneeForm
  *
  * @author Kevin F.
  *
  */
-class PersonnageUpdatePugilatForm extends AbstractType
+class PersonnageLigneeForm extends AbstractType
 {
 	/**
 	 * Construction du formulaire
-	 *
+	 * 
 	 * @param FormBuilderInterface $builder
 	 * @param array $options
 	 */
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
-		$builder->add('pugilat','integer', array(
+		$builder->add('parent1','entity', [
+					'label' => "Choisissez le Parent 1 du personnage",
+					'expanded' => false,
 					'required' => true,
-					'label' => 'Combien de points de Pugilat voulez-vous ajouter ? (indiquez une valeur négative pour retirer des points)',
-					'mapped' => false,
-					'attr' => array('max' => 6),
-				))
-				->add('explication','textarea', array(
-					'required' => true,
-					'mapped' => false,
-					'label' => 'Donnez une explication',
-				));
+					'class' => 'LarpManager\Entities\Personnage',
+					'query_builder' => function(PersonnageRepository $pr) {
+						return $pr->createQueryBuilder('p')->orderBy('p.nom', 'ASC');
+					}
+				])
+				->add('parent2','entity', [
+					'label' => "Choisissez le Parent 2 du personnage (optionnel)",
+					'expanded' => false,
+					'required' => false,
+					'empty_data' => null,
+					'class' => 'LarpManager\Entities\Personnage',
+					'query_builder' => function(PersonnageRepository $pr) {
+						return $pr->createQueryBuilder('p')->orderBy('p.nom', 'ASC');
+					}
+				])
+				->add('lignee','entity', [
+					'label' => "Choisissez la lignée de votre personnage (optionnel)",
+					'expanded' => false,
+					'required' => false,
+					'empty_data' => null,
+					'class' => 'LarpManager\Entities\Lignee',
+					'query_builder' => function(LigneesRepository $pr) {
+						return $pr->createQueryBuilder('p')->orderBy('p.nom', 'ASC');
+					}
+				])
+		;
 	}
 
 	/**
@@ -61,12 +83,13 @@ class PersonnageUpdatePugilatForm extends AbstractType
 	public function configureOptions(OptionsResolver $resolver)
 	{
 	}
-
+	
 	/**
-	 * Nom du formulaire
+	 * Nom du formulaire 
+	 * @return string
 	 */
 	public function getName()
 	{
-		return 'personnageUpdatePugilat';
+		return 'personnageLignee';
 	}
 }

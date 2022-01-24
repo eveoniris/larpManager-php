@@ -25,32 +25,32 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * LarpManager\Form\PersonnageUpdatePugilatForm
+ * LarpManager\Form\PersonnageChronologieForm
  *
  * @author Kevin F.
  *
  */
-class PersonnageUpdatePugilatForm extends AbstractType
+class PersonnageChronologieForm extends AbstractType
 {
 	/**
 	 * Construction du formulaire
-	 *
+	 * 
 	 * @param FormBuilderInterface $builder
 	 * @param array $options
 	 */
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
-		$builder->add('pugilat','integer', array(
-					'required' => true,
-					'label' => 'Combien de points de Pugilat voulez-vous ajouter ? (indiquez une valeur négative pour retirer des points)',
-					'mapped' => false,
-					'attr' => array('max' => 6),
-				))
-				->add('explication','textarea', array(
-					'required' => true,
-					'mapped' => false,
-					'label' => 'Donnez une explication',
-				));
+		$builder->add('annee','integer', array(
+				'required' => true,
+				'label' => 'Année de l\'évènement.',
+				'mapped' => false,
+			))
+			->add('evenement','text', array(
+				'required' => true,
+				'trim' => true,
+				'mapped' => false,
+				'label' => 'Décrivez l\'évènement',
+			));
 	}
 
 	/**
@@ -61,12 +61,13 @@ class PersonnageUpdatePugilatForm extends AbstractType
 	public function configureOptions(OptionsResolver $resolver)
 	{
 	}
-
+	
 	/**
-	 * Nom du formulaire
+	 * Nom du formulaire 
+	 * @return string
 	 */
 	public function getName()
 	{
-		return 'personnageUpdatePugilat';
+		return 'personnageChronologie';
 	}
 }
