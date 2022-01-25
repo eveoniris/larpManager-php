@@ -25,4 +25,9 @@ class Item extends BaseItem
 		$this->setQuantite(1);
 		parent::__construct();
 	}
+
+	public function getIdentite()
+	{
+		return $this->getNumero().' - '.$this->getLabel();
+	}
 }

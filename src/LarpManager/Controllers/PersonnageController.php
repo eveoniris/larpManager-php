@@ -309,7 +309,7 @@ class PersonnageController
 	}
 	
 	/**
-	 * Modification des savoir-faire d'un personnage
+	 * Modification des technologies d'un personnage
 	 * 
 	 * @param Request $request
 	 * @param Application $app

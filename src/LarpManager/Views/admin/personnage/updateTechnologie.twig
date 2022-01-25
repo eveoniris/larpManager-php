@@ -8,14 +8,14 @@
 		<li><a href="{{ path('homepage') }}">Accueil</a></li>
 		<li><a href="{{ path('personnage.admin.list') }}">Liste des personnages</a></li>
 		<li><a href="{{ path('personnage.admin.detail', {'personnage': personnage.id}) }}">Détail de {{ personnage.publicName }}</a></li>
-		<li class="active">Choix des savoir-faire</li>
+		<li class="active">Choix des technologies</li>
 	</ol>
 	
 	<div class="well bs-component">
 		<form action="{{ path('personnage.technologie.update',{'personnage':personnage.id}) }}" method="POST" {{ form_enctype(form) }}>
 			<fieldset>
-				<legend>{{ personnage.publicName }} - <small>Choix des savoir-faire</small></legend>
-				<p>Choisissez les savoir-faire du personnage</p>
+				<legend>{{ personnage.publicName }} - <small>Choix des technologies</small></legend>
+				<p>Choisissez les technologies du personnage</p>
 				{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
 	
 				{{ form_row(form.technologies) }}
