@@ -593,18 +593,6 @@ class MagieController
 		$document = $request->get('document');
 		$potion = $request->get('potion');
 	
-		// on ne peux télécharger que les documents des compétences que l'on connait
-		/*if  ( ! $app['security.authorization_checker']->isGranted('ROLE_REGLE') )
-		{
-		if ( $app['user']->getPersonnage() )
-		{
-		if ( ! $app['user']->getPersonnage()->getCompetences()->contains($competence) )
-		{
-		$app['session']->getFlashBag()->add('error', 'Vous n\'avez pas les droits necessaires');
-		}
-		}
-		}*/
-	
 		$file = __DIR__.'/../../../private/doc/'.$document;
 	
 		$stream = function () use ($file) {
@@ -952,7 +940,7 @@ class MagieController
 		return $app->stream($stream, 200, array(
 				'Content-Type' => 'text/pdf',
 				'Content-length' => filesize($file),
-				'Content-Disposition' => 'attachment; filename="'.$sort->getLabel().'.pdf"'
+				'Content-Disposition' => 'attachment; filename="'.$sort->getPrintLabel().'.pdf"'
 		));
 	}
 	
