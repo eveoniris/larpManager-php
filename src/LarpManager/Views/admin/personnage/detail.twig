@@ -388,7 +388,7 @@
 											{{ competence.materielRaw }}
 										</div>
 									{% else %}
-										<div class="list-group-item-text">Aucun matériel</div>
+										<div class="list-group-item-text">Aucun</div>
 									{% endfor %}
 								</div>
 								
@@ -397,7 +397,7 @@
 									{% for materiel in langueMateriel %}
 											<div class="list-group-item-text"><strong>{{ materiel }}</strong></div>
 									{% else %}
-										<div class="list-group-item-text">Aucun matériel</div>
+										<div class="list-group-item-text">Aucun</div>
 									{% endfor %}
 								</div>
 								
@@ -405,7 +405,7 @@
 								<div class="list-group-item">
 									<h6 class="list-group-item-heading">Documents :</h6>
 									{% for document in personnage.documents %}
-										<div class="list-group-item-text"><a href="{{ path('document.detail', {'document':document.id}) }}"><strong>{{ document.code }}</strong>&nbsp;{{ document.titre }}</a></div>
+										<div class="list-group-item-text"><a href="{{ path('document.detail', {'document':document.id}) }}"><strong>{{ document.code }}</strong> - {{ document.titre }}</a></div>
 									{% else %}
 										<div class="list-group-item-text">Aucun</div>
 									{% endfor %}
@@ -414,7 +414,7 @@
 								<div class="list-group-item">
 									<h6 class="list-group-item-heading">Objets :</h6>
 									{% for item in personnage.items %}
-										<div class="list-group-item-text"><a href="{{ path('item.detail', {'item':item.id}) }}"><strong>{{ item.numero }}</strong>&nbsp;{{ item.label }}</a></div>
+										<div class="list-group-item-text"><a href="{{ path('item.detail', {'item':item.id}) }}"><strong>{{ item.numero }}</strong> - {{ item.label }}</a></div>
 									{% else %}
 										<div class="list-group-item-text">Aucun</div>
 									{% endfor %}
@@ -434,7 +434,7 @@
 									{% for personnageRessource in personnage.personnageRessources %}
 										<div class="list-group-item-text">{{personnageRessource.nombre}} - {{ personnageRessource.ressource }}</div>
 									{% else %}
-										<div class="list-group-item-text">Aucun</div>
+										<div class="list-group-item-text">Aucune</div>
 									{% endfor %}
 								</div>
 								
@@ -442,13 +442,18 @@
 									<h6 class="list-group-item-heading">Technologies :</h6>
 									{% for technologie in personnage.technologies %}
 										<div class="list-group-item-text">{{ technologie.label }}</div>
+									{% else %}
+										<div class="list-group-item-text">Aucune</div>
 									{% endfor %}
 								</div>
 								
 								<div class="list-group-item">
-									<h6 class="list-group-item-heading">Matériel</h6>
+									<h6 class="list-group-item-heading">Matériel :</h6>
+									{% if personnage.materiel %}
 									{{ personnage.materiel }}
-									<br />
+									{% else %}
+										<div class="list-group-item-text">Aucun</div>
+									{% endif %}
 								</div>
 							</div>
 						</div>

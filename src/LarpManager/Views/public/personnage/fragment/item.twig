@@ -12,6 +12,11 @@
 				</div>
 			{% endfor %}
 			</div>
-			
+
+		{% if personnage.materiel %}
+			<div class="list-group-item">
+				<div class="list-group-item-text">{{ personnage.materiel }}</div>
+			</div>
+		{% endif %}
 		</div>
 	</div>
