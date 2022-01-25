@@ -63,40 +63,40 @@ class TechnologieControllerProvider implements ControllerProviderInterface
 			->bind("technologie")
 			->method('GET')
 			->before($mustBeScenariste);
-		
+
 		$controllers->match('/add','LarpManager\Controllers\TechnologieController::addAction')
 			->bind("technologie.add")
 			->method('GET|POST')
 			->before($mustBeScenariste);
-				
+
 		$controllers->match('/{technologie}/update','LarpManager\Controllers\TechnologieController::updateAction')
 			->assert('technologie', '\d+')
 			->convert('technologie', 'converter.technologie:convert')
 			->bind("technologie.update")
 			->method('GET|POST')
 			->before($mustBeScenariste);
-		
+
 		$controllers->match('/{technologie}','LarpManager\Controllers\TechnologieController::detailAction')
 			->assert('technologie', '\d+')
 			->convert('technologie', 'converter.technologie:convert')
 			->bind("technologie.detail")
 			->method('GET')
 			->before($mustBeScenariste);
-		
+
 		$controllers->match('/{technologie}/delete','LarpManager\Controllers\TechnologieController::deleteAction')
 			->assert('technologie', '\d+')
 			->convert('technologie', 'converter.technologie:convert')
 			->bind("technologie.delete")
 			->method('GET|POST')
 			->before($mustBeScenariste);
-							
+
 		$controllers->match('/{technologie}/personnages','LarpManager\Controllers\TechnologieController::personnagesAction')
 			->assert('technologie', '\d+')
 			->convert('technologie', 'converter.technologie:convert')
 			->bind("technologie.personnages")
 			->method('GET')
 			->before($mustBeScenariste);
-							
+
 		return $controllers;
 	}
 }

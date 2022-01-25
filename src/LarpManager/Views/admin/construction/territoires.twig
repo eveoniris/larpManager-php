@@ -1,0 +1,19 @@
+{% extends "layout.twig" %}
+
+{% block title %}Constructions{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path('construction') }}">Liste des constructions</a></li>
+		<li class="active">Territoires ayant {{ construction.label }}</li>
+	</ol>
+	
+	<div class="list-group">
+		{% for territoire in construction.territoires %}
+			<a class="list-group-item" href="{{ path('territoire.admin.detail', {'territoire': territoire.id}) }}">{{ territoire.tree }}</a>
+		{% endfor %}
+	</div>
+	
+{% endblock content %}
