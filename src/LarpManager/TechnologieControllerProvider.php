@@ -90,6 +90,13 @@ class TechnologieControllerProvider implements ControllerProviderInterface
 			->method('GET|POST')
 			->before($mustBeScenariste);
 							
+		$controllers->match('/{technologie}/personnages','LarpManager\Controllers\TechnologieController::personnagesAction')
+			->assert('technologie', '\d+')
+			->convert('technologie', 'converter.technologie:convert')
+			->bind("technologie.personnages")
+			->method('GET')
+			->before($mustBeScenariste);
+							
 		return $controllers;
 	}
 }
