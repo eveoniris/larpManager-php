@@ -512,7 +512,7 @@
 	  							<div class="navbar-header">
 	  								<span class="navbar-brand">Lignée</span>
 	  							</div>
-								{% if not personnage.personnageLignee %}
+								{% if personnage.personnageLignee|length == 0 %}
 	  							<div class="collapse navbar-collapse">
 	  								<ul class="nav navbar-nav navbar-right">
 		  								<li class="dropdown">
@@ -532,18 +532,24 @@
 	  					<div class="panel-body">
 							<div class="list-group">
 								{# Gestion de la lignée du personnage #}
-								{% for lignage in personnage.personnageLignee %}
-									{% if lignage.lignee %}<div class="list-group-item">Lignee : {{ lignage.lignee.nom }}</div>{% endif %}
-									<div class="list-group-item">Parent : {{ lignage.parent1.nom }}</div>
-									{% if lignage.parent2 %}<div class="list-group-item">Parent : {{ lignage.parent2.nom }}</div>{% endif %}
-									{% for descendants in lignage.descendants %}
-										<li class="list-group-item">Enfant{% if descendants|length > 1 %}s{% endif %} : {{ descendants.nom }}</li>
-										{% for descendants2 in descendants.descendants %}
-										<li class="list-group-item">Petit{% if descendants2|length > 1 %}s{% endif %}-Enfant{% if descendants2|length > 1 %}s{% endif %} : {{ descendants2.nom }}</li>
+								{% if personnage.personnageLignee|length > 0 %}
+									{% for lignage in personnage.personnageLignee %}
+										{% if lignage.lignee %}<div class="list-group-item">Lignee : {{ lignage.lignee.nom }}</div>{% endif %}
+										<div class="list-group-item">Parent : {{ lignage.parent1.nom }}</div>
+										{% if lignage.parent2 %}<div class="list-group-item">Parent : {{ lignage.parent2.nom }}</div>{% endif %}
+										{% for descendants in lignage.descendants %}
+											<li class="list-group-item">Enfant{% if descendants|length > 1 %}s{% endif %} : {{ descendants.nom }}</li>
+											{% for descendants2 in descendants.descendants %}
+											<li class="list-group-item">Petit{% if descendants2|length > 1 %}s{% endif %}-Enfant{% if descendants2|length > 1 %}s{% endif %} : {{ descendants2.nom }}</li>
+											{% endfor %}
 										{% endfor %}
+										<div class="list-group-item"><a href="{{ path('personnage.admin.lignee.delete', {'personnage': personnage.id, 'personnageLignee' : lignage.id }) }}">Supprimer</a></div>
 									{% endfor %}
-									<div class="list-group-item"><a href="{{ path('personnage.admin.lignee.delete', {'personnage': personnage.id, 'personnageLignee' : lignage.id }) }}">Supprimer</a></div>
-								{% endfor %}
+								{% else %}
+									<p class="list-group-item-text">
+										Ce personnage n'a pas de lignée.
+									</p>
+								{% endif %}
 							</div>
 						</div>
 					</div>

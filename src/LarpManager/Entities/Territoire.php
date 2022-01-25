@@ -263,6 +263,21 @@ class Territoire extends BaseTerritoire implements \JsonSerializable
 			return $this;
 		}		
 	}
+
+	/**
+	 * Fourni l'arbre des territoires'
+	 */
+	public function getTree()
+	{
+		if ( $this->getTerritoire() )
+		{
+			return $this .' --- '. $this->getTerritoire() .' --- '. $this->getTerritoire()->getRoot();	
+		}
+		else
+		{
+			return $this;
+		}		
+	}
 	
 	/**
 	 * Fourni tous les ancêtres d'un territoire
