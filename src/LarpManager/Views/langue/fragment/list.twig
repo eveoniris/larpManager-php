@@ -8,7 +8,7 @@
 	{%  for langue in langues %}
 	<li class="list-group-item">
 		<h4 class="list-group-item-heading">
-			{{ langue.label }} -- <small>langue {{ langue.categorie }}</small>
+			{{ langue.label }} -- <small>{{ langue.groupeLangue.label }} ({% if langue.secret %}Secrète{% else %}{{ langue.categorie }}{% endif %})</small>
 			<div class="btn-group pull-right" role="group" aria-label="...">
 				<a href="{{ path('langue.detail', {index: langue.id}) }}" class="btn btn-primary" role="button">Détail</a>
 			    <a href="{{ path('langue.update', {index: langue.id}) }}" class="btn btn-default" role="button">Modifier</a>

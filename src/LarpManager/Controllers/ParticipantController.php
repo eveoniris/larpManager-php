@@ -2848,7 +2848,7 @@ class ParticipantController
 			{
 				switch ($competence->getLevel()->getId())
 				{
-					case 1: // 2 langues très répandue supplémentaires de son choix
+					case 1: // 2 langues commune supplémentaires de son choix
 						$trigger = new \LarpManager\Entities\PersonnageTrigger();
 						$trigger->setPersonnage($personnage);
 						$trigger->setTag('LANGUE COURANTE');
@@ -2864,7 +2864,7 @@ class ParticipantController
 						$app['orm.em']->flush();
 						
 						break;
-					case 2: //  Sait parler, lire et écrire trois autres langues vivantes (courante ou très répandue) de son choix.
+					case 2: //  Sait parler, lire et écrire trois autres langues vivantes (courante ou commune) de son choix.
 						$trigger = new \LarpManager\Entities\PersonnageTrigger();
 						$trigger->setPersonnage($personnage);
 						$trigger->setTag('LANGUE COURANTE');
@@ -2902,7 +2902,7 @@ class ParticipantController
 						$app['orm.em']->flush();
 
 						break;
-					case 3: // Sait parler, lire et écrire un langage ancien ainsi que trois autres langues vivantes (courante ou très répandue) de son choix ainsi qu'une langue ancienne
+					case 3: // Sait parler, lire et écrire un langage ancien ainsi que trois autres langues vivantes (courante ou commune) de son choix ainsi qu'une langue ancienne
 						$trigger = new \LarpManager\Entities\PersonnageTrigger();
 						$trigger->setPersonnage($personnage);
 						$trigger->setTag('LANGUE COURANTE');
@@ -2946,7 +2946,7 @@ class ParticipantController
 						$app['orm.em']->persist($trigger);
 						$app['orm.em']->flush();
 						break;
-					case 4: // Sait parler, lire et écrire un autre langage ancien ainsi que trois autres langues vivantes de son choix (courante ou très répandue) ainsi qu'une langue ancienne
+					case 4: // Sait parler, lire et écrire un autre langage ancien ainsi que trois autres langues vivantes de son choix (courante ou commune) ainsi qu'une langue ancienne
 						$trigger = new \LarpManager\Entities\PersonnageTrigger();
 						$trigger->setPersonnage($personnage);
 						$trigger->setTag('LANGUE COURANTE');
