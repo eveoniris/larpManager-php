@@ -25,7 +25,7 @@
 
 			<div class="list-group">
 				{% for personnage in classe.personnages %}
-					<a class="list-group-item" href="{{ path('personnage.admin.detail',{'personnage':personnage.id}) }}">#{{ personnage.id }} - {{ personnage.nom }}{% if personnage.surnom %} ({{ personnage.surnom }}){% endif %} -- {{ personnage.classeName }}</a>
+					<a class="list-group-item" href="{{ path('personnage.admin.detail',{'personnage':personnage.id}) }}">{% if personnage.vivant == 0 %}💀 {% endif %}#{{ personnage.id }} - {{ personnage.identity }} -- {{ personnage.classeName }}</a>
 				{% endfor %}
 			</div>
 		</div>

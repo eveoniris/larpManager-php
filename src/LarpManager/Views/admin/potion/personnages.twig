@@ -12,7 +12,7 @@
 	
 	<div class="list-group">
 		{% for personnage in potion.personnages %}
-			<a class="list-group-item" href="{{ path('personnage.admin.detail', {'personnage': personnage.id}) }}">{{ personnage.identity }}</a>
+			<a class="list-group-item" href="{{ path('personnage.admin.detail', {'personnage': personnage.id}) }}">{% if personnage.vivant == 0 %}💀 {% endif %}#{{ personnage.id }} - {{ personnage.identity }} -- {{ personnage.classeName }}</a>
 		{% endfor %}
 	</div>
 	
