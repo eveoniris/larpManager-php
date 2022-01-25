@@ -177,8 +177,8 @@ TOTAL : {{ groupe.richesseTotale|default(0) }} PA
 					<li>{{ participant.personnage.richesse|default(0) }} PA</li>
 				</ul>
 				
-				Savoir-faire :
-				<a href="{{ path('personnage.technologie.update', {'personnage': participant.personnage.id}) }}">Modifier les savoir-faire</a>
+				Technologies :
+				<a href="{{ path('personnage.technologie.update', {'personnage': participant.personnage.id}) }}">Modifier les technologies</a>
 				<ul>
 					{% for technologie in participant.personnage.technologies %}
 						<li>{{ technologie.label }}</li>
