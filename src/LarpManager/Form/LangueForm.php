@@ -51,7 +51,7 @@ class LangueForm extends AbstractType
 					'attr' => array('rows' => 10),
 				))
 				->add('diffusion','integer', array(
-						'label' => 'Degrés de diffusion (de 0 à 2 : ancien, courant, très répandu)',
+						'label' => 'Degrés de diffusion (de 0 à 2 : ancien, courant, commune)',
 						'required' => false,
 				))
 				->add('groupeLangue','entity', array(
