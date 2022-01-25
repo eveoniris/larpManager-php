@@ -146,4 +146,17 @@ class TechnologieController
 				'technologie' => $technologie,
 		));
 	}
+
+	/**
+	 * Liste des personnages ayant cette technologie
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function personnagesAction(Request $request, Application $app, Technologie $technologie)
+	{
+		return $app['twig']->render('admin/technologie/personnages.twig', array(
+				'technologie' => $technologie,
+		));
+	}	
 }
