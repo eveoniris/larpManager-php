@@ -25,7 +25,7 @@
 
 			<div class="list-group">
 				{% for participant in competence.personnagesGn(app['larp.manager'].getGnActif.id) %}
-					<a class="list-group-item" href="{{ path('personnage.admin.detail',{'personnage':participant.personnage.id}) }}">#{{ participant.personnage.id }} - {{ participant.personnage.nom }}{% if participant.personnage.surnom %} ({{ participant.personnage.surnom }}){% endif %} -- {{ participant.personnage.classeName }}</a>
+					<a class="list-group-item" href="{{ path('personnage.admin.detail',{'personnage':participant.personnage.id}) }}">{% if participant.personnage.vivant == 0 %}💀 {% endif %}#{{ participant.personnage.id }} - {{ participant.personnage.identity }} -- {{ participant.personnage.classeName }}</a>
 				{% endfor %}
 			</div>
 		</div>
