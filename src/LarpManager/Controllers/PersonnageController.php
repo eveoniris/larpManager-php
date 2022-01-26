@@ -556,7 +556,7 @@ class PersonnageController
 			switch ($type){
 				case 'nom':
 				    // $criteria[] = new LikeExpression("p.nom", "%$value%");
-				    $criteria["nom"] = "LOWER(p.nom) LIKE '%".preg_replace('/[\'"<>=*;]/', '', strtolower($value))."%'";
+				    $criteria["nom"] = "LOWER(p.nom) LIKE '%".preg_replace('/[\'"<>=*;]/', '', strtolower($value))."%' OR LOWER(p.surnom) LIKE '%".preg_replace('/[\'"<>=*;]/', '', strtolower($value))."%'";
 					break;
 				case 'id':
 				    // $criteria[] = new EqualExpression("p.id", $value);
