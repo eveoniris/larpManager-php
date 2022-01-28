@@ -40,6 +40,11 @@ class BaseGn
     protected $xp_creation;
 
     /**
+     * @Column(type="integer", nullable=true)
+     */
+    protected $date_jeu;
+
+    /**
      * @Column(type="text", nullable=true)
      */
     protected $description;
@@ -217,6 +222,29 @@ class BaseGn
     public function getXpCreation()
     {
         return $this->xp_creation;
+    }
+
+    /**
+     * Set the value of date_jeu.
+     *
+     * @param integer $date_jeu
+     * @return \LarpManager\Entities\Gn
+     */
+    public function setDateJeu($date_jeu)
+    {
+        $this->date_jeu = $date_jeu;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of date_jeu.
+     *
+     * @return integer
+     */
+    public function getDateJeu()
+    {
+        return $this->date_jeu;
     }
 
     /**

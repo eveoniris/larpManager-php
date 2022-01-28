@@ -260,6 +260,18 @@ class PersonnageController
 					else
 					{
 						$personnage->setVivant(false);
+						foreach ($personnage->getParticipants() as $participant)
+						{
+							if ($participant->getGn() != null) {
+								$anneeGN = $participant->getGn()->getDateJeu() + rand(1, 4);
+							}
+						}
+						$evenement = 'Mort de vieillesse';
+						$personnageChronologie = new \LarpManager\Entities\PersonnageChronologie();
+						$personnageChronologie->setAnnee($anneeGN);
+						$personnageChronologie->setEvenement($evenement);
+						$personnageChronologie->setPersonnage($personnage);
+						$app['orm.em']->persist($personnageChronologie);
 					}
 				}
 				
@@ -416,6 +428,22 @@ class PersonnageController
 		if ( $form->isValid() )
 		{
 			$personnage = $form->getData();
+			
+			if ($personnage->getVivant() == false){
+				$evenement = 'Mort violente';
+			}
+			else {
+				$evenement = 'Résurrection';
+			}
+			// TODO: Trouver comment avoir la date du GN
+			/*
+			$personnageChronologie = new \LarpManager\Entities\PersonnageChronologie();
+			$personnageChronologie->setAnnee($anneeGN);
+			$personnageChronologie->setEvenement($evenement);
+			$personnageChronologie->setPersonnage($personnage);
+			$app['orm.em']->persist($personnageChronologie);
+			*/
+
 			$app['orm.em']->persist($personnage);
 			$app['orm.em']->flush();
 			
@@ -1129,11 +1157,25 @@ class PersonnageController
 				$age = $app['orm.em']->getRepository('\LarpManager\Entities\Age')->findOneById($personnage->getAge()->getId() + 1);
 				$personnage->setAge($age);
 			}
+			else
+			{
+				$personnage->setVivant(false);
+				foreach ($personnage->getParticipants() as $participant)
+				{
+					if ($participant->getGn() != null) {
+						$anneeGN = $participant->getGn()->getDateJeu() + rand(1, 4);
+					}
+				}
+				$evenement = 'Mort de vieillesse';
+				$personnageChronologie = new \LarpManager\Entities\PersonnageChronologie();
+				$personnageChronologie->setAnnee($anneeGN);
+				$personnageChronologie->setEvenement($evenement);
+				$personnageChronologie->setPersonnage($personnage);
+				$app['orm.em']->persist($personnageChronologie);
+			}
 		}
-		
 		$app['orm.em']->persist($personnage);
-		$app['orm.em']->flush();
-	
+		$app['orm.em']->flush();	
 		$app['session']->getFlashBag()->add('success','Le jeton '.$token->getTag().' a été ajouté.');
 		return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),303);
 	}
@@ -1149,12 +1191,34 @@ class PersonnageController
 	public function adminTokenDeleteAction(Request $request, Application $app, Personnage $personnage, PersonnageHasToken $personnageHasToken)
 	{
 		$personnage->removePersonnageHasToken($personnageHasToken);
-		$app['orm.em']->persist($personnage);
+		$personnage->setAgeReel($personnage->getAgeReel() - 5);
+		if ( $personnage->getPersonnageHasTokens()->count() % 2 != 0 )
+		{
+			if ( $personnage->getAge()->getId() != 5 )
+			{
+				$age = $app['orm.em']->getRepository('\LarpManager\Entities\Age')->findOneById($personnage->getAge()->getId() - 1);
+				$personnage->setAge($age);
+			}
+		}
 		$app['orm.em']->remove($personnageHasToken);
-		
 		$app['orm.em']->persist($personnage);
+
+		// Chronologie : Fruits & Légumes
+		foreach ($personnage->getParticipants() as $participant)
+		{
+			if ($participant->getGn() != null) {
+				$anneeGN = $participant->getGn()->getDateJeu() +1;
+			}
+		}
+		$evenement = 'Consommation de Fruits & Légumes';
+		$personnageChronologie = new \LarpManager\Entities\PersonnageChronologie();
+		$personnageChronologie->setAnnee($anneeGN);
+		$personnageChronologie->setEvenement($evenement);
+		$personnageChronologie->setPersonnage($personnage);
+		$app['orm.em']->persist($personnageChronologie);
+
 		$app['orm.em']->flush();
-		
+
 		$app['session']->getFlashBag()->add('success','Le jeton a été retiré.');
 		return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),303);
 	}
@@ -2165,12 +2229,12 @@ class PersonnageController
 		
 		if ( $form->isValid() )
 		{
-			$annee = $form->get('annee')->getData();
+			$anneeGN = $form->get('annee')->getData();
 			$evenement = $form->get('evenement')->getData();
 				
 			$personnageChronologie = new \LarpManager\Entities\PersonnageChronologie();
 				
-			$personnageChronologie->setAnnee($annee);
+			$personnageChronologie->setAnnee($anneeGN);
 			$personnageChronologie->setEvenement($evenement);
 			$personnageChronologie->setPersonnage($personnage);
 
