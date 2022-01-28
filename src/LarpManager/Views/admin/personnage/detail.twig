@@ -586,7 +586,7 @@
 								{# Gestion de la chronologie du personnage #}
 								{% if personnage.personnageChronologie|length > 0 %}
 									{% for personnageChronologie in personnage.personnageChronologie %}
-										<div class="list-group-item">{{ personnageChronologie.annee }} : {{ personnageChronologie.evenement }} - <a href="{{ path('personnage.admin.chronologie.delete', {'personnage': personnage.id, 'personnageChronologie' : personnageChronologie.id }) }}">Supprimer</a></div>
+										<div class="list-group-item">{{ personnageChronologie.annee }} : {{ personnageChronologie.evenement }}</div>
 									{% endfor %}
 								{% else %}
 									<p class="list-group-item-text">

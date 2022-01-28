@@ -611,7 +611,7 @@ class ParticipantController
 		if($lastPersonnage != null) {
 		    $default = $lastPersonnage;
 		}
-		error_log($default->getNom());
+		//error_log($default->getNom());
 				
 		$form = $app['form.factory']->createBuilder()
 			->add('personnage','entity', array(
@@ -647,7 +647,15 @@ class ParticipantController
 					}
 				}
 			}
-			
+			// Chronologie : Participation au GN courant 
+			$anneeGN2 = $participant->getGn()->getDateJeu();
+			$evenement2 = 'Participation '.$participant->getGn()->getLabel();
+			$personnageChronologie2 = new \LarpManager\Entities\PersonnageChronologie();
+			$personnageChronologie2->setAnnee($anneeGN2);
+			$personnageChronologie2->setEvenement($evenement2);
+			$personnageChronologie2->setPersonnage($data['personnage']);
+
+			$app['orm.em']->persist($personnageChronologie2);
 			$app['orm.em']->persist($participant);
 			$app['orm.em']->flush();
 			
@@ -708,7 +716,15 @@ class ParticipantController
 					}
 				}
 			}
-			
+			// Chronologie : Participation au GN courant 
+			$anneeGN2 = $participant->getGn()->getDateJeu();
+			$evenement2 = 'Participation '.$participant->getGn()->getLabel();
+			$personnageChronologie2 = new \LarpManager\Entities\PersonnageChronologie();
+			$personnageChronologie2->setAnnee($anneeGN2);
+			$personnageChronologie2->setEvenement($evenement2);
+			$personnageChronologie2->setPersonnage($data['personnage']);
+
+			$app['orm.em']->persist($personnageChronologie2);
 			$app['orm.em']->persist($participant);
 			$app['orm.em']->flush();
 			
@@ -796,7 +812,25 @@ class ParticipantController
 			$age = $personnage->getAge()->getMinimumValue();
 			$age += rand(0, 4);
 			$personnage->setAgeReel($age);
-				
+
+			// Chronologie : Naissance 
+			$anneeGN = $participant->getGn()->getDateJeu() - $age;
+			$evenement = 'Naissance';
+			$personnageChronologie = new \LarpManager\Entities\PersonnageChronologie();
+			$personnageChronologie->setAnnee($anneeGN);
+			$personnageChronologie->setEvenement($evenement);
+			$personnageChronologie->setPersonnage($personnage);
+			$app['orm.em']->persist($personnageChronologie);
+			
+			// Chronologie : Participation au GN courant 
+			$anneeGN2 = $participant->getGn()->getDateJeu();
+			$evenement2 = 'Participation '.$participant->getGn()->getLabel();
+			$personnageChronologie2 = new \LarpManager\Entities\PersonnageChronologie();
+			$personnageChronologie2->setAnnee($anneeGN2);
+			$personnageChronologie2->setEvenement($evenement2);
+			$personnageChronologie2->setPersonnage($personnage);
+			$app['orm.em']->persist($personnageChronologie2);			
+
 			// historique
 			$historique = new \LarpManager\Entities\ExperienceGain();
 			$historique->setExplanation("Création de votre personnage");
@@ -886,8 +920,7 @@ class ParticipantController
 			$app['orm.em']->persist($personnage);
 			$app['orm.em']->persist($participant);
 			$app['orm.em']->flush();
-	
-	
+
 			$app['session']->getFlashBag()->add('success','Votre personnage a été sauvegardé.');
 			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $groupeGn->getGn()->getId())),303);
 		}
