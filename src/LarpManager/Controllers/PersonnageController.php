@@ -1191,7 +1191,7 @@ class PersonnageController
 	public function adminTokenDeleteAction(Request $request, Application $app, Personnage $personnage, PersonnageHasToken $personnageHasToken)
 	{
 		$personnage->removePersonnageHasToken($personnageHasToken);
-		$personnage->setAgeReel($personnage->getAgeReel() - 5);
+		// $personnage->setAgeReel($personnage->getAgeReel() - 5);
 		if ( $personnage->getPersonnageHasTokens()->count() % 2 != 0 )
 		{
 			if ( $personnage->getAge()->getId() != 5 )
