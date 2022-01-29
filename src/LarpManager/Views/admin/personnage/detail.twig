@@ -245,9 +245,9 @@
 								<div class="text-warning">{{sortAnomalie}}</div>
 								{% endif %}
 								{% for priere in personnage.prieres %}
-									<p class="list-group-item-text">
-										{{ priere.sphere.label }} - Niveau {{ priere.niveau }} ({{ priere.label }})
-									</p>
+									<div class="list-group-item-text">{{ priere.sphere.label }} - Niveau {{ priere.niveau }} ({{ priere.label }})</div>
+								{% else %}
+									<div class="list-group-item-text">Aucune</div>
 								{% endfor %}
 							</div>
 								
@@ -278,7 +278,7 @@
 	  					</nav>
 					
 						<div class="panel-body">
-							<h6>Jetons</h6>
+							<h6>Jetons de vieillesse</h6>
 							<div class="list-group">
 								{% for personnageToken in personnage.personnageHasTokens %}
 									<div class="list-group-item">
@@ -290,7 +290,7 @@
 								{% endfor %}
 							</div>
 									
-							<h6>Déclencheurs</h6>
+							<h6>Déclencheurs de compétences</h6>
 							<div class="list-group">
 								{% for trigger in personnage.personnageTriggers %}
 									<div class="list-group-item">
