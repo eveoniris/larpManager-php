@@ -611,7 +611,7 @@ class ParticipantController
 		if($lastPersonnage != null) {
 		    $default = $lastPersonnage;
 		}
-		error_log($default->getNom());
+		//error_log($default->getNom());
 				
 		$form = $app['form.factory']->createBuilder()
 			->add('personnage','entity', array(
@@ -647,7 +647,15 @@ class ParticipantController
 					}
 				}
 			}
-			
+			// Chronologie : Participation au GN courant 
+			$anneeGN2 = $participant->getGn()->getDateJeu();
+			$evenement2 = 'Participation '.$participant->getGn()->getLabel();
+			$personnageChronologie2 = new \LarpManager\Entities\PersonnageChronologie();
+			$personnageChronologie2->setAnnee($anneeGN2);
+			$personnageChronologie2->setEvenement($evenement2);
+			$personnageChronologie2->setPersonnage($data['personnage']);
+
+			$app['orm.em']->persist($personnageChronologie2);
 			$app['orm.em']->persist($participant);
 			$app['orm.em']->flush();
 			
@@ -708,7 +716,15 @@ class ParticipantController
 					}
 				}
 			}
-			
+			// Chronologie : Participation au GN courant 
+			$anneeGN2 = $participant->getGn()->getDateJeu();
+			$evenement2 = 'Participation '.$participant->getGn()->getLabel();
+			$personnageChronologie2 = new \LarpManager\Entities\PersonnageChronologie();
+			$personnageChronologie2->setAnnee($anneeGN2);
+			$personnageChronologie2->setEvenement($evenement2);
+			$personnageChronologie2->setPersonnage($data['personnage']);
+
+			$app['orm.em']->persist($personnageChronologie2);
 			$app['orm.em']->persist($participant);
 			$app['orm.em']->flush();
 			
@@ -796,7 +812,25 @@ class ParticipantController
 			$age = $personnage->getAge()->getMinimumValue();
 			$age += rand(0, 4);
 			$personnage->setAgeReel($age);
-				
+
+			// Chronologie : Naissance 
+			$anneeGN = $participant->getGn()->getDateJeu() - $age;
+			$evenement = 'Naissance';
+			$personnageChronologie = new \LarpManager\Entities\PersonnageChronologie();
+			$personnageChronologie->setAnnee($anneeGN);
+			$personnageChronologie->setEvenement($evenement);
+			$personnageChronologie->setPersonnage($personnage);
+			$app['orm.em']->persist($personnageChronologie);
+			
+			// Chronologie : Participation au GN courant 
+			$anneeGN2 = $participant->getGn()->getDateJeu();
+			$evenement2 = 'Participation '.$participant->getGn()->getLabel();
+			$personnageChronologie2 = new \LarpManager\Entities\PersonnageChronologie();
+			$personnageChronologie2->setAnnee($anneeGN2);
+			$personnageChronologie2->setEvenement($evenement2);
+			$personnageChronologie2->setPersonnage($personnage);
+			$app['orm.em']->persist($personnageChronologie2);			
+
 			// historique
 			$historique = new \LarpManager\Entities\ExperienceGain();
 			$historique->setExplanation("Création de votre personnage");
@@ -886,8 +920,7 @@ class ParticipantController
 			$app['orm.em']->persist($personnage);
 			$app['orm.em']->persist($participant);
 			$app['orm.em']->flush();
-	
-	
+
 			$app['session']->getFlashBag()->add('success','Votre personnage a été sauvegardé.');
 			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $groupeGn->getGn()->getId())),303);
 		}
@@ -2848,7 +2881,7 @@ class ParticipantController
 			{
 				switch ($competence->getLevel()->getId())
 				{
-					case 1: // 2 langues très répandue supplémentaires de son choix
+					case 1: // 2 langues commune supplémentaires de son choix
 						$trigger = new \LarpManager\Entities\PersonnageTrigger();
 						$trigger->setPersonnage($personnage);
 						$trigger->setTag('LANGUE COURANTE');
@@ -2864,7 +2897,7 @@ class ParticipantController
 						$app['orm.em']->flush();
 						
 						break;
-					case 2: //  Sait parler, lire et écrire trois autres langues vivantes (courante ou très répandue) de son choix.
+					case 2: //  Sait parler, lire et écrire trois autres langues vivantes (courante ou commune) de son choix.
 						$trigger = new \LarpManager\Entities\PersonnageTrigger();
 						$trigger->setPersonnage($personnage);
 						$trigger->setTag('LANGUE COURANTE');
@@ -2902,7 +2935,7 @@ class ParticipantController
 						$app['orm.em']->flush();
 
 						break;
-					case 3: // Sait parler, lire et écrire un langage ancien ainsi que trois autres langues vivantes (courante ou très répandue) de son choix ainsi qu'une langue ancienne
+					case 3: // Sait parler, lire et écrire un langage ancien ainsi que trois autres langues vivantes (courante ou commune) de son choix ainsi qu'une langue ancienne
 						$trigger = new \LarpManager\Entities\PersonnageTrigger();
 						$trigger->setPersonnage($personnage);
 						$trigger->setTag('LANGUE COURANTE');
@@ -2946,7 +2979,7 @@ class ParticipantController
 						$app['orm.em']->persist($trigger);
 						$app['orm.em']->flush();
 						break;
-					case 4: // Sait parler, lire et écrire un autre langage ancien ainsi que trois autres langues vivantes de son choix (courante ou très répandue) ainsi qu'une langue ancienne
+					case 4: // Sait parler, lire et écrire un autre langage ancien ainsi que trois autres langues vivantes de son choix (courante ou commune) ainsi qu'une langue ancienne
 						$trigger = new \LarpManager\Entities\PersonnageTrigger();
 						$trigger->setPersonnage($personnage);
 						$trigger->setTag('LANGUE COURANTE');

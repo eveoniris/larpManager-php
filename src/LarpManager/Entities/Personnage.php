@@ -1134,4 +1134,11 @@ class Personnage extends BasePersonnage
 	    }
 	    return $s; 
 	}
+
+	/**
+	 * Fourni la liste des descendants directs
+	 */
+	public function getDescendants()
+	{
+	}	
 }

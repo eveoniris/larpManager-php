@@ -1,0 +1,25 @@
+{% extends "layout.twig" %}
+
+{% block title %}Personnages{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path('personnage.admin.list') }}">Liste des personnages</a></li>
+		<li><a href="{{ path('personnage.admin.detail', {'personnage': personnage.id}) }}">Détail de {{ personnage.publicName }}</a></li>
+		<li class="active">Retrait d'une lignée</li>
+	</ol>
+
+	<div class="well bs-component">	
+		<form action="{{ path('personnage.admin.lignee.delete', {'personnage': personnage.id,'personnageLignee': personnageLignee.id}) }}" method="POST" {{ form_enctype(form) }}>
+			<fieldset>
+				<legend>Retrait d'une lignée</legend>
+				{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+				Attention, vous vous appretez à retirer la lignée issue de <b>{{ personnageLignee.parent1.publicName }}</b> du personnage {{ personnage.publicName }}.
+				{{ form(form) }}
+			</fieldset>
+		</form>
+	</div>
+	
+{% endblock content %}

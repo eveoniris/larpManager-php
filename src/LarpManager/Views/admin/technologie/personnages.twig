@@ -1,17 +1,17 @@
 {% extends "layout.twig" %}
 
-{% block title %}Prières{% endblock title %}
+{% block title %}Technologies{% endblock title %}
 
 {% block content %}
 
 	<ol class="breadcrumb">
 		<li><a href="{{ path('homepage') }}">Accueil</a></li>
-		<li><a href="{{ path('magie.priere.list') }}">Liste des prières</a></li>
-		<li class="active">Personnages ayant {{ priere.label }} - Niveau {{ priere.niveau }}</li>
+		<li><a href="{{ path('technologie') }}">Liste des technologies</a></li>
+		<li class="active">Personnages ayant {{ technologie.label }}</li>
 	</ol>
 	
 	<div class="list-group">
-		{% for personnage in priere.personnages %}
+		{% for personnage in technologie.personnages %}
 			<a class="list-group-item" href="{{ path('personnage.admin.detail', {'personnage': personnage.id}) }}">{% if personnage.vivant == 0 %}💀 {% endif %}#{{ personnage.id }} - {{ personnage.identity }} -- {{ personnage.classeName }}</a>
 		{% endfor %}
 	</div>

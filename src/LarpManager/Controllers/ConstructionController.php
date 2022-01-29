@@ -22,7 +22,7 @@ namespace LarpManager\Controllers;
 
 use Symfony\Component\HttpFoundation\Request;
 use Silex\Application;
-
+use LarpManager\Entities\Construction;
 use LarpManager\Form\ConstructionForm;
 use LarpManager\Form\ConstructionDeleteForm;
 
@@ -118,7 +118,7 @@ class ConstructionController
 	}
 	
 	/**
-	 * Supprimme une construction
+	 * Supprime une construction
 	 *
 	 * @param Request $request
 	 * @param Application $app
@@ -164,4 +164,17 @@ class ConstructionController
 		return $app['twig']->render('admin/construction/detail.twig', array(
 				'construction' => $construction));
 	}
+
+	/**
+	 * Liste des territoires ayant cette construction
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function personnagesAction(Request $request, Application $app, Construction $construction)
+	{
+		return $app['twig']->render('admin/construction/territoires.twig', array(
+				'construction' => $construction,
+		));
+	}	
 }

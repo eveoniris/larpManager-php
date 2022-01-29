@@ -94,7 +94,7 @@ class Langue extends BaseLangue
 		{
 			case 2: return 'Commune';
 			case 1: return 'Courante';
-			case 0: return 'Ancienne';
+			case 0: return 'Rare';
 			default : return 'Inconnue';
 		}
 	}

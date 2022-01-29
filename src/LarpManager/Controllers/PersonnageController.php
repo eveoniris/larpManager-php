@@ -42,6 +42,8 @@ use LarpManager\Form\Personnage\PersonnageUpdateRenommeForm;
 use LarpManager\Form\Personnage\PersonnageUpdateHeroismeForm;
 use LarpManager\Form\Personnage\PersonnageUpdatePugilatForm;
 use LarpManager\Form\Personnage\PersonnageTechnologieForm;
+use LarpManager\Form\Personnage\PersonnageChronologieForm;
+use LarpManager\Form\Personnage\PersonnageLigneeForm;
 
 use LarpManager\Form\PersonnageFindForm;
 use LarpManager\Form\PersonnageForm;
@@ -258,6 +260,18 @@ class PersonnageController
 					else
 					{
 						$personnage->setVivant(false);
+						foreach ($personnage->getParticipants() as $participant)
+						{
+							if ($participant->getGn() != null) {
+								$anneeGN = $participant->getGn()->getDateJeu() + rand(1, 4);
+							}
+						}
+						$evenement = 'Mort de vieillesse';
+						$personnageChronologie = new \LarpManager\Entities\PersonnageChronologie();
+						$personnageChronologie->setAnnee($anneeGN);
+						$personnageChronologie->setEvenement($evenement);
+						$personnageChronologie->setPersonnage($personnage);
+						$app['orm.em']->persist($personnageChronologie);
 					}
 				}
 				
@@ -307,7 +321,7 @@ class PersonnageController
 	}
 	
 	/**
-	 * Modification des savoir-faire d'un personnage
+	 * Modification des technologies d'un personnage
 	 * 
 	 * @param Request $request
 	 * @param Application $app
@@ -414,6 +428,22 @@ class PersonnageController
 		if ( $form->isValid() )
 		{
 			$personnage = $form->getData();
+			
+			if ($personnage->getVivant() == false){
+				$evenement = 'Mort violente';
+			}
+			else {
+				$evenement = 'Résurrection';
+			}
+			// TODO: Trouver comment avoir la date du GN
+			/*
+			$personnageChronologie = new \LarpManager\Entities\PersonnageChronologie();
+			$personnageChronologie->setAnnee($anneeGN);
+			$personnageChronologie->setEvenement($evenement);
+			$personnageChronologie->setPersonnage($personnage);
+			$app['orm.em']->persist($personnageChronologie);
+			*/
+
 			$app['orm.em']->persist($personnage);
 			$app['orm.em']->flush();
 			
@@ -554,7 +584,7 @@ class PersonnageController
 			switch ($type){
 				case 'nom':
 				    // $criteria[] = new LikeExpression("p.nom", "%$value%");
-				    $criteria["nom"] = "LOWER(p.nom) LIKE '%".preg_replace('/[\'"<>=*;]/', '', strtolower($value))."%'";
+				    $criteria["nom"] = "LOWER(p.nom) LIKE '%".preg_replace('/[\'"<>=*;]/', '', strtolower($value))."%' OR LOWER(p.surnom) LIKE '%".preg_replace('/[\'"<>=*;]/', '', strtolower($value))."%'";
 					break;
 				case 'id':
 				    // $criteria[] = new EqualExpression("p.id", $value);
@@ -1127,11 +1157,25 @@ class PersonnageController
 				$age = $app['orm.em']->getRepository('\LarpManager\Entities\Age')->findOneById($personnage->getAge()->getId() + 1);
 				$personnage->setAge($age);
 			}
+			else
+			{
+				$personnage->setVivant(false);
+				foreach ($personnage->getParticipants() as $participant)
+				{
+					if ($participant->getGn() != null) {
+						$anneeGN = $participant->getGn()->getDateJeu() + rand(1, 4);
+					}
+				}
+				$evenement = 'Mort de vieillesse';
+				$personnageChronologie = new \LarpManager\Entities\PersonnageChronologie();
+				$personnageChronologie->setAnnee($anneeGN);
+				$personnageChronologie->setEvenement($evenement);
+				$personnageChronologie->setPersonnage($personnage);
+				$app['orm.em']->persist($personnageChronologie);
+			}
 		}
-		
 		$app['orm.em']->persist($personnage);
-		$app['orm.em']->flush();
-	
+		$app['orm.em']->flush();	
 		$app['session']->getFlashBag()->add('success','Le jeton '.$token->getTag().' a été ajouté.');
 		return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),303);
 	}
@@ -1147,12 +1191,34 @@ class PersonnageController
 	public function adminTokenDeleteAction(Request $request, Application $app, Personnage $personnage, PersonnageHasToken $personnageHasToken)
 	{
 		$personnage->removePersonnageHasToken($personnageHasToken);
-		$app['orm.em']->persist($personnage);
+		$personnage->setAgeReel($personnage->getAgeReel() - 5);
+		if ( $personnage->getPersonnageHasTokens()->count() % 2 != 0 )
+		{
+			if ( $personnage->getAge()->getId() != 5 )
+			{
+				$age = $app['orm.em']->getRepository('\LarpManager\Entities\Age')->findOneById($personnage->getAge()->getId() - 1);
+				$personnage->setAge($age);
+			}
+		}
 		$app['orm.em']->remove($personnageHasToken);
-		
 		$app['orm.em']->persist($personnage);
+
+		// Chronologie : Fruits & Légumes
+		foreach ($personnage->getParticipants() as $participant)
+		{
+			if ($participant->getGn() != null) {
+				$anneeGN = $participant->getGn()->getDateJeu() +1;
+			}
+		}
+		$evenement = 'Consommation de Fruits & Légumes';
+		$personnageChronologie = new \LarpManager\Entities\PersonnageChronologie();
+		$personnageChronologie->setAnnee($anneeGN);
+		$personnageChronologie->setEvenement($evenement);
+		$personnageChronologie->setPersonnage($personnage);
+		$app['orm.em']->persist($personnageChronologie);
+
 		$app['orm.em']->flush();
-		
+
 		$app['session']->getFlashBag()->add('success','Le jeton a été retiré.');
 		return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),303);
 	}
@@ -1354,8 +1420,7 @@ class PersonnageController
 					}
 				}
 			}
-			
-				
+
 			$app['orm.em']->persist($personnage);
 			$app['orm.em']->flush();
 				
@@ -2142,6 +2207,160 @@ class PersonnageController
 				'participant' => $participant,
 				'groupe' => $groupe,
 			));
+	}
+	
+	/**
+	 * Ajoute un evenement de chronologie au personnage
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function adminAddChronologieAction(Request $request, Application $app)
+	{
+		$personnage = $request->get('personnage');
+		$personnageChronologie = new \LarpManager\Entities\PersonnageChronologie();
+		$personnageChronologie->setPersonnage($personnage);
 
+		$form = $app['form.factory']->createBuilder(new PersonnageChronologieForm(), $personnageChronologie)
+			->add('save','submit', array('label' => 'Valider l\'évènement'))
+			->getForm();
+
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
+		{
+			$anneeGN = $form->get('annee')->getData();
+			$evenement = $form->get('evenement')->getData();
+				
+			$personnageChronologie = new \LarpManager\Entities\PersonnageChronologie();
+				
+			$personnageChronologie->setAnnee($anneeGN);
+			$personnageChronologie->setEvenement($evenement);
+			$personnageChronologie->setPersonnage($personnage);
+
+			$app['orm.em']->persist($personnageChronologie);
+			$app['orm.em']->flush();
+		
+			$app['session']->getFlashBag()->add('success','L\'évènement a été ajouté à la chronologie.');
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),303);
+		}
+		
+		return $app['twig']->render('admin/personnage/updateChronologie.twig', array(
+				'form' => $form->createView(),
+				'personnage' => $personnage,
+				'personnageChronologie' => $personnageChronologie,
+		));
+	}
+
+	/**
+	 * Retire un évènement d'un personnage
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function adminDeleteChronologieAction(Request $request, Application $app)
+	{
+		$personnage = $request->get('personnage');
+		$personnageChronologie = $request->get('personnageChronologie');
+		
+		$form = $app['form.factory']->createBuilder()
+			->add('save','submit', array('label' => 'Retirer l\'évènement'))
+			->getForm();
+		
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
+		{
+			$data = $form->getData();
+				
+			$app['orm.em']->remove($personnageChronologie);
+			$app['orm.em']->flush();
+				
+			$app['session']->getFlashBag()->add('success','L\'évènement a été supprimé de la chronologie.');
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),303);
+		}
+		
+		return $app['twig']->render('admin/personnage/removeChronologie.twig', array(
+				'form' => $form->createView(),
+				'personnage' => $personnage,
+				'personnageChronologie'=> $personnageChronologie,
+		));
+	}
+
+	/**
+	 * Ajoute une lignée au personnage
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function adminAddLigneeAction(Request $request, Application $app)
+	{
+		$personnage = $request->get('personnage');
+		$personnageLignee = new \LarpManager\Entities\PersonnageLignee();
+		$personnageLignee->setPersonnage($personnage);
+		
+		$form = $app['form.factory']->createBuilder(new PersonnageLigneeForm(), $personnageLignee)
+			->add('save','submit', array('label' => 'Valider les modifications'))
+			->getForm();
+
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$parent1 = $form->get('parent1')->getData();
+			$parent2 = $form->get('parent2')->getData();
+			$lignee = $form->get('lignee')->getData();
+
+			$personnageLignee->setParent1($parent1);
+			$personnageLignee->setParent2($parent2);
+			$personnageLignee->setLignee($lignee);
+
+			$app['orm.em']->persist($personnageLignee);
+			$app['orm.em']->flush();
+		
+			$app['session']->getFlashBag()->add('success','La lignée a été ajoutée.');
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),303);
+		}
+		
+		return $app['twig']->render('admin/personnage/updateLignee.twig', array(
+				'form' => $form->createView(),
+				'personnage' => $personnage,
+				'lignee' => $personnageLignee,
+			));
+	}
+
+	/**
+	 * Retire une lignée d'un personnage
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function adminDeleteLigneeAction(Request $request, Application $app)
+	{
+		$personnage = $request->get('personnage');
+		$personnageLignee = $request->get('personnageLignee');
+		
+		$form = $app['form.factory']->createBuilder()
+			->add('save','submit', array('label' => 'Retirer la lignée'))
+			->getForm();
+		
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
+		{
+			$data = $form->getData();
+				
+			$app['orm.em']->remove($personnageLignee);
+			$app['orm.em']->flush();
+				
+			$app['session']->getFlashBag()->add('success','La lignée a été supprimée.');
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),303);
+		}
+		
+		return $app['twig']->render('admin/personnage/removeLignee.twig', array(
+				'form' => $form->createView(),
+				'personnage' => $personnage,
+				'personnageLignee'=> $personnageLignee,
+		));
 	}
 }

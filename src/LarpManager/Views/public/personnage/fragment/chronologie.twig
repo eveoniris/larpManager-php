@@ -1,0 +1,16 @@
+{# Chronologie #}
+<div class="header">
+	<h5>Chronologie</h5>
+</div>
+
+<ul class="list-group">
+	{% if personnage.personnageChronologie|length > 0 %}
+		{% for evenement in personnage.personnageChronologie %}
+			<li class="list-group-item">{{ evenement.annee }} : {{ evenement.evenement }}</li>
+		{% endfor %}
+	{% else %}
+		<p class="list-group-item-text">
+			<li class="list-group-item">Ce personnage n'a pas de chronologie.</li>
+		</p>
+	{% endif %}
+</ul>

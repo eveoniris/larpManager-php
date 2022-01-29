@@ -313,6 +313,18 @@ class BasePersonnage
      */
     protected $pugilatHistories;
 
+    /**
+     * @OneToMany(targetEntity="PersonnageChronologie", mappedBy="personnage")
+     * @JoinColumn(name="id", referencedColumnName="personnage_id", nullable=false)
+     * @OrderBy({"annee" = "ASC", "id" = "ASC",})
+     */
+    protected $personnageChronologie;
+
+    /**
+     * @OneToMany(targetEntity="PersonnageLignee", mappedBy="personnage")
+     * @JoinColumn(name="id", referencedColumnName="personnage_id", nullable=false)
+     */
+    protected $personnageLignee;
 
     public function __construct()
     {
@@ -342,6 +354,8 @@ class BasePersonnage
         $this->prieres = new ArrayCollection();
         $this->sorts = new ArrayCollection();
         $this->pugilatHistories = new ArrayCollection();
+        $this->personnageChronologie = new ArrayCollection();
+        $this->personnageLignee = new ArrayCollection();
     }
 
     /**
@@ -1757,6 +1771,26 @@ class BasePersonnage
         return $this->sorts;
     }
 
+    /**
+     * Get personnageChronologie entity collection.
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getPersonnageChronologie()
+    {
+        return $this->personnageChronologie;
+    }
+
+    /**
+     * Get personnageLignee entity collection.
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getPersonnageLignee()
+    {
+        return $this->personnageLignee;
+    }
+
     public function __sleep()
     {
         return array('id', 'nom', 'surnom', 'intrigue', 'groupe_id', 'classe_id', 'age_id', 'genre_id', 'renomme', 'photo', 'xp', 'territoire_id', 'materiel', 'vivant', 'age_reel', 'trombineUrl', 'user_id', 'richesse', 'heroisme');
@@ -1779,4 +1813,5 @@ class BasePersonnage
         }
         return $prochain;
     }
+
 }

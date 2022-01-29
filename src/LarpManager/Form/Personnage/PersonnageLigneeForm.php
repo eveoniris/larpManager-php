@@ -18,20 +18,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace LarpManager\Form;
+namespace LarpManager\Form\Personnage;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Doctrine\ORM\EntityRepository;
+
+use LarpManager\Repository\LigneesRepository;
+use LarpManager\Repository\PersonnageRepository;
 
 /**
- * LarpManager\Form\LangueForm
+ * LarpManager\Form\PersonnageLigneeForm
  *
- * @author kevin
+ * @author Kevin F.
  *
  */
-class LangueForm extends AbstractType
+class PersonnageLigneeForm extends AbstractType
 {
 	/**
 	 * Construction du formulaire
@@ -41,63 +43,53 @@ class LangueForm extends AbstractType
 	 */
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
-		$builder->add('label','text', array(
-					'label' => 'Label',
+		$builder->add('parent1','entity', [
+					'label' => "Choisissez le Parent 1 du personnage",
+					'expanded' => false,
 					'required' => true,
-				))
-				->add('description','textarea', array(
-					'label' => 'Description',
+					'class' => 'LarpManager\Entities\Personnage',
+					'query_builder' => function(PersonnageRepository $pr) {
+						return $pr->createQueryBuilder('p')->orderBy('p.nom', 'ASC');
+					}
+				])
+				->add('parent2','entity', [
+					'label' => "Choisissez le Parent 2 du personnage (optionnel)",
+					'expanded' => false,
 					'required' => false,
-					'attr' => array('rows' => 10),
-				))
-				->add('diffusion','integer', array(
-						'label' => 'Degrés de diffusion (de 0 à 2 : ancien, courant, commune)',
-						'required' => false,
-				))
-				->add('groupeLangue','entity', array(
-					'label' => "Choisissez le groupe de langue associé",
-					'multiple' => false,
-					'expanded' => true,
-					'required' => true,
-					'class' => 'LarpManager\Entities\GroupeLangue',
-					'property' => 'label',
-					'query_builder' => function(EntityRepository $er) {
-						return $er->createQueryBuilder('i')->orderBy('i.id', 'ASC');
-					},
-				))
-				->add('secret', 'choice', array(
-					'required' => true,
-					'choices' => array(
-							false => 'Langue visible',
-							true => 'Langue secrète',
-					),
-					'label' => 'Secret'
-				))
-				->add('document','file', array(
-					'label' => 'Téléversez un document',
+					'empty_data' => null,
+					'class' => 'LarpManager\Entities\Personnage',
+					'query_builder' => function(PersonnageRepository $pr) {
+						return $pr->createQueryBuilder('p')->orderBy('p.nom', 'ASC');
+					}
+				])
+				->add('lignee','entity', [
+					'label' => "Choisissez la lignée de votre personnage (optionnel)",
+					'expanded' => false,
 					'required' => false,
-					'mapped' => false
-				))
-			;
+					'empty_data' => null,
+					'class' => 'LarpManager\Entities\Lignee',
+					'query_builder' => function(LigneesRepository $pr) {
+						return $pr->createQueryBuilder('p')->orderBy('p.nom', 'ASC');
+					}
+				])
+		;
 	}
-	
+
 	/**
 	 * Définition de l'entité concerné
-	 * 
+	 *
 	 * @param OptionsResolver $resolver
 	 */
 	public function configureOptions(OptionsResolver $resolver)
 	{
-		$resolver->setDefaults(array(
-				'data_class' => 'LarpManager\Entities\Langue',
-		));
 	}
 	
 	/**
-	 * Nom du formulaire
+	 * Nom du formulaire 
+	 * @return string
 	 */
 	public function getName()
 	{
-		return 'langue';
+		return 'personnageLignee';
 	}
 }

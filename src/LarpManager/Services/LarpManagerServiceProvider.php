@@ -70,6 +70,8 @@ use LarpManager\Services\Converter\PersonnageReligionConverter;
 use LarpManager\Services\Converter\PersonnageSecondaireConverter;
 use LarpManager\Services\Converter\PersonnageTokenConverter;
 use LarpManager\Services\Converter\PersonnageTriggerConverter;
+use LarpManager\Services\Converter\PersonnageChronologieConverter;
+use LarpManager\Services\Converter\PersonnageLigneeConverter;
 use LarpManager\Services\Converter\PostulantConverter;
 use LarpManager\Services\Converter\PotionConverter;
 use LarpManager\Services\Converter\PriereConverter;
@@ -424,6 +426,16 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 		// Intrigue converter
 		$app['converter.intrigue'] = $app->share(function($app) {
 			return new IntrigueConverter($app['orm.em']);
+		});
+		
+		// PersonnageChronologie converter
+		$app['converter.personnageChronologie'] = $app->share(function($app) {
+			return new PersonnageChronologieConverter($app['orm.em']);
+		});
+	
+		// PersonnageLignee converter
+		$app['converter.personnageLignee'] = $app->share(function($app) {
+			return new PersonnageLigneeConverter($app['orm.em']);
 		});
 	}
 
