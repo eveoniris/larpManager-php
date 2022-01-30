@@ -192,7 +192,7 @@
 								{% for personnageReligion in personnage.personnagesReligions %}
 									<div class="list-group-item">{{ personnageReligion.religion.label }} - {{ personnageReligion.religionLevel.label }} - <a href="{{ path('personnage.admin.religion.delete', {'personnage': personnage.id, 'personnageReligion': personnageReligion.id }) }}">Supprimer</a></div>
 								{% else %}
-									<div class="list-group-item-text">Agnostique - Fervent</div>
+									<div class="list-group-item-text">Sans - Fervent</div>
 								{% endfor %}
 							</div>
 							
@@ -211,6 +211,8 @@
 							<div class="list-group">
 								{% for domaine in personnage.domaines %}
 									<div class="list-group-item">{{ domaine.label }}</div>
+								{% else %}
+									<div class="list-group-item-text">Aucun</div>
 								{% endfor %}
 							</div>
 
