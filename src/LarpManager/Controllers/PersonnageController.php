@@ -357,12 +357,15 @@ class PersonnageController
 		$langueMateriel = array();
 		foreach($personnage->getPersonnageLangues() as $langue) {
 			if(!in_array('Bracelet '.$langue->getLangue()->getGroupeLangue()->getCouleur(),$langueMateriel)) {
-				array_push($langueMateriel, 'Bracelet '.$langue->getLangue()->getGroupeLangue()->getCouleur());
+				if ($langue->getLangue()->getGroupeLangue()->getId() != 0 && $langue->getLangue()->getGroupeLangue()->getId() != 6){
+					array_push($langueMateriel, 'Bracelet '.$langue->getLangue()->getGroupeLangue()->getCouleur());
+				}
 			}
 			if($langue->getLangue()->getDiffusion() === 0) {
 				array_push($langueMateriel, 'Alphabet '.$langue->getLangue()->getLabel());
 			}
 		}
+		sort($langueMateriel);
 		return $langueMateriel;
 	}
 	

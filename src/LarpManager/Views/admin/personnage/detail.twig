@@ -186,21 +186,17 @@
 									{% endfor %}
 								</div>
 							</div>														
-							<h6>Domaines de magie</h6>
-							<div class="list-group">
-								{% for domaine in personnage.domaines %}
-									<div class="list-group-item">{{ domaine.label }}</div>
-								{% endfor %}
-							</div>
 								
-							<h6>Religions</h6>
+							<h6>Religions :</h6>
 							<div class="list-group">
 								{% for personnageReligion in personnage.personnagesReligions %}
 									<div class="list-group-item">{{ personnageReligion.religion.label }} - {{ personnageReligion.religionLevel.label }} - <a href="{{ path('personnage.admin.religion.delete', {'personnage': personnage.id, 'personnageReligion': personnageReligion.id }) }}">Supprimer</a></div>
+								{% else %}
+									<div class="list-group-item-text">Agnostique - Fervent</div>
 								{% endfor %}
 							</div>
 							
-							<h6>Langues connues</h6>
+							<h6>Langues connues :</h6>
 							{% set languesAnomalie = personnage.getLanguesAnomaliesMessage() %}
 							{% if languesAnomalie != "" %}
 							<div class="text-warning">{{languesAnomalie}}</div>
@@ -210,14 +206,20 @@
 									<div class="list-group-item"><strong>{{ personnageLangue.langue}}</strong> ({{ personnageLangue.source }}) - <a href="{{ path('personnage.admin.langue.delete', {'personnage': personnage.id, 'personnageLangue' : personnageLangue.id }) }}">Supprimer</a></div>
 								{% endfor %}
 							</div>
-		
+
+							<h6>Domaines de magie :</h6>
+							<div class="list-group">
+								{% for domaine in personnage.domaines %}
+									<div class="list-group-item">{{ domaine.label }}</div>
+								{% endfor %}
+							</div>
+
 							<h6 class="list-group-item-heading">Sorts :</h6>
 							<div class="list-group-item">
 								{% set sortAnomalie = personnage.getSortAnomalieMessage() %}
 								{% if sortAnomalie != "" %}
 								<div class="text-warning">{{sortAnomalie}}</div>
 								{% endif %}
-																
 								{% for sort in personnage.sorts %}
 									<div class="list-group-item-text">{{ sort.label }} - {{ sort.domaine.label }} Niveau {{ sort.niveau }}</div>
 								{% else %}
@@ -382,7 +384,7 @@
 								</div>
 								
 								<div class="list-group-item">
-									<h6 class="list-group-item-heading">Lié aux compétences :</h6>	
+									<h6 class="list-group-item-heading">Lié aux compétences :</h6>
 									{% for competence in personnage.competences if competence.materiel %}
 										<div class="list-group-item-text"><strong>{{ competence.competenceFamily.label }}&nbsp({{ competence.level.label }}) : </strong>
 											{{ competence.materielRaw }}
@@ -391,7 +393,22 @@
 										<div class="list-group-item-text">Aucun</div>
 									{% endfor %}
 								</div>
-								
+
+								{% if personnage.hasCompetence('Prêtrise') %}
+								<div class="list-group-item">
+									{% set enoughReligion = 0 %}
+									<h6 class="list-group-item-heading">Divinité principale :</h6>
+									{% for religion in personnage.personnagesReligions %}
+									{% if religion.religionLevel.index >= 2 %}
+										{% set enoughReligion = 1 %}
+										<div class="list-group-item-text"><strong>{{ religion.religion }}</strong> ({{ religion.religionLevel.label }})</div>
+									{% endif %}
+									{% endfor %}
+									{% if enoughReligion == 0 %}
+										<div class="list-group-item-text">CE PRÊTRE N'A PAS ASSEZ DE FERVEUR</div>
+									{% endif %}
+								</div>
+								{% endif %}
 								<div class="list-group-item">
 									<h6 class="list-group-item-heading">Lié aux langues :</h6>
 									{% for materiel in langueMateriel %}
@@ -400,7 +417,6 @@
 										<div class="list-group-item-text">Aucun</div>
 									{% endfor %}
 								</div>
-								
 								
 								<div class="list-group-item">
 									<h6 class="list-group-item-heading">Documents :</h6>
