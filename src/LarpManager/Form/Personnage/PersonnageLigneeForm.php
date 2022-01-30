@@ -48,6 +48,9 @@ class PersonnageLigneeForm extends AbstractType
 					'expanded' => false,
 					'required' => true,
 					'class' => 'LarpManager\Entities\Personnage',
+					'choice_label' => function ($personnage) {
+						return $personnage->getIdentity();
+					},
 					'query_builder' => function(PersonnageRepository $pr) {
 						return $pr->createQueryBuilder('p')->orderBy('p.nom', 'ASC');
 					}
@@ -58,6 +61,9 @@ class PersonnageLigneeForm extends AbstractType
 					'required' => false,
 					'empty_data' => null,
 					'class' => 'LarpManager\Entities\Personnage',
+					'choice_label' => function ($personnage) {
+						return $personnage->getIdentity();
+					},
 					'query_builder' => function(PersonnageRepository $pr) {
 						return $pr->createQueryBuilder('p')->orderBy('p.nom', 'ASC');
 					}
