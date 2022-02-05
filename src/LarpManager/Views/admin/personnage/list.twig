@@ -123,7 +123,7 @@
 						{% endfor %}
 					</td>
 					<td>
-						<a href="{{ path('personnage.admin.xp', {'personnage': personnage.id}) }}">Points d'expériences</a>
+						{{ personnage.xp|default(0) }} / {{ personnage.xpTotal }} XP - <a href="{{ path('personnage.admin.xp', {'personnage': personnage.id}) }}">Modifier</a>
 					</td>
 					<td>
 						{% set languesAnomalie = personnage.getLanguesAnomaliesMessage() %}
