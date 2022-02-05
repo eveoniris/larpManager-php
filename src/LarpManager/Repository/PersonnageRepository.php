@@ -51,6 +51,7 @@ class PersonnageRepository extends EntityRepository
         }
         if(array_key_exists("classe",$criteria)) $qb->join('p.classe','cl');
         if(array_key_exists("competence",$criteria)) $qb->join('p.competences','cmp');
+        if(array_key_exists("groupe",$criteria)) $qb->join('p.groupe','gr');
 //        $qb->join('pa.gn','gn');
 
         foreach ( $criteria as $critere )
@@ -83,6 +84,7 @@ class PersonnageRepository extends EntityRepository
         }
         if(array_key_exists("classe",$criteria)) $qb->join('p.classe','cl');
         if(array_key_exists("competence",$criteria)) $qb->join('p.competences','cmp');
+        if(array_key_exists("groupe",$criteria)) $qb->join('p.groupe','gr');
 //		$qb->join('pa.gn','gn');
 
 		foreach ( $criteria as $critere )
