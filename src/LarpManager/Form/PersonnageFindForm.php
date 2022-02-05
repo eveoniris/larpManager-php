@@ -23,6 +23,7 @@ namespace LarpManager\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use LarpManager\Repository\GroupeRepository;
 
 /**
  * LarpManager\Form\PersonnageFindForm
@@ -61,22 +62,32 @@ class PersonnageFindForm extends AbstractType
 				))
 				->add('religion', 'entity',  array(
 					'required' => false,
-					'label' => 'Par religion',
+					'label' => '	Par religion',
 					'class' => 'LarpManager\Entities\Religion',
 					'property' => 'label'
 				))
 				->add('competence', 'entity', array(
 					'required' => false,
-					'label' => 'Par compétence',
+					'label' => '	Par compétence',
 					'class' => 'LarpManager\Entities\Competence',
 					'property' => 'label',
 				))
 				->add('classe','entity',array(
 					'required' => false,
-					'label' => 'Par classe',
+					'label' => '	Par classe',
 					'class' => 'LarpManager\Entities\Classe',
 					'property' => 'label',
-				));
+				))
+				->add('groupe','entity',array(
+					'required' => false,
+					'label' => '	Par groupe',
+					'class' => 'LarpManager\Entities\Groupe',
+					'property' => 'nom',
+					'query_builder' => function(GroupeRepository $gr) {
+						return $gr->createQueryBuilder('gr')->orderBy('gr.nom', 'ASC');
+					},
+				))
+				;
 	}
 	
 	/**
