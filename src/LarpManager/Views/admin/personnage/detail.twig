@@ -98,15 +98,15 @@
 							<h6>Groupes secondaires</h6>
 							<ul class="list-group">
 								{% for groupeSecondaire in personnage.secondaryGroups %}
-										<li class="list-group-item">{{ groupeSecondaire.label }} (Chef)</li>
+									<li class="list-group-item">{{ groupeSecondaire.label }} (Chef)</li>
 								{% endfor %}
 								{% for membre in personnage.membres %}
-										<a class="list-group-item" href="{{ path('groupeSecondaire.admin.detail', {'groupe': membre.secondaryGroup.id}) }}">{{ membre.secondaryGroup.label }}</a>
+									<a class="list-group-item" href="{{ path('groupeSecondaire.admin.detail', {'groupe': membre.secondaryGroup.id}) }}">{{ membre.secondaryGroup.label }}</a>
 								{% endfor %}
 							</ul>
-	
-							<h6>Postulation(s)</h6>
+
 							{% if personnage.postulants|length > 0 %}
+								<h6>Postulation(s)</h6>
 								<ul class="list-group">
 								{% for postulant in personnage.postulants %}
 									<a class="list-group-item" href="{{ path('groupeSecondaire.admin.detail', {'groupe': postulant.secondaryGroup.id}) }}">{{ postulant.secondaryGroup.label }} en attente de validation.</a>
@@ -212,47 +212,53 @@
 								{% for domaine in personnage.domaines %}
 									<div class="list-group-item">{{ domaine.label }}</div>
 								{% else %}
-									<div class="list-group-item-text">Aucun</div>
+									<div class="list-group-item">Aucun</div>
 								{% endfor %}
 							</div>
 
-							<h6 class="list-group-item-heading">Sorts :</h6>
-							<div class="list-group-item">
-								{% set sortAnomalie = personnage.getSortAnomalieMessage() %}
-								{% if sortAnomalie != "" %}
-								<div class="text-warning">{{sortAnomalie}}</div>
-								{% endif %}
-								{% for sort in personnage.sorts %}
-									<div class="list-group-item-text">{{ sort.label }} - {{ sort.domaine.label }} Niveau {{ sort.niveau }}</div>
-								{% else %}
-									<div class="list-group-item-text">Aucun</div>
-								{% endfor %}
+							<h6>Sorts :</h6>
+							{% set sortAnomalie = personnage.getSortAnomalieMessage() %}
+							{% if sortAnomalie != "" %}
+							<div class="text-warning">{{sortAnomalie}}</div>
+							{% endif %}
+							<div class="list-group">
+								<div class="list-group-item">
+									{% for sort in personnage.sorts %}
+										<div class="list-group-item-text">{{ sort.label }} - {{ sort.domaine.label }} Niveau {{ sort.niveau }}</div>
+									{% else %}
+										<div class="list-group-item-text">Aucun</div>
+									{% endfor %}
+								</div>
 							</div>
 
-							<h6 class="list-group-item-heading">Potions :</h6>
-							<div class="list-group-item">
-								{% set potionsAnomalie = personnage.getPotionAnomalieMessage() %}
-								{% if potionsAnomalie != "" %}
-								<div class="text-warning">{{potionsAnomalie}}</div>
-								{% endif %}
-								{% for potion in personnage.potions %}
-									<div class="list-group-item-text">{{ potion.label }} - Niveau {{ potion.niveau }}</div>
-								{% else %}
-									<div class="list-group-item-text">Aucune</div>
-								{% endfor %}
+							<h6>Potions :</h6>
+							{% set potionsAnomalie = personnage.getPotionAnomalieMessage() %}
+							{% if potionsAnomalie != "" %}
+							<div class="text-warning">{{potionsAnomalie}}</div>
+							{% endif %}
+							<div class="list-group">
+								<div class="list-group-item">
+									{% for potion in personnage.potions %}
+										<div class="list-group-item-text">{{ potion.label }} - Niveau {{ potion.niveau }}</div>
+									{% else %}
+										<div class="list-group-item-text">Aucune</div>
+									{% endfor %}
+								</div>
 							</div>
 
-							<h6 class="list-group-item-heading">Prières :</h6>
-							<div class="list-group-item">
-								{% set sortAnomalie = personnage.getPrieresAnomalieMessage() %}
-								{% if sortAnomalie != "" %}
-								<div class="text-warning">{{sortAnomalie}}</div>
-								{% endif %}
-								{% for priere in personnage.prieres %}
-									<div class="list-group-item-text">{{ priere.sphere.label }} - Niveau {{ priere.niveau }} ({{ priere.label }})</div>
-								{% else %}
-									<div class="list-group-item-text">Aucune</div>
-								{% endfor %}
+							<h6>Prières :</h6>
+							{% set sortAnomalie = personnage.getPrieresAnomalieMessage() %}
+							{% if sortAnomalie != "" %}
+							<div class="text-warning">{{sortAnomalie}}</div>
+							{% endif %}
+							<div class="list-group">
+								<div class="list-group-item">
+									{% for priere in personnage.prieres %}
+										<div class="list-group-item-text">{{ priere.sphere.label }} - Niveau {{ priere.niveau }} ({{ priere.label }})</div>
+									{% else %}
+										<div class="list-group-item-text">Aucune</div>
+									{% endfor %}
+								</div>
 							</div>
 								
 						</div>
