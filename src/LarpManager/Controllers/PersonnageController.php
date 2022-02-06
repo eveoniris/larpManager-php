@@ -357,12 +357,15 @@ class PersonnageController
 		$langueMateriel = array();
 		foreach($personnage->getPersonnageLangues() as $langue) {
 			if(!in_array('Bracelet '.$langue->getLangue()->getGroupeLangue()->getCouleur(),$langueMateriel)) {
-				array_push($langueMateriel, 'Bracelet '.$langue->getLangue()->getGroupeLangue()->getCouleur());
+				if ($langue->getLangue()->getGroupeLangue()->getId() != 0 && $langue->getLangue()->getGroupeLangue()->getId() != 6){
+					array_push($langueMateriel, 'Bracelet '.$langue->getLangue()->getGroupeLangue()->getCouleur());
+				}
 			}
 			if($langue->getLangue()->getDiffusion() === 0) {
 				array_push($langueMateriel, 'Alphabet '.$langue->getLangue()->getLabel());
 			}
 		}
+		sort($langueMateriel);
 		return $langueMateriel;
 	}
 	
@@ -558,6 +561,7 @@ class PersonnageController
         $religion = isset($formData['religion'])?$app['orm.em']->find('LarpManager\Entities\Religion',$formData['religion']):null;
         $competence = isset($formData['competence'])?$app['orm.em']->find('LarpManager\Entities\Competence',$formData['competence']):null;
         $classe = isset($formData['classe'])?$app['orm.em']->find('LarpManager\Entities\Classe',$formData['classe']):null;
+        $groupe = isset($formData['groupe'])?$app['orm.em']->find('LarpManager\Entities\Groupe',$formData['groupe']):null;
         $optionalParameters = "";
 
 		$form = $app['form.factory']->createBuilder(
@@ -568,6 +572,7 @@ class PersonnageController
                     'religion' => $religion,
                     'classe' => $classe,
                     'competence' => $competence,
+                    'groupe' => $groupe,
                 ],
                 'method' => 'get',
                 'csrf_protection' => false
@@ -603,6 +608,10 @@ class PersonnageController
         if($classe){
             $criteria["classe"] = "cl.id = {$classe->getId()}";
             $optionalParameters .= "&personnageFind[classe]={$classe->getId()}";
+        }
+        if($groupe){
+            $criteria["groupe"] = "gr.id = {$groupe->getId()}";
+            $optionalParameters .= "&personnageFind[groupe]={$groupe->getId()}";
         }
 
         /* @var PersonnageRepository $repo */
@@ -1191,7 +1200,7 @@ class PersonnageController
 	public function adminTokenDeleteAction(Request $request, Application $app, Personnage $personnage, PersonnageHasToken $personnageHasToken)
 	{
 		$personnage->removePersonnageHasToken($personnageHasToken);
-		$personnage->setAgeReel($personnage->getAgeReel() - 5);
+		// $personnage->setAgeReel($personnage->getAgeReel() - 5);
 		if ( $personnage->getPersonnageHasTokens()->count() % 2 != 0 )
 		{
 			if ( $personnage->getAge()->getId() != 5 )

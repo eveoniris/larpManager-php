@@ -98,15 +98,15 @@
 							<h6>Groupes secondaires</h6>
 							<ul class="list-group">
 								{% for groupeSecondaire in personnage.secondaryGroups %}
-										<li class="list-group-item">{{ groupeSecondaire.label }} (Chef)</li>
+									<li class="list-group-item">{{ groupeSecondaire.label }} (Chef)</li>
 								{% endfor %}
 								{% for membre in personnage.membres %}
-										<a class="list-group-item" href="{{ path('groupeSecondaire.admin.detail', {'groupe': membre.secondaryGroup.id}) }}">{{ membre.secondaryGroup.label }}</a>
+									<a class="list-group-item" href="{{ path('groupeSecondaire.admin.detail', {'groupe': membre.secondaryGroup.id}) }}">{{ membre.secondaryGroup.label }}</a>
 								{% endfor %}
 							</ul>
-	
-							<h6>Postulation(s)</h6>
+
 							{% if personnage.postulants|length > 0 %}
+								<h6>Postulation(s)</h6>
 								<ul class="list-group">
 								{% for postulant in personnage.postulants %}
 									<a class="list-group-item" href="{{ path('groupeSecondaire.admin.detail', {'groupe': postulant.secondaryGroup.id}) }}">{{ postulant.secondaryGroup.label }} en attente de validation.</a>
@@ -186,21 +186,17 @@
 									{% endfor %}
 								</div>
 							</div>														
-							<h6>Domaines de magie</h6>
-							<div class="list-group">
-								{% for domaine in personnage.domaines %}
-									<div class="list-group-item">{{ domaine.label }}</div>
-								{% endfor %}
-							</div>
 								
-							<h6>Religions</h6>
+							<h6>Religions :</h6>
 							<div class="list-group">
 								{% for personnageReligion in personnage.personnagesReligions %}
 									<div class="list-group-item">{{ personnageReligion.religion.label }} - {{ personnageReligion.religionLevel.label }} - <a href="{{ path('personnage.admin.religion.delete', {'personnage': personnage.id, 'personnageReligion': personnageReligion.id }) }}">Supprimer</a></div>
+								{% else %}
+									<div class="list-group-item-text">Sans - Fervent</div>
 								{% endfor %}
 							</div>
 							
-							<h6>Langues connues</h6>
+							<h6>Langues connues :</h6>
 							{% set languesAnomalie = personnage.getLanguesAnomaliesMessage() %}
 							{% if languesAnomalie != "" %}
 							<div class="text-warning">{{languesAnomalie}}</div>
@@ -210,45 +206,59 @@
 									<div class="list-group-item"><strong>{{ personnageLangue.langue}}</strong> ({{ personnageLangue.source }}) - <a href="{{ path('personnage.admin.langue.delete', {'personnage': personnage.id, 'personnageLangue' : personnageLangue.id }) }}">Supprimer</a></div>
 								{% endfor %}
 							</div>
-		
-							<h6 class="list-group-item-heading">Sorts :</h6>
-							<div class="list-group-item">
-								{% set sortAnomalie = personnage.getSortAnomalieMessage() %}
-								{% if sortAnomalie != "" %}
-								<div class="text-warning">{{sortAnomalie}}</div>
-								{% endif %}
-																
-								{% for sort in personnage.sorts %}
-									<div class="list-group-item-text">{{ sort.label }} - {{ sort.domaine.label }} Niveau {{ sort.niveau }}</div>
+
+							<h6>Domaines de magie :</h6>
+							<div class="list-group">
+								{% for domaine in personnage.domaines %}
+									<div class="list-group-item">{{ domaine.label }}</div>
 								{% else %}
-									<div class="list-group-item-text">Aucun</div>
+									<div class="list-group-item">Aucun</div>
 								{% endfor %}
 							</div>
 
-							<h6 class="list-group-item-heading">Potions :</h6>
-							<div class="list-group-item">
-								{% set potionsAnomalie = personnage.getPotionAnomalieMessage() %}
-								{% if potionsAnomalie != "" %}
-								<div class="text-warning">{{potionsAnomalie}}</div>
-								{% endif %}
-								{% for potion in personnage.potions %}
-									<div class="list-group-item-text">{{ potion.label }} - Niveau {{ potion.niveau }}</div>
-								{% else %}
-									<div class="list-group-item-text">Aucune</div>
-								{% endfor %}
+							<h6>Sorts :</h6>
+							{% set sortAnomalie = personnage.getSortAnomalieMessage() %}
+							{% if sortAnomalie != "" %}
+							<div class="text-warning">{{sortAnomalie}}</div>
+							{% endif %}
+							<div class="list-group">
+								<div class="list-group-item">
+									{% for sort in personnage.sorts %}
+										<div class="list-group-item-text">{{ sort.label }} - {{ sort.domaine.label }} Niveau {{ sort.niveau }}</div>
+									{% else %}
+										<div class="list-group-item-text">Aucun</div>
+									{% endfor %}
+								</div>
 							</div>
 
-							<h6 class="list-group-item-heading">Prières :</h6>
-							<div class="list-group-item">
-								{% set sortAnomalie = personnage.getPrieresAnomalieMessage() %}
-								{% if sortAnomalie != "" %}
-								<div class="text-warning">{{sortAnomalie}}</div>
-								{% endif %}
-								{% for priere in personnage.prieres %}
-									<div class="list-group-item-text">{{ priere.sphere.label }} - Niveau {{ priere.niveau }} ({{ priere.label }})</div>
-								{% else %}
-									<div class="list-group-item-text">Aucune</div>
-								{% endfor %}
+							<h6>Potions :</h6>
+							{% set potionsAnomalie = personnage.getPotionAnomalieMessage() %}
+							{% if potionsAnomalie != "" %}
+							<div class="text-warning">{{potionsAnomalie}}</div>
+							{% endif %}
+							<div class="list-group">
+								<div class="list-group-item">
+									{% for potion in personnage.potions %}
+										<div class="list-group-item-text">{{ potion.label }} - Niveau {{ potion.niveau }}</div>
+									{% else %}
+										<div class="list-group-item-text">Aucune</div>
+									{% endfor %}
+								</div>
+							</div>
+
+							<h6>Prières :</h6>
+							{% set sortAnomalie = personnage.getPrieresAnomalieMessage() %}
+							{% if sortAnomalie != "" %}
+							<div class="text-warning">{{sortAnomalie}}</div>
+							{% endif %}
+							<div class="list-group">
+								<div class="list-group-item">
+									{% for priere in personnage.prieres %}
+										<div class="list-group-item-text">{{ priere.sphere.label }} - Niveau {{ priere.niveau }} ({{ priere.label }})</div>
+									{% else %}
+										<div class="list-group-item-text">Aucune</div>
+									{% endfor %}
+								</div>
 							</div>
 								
 						</div>
@@ -268,8 +278,8 @@
 								      			<span class="caret"></span>
 								    		</a>
 											<ul class="dropdown-menu">
-												<li><a href="{{ path('personnage.admin.token.add', {'personnage': personnage.id, 'token': 'VIEILLESSE'}) }}">Ajouter un jeton vieillesse</a></li>
-												<li><a href="{{ path('personnage.admin.trigger.add', {'personnage': personnage.id}) }}">Ajouter un déclencheur</a></li>
+												<!-- <li><a href="{{ path('personnage.admin.token.add', {'personnage': personnage.id, 'token': 'VIEILLESSE'}) }}">Ajouter un jeton vieillesse</a></li>-->
+												<li><a href="{{ path('personnage.admin.trigger.add', {'personnage': personnage.id}) }}">Ajouter un déclencheur de compétences</a></li>
 											</ul>
 										</li>
 	  								</ul>
@@ -382,7 +392,7 @@
 								</div>
 								
 								<div class="list-group-item">
-									<h6 class="list-group-item-heading">Lié aux compétences :</h6>	
+									<h6 class="list-group-item-heading">Lié aux compétences :</h6>
 									{% for competence in personnage.competences if competence.materiel %}
 										<div class="list-group-item-text"><strong>{{ competence.competenceFamily.label }}&nbsp({{ competence.level.label }}) : </strong>
 											{{ competence.materielRaw }}
@@ -391,7 +401,22 @@
 										<div class="list-group-item-text">Aucun</div>
 									{% endfor %}
 								</div>
-								
+
+								{% if personnage.hasCompetence('Prêtrise') %}
+								<div class="list-group-item">
+									{% set enoughReligion = 0 %}
+									<h6 class="list-group-item-heading">Divinité principale :</h6>
+									{% for religion in personnage.personnagesReligions %}
+									{% if religion.religionLevel.index >= 2 %}
+										{% set enoughReligion = 1 %}
+										<div class="list-group-item-text"><strong>{{ religion.religion }}</strong> ({{ religion.religionLevel.label }})</div>
+									{% endif %}
+									{% endfor %}
+									{% if enoughReligion == 0 %}
+										<div class="list-group-item-text">CE PRÊTRE N'A PAS ASSEZ DE FERVEUR</div>
+									{% endif %}
+								</div>
+								{% endif %}
 								<div class="list-group-item">
 									<h6 class="list-group-item-heading">Lié aux langues :</h6>
 									{% for materiel in langueMateriel %}
@@ -400,7 +425,6 @@
 										<div class="list-group-item-text">Aucun</div>
 									{% endfor %}
 								</div>
-								
 								
 								<div class="list-group-item">
 									<h6 class="list-group-item-heading">Documents :</h6>
@@ -540,12 +564,12 @@
 								{% if personnage.personnageLignee|length > 0 %}
 									{% for lignage in personnage.personnageLignee %}
 										{% if lignage.lignee %}<div class="list-group-item">Lignee : {{ lignage.lignee.nom }}</div>{% endif %}
-										<div class="list-group-item">Parent : {{ lignage.parent1.nom }}</div>
-										{% if lignage.parent2 %}<div class="list-group-item">Parent : {{ lignage.parent2.nom }}</div>{% endif %}
+										<div class="list-group-item">Parent : <a href="{{ path('personnage.admin.detail', {'personnage':lignage.parent1.id}) }}">{{ lignage.parent1.identity }}</a></div>
+										{% if lignage.parent2 %}<div class="list-group-item">Parent : <a href="{{ path('personnage.admin.detail', {'personnage':lignage.parent2.id}) }}">{{ lignage.parent2.identity }}</a></div>{% endif %}
 										{% for descendants in lignage.descendants %}
-											<li class="list-group-item">Enfant{% if descendants|length > 1 %}s{% endif %} : {{ descendants.nom }}</li>
+											<li class="list-group-item">Enfant{% if descendants|length > 1 %}s{% endif %} : <a href="{{ path('personnage.admin.detail', {'personnage':descendants.id}) }}">{{ descendants.identity }}</a></li>
 											{% for descendants2 in descendants.descendants %}
-											<li class="list-group-item">Petit{% if descendants2|length > 1 %}s{% endif %}-Enfant{% if descendants2|length > 1 %}s{% endif %} : {{ descendants2.nom }}</li>
+											<li class="list-group-item">Petit{% if descendants2|length > 1 %}s{% endif %}-Enfant{% if descendants2|length > 1 %}s{% endif %} : <a href="{{ path('personnage.admin.detail', {'personnage':descendants2.id}) }}">{{ descendants2.identity }}</a></li>
 											{% endfor %}
 										{% endfor %}
 										<div class="list-group-item"><a href="{{ path('personnage.admin.lignee.delete', {'personnage': personnage.id, 'personnageLignee' : lignage.id }) }}">Supprimer</a></div>
