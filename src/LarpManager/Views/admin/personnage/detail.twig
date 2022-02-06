@@ -278,8 +278,8 @@
 								      			<span class="caret"></span>
 								    		</a>
 											<ul class="dropdown-menu">
-												<li><a href="{{ path('personnage.admin.token.add', {'personnage': personnage.id, 'token': 'VIEILLESSE'}) }}">Ajouter un jeton vieillesse</a></li>
-												<li><a href="{{ path('personnage.admin.trigger.add', {'personnage': personnage.id}) }}">Ajouter un déclencheur</a></li>
+												<!-- <li><a href="{{ path('personnage.admin.token.add', {'personnage': personnage.id, 'token': 'VIEILLESSE'}) }}">Ajouter un jeton vieillesse</a></li>-->
+												<li><a href="{{ path('personnage.admin.trigger.add', {'personnage': personnage.id}) }}">Ajouter un déclencheur de compétences</a></li>
 											</ul>
 										</li>
 	  								</ul>
@@ -564,12 +564,12 @@
 								{% if personnage.personnageLignee|length > 0 %}
 									{% for lignage in personnage.personnageLignee %}
 										{% if lignage.lignee %}<div class="list-group-item">Lignee : {{ lignage.lignee.nom }}</div>{% endif %}
-										<div class="list-group-item">Parent : {{ lignage.parent1.nom }}</div>
-										{% if lignage.parent2 %}<div class="list-group-item">Parent : {{ lignage.parent2.nom }}</div>{% endif %}
+										<div class="list-group-item">Parent : <a href="{{ path('personnage.admin.detail', {'personnage':lignage.parent1.id}) }}">{{ lignage.parent1.identity }}</a></div>
+										{% if lignage.parent2 %}<div class="list-group-item">Parent : <a href="{{ path('personnage.admin.detail', {'personnage':lignage.parent2.id}) }}">{{ lignage.parent2.identity }}</a></div>{% endif %}
 										{% for descendants in lignage.descendants %}
-											<li class="list-group-item">Enfant{% if descendants|length > 1 %}s{% endif %} : {{ descendants.nom }}</li>
+											<li class="list-group-item">Enfant{% if descendants|length > 1 %}s{% endif %} : <a href="{{ path('personnage.admin.detail', {'personnage':descendants.id}) }}">{{ descendants.identity }}</a></li>
 											{% for descendants2 in descendants.descendants %}
-											<li class="list-group-item">Petit{% if descendants2|length > 1 %}s{% endif %}-Enfant{% if descendants2|length > 1 %}s{% endif %} : {{ descendants2.nom }}</li>
+											<li class="list-group-item">Petit{% if descendants2|length > 1 %}s{% endif %}-Enfant{% if descendants2|length > 1 %}s{% endif %} : <a href="{{ path('personnage.admin.detail', {'personnage':descendants2.id}) }}">{{ descendants2.identity }}</a></li>
 											{% endfor %}
 										{% endfor %}
 										<div class="list-group-item"><a href="{{ path('personnage.admin.lignee.delete', {'personnage': personnage.id, 'personnageLignee' : lignage.id }) }}">Supprimer</a></div>
