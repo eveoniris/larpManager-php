@@ -729,10 +729,19 @@ class PersonnageController
 		$personnage = new \LarpManager\Entities\Personnage();
 		
 		$participant = $request->get('participant');
-		if ( !$participant ) {
-			$participant = $app['user']->getLastParticipant();
+		if (!$participant) 
+		{
+		    // essaye de récupérer le participant du gn actif		    
+		    $gn = $app['larp.manager']->getGnActif();
+		    $participant = $app['user']->getParticipant($gn);
+		    if (!$participant)
+		    {
+		        // sinon récupère le dernier dans la liste
+			     $participant = $app['user']->getLastParticipant();
+		    }
 		}
-		else {
+		else 
+		{
 			$participant = $app['orm.em']->getRepository('\LarpManager\Entities\Participant')->find($participant);
 		}
 		
