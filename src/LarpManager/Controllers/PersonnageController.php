@@ -733,7 +733,10 @@ class PersonnageController
 		{
 		    // essaye de récupérer le participant du gn actif		    
 		    $gn = $app['larp.manager']->getGnActif();
-		    $participant = $app['user']->getParticipant($gn);
+		    if ($gn) 
+		    {
+		      $participant = $app['user']->getParticipant($gn);
+		    }
 		    if (!$participant)
 		    {
 		        // sinon récupère le dernier dans la liste
