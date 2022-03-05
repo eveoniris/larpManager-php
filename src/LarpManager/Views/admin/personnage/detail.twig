@@ -24,7 +24,7 @@
 			
 			<small>{{ personnage.ageReel|default('x') }} ans ({{ personnage.age }})</small>
 			
-			{% if personnage.vivant %}<span class="text-success">Vivant</span>{% else %}<span class="text-danger">Mort</span>{% endif %}
+			{% if personnage.vivant %}<span class="text-success">⚔️ Vivant</span>{% else %}<span class="text-danger">💀 Mort</span>{% endif %}{% if personnage.isPnj() %} 🎭 PNJ{% endif %}
 			
 			<div class="pull-right">
 				{{ personnage.classeName }}

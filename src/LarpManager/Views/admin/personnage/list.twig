@@ -98,7 +98,7 @@
 			{% for personnage in personnages %}
 				<tr>
 					<td>{{ personnage.id }}</td>
-					<td>{% if personnage.vivant == 0 %}💀 {% endif %}<a href="{{ path('personnage.admin.detail', {'personnage':personnage.id}) }}">{{ personnage.nom }}{% if personnage.surnom %} ({{ personnage.surnom }}){% endif %}</a></td>
+					<td>{% if personnage.vivant == 0 %}💀 {% else %}⚔️ {% endif %}<a href="{{ path('personnage.admin.detail', {'personnage':personnage.id}) }}">{{ personnage.nom }}{% if personnage.surnom %} ({{ personnage.surnom }}){% endif %}</a>&nbsp;{% if personnage.isPnj() %}🎭 {% endif %}</td>
 					<td>{{ personnage.classeName }}</td>
 					<td>
 						{% set gn = 'LH1' %}
