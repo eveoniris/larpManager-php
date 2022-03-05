@@ -730,7 +730,7 @@ class PersonnageController
 		
 		$participant = $request->get('participant');
 		if ( !$participant ) {
-			$participant = $app['user']->getParticipant();
+			$participant = $app['user']->getLastParticipant();
 		}
 		else {
 			$participant = $app['orm.em']->getRepository('\LarpManager\Entities\Participant')->find($participant);
@@ -751,13 +751,15 @@ class PersonnageController
 		if ( $form->isValid() )
 		{
 			$personnage = $form->getData();
-			$participant->setPersonnage($personnage);
-			
-			if ( $participant->getGroupe())
+			if ($participant)
 			{
-				$personnage->setGroupe($participant->getGroupe());
+    			$participant->setPersonnage($personnage);
+    			
+    			if ($participant->getGroupe())
+    			{
+    				$personnage->setGroupe($participant->getGroupe());
+    			}
 			}
-			
 			$personnage->setXp($app['larp.manager']->getGnActif()->getXpCreation());
 				
 			// historique
@@ -795,11 +797,14 @@ class PersonnageController
 			
 			
 			$app['orm.em']->persist($personnage);
-			$app['orm.em']->persist($participant);
+			if ($participant)
+			{
+	           $app['orm.em']->persist($participant);
+			}
 			$app['orm.em']->flush();
 			
 			$app['session']->getFlashBag()->add('success','Votre personnage a été sauvegardé.');
-			if ( $participant->getGroupe())
+			if ( $participant && $participant->getGroupe())
 			{
 				return $app->redirect($app['url_generator']->generate('groupe.detail', array('index' => $participant->getGroupe()->getId())),303);
 			}

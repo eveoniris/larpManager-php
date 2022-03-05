@@ -109,4 +109,15 @@ class Participant extends BaseParticipant
 	public function getBesoinValidationCi() {
 	   return $this->getGn()->getBesoinValidationCi() && $this->getValideCiLe() == null;
 	}
+	
+	/**
+	 * Retourne le groupe du groupe gn associé
+	 */
+	public function getGroupe() {
+	    if ($this->getGroupeGn() != null)
+	    {
+	       return $this->getGroupeGn()->getGroupe();
+	    }
+	    return null;
+	}
 }

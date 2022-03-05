@@ -126,6 +126,20 @@ class User extends BaseUser implements AdvancedUserInterface, \Serializable
 		
 	
 	/**
+	 * Retourne le dernier participant de l'utilisateur
+	 *
+	 */
+	public function getLastParticipant()
+	{
+	    if (!$this->getParticipants()->isEmpty())
+	    {
+	        return $this->getParticipants()->last();
+	    }
+	    return null;
+	}
+	
+	
+	/**
 	 * Fourni tous les billets d'un utilisateur
 	 */
 	public function getBillets()
