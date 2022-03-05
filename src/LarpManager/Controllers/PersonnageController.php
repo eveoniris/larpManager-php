@@ -735,12 +735,12 @@ class PersonnageController
 		    $gn = $app['larp.manager']->getGnActif();
 		    if ($gn) 
 		    {
-		      $participant = $app['user']->getParticipant($gn);
+				$participant = $app['user']->getParticipant($gn);
 		    }
 		    if (!$participant)
 		    {
-		        // sinon récupère le dernier dans la liste
-			     $participant = $app['user']->getLastParticipant();
+				// sinon récupère le dernier dans la liste
+			    $participant = $app['user']->getLastParticipant();
 		    }
 		}
 		else 
@@ -811,12 +811,12 @@ class PersonnageController
 			$app['orm.em']->persist($personnage);
 			if ($participant)
 			{
-	           $app['orm.em']->persist($participant);
+				$app['orm.em']->persist($participant);
 			}
 			$app['orm.em']->flush();
 			
 			$app['session']->getFlashBag()->add('success','Votre personnage a été sauvegardé.');
-			if ( $participant && $participant->getGroupe())
+			if ($participant && $participant->getGroupe())
 			{
 				return $app->redirect($app['url_generator']->generate('groupe.detail', array('index' => $participant->getGroupe()->getId())),303);
 			}
