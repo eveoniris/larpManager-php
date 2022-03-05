@@ -212,16 +212,9 @@ class Gn extends BaseGn
 		
 		foreach( $this->getParticipants() as $participant)
 		{
-			if ( $participant->getBillet() )
+			if ( $participant->isPnj() )
 			{
-				if ( $participant->getBillet()->getLabel() ==  'Inscription PNJ')
-				{
-					$participants[] = $participant;
-				}
-				if ( $participant->getBillet()->getLabel() ==  'Gratuit PNJ')
-				{
-					$participants[] = $participant;
-				}
+			    $participants->add($participant);
 			}
 		}
 		

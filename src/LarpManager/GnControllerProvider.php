@@ -149,6 +149,15 @@ class GnControllerProvider implements ControllerProviderInterface
 			->before($mustBeAdmin);
 			
 		/**
+		 * Liste des participants pnj
+		 */
+			$controllers->match('/{gn}/participants/pnj', 'LarpManager\Controllers\GnController::pnjsAction')
+			->assert('gn', '\d+')
+			->convert('gn', 'converter.gn:convert')
+			->bind("gn.participants.pnj")
+			->before($mustBeAdmin);
+			
+		/**
 		 * Liste des participants à un gn n'ayant pas encore de billet
 		 */
 		$controllers->match('/{gn}/participants/withoutbillet.csv', 'LarpManager\Controllers\GnController::participantsWithoutBilletCSVAction')
