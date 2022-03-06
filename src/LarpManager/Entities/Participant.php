@@ -106,18 +106,33 @@ class Participant extends BaseParticipant
 		
 	}
 	
-	public function getBesoinValidationCi() {
+	public function getBesoinValidationCi() 
+  {
 	   return $this->getGn()->getBesoinValidationCi() && $this->getValideCiLe() == null;
 	}
 	
 	/**
 	 * Retourne le groupe du groupe gn associé
 	 */
-	public function getGroupe() {
+	public function getGroupe() : \LarpManager\Entities\Groupe
+  {
 	    if ($this->getGroupeGn() != null)
 	    {
 	       return $this->getGroupeGn()->getGroupe();
 	    }
 	    return null;
 	}
+  
+  /**
+	 * Retourne true si le participant a un billet PNJ, false sinon
+	 */
+	public function isPnj() : bool
+	{
+	    if ($this->getBillet())
+	    {
+	        return $this->getBillet()->isPnj();
+	    }
+	    return false;
+	}
+	
 }

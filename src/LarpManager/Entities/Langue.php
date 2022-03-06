@@ -90,13 +90,23 @@ class Langue extends BaseLangue
 	 */
 	public function getCategorie()
 	{
+		$unknown = 'Inconnue';
+		if ($this->getDiffusion() === null)
+		{
+			return $unknown;
+		}
 		switch ( $this->getDiffusion() )
 		{
 			case 2: return 'Commune';
 			case 1: return 'Courante';
 			case 0: return 'Rare';
-			default : return 'Inconnue';
+			default : return $unknown;
 		}
+	}
+	
+	public function getDiffusionLabel()
+	{
+		return ($this->getDiffusion() !== null ? $this->getDiffusion().' - ' : '').$this->getCategorie();
 	}
 
 	public function getPrintLabel()

@@ -9,3 +9,6 @@ composer.phar
 composer.json.old
 /generate/
 .DS_Store
+/.vs
+/private/doc
+/larpmanager-anonymized-202109.sql

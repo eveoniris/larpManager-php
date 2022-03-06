@@ -11,7 +11,7 @@
 	</ol>
 		
 	<div class="well well-sm">
-		<h3>
+		<h3>{% if personnage.isPnj() %} 🎭 PNJ - {% endif %}
 			{{ personnage.nom }}{% if personnage.surnom %} <small>({{ personnage.surnom }})</small>{% endif %}
 			
 			{% if personnage.genre == 'Masculin' %}
@@ -24,7 +24,7 @@
 			
 			<small>{{ personnage.ageReel|default('x') }} ans ({{ personnage.age }})</small>
 			
-			{% if personnage.vivant %}<span class="text-success">Vivant</span>{% else %}<span class="text-danger">Mort</span>{% endif %}
+			{% if personnage.vivant %}<span class="text-success">Vivant</span>{% else %}<span class="text-danger">💀 Mort</span>{% endif %}
 			
 			<div class="pull-right">
 				{{ personnage.classeName }}

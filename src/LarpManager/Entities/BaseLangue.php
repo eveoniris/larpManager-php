@@ -344,7 +344,7 @@ class BaseLangue
     }
 
     /**
-     * Get the value of sedocumentUrlcret.
+     * Get the value of documentUrl.
      *
      * @return boolean
      */
