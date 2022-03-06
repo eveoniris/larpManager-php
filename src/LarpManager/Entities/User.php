@@ -590,4 +590,13 @@ class User extends BaseUser implements AdvancedUserInterface, \Serializable
 
 	    return $last->getPersonnage();
 	}
+	
+	/**
+	 * Retourne le nom complet de l'utilisateur
+	 * @return string
+	 */
+	public function getFullName() : string
+	{
+	    return $this->getEtatCivil()->getFullName();
+	}
 }

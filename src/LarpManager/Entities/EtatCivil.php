@@ -36,19 +36,29 @@ use LarpManager\Entities\BaseEtatCivil;
  */
 class EtatCivil extends BaseEtatCivil
 {
-	/**
-	 * Constructeur
-	 */
-	public function __construct()
-	{
-		parent::__construct();
-		$this->setCreationDate(new \Datetime('NOW'));
-		$this->setUpdateDate(new \Datetime('NOW'));
-	}
-	
-	public function __toString()
-	{
-		return $this->getNom(). ' ' . $this->getPrenom();
-	}
-		
+    /**
+     * Constructeur
+     */
+    public function __construct()
+    {
+        parent::__construct();
+        $this->setCreationDate(new \Datetime('NOW'));
+        $this->setUpdateDate(new \Datetime('NOW'));
+    }
+    
+    public function __toString()
+    {
+        return $this->getFullName();
+    }
+    
+    /**
+     * Retourne le nom complet
+     * @return string
+     */
+    public function getFullName(): string
+    {
+        return $this->getNom(). ' ' . $this->getPrenom();
+    }
+    
+    
 }

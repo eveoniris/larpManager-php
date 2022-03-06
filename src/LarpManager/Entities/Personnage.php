@@ -1168,4 +1168,43 @@ class Personnage extends BasePersonnage
 	    return false;
 	}
 	
+	/**
+	 * Retourne le nom complet de l'utilisateur
+	 */
+	public function getUserFullName() : string
+	{
+	    if ($this->getUser())
+	    {
+	        return $this->getUser()->getFullName();
+	    }
+	    return null;
+	}
+	
+	
+	/**
+	 * Retourne true si le personnage a au moins une anomalie
+	 */
+	public function hasAnomalie() : bool
+	{
+	    return (
+            !empty($this->getLanguesAnomaliesMessage())
+            || !empty($this->getPotionAnomalieMessage())
+            || !empty($this->getSortAnomalieMessage())
+            || !empty($this->getPrieresAnomalieMessage())
+        );	    
+	}
+	
+	/**
+	 * Retourne le status d'un joueur sous forme entier : 0 = mort, 1 = vivant, 2 = pnj
+	 */
+	public function getStatusCode() : int
+	{
+	    if ($this->isPnj())
+	    {
+	        return 2;
+	    }
+	    return $this->getVivant() ? 1 : 0;
+	}
+	
+	
 }
