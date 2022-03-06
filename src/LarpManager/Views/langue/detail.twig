@@ -37,13 +37,7 @@
 	    		<div class="list-group-item">
 			    	<h4 class="list-group-item-heading">Degré de diffusion</h4>
 			    	<p class="list-group-item-text">
-			    		{% if langue.diffusion == 0 %}
-			    			Ancien
-			    		{% elseif langue.diffusion == 1 %}
-			    			Courant
-			    		{% else %}
-			    			Commune
-			    		{% endif %}
+			    		{{ langue.getDiffusionLabel() }}
 			    	</p>
 			    </div>
 	    		
