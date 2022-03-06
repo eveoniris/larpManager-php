@@ -1141,4 +1141,31 @@ class Personnage extends BasePersonnage
 	public function getDescendants()
 	{
 	}	
+	
+	/**
+	 * Retourne le dernier participant du personnage
+	 *
+	 */
+	public function getLastParticipant() : \LarpManager\Entities\Participant
+	{
+	    if (!$this->getParticipants()->isEmpty())
+	    {
+	        return $this->getParticipants()->last();
+	    }
+	    return null;
+	}
+	
+	/**
+	 * Indique si le dernier participant était un PNJ ou non
+	 */
+	public function isPnj() : bool
+	{
+	    $lastParticipant = $this->getLastParticipant();
+	    if ($lastParticipant)
+	    {
+	        return $lastParticipant->isPnj();
+	    }
+	    return false;
+	}
+	
 }

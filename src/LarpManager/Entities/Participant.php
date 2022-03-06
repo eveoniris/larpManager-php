@@ -109,4 +109,17 @@ class Participant extends BaseParticipant
 	public function getBesoinValidationCi() {
 	   return $this->getGn()->getBesoinValidationCi() && $this->getValideCiLe() == null;
 	}
+	
+	/**
+	 * Retourne true si le participant a un billet PNJ, false sinon
+	 */
+	public function isPnj() : bool
+	{
+	    if ($this->getBillet())
+	    {
+	        return $this->getBillet()->isPnj();
+	    }
+	    return false;
+	}
+	
 }
