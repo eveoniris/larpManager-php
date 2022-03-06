@@ -150,3 +150,18 @@ ul.forum li
 	background-color: orange;
 	border-radius: 15px; 
 }
+
+.invisible {
+	/* already exists in bootstrap but just in case we replace the bootstrap css theme someday, redefine it */
+	visibility: hidden;
+}
+
+.paginator-container {
+	display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.legend-header  {
+	font-weight: bold;
+}
