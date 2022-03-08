@@ -446,6 +446,6 @@ class PersonnageRepository extends EntityRepository
      */
     public static function sortByStatusDesc(\LarpManager\Entities\Personnage $a, \LarpManager\Entities\Personnage $b)
     {
-        return self::sortByStatusAdvanced($b,$a);
+        return self::sortByStatus($b,$a);
     }
 }
