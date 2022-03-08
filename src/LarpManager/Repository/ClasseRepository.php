@@ -20,7 +20,9 @@
 
 namespace LarpManager\Repository;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\QueryBuilder;
 
 /**
  * LarpManager\Repository\ClasseRepository
@@ -40,6 +42,22 @@ class ClasseRepository extends EntityRepository
 				->getResult();
 		
 		return $classes;
+	}
+	
+	
+	/**
+	 * Returns a query builder to find all competences ordered by label
+	 * @return QueryBuilder $competences
+	 */
+	public function getQueryBuilderFindAllOrderedByLabel() : QueryBuilder
+	{
+	    $queryBuilder = $this->getEntityManager()
+	    ->createQueryBuilder()
+	    ->select('c')
+	    ->from('LarpManager\Entities\Classe', 'c')
+	    ->addOrderBy('c.label_feminin')
+	    ->addOrderBy('c.label_masculin');
+	    return $queryBuilder;	    
 	}
 	
 	/**

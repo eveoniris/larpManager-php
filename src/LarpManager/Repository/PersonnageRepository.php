@@ -21,7 +21,6 @@
 namespace LarpManager\Repository;
 
 use Doctrine\ORM\EntityRepository;
-use LarpManager\Entities\Personnage;
 use LarpManager\Services\Utilities;
 use Doctrine\Common\Collections\ArrayCollection;
 
@@ -104,7 +103,7 @@ class PersonnageRepository extends EntityRepository
                     $sortByFunctionName = '';
             }
             
-            Utilities::stable_uasort($resultArray, array($this, $sortByFunctionName));
+            Utilities::stable_uasort($resultArray, array('LarpManager\Repository\PersonnageRepository', $sortByFunctionName));
             $resultCollection = new ArrayCollection($resultArray);
             return $resultCollection->slice($offset, $limit);
         }
@@ -158,7 +157,7 @@ class PersonnageRepository extends EntityRepository
         }
         if(array_key_exists('nom',$criteria))
         {
-            $qb->andWhere('LOWER(p.nom) LIKE :nom OR LOWER(p.surnom) LIKE :nom')->setParameter('nom', '%'.$criteria['nom'].'%');
+            $qb->andWhere('p.nom LIKE :nom OR p.surnom LIKE :nom')->setParameter('nom', '%'.$criteria['nom'].'%');
         }
     }
     
@@ -195,55 +194,258 @@ class PersonnageRepository extends EntityRepository
         
     }
     
-    
-    
-    function sortByPugilat(\LarpManager\Entities\Personnage $a, \LarpManager\Entities\Personnage $b)
+    /**
+     * Tri sur Pugilat
+     * @param \LarpManager\Entities\Personnage $a
+     * @param \LarpManager\Entities\Personnage $b
+     * @return number
+     */
+    public static function sortByPugilat(\LarpManager\Entities\Personnage $a, \LarpManager\Entities\Personnage $b)
     {
         return Utilities::sortBy($a->getPugilat(), $b->getPugilat());
     }
     
-    function sortByPugilatDesc(\LarpManager\Entities\Personnage $a, \LarpManager\Entities\Personnage $b)
+    /**
+     * Tri sur Pugilat Desc
+     * @param \LarpManager\Entities\Personnage $a
+     * @param \LarpManager\Entities\Personnage $b
+     * @return number
+     */
+    public static function sortByPugilatDesc(\LarpManager\Entities\Personnage $a, \LarpManager\Entities\Personnage $b)
     {
-        return Utilities::sortByDesc($a->getPugilat(), $b->getPugilat());
+        return self::sortByPugilat($b, $a);
     }
     
-    function sortByHeroisme(\LarpManager\Entities\Personnage $a, \LarpManager\Entities\Personnage $b)
+    /**
+     * Tri sur Heroisme
+     * @param \LarpManager\Entities\Personnage $a
+     * @param \LarpManager\Entities\Personnage $b
+     * @return number
+     */
+    public static function sortByHeroisme(\LarpManager\Entities\Personnage $a, \LarpManager\Entities\Personnage $b)
     {
         return Utilities::sortBy($a->getHeroisme(), $b->getHeroisme());
     }
     
-    function sortByHeroismeDesc(\LarpManager\Entities\Personnage $a, \LarpManager\Entities\Personnage $b)
+    /**
+     * Tri sur Heroisme Desc
+     * @param \LarpManager\Entities\Personnage $a
+     * @param \LarpManager\Entities\Personnage $b
+     * @return number
+     */
+    public static function sortByHeroismeDesc(\LarpManager\Entities\Personnage $a, \LarpManager\Entities\Personnage $b)
     {
-        return Utilities::sortByDesc($a->getHeroisme(), $b->getHeroisme());
+        return self::sortByHeroisme($b, $a);
     }
     
-    function sortByUser(\LarpManager\Entities\Personnage $a, \LarpManager\Entities\Personnage $b)
+    /**
+     * Tri sur User Full Name
+     * @param \LarpManager\Entities\Personnage $a
+     * @param \LarpManager\Entities\Personnage $b
+     * @return number
+     */
+    public static function sortByUser(\LarpManager\Entities\Personnage $a, \LarpManager\Entities\Personnage $b)
     {
         return Utilities::sortBy($a->getUserFullName(), $b->getUserFullName());
     }
     
-    function sortByUserDesc(\LarpManager\Entities\Personnage $a, \LarpManager\Entities\Personnage $b)
+    /**
+     * Tri sur User Full Name Desc
+     * @param \LarpManager\Entities\Personnage $a
+     * @param \LarpManager\Entities\Personnage $b
+     * @return number
+     */
+    public static function sortByUserDesc(\LarpManager\Entities\Personnage $a, \LarpManager\Entities\Personnage $b)
     {
-        return Utilities::sortByDesc($a->getUserFullName(), $b->getUserFullName());
+        return self::sortByUser($b, $a);
     }
     
-    function sortByHasAnomalie(\LarpManager\Entities\Personnage $a, \LarpManager\Entities\Personnage $b)
+    /**
+     * Tri sur HasAnomalie
+     * @param \LarpManager\Entities\Personnage $a
+     * @param \LarpManager\Entities\Personnage $b
+     * @return number
+     */
+    public static function sortByHasAnomalie(\LarpManager\Entities\Personnage $a, \LarpManager\Entities\Personnage $b)
     {
         return Utilities::sortBy($a->hasAnomalie(), $b->hasAnomalie());
     }
     
-    function sortByHasAnomalieDesc(\LarpManager\Entities\Personnage $a, \LarpManager\Entities\Personnage $b)
+    /**
+     * Tri sur HasAnomalieDesc
+     * @param \LarpManager\Entities\Personnage $a
+     * @param \LarpManager\Entities\Personnage $b
+     * @return number
+     */
+    public static function sortByHasAnomalieDesc(\LarpManager\Entities\Personnage $a, \LarpManager\Entities\Personnage $b)
     {
-        return Utilities::sortByDesc($a->hasAnomalie(), $b->hasAnomalie());
+        return self::sortByHasAnomalie($b, $a);
     }
     
-    function sortByStatus(\LarpManager\Entities\Personnage $a, \LarpManager\Entities\Personnage $b)
+    /**
+     * Tri sur Status Code
+     * @param \LarpManager\Entities\Personnage $a
+     * @param \LarpManager\Entities\Personnage $b
+     * @return number
+     */
+    public static function sortByStatusCode(\LarpManager\Entities\Personnage $a, \LarpManager\Entities\Personnage $b)
     {
         return Utilities::sortBy($a->getStatusCode(), $b->getStatusCode());
     }
     
-    function sortByStatusDesc(\LarpManager\Entities\Personnage $a, \LarpManager\Entities\Personnage $b)
+    /**
+     * Tri sur Status Code Desc
+     * @param \LarpManager\Entities\Personnage $a
+     * @param \LarpManager\Entities\Personnage $b
+     * @return number
+     */
+    public static function sortByStatusCodeDesc(\LarpManager\Entities\Personnage $a, \LarpManager\Entities\Personnage $b)
     {
-        return Utilities::sortByDesc($a->getStatusCode(), $b->getStatusCode());
+        return self::sortByStatus($b, $a);
+    }
+    
+    /**
+     * Tri sur Status On Active GN 
+     * @param \LarpManager\Entities\Personnage $a
+     * @param \LarpManager\Entities\Personnage $b
+     * @return number
+     */
+    public static function sortByStatusOnActiveGn(\LarpManager\Entities\Personnage $a, \LarpManager\Entities\Personnage $b)
+    {
+        return Utilities::sortBy($a->getStatusOnActiveGnCode(), $b->getStatusOnActiveGnCode());
+    }
+    
+    /**
+     * Tri sur Status On Active GN Desc
+     * @param \LarpManager\Entities\Personnage $a
+     * @param \LarpManager\Entities\Personnage $b
+     * @return number
+     */
+    public static function sortByStatusOnActiveGnDesc(\LarpManager\Entities\Personnage $a, \LarpManager\Entities\Personnage $b)
+    {
+        return self::sortByStatusOnActiveGn($b, $a);
+    }
+    
+    /**
+     * Tri sur Nom
+     * @param \LarpManager\Entities\Personnage $a
+     * @param \LarpManager\Entities\Personnage $b
+     * @return number
+     */
+    public static function sortByNom(\LarpManager\Entities\Personnage $a, \LarpManager\Entities\Personnage $b)
+    {
+        return Utilities::sortBy($a->getNom(), $b->getNom());
+    }
+    
+    /**
+     * Tri sur Nom Desc
+     * @param \LarpManager\Entities\Personnage $a
+     * @param \LarpManager\Entities\Personnage $b
+     * @return number
+     */
+    public static function sortByNomDesc(\LarpManager\Entities\Personnage $a, \LarpManager\Entities\Personnage $b)
+    {
+        return self::sortByNom($b, $a);
+    }
+    
+    /**
+     * Tri sur Status GN, du + récent (+ grand) au - récent (+ petit) puis par nom ASC
+     * @param \LarpManager\Entities\Personnage $a
+     * @param \LarpManager\Entities\Personnage $b
+     * @return number
+     */
+    public static function sortByStatusGn(\LarpManager\Entities\Personnage $a, \LarpManager\Entities\Personnage $b)
+    {
+        $aStatus = $a->getStatusGnCode();
+        $bStatus = $b->getStatusGnCode();
+        if ($aStatus == $bStatus) {
+            return self::sortByNom($a, $b);
+        }
+        // on prend le statut à l'envers, ici 0 = mort donc on veut plutôt du + grand au + petit
+        return ($aStatus > $bStatus) ? -1 : 1;
+    }
+    
+    /**
+     * Tri sur Status GN DESC, du - récent (+ petit) au + récent (+ grand) puis par nom DESC
+     * @param \LarpManager\Entities\Personnage $a
+     * @param \LarpManager\Entities\Personnage $b
+     * @return number
+     */
+    public static function sortByStatusGnDesc(\LarpManager\Entities\Personnage $a, \LarpManager\Entities\Personnage $b)
+    {
+        return self::sortByStatusGn($b, $a);
+    }
+        
+    /**
+     * Tri sur Last Participant GN Number, du + récent (+ grand) au - récent (+ petit) puis par nom ASC
+     * @param \LarpManager\Entities\Personnage $a
+     * @param \LarpManager\Entities\Personnage $b
+     * @return number
+     */
+    public static function sortByLastParticipantGnNumber(\LarpManager\Entities\Personnage $a, \LarpManager\Entities\Personnage $b)
+    {
+        $aStatus = $a->getLastParticipantGnNumber();
+        $bStatus = $b->getLastParticipantGnNumber();
+        if ($aStatus == $bStatus) {
+            return self::sortByNom($a, $b);
+        }
+        // on prend le statut à l'envers, ici 0 = mort donc on veut plutôt du + grand au + petit
+        return ($aStatus > $bStatus) ? -1 : 1;
+        //return Utilities::sortBy($a->getLastParticipantGnNumber(), $b->getLastParticipantGnNumber());
+    }
+    
+    /**
+     * Tri sur Last Participant GN Number DESC, du - récent (+ petit) au + récent (+ grand) puis par nom DESC
+     * @param \LarpManager\Entities\Personnage $a
+     * @param \LarpManager\Entities\Personnage $b
+     * @return number
+     */
+    public static function sortByLastParticipantGnNumberDesc(\LarpManager\Entities\Personnage $a, \LarpManager\Entities\Personnage $b)
+    {
+        return self::sortByLastParticipantGnNumber($b, $a);
+    }
+    
+    /**
+     * Tri sur Status :
+     * - d'abord les PJs vivants sur le GN actif, 
+     * - puis les PNJ, 
+     * - puis les PJ anciens, 
+     * - puis les morts, 
+     * et pour chaque groupe, du + récent gn (+ grand) au - récent (+ petit) puis par nom ASC 
+     * @param \LarpManager\Entities\Personnage $a
+     * @param \LarpManager\Entities\Personnage $b
+     * @return number
+     */
+    public static function sortByStatus(\LarpManager\Entities\Personnage $a, \LarpManager\Entities\Personnage $b)
+    {
+        $aStatus = $a->getStatusOnActiveGnCode();
+        $bStatus = $b->getStatusOnActiveGnCode();
+        
+        // si les 2 sont pnj ou les 2 sont morts, on se base sur le gn
+        if ($a->isPnj() && $b->isPnj() || !$a->getVivant() && !$b->getVivant())
+        {
+            return self::sortByLastParticipantGnNumber($a, $b);
+        }
+        if ($aStatus == $bStatus) {
+            return self::sortByStatusGn($a, $b);
+        }
+        // on prend le statut à l'envers, ici 0 = mort donc on veut plutôt du + grand au + petit
+        return ($aStatus > $bStatus) ? -1 : 1;
+    }
+    
+    /**
+     * Tri sur Status DESC:
+     * - d'abord les morts,
+     * - puis les PJ anciens, 
+     * - puis les PNJ, 
+     * - puis les PJs vivants sur le GN actif
+     * et pour chaque groupe, du - récent gn (+ petit) au + récent (+ grand) puis par nom DESC
+     * @param \LarpManager\Entities\Personnage $a
+     * @param \LarpManager\Entities\Personnage $b
+     * @return number
+     */
+    public static function sortByStatusDesc(\LarpManager\Entities\Personnage $a, \LarpManager\Entities\Personnage $b)
+    {
+        return self::sortByStatusAdvanced($b,$a);
     }
 }

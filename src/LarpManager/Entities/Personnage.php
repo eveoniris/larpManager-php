@@ -1144,7 +1144,7 @@ class Personnage extends BasePersonnage
 	
 	/**
 	 * Retourne le dernier participant du personnage
-	 *
+	 * @return \LarpManager\Entities\Participant
 	 */
 	public function getLastParticipant() : \LarpManager\Entities\Participant
 	{
@@ -1156,7 +1156,36 @@ class Personnage extends BasePersonnage
 	}
 	
 	/**
+	 * Retourne true si le dernier participant du personnage est sur un gn actif (attention on ne vérifie pas le billet)
+	 * @return bool
+	 */
+	public function isLastParticipantOnActiveGn() : bool
+	{
+	    $lastParticipant = $this->getLastParticipant();
+	    if ($lastParticipant)
+	    {
+	        return $lastParticipant->getGn()->getActif();
+	    }
+	    return false;
+	}
+	
+	/**
+	 * Retourne le numéro du gn du dernier participant du personnage
+	 * @return int
+	 */
+	public function getLastParticipantGnNumber() : int
+	{
+	    $lastParticipant = $this->getLastParticipant();
+	    if ($lastParticipant)
+	    {
+	        return $lastParticipant->getGn()->getNumber();
+	    }
+	    return 0;
+	}
+	
+	/**
 	 * Indique si le dernier participant était un PNJ ou non
+	 * @return bool
 	 */
 	public function isPnj() : bool
 	{
@@ -1170,6 +1199,7 @@ class Personnage extends BasePersonnage
 	
 	/**
 	 * Retourne le nom complet de l'utilisateur
+	 * @return string
 	 */
 	public function getUserFullName() : string
 	{
@@ -1180,9 +1210,18 @@ class Personnage extends BasePersonnage
 	    return null;
 	}
 	
+	/**
+	 * Retourne le nom complet du personnage
+	 * @return string
+	 */
+	public function getFullName() : string
+	{
+	    return $this->getNom().(!empty($this->getSurnom()) ? ' '.$this->getSurnom() : '');
+	}
 	
 	/**
 	 * Retourne true si le personnage a au moins une anomalie
+	 * @return bool
 	 */
 	public function hasAnomalie() : bool
 	{
@@ -1195,15 +1234,57 @@ class Personnage extends BasePersonnage
 	}
 	
 	/**
-	 * Retourne le status d'un joueur sous forme entier : 0 = mort, 1 = vivant, 2 = pnj
+	 * Retourne le statut suivant d'un joueur sous forme entier : 
+	 * 0 = Mort
+	 * 1 = PJ vivant 
+	 * 2 = PNJ vivant
+	 * @return int
 	 */
 	public function getStatusCode() : int
 	{
+	    return $this->getVivant() 
+	       ? ($this->isPnj() ? 2 : 1) 
+	       : 0;
+	}
+	
+	/**
+	 * Retourne le statut lié au gn actif d'un joueur sous forme entier :
+	 * 0 = Mort
+	 * 1 = PJ vivant ne participant pas au gn actif
+	 * 2 = PNJ vivant
+	 * 3 = PJ vivant participant au gn actif
+	 * @return int
+	 */
+	public function getStatusOnActiveGnCode() : int
+	{	
+	    return $this->getVivant() 
+	       ? ($this->isPnj() 
+	           ? 2 
+	           : ($this->isLastParticipantOnActiveGn() 
+	               ? 3 
+	               : 1)
+	           )
+	       : 0;
+	}
+	
+	/**
+	 * Retourne le statut d'un joueur sous forme entier prenant en compte le numéro du dernier GN participé :
+	 * -1 = PNJ
+	 * 0 = mort
+	 * 1 .. N = numéro du dernier GN auquel
+	 * @return int
+	 */
+	public function getStatusGnCode() : int
+	{
+	    if (!$this->getVivant())
+	    {
+	        return 0;
+	    }
 	    if ($this->isPnj())
 	    {
-	        return 2;
+	        return -1;
 	    }
-	    return $this->getVivant() ? 1 : 0;
+	    return $this->getLastParticipantGnNumber();
 	}
 	
 	
