@@ -94,7 +94,7 @@ class TechnologieControllerProvider implements ControllerProviderInterface
 			->assert('technologie', '\d+')
 			->convert('technologie', 'converter.technologie:convert')
 			->bind("technologie.personnages")
-			->method('GET')
+			->method('GET|POST')
 			->before($mustBeScenariste);
 
 		return $controllers;

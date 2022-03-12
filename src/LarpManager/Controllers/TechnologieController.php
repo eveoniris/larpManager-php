@@ -152,11 +152,35 @@ class TechnologieController
 	 *
 	 * @param Request $request
 	 * @param Application $app
+	 * @param Technologie
 	 */
 	public function personnagesAction(Request $request, Application $app, Technologie $technologie)
 	{
-		return $app['twig']->render('admin/technologie/personnages.twig', array(
-				'technologie' => $technologie,
-		));
+	    $routeName = 'technologie.personnages';
+	    $routeParams = array('technologie' => $technologie->getId());
+	    $twigFilePath = 'admin/technologie/personnages.twig';
+	    $columnKeys = ['colId', 'colStatut', 'colNom', 'colClasse', 'colGroupe', 'colUser'];
+	    $personnages =  $technologie->getPersonnages();
+	    $additionalViewParams = array(
+	        'technologie' => $technologie
+	    );
+	    
+	    // handle the request and return an array containing the parameters for the view
+	    $personnageSearchHandler = $app['personnage.manager']->getSearchHandler();
+	    
+	    $viewParams = $personnageSearchHandler->getSearchViewParameters(
+	        $request,
+	        $routeName,
+	        $routeParams,
+	        $columnKeys,
+	        $additionalViewParams,
+	        $personnages
+	        );
+	    
+	    return $app['twig']->render(
+	        $twigFilePath,
+	        $viewParams
+	        );
+	    
 	}	
 }

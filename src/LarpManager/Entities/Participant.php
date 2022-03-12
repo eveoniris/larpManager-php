@@ -107,24 +107,26 @@ class Participant extends BaseParticipant
 	}
 	
 	public function getBesoinValidationCi() 
-  {
+    {
 	   return $this->getGn()->getBesoinValidationCi() && $this->getValideCiLe() == null;
 	}
 	
 	/**
 	 * Retourne le groupe du groupe gn associé
+	 * @return \LarpManager\Entities\Groupe
 	 */
 	public function getGroupe() : \LarpManager\Entities\Groupe
-  {
+    {
 	    if ($this->getGroupeGn() != null)
 	    {
 	       return $this->getGroupeGn()->getGroupe();
 	    }
 	    return null;
-	}
+    }
   
-  /**
+    /**
 	 * Retourne true si le participant a un billet PNJ, false sinon
+	 * @return bool
 	 */
 	public function isPnj() : bool
 	{
@@ -133,6 +135,16 @@ class Participant extends BaseParticipant
 	        return $this->getBillet()->isPnj();
 	    }
 	    return false;
+	}
+	
+	/**
+	 * Retourne le nom complet de l'utilisateur (nom prénom)
+	 * @return string
+	 */
+	public function getUserFullName() : string
+	{
+	    return $this->getUser()->getFullName();
+	    
 	}
 	
 }

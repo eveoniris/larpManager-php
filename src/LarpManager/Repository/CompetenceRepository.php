@@ -20,7 +20,9 @@
 
 namespace LarpManager\Repository;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\QueryBuilder;
 
 /**
  * LarpManager\Repository\CompetenceRepository
@@ -41,5 +43,22 @@ class CompetenceRepository extends EntityRepository
 		
 		return $competences;
 
+	}
+	
+	/**
+	 * Returns a query builder to find all competences ordered by label
+	 * @return QueryBuilder 
+	 */
+	public function getQueryBuilderFindAllOrderedByLabel() : QueryBuilder
+	{
+	    $queryBuilder = $this->getEntityManager()
+    	    ->createQueryBuilder()
+    	    ->select('c')
+    	    ->from('LarpManager\Entities\Competence', 'c')
+    	    ->join('c.competenceFamily', 'cf')
+    	    ->join('c.level', 'l')
+    	    ->addOrderBy('cf.label')
+            ->addOrderBy('l.index');
+	    return $queryBuilder;	    
 	}
 }

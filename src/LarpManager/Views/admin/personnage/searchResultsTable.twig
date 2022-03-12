@@ -1,0 +1,69 @@
+{% set formPath = formPath is defined ? formPath : 'personnage.admin.list' %}
+{% set formParams = formParams is defined ? formParams : {} %}
+
+{% block content %}
+
+{% import "admin/filterMacros.html.twig" as macros %}
+
+<table class="table table-striped table-bordered table-condensed table-hover">
+		<thead>
+			<tr>
+			{% for columnDef in columnDefinitions %}
+			   <th class="personnage-list-column-{{columnDef['fieldName']}}">
+					<a title="{{columnDef['tooltip']}}" href="{{ path(formPath, formParams|merge({'order_by': columnDef['sortFieldName'], 'order_dir': macros.getDirection(app,columnDef['sortFieldName'])|trim}))~optionalParameters }}">
+						{{ columnDef['label'] }} {{ macros.getCaret(app, columnDef['sortFieldName']) }}
+					</a>
+				</th>
+			{% endfor %}
+			</tr>
+		</thead>
+		<tbody>
+			{% for personnage in personnages %}
+				<tr>				
+					{% for columnDef in columnDefinitions %}
+						{% set fieldName = columnDef['fieldName'] %}
+						<td class="personnage-list-column-{{fieldName}}">
+						{% if fieldName == 'id' %}	
+					    	{{ personnage.id }}
+					    {% elseif fieldName == 'status' %}
+					    	{% if personnage.vivant == 0 %}{{ iconPjDead | raw }}{% elseif personnage.isPnj() %}{{ iconPnj | raw }}{% elseif personnage.isLastParticipantOnActiveGn() %}<span class="">{{ iconPjConfirmed | raw }}</span>{% else %}{{ iconPjOld | raw }}{% endif %}
+					    {% elseif fieldName == 'nom' %}
+					    	<a href="{{ path('personnage.admin.detail', {'personnage':personnage.id}) }}">{{ personnage.fullName }}</a>
+					    {% elseif fieldName == 'classe' %}
+					    	{{ personnage.classeName }}
+					    {% elseif fieldName == 'groupe' %}
+					    	{% set gn = personnage.getLastParticipantGn() ?: 'LH1' %}
+							{% set groupe = personnage.getLastParticipantGnGroupeNom() %}
+							<strong>{{ gn }}</strong> - {{ groupe }}
+					    {% elseif fieldName == 'renomme' %}
+					    	{{ personnage.renomme|default(0) }}
+					    {% elseif fieldName == 'pugilat' %}
+					    	{{ personnage.pugilat|default(0) }}
+					    {% elseif fieldName == 'heroisme' %}
+					    	{{ personnage.heroisme|default(0) }}
+					    {% elseif fieldName == 'user' %}
+					    	{% for participant in personnage.participants %}
+								<strong>{{ participant.gn.label }}</strong>&nbsp;-&nbsp;
+								{{ participant.userFullName }}<br />
+							{% endfor %}
+					    {% elseif fieldName == 'xp' %}
+					    	{{ personnage.xp|default(0) }} / {{ personnage.xpTotal }} XP - <a href="{{ path('personnage.admin.xp', {'personnage': personnage.id}) }}">Modifier</a>
+					    {% elseif fieldName == 'hasAnomalie' %}
+					        {% set languesAnomalie = personnage.getLanguesAnomaliesMessage() %}
+							{% set potionAnomalie = personnage.getPotionAnomalieMessage() %}
+							{% set sortAnomalie = personnage.getSortAnomalieMessage() %}
+							{% set priereAnomalie = personnage.getPrieresAnomalieMessage() %}
+							{% if languesAnomalie != "" or potionAnomalie != "" or sortAnomalie != "" or priereAnomalie != "" %}
+								<div style="margin:auto;" class="pastille-orange" title='{{languesAnomalie}} {{potionAnomalie}} {{sortAnomalie}} {{priereAnomalie}}'>&nbsp;</div>
+							{% endif %}	
+					    {% else %}
+							Colonne non valide
+						{% endif %}
+						</td>
+					{% endfor %}
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+
+{% endblock content %}

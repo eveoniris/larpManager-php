@@ -87,8 +87,9 @@ class Langue extends BaseLangue
 	
 	/**
 	 * Fourni la catégorie de la langue
+	 * @return string
 	 */
-	public function getCategorie()
+	public function getCategorie(): string
 	{
 		$unknown = 'Inconnue';
 		if ($this->getDiffusion() === null)
@@ -104,7 +105,11 @@ class Langue extends BaseLangue
 		}
 	}
 	
-	public function getDiffusionLabel()
+	/**
+	 * Renvoie le libellé de diffusion, incluant la catégorie
+	 * @return string
+	 */
+	public function getDiffusionLabel() : string
 	{
 		return ($this->getDiffusion() !== null ? $this->getDiffusion().' - ' : '').$this->getCategorie();
 	}

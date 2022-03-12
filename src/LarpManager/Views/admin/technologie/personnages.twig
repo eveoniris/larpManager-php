@@ -10,10 +10,12 @@
 		<li class="active">Personnages ayant {{ technologie.label }}</li>
 	</ol>
 	
-	<div class="list-group">
-		{% for personnage in technologie.personnages %}
-			<a class="list-group-item" href="{{ path('personnage.admin.detail', {'personnage': personnage.id}) }}">{% if personnage.vivant == 0 %}💀 {% endif %}#{{ personnage.id }} - {{ personnage.identity }} -- {{ personnage.classeName }}</a>
-		{% endfor %}
-	</div>
+	{{ include('admin/personnage/search.twig',
+		 	{
+			 displayAdminToolbar: false, 
+			 displaySearchFilter: false
+		  	} 
+  		) 
+	 }}	
 	
 {% endblock content %}

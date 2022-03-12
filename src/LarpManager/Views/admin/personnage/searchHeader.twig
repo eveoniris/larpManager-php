@@ -1,0 +1,52 @@
+{% set formPath = formPath is defined ? formPath : 'personnage.admin.list' %}
+{% set formParams = formParams is defined ? formParams : {} %}
+{% set displayAdminToolbar = displayAdminToolbar is defined ? displayAdminToolbar : true %}
+{% set displaySearchFilter = displaySearchFilter is defined ? displaySearchFilter : true %}
+
+{% block content %}
+
+{% if paginator.totalItems == 1 %}
+	<strong>1</strong> personnage trouvé.
+{% else %}
+	<strong>{{ paginator.totalItems }}</strong> personnages trouvés.
+{% endif %}
+
+Résultats affichés : <strong>{{ paginator.currentPageFirstItem }} - {{ paginator.currentPageLastItem }}</strong>.
+
+<div class="btn-toolbar" role="toolbar" aria-label="...">
+	{% if displayAdminToolbar %}
+		<div class="btn-group" role="group" aria-label="...">
+			<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Ajouter un personnage" href="{{ path('personnage.admin.add') }}"><i class="fa fa-plus"></i></a>
+			<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Faire vieillir les personnages" href="{{ path('personnage.vieillir') }}"><i class="fa fa-users"></i></a>
+			<!-- à remettre quand la fonctionnalité sera implémentée <a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Imprimer la liste" href="{{ path('personnage.admin.print') }}"><i class="fa fa-print"></i></a> -->
+			<!-- à remettre quand la fonctionnalité sera implémentée <a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Télécharger la liste (CSV)" href="{{ path('personnage.admin.download') }}"><i class="fa fa-download"></i></a> -->
+		</div>
+	{% endif %}	
+	{% if displaySearchFilter %}	
+		<form class="form-inline" action="{{ path(formPath, formParams) }}" method="GET" {{ form_enctype(form) }}>
+			{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+	
+			<div class="form-group">
+				<div class="input-group">
+					{{ form_widget(form.value) }}
+				</div>
+				<div class="input-group">
+					{{ form_widget(form.type) }}
+					<div class="input-group-btn">
+						<button type="submit" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Lancer la recherche"><i class="fa fa-search"></i></button>
+						<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Reset" href="{{ path(formPath, formParams) }}"><i class="fa fa-undo"></i></a>
+					</div>
+				</div>
+			</div>
+			{{ form_rest(form) }}
+		</form>	
+	{% endif %}	
+</div>
+
+<div class="paginator-container">
+	{{ paginator|raw }}
+	<div class="legend"><span class="legend-header">Légende Statut : </span>{{ iconPjConfirmed | raw }} = PJ Actif, {{ iconPnj | raw }} = PNJ, {{ iconPjOld | raw }} = PJ Non actif, {{ iconPjDead | raw }} = Mort</div>
+</div>
+			
+			
+{% endblock content %}

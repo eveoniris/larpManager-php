@@ -263,8 +263,20 @@ class Gn extends BaseGn
 		
 		return $result;
 	}	
+	
 	public function getBesoinValidationCi() 
 	{
           return $this->getConditionsInscription() != '' && $this->getConditionsInscription() != null;	
+	}
+	
+	/**
+	 * Retourne le numéro du GN (à partir de son label)
+	 * @return int
+	 */
+	public function getNumber() : int
+	{
+	    $str = preg_replace('/[^0-9.]+/', '', $this->getLabel());	    
+	    $num = (int)$str;	
+	    return $num;
 	}
 }

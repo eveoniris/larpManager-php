@@ -101,6 +101,8 @@ class Billet extends BaseBillet
 	
 	/**
 	 * Indique si le billet est pour un PNJ ou non
+	 * 
+	 * @return bool
 	 */
 	public function isPnj() : bool
 	{
