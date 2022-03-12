@@ -159,7 +159,7 @@ class TechnologieController
 	    $routeName = 'technologie.personnages';
 	    $routeParams = array('technologie' => $technologie->getId());
 	    $twigFilePath = 'admin/technologie/personnages.twig';
-	    $columnKeys = ['colId', 'colStatut', 'colNom', 'colGroupe', 'colUser'];
+	    $columnKeys = ['colId', 'colStatut', 'colNom', 'colClasse', 'colGroupe', 'colUser'];
 	    $personnages =  $technologie->getPersonnages();
 	    $additionalViewParams = array(
 	        'technologie' => $technologie
