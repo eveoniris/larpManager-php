@@ -67,7 +67,7 @@
 	  						<p><strong>Joueur : </strong>{% if personnage.user %}<a href="{{path('user.view',{'id': personnage.user.id}) }}"> {{ personnage.user.etatCivil.nom }} {{ personnage.user.etatCivil.prenom }}</a>{% else %}Ce personnage n'est pas lié à un joueur</p>{% endif %}
 		  					<p>Ce personnage <strong class="text-success">{% if personnage.intrigue %}participe aux intrigues{% else %}ne participe pas aux intrigues{% endif %}</strong></p>
 		  					
-		  					{# Liste des groupes auquel fait partit ce personnage #}
+		  					{# Liste des groupes auxquels fait partie ce personnage #}
 							<h6>Groupes</h6>
 							<div class="list-group">									
 								{% if personnage.user %}
@@ -91,7 +91,7 @@
 										{% endif %}
 									{% endfor %}
 								{% else %}
-									<li class="list-group-item">Ce personnage ne fait pas parti d'un groupe.</li>
+									<li class="list-group-item">Ce personnage ne fait pas partie d'un groupe.</li>
 								{% endif %}
 							</div>
 

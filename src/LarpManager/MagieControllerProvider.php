@@ -143,7 +143,7 @@ class MagieControllerProvider implements ControllerProviderInterface
 			->bind("magie.sort.personnages")
 			->convert('sort', 'converter.sort:convert')
 			->before($mustBeScenariste)
-			->method('GET');
+			->method('GET|POST');
 			
 		/**
 		 * Ajouter un sortilège
@@ -208,7 +208,7 @@ class MagieControllerProvider implements ControllerProviderInterface
 			->bind("magie.potion.personnages")
 			->convert('potion', 'converter.potion:convert')
 			->before($mustBeScenariste)
-			->method('GET');
+			->method('GET|POST');
 			
 		/**
 		 * Ajouter une potion
@@ -273,7 +273,7 @@ class MagieControllerProvider implements ControllerProviderInterface
 		->bind("magie.priere.personnages")
 		->convert('priere', 'converter.priere:convert')
 		->before($mustBeScenariste)
-		->method('GET');
+		->method('GET|POST');
 
 		/**
 		 * Ajouter une priere

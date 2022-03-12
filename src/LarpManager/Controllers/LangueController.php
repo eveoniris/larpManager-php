@@ -27,6 +27,8 @@ use Doctrine\ORM\Query;
 use Silex\Application;
 use LarpManager\Form\LangueForm;
 use LarpManager\Form\GroupeLangueForm;
+use Symfony\Component\Form\Form;
+use LarpManager\Entities\Langue;
 
 /**
  * LarpManager\Controllers\LangueController
@@ -173,7 +175,16 @@ class LangueController
 		));
 	}
 	
-	private function handleDocument(Request $request, Application $app, \Symfony\Component\Form\Form $form, \LarpManager\Entities\Langue $langue) : bool
+	/**
+	 * Gère le document uploadé et renvoie true si il est valide, false sinon
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Form $form
+	 * @param Langue $langue
+	 * @return bool
+	 */
+	private function handleDocument(Request $request, Application $app, Form $form, Langue $langue) : bool
 	{
 		$files = $request->files->get($form->getName());
 		$documentFile = $files['document'];
@@ -200,6 +211,11 @@ class LangueController
 		return true;
 	}
 	
+	/**
+	 * Supprime le document spécifié, en cas d'erreur, ne fait rien pour le moment
+	 *
+	 * @param string $langueDocumentUrl
+	 */
 	private function tryDeleteDocument(string $langueDocumentUrl)
 	{
 		try 

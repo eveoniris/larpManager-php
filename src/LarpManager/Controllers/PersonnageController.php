@@ -551,83 +551,17 @@ class PersonnageController
      */
     public function adminListAction(Request $request, Application $app)
     {
-        $order_by = $request->get('order_by') ?: 'id';
-        $order_dir = $request->get('order_dir') == 'DESC' ? 'DESC' : 'ASC';
-        $limit = (int)($request->get('limit') ?: 50);
-        $page = (int)($request->get('page') ?: 1);
-        $offset = ($page - 1) * $limit;
-        $criteria = array();
+        $routeName = 'personnage.admin.list';
+        $twigFilePath = 'admin/personnage/list.twig';
         
-        $formData = $request->query->get('personnageFind');
-        $religion = isset($formData['religion'])?$app['orm.em']->find('LarpManager\Entities\Religion',$formData['religion']):null;
-        $competence = isset($formData['competence'])?$app['orm.em']->find('LarpManager\Entities\Competence',$formData['competence']):null;
-        $classe = isset($formData['classe'])?$app['orm.em']->find('LarpManager\Entities\Classe',$formData['classe']):null;
-        $groupe = isset($formData['groupe'])?$app['orm.em']->find('LarpManager\Entities\Groupe',$formData['groupe']):null;
-        $optionalParameters = "";
+        // handle the request and return an array containing the parameters for the view
+        $personnageSearchHandler = $app['personnage.manager']->getSearchHandler();
+        $viewParams = $personnageSearchHandler->getSearchViewParameters($request, $routeName);
         
-        $form = $app['form.factory']->createBuilder(
-            new PersonnageFindForm(),
-            null,
-            array(
-                'data' => [
-                    'religion' => $religion,
-                    'classe' => $classe,
-                    'competence' => $competence,
-                    'groupe' => $groupe,
-                ],
-                'method' => 'get',
-                'csrf_protection' => false
-            )
-            )->getForm();
-            
-            $form->handleRequest($request);
-            
-            if ( $form->isValid() )
-            {
-                $data = $form->getData();
-                $type = $data['type'];
-                $value = $data['value'];
-                $criteria[$type] = $value;
-            }
-            if($religion){
-                $criteria["religion"] = $religion->getId();
-                $optionalParameters .= "&personnageFind[religion]={$religion->getId()}";
-            }
-            if($competence){
-                $criteria["competence"] = $competence->getId();
-                $optionalParameters .= "&personnageFind[competence]={$competence->getId()}";
-            }
-            if($classe){
-                $criteria["classe"] = $classe->getId();
-                $optionalParameters .= "&personnageFind[classe]={$classe->getId()}";
-            }
-            if($groupe){
-                $criteria["groupe"] = $groupe->getId();
-                $optionalParameters .= "&personnageFind[groupe]={$groupe->getId()}";
-            }
-            
-            /* @var PersonnageRepository $repo */
-            $repo = $app['orm.em']->getRepository('\LarpManager\Entities\Personnage');
-            
-            $personnages = $repo->findList(
-                $criteria,
-                array( 'by' =>  $order_by, 'dir' => $order_dir),
-                $limit,
-                $offset
-                );
-            $numResults = $repo->findCount($criteria);
-            
-            $paginator = new Paginator($numResults, $limit, $page,
-                $app['url_generator']->generate('personnage.admin.list') . '?page=(:num)&limit=' . $limit . '&order_by=' . $order_by . '&order_dir=' . $order_dir . $optionalParameters
-                );
-            
-            return $app['twig']->render('admin/personnage/list.twig', array(
-                'personnages' => $personnages,
-                'paginator' => $paginator,
-                'form' => $form->createView(),
-                'optionalParameters' => $optionalParameters
-            ));
+        return $app['twig']->render($twigFilePath, $viewParams);
     }
+        
+        
 	
 	
 	/**

@@ -190,6 +190,11 @@ ul.forum li
 	margin: 15px 0px;
 }
 
-.center {
+
+.personnage-list-column-hasAnomalie,
+.personnage-list-column-status,
+.personnage-list-column-renomme, 
+.personnage-list-column-pugilat,
+.personnage-list-column-heroisme {
 	text-align: center;
 }

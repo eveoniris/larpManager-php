@@ -10,10 +10,20 @@
 		<li class="active">Personnages ayant {{ sort.label }} - Niveau {{ sort.niveau }}</li>
 	</ol>
 	
+	{{ include('admin/personnage/search.twig',
+		 	{
+			 displayAdminToolbar: false, 
+			 displaySearchFilter: false
+		  	} 
+  		) 
+	 }}	
+	
+	<!-- Previous code (before reusing the same template as admin search) - can probably be removed but keeping for now just in case
 	<div class="list-group">
 		{% for personnage in sort.personnages %}
 			<a class="list-group-item" href="{{ path('personnage.admin.detail', {'personnage': personnage.id}) }}">{% if personnage.vivant == 0 %}💀 {% endif %}#{{ personnage.id }} - {{ personnage.identity }} -- {{ personnage.classeName }}</a>
 		{% endfor %}
 	</div>
+	-->
 	
 {% endblock content %}

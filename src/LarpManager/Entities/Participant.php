@@ -113,6 +113,7 @@ class Participant extends BaseParticipant
 	
 	/**
 	 * Retourne le groupe du groupe gn associé
+	 * @return \LarpManager\Entities\Groupe
 	 */
 	public function getGroupe() : \LarpManager\Entities\Groupe
     {
@@ -125,6 +126,7 @@ class Participant extends BaseParticipant
   
     /**
 	 * Retourne true si le participant a un billet PNJ, false sinon
+	 * @return bool
 	 */
 	public function isPnj() : bool
 	{
@@ -136,7 +138,8 @@ class Participant extends BaseParticipant
 	}
 	
 	/**
-	 * Retourne le nom complet de l'utilisateur
+	 * Retourne le nom complet de l'utilisateur (nom prénom)
+	 * @return string
 	 */
 	public function getUserFullName() : string
 	{

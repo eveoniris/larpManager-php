@@ -10,6 +10,7 @@ use LarpManager\Entities\Personnage;
 use LarpManager\Entities\CompetenceFamily;
 use LarpManager\Entities\Competence;
 use LarpManager\Entities\Religion;
+use LarpManager\Services\Personnage\PersonnageSearchHandler;
 
 /**
  * LarpManager\ForumRightManager
@@ -21,6 +22,7 @@ class PersonnageManager
 	/** @var \Silex\Application */
 	protected $app;
 	
+	
 	/**
 	 * Constructeur
 	 *
@@ -30,6 +32,18 @@ class PersonnageManager
 	{
 		$this->app = $app;
 	}
+	
+	/**
+	 * Retourne une nouvelle instance du gestionnaire de recherche de personnage
+	 *
+	 * @return PersonnageSearchHandler
+	 */
+	public function getSearchHandler() : PersonnageSearchHandler
+	{
+	    $handler = new PersonnageSearchHandler($this->app);
+	    return $handler;
+	}
+	
 	
 	/**
 	 * Stock le personnage courant de la session

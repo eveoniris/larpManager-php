@@ -47,7 +47,7 @@ class CompetenceRepository extends EntityRepository
 	
 	/**
 	 * Returns a query builder to find all competences ordered by label
-	 * @return QueryBuilder $competences
+	 * @return QueryBuilder 
 	 */
 	public function getQueryBuilderFindAllOrderedByLabel() : QueryBuilder
 	{

@@ -10,10 +10,14 @@
 		<li class="active">Personnages ayant {{ potion.label }} - Niveau {{ potion.niveau }}</li>
 	</ol>
 	
-	<div class="list-group">
-		{% for personnage in potion.personnages %}
-			<a class="list-group-item" href="{{ path('personnage.admin.detail', {'personnage': personnage.id}) }}">{% if personnage.vivant == 0 %}💀 {% endif %}#{{ personnage.id }} - {{ personnage.identity }} -- {{ personnage.classeName }}</a>
-		{% endfor %}
-	</div>
+	
+	{{ include('admin/personnage/search.twig',
+		 	{
+			 displayAdminToolbar: false, 
+			 displaySearchFilter: false
+		  	} 
+  		) 
+	 }}	
+	
 	
 {% endblock content %}
