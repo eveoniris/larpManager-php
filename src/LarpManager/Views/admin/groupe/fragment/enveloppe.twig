@@ -3,18 +3,18 @@
 
 <h6><i class="fa fa-circle"></i><strong>&nbsp;Richesse</strong>. <a href="{{ path('groupe.admin.richesse', {'groupe': groupe.id}) }}">Modifier la richesse</a></h6>
 <div class="white-box">
-<p>La richesse de votre groupe est composé des PA fournis par les territoires qu'il contrôle, ainsi de ce qui reste des enveloppes de retour du jeu précédent</p>  
+<p>La richesse de votre groupe est composé des pièces d'argent fournies par les territoires qu'il contrôle, ainsi de ce qui reste des enveloppes de retour du jeu précédent</p>  
 <ul>
 {% if groupe.hasRichesse %}
 	{% for territoire in groupe.territoires %}
-		<li><strong>{{ territoire.richesse|default(0) }} PA</strong> fourni par <strong>{{ territoire.nom }}</strong></li>
+		<li><strong>{{ territoire.richesse|default(0) }} pièces d'argent</strong> fournies par <strong>{{ territoire.nom }}</strong></li>
 	{% endfor %}
 {% else %}
-	<li>Aucune PA fourni par les territoires</li>
+	<li>Aucune pièces d'argent fournies par les territoires</li>
 {% endif %}
-	<li><strong>{{ groupe.richesse|default(0) }} PA</strong> supplémentaire</li>
+	<li><strong>{{ groupe.richesse|default(0) }} pièces d'argent</strong> supplémentaires</li>
 </ul>
-TOTAL : {{ groupe.richesseTotale|default(0) }} PA
+TOTAL : {{ groupe.richesseTotale|default(0) }} pièces d'argent
 </div>
 
 <h6><i class="fa fa-circle"></i><strong>&nbsp;Ressources</strong>. <a href="{{ path('groupe.admin.ressources', {'groupe': groupe.id}) }}">Modifier les ressources</a></h6>

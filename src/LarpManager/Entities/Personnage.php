@@ -253,13 +253,13 @@ class Personnage extends BasePersonnage
 	    }
 
 	    for($i = 0; $i < 4;$i++) {
-	        error_log("PA " . $expectedByLevel[$i] . " " . $countByLevel[$i]);
+	        // error_log($this->nom . " PA " . $expectedByLevel[$i] . " " . $countByLevel[$i]);
 	        if($litteratureApprenti == null && $expectedByLevel[$i] < $countByLevel[$i]) {
 	            return ($countByLevel[$i] - $expectedByLevel[$i]) . " potion(s) de niveau " . ($i+1) . " en trop à vérifier ";
 	        }
 
 	        if($expectedByLevel[$i] > $countByLevel[$i]) {
-	            return ($expectedByLevel[$i] - $countByLevel[$i]) . " potion(s) de niveau " . ($i+1) . " manquante";
+	            return ($expectedByLevel[$i] - $countByLevel[$i]) . " potion(s) de niveau " . ($i+1) . " manquante(s)";
 	        }
 	    }
 

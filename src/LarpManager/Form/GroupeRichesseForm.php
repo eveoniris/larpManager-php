@@ -46,7 +46,7 @@ class GroupeRichesseForm extends AbstractType
 					'label' => "PA",
 					'required' => false,
 					'attr' => array(
-						'help' => "Indiquez combien de PA votre groupe doit recevoir en plus des PA fourni par ses territoires"
+						'help' => "Indiquez combien de pièces d'argent votre groupe doit recevoir en plus des pièces d'argent fournies par ses territoires"
 					)
 				));
 	}
