@@ -46,7 +46,7 @@ class PersonnageRichesseForm extends AbstractType
 					'label' => "PA",
 					'required' => false,
 					'attr' => array(
-						'help' => "Indiquez combien de PA votre personnage doit recevoir"
+						'help' => "Indiquez combien de pièces d'argent votre personnage doit recevoir"
 					)
 				))
 				->add('valider','submit', array('label' => 'Valider'));
