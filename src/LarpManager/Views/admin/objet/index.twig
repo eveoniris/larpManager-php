@@ -7,6 +7,8 @@
 .hover_img a { position:relative; }
 .hover_img a span { position:absolute; display:none; z-index:99; }
 .hover_img a:hover span { display:block; }
+table {width: 100%; table-layout: fixed}
+td {white-space: normal; text-overflow: ellipsis;}
 </style>
 {% endblock style %}
 
@@ -38,10 +40,10 @@
 	</nav>
 	
 	<div class="well well-sm">
-		 	<table class="table">
+		 	<table class="table table-condensed table-striped table-bordered">
 		 		<thead>
 		 			<tr>
-		 				<th>numéro</th>
+		 				<th>Numéro</th>
 		 				<th>Qualité et identification</th>
 		 				<th>Label</th>
 		 				<th>Photo</th>
@@ -68,7 +70,7 @@
 					    	</div>
 					    </td>
 					    <td>{{ item.quantite }}</td>
-		    			<td>{{ item.description|markdown }}</td>
+		    			<td st>{{ item.description|markdown }}</td>
 		    			<td>{{ item.special|markdown }}</td>
 		    			<td>
 		    				{% for groupe in item.groupes %}
