@@ -509,7 +509,9 @@ class PersonnageController
 			}
 
             $oldParticipant->setPersonnageNull();
+            $oldParticipant->getUser()->setPersonnage(null);
 			$newParticipant->setPersonnage($personnage);
+            $newParticipant->getUser()->setPersonnage($personnage);
 			$personnage->addParticipant($newParticipant);
 
             $app['orm.em']->persist($oldParticipant);
