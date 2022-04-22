@@ -486,31 +486,36 @@ class PersonnageController
 		if ( $form->isValid() )
 		{
 			$data = $form->getData();
-			$participant = $data['participant'];
+			$newParticipant = $data['participant'];
+            $oldParticipant = $personnage->getLastParticipant();
 			
-			$personnage->setUser($participant->getUser());
+			$personnage->setUser($newParticipant->getUser());
 						
 			// gestion de l'ancien personnage
-			if ( $participant->getPersonnage() )
+			if ( $newParticipant->getPersonnage() )
 			{
-				$oldPersonnage = $participant->getPersonnage();
-				$oldPersonnage->removeParticipant($participant);
+				$oldPersonnage = $newParticipant->getPersonnage();
+				$oldPersonnage->removeParticipant($newParticipant);
 				$oldPersonnage->setGroupeNull();
 			}
 			
 			// le personnage doit rejoindre le groupe de l'utilisateur
-			if ( $participant->getGroupeGn())
+			if ( $newParticipant->getGroupeGn())
 			{
-				if ( $participant->getGroupeGn()->getGroupe() )
+				if ( $newParticipant->getGroupeGn()->getGroupe() )
 				{
-					$personnage->setGroupe($participant->getGroupeGn()->getGroupe());
+					$personnage->setGroupe($newParticipant->getGroupeGn()->getGroupe());
 				}
 			}
-				
-			$participant->setPersonnage($personnage);
-			$personnage->addParticipant($participant);
-						
-			$app['orm.em']->persist($participant);
+
+            $oldParticipant->setPersonnageNull();
+            $oldParticipant->getUser()->setPersonnage(null);
+			$newParticipant->setPersonnage($personnage);
+            $newParticipant->getUser()->setPersonnage($personnage);
+			$personnage->addParticipant($newParticipant);
+
+            $app['orm.em']->persist($oldParticipant);
+			$app['orm.em']->persist($newParticipant);
 			$app['orm.em']->persist($personnage);
 			$app['orm.em']->flush();
 			
