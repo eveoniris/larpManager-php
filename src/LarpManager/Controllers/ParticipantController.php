@@ -944,14 +944,16 @@ class ParticipantController
 	 * @param Request $request
 	 * @param Application $app
 	 */
-	public function adminPersonnageNewAction(Request $request, Application $app, Participant $participant)
+	public function adminPersonnageNewAction(Request $request, Application $app)
 	{
-		$groupeGn = $participant->getGroupeGn();	
+        $participant = $request->get('participant');
+        $participant = $app['orm.em']->getRepository('\LarpManager\Entities\Participant')->find($participant);
+		$groupeGn = $participant->getGroupeGn();
 		$groupe = $groupeGn->getGroupe();
-		
+
 		$personnage = new \LarpManager\Entities\Personnage();
 		$classes = $app['orm.em']->getRepository('\LarpManager\Entities\Classe')->findAllCreation();
-	
+
 		// j'ajoute içi certain champs du formulaires (les classes)
 		// car j'ai besoin des informations du groupe pour les alimenter
 		$form = $app['form.factory']->createBuilder(new PersonnageForm(), $personnage)
@@ -963,19 +965,19 @@ class ParticipantController
 			))
 		->add('save','submit', array('label' => 'Valider le personnage'))
 		->getForm();
-			
+
 		$form->handleRequest($request);
-	
+
 		if ( $form->isValid() )
 		{
 			$personnage = $form->getData();
-				
-			$personnage->setUser($app['user']);
+            $personnage->setUser($participant->getUser());
+            $personnage->setGroupe($participant->getGroupeGn()->getGroupe());
 			$participant->setPersonnage($personnage);
-	
+
 			// Ajout des points d'expérience gagné à la création d'un personnage
 			$personnage->setXp($participant->getGn()->getXpCreation());
-	
+
 			// historique
 			$historique = new \LarpManager\Entities\ExperienceGain();
 			$historique->setExplanation("Création de votre personnage");
@@ -983,7 +985,7 @@ class ParticipantController
 			$historique->setPersonnage($personnage);
 			$historique->setXpGain($participant->getGn()->getXpCreation());
 			$app['orm.em']->persist($historique);
-				
+
 			// ajout des compétences acquises à la création
 			foreach ($personnage->getClasse()->getCompetenceFamilyCreations() as $competenceFamily)
 			{
@@ -994,19 +996,19 @@ class ParticipantController
 					$firstCompetence->addPersonnage($personnage);
 					$app['orm.em']->persist($firstCompetence);
 				}
-	
+
 				if ( $competenceFamily->getLabel() == "Noblesse")
 				{
 					$personnage->addRenomme(2);
 					$renomme_history = new \LarpManager\Entities\RenommeHistory();
-	
+
 					$renomme_history->setRenomme(2);
 					$renomme_history->setExplication('Compétence Noblesse niveau 1');
 					$renomme_history->setPersonnage($personnage);
 					$app['orm.em']->persist($renomme_history);
 				}
 			}
-	
+
 			// Ajout des points d'expérience gagné grace à l'age
 			$xpAgeBonus = $personnage->getAge()->getBonus();
 			if ( $xpAgeBonus )
@@ -1019,7 +1021,7 @@ class ParticipantController
 				$historique->setXpGain($xpAgeBonus);
 				$app['orm.em']->persist($historique);
 			}
-	
+
 			// Ajout des langues en fonction de l'origine du personnage
 			$langue = $personnage->getOrigine()->getLangue();
 			if ( $langue )
@@ -1030,7 +1032,7 @@ class ParticipantController
 				$personnageLangue->setSource('ORIGINE');
 				$app['orm.em']->persist($personnageLangue);
 			}
-				
+
 			// Ajout des langues secondaires lié à l'origine du personnage
 			foreach ( $personnage->getOrigine()->getLangues() as $langue)
 			{
@@ -1043,7 +1045,7 @@ class ParticipantController
 					$app['orm.em']->persist($personnageLangue);
 				}
 			}
-				
+
 			// Ajout de la langue du groupe
 			$territoire = $groupe->getTerritoire();
 			if ( $territoire )
@@ -1061,19 +1063,19 @@ class ParticipantController
 					}
 				}
 			}
-	
+
 			$app['orm.em']->persist($personnage);
 			$app['orm.em']->persist($participant);
 			$app['orm.em']->flush();
-	
-	
+
+
 			$app['session']->getFlashBag()->add('success','Votre personnage a été sauvegardé.');
 			return $app->redirect($app['url_generator']->generate('gn.participants.withoutperso', array('gn' => $groupeGn->getGn()->getId())),303);
 		}
-	
+
 		$ages = $app['orm.em']->getRepository('LarpManager\Entities\Age')->findAllOnCreation();
 		$territoires = $app['orm.em']->getRepository('LarpManager\Entities\Territoire')->findRoot();
-	
+
 		return $app['twig']->render('admin/participant/personnage_new.twig', array(
 				'form' => $form->createView(),
 				'classes' => array_unique($classes),

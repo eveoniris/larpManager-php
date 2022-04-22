@@ -20,6 +20,8 @@
 
 namespace LarpManager\Form\Personnage;
 
+use LarpManager\Repository\ClasseRepository;
+use LarpManager\Repository\TerritoireRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -71,7 +73,7 @@ class PersonnageForm extends AbstractType
 						'label' => 'Votre classe',
 						'class' => 'LarpManager\Entities\Classe',
 						'property' => 'label',
-						'query_builder' => function(\LarpManager\Repository\ClasseRepository $er) {
+						'query_builder' => function(ClasseRepository $er) {
 							$qb = $er->createQueryBuilder('c');
 							$qb->where('c.creation is true');
 							$qb->orderBy('c.label_masculin', 'ASC');
@@ -83,7 +85,7 @@ class PersonnageForm extends AbstractType
 						'label' => 'Votre origine',
 						'class' => 'LarpManager\Entities\Territoire',
 						'property' => 'nom',
-						'query_builder' => function(\LarpManager\Repository\TerritoireRepository $er) {
+						'query_builder' => function(TerritoireRepository $er) {
 							$qb = $er->createQueryBuilder('t');
 							$qb->andWhere('t.territoire IS NULL');
 							$qb->orderBy('t.nom', 'ASC');
