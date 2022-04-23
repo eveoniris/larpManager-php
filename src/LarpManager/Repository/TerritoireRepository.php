@@ -121,6 +121,7 @@ class TerritoireRepository extends EntityRepository
         $qb->setFirstResult($offset);
         $qb->setMaxResults($limit);
         $defaultEntityAlias = strstr($order['by'],'.') ? '' : 't.';
+        $qb->orderBy($defaultEntityAlias.$order['by'], $order['dir']);
         return $qb->getQuery()->getResult();
     }
     /**
