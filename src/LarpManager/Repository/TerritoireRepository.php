@@ -21,6 +21,7 @@
 namespace LarpManager\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
 
 /**
  * LarpManager\Repository\TerritoireRepository
@@ -92,12 +93,14 @@ class TerritoireRepository extends EntityRepository
         $qb->select('distinct t');
         $qb->from('LarpManager\Entities\Territoire','t');
         if(array_key_exists("tgr.id",$criteria)) $qb->join('t.groupe','tgr');
-        $qb->join('t.territoire','tpr');
-        $qb->join('tpr.territoire','tp');
+        # $qb->join('t.territoire','tpr');
+        # $qb->join('tpr.territoire','tp');
+        # $qb->andWhere('t.territoire IS NOT NULL');
+        # $qb->andWhere('tp.territoire IS NULL');
+        $qb->leftjoin('LarpManager\Entities\Territoire', 't1_', Join::WITH, 't.id = t1_.territoire');
         $qb->andWhere('t.territoire IS NOT NULL');
-        // TODO: Voir pourquoi ça a été initialement fait comme ça et pourquoi ça ne marche pas comme attendu (Exemple avec Punt)
-        // http://localhost:8080/territoire/fief?fief%5Bvalue%5D=&fief%5Btype%5D=&fief%5Bpays%5D=88&fief%5Bprovince%5D=&fief%5Bgroupe%5D=
-        $qb->andWhere('tp.territoire IS NULL');
+        $qb->groupby('t.id');
+        $qb->having('COUNT(t1_.id) = 0');
 
         $count = 0;
         foreach ( $criteria as $key => $value )
@@ -118,7 +121,6 @@ class TerritoireRepository extends EntityRepository
         $qb->setFirstResult($offset);
         $qb->setMaxResults($limit);
         $defaultEntityAlias = strstr($order['by'],'.') ? '' : 't.';
-        $qb->orderBy($defaultEntityAlias.$order['by'], $order['dir']);
         return $qb->getQuery()->getResult();
     }
     /**
