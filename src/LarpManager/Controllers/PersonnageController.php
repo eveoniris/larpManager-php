@@ -256,11 +256,11 @@ class PersonnageController
 
 				if ( $personnage->getPersonnageHasTokens()->count() % 2 == 0 && $personnage->getVivant() == true)
 				{
-					if ( $personnage->getAge()->getId() < 5)
+					if ( $personnage->getAge()->getId() <5 )
 					{
-						$personnage->setAge($ages[$personnage->getAge()->getId()]);
+						$personnage->setAge($ages[$personnage->getAge()->getID()]);
 					}
-					else
+					elseif ( $personnage->getAge()->getId() ==5 )
 					{
                         $personnage->setVivant(false);
 						foreach ($personnage->getParticipants() as $participant)
@@ -281,7 +281,7 @@ class PersonnageController
 			}
 			$app['orm.em']->flush();
 			
-			$app['session']->getFlashBag()->add('success', 'tous les personnages ont reçut un jeton vieillesse.');
+			$app['session']->getFlashBag()->add('success', 'tous les personnages ont reçu un jeton vieillesse.');
 			return $app->redirect($app['url_generator']->generate('homepage'),303);
 		}
 		
