@@ -43,4 +43,72 @@ class LigneesRepository extends EntityRepository
 		$qb->orderBy('l.id','ASC');
 		return $qb->getQuery()->getResult();
 	}
+
+    /**
+     * Recherche d'une liste de lignees
+     *
+     * @param unknown $type
+     * @param unknown $value
+     * @param array $order
+     * @param unknown $limit
+     * @param unknown $offset
+     */
+    public function findList($type, $value, array $order = array(), $limit, $offset)
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+
+        $qb->select('l');
+        $qb->from('LarpManager\Entities\Lignee','l');
+        if ( $type && $value)
+        {
+            switch ($type){
+                case 'id':
+                    $qb->andWhere('l.id = :value');
+                    $qb->setParameter('value', $value);
+                    break;
+                case 'nom':
+                    $qb->andWhere('l.nom LIKE :value');
+                    $qb->setParameter('value', '%'.$value.'%');
+                    break;
+            }
+
+        }
+
+        $qb->setFirstResult($offset);
+        $qb->setMaxResults($limit);
+        $qb->orderBy('l.'.$order['by'], $order['dir']);
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * Retourne le nombre de résultats correspondant à un critère
+     *
+     * @param array $criteria
+     * @param array $options
+     */
+    public function findCount($type, $value)
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+
+        $qb->select($qb->expr()->count('l'));
+        $qb->from('LarpManager\Entities\Lignee','l');
+
+        if ( $type && $value)
+        {
+            switch ($type){
+                case 'id':
+                    $qb->andWhere('l.id = :value');
+                    $qb->setParameter('value', $value);
+                    break;
+                case 'nom':
+                    $qb->andWhere('l.nom LIKE :value');
+                    $qb->setParameter('value', '%'.$value.'%');
+                    break;
+            }
+
+        }
+
+        return $qb->getQuery()->getSingleScalarResult();
+    }
 }
