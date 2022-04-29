@@ -124,7 +124,8 @@ table tr td {
 					{% for item in personnage.items %}
 						{{ item.numero }}&nbsp;{{ item.label }}<br />
 					{% endfor %}
-		
+					{% if personnage.materiel %}{{ personnage.materiel }}<br />{% endif %}
+					
 					{% for personnageIngredient in personnage.personnageIngredients %}
 						{{personnageIngredient.nombre}} - {{ personnageIngredient.ingredient }}<br />
 					{% endfor %}
