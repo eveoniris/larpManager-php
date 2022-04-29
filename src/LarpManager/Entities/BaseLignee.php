@@ -34,6 +34,12 @@ class BaseLignee
      */
     protected $description;
 
+    /**
+     * @OneToMany(targetEntity="PersonnageLignee", mappedBy="lignee")
+     * @JoinColumn(name="id", referencedColumnName="lignee_id", nullable=false)
+     */
+    protected $personnageLignees;
+
 
     public function __construct()
     {
@@ -106,6 +112,22 @@ class BaseLignee
     public function getDescription()
     {
         return $this->description;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPersonnageLignees()
+    {
+        return $this->personnageLignees;
+    }
+
+    /**
+     * @param mixed $personnageLignees
+     */
+    public function setPersonnageLignees($personnageLignees): void
+    {
+        $this->personnageLignees = $personnageLignees;
     }
 
     public function __sleep()
