@@ -300,6 +300,7 @@ else
 	$app->mount('/culture', new LarpManager\CultureControllerProvider());
 	$app->mount('/loi', new LarpManager\LoiControllerProvider());
 	$app->mount('/question', new LarpManager\QuestionControllerProvider());
+    $app->mount('/lignee', new LarpManager\LigneeControllerProvider());
 		
 
 	/**
