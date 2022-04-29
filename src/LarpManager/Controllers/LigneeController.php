@@ -63,4 +63,31 @@ class LigneeController
             'paginator' => $paginator,
         ));
     }
+
+    /**
+     * Affiche le détail d'une lignée
+     *
+     * @param Request $request
+     * @param Application $app
+     */
+    public function detailAction(Request $request, Application $app)
+    {
+        $id = $request->get('index');
+
+        $lignee = $app['orm.em']->find('\LarpManager\Entities\Lignee',$id);
+
+        /**
+         * Si la lignee existe, on affiche ses détails
+         * Sinon on envoie une erreur
+         */
+        if ( $lignee )
+        {
+            return $app['twig']->render('admin/lignee/details.twig', array('lignee' => $lignee));
+        }
+        else
+        {
+            $app['session']->getFlashBag()->add('error', 'La lignee n\'a pas été trouvée.');
+            return $app->redirect($app['url_generator']->generate('lignee'));
+        }
+    }
 }

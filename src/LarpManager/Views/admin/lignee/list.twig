@@ -1,6 +1,6 @@
 {% extends "layout.twig" %}
 
-{% block title %}Lignées{% endblock title %}
+{% block title %}Lignées{% endblock %}
 
 {% block content %}
 
@@ -97,6 +97,7 @@
                     </a>
                 </th>
                 <th>Description</th>
+                <th>Détails</th>
             </tr>
             </thead>
             <tbody>
@@ -105,13 +106,13 @@
                     <td>{{ lignee.id }}</td>
                     <td>{{ lignee.nom }}</td>
                     <td>{{ lignee.description }}</td>
-                    {# <td>
+                    <td>
                         <div class="btn-toolbar pull-right" role="toolbar" aria-label="...">
                             <div class="btn-group" role="group" aria-label="...">
-                                <a class="btn btn-primary" href="{{ path('lignee.detail', {'index':lignee.id}) }}"><i class="fa fa-eye"></i></a>
+                                <a class="btn btn-primary" href="{{ path('lignee.admin.details', {'index':lignee.id}) }}"><i class="fa fa-eye"></i></a>
                             </div>
                         </div>
-                    </td> #}
+                    </td>
                 </tr>
             {% endfor %}
             </tbody>
@@ -120,4 +121,4 @@
         {{ paginator|raw }}
     </div>
 
-{% endblock content %}
+{% endblock %}
