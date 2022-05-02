@@ -3,8 +3,9 @@
 namespace LarpManager\Controllers;
 
 use JasonGrimes\Paginator;
+use LarpManager\Entities\Lignee;
 use LarpManager\Form\Lignee\LigneeFindForm;
-use LarpManager\Form\Lignee\LigneeUpdateForm;
+use LarpManager\Form\Lignee\LigneeForm;
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -93,6 +94,48 @@ class LigneeController
     }
 
     /**
+     * Ajout d'une lignée
+     *
+     * @param Request $request
+     * @param Application $app
+     */
+    public function adminAddAction(Request $request, Application $app)
+    {
+        $lignee = new Lignee();
+
+        $form = $app['form.factory']->createBuilder(new LigneeForm(), $lignee)
+            ->add('save','submit', array('label' => 'Sauvegarder et retour à la liste'))
+            ->add('save_continue','submit',array('label' => 'Sauvegarder et nouvelle lignée'))
+            ->getForm();
+
+        $form->handleRequest($request);
+
+        if ( $form->isValid() && $form->isSubmitted())
+        {
+            $lignee = $form->getData();
+
+            $app['orm.em']->persist($lignee);
+            $app['orm.em']->flush();
+            $app['session']->getFlashBag()->add('success', 'La lignée a été enregistrée.');
+
+            /**
+             * Si l'utilisateur a cliqué sur "save", renvoi vers la liste des lignee
+             * Si l'utilisateur a cliqué sur "save_continue", renvoi vers un nouveau formulaire d'ajout
+             */
+            if ( $form->get('save')->isClicked())
+            {
+                return $app->redirect($app['url_generator']->generate('lignee.admin.list'),303);
+            }
+            else if ( $form->get('save_continue')->isClicked())
+            {
+                return $app->redirect($app['url_generator']->generate('lignee.admin.add'),303);
+            }
+        }
+
+        return $app['twig']->render('admin/lignee/add.twig', array('form' => $form->createView()));
+    }
+
+    /**
      * Modification d'une lignée
      *
      * @param Request $request
@@ -104,7 +147,7 @@ class LigneeController
 
         $lignee = $app['orm.em']->find('\LarpManager\Entities\Lignee',$id);
 
-        $form = $app['form.factory']->createBuilder(new LigneeUpdateForm(), $lignee)
+        $form = $app['form.factory']->createBuilder(new LigneeForm(), $lignee)
             ->add('update','submit', array('label' => "Sauvegarder"))
             ->add('delete','submit', array('label' => "Supprimer"))
             ->getForm();

@@ -21,6 +21,7 @@ class LigneeControllerProvider implements ControllerProviderInterface
      * Routes :
      *  - lignee.admin.list
      *  - lignee.admin.details
+     *  - lignee.admin.add
      *  - lignee.admin.update
      *  - lignee.admin.delete
      *
@@ -56,6 +57,14 @@ class LigneeControllerProvider implements ControllerProviderInterface
             ->assert('lignee', '\d+')
             ->bind("lignee.admin.details")
             ->method('GET')
+            ->before($mustBeOrga);
+
+        /**
+         * Création d'une lignée
+         */
+        $controllers->match('/admin/add','LarpManager\Controllers\LigneeController::adminAddAction')
+            ->bind("lignee.admin.add")
+            ->method('GET|POST')
             ->before($mustBeOrga);
 
         /**
