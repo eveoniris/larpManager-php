@@ -83,7 +83,7 @@ a {
 	    					{% if participant.personnage.trombineUrl %}
 			  					<img src="{{ path('personnage.trombine', {'personnage' : participant.personnage.id }) }}" alt="{{ participant.personnage.nom }}" />
 			  				{% else %}
-			  					<img width="160" height="200" src="{{ app.request.basepath }}/img/no_trombine.png" />
+			  					<img width="160" src="{{ app.request.basepath }}/img/no_trombine.png" />
 			  				{% endif %}
 		  				</a>
 		  			</li>
