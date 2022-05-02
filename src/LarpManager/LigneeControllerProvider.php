@@ -52,8 +52,8 @@ class LigneeControllerProvider implements ControllerProviderInterface
         /**
          * Detail d'une lignée
          */
-        $controllers->match('/admin/{index}','LarpManager\Controllers\LigneeController::detailAction')
-            ->assert('index', '\d+')
+        $controllers->match('/admin/{lignee}','LarpManager\Controllers\LigneeController::detailAction')
+            ->assert('lignee', '\d+')
             ->bind("lignee.admin.details")
             ->method('GET')
             ->before($mustBeOrga);
