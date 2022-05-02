@@ -7,12 +7,12 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * LarpManager\Form\LigneeUpdateForm
+ * LarpManager\Form\LigneeForm
  * Formulaire de mis à jour de lignée
  * @author gerald
  *
  */
-class LigneeUpdateForm extends AbstractType
+class LigneeForm extends AbstractType
 {
     /**
      * Construction du formulaire
@@ -23,11 +23,17 @@ class LigneeUpdateForm extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('nom','text', array(
-                    'required' => true
+                    'required' => true,
+                    'attr' => array(
+                        'placeholder' => 'Nom de la lignée'
+                     )
             )
         )
             ->add('description', 'textarea', array(
-                    'required' => false
+                    'required' => false,
+                    'attr' => array(
+                            'placeholder' => 'Description de la lignée (aperçu et/ou effet de jeu)'
+                    )
             ));
     }
 

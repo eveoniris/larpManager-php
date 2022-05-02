@@ -36,17 +36,15 @@
                     </form>
                 </div>
             </li>
-           {#  <li class="list-group-item">
-                <a href="{{ path('lignee.add') }}">Ajouter une lignee</a>
-            </li>#}
             <li class="list-group-item">
                 {% if paginator.totalItems == 1 %}
                     <strong>1</strong> lignée trouvé.
                 {% else %}
                     <strong>{{ paginator.totalItems }}</strong> lignées trouvées.
                 {% endif %}
-
                 Affiche <strong>{{ paginator.currentPageFirstItem }} - {{ paginator.currentPageLastItem }}</strong>.
+
+                <a href="{{ path('lignee.admin.add') }}"> Ajouter une lignée</a>
             </li>
         </ul>
 
@@ -109,7 +107,7 @@
                     <td>
                         <div class="btn-toolbar pull-right" role="toolbar" aria-label="...">
                             <div class="btn-group" role="group" aria-label="...">
-                                <a class="btn btn-primary" href="{{ path('lignee.admin.details', {'index':lignee.id}) }}"><i class="fa fa-eye"></i></a>
+                                <a class="btn btn-primary" href="{{ path('lignee.admin.details', {'lignee':lignee.id}) }}"><i class="fa fa-eye"></i></a>
                             </div>
                         </div>
                     </td>
