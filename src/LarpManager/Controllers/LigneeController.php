@@ -4,6 +4,7 @@ namespace LarpManager\Controllers;
 
 use JasonGrimes\Paginator;
 use LarpManager\Form\Lignee\LigneeFindForm;
+use LarpManager\Form\Lignee\LigneeUpdateForm;
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -16,7 +17,7 @@ class LigneeController
 {
 
     /**
-     * Liste des groupes
+     * Liste des lignées
      *
      * @param Request $request
      * @param Application $app
@@ -72,7 +73,7 @@ class LigneeController
      */
     public function detailAction(Request $request, Application $app)
     {
-        $id = $request->get('index');
+        $id = $request->get('lignee');
 
         $lignee = $app['orm.em']->find('\LarpManager\Entities\Lignee',$id);
 
@@ -89,5 +90,63 @@ class LigneeController
             $app['session']->getFlashBag()->add('error', 'La lignee n\'a pas été trouvée.');
             return $app->redirect($app['url_generator']->generate('lignee'));
         }
+    }
+
+    /**
+     * Modification d'une lignée
+     *
+     * @param Request $request
+     * @param Application $app
+     */
+    public function adminUpdateAction(Request $request, Application $app)
+    {
+        $id = $request->get('lignee');
+
+        $lignee = $app['orm.em']->find('\LarpManager\Entities\Lignee',$id);
+
+        $form = $app['form.factory']->createBuilder(new LigneeUpdateForm(), $lignee)
+            ->add('update','submit', array('label' => "Sauvegarder"))
+            ->add('delete','submit', array('label' => "Supprimer"))
+            ->getForm();
+
+        $form->handleRequest($request);
+
+        if ( $form->isValid() && $form->isSubmitted() )
+        {
+            $lignee = $form->getData();
+
+            /**
+             * Si l'utilisateur a cliquer sur "update", on met à jour la lignée
+             * Si l'utilisateur a cliquer sur "delete", on supprime la lignée
+             */
+            if ($form->get('update')->isClicked())
+            {
+                $app['orm.em']->persist($lignee);
+                $app['orm.em']->flush();
+                $app['session']->getFlashBag()->add('success', 'La lignée a été mise à jour.');
+                return $app->redirect($app['url_generator']->generate('lignee.admin.details', array('lignee' => $id)));
+            }
+            else if ($form->get('delete')->isClicked())
+            {
+                // supprime le lien entre les personnages et le groupe
+                foreach ( $lignee->getPersonnageLignees() as $personnage)
+                {
+                    /*TODO /suppimer le ligne dans PersonnageLignee*/
+                    $app['orm.em']->persist($personnage);
+                }
+                $app['orm.em']->remove($lignee);
+                $app['orm.em']->flush();
+
+                $app['session']->getFlashBag()->add('success', 'La lignée a été supprimée.');
+                return $app->redirect($app['url_generator']->generate('lignee.admin.list'));
+            }
+
+
+        }
+
+        return $app['twig']->render('admin/lignee/update.twig', array(
+            'lignee' => $lignee,
+            'form' => $form->createView(),
+        ));
     }
 }
