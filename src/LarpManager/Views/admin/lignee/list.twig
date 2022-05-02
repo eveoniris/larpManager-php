@@ -59,20 +59,20 @@
             <tr>
                 <th>
                     {% if app.request.get('order_dir') == 'ASC' and app.request.get('order_by') == 'id' %}
-                    <a href="{{ path('lignee.admin.list', {'order_by': 'id', 'order_dir': 'DESC'}) }}">
-                        {%  else %}
+                        <a href="{{ path('lignee.admin.list', {'order_by': 'id', 'order_dir': 'DESC'}) }}">
+                    {%  else %}
                         <a href="{{ path('lignee.admin.list', {'order_by': 'id', 'order_dir': 'ASC'}) }}">
-                            {% endif %}
+                    {% endif %}
                             ID
-                            {% if app.request.get('order_by') == 'id'  %}
-                                {% if app.request.get('order_dir') == 'ASC' %}
-                                    <span class="caret"></span>
-                                {%else%}
-                                    <span class="dropup">
-    								<span class="caret"></span>
-								</span>
-                                {% endif %}
-                            {% endif %}
+                    {% if app.request.get('order_by') == 'id'  %}
+                        {% if app.request.get('order_dir') == 'ASC' %}
+                            <span class="caret"></span>
+                        {%else%}
+                            <span class="dropup">
+                                <span class="caret"></span>
+                            </span>
+                        {% endif %}
+                    {% endif %}
                         </a>
                     </a>
                 </th>
