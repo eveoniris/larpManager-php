@@ -174,8 +174,7 @@ class LigneeController
                 // supprime le lien entre les personnages et le groupe
                 foreach ( $lignee->getPersonnageLignees() as $personnage)
                 {
-                    /*TODO /suppimer le ligne dans PersonnageLignee*/
-                    $app['orm.em']->persist($personnage);
+                    $app['orm.em']->remove($personnage);
                 }
                 $app['orm.em']->remove($lignee);
                 $app['orm.em']->flush();
