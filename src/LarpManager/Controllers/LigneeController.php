@@ -4,6 +4,8 @@ namespace LarpManager\Controllers;
 
 use JasonGrimes\Paginator;
 use LarpManager\Entities\Lignee;
+use LarpManager\Entities\PersonnageLignee;
+use LarpManager\Form\Lignee\LigneeAddMembreForm;
 use LarpManager\Form\Lignee\LigneeFindForm;
 use LarpManager\Form\Lignee\LigneeForm;
 use Silex\Application;
@@ -188,7 +190,48 @@ class LigneeController
 
         return $app['twig']->render('admin/lignee/update.twig', array(
             'lignee' => $lignee,
-            'form' => $form->createView(),
+            'form' => $form->createView()
+        ));
+    }
+
+    /**
+     * Ajoute un nouveau membre à la lignée
+     *
+     * @param Request $request
+     * @param Application $app
+     * @param Lignee $lignee
+     */
+    public function adminAddMembreAction(Request $request, Application $app)
+    {
+        $id = $request->get('lignee');
+        $lignee = $app['orm.em']->find('\LarpManager\Entities\Lignee',$id);
+
+        $form = $app['form.factory']->createBuilder(new LigneeAddMembreForm())->getForm();
+
+        $form->handleRequest($request);
+
+        if ( $form->isValid() && $form->isSubmitted())
+        {
+            $personnage = $form['personnage']->getData();
+            $parent1 = $form['parent1']->getData();
+            $parent2 = $form['parent2']->getData();
+
+            $membre = new PersonnageLignee();
+            $membre->setPersonnage($personnage);
+            $membre->setParent1($parent1);
+            $membre->setParent2($parent2);
+            $membre->setLignee($lignee);
+
+            $app['orm.em']->persist($membre);
+            $app['orm.em']->flush();
+
+            $app['session']->getFlashBag()->add('success', 'le personnage a été ajouté à la lignée.');
+            return $app->redirect($app['url_generator']->generate('lignee.admin.details', array('lignee' => $lignee->getId()),303));
+        }
+
+        return $app['twig']->render('admin/lignee/addMembre.twig', array(
+            'lignee' => $lignee,
+            'form' => $form->createView()
         ));
     }
 }

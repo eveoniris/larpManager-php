@@ -17,13 +17,13 @@ class LigneeControllerProvider implements ControllerProviderInterface
 {
 
     /**
-     * Initialise les routes pour les lignees
+     * Initialise les routes pour les lignées
      * Routes :
      *  - lignee.admin.list
      *  - lignee.admin.details
      *  - lignee.admin.add
      *  - lignee.admin.update
-     *  - lignee.admin.delete
+     *  - lignee.admin.addMembre
      *
      * @param Application $app
      * @return Controllers $controllers
@@ -77,15 +77,17 @@ class LigneeControllerProvider implements ControllerProviderInterface
             ->before($mustBeOrga);
 
         /**
-         * Suppression d'une lignée
+         * Ajout d'un membre
          */
-        $controllers->match('/admin/{lignee}/delete','LarpManager\Controllers\LigneeController::adminDeleteAction')
+        $controllers->match('/admin/{lignee}/addMembre','LarpManager\Controllers\LigneeController::adminAddMembreAction')
             ->assert('lignee', '\d+')
-            ->bind("lignee.admin.delete")
+            ->bind("lignee.admin.addMembre")
             ->method('GET|POST')
             ->before($mustBeOrga);
 
         return $controllers;
     }
+
+
 
 }
