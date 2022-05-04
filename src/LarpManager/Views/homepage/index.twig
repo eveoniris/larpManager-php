@@ -18,6 +18,45 @@
 		</div>
 		<div class="col-md-9">
 
+			{# affichage des personnages anciens et actuels #}
+
+			<div class="well well-sm">
+				<div class="header">
+					<h5>Vos personnages</h5>
+				</div>
+
+				<ul class="list-group">
+					{% for participant in user.participants %}
+						{% if participant.personnage  %}
+							<li class="list-group-item">
+								<a href="{{ path('gn.detail', {'gn': participant.gn.id}) }}">
+									{{ participant.gn.label }}
+								</a>
+								<a href="{{ path('gn.personnage',{'gn': participant.gn.id}) }}">
+									 -{{ participant.personnage.nom }} ({{ participant.personnage.surnom }})
+								</a>
+								{% if participant.groupeGn %}
+									<a href="{{ path('groupeGn.groupe',{'groupeGn':participant.groupeGn.id}) }}">
+										 - {{ participant.groupe.nom }}
+									</a>
+								{% endif %}
+							</li>
+						{% else %}
+							<li class="list-group-item">
+								<a href="{{ path('gn.detail', {'gn': participant.gn.id}) }}">
+									{{ participant.gn.label }}
+								</a> - 	Vous ne possédez pas de personnage pour cet opus.
+								{% if participant.groupeGn%}
+									<a href="{{ path('groupeGn.groupe',{'groupeGn':participant.groupeGn.id}) }}">
+										 - {{ participant.groupe.nom }}
+									</a>
+								{% endif %}
+							</li>
+						{% endif %}
+					{% endfor %}
+				</ul>
+			</div>
+
 			
 			{# affichage des événements passé et futur #}
 			

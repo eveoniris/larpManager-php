@@ -45,6 +45,9 @@
                             <span class="navbar-brand">Membres</span>
                         </div>
                         <div class="collapse navbar-collapse">
+                            <ul class="nav navbar-nav navbar-right">
+                                <li><a href="{{ path('lignee.admin.addMembre', {'lignee':lignee.id} ) }}">Ajouter un membre</a></li>
+                            </ul>
                         </div>
                     </div>
                 </nav>
@@ -55,7 +58,6 @@
                 {% set iconPjOld = '<span title="Ancien PJ ne participant pas au GN actif">➖</span>' %}
 
                 <div class="panel-body">
-                    {#TODO : <a href="{{ path('lignee.admin.addMembre', {'lignee': lignee.id}) }}">Ajouter un membre</a> #}
                     <table class="table table-striped table-bordered table-condensed">
                         <th>ID</th>
                         <th>Nom</th>
