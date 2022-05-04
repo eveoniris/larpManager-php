@@ -96,6 +96,7 @@ table tr td {
 	</table>		
 	
 	<div style="border: 1px solid #000;padding: 5px;">
+	<h3><strong>Compétences</strong></h3>
 	{% for competence in personnage.competences %}
 		<strong>{{ competence.competenceFamily.label }}&nbsp({{ competence.level.label }})</strong> : {{ competence.descriptionRaw }}<br />
 	{% endfor %}
@@ -124,6 +125,7 @@ table tr td {
 					{% for item in personnage.items %}
 						{{ item.numero }}&nbsp;{{ item.label }}<br />
 					{% endfor %}
+					{% if personnage.materiel %}{{ personnage.materiel }}<br />{% endif %}
 		
 					{% for personnageIngredient in personnage.personnageIngredients %}
 						{{personnageIngredient.nombre}} - {{ personnageIngredient.ingredient }}<br />
@@ -140,12 +142,12 @@ table tr td {
 					{% endfor %}
 				</td>
 				<td>
-					{% for groupeSecondaire in personnage.secondaryGroups %}
-						{{ groupeSecondaire.label }}<br />
+					{% for membre in personnage.membres %}
+						{{ membre.secondaryGroup }}<br />
 					{% endfor %}
 					
 					{% for postulant in personnage.postulants %}
-						Candidature au groupe {{ postulant.secondaryGroup.label }} en attente de validation.<br />
+						{{ postulant.secondaryGroup.label }} en attente de validation.<br />
 					{% endfor %}
 				</td>
 			</tr>
@@ -164,7 +166,7 @@ table tr td {
 			<tr>
 				<td>
 					{% for sort in personnage.sorts %}
-						{{ sort.label }} - {{ sort.domaine.label }} Niveau {{ sort.niveau }}<br />
+						{{ sort.label }} - {{ sort.domaine.label }} - Niveau {{ sort.niveau }}<br />
 					{% endfor %}
 				</td>
 				<td>
