@@ -163,6 +163,24 @@ class Gn extends BaseGn
 		
 		return $participants;
 	}
+
+	/**
+	 * Fourni la liste de tous les participants à un GN avec un billet
+	 */
+	public function getParticipantsWithBillet()
+	{
+		$participants = new ArrayCollection();
+		
+		foreach( $this->getParticipants() as $participant)
+		{
+			if ( $participant->getBillet() )
+			{
+				$participants[] = $participant;
+			}
+		}
+		
+		return $participants;
+	}
 	
 	/**
 	 * Fourni la liste de tous les participants à un GN ayant un billet mais n'étant pas encore dans un groupe
