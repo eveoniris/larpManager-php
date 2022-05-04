@@ -725,4 +725,23 @@ class GnController
             'gn' => $gn
         ));
     }
+
+	/**
+	 * Impression fiche de perso pour le gn
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Gn $gn
+	 */
+	public function printPersoAction(Request $request, Application $app, Gn $gn)
+	{
+		$participants = $gn->getParticipantsWithBillet();
+		$quetes = new ArrayCollection();
+		
+		return $app['twig']->render('admin/gn/printPerso.twig', array(
+				'gn' => $gn,
+				'participants' => $participants,
+				'quetes' => $quetes,
+		));
+	}
 }

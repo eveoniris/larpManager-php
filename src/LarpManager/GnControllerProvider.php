@@ -60,6 +60,15 @@ class GnControllerProvider implements ControllerProviderInterface
 				throw new AccessDeniedException();
 			}
 		};
+
+		/**
+		 * Vérifie que l'utilisateur dispose du role SCENARISTE
+		 */
+		$mustBeScenariste = function(Request $request) use ($app) {
+			if (!$app['security.authorization_checker']->isGranted('ROLE_SCENARISTE')) {
+				throw new AccessDeniedException();
+			}
+		};
 		
 		/**
 		 * Voir la liste des gns
@@ -274,7 +283,17 @@ class GnControllerProvider implements ControllerProviderInterface
 			->convert('gn', 'converter.gn:convert')
 			->bind("gn.personnage")
 			->method('GET');
+
 			
+		/**
+		 * Impression des fiches de perso
+		 */
+		$controllers->match('/{gn}/print/perso','LarpManager\Controllers\GnController::printPersoAction')
+			->assert('gn', '\d+')
+			->bind("gn.print.perso")
+			->convert('gn', 'converter.gn:convert')
+			->method('GET')
+			->before($mustBeScenariste);			
 		return $controllers;
 	}
 }
