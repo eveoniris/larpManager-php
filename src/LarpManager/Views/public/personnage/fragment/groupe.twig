@@ -5,6 +5,6 @@
 
 <div class="list-group">
 	{% if personnage.groupe %}
-		<a class="list-group-item" href="{{ path('groupeGn.groupe', {'groupeGn': participant.session.id}) }}">{{ participant.session.groupe.nom }}</a>
+		<a class="list-group-item" href="{{ path('groupeGn.groupe', {'groupeGn': participant.groupeGn.id }) }}">{{ participant.groupeGn.groupe.nom }}</a>
 	{% endif %}
 </div>
