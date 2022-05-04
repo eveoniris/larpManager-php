@@ -14,7 +14,7 @@
     <div class="well bs-component">
         <form action="{{ path('lignee.admin.addMembre', {'lignee': lignee.id}) }}" method="POST" {{ form_enctype(form) }}>
             <fieldset>
-                <legend>{{ lignee.nom }} - Ajout d'un membre à la lignée</legend>
+                <legend>{{ lignee.nom }} - Ajout d'un membre à la lignée (Attention ! Seuls les personnages sans lignée peuvent être ajoutés)</legend>
                 {% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
                 {{ form(form) }}
             </fieldset>
