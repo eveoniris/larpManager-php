@@ -234,4 +234,26 @@ class LigneeController
             'form' => $form->createView()
         ));
     }
+
+    /**
+     * Retire un membre à la lignée
+     *
+     * @param Request $request
+     * @param Application $app
+     */
+    public function adminRemoveMembreAction(Request $request, Application $app)
+    {
+        $lignee = $request->get('lignee');
+        $membreNom = $request->get('membreNom');
+        $membre = $request->get('membre');
+
+        $personnageLignee = $app['orm.em']->find('\LarpManager\Entities\PersonnageLignee',$membre);
+
+        $app['orm.em']->remove($personnageLignee);
+        $app['orm.em']->flush();
+
+        $app['session']->getFlashBag()->add('success', $membreNom.' a été retiré de la lignée.');
+
+        return $app->redirect($app['url_generator']->generate('lignee.admin.details', array('lignee' => $lignee,303)));
+    }
 }
