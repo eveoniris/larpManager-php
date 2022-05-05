@@ -1,13 +1,13 @@
 {% extends "layout.twig" %}
 
-{% block title %}Personnages{% endblock title %}
+{% block title %}{{ personnage.nom }} détails{% endblock title %}
 
 {% block content %}
 
 	<ol class="breadcrumb">
 		<li><a href="{{ path('homepage') }}">Accueil</a></li>
 		<li><a href="{{ path('personnage.admin.list') }}">Liste des personnages</a></li>
-		<li class="active">Détail de {{ personnage.publicName }}</li>
+		<li class="active">Détail de {{ personnage.nom }}</li>
 	</ol>
 		
 	<div class="well well-sm">
@@ -34,7 +34,7 @@
 			<div class="row">
 				<div class="col-md-4">		
 					<div class="panel panel-default">
-						<nav class="navbar navbar-default" style="margin-bottom: 0px;">
+						<nav class="navbar navbar-default" style="margin-bottom: 0;">
 	  						<div class="container-fluid">
 	  							<div class="navbar-header">
 	  								<span class="navbar-brand">Informations</span>
@@ -115,7 +115,7 @@
 					</div>
 
 					<div class="panel panel-default">
-						<nav class="navbar navbar-default" style="margin-bottom: 0px;">
+						<nav class="navbar navbar-default" style="margin-bottom: 0;">
 	  						<div class="container-fluid">
 	  							<div class="navbar-header">
 	  								<span class="navbar-brand">Informations de jeu</span>
@@ -262,7 +262,7 @@
 					</div>
 					
 					<div class="panel panel-default">
-						<nav class="navbar navbar-default" style="margin-bottom: 0px;">
+						<nav class="navbar navbar-default" style="margin-bottom: 0;">
 	  						<div class="container-fluid">
 	  							<div class="navbar-header">
 	  								<span class="navbar-brand">Technique</span>
@@ -315,7 +315,7 @@
 				
 				
 					<div class="panel panel-default">
-						<nav class="navbar navbar-default" style="margin-bottom: 0px;">
+						<nav class="navbar navbar-default" style="margin-bottom: 0;">
 	  						<div class="container-fluid">
 	  							<div class="navbar-header">
 	  								<span class="navbar-brand">Photo</span>
@@ -346,7 +346,7 @@
 					</div>
 				
 					<div class="panel panel-default">
-						<nav class="navbar navbar-default" style="margin-bottom: 0px;">
+						<nav class="navbar navbar-default" style="margin-bottom: 0;">
 	  						<div class="container-fluid">
 	  							<div class="navbar-header">
 	  								<span class="navbar-brand">Enveloppe</span>
@@ -483,7 +483,7 @@
 				<div class="col-md-4">
 				
 					<div class="panel panel-default">
-						<nav class="navbar navbar-default" style="margin-bottom: 0px;">
+						<nav class="navbar navbar-default" style="margin-bottom: 0;">
 	  						<div class="container-fluid">
 	  							<div class="navbar-header">
 	  								<span class="navbar-brand">Compétences <small>({{ personnage.xp|default(0) }} / {{ personnage.xpTotal }} xp)</small></span>
@@ -533,7 +533,7 @@
 
 					{% if personnage.personnageLignee %}
 					<div class="panel panel-default">
-						<nav class="navbar navbar-default" style="margin-bottom: 0px;">
+						<nav class="navbar navbar-default" style="margin-bottom: 0;">
 	  						<div class="container-fluid">
 	  							<div class="navbar-header">
 	  								<span class="navbar-brand">Lignée</span>
@@ -560,9 +560,14 @@
 								{# Gestion de la lignée du personnage #}
 								{% if personnage.personnageLignee|length > 0 %}
 									{% for lignage in personnage.personnageLignee %}
-										{% if lignage.lignee %}<div class="list-group-item">Lignee : {{ lignage.lignee.nom }}</div>{% endif %}
-										<div class="list-group-item">Parent : <a href="{{ path('personnage.admin.detail', {'personnage':lignage.parent1.id}) }}">{{ lignage.parent1.identity }}</a></div>
-										{% if lignage.parent2 %}<div class="list-group-item">Parent : <a href="{{ path('personnage.admin.detail', {'personnage':lignage.parent2.id}) }}">{{ lignage.parent2.identity }}</a></div>{% endif %}
+										{% if lignage.lignee %}<div class="list-group-item">
+											Lignée :<a href="{{ path('lignee.admin.details', {'lignee':lignage.lignee.id}) }}"> {{ lignage.lignee.nom }}</a></div>
+										{% endif %}
+										<div class="list-group-item">
+											Parent : <a href="{{ path('personnage.admin.detail', {'personnage':lignage.parent1.id}) }}">{{ lignage.parent1.identity }}</a></div>
+										{% if lignage.parent2 %}<div class="list-group-item">
+											Parent : <a href="{{ path('personnage.admin.detail', {'personnage':lignage.parent2.id}) }}">{{ lignage.parent2.identity }}</a></div>
+										{% endif %}
 										{% for descendants in lignage.descendants %}
 											<li class="list-group-item">Enfant{% if descendants|length > 1 %}s{% endif %} : <a href="{{ path('personnage.admin.detail', {'personnage':descendants.id}) }}">{{ descendants.identity }}</a></li>
 											{% for descendants2 in descendants.descendants %}
@@ -582,7 +587,7 @@
 					{% endif %}
 
 					<div class="panel panel-default">
-						<nav class="navbar navbar-default" style="margin-bottom: 0px;">
+						<nav class="navbar navbar-default" style="margin-bottom: 0;">
 	  						<div class="container-fluid">
 	  							<div class="navbar-header">
 	  								<span class="navbar-brand">Chronologie</span>
@@ -619,7 +624,7 @@
 					</div>
 					
 					<div class="panel panel-default">
-						<nav class="navbar navbar-default" style="margin-bottom: 0px;">
+						<nav class="navbar navbar-default" style="margin-bottom: 0;">
 	  						<div class="container-fluid">
 	  							<div class="navbar-header">
 	  								<span class="navbar-brand">Background</span>
