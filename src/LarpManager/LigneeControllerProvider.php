@@ -24,6 +24,7 @@ class LigneeControllerProvider implements ControllerProviderInterface
      *  - lignee.admin.add
      *  - lignee.admin.update
      *  - lignee.admin.addMembre
+     *  - lignee.admin.membre.remove
      *
      * @param Application $app
      * @return Controllers $controllers
@@ -85,9 +86,17 @@ class LigneeControllerProvider implements ControllerProviderInterface
             ->method('GET|POST')
             ->before($mustBeOrga);
 
+        /**
+         * Suppression d'un membre
+         */
+        $controllers->match('/admin/{lignee}/membre/{membre}/remove','LarpManager\Controllers\LigneeController::adminRemoveMembreAction')
+            ->assert('lignee', '\d+')
+            ->assert('membre', '\d+')
+            ->bind("lignee.admin.membre.remove")
+            ->method('GET')
+            ->before($mustBeOrga);
+
         return $controllers;
     }
-
-
-
 }
+
