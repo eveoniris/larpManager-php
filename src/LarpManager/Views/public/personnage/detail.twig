@@ -104,6 +104,9 @@
 					{% endif %}
 					{% include 'public/personnage/fragment/priere.twig' with {'personnage': personnage, 'participant': participant} %}
 					{% include 'public/personnage/fragment/religion.twig' with {'personnage': personnage, 'participant': participant} %}
+					{% if personnage.personnageLignee|length > 0 %}
+						{% include 'public/personnage/fragment/lignee.twig'%}
+					{% endif%}
 				</div>
 			</div>
 
