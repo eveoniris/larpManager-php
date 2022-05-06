@@ -2313,7 +2313,7 @@ class PersonnageController
 			$app['orm.em']->remove($personnageLignee);
 			$app['orm.em']->flush();
 				
-			$app['session']->getFlashBag()->add('success','La lignée a été supprimée.');
+			$app['session']->getFlashBag()->add('success','La lignée a été retirée.');
 			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),303);
 		}
 		
