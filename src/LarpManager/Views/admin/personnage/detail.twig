@@ -562,7 +562,7 @@
 											</a>
 											{% for lignage in personnage.personnageLignee %}
 											<ul class="dropdown-menu">
-												<li><a href="{{ path('personnage.admin.lignee.delete', {'personnage': personnage.id, 'personnageLignee' : lignage.id }) }}">Supprimer</a></li>
+												<li><a href="{{ path('personnage.admin.lignee.delete', {'personnage': personnage.id, 'personnageLignee' : lignage.id }) }}">Retirer</a></li>
 											</ul>
 											{% endfor %}
 										</li>
