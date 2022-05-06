@@ -69,6 +69,7 @@ class PersonnageLigneeForm extends AbstractType
 					}
 				])
 
+
 				->add('lignee','entity', [
 					'label' => "Choisissez la lignée de votre personnage ",
 					'expanded' => false,
