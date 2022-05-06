@@ -151,7 +151,9 @@ class LigneeController
 
         $form = $app['form.factory']->createBuilder(new LigneeForm(), $lignee)
             ->add('update','submit', array('label' => "Sauvegarder"))
-            ->add('delete','submit', array('label' => "Supprimer"))
+            ->add('delete','submit', array(
+                'label' => "Supprimer",
+                'attr'=> array( 'onclick' => 'return confirm("Vous vous apprétez à supprimer cette lignée. Confirmer ?")')))
             ->getForm();
 
         $form->handleRequest($request);
