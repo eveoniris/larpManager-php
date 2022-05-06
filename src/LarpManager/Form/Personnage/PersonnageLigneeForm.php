@@ -68,6 +68,7 @@ class PersonnageLigneeForm extends AbstractType
 						return $pr->createQueryBuilder('p')->orderBy('p.nom', 'ASC');
 					}
 				])
+
 				->add('lignee','entity', [
 					'label' => "Choisissez la lignée de votre personnage ",
 					'expanded' => false,
