@@ -29,10 +29,13 @@ class LigneeAddMembreForm extends AbstractType
             'label' => 'Choisissez le personnage membre',
             'class' => 'LarpManager\Entities\Personnage',
             'query_builder' => function(EntityRepository $er) {
+
+                /*trouve les personnages ayant une lignée*/
                 $sqb = $er->createQueryBuilder('m');
                 $sqb->join('LarpManager\Entities\PersonnageLignee', 'pl', 'WITH', 'm.id = pl.personnage');
                 $dqlString = $sqb->getQuery()->getDQL();
 
+                /*trouve les personnages n'ayant pas de lignée*/
                 $qb = $er->createQueryBuilder('p');
                 $qb->where('p.id NOT IN ('.$dqlString.')');
                 $qb->orderBy('p.nom', 'ASC');
