@@ -21,25 +21,12 @@ table tr td {
 		<table>
 			<tr>
 				<td style="width:33%;">
+					<strong>GN : Inter GN Cimmérie</strong><br />
 					<strong>#{{ personnage.id }}</strong><br />
-					<strong>{{ personnage.nom }}{% if personnage.surnom %} (<small>{{ personnage.surnom }}</small>){% endif %}</strong><br />
+					<strong>{{ personnage.identity }}</strong><br />
 					Origine : {{ personnage.territoire|default("non définie") }}<br />
 					{{ personnage.classeName }}, {{ personnage.genre }}, <small>{{ personnage.ageReel|default('x') }} ans ({{ personnage.age }})</small><br />
 					{% if personnage.user %}{{ personnage.user.etatCivil.nom }} {{ personnage.user.etatCivil.prenom }}{% else %}Ce personnage n'est pas lié à un joueur{% endif %}. {% if personnage.intrigue %}participe aux intrigues{% else %}ne participe pas aux intrigues{% endif %}	
-				</td>
-				<td>
-					<strong>GN : {{ participant.gn.label }}</strong><br />
-					<strong>Groupe #{{ groupe.numero }} {{ groupe.nom }}</strong><br />
-					{% for participantHasRestauration in participant.participantHasRestaurations %}
-						{{ participantHasRestauration.restauration.label }}<br />
-					{% endfor %}
-					<strong>Personnage Secondaire : </strong>
-					{% if participant.personnageSecondaire %}
-						{{ participant.personnageSecondaire.classe.label }}
-					{% else %}
-						PAS DE PERSONNAGE SECONDAIRE
-					{% endif %}
-							
 				</td>
 				<td>
 					{% if personnage.user %}
@@ -96,7 +83,6 @@ table tr td {
 	</table>		
 	
 	<div style="border: 1px solid #000;padding: 5px;">
-	<h3><strong>Compétences</strong></h3>
 	{% for competence in personnage.competences %}
 		<strong>{{ competence.competenceFamily.label }}&nbsp({{ competence.level.label }})</strong> : {{ competence.descriptionRaw }}<br />
 	{% endfor %}
@@ -125,7 +111,6 @@ table tr td {
 					{% for item in personnage.items %}
 						{{ item.numero }}&nbsp;{{ item.label }}<br />
 					{% endfor %}
-					{% if personnage.materiel %}{{ personnage.materiel }}<br />{% endif %}
 		
 					{% for personnageIngredient in personnage.personnageIngredients %}
 						{{personnageIngredient.nombre}} - {{ personnageIngredient.ingredient }}<br />
@@ -142,12 +127,12 @@ table tr td {
 					{% endfor %}
 				</td>
 				<td>
-					{% for membre in personnage.membres %}
-						{{ membre.secondaryGroup }}<br />
+					{% for groupeSecondaire in personnage.secondaryGroups %}
+						{{ groupeSecondaire.label }}<br />
 					{% endfor %}
 					
 					{% for postulant in personnage.postulants %}
-						{{ postulant.secondaryGroup.label }} en attente de validation.<br />
+						Candidature au groupe {{ postulant.secondaryGroup.label }} en attente de validation.<br />
 					{% endfor %}
 				</td>
 			</tr>
@@ -166,7 +151,7 @@ table tr td {
 			<tr>
 				<td>
 					{% for sort in personnage.sorts %}
-						{{ sort.label }} - {{ sort.domaine.label }} - Niveau {{ sort.niveau }}<br />
+						{{ sort.label }} - {{ sort.domaine.label }} Niveau {{ sort.niveau }}<br />
 					{% endfor %}
 				</td>
 				<td>
@@ -183,24 +168,6 @@ table tr td {
 			</tr>
 		</tbody>
 	</table>
-					
-	{% if participant.personnageSecondaire %}
-		<br />
-		<hr />
-		<br />
-		<div class="print-center">
-			<h3>Personnage secondaire<br />
-			{{ participant.personnageSecondaire.classe.label }}
-			</h3>
-		</div>
-
-		<div style="border: 1px solid #000;padding: 5px;">
-		<h3><strong>Compétences</strong></h3>
-		{% for competence in participant.personnageSecondaire.competences %}
-				<strong>{{ competence.competenceFamily.label }}&nbsp({{ competence.level.label }})</strong> : {{ competence.descriptionRaw }}<br />
-		{% endfor %}
-		</div>
-	{% endif %}
 	<br />
 	<hr />
 	<br />
@@ -210,26 +177,12 @@ table tr td {
 		<strong>Identité du personnage :</strong> {{ personnage.identity }}<br />
 		<h3>MORT</h3>
 	</div>
-	
+	<hr />
 	<div class="print-page-break"></div>
 {% else %}
-Ce participant ne dispose pas de personnages
+{{ participant.user.etatCivil }} ({{ participant.user.username }}): ce participant ne dispose pas de personnages.<hr />
+<div class="print-page-break"></div>
 {% endif %}	
-{% endfor %}
-
-{% for quete in quetes %}
-		<div>
-                        <h4>Quête commerciale pour #{{ quete.personnage.id}} {{ quete.personnage.nom }} ({{ groupe.nom }})</h4>
-                        <p>La route commerciale doit partir de <strong>{% if groupe.territoire %}{{ groupe.territoire.nom }}{% else %}INCONNU{% endif %} et parvenir à <strong>{% if quete.quete.cible %}{{ quete.quete.cible }}{% else %}INCONNU{% endif %}</strong></p>
-                        <strong>Les ressources demandées sont :</strong>
-                        <ul>
-                                {% for ressource in quete.quete.needs %}
-                                        <li>{{ ressource.label }}</li>
-                                {% endfor %}
-                        </ul>
-                        <strong>Récompenses : </strong>{{ quete.quete.recompenses|join(', ') }}
-                </div>
-		<hr class="print-page-break" />
 {% endfor %}
  
 {% endblock content %}

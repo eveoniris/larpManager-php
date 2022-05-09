@@ -22,7 +22,7 @@
 				{% if not priere.documentUrl %}
 					Aucun document n'est disponible
 				{% else %}
-					<a href="{{ path('magie.priere.document',{'priere' :priere.id, 'document':priere.documentUrl}) }}">Téléchargez le document</a>
+					<a href="{{ path('magie.priere.document',{'priere': priere.id, 'document': priere.documentUrl}) }}">Téléchargez le document</a>
 				{% endif %}
 	    	</p>
     	</div>
@@ -44,6 +44,6 @@
 		</div>
 	</div>
 	
-	<a href="{{ path('magie.priere.update',{'priere':priere.id}) }}"><button class="btn btn-default"><i class="fa fa-pencil"></i> Modifier</button></a>
+	<a href="{{ path('magie.priere.update',{'priere': priere.id}) }}"><button class="btn btn-default"><i class="fa fa-pencil"></i> Modifier</button></a>
 		
 {% endblock content %}

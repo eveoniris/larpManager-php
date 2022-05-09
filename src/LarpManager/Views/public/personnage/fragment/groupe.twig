@@ -4,7 +4,9 @@
 </div>
 
 <div class="list-group">
-	{% if personnage.groupe %}
-		<a class="list-group-item" href="{{ path('groupeGn.groupe', {'groupeGn': participant.session.id}) }}">{{ participant.session.groupe.nom }}</a>
+	{% if participant.groupeGn %}
+		<a class="list-group-item" href="{{ path('groupeGn.groupe', {'groupeGn': participant.groupeGn.id }) }}">{{ participant.session.groupe.nom }}</a>
+	{% else %}
+		Votre groupe n'est pas encore actif.
 	{% endif %}
 </div>

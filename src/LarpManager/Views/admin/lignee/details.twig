@@ -6,14 +6,14 @@
 
     <ol class="breadcrumb">
         <li><a href="{{ path('homepage') }}">Accueil</a></li>
-        <li><a href="{{ path('lignee.admin.list') }}">Liste des lignées</a></li>
+        <li><a href="{{ path('lignee.admin.list') }}">Lignées</a></li>
         <li class="active">{{ lignee.nom }} - Détails</li>
     </ol>
 
     <div class="well well-sm">
-        <h5>
-            Détails de lignée (ID: {{ lignee.id }})
-        </h5>
+        <h3>
+            Détails de la lignée {{ lignee.nom }}
+        </h3>
     </div>
 
     <div class="row">
@@ -22,7 +22,7 @@
                 <nav class="navbar navbar-default" style="margin-bottom: 0;">
                     <div class="container-fluid">
                         <div class="navbar-header">
-                            <span class="navbar-brand">{{ lignee.nom }}</span>
+                            <span class="navbar-brand">{{ lignee.nom }} (#{{ lignee.id }})</span>
                         </div>
                         <div class="collapse navbar-collapse">
                             <ul class="nav navbar-nav navbar-right">

@@ -101,6 +101,9 @@
 								{% for membre in personnage.membres %}
 									<a class="list-group-item" href="{{ path('groupeSecondaire.admin.detail', {'groupe': membre.secondaryGroup.id}) }}">{{ membre.secondaryGroup.label }}</a>
 								{% endfor %}
+								{% if personnage.secondaryGroups|length <= 0 and personnage.membres|length <= 0 %}
+									<li class="list-group-item">Ce personnage ne fait pas partie d'un groupe secondaire.</li>
+								{% endif %}
 							</ul>
 
 							{% if personnage.postulants|length > 0 %}
