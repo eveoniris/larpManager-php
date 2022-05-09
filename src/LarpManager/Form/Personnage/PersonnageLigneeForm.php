@@ -68,10 +68,12 @@ class PersonnageLigneeForm extends AbstractType
 						return $pr->createQueryBuilder('p')->orderBy('p.nom', 'ASC');
 					}
 				])
+
+
 				->add('lignee','entity', [
-					'label' => "Choisissez la lignée de votre personnage (optionnel)",
+					'label' => "Choisissez la lignée de votre personnage ",
 					'expanded' => false,
-					'required' => false,
+					'required' => true,
 					'empty_data' => null,
 					'class' => 'LarpManager\Entities\Lignee',
 					'query_builder' => function(LigneesRepository $pr) {
