@@ -555,6 +555,22 @@
 										</li>
 	  								</ul>
 	  							</div>
+								{% else %}
+								<div class="collapse navbar-collapse">
+									<ul class="nav navbar-nav navbar-right">
+										<li class="dropdown">
+											<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+												Action
+												<span class="caret"></span>
+											</a>
+											{% for lignage in personnage.personnageLignee %}
+											<ul class="dropdown-menu">
+												<li><a href="{{ path('personnage.admin.lignee.delete', {'personnage': personnage.id, 'personnageLignee' : lignage.id }) }}">Supprimer</a></li>
+											</ul>
+											{% endfor %}
+										</li>
+									</ul>
+								</div>
 								{% endif %}
 	  						</div>
 	  					</nav>
@@ -577,7 +593,6 @@
 											<li class="list-group-item">Petit{% if descendants2|length > 1 %}s{% endif %}-Enfant{% if descendants2|length > 1 %}s{% endif %} : <a href="{{ path('personnage.admin.detail', {'personnage':descendants2.id}) }}">{{ descendants2.identity }}</a></li>
 											{% endfor %}
 										{% endfor %}
-										<div class="list-group-item"><a href="{{ path('personnage.admin.lignee.delete', {'personnage': personnage.id, 'personnageLignee' : lignage.id }) }}">Supprimer</a></div>
 									{% endfor %}
 								{% else %}
 									<p class="list-group-item-text">
@@ -667,7 +682,7 @@
 						</div>
 					</div>
 				</div>
-			</div>	
+			</div>
 	</div>
 				
 {% endblock content %}
