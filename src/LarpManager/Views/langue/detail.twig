@@ -1,6 +1,6 @@
 {% extends "layout.twig" %}
 
-{% block title %}Territoire{% endblock title %}
+{% block title %}{{ langue.label }}{% endblock title %}
 
 {% block content %}
 
@@ -68,11 +68,17 @@
 	    		<div class="list-group-item">
 		    		<h4 class="list-group-item-heading">Liste des documents rédigés dans cette langue ({{ langue.documents|length }} documents)</h4>
     				<p class="list-group-item-text">
-						<ul>
-						{% for document in langue.documents %}
-							<li>{{ document.titre }}</li>
-						{% endfor %}
-						</ul>
+						{% if langue.documents|length >0 %}
+							<ul>
+							{% for document in langue.documents %}
+								<li>
+									<a href="{{ path('document.get',{'document': document}) }}">{{ document.titre }}</a>
+								</li>
+							{% endfor %}
+							</ul>
+						{% else %}
+							Aucun document n'est rédigé dans cette langue.
+						{% endif %}
 					</p>
 				</div>
 
