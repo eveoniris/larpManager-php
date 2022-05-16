@@ -21,12 +21,10 @@
 namespace LarpManager\Controllers;
 
 use LarpManager\Entities\PersonnageChronologie;
-use LarpManager\Repository\PersonnageRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Common\Collections\ArrayCollection;
 
 use Silex\Application;
-use JasonGrimes\Paginator;
 use LarpManager\Entities\Personnage;
 use LarpManager\Entities\PersonnageRessource;
 use LarpManager\Entities\PersonnageIngredient;
@@ -46,16 +44,13 @@ use LarpManager\Form\Personnage\PersonnageTechnologieForm;
 use LarpManager\Form\Personnage\PersonnageChronologieForm;
 use LarpManager\Form\Personnage\PersonnageLigneeForm;
 
-use LarpManager\Form\PersonnageFindForm;
 use LarpManager\Form\PersonnageForm;
 use LarpManager\Form\TriggerForm;
 use LarpManager\Form\TriggerDeleteForm;
 use LarpManager\Form\PersonnageUpdateForm;
-use LarpManager\Form\PersonnageTransfertForm;
 use LarpManager\Form\PersonnageUpdateSortForm;
 use LarpManager\Form\PersonnageUpdatePotionForm;
 use LarpManager\Form\PersonnageUpdateDomaineForm;
-use LarpManager\Form\PersonnageUpdateLangueForm;
 use LarpManager\Form\PersonnageUpdatePriereForm;
 use LarpManager\Form\PersonnageUpdateAgeForm;
 use LarpManager\Form\PersonnageBackgroundForm;
@@ -63,8 +58,7 @@ use LarpManager\Form\PersonnageStatutForm;
 use LarpManager\Form\PersonnageDeleteForm;
 use LarpManager\Form\PersonnageXpForm;
 use LarpManager\Form\TrombineForm;
-use LarpManager\Repository\LikeExpression;
-use LarpManager\Repository\EqualExpression;
+
 
 
 /**
@@ -605,8 +599,9 @@ class PersonnageController
 	{
 		$personnage = $request->get('personnage');
 		$personnageLangues = $personnage->getPersonnageLangues();
+        $descendants =  $app['orm.em']->getRepository(Personnage::class)->findDescendants($personnage);
 
-		return $app['twig']->render('admin/personnage/detail.twig', array('personnage' => $personnage,'langueMateriel' => $this->getLangueMateriel($personnage)));
+		return $app['twig']->render('admin/personnage/detail.twig', array('personnage' => $personnage, 'descendants' => $descendants, 'langueMateriel' => $this->getLangueMateriel($personnage)));
 	}
 	
 	/**
