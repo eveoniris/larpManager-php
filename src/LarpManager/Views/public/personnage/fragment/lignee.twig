@@ -7,4 +7,11 @@
 	{% for lignage in personnage.personnageLignee %}
 		<li class="list-group-item">{{ lignage.lignee.nom }}</li>
 	{% endfor %}
+	<li class="list-group-item">
+		<strong>Enfants :</strong>
+	</li>
+	{% for descendant in descendants %}
+		<li class="list-group-item">{{ descendant.personnage.nom }}</li>
+	{% endfor %}
+
 </div>

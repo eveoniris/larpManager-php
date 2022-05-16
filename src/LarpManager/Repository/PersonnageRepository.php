@@ -21,8 +21,7 @@
 namespace LarpManager\Repository;
 
 use Doctrine\ORM\EntityRepository;
-use LarpManager\Services\Utilities;
-use Doctrine\Common\Collections\ArrayCollection;
+use LarpManager\Entities\PersonnageLignee;
 use Doctrine\ORM\QueryBuilder;
 
 /**
@@ -195,6 +194,23 @@ LEFT JOIN p2.participants pa2
         $qb->andWhere('gn.id = :gnId')->setParameter('gnId', $gnId);
         return $qb->getQuery()->getResult();
         
+    }
+
+    /**
+     * Fourni la liste des descendants directs
+     */
+    public function findDescendants($personnage_id)
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+
+        $qb->select('d');
+        $qb->from(PersonnageLignee::class, 'd');
+        $qb->join('d.personnage','p');
+        $qb->where ('(d.parent1 = :parent OR d.parent2 = :parent)');
+        $qb->orderBy('d.personnage','DESC');
+        $qb->setParameter('parent', $personnage_id);
+
+        return $qb->getQuery()->getResult();
     }
     
   

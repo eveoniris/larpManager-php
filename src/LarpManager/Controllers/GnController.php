@@ -15,6 +15,8 @@
  **/
 namespace LarpManager\Controllers;
 
+use DoctrineProxy\__CG__\LarpManager\Entities\Participant;
+use LarpManager\Entities\Personnage;
 use Symfony\Component\HttpFoundation\Request;
 use Silex\Application;
 use LarpManager\Form\Gn\GnForm;
@@ -24,8 +26,7 @@ use LarpManager\Form\PersonnageFindForm;
 use LarpManager\Entities\Gn;
 use JasonGrimes\Paginator;
 use Doctrine\Common\Collections\ArrayCollection;
-use LarpManager\Repository\LikeExpression;
-use LarpManager\Repository\EqualExpression;
+use LarpManager\Entities\Loi;
 
 /**
  * * LarpManager\Controllers\GnController * * @author kevin *
@@ -89,11 +90,13 @@ class GnController
                 'gn' => $gn->getId()
             )), 303);
         }
-        $lois = $app['orm.em']->getRepository('LarpManager\Entities\Loi')->findAll();
+        $lois = $app['orm.em']->getRepository(Loi::class)->findAll();
+        $descendants =  $app['orm.em']->getRepository(Personnage::class)->findDescendants($personnage);
         return $app['twig']->render('public/personnage/detail.twig', array(
             'personnage' => $personnage,
             'participant' => $participant,
-            'lois' => $lois
+            'lois' => $lois,
+            'descendants' => $descendants
         ));
     }
 
