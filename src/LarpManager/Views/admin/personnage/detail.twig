@@ -582,17 +582,25 @@
 										{% if lignage.lignee %}<div class="list-group-item">
 											Lignée :<a href="{{ path('lignee.admin.details', {'lignee':lignage.lignee.id}) }}"> {{ lignage.lignee.nom }}</a></div>
 										{% endif %}
+										<li class="list-group-item">
+											<strong>Parents :</strong>
+										</li>
 										<div class="list-group-item">
-											Parent : <a href="{{ path('personnage.admin.detail', {'personnage':lignage.parent1.id}) }}">{{ lignage.parent1.identity }}</a></div>
+											<a href="{{ path('personnage.admin.detail', {'personnage':lignage.parent1.id}) }}">{{ lignage.parent1.identity }}</a></div>
 										{% if lignage.parent2 %}<div class="list-group-item">
-											Parent : <a href="{{ path('personnage.admin.detail', {'personnage':lignage.parent2.id}) }}">{{ lignage.parent2.identity }}</a></div>
+											<a href="{{ path('personnage.admin.detail', {'personnage':lignage.parent2.id}) }}">{{ lignage.parent2.identity }}</a></div>
 										{% endif %}
-										{% for descendants in lignage.descendants %}
-											<li class="list-group-item">Enfant{% if descendants|length > 1 %}s{% endif %} : <a href="{{ path('personnage.admin.detail', {'personnage':descendants.id}) }}">{{ descendants.identity }}</a></li>
-											{% for descendants2 in descendants.descendants %}
-											<li class="list-group-item">Petit{% if descendants2|length > 1 %}s{% endif %}-Enfant{% if descendants2|length > 1 %}s{% endif %} : <a href="{{ path('personnage.admin.detail', {'personnage':descendants2.id}) }}">{{ descendants2.identity }}</a></li>
+
+										{% if descendants|length > 0 %}
+											<li class="list-group-item">
+												<strong>Enfants :</strong>
+											</li>
+
+											{% for descendant in descendants %}
+												<div class="list-group-item">
+													<a href="{{ path('personnage.admin.detail', {'personnage':descendant.personnage.id}) }}">{{ descendant.personnage.identity }}</a></div>
 											{% endfor %}
-										{% endfor %}
+										{% endif %}
 									{% endfor %}
 								{% else %}
 									<p class="list-group-item-text">
