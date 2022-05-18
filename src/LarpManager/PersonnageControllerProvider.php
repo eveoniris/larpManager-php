@@ -45,6 +45,9 @@ class PersonnageControllerProvider implements ControllerProviderInterface
      *  - personnage.admin.update.sort
      *  - personnage.admin.add.sort
      *  - personnage.admin.remove.sort
+     *  - personnage.admin.update.priere
+     *  - personnage.admin.add.priere
+     *  - personnage.admin.remove.priere
 	 *  - personnage.admin.religion.delete
 	 *  - personnage.admin.religion.add
 	 *  - personnage.admin.origine.update
@@ -399,7 +402,7 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 			->before($mustBeOrga);
 			
 		/**
-		 * Mise à jours des prieres
+		 * Page de mise à jours des prieres
 		 */
 		$controllers->match('/admin/{personnage}/update/priere','LarpManager\Controllers\PersonnageController::adminUpdatePriereAction')
 			->assert('personnage', '\d+')
@@ -407,9 +410,31 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 			->method('GET|POST')
 			->convert('personnage', 'converter.personnage:convert')
 			->before($mustBeOrga);
+
+        /**
+         * Ajout d'une prière (orga)
+         */
+        $controllers->match('/admin/{personnage}/add/priere','LarpManager\Controllers\PersonnageController::adminAddPriereAction')
+            ->assert('personnage', '\d+')
+            ->assert('priere', '\d+')
+            ->bind("personnage.admin.add.priere")
+            ->method('GET|POST')
+            ->convert('personnage', 'converter.personnage:convert')
+            ->before($mustBeOrga);
+
+        /**
+         * Retrait d'une prière (orga)
+         */
+        $controllers->match('/admin/{personnage}/remove/priere','LarpManager\Controllers\PersonnageController::adminRemovePriereAction')
+            ->assert('personnage', '\d+')
+            ->assert('sort', '\d+')
+            ->bind("personnage.admin.remove.priere")
+            ->method('GET|POST')
+            ->convert('personnage', 'converter.personnage:convert')
+            ->before($mustBeOrga);
 			
 		/**
-		 * Mise à jours des prieres
+		 * Mise à jours des âges
 		 */
 		$controllers->match('/admin/{personnage}/update/age','LarpManager\Controllers\PersonnageController::adminUpdateAgeAction')
 			->assert('personnage', '\d+')

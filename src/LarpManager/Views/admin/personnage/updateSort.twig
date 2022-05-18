@@ -1,6 +1,6 @@
 {% extends "layout.twig" %}
 
-{% block title %}{{ personnage.publicName }}{% endblock title %}
+{% block title %}{{ personnage.publicName }} liste de sorts{% endblock title %}
 
 {% block content %}
 <div class="container-fluid">
@@ -15,13 +15,14 @@
 	<div class="well bs-component">
 		<table class="table table-striped table-bordered table-condensed">
 			<thead>
-			<tr>Nom</th>
-				<th>Niveau</th>
-				<th>Secret</th>
-				<th>Domaine</th>
-				<th>Description</th>
-				<th>Ajouter/Retirer</th>
-			</tr>
+				<tr>
+					<th>Nom</th>
+					<th>Niveau</th>
+					<th>Secret</th>
+					<th>Domaine</th>
+					<th>Description</th>
+					<th>Ajouter/Retirer</th>
+				</tr>
 			</thead>
 			<tbody>
 			{% for sort in sorts %}
@@ -51,6 +52,5 @@
 			</tbody>
 		</table>
 	</div>
-
 
 {% endblock content %}
