@@ -21,6 +21,8 @@
 namespace LarpManager\Controllers;
 
 use LarpManager\Entities\PersonnageChronologie;
+use LarpManager\Entities\PersonnageLignee;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Common\Collections\ArrayCollection;
 
@@ -48,7 +50,6 @@ use LarpManager\Form\PersonnageForm;
 use LarpManager\Form\TriggerForm;
 use LarpManager\Form\TriggerDeleteForm;
 use LarpManager\Form\PersonnageUpdateForm;
-use LarpManager\Form\PersonnageUpdateSortForm;
 use LarpManager\Form\PersonnageUpdatePotionForm;
 use LarpManager\Form\PersonnageUpdateDomaineForm;
 use LarpManager\Form\PersonnageUpdatePriereForm;
@@ -58,7 +59,7 @@ use LarpManager\Form\PersonnageStatutForm;
 use LarpManager\Form\PersonnageDeleteForm;
 use LarpManager\Form\PersonnageXpForm;
 use LarpManager\Form\TrombineForm;
-
+use LarpManager\Entities\Sort;
 
 
 /**
@@ -1442,38 +1443,22 @@ class PersonnageController
 				'personnage' => $personnage,
 		));
 	}
-	
-	
-	
-	/**
-	 * Modifie la liste des sorts
-	 * @param Request $request
-	 * @param Application $app
-	 */
+
+
+    /**
+     * Affiche la liste des sorts pour modification
+     * @param Request $request
+     * @param Application $app
+     * @return mixed
+     */
 	public function adminUpdateSortAction(Request $request, Application $app)
 	{
 		$personnage = $request->get('personnage');
-			
-		$form = $app['form.factory']->createBuilder(new PersonnageUpdateSortForm(), $personnage)
-			->add('save','submit', array('label' => 'Valider les modifications'))
-			->getForm();
-		
-		$form->handleRequest($request);
-				
-		if ( $form->isValid() )
-		{
-			$personnage = $form->getData();
-			
-			$app['orm.em']->persist($personnage);
-			$app['orm.em']->flush();
-			
-			$app['session']->getFlashBag()->add('success','Le personnage a été sauvegardé.');
-			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),303);
-		}
+        $sorts = $app['orm.em']->getRepository(Sort::class)->findAll();
 		
 		return $app['twig']->render('admin/personnage/updateSort.twig', array(
-				'form' => $form->createView(),
 				'personnage' => $personnage,
+                'sorts' => $sorts,
 		));
 	}
 	
@@ -2251,7 +2236,7 @@ class PersonnageController
 	public function adminAddLigneeAction(Request $request, Application $app)
 	{
 		$personnage = $request->get('personnage');
-		$personnageLignee = new \LarpManager\Entities\PersonnageLignee();
+		$personnageLignee = new PersonnageLignee();
 		$personnageLignee->setPersonnage($personnage);
 		
 		$form = $app['form.factory']->createBuilder(new PersonnageLigneeForm(), $personnageLignee)
@@ -2318,4 +2303,58 @@ class PersonnageController
 				'personnageLignee'=> $personnageLignee,
 		));
 	}
+
+    /**
+     * Ajoute un sort à un personnage
+     *
+     * @param Request $request
+     * @param Application $app
+     * @return RedirectResponse
+     */
+    public function adminAddSortAction(Request $request, Application $app)
+    {
+        $sortID = $request->get('sort');
+        $personnage = $request->get('personnage');
+
+        $sort = $app['orm.em']->getRepository(Sort::class)
+            ->find($sortID);
+
+        $nomSort = $sort->getLabel();
+        $niveauSort = $sort->getNiveau();
+
+        $personnage->addSort($sort);
+
+        $app['orm.em']->flush();
+
+        $app['session']->getFlashBag()->add('success', $nomSort.' '.$niveauSort.' a été ajouté.');
+
+        return $app->redirect($app['url_generator']->generate('personnage.admin.update.sort', array('personnage' => $personnage->getId(),303)));
+    }
+
+    /**
+     * Retire un sort à un personnage
+     *
+     * @param Request $request
+     * @param Application $app
+     * @return RedirectResponse
+     */
+    public function adminRemoveSortAction(Request $request, Application $app)
+    {
+        $sortID = $request->get('sort');
+        $personnage = $request->get('personnage');
+
+        $sort = $app['orm.em']->getRepository(Sort::class)
+            ->find($sortID);
+
+        $nomSort = $sort->getLabel();
+        $niveauSort = $sort->getNiveau();
+
+        $personnage->removeSort($sort);
+
+        $app['orm.em']->flush();
+
+        $app['session']->getFlashBag()->add('success', $nomSort.' '.$niveauSort.' a été retiré.');
+
+        return $app->redirect($app['url_generator']->generate('personnage.admin.update.sort', array('personnage' => $personnage->getId(),303)));
+    }
 }
