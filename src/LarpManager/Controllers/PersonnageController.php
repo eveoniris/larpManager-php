@@ -22,6 +22,7 @@ namespace LarpManager\Controllers;
 
 use LarpManager\Entities\PersonnageChronologie;
 use LarpManager\Entities\PersonnageLignee;
+use LarpManager\Entities\Potion;
 use LarpManager\Entities\Priere;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -51,7 +52,6 @@ use LarpManager\Form\PersonnageForm;
 use LarpManager\Form\TriggerForm;
 use LarpManager\Form\TriggerDeleteForm;
 use LarpManager\Form\PersonnageUpdateForm;
-use LarpManager\Form\PersonnageUpdatePotionForm;
 use LarpManager\Form\PersonnageUpdateDomaineForm;
 use LarpManager\Form\PersonnageUpdateAgeForm;
 use LarpManager\Form\PersonnageBackgroundForm;
@@ -1532,7 +1532,7 @@ class PersonnageController
     }
 	
 	/**
-	 * Modifie la liste des potions
+	 * Affiche la liste des potions pour modification
 	 * 
 	 * @param Request $request
 	 * @param Application $app
@@ -1540,29 +1540,65 @@ class PersonnageController
 	public function adminUpdatePotionAction(Request $request, Application $app)
 	{
 		$personnage = $request->get('personnage');
-			
-		$form = $app['form.factory']->createBuilder(new PersonnageUpdatePotionForm(), $personnage)
-			->add('save','submit', array('label' => 'Valider les modifications'))
-			->getForm();
-	
-		$form->handleRequest($request);
-	
-		if ( $form->isValid() )
-		{
-			$personnage = $form->getData();
-				
-			$app['orm.em']->persist($personnage);
-			$app['orm.em']->flush();
-				
-			$app['session']->getFlashBag()->add('success','Le personnage a été sauvegardé.');
-			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),303);
-		}
+        $potions =$app['orm.em']->getRepository(Potion::class)->findAll();
 	
 		return $app['twig']->render('admin/personnage/updatePotion.twig', array(
-				'form' => $form->createView(),
 				'personnage' => $personnage,
+                'potions' => $potions,
 		));
 	}
+
+    /**
+     * Ajoute une potion à un personnage
+     *
+     * @param Request $request
+     * @param Application $app
+     * @return RedirectResponse
+     */
+    public function adminAddPotionAction(Request $request, Application $app)
+    {
+        $potionID = $request->get('potion');
+        $personnage = $request->get('personnage');
+
+        $potion = $app['orm.em']->getRepository(Potion::class)
+            ->find($potionID);
+
+        $nomPotion = $potion->getLabel();
+
+        $personnage->addPotion($potion);
+
+        $app['orm.em']->flush();
+
+        $app['session']->getFlashBag()->add('success', $nomPotion.' a été ajoutée.');
+
+        return $app->redirect($app['url_generator']->generate('personnage.admin.update.potion', array('personnage' => $personnage->getId(),303)));
+    }
+
+    /**
+     * Retire une potion à un personnage
+     *
+     * @param Request $request
+     * @param Application $app
+     * @return RedirectResponse
+     */
+    public function adminRemovePotionAction(Request $request, Application $app)
+    {
+        $potionID = $request->get('potion');
+        $personnage = $request->get('personnage');
+
+        $potion = $app['orm.em']->getRepository(Potion::class)
+            ->find($potionID);
+
+        $nomPotion = $potion->getLabel();
+
+        $personnage->removePotion($potion);
+
+        $app['orm.em']->flush();
+
+        $app['session']->getFlashBag()->add('success', $nomPotion.' a été retirée.');
+
+        return $app->redirect($app['url_generator']->generate('personnage.admin.update.potion', array('personnage' => $personnage->getId(),303)));
+    }
 	
 	/**
 	 * Modifie la liste des ingrédients
