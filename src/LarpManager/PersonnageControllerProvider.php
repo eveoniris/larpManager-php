@@ -48,6 +48,9 @@ class PersonnageControllerProvider implements ControllerProviderInterface
      *  - personnage.admin.update.priere
      *  - personnage.admin.add.priere
      *  - personnage.admin.remove.priere
+     *  - personnage.admin.update.potion
+     *  - personnage.admin.add.potion
+     *  - personnage.admin.remove.potion
 	 *  - personnage.admin.religion.delete
 	 *  - personnage.admin.religion.add
 	 *  - personnage.admin.origine.update
@@ -300,7 +303,7 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 			->before($mustBeOrga);
 			
 		/**
-		 * Page de mise à jour des sortlèges (orga)
+		 * Page de mise à jour des sortilèges (orga)
 		 */
 		$controllers->match('/admin/{personnage}/update/sort','LarpManager\Controllers\PersonnageController::adminUpdateSortAction')
 			->assert('personnage', '\d+')
@@ -332,7 +335,7 @@ class PersonnageControllerProvider implements ControllerProviderInterface
             ->before($mustBeOrga);
 
         /**
-		 * Ajout d'une potion (orga)
+		 * Page de mise à jours de la liste des potions (orga)
 		 */
 		$controllers->match('/admin/{personnage}/update/potion','LarpManager\Controllers\PersonnageController::adminUpdatePotionAction')
 			->assert('personnage', '\d+')
@@ -340,6 +343,28 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 			->method('GET|POST')
 			->convert('personnage', 'converter.personnage:convert')
 			->before($mustBeOrga);
+
+        /**
+         * Ajout d'une potion (orga)
+         */
+        $controllers->match('/admin/{personnage}/add/potion','LarpManager\Controllers\PersonnageController::adminAddPotionAction')
+            ->assert('personnage', '\d+')
+            ->assert('potion', '\d+')
+            ->bind("personnage.admin.add.potion")
+            ->method('GET|POST')
+            ->convert('personnage', 'converter.personnage:convert')
+            ->before($mustBeOrga);
+
+        /**
+         * Retrait d'une potion (orga)
+         */
+        $controllers->match('/admin/{personnage}/remove/potion','LarpManager\Controllers\PersonnageController::adminRemovePotionAction')
+            ->assert('personnage', '\d+')
+            ->assert('sort', '\d+')
+            ->bind("personnage.admin.remove.potion")
+            ->method('GET|POST')
+            ->convert('personnage', 'converter.personnage:convert')
+            ->before($mustBeOrga);
 			
 		/**
 		 * Modification des ingrédients
