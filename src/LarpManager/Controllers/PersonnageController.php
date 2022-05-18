@@ -22,6 +22,7 @@ namespace LarpManager\Controllers;
 
 use LarpManager\Entities\PersonnageChronologie;
 use LarpManager\Entities\PersonnageLignee;
+use LarpManager\Entities\Priere;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -52,7 +53,6 @@ use LarpManager\Form\TriggerDeleteForm;
 use LarpManager\Form\PersonnageUpdateForm;
 use LarpManager\Form\PersonnageUpdatePotionForm;
 use LarpManager\Form\PersonnageUpdateDomaineForm;
-use LarpManager\Form\PersonnageUpdatePriereForm;
 use LarpManager\Form\PersonnageUpdateAgeForm;
 use LarpManager\Form\PersonnageBackgroundForm;
 use LarpManager\Form\PersonnageStatutForm;
@@ -1389,60 +1389,75 @@ class PersonnageController
 				'personnage' => $personnage,
 		));
 	}
-	
-	/**
-	 * Modifie la liste des prières
-	 * @param Request $request
-	 * @param Application $app
-	 */
+
+    /**
+     * Affiche la liste des prières pour modifications
+     * @param Request $request
+     * @param Application $app
+     * @return mixed
+     */
 	public function adminUpdatePriereAction(Request $request, Application $app)
 	{
 		$personnage = $request->get('personnage');
-
-		$originalPrieres = new ArrayCollection();
-		foreach ( $personnage->getPrieres() as $priere)
-		{
-			$originalPrieres[] = $priere;
-		}
-		
-		$form = $app['form.factory']->createBuilder(new PersonnageUpdatePriereForm(), $personnage)
-			->add('save','submit', array('label' => 'Valider les modifications'))
-			->getForm();
-	
-		$form->handleRequest($request);
-	
-		if ( $form->isValid() )
-		{
-			$personnage = $form->getData();
-
-			foreach($personnage->getPrieres() as $priere)
-			{
-				if ( ! $originalPrieres->contains($priere))
-				{
-					$priere->addPersonnage($personnage);
-				}
-			}
-			
-			foreach ( $originalPrieres as $priere)
-			{
-				if ( ! $personnage->getPrieres()->contains($priere))
-				{
-					$priere->removePersonnage($personnage);
-				}
-			}
-	
-			$app['orm.em']->persist($personnage);
-			$app['orm.em']->flush();
-	
-			$app['session']->getFlashBag()->add('success','Le personnage a été sauvegardé.');
-			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),303);
-		}
+        $prieres = $app['orm.em']->getRepository(Priere::class)->findAll();
 	
 		return $app['twig']->render('admin/personnage/updatePriere.twig', array(
-				'form' => $form->createView(),
 				'personnage' => $personnage,
+                'prieres' => $prieres,
 		));
 	}
+
+    /**
+     * Ajoute une priere à un personnage
+     *
+     * @param Request $request
+     * @param Application $app
+     * @return RedirectResponse
+     */
+    public function adminAddPriereAction(Request $request, Application $app)
+    {
+        $priereID = $request->get('priere');
+        $personnage = $request->get('personnage');
+
+        $priere = $app['orm.em']->getRepository(Priere::class)
+            ->find($priereID);
+
+        $nomPriere = $priere->getLabel();
+
+        $priere->addPersonnage($personnage);
+
+        $app['orm.em']->flush();
+
+        $app['session']->getFlashBag()->add('success', $nomPriere.' a été ajoutée.');
+
+        return $app->redirect($app['url_generator']->generate('personnage.admin.update.priere', array('personnage' => $personnage->getId(), 303)));
+    }
+
+    /**
+     * Retire une priere à un personnage
+     *
+     * @param Request $request
+     * @param Application $app
+     * @return RedirectResponse
+     */
+    public function adminRemovePriereAction(Request $request, Application $app)
+    {
+        $priereID = $request->get('priere');
+        $personnage = $request->get('personnage');
+
+        $priere = $app['orm.em']->getRepository(Priere::class)
+            ->find($priereID);
+
+        $nomPriere = $priere->getLabel();
+
+        $priere->removePersonnage($personnage);
+
+        $app['orm.em']->flush();
+
+        $app['session']->getFlashBag()->add('success', $nomPriere.' a été retirée.');
+
+        return $app->redirect($app['url_generator']->generate('personnage.admin.update.priere', array('personnage' => $personnage->getId(),303)));
+    }
 
 
     /**
@@ -1461,6 +1476,60 @@ class PersonnageController
                 'sorts' => $sorts,
 		));
 	}
+
+    /**
+     * Ajoute un sort à un personnage
+     *
+     * @param Request $request
+     * @param Application $app
+     * @return RedirectResponse
+     */
+    public function adminAddSortAction(Request $request, Application $app)
+    {
+        $sortID = $request->get('sort');
+        $personnage = $request->get('personnage');
+
+        $sort = $app['orm.em']->getRepository(Sort::class)
+            ->find($sortID);
+
+        $nomSort = $sort->getLabel();
+        $niveauSort = $sort->getNiveau();
+
+        $personnage->addSort($sort);
+
+        $app['orm.em']->flush();
+
+        $app['session']->getFlashBag()->add('success', $nomSort.' '.$niveauSort.' a été ajouté.');
+
+        return $app->redirect($app['url_generator']->generate('personnage.admin.update.sort', array('personnage' => $personnage->getId(),303)));
+    }
+
+    /**
+     * Retire un sort à un personnage
+     *
+     * @param Request $request
+     * @param Application $app
+     * @return RedirectResponse
+     */
+    public function adminRemoveSortAction(Request $request, Application $app)
+    {
+        $sortID = $request->get('sort');
+        $personnage = $request->get('personnage');
+
+        $sort = $app['orm.em']->getRepository(Sort::class)
+            ->find($sortID);
+
+        $nomSort = $sort->getLabel();
+        $niveauSort = $sort->getNiveau();
+
+        $personnage->removeSort($sort);
+
+        $app['orm.em']->flush();
+
+        $app['session']->getFlashBag()->add('success', $nomSort.' '.$niveauSort.' a été retiré.');
+
+        return $app->redirect($app['url_generator']->generate('personnage.admin.update.sort', array('personnage' => $personnage->getId(),303)));
+    }
 	
 	/**
 	 * Modifie la liste des potions
@@ -2303,58 +2372,4 @@ class PersonnageController
 				'personnageLignee'=> $personnageLignee,
 		));
 	}
-
-    /**
-     * Ajoute un sort à un personnage
-     *
-     * @param Request $request
-     * @param Application $app
-     * @return RedirectResponse
-     */
-    public function adminAddSortAction(Request $request, Application $app)
-    {
-        $sortID = $request->get('sort');
-        $personnage = $request->get('personnage');
-
-        $sort = $app['orm.em']->getRepository(Sort::class)
-            ->find($sortID);
-
-        $nomSort = $sort->getLabel();
-        $niveauSort = $sort->getNiveau();
-
-        $personnage->addSort($sort);
-
-        $app['orm.em']->flush();
-
-        $app['session']->getFlashBag()->add('success', $nomSort.' '.$niveauSort.' a été ajouté.');
-
-        return $app->redirect($app['url_generator']->generate('personnage.admin.update.sort', array('personnage' => $personnage->getId(),303)));
-    }
-
-    /**
-     * Retire un sort à un personnage
-     *
-     * @param Request $request
-     * @param Application $app
-     * @return RedirectResponse
-     */
-    public function adminRemoveSortAction(Request $request, Application $app)
-    {
-        $sortID = $request->get('sort');
-        $personnage = $request->get('personnage');
-
-        $sort = $app['orm.em']->getRepository(Sort::class)
-            ->find($sortID);
-
-        $nomSort = $sort->getLabel();
-        $niveauSort = $sort->getNiveau();
-
-        $personnage->removeSort($sort);
-
-        $app['orm.em']->flush();
-
-        $app['session']->getFlashBag()->add('success', $nomSort.' '.$niveauSort.' a été retiré.');
-
-        return $app->redirect($app['url_generator']->generate('personnage.admin.update.sort', array('personnage' => $personnage->getId(),303)));
-    }
 }
