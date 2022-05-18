@@ -42,6 +42,9 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 	 *  - personnage.admin.detail
 	 *  - personnage.admin.add
 	 *  - personnage.admin.update
+     *  - personnage.admin.update.sort
+     *  - personnage.admin.add.sort
+     *  - personnage.admin.remove.sort
 	 *  - personnage.admin.religion.delete
 	 *  - personnage.admin.religion.add
 	 *  - personnage.admin.origine.update
@@ -294,16 +297,38 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 			->before($mustBeOrga);
 			
 		/**
-		 * Ajout d'un sortilège (orga)
+		 * Page de mise à jour des sortlèges (orga)
 		 */
 		$controllers->match('/admin/{personnage}/update/sort','LarpManager\Controllers\PersonnageController::adminUpdateSortAction')
 			->assert('personnage', '\d+')
 			->bind("personnage.admin.update.sort")
 			->method('GET|POST')
 			->convert('personnage', 'converter.personnage:convert')
-			->before($mustBeOrga);			
+			->before($mustBeOrga);
 
-		/**
+        /**
+         * Ajout d'un sortilège (orga)
+         */
+        $controllers->match('/admin/{personnage}/add/sort','LarpManager\Controllers\PersonnageController::adminAddSortAction')
+            ->assert('personnage', '\d+')
+            ->assert('sort', '\d+')
+            ->bind("personnage.admin.add.sort")
+            ->method('GET|POST')
+            ->convert('personnage', 'converter.personnage:convert')
+            ->before($mustBeOrga);
+
+        /**
+         * Retrait d'un sortilège (orga)
+         */
+        $controllers->match('/admin/{personnage}/remove/sort','LarpManager\Controllers\PersonnageController::adminRemoveSortAction')
+            ->assert('personnage', '\d+')
+            ->assert('sort', '\d+')
+            ->bind("personnage.admin.remove.sort")
+            ->method('GET|POST')
+            ->convert('personnage', 'converter.personnage:convert')
+            ->before($mustBeOrga);
+
+        /**
 		 * Ajout d'une potion (orga)
 		 */
 		$controllers->match('/admin/{personnage}/update/potion','LarpManager\Controllers\PersonnageController::adminUpdatePotionAction')
