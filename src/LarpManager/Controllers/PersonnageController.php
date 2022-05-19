@@ -20,6 +20,7 @@
  
 namespace LarpManager\Controllers;
 
+use LarpManager\Entities\ExperienceGain;
 use LarpManager\Entities\PersonnageChronologie;
 use LarpManager\Entities\PersonnageLignee;
 use LarpManager\Entities\Potion;
@@ -628,7 +629,7 @@ class PersonnageController
 			$personnage->setXp($xp + $data['xp']);
 				
 			// historique
-			$historique = new \LarpManager\Entities\ExperienceGain();
+			$historique = new ExperienceGain();
 			$historique->setOperationDate(new \Datetime('NOW'));
 			$historique->setXpGain($data['xp']);
 			$historique->setExplanation($data['explanation']);
@@ -705,7 +706,7 @@ class PersonnageController
 			$personnage->setXp($app['larp.manager']->getGnActif()->getXpCreation());
 				
 			// historique
-			$historique = new \LarpManager\Entities\ExperienceGain();
+			$historique = new ExperienceGain();
 			$historique->setExplanation("Création de votre personnage");
 			$historique->setOperationDate(new \Datetime('NOW'));
 			$historique->setPersonnage($personnage);
@@ -729,7 +730,7 @@ class PersonnageController
 			if ( $xpAgeBonus )
 			{
 				$personnage->addXp($xpAgeBonus);
-				$historique = new \LarpManager\Entities\ExperienceGain();
+				$historique = new ExperienceGain();
 				$historique->setExplanation("Bonus lié à l'age");
 				$historique->setOperationDate(new \Datetime('NOW'));
 				$historique->setPersonnage($personnage);
@@ -2074,16 +2075,16 @@ class PersonnageController
 				'form' => $form->createView(),
 				'personnage' => $personnage,
 		));
-	}	
-	
+	}
+
 	/**
 	 * Retire la dernière compétence acquise par un personnage
-	 * 
+	 *
 	 * @param Request $request
 	 * @param Application $app
 	 */
 	public function removeCompetenceAction(Request $request, Application $app)
-	{
+    {
 		$personnage = $request->get('personnage');
 		$lastCompetence = $app['personnage.manager']->getLastCompetence($personnage);
 		
@@ -2100,8 +2101,6 @@ class PersonnageController
 				
 		if ( $form->isValid() )
 		{
-			$data = $form->getData();
-			
 			$cout = $app['personnage.manager']->getCompetenceCout($personnage, $lastCompetence);
 			$xp = $personnage->getXp();
 			
@@ -2109,35 +2108,8 @@ class PersonnageController
 			$personnage->removeCompetence($lastCompetence);
 			$lastCompetence->removePersonnage($personnage);
 			
-			// cas special noblesse
-			// noblesse apprentit +2 renomme
-			// noblesse initie  +3 renomme
-			// noblesse expert +2 renomme
-			// TODO : trouver un moyen pour ne pas implémenter les règles spéciales de ce type dans le code.
-			if ( $lastCompetence->getCompetenceFamily()->getLabel() == "Noblesse")
-			{
-				switch ($lastCompetence->getLevel()->getId())
-				{
-					case 1:
-						$personnage->removeRenomme(2);
-						break;
-					case 2:
-						$personnage->removeRenomme(3);
-						break;
-					case 3:
-						$personnage->removeRenomme(2);
-						break;
-					case 4:
-						$personnage->removeRenomme(5);
-						break;
-					case 5:
-						$personnage->removeRenomme(6);
-						break;
-				}
-			}
-			
 			// historique
-			$historique = new \LarpManager\Entities\ExperienceGain();
+			$historique = new ExperienceGain();
 			$historique->setOperationDate(new \Datetime('NOW'));
 			$historique->setXpGain($cout);
 			$historique->setExplanation('Suppression de la compétence ' . $lastCompetence->getLabel());
