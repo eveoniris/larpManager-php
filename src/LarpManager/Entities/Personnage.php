@@ -28,10 +28,7 @@
 namespace LarpManager\Entities;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use LarpManager\Entities\BasePersonnage;
-use LarpManager\Entities\PugilatHistory;
-use LarpManager\Entities\HeroismeHistory;
-use Doctrine\Common\Annotations\Annotation\Attribute;
+
 
 /**
  * LarpManager\Entities\Personnage
@@ -528,16 +525,17 @@ class Personnage extends BasePersonnage
 		return false;
 	}
 
-	/**
-	 * Fourni le niveau d'une compétence d'un personnage
-	 * @param unknown $label
-	 */
-	public function getCompetenceNiveau($label)
-	{
+    /**
+     * Fourni le niveau d'une compétence d'un personnage
+     * @param string $label
+     * @return int
+     */
+	public function getCompetenceNiveau(string $label): int
+    {
 		$niveau = 0;
 		foreach ( $this->getCompetences() as $competence)
 		{
-			if ( $competence->getCompetenceFamily()->getLabel() == $label)
+			if ( $competence->getCompetenceFamily()->getLabel() === $label)
 			{
 				if ( $niveau < $competence->getLevel()->getIndex() )
 					$niveau = $competence->getLevel()->getIndex();
@@ -774,6 +772,41 @@ class Personnage extends BasePersonnage
 
 		return $heroismeHistories;
 	}
+
+    /**
+     * Fourni le score de Renommée
+     * @override BasePersonnage::getRenomme()
+     */
+    public function getRenomme(): int
+    {
+        $renomme = 0;
+
+        if ( $this->getCompetenceNiveau('Noblesse') >= 1 ) {
+            $renomme += 2;
+        }
+        if ( $this->getCompetenceNiveau('Noblesse') >= 2 ) {
+            $renomme += 3;
+        }
+        if ( $this->getCompetenceNiveau('Noblesse') >= 3 ) {
+            $renomme += 2;
+        }
+        if ( $this->getCompetenceNiveau('Noblesse') >= 4 ) {
+            $renomme += 5;
+        }
+        if ( $this->getCompetenceNiveau('Noblesse') >= 5 ) {
+            $renomme += 6;
+        }
+        if ( $this->getCompetenceNiveau('Stratégie') >= 5 ) {
+            $renomme += 5;
+        }
+
+        foreach ( $this->getRenommeHistories() as $renommeHistory)
+        {
+            $renomme += $renommeHistory->getRenomme();
+        }
+
+        return $renomme;
+    }
 
 	/**
 	 * Fourni le trigger correspondant au tag
@@ -1056,22 +1089,24 @@ class Personnage extends BasePersonnage
 		return $this;
 	}
 
-	/**
-	 * Ajoute des points de renomme à un personnage
-	 * @param unknown $renomme
-	 */
-	public function addRenomme($renomme)
-	{
+    /**
+     * Ajoute des points de renomme à un personnage
+     * @param integer $renomme
+     * @return Personnage
+     */
+	public function addRenomme(int $renomme)
+    {
 		$this->setRenomme($this->getRenomme() + $renomme);
 		return $this;
 	}
 
-	/**
-	 * Retire des points de renomme à un personnage
-	 * @param unknown $renomme
-	 */
-	public function removeRenomme($renomme)
-	{
+    /**
+     * Retire des points de renomme à un personnage
+     * @param integer $renomme
+     * @return Personnage
+     */
+	public function removeRenomme(int $renomme)
+    {
 		$this->setRenomme($this->getRenomme() - $renomme);
 		return $this;
 	}
@@ -1134,13 +1169,6 @@ class Personnage extends BasePersonnage
 	    }
 	    return $s; 
 	}
-
-	/**
-	 * Fourni la liste des descendants directs
-	 */
-	public function getDescendants()
-	{
-	}	
 	
 	/**
 	 * Retourne le dernier participant du personnage
@@ -1344,7 +1372,7 @@ class Personnage extends BasePersonnage
 	    }
 	    return $this->getLastParticipantGnNumber();
 	}
-	
+
 	
 	
 }
