@@ -57,8 +57,8 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 	 *  - personnage.detail
 	 *  - personnage.update
 	 *  - personnage.delete
-	 *  - personnage.competence.add
-	 *  - personnage.competence.remove
+	 *  - personnage.admin.competence.add
+	 *  - personnage.admin.competence.remove
 	 *  - personnage.religion.add
 	 *  - personnage.technologie.update
 	 *

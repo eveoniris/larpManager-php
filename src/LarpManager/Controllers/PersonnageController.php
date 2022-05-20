@@ -20,10 +20,13 @@
  
 namespace LarpManager\Controllers;
 
+use LarpManager\Entities\ExperienceGain;
+use LarpManager\Entities\ExperienceUsage;
 use LarpManager\Entities\PersonnageChronologie;
 use LarpManager\Entities\PersonnageLignee;
 use LarpManager\Entities\Potion;
 use LarpManager\Entities\Priere;
+use LarpManager\Entities\RenommeHistory;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -60,6 +63,7 @@ use LarpManager\Form\PersonnageDeleteForm;
 use LarpManager\Form\PersonnageXpForm;
 use LarpManager\Form\TrombineForm;
 use LarpManager\Entities\Sort;
+use LarpManager\Entities\Competence;
 
 
 /**
@@ -628,7 +632,7 @@ class PersonnageController
 			$personnage->setXp($xp + $data['xp']);
 				
 			// historique
-			$historique = new \LarpManager\Entities\ExperienceGain();
+			$historique = new ExperienceGain();
 			$historique->setOperationDate(new \Datetime('NOW'));
 			$historique->setXpGain($data['xp']);
 			$historique->setExplanation($data['explanation']);
@@ -705,7 +709,7 @@ class PersonnageController
 			$personnage->setXp($app['larp.manager']->getGnActif()->getXpCreation());
 				
 			// historique
-			$historique = new \LarpManager\Entities\ExperienceGain();
+			$historique = new ExperienceGain();
 			$historique->setExplanation("Création de votre personnage");
 			$historique->setOperationDate(new \Datetime('NOW'));
 			$historique->setPersonnage($personnage);
@@ -729,7 +733,7 @@ class PersonnageController
 			if ( $xpAgeBonus )
 			{
 				$personnage->addXp($xpAgeBonus);
-				$historique = new \LarpManager\Entities\ExperienceGain();
+				$historique = new ExperienceGain();
 				$historique->setExplanation("Bonus lié à l'age");
 				$historique->setOperationDate(new \Datetime('NOW'));
 				$historique->setPersonnage($personnage);
@@ -2074,16 +2078,16 @@ class PersonnageController
 				'form' => $form->createView(),
 				'personnage' => $personnage,
 		));
-	}	
-	
+	}
+
 	/**
 	 * Retire la dernière compétence acquise par un personnage
-	 * 
+	 *
 	 * @param Request $request
 	 * @param Application $app
 	 */
 	public function removeCompetenceAction(Request $request, Application $app)
-	{
+    {
 		$personnage = $request->get('personnage');
 		$lastCompetence = $app['personnage.manager']->getLastCompetence($personnage);
 		
@@ -2098,10 +2102,8 @@ class PersonnageController
 		
 		$form->handleRequest($request);
 				
-		if ( $form->isValid() )
+		if ( $form->isValid() && $form->isSubmitted())
 		{
-			$data = $form->getData();
-			
 			$cout = $app['personnage.manager']->getCompetenceCout($personnage, $lastCompetence);
 			$xp = $personnage->getXp();
 			
@@ -2109,43 +2111,51 @@ class PersonnageController
 			$personnage->removeCompetence($lastCompetence);
 			$lastCompetence->removePersonnage($personnage);
 			
-			// cas special noblesse
-			// noblesse apprentit +2 renomme
-			// noblesse initie  +3 renomme
-			// noblesse expert +2 renomme
-			// TODO : trouver un moyen pour ne pas implémenter les règles spéciales de ce type dans le code.
-			if ( $lastCompetence->getCompetenceFamily()->getLabel() == "Noblesse")
-			{
-				switch ($lastCompetence->getLevel()->getId())
-				{
-					case 1:
-						$personnage->removeRenomme(2);
-						break;
-					case 2:
-						$personnage->removeRenomme(3);
-						break;
-					case 3:
-						$personnage->removeRenomme(2);
-						break;
-					case 4:
-						$personnage->removeRenomme(5);
-						break;
-					case 5:
-						$personnage->removeRenomme(6);
-						break;
-				}
-			}
-			
-			// historique
-			$historique = new \LarpManager\Entities\ExperienceGain();
-			$historique->setOperationDate(new \Datetime('NOW'));
-			$historique->setXpGain($cout);
-			$historique->setExplanation('Suppression de la compétence ' . $lastCompetence->getLabel());
-			$historique->setPersonnage($personnage);
+			// historique xp
+			$historiqueXP = new ExperienceGain;
+			$historiqueXP->setOperationDate(new \Datetime('NOW'));
+			$historiqueXP->setXpGain($cout);
+			$historiqueXP->setExplanation('Suppression de la compétence ' . $lastCompetence->getLabel());
+			$historiqueXP->setPersonnage($personnage);
+
+            //historique renommée
+            $competenceNom = $lastCompetence->getCompetenceFamily()->getLabel();
+            $competenceNiveau = $lastCompetence->getLevel()->getLabel();
+            $competenceId = $lastCompetence->getid();
+
+                //si compétence est Noblesse ou Stratégie(5)
+            if ( $competenceId === 151 || $lastCompetence->getCompetenceFamily()->getId() === 26){
+                if ($competenceId === 97){
+                    $renomme = -2;
+                }
+                if ($competenceId === 98){
+                    $renomme = -3;
+                }
+                if ($competenceId === 99){
+                    $renomme = -2;
+                }
+                if ($competenceId === 100){
+                    $renomme = -5;
+                }
+                if ($competenceId === 101 ){
+                    $renomme = -6;
+                }
+                if ($competenceId === 151){
+                    $renomme = -5;
+                }
+
+                $renommeHistory = new RenommeHistory;
+                $renommeHistory->setDate(new \DateTime('NOW'));
+                $renommeHistory->setPersonnage($personnage);
+                $renommeHistory->setExplication("Retrait de ".$competenceNom." ".$competenceNiveau." (retrait automatique)");
+                $renommeHistory->setRenomme($renomme);
+
+                $app['orm.em']->persist($renommeHistory);
+            }
 				
 			$app['orm.em']->persist($lastCompetence);
 			$app['orm.em']->persist($personnage);
-			$app['orm.em']->persist($historique);
+			$app['orm.em']->persist($historiqueXP);
 			$app['orm.em']->flush();
 			
 			$app['session']->getFlashBag()->add('success','La compétence a été retirée');
@@ -2166,7 +2176,7 @@ class PersonnageController
 		
 		$availableCompetences = $app['personnage.manager']->getAvailableCompetences($personnage);
 		
-		if ( $availableCompetences->count() == 0 )
+		if ( $availableCompetences->count() === 0 )
 		{
 			$app['session']->getFlashBag()->add('error','Désolé, il n\'y a plus de compétence disponible.');
 			return $app->redirect($app['url_generator']->generate('homepage'),303);
@@ -2189,12 +2199,12 @@ class PersonnageController
 		
 		$form->handleRequest($request);
 			
-		if ( $form->isValid() )
+		if ( $form->isValid() && $form->isSubmitted() )
 		{
 			$data = $form->getData();
 				
 			$competenceId = $data['competenceId'];
-			$competence = $app['orm.em']->find('\LarpManager\Entities\Competence', $competenceId);
+			$competence = $app['orm.em']->find(Competence::class, $competenceId);
 			
 			$cout = $app['personnage.manager']->getCompetenceCout($personnage, $competence);
 			$xp = $personnage->getXp();
@@ -2208,16 +2218,51 @@ class PersonnageController
 			$personnage->addCompetence($competence);
 			$competence->addPersonnage($personnage);
 			
-			// historique
-			$historique = new \LarpManager\Entities\ExperienceUsage();
-			$historique->setOperationDate(new \Datetime('NOW'));
-			$historique->setXpUse($cout);
-			$historique->setCompetence($competence);
-			$historique->setPersonnage($personnage);
+			// historique xp
+			$historiqueXP = new ExperienceUsage;
+			$historiqueXP->setOperationDate(new \Datetime('NOW'));
+			$historiqueXP->setXpUse($cout);
+			$historiqueXP->setCompetence($competence);
+			$historiqueXP->setPersonnage($personnage);
+
+            //historique renommée
+            $competenceNom = $competence->getCompetenceFamily()->getLabel();
+            $competenceNiveau = $competence->getLevel()->getLabel();
+
+                //si la nouvelle compétence est Noblesse ou Stratégie(5)
+            if ( $competenceId === 151 || $competence->getCompetenceFamily()->getId() === 26){
+                if ($competenceId === 97){
+                    $renomme = 2;
+                }
+                if ($competenceId === 98){
+                    $renomme = 3;
+                }
+                if ($competenceId === 99){
+                    $renomme = 2;
+                }
+                if ($competenceId === 100){
+                    $renomme = 5;
+                }
+                if ($competenceId === 101 ){
+                    $renomme = 6;
+                }
+                if ($competenceId === 151){
+                    $renomme = 5;
+                }
+
+                $renommeHistory = new RenommeHistory;
+                $renommeHistory->setDate(new \DateTime('NOW'));
+                $renommeHistory->setPersonnage($personnage);
+                $renommeHistory->setExplication("Acquisition de ".$competenceNom." ".$competenceNiveau." (ajout automatique)");
+                $renommeHistory->setRenomme($renomme);
+
+                $app['orm.em']->persist($renommeHistory);
+            }
+
 				
 			$app['orm.em']->persist($competence);
 			$app['orm.em']->persist($personnage);
-			$app['orm.em']->persist($historique);
+			$app['orm.em']->persist($historiqueXP);
 			$app['orm.em']->flush();
 				
 			$app['session']->getFlashBag()->add('success','Votre personnage a été sauvegardé.');
