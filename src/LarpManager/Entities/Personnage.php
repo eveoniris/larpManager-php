@@ -28,6 +28,7 @@
 namespace LarpManager\Entities;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping\Entity;
 
 
 /**
@@ -780,25 +781,6 @@ class Personnage extends BasePersonnage
     public function getRenomme(): int
     {
         $renomme = 0;
-
-        if ( $this->getCompetenceNiveau('Noblesse') >= 1 ) {
-            $renomme += 2;
-        }
-        if ( $this->getCompetenceNiveau('Noblesse') >= 2 ) {
-            $renomme += 3;
-        }
-        if ( $this->getCompetenceNiveau('Noblesse') >= 3 ) {
-            $renomme += 2;
-        }
-        if ( $this->getCompetenceNiveau('Noblesse') >= 4 ) {
-            $renomme += 5;
-        }
-        if ( $this->getCompetenceNiveau('Noblesse') >= 5 ) {
-            $renomme += 6;
-        }
-        if ( $this->getCompetenceNiveau('Stratégie') >= 5 ) {
-            $renomme += 5;
-        }
 
         foreach ( $this->getRenommeHistories() as $renommeHistory)
         {
