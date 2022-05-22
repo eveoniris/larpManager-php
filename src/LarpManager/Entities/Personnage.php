@@ -1355,6 +1355,17 @@ class Personnage extends BasePersonnage
 	    return $this->getLastParticipantGnNumber();
 	}
 
-	
+	/**
+	 * Retourne le score d'energie vitale
+	 * 
+	 * @return int
+	 */
+
+	public function getEnergieVitale() : int
+	{
+		$energie_vitale = 1 + $this->getCompetenceNiveau('Magie');
+
+		return $energie_vitale;
+	}
 	
 }

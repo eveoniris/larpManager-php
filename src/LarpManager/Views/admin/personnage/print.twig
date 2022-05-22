@@ -201,10 +201,21 @@ table tr td {
 	<hr />
 	<br />
 	<div class="print-center">
-		<p>Partie à découper et à remettre au PC Joueur par votre meurtrier en cas de mort du personnage.</p>
+		<p>Partie à découper et à remettre au PC Joueur par votre meurtrier en cas de mort de votre personnage.</p>
 		<strong>Numéro du personnage :</strong> #{{ personnage.id }}<br />
 		<strong>Identité du personnage :</strong> {{ personnage.identity }}<br />
 		<h3>MORT</h3>
+	</div>
+	<hr />
+	<div class="print-center">
+		<p>Si cette partie a été découpée, votre personnage ne plus plus être à l'état de Plein santé, il reste à l'état Blessé au maximum et ce jusqu'à la fin du GN.</p>
+	</div>
+	<hr />
+	<div class="print-center">
+		<p>Partie à découper et à remettre au mage responsable de votre ponction vitale.</p>
+		<strong>Numéro du personnage :</strong> #{{ personnage.id }}<br />
+		<strong>Identité du personnage :</strong> {{ personnage.surnom }}<br />
+		<strong>Energie vitale :</strong> {{ personnage.energievitale }}
 	</div>
 	
 	
