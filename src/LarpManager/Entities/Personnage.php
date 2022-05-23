@@ -780,7 +780,7 @@ class Personnage extends BasePersonnage
      */
     public function getRenomme(): int
     {
-        $renomme = 0;
+        $renomme = $this->renomme ?? 0;
 
         foreach ( $this->getRenommeHistories() as $renommeHistory)
         {
