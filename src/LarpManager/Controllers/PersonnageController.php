@@ -2147,7 +2147,7 @@ class PersonnageController
                 $renommeHistory = new RenommeHistory;
                 $renommeHistory->setDate(new \DateTime('NOW'));
                 $renommeHistory->setPersonnage($personnage);
-                $renommeHistory->setExplication("Retrait de ".$competenceNom." ".$competenceNiveau." (retrait automatique)");
+                $renommeHistory->setExplication("[Retrait] ".$competenceNom." ".$competenceNiveau);
                 $renommeHistory->setRenomme($renomme);
 
                 $app['orm.em']->persist($renommeHistory);
@@ -2253,13 +2253,12 @@ class PersonnageController
                 $renommeHistory = new RenommeHistory;
                 $renommeHistory->setDate(new \DateTime('NOW'));
                 $renommeHistory->setPersonnage($personnage);
-                $renommeHistory->setExplication("Acquisition de ".$competenceNom." ".$competenceNiveau." (ajout automatique)");
+                $renommeHistory->setExplication("[Acquisition] ".$competenceNom." ".$competenceNiveau);
                 $renommeHistory->setRenomme($renomme);
 
                 $app['orm.em']->persist($renommeHistory);
             }
 
-				
 			$app['orm.em']->persist($competence);
 			$app['orm.em']->persist($personnage);
 			$app['orm.em']->persist($historiqueXP);
