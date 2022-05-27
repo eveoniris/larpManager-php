@@ -67,7 +67,7 @@ class BaseTechnologie
 
     /**
      * @ManyToOne(targetEntity="CompetenceFamily", inversedBy="technologies", cascade={"persist"})
-     * @JoinColumn(name="competence_family_id", referencedColumnName="id", nullable=false)
+     * @JoinColumn(name="competence_family_id", referencedColumnName="id", nullable=true)
      */
     protected CompetenceFamily $competenceFamily;
 
