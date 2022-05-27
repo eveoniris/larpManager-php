@@ -29,9 +29,9 @@
 					<td>{{ potion.label }}</td>
 					<td>{{ potion.niveau }}</td>
 					<td>{% if potion.secret %}
-							<i class="fa fa-check"></i>
+							<i class="fa fa-user-secret" style="color: #1b8dbb"></i>
 						{% else %}
-							<i class="fa fa-ban"></i>
+							-
 						{% endif %}
 					</td>
 					<td>{{ potion.description |striptags}}</td>
