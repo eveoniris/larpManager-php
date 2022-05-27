@@ -9,30 +9,74 @@
 		<li class="active">Liste des technologies</li>
 	</ol>
 
-	<div class="well well-sm">
-	
-		<a href="{{ path('technologie.add') }}"><i class="fa fa-plus"></i> Ajouter une technologie</a>
-		
-		<ul class="list-group">
-		{% for technologie in technologies %}
-		
-			<li class="list-group-item">
-				<div class="row">
-					<div class="col-md-8">
-						{{ technologie.label }}
-						{{ technologie.description|markdown }}
-					</div>
-					<div class="col-md-4">
-						<a href="{{ path('technologie.update',{'technologie':technologie.id}) }}"><i class="fa fa-pencil"></i> Modifier</a>&nbsp;|&nbsp;
-						<a href="{{ path('technologie.detail',{'technologie':technologie.id}) }}"><i class="fa fa-eye"></i> Detail</a>&nbsp;|&nbsp;
-						<a href="{{ path('technologie.personnages',{'technologie':technologie.id}) }}"><i class="fa fa-users"></i> Personnages</a>&nbsp;|&nbsp;
-						<a href="{{ path('technologie.delete',{'technologie':technologie.id}) }}"><i class="fa fa-eraser"></i> Supprimer</a>
-					</div>
-				</div>
-		    </li>
+{#	<div class="well well-sm">#}
+{#	#}
+{#		<a href="{{ path('technologie.add') }}"><i class="fa fa-plus"></i> Ajouter une technologie</a>#}
+{#		#}
+{#		<ul class="list-group">#}
+{#		{% for technologie in technologies %}#}
+{#		#}
+{#			<li class="list-group-item">#}
+{#				<div class="row">#}
+{#					<div class="col-md-8">#}
+{#						{{ technologie.label }}#}
+{#						{{ technologie.description|markdown }}#}
+{#					</div>#}
+{#					<div class="col-md-4">#}
+{#						<a href="{{ path('technologie.update',{'technologie':technologie.id}) }}"><i class="fa fa-pencil"></i> Modifier</a>&nbsp;|&nbsp;#}
+{#						<a href="{{ path('technologie.detail',{'technologie':technologie.id}) }}"><i class="fa fa-eye"></i> Detail</a>&nbsp;|&nbsp;#}
+{#						<a href="{{ path('technologie.personnages',{'technologie':technologie.id}) }}"><i class="fa fa-users"></i> Personnages</a>&nbsp;|&nbsp;#}
+{#						<a href="{{ path('technologie.delete',{'technologie':technologie.id}) }}"><i class="fa fa-eraser"></i> Supprimer</a>#}
+{#					</div>#}
+{#				</div>#}
+{#		    </li>#}
 
-		{% endfor %}
-	 	</ul>
+{#		{% endfor %}#}
+{#	 	</ul>#}
+{#	</div>#}
+
+	<div class="well bs-component">
+		<a href="{{ path('technologie.add') }}"><i class="fa fa-plus"></i> Ajouter une technologie</a>
+		<table class="table table-striped table-bordered table-condensed">
+			<thead>
+			<tr>
+				<th>Nom</th>
+				<th>Secret</th>
+				<th>Compétence</th>
+				<th>Description</th>
+				<th>Ressources requises</th>
+				<th>Actions</th>
+			</tr>
+			</thead>
+			<tbody>
+			{% for technologie in technologies %}
+				<tr>
+					<td>{{ technologie.label }}</td>
+					<td>{% if technologie.secret %}
+							<i class="fa fa-user-secret" style="color: #1b8dbb"></i>
+						{% else %}
+							-
+						{% endif %}
+					</td>
+					<td>{{ technologie.competenceFamily.label }}</td>
+					<td>{{ technologie.description}}</td>
+					<td>{% for technologieRessource in technologie.ressources %}
+							{{ technologieRessource.quantite }} {{ technologieRessource.ressource.label }} /
+						{% endfor %}
+					</td>
+					<td>
+						<div class="btn-toolbar pull-right" role="toolbar" aria-label="...">
+							<div class="btn-group" role="group" aria-label="..." >
+								<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Modifier" href="{{ path('technologie.update', {'technologie':technologie.id}) }}"><i class="fa fa-pencil"></i></a>
+								<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Personnage" href="{{ path('technologie.personnages', {'technologie':technologie.id}) }}"><i class="fa fa-users"></i></a>
+								<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Supprimer" href="{{ path('technologie.delete', {'technologie':technologie.id}) }}"><i class="fa fa-eraser"></i></a>
+							</div>
+						</div>
+					</td>
+				</tr>
+			{% endfor %}
+			</tbody>
+		</table>
 	</div>
 	
 {% endblock %}

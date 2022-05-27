@@ -4,6 +4,7 @@
 namespace LarpManager\Entities;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\DiscriminatorColumn;
 use Doctrine\ORM\Mapping\DiscriminatorMap;
@@ -14,6 +15,7 @@ use Doctrine\ORM\Mapping\InheritanceType;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\Table;
+
 
 /**
  * LarpManager\Entities\CompetenceFamily
@@ -48,13 +50,13 @@ class BaseCompetenceFamily
      * @JoinColumn (name="id", referencedColumnName="competence_family_id", nullable=false)
      */
 
-    protected ArrayCollection $technologies;
+    protected Collection $technologies;
 
     /**
      * @OneToMany(targetEntity="Competence", mappedBy="competenceFamily", cascade={"persist"})
      * @JoinColumn(name="id", referencedColumnName="competence_family_id", nullable=false)
      */
-    protected ArrayCollection $competences;
+    protected Collection $competences;
 
     public function __construct()
     {
@@ -160,9 +162,9 @@ class BaseCompetenceFamily
     /**
      * Get Competence entity collection (one to many).
      *
-     * @return ArrayCollection
+     * @return Collection
      */
-    public function getCompetences(): ArrayCollection
+    public function getCompetences()
     {
         return $this->competences;
     }
@@ -196,9 +198,9 @@ class BaseCompetenceFamily
     /**
      * Get Technologie entity collection (one to many).
      *
-     * @return ArrayCollection
+     * @return Collection
      */
-    public function getTechnologies(): ArrayCollection
+    public function getTechnologies()
     {
         return $this->technologies;
     }

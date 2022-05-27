@@ -10,6 +10,7 @@
 namespace LarpManager\Entities;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\DiscriminatorColumn;
 use Doctrine\ORM\Mapping\DiscriminatorMap;
@@ -49,19 +50,19 @@ class BaseRessource
      * @OneToMany(targetEntity="GroupeHasRessource", mappedBy="ressource")
      * @JoinColumn(name="id", referencedColumnName="ressource_id", nullable=false)
      */
-    protected ArrayCollection $groupeHasRessources;
+    protected Collection $groupeHasRessources;
 
     /**
      * @OneToMany(targetEntity="PersonnageRessource", mappedBy="ressource")
      * @JoinColumn(name="id", referencedColumnName="ressource_id", nullable=false)
      */
-    protected ArrayCollection $personnageRessources;
+    protected Collection $personnageRessources;
 
     /**
      * @OneToMany(targetEntity="TechnologiesRessources", mappedBy="ressource")
      * @JoinColumn(name="id", referencedColumnName="ressource_id", nullable=false)
      */
-    protected ArrayCollection $technologiesRessources;
+    protected Collection $technologiesRessources;
 
     /**
      * @ManyToOne(targetEntity="Rarete", inversedBy="ressources")
@@ -73,6 +74,7 @@ class BaseRessource
     {
         $this->groupeHasRessources = new ArrayCollection();
         $this->personnageRessources = new ArrayCollection();
+        $this->technologiesRessources= new ArrayCollection();
     }
 
     /**
@@ -150,9 +152,9 @@ class BaseRessource
     /**
      * Get GroupeHasRessource entity collection (one to many).
      *
-     * @return ArrayCollection
+     * @return Collection
      */
-    public function getGroupeHasRessources(): ArrayCollection
+    public function getGroupeHasRessources()
     {
         return $this->groupeHasRessources;
     }
@@ -186,9 +188,9 @@ class BaseRessource
     /**
      * Get PersonnageRessource entity collection (one to many).
      *
-     * @return ArrayCollection
+     * @return Collection
      */
-    public function getPersonnageRessources(): ArrayCollection
+    public function getPersonnageRessources()
     {
         return $this->personnageRessources;
     }
@@ -222,9 +224,9 @@ class BaseRessource
     /**
      * Get TechnologiesRessources entity collection (one to many).
      *
-     * @return ArrayCollection
+     * @return Collection
      */
-    public function getTechnologiesRessources(): ArrayCollection
+    public function getTechnologiesRessources()
     {
         return $this->technologiesRessources;
     }

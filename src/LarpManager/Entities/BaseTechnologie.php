@@ -3,6 +3,7 @@
 namespace LarpManager\Entities;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\DiscriminatorColumn;
 use Doctrine\ORM\Mapping\DiscriminatorMap;
@@ -15,7 +16,6 @@ use Doctrine\ORM\Mapping\ManyToMany;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\Table;
-use phpDocumentor\Reflection\Types\Boolean;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -41,12 +41,12 @@ class BaseTechnologie
      * @Assert\NotNull()
      * @Column(type="string", length=45)
      */
-    protected string $label;
+    protected ?string $label = null;
 
     /**
      * @Column(type="text", length=450)
      */
-    protected string $description;
+    protected ?string $description = null;
 
     /**
      * @Column(type="string", length=45, nullable=true)
@@ -56,14 +56,14 @@ class BaseTechnologie
     /**
      * @Column(type="boolean", nullable=false, options={"default":0})
      */
-    protected Boolean $secret;
+    protected bool $secret;
 
     /**
      * @OneToMany(targetEntity="BaseTechnologiesRessources", mappedBy="technologie", cascade={"persist"})
      * @JoinColumn (name="id", referencedColumnName="technology_id", nullable=false)
      */
 
-    protected ArrayCollection $ressources;
+    protected Collection $ressources;
 
     /**
      * @ManyToOne(targetEntity="CompetenceFamily", inversedBy="technologies", cascade={"persist"})
@@ -74,7 +74,7 @@ class BaseTechnologie
     /**
      * @ManyToMany(targetEntity="Personnage", mappedBy="technologies")
      */
-    protected ArrayCollection $personnages;
+    protected Collection $personnages;
 
     public function __construct()
     {
@@ -120,9 +120,9 @@ class BaseTechnologie
     /**
      * Get the value of label.
      *
-     * @return string
+     * @return string|null
      */
-    public function getLabel(): string
+    public function getLabel(): ?string
     {
         return $this->label;
     }
@@ -143,9 +143,9 @@ class BaseTechnologie
     /**
      * Get the value of description.
      *
-     * @return string
+     * @return string|null
      */
-    public function getDescription(): string
+    public function getDescription(): ?string
     {
         return $this->description;
     }
@@ -217,9 +217,9 @@ class BaseTechnologie
     /**
      * Get BaseTechnologiesRessources entity collection (one to many).
      *
-     * @return ArrayCollection
+     * @return Collection
      */
-    public function getRessources(): ArrayCollection
+    public function getRessources()
     {
         return $this->ressources;
     }
@@ -276,9 +276,9 @@ class BaseTechnologie
     /**
      * Get Personnage entity collection.
      *
-     * @return ArrayCollection
+     * @return Collection
      */
-    public function getPersonnages(): ArrayCollection
+    public function getPersonnages()
     {
         return $this->personnages;
     }
