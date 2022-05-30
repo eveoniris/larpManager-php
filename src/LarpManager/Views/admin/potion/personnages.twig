@@ -10,14 +10,13 @@
 		<li class="active">Personnages ayant {{ potion.label }} - Niveau {{ potion.niveau }}</li>
 	</ol>
 	
-	
 	{{ include('admin/personnage/search.twig',
 		 	{
 			 displayAdminToolbar: false, 
-			 displaySearchFilter: false
-		  	} 
-  		) 
-	 }}	
-	
-	
+			 displaySearchFilter: false,
+			 extraData: 'Alchimie'
+		  	}
+  		)
+	}}
+
 {% endblock content %}

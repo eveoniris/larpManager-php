@@ -6,17 +6,23 @@
 	{% set personnages = personnages is defined ? personnages : [] %}
 	
 	{% set displayAdminToolbar = displayAdminToolbar is defined ? displayAdminToolbar : true %}
+	{% set extraData = extraData is defined ? extraData : false %}
 
 	{% set iconPjConfirmed = '<span title="PJ participant au GN actif">✅</span>' %}
 	{% set iconPjDead = '<span title="Personnage mort">💀</span>' %}
 	{% set iconPnj = '<span title="PNJ">🎭</span>' %}
 	{% set iconPjOld = '<span title="Ancien PJ ne participant pas au GN actif">➖</span>' %}
 	
-	<div class="well well-sm">			
+	<div class="well well-sm">
 			
-		{{ include('admin/personnage/searchHeader.twig') }}	
-		{{ include('admin/personnage/searchResultsTable.twig') }}	
-			
+		{{ include('admin/personnage/searchHeader.twig') }}
+		{{ include('admin/personnage/searchResultsTable.twig',
+		 	{
+				extraData: extraData
+		  	}
+  			)
+		}}
+
 		{{ paginator|raw }}
 	</div>
 

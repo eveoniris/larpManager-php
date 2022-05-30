@@ -13,10 +13,11 @@
 	{{ include('admin/personnage/search.twig',
 		 	{
 			 displayAdminToolbar: false, 
-			 displaySearchFilter: false
-		  	} 
-  		) 
-	 }}	
+			 displaySearchFilter: false,
+			 extraData: 'Magie'
+		  	}
+  		)
+	}}
 	
 	<!-- Previous code (before reusing the same template as admin search) - can probably be removed but keeping for now just in case
 	<div class="list-group">

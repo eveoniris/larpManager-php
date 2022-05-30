@@ -1,7 +1,10 @@
 {% set formPath = formPath is defined ? formPath : 'personnage.admin.list' %}
 {% set formParams = formParams is defined ? formParams : {} %}
+{% set extraData = extraData is defined ? extraData : false %}
 
 {% block content %}
+
+<t1>{{ extraData }}</t1>
 
 {% import "admin/filterMacros.html.twig" as macros %}
 
@@ -9,17 +12,22 @@
 		<thead>
 			<tr>
 			{% for columnDef in columnDefinitions %}
-			   <th class="personnage-list-column-{{columnDef['fieldName']}}">
+			    <th class="personnage-list-column-{{columnDef['fieldName']}}">
 					<a title="{{columnDef['tooltip']}}" href="{{ path(formPath, formParams|merge({'order_by': columnDef['sortFieldName'], 'order_dir': macros.getDirection(app,columnDef['sortFieldName'])|trim}))~optionalParameters }}">
 						{{ columnDef['label'] }} {{ macros.getCaret(app, columnDef['sortFieldName']) }}
 					</a>
 				</th>
 			{% endfor %}
+			{% if extraData %}
+			<th class="personnage-list-column-{{ extraData }}">
+				{{ extraData }}
+			</th>
+			{% endif %}
 			</tr>
 		</thead>
 		<tbody>
 			{% for personnage in personnages %}
-				<tr>				
+				<tr>
 					{% for columnDef in columnDefinitions %}
 						{% set fieldName = columnDef['fieldName'] %}
 						<td class="personnage-list-column-{{fieldName}}">
@@ -61,6 +69,11 @@
 						{% endif %}
 						</td>
 					{% endfor %}
+					{% if extraData %}
+					<td class="personnage-list-column-{{ extraData }}">
+						{{ personnage.getCompetenceNiveau(extraData) }}
+					</td>
+					{% endif %}
 				</tr>
 			{% endfor %}
 		</tbody>
