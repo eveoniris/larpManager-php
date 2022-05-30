@@ -20,10 +20,15 @@
 
 namespace LarpManager\Form\Technologie;
 
+use LarpManager\Entities\CompetenceFamily;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use Doctrine\ORM\EntityRepository;
 
 /**
  * LarpManager\Form\Groupe\TechnologieForm
@@ -41,16 +46,27 @@ class TechnologieForm extends AbstractType
 	 */
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
-		$builder->add('label','text')
-				->add('description','textarea', array(
-						'required' => false,
-						'label' => 'Description succinte',
-						'attr' => array(
-							'class' => 'tinymce',
-							'row' => 9,
-						),
+		$builder->add('label', TextType::class, array(
+                    'required' => true,
+                    'label' => 'Nom'
+
+        ))
+				->add('description', TextareaType::class, array(
+                    'required' => false,
+                    'label' => 'Description succinte',
 				))
-				->add('submit', 'submit', array('label' => 'Valider'));
+                ->add('competenceFamily', EntityType::class, array(
+                    'class'=> CompetenceFamily::class,
+                    'required'=>true,
+                    'label'=> 'Compétence Expert requise',
+                    'property' => 'label',
+                ))
+
+                ->add('secret', CheckboxType::class, array(
+                    'label' => 'Technologie secrète ?'
+                ))
+
+				->add('submit', SubmitType::class, array('label' => 'Valider'));
 	}
 
 	/**

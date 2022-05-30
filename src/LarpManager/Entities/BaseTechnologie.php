@@ -56,7 +56,7 @@ class BaseTechnologie
     /**
      * @Column(type="boolean", nullable=false, options={"default":0})
      */
-    protected bool $secret;
+    protected bool $secret = false;
 
     /**
      * @OneToMany(targetEntity="BaseTechnologiesRessources", mappedBy="technologie", cascade={"persist"})
@@ -69,7 +69,7 @@ class BaseTechnologie
      * @ManyToOne(targetEntity="CompetenceFamily", inversedBy="technologies", cascade={"persist"})
      * @JoinColumn(name="competence_family_id", referencedColumnName="id", nullable=true)
      */
-    protected CompetenceFamily $competenceFamily;
+    protected ?CompetenceFamily $competenceFamily = null;
 
     /**
      * @ManyToMany(targetEntity="Personnage", mappedBy="technologies")
