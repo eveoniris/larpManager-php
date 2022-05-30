@@ -1,0 +1,23 @@
+{% extends "layout.twig" %}
+
+{% block title %}Technologie Ajout Ressource {% endblock title %}
+
+{% block content %}
+
+    <ol class="breadcrumb">
+        <li><a href="{{ path('homepage') }}">Accueil</a></li>
+        <li><a href="{{ path('technologie') }}">Liste des technologies</a></li>
+        <li class="active">Ajouter une ressource requise</li>
+    </ol>
+
+
+    <div class="well bs-component">
+        <form action="{{ path('technologie.ressource.add', {'technologie':technologie.id}) }}" method="POST" {{ form_enctype(form) }} novalidate>
+            <fieldset>
+                <legend>Ajout d'une ressource requise</legend>
+                {% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+                {{ form(form) }}
+            </fieldset>
+        </form>
+    </div>
+{% endblock content %}
