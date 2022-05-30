@@ -34,7 +34,7 @@
 						{% if fieldName == 'id' %}	
 					    	{{ personnage.id }}
 					    {% elseif fieldName == 'status' %}
-					    	{% if personnage.vivant == 0 %}{{ iconPjDead | raw }}{% elseif personnage.isPnj() %}{{ iconPnj | raw }}{% elseif personnage.isLastParticipantOnActiveGn() %}<span class="">{{ iconPjConfirmed | raw }}</span>{% else %}{{ iconPjOld | raw }}{% endif %}
+					    	{% if personnage.vivant == 0 %}{{ iconPjDead | raw }}{% elseif personnage.isPnj() %}{{ iconPnj | raw }}{% elseif personnage.isLastParticipantOnActiveGn() %}{{ iconPjConfirmed | raw }}{% else %}{{ iconPjOld | raw }}{% endif %}
 					    {% elseif fieldName == 'nom' %}
 					    	<a href="{{ path('personnage.admin.detail', {'personnage':personnage.id}) }}">{{ personnage.fullName }}</a>
 					    {% elseif fieldName == 'classe' %}
