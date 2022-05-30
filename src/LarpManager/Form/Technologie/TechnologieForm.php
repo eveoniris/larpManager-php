@@ -29,6 +29,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use LarpManager\Entities\Technologie;
 
 /**
  * LarpManager\Form\Groupe\TechnologieForm
@@ -77,7 +78,7 @@ class TechnologieForm extends AbstractType
 	public function setDefaultOptions(OptionsResolverInterface $resolver)
 	{
 		$resolver->setDefaults(array(
-				'data_class' => '\LarpManager\Entities\Technologie',
+				'data_class' => Technologie::class,
 		));
 	}
 

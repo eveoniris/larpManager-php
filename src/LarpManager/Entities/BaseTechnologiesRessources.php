@@ -39,7 +39,7 @@ class BaseTechnologiesRessources
      * @Assert\NotBlank()
      * @Column (type="integer")
      */
-    protected int $quantite;
+    protected ?int $quantite = null;
 
     /**
      * @ManyToOne(targetEntity="Technologie", inversedBy="technologieRessource", cascade={"persist"})
@@ -51,7 +51,7 @@ class BaseTechnologiesRessources
      * @ManyToOne(targetEntity="Ressource", inversedBy="technologieRessource", cascade={"persist"})
      * @JoinColumn(name="ressource_id", referencedColumnName="id")
      */
-    protected Ressource $ressource;
+    protected ?Ressource $ressource = null;
 
     /**
      * @return int
@@ -72,7 +72,7 @@ class BaseTechnologiesRessources
     /**
      * @return int
      */
-    public function getQuantite(): int
+    public function getQuantite()
     {
         return $this->quantite;
     }
@@ -104,7 +104,7 @@ class BaseTechnologiesRessources
     /**
      * @return Ressource
      */
-    public function getRessource(): Ressource
+    public function getRessource()
     {
         return $this->ressource;
     }

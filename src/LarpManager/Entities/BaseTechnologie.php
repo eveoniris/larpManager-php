@@ -63,7 +63,7 @@ class BaseTechnologie
      * @JoinColumn (name="id", referencedColumnName="technology_id", nullable=false)
      */
 
-    protected Collection $ressources;
+    protected  $ressources;
 
     /**
      * @ManyToOne(targetEntity="CompetenceFamily", inversedBy="technologies", cascade={"persist"})
@@ -79,6 +79,7 @@ class BaseTechnologie
     public function __construct()
     {
         $this->personnages = new ArrayCollection();
+        $this->ressources = new ArrayCollection();
     }
 
     /**
