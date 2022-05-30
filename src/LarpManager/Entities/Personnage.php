@@ -1280,7 +1280,7 @@ class Personnage extends BasePersonnage
 	 */
 	public function getFullName() : string
 	{
-	    return $this->getNom().(!empty($this->getSurnom()) ? ' '.$this->getSurnom() : '');
+	    return $this->getNom().(!empty($this->getSurnom()) ? ' ('.$this->getSurnom().')' : '');
 	}
 	
 	/**
