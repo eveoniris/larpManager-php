@@ -28,7 +28,7 @@ class LigneeController
     public function adminListAction(Request $request, Application $app)
     {
         $order_by = $request->get('order_by') ?: 'id';
-        $order_dir = $request->get('order_dir') == 'DESC' ? 'DESC' : 'ASC';
+        $order_dir = $request->get('order_dir') === 'DESC' ? 'DESC' : 'ASC';
         $limit = (int)($request->get('limit') ?: 50);
         $page = (int)($request->get('page') ?: 1);
         $offset = ($page - 1) * $limit;
@@ -78,7 +78,7 @@ class LigneeController
     {
         $id = $request->get('lignee');
 
-        $lignee = $app['orm.em']->find('\LarpManager\Entities\Lignee',$id);
+        $lignee = $app['orm.em']->find(Lignee::class,$id);
 
         /**
          * Si la lignee existe, on affiche ses détails
@@ -206,7 +206,7 @@ class LigneeController
     public function adminAddMembreAction(Request $request, Application $app)
     {
         $id = $request->get('lignee');
-        $lignee = $app['orm.em']->find('\LarpManager\Entities\Lignee',$id);
+        $lignee = $app['orm.em']->find(Lignee::class,$id);
 
         $form = $app['form.factory']->createBuilder(new LigneeAddMembreForm())->getForm();
 
