@@ -197,16 +197,26 @@ class TechnologieController
         $technologieId = $request->get('technologie');
         $technologie = $app['orm.em']->find(Technologie::class,$technologieId);
 
-        $form = $app['form.factory']->createBuilder(new TechnologiesRessourcesForm(),new TechnologiesRessources())->getForm();
+        $form = $app['form.factory']->createBuilder(new TechnologiesRessourcesForm())->getForm();
 
         $form->handleRequest($request);
 
         if ($form->isValid() && $form->isSubmitted())
         {
-            $ressource = $form->getData();
-            $ressource->setTechnologie($technologie);
+            $technologieRessource = $form->getData();
+            $ressourceId = $technologieRessource->getRessource()->getId();
 
-            $app['orm.em']->persist($ressource);
+            $oldRessource = $app['orm.em']->getRepository(TechnologiesRessources::class)
+                ->findOneBy(array('technologie' => $technologieId, 'ressource' => $ressourceId));
+            $newQuantite = $technologieRessource->getQuantite();
+
+            if($oldRessource)
+            {
+                $oldRessource->setQuantite($newQuantite);
+            }else{
+                $technologieRessource->setTechnologie($technologie);
+                $app['orm.em']->persist($technologieRessource);
+            }
             $app['orm.em']->flush();
             $app['session']->getFlashBag()->add('success', 'La ressource a été ajoutée.');
             return $app->redirect($app['url_generator']->generate('technologie') ,303);

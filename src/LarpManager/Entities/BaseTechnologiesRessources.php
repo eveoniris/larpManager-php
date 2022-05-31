@@ -31,7 +31,7 @@ class BaseTechnologiesRessources
      * @Column(type="integer", options={"unsigned":true})
      * @GeneratedValue(strategy="AUTO")
      */
-    protected int $id;
+    protected ?int $id = null;
 
     /**
      * @Assert\GreaterThan(0)
@@ -56,7 +56,7 @@ class BaseTechnologiesRessources
     /**
      * @return int
      */
-    public function getId(): int
+    public function getId()
     {
         return $this->id;
     }
