@@ -35,7 +35,11 @@
 					<td>{{ technologie.competenceFamily.label }}</td>
 					<td>{{ technologie.description | striptags}}</td>
 					<td>{% for technologieRessource in technologie.ressources %}
-							{{ technologieRessource.quantite }} {{ technologieRessource.ressource.label }} /
+							{{ technologieRessource.quantite }} {{ technologieRessource.ressource.label }}
+							<a class="btn" data-toggle="tooltip" data-placement="top" title="Retirer {{ technologieRessource.ressource.label }}"
+								href="{{ path('technologie.ressource.remove', {'technologie':technologie.id, 'ressource':technologieRessource.ressource.id, 'ressourceNom':technologieRessource.ressource.label}) }}"
+								onclick="return confirm('Vous vous apprétez à retirer {{ technologieRessource.ressource.label }} de {{ technologie.label }}. Confirmer ?')">
+								<i class="fa fa-trash"></i></a> /
 						{% endfor %}
 					</td>
 					<td>

@@ -227,4 +227,26 @@ class TechnologieController
             'form' => $form->createView(),
         ));
     }
+
+    /**
+     * Retrait d'une ressource à une technologie
+     * @param Request $request
+     * @param Application $app
+     */
+    public function removeRessourceAction(Request $request, Application $app)
+    {
+        $technologie = $request->get('technologie');
+        $ressourceNom = $request->get('ressourceNom');
+        $ressource = $request->get('ressource');
+
+        $technologieRessource = $app['orm.em']->getRepository(TechnologiesRessources::class)
+            ->findOneBy(array('technologie' => $technologie, 'ressource' => $ressource));
+
+        $app['orm.em']->remove($technologieRessource);
+        $app['orm.em']->flush();
+
+        $app['session']->getFlashBag()->add('success', $ressourceNom.' a été retiré de la technologie.');
+
+        return $app->redirect($app['url_generator']->generate('technologie') ,303);
+    }
 }

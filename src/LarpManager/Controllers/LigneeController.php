@@ -249,7 +249,7 @@ class LigneeController
         $membreNom = $request->get('membreNom');
         $membre = $request->get('membre');
 
-        $personnageLignee = $app['orm.em']->find('\LarpManager\Entities\PersonnageLignee',$membre);
+        $personnageLignee = $app['orm.em']->find(PersonnageLignee::class,$membre);
 
         $app['orm.em']->remove($personnageLignee);
         $app['orm.em']->flush();
