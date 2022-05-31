@@ -33,23 +33,28 @@
 						{% endif %}
 					</td>
 					<td>{{ technologie.competenceFamily.label }}</td>
-					<td>{{ technologie.description | striptags}}</td>
-					<td>{% for technologieRessource in technologie.ressources %}
+					<td style="width: 33%">{{ technologie.description | striptags}}</td>
+					<td style="width: 33%">{% for technologieRessource in technologie.ressources %}
 							{{ technologieRessource.quantite }} {{ technologieRessource.ressource.label }}
 							<a class="btn" data-toggle="tooltip" data-placement="top" title="Retirer {{ technologieRessource.ressource.label }}"
 								href="{{ path('technologie.ressource.remove', {'technologie':technologie.id, 'ressource':technologieRessource.ressource.id, 'ressourceNom':technologieRessource.ressource.label}) }}"
 								onclick="return confirm('Vous vous apprétez à retirer {{ technologieRessource.ressource.label }} de {{ technologie.label }}. Confirmer ?')">
-								<i class="fa fa-trash"></i></a> /
+								<i class="fa fa-trash"></i></a>/
 						{% endfor %}
+						<a class="btn" data-toggle="tooltip" data-placement="top" title="Ajouter/Modifier une Ressource"
+						   href="{{ path('technologie.ressource.add', {'technologie':technologie.id}) }}">
+							<i class="fa fa-plus"></i>
+						</a>
 					</td>
 					<td>
 						<div class="btn-toolbar pull-right" role="toolbar" aria-label="...">
-							<div class="btn-group" role="group" aria-label="..." >
-								<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Modifier" href="{{ path('technologie.update', {'technologie':technologie.id}) }}"><i class="fa fa-pencil"></i></a>
-								<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Ajouter une Ressource" href="{{ path('technologie.ressource.add', {'technologie':technologie.id}) }}"><i class="fa fa-balance-scale"></i></a>
-								<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Voir Personnages" href="{{ path('technologie.personnages', {'technologie':technologie.id}) }}"><i class="fa fa-users"></i></a>
-								<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Supprimer" href="{{ path('technologie.delete', {'technologie':technologie.id}) }}"><i class="fa fa-eraser"></i></a>
-							</div>
+							<fieldset>
+								<div class="btn-group" role="group" aria-label="..." >
+									<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Modifier" href="{{ path('technologie.update', {'technologie':technologie.id}) }}"><i class="fa fa-pencil"></i></a>
+									<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Voir Personnages" href="{{ path('technologie.personnages', {'technologie':technologie.id}) }}"><i class="fa fa-users"></i></a>
+									<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Supprimer" href="{{ path('technologie.delete', {'technologie':technologie.id}) }}"><i class="fa fa-eraser"></i></a>
+								</div>
+							</fieldset>
 						</div>
 					</td>
 				</tr>
