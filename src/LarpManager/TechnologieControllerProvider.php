@@ -42,7 +42,8 @@ class TechnologieControllerProvider implements ControllerProviderInterface
 	 *  - technologie.delete
 	 *  - technologie.document
 	 *  - technologie.document.delete
-     *  - techologie.resource.add
+     *  - technologie.resource.add
+     *  - technologie.ressource.remove
 	 *
 	 * @param Application $app
 	 * @return Controllers $controllers
@@ -105,6 +106,16 @@ class TechnologieControllerProvider implements ControllerProviderInterface
             ->assert('technologie', '\d+')
             ->convert('technologie', 'converter.technologie:convert')
             ->bind('technologie.ressource.add')
+            ->method('GET|POST')
+            ->before($mustBeScenariste);
+
+        /**
+         * Retrait d'une ressource requise pour une technologie
+         */
+        $controllers->match('/{technologie}/removeRessource','LarpManager\Controllers\TechnologieController::removeRessourceAction')
+            ->assert('technologie', '\d+')
+            ->convert('technologie', 'converter.technologie:convert')
+            ->bind('technologie.ressource.remove')
             ->method('GET|POST')
             ->before($mustBeScenariste);
 
