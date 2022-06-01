@@ -480,7 +480,7 @@ class UserManager implements UserProviderInterface
 	
 		// If username is required, ensure it is set.
 		if ( !$user->getRealUsername()) {
-			$errors['username'] = 'Pseudo requis.';
+			$errors['username'] = 'Pseudonyme requis.';
 		}
 	
 		return $errors;
