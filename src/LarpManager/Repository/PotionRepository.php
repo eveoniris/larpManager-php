@@ -20,6 +20,7 @@
 
 namespace LarpManager\Repository;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityRepository;
 
 /**
@@ -37,7 +38,8 @@ class PotionRepository extends EntityRepository
 	public function findByNiveau($niveau)
 	{
 		$potions = $this->getEntityManager()
-				->createQuery('SELECT p FROM LarpManager\Entities\Potion p Where p.niveau = '.$niveau.' and (p.secret = false or p.secret is null) ORDER BY p.label ASC')
+				->createQuery('SELECT p FROM LarpManager\Entities\Potion p Where p.niveau = ?1 and (p.secret = false or p.secret is null) ORDER BY p.label ASC')
+                ->setParameter(1, $niveau)
 				->getResult();
 		
 		return $potions;

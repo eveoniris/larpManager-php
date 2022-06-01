@@ -45,7 +45,8 @@ class AnnonceRepository extends EntityRepository
 		
 		foreach ( $criteria as $criter )
 		{
-			$qb->addWhere($criter);
+			$qb->andWhere('?1');
+            $qb->setParameter(1, $criter);
 		}
 		
 		return $qb->getQuery()->getSingleScalarResult();
