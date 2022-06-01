@@ -474,7 +474,7 @@ class UserManager implements UserProviderInterface
 				if ($user->getId() && $dup->getId() == $user->getId()) {
 					continue;
 				}
-				$errors['username'] = 'Pseudo invalide, veuillez en choisir un autre.';
+				$errors['username'] = 'Pseudonyme invalide, veuillez en choisir un autre.';
 			}
 		}
 	
