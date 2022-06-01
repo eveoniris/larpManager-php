@@ -71,7 +71,7 @@ class TechnologieForm extends AbstractType
 	}
 
 	/**
-	 * Définition de l'entité conercné
+	 * Définition de l'entité concernée
 	 * 
 	 * @param OptionsResolverInterface $resolver
 	 */

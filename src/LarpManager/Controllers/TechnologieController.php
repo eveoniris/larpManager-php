@@ -38,7 +38,7 @@ class TechnologieController
 	 */
 	public function indexAction(Request $request, Application $app)
 	{
-		$technologies = $app['orm.em']->getRepository('LarpManager\Entities\Technologie')->findAll();
+		$technologies = $app['orm.em']->getRepository(Technologie::class)->findAll();
 		
 		return $app['twig']->render('admin\technologie\index.twig', array(
 			'technologies' => $technologies,	
@@ -196,6 +196,7 @@ class TechnologieController
     {
         $technologieId = $request->get('technologie');
         $technologie = $app['orm.em']->find(Technologie::class,$technologieId);
+        $technologieNom = $technologie->getLabel();
 
         $form = $app['form.factory']->createBuilder(new TechnologiesRessourcesForm())->getForm();
 
@@ -205,20 +206,25 @@ class TechnologieController
         {
             $technologieRessource = $form->getData();
             $ressourceId = $technologieRessource->getRessource()->getId();
+            $ressourceNom = $technologieRessource->getRessource()->getLabel();
 
+            //recherche une instance de TechnologiesRessources correspondant à la technologie et la ressource sélectionnées
             $oldRessource = $app['orm.em']->getRepository(TechnologiesRessources::class)
                 ->findOneBy(array('technologie' => $technologieId, 'ressource' => $ressourceId));
             $newQuantite = $technologieRessource->getQuantite();
 
+            //Si la TechnologiesRessources existe déjà
             if($oldRessource)
             {
+                //mise à jour de la Quantite
                 $oldRessource->setQuantite($newQuantite);
             }else{
+                //création d'une nouvelle entrée TechnologiesRessources
                 $technologieRessource->setTechnologie($technologie);
                 $app['orm.em']->persist($technologieRessource);
             }
             $app['orm.em']->flush();
-            $app['session']->getFlashBag()->add('success', 'La ressource a été ajoutée.');
+            $app['session']->getFlashBag()->add('success', $technologieNom.' requiert désormais '.$newQuantite.' '.$ressourceNom);
             return $app->redirect($app['url_generator']->generate('technologie') ,303);
         }
 
@@ -235,17 +241,19 @@ class TechnologieController
      */
     public function removeRessourceAction(Request $request, Application $app)
     {
-        $technologie = $request->get('technologie');
+        $technologieId = $request->get('technologie');
+        $technologie = $app['orm.em']->find(Technologie::class,$technologieId);
+        $technologieNom = $technologie->getLabel();
         $ressourceNom = $request->get('ressourceNom');
         $ressource = $request->get('ressource');
 
         $technologieRessource = $app['orm.em']->getRepository(TechnologiesRessources::class)
-            ->findOneBy(array('technologie' => $technologie, 'ressource' => $ressource));
+            ->findOneBy(array('technologie' => $technologieId, 'ressource' => $ressource));
 
         $app['orm.em']->remove($technologieRessource);
         $app['orm.em']->flush();
 
-        $app['session']->getFlashBag()->add('success', $ressourceNom.' a été retiré de la technologie.');
+        $app['session']->getFlashBag()->add('success', $technologieNom.' ne requiert plus de '.$ressourceNom.'.');
 
         return $app->redirect($app['url_generator']->generate('technologie') ,303);
     }

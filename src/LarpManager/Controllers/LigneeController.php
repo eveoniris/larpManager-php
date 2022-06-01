@@ -46,7 +46,7 @@ class LigneeController
             $value = $data['search'];
         }
 
-        $repo = $app['orm.em']->getRepository('\LarpManager\Entities\Lignee');
+        $repo = $app['orm.em']->getRepository(Lignee::class);
 
         $lignees = $repo->findList(
             $type,
@@ -147,13 +147,13 @@ class LigneeController
     {
         $id = $request->get('lignee');
 
-        $lignee = $app['orm.em']->find('\LarpManager\Entities\Lignee',$id);
+        $lignee = $app['orm.em']->find(Lignee::class,$id);
 
         $form = $app['form.factory']->createBuilder(new LigneeForm(), $lignee)
             ->add('update','submit', array('label' => "Sauvegarder"))
             ->add('delete','submit', array(
                 'label' => "Supprimer",
-                'attr'=> array( 'onclick' => 'return confirm("Vous vous apprétez à supprimer cette lignée. Confirmer ?")')))
+                'attr'=> array( 'onclick' => 'return confirm("Vous vous apprêtez à supprimer cette lignée. Confirmer ?")')))
             ->getForm();
 
         $form->handleRequest($request);
@@ -163,8 +163,8 @@ class LigneeController
             $lignee = $form->getData();
 
             /**
-             * Si l'utilisateur a cliquer sur "update", on met à jour la lignée
-             * Si l'utilisateur a cliquer sur "delete", on supprime la lignée
+             * Si l'utilisateur a cliqué sur "update", on met à jour la lignée
+             * Si l'utilisateur a cliqué sur "delete", on supprime la lignée
              */
             if ($form->get('update')->isClicked())
             {
