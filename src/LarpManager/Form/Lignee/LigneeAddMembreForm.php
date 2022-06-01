@@ -4,9 +4,12 @@ namespace LarpManager\Form\Lignee;
 
 
 use Doctrine\ORM\EntityRepository;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use LarpManager\Entities\Personnage;
+use LarpManager\Entities\PersonnageLignee;
 
 /**
  * LarpManager\Form\Lignee\LigneeAddMembreForm
@@ -24,15 +27,15 @@ class LigneeAddMembreForm extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('personnage', 'entity', array(
+        $builder->add('personnage', EntityType::class, array(
             'required' => true,
             'label' => 'Choisissez le personnage membre',
-            'class' => 'LarpManager\Entities\Personnage',
+            'class' => Personnage::class,
             'query_builder' => function(EntityRepository $er) {
 
                 /*trouve les personnages ayant une lignée*/
                 $sqb = $er->createQueryBuilder('m');
-                $sqb->join('LarpManager\Entities\PersonnageLignee', 'pl', 'WITH', 'm.id = pl.personnage');
+                $sqb->join(PersonnageLignee::class, 'pl', 'WITH', 'm.id = pl.personnage');
                 $dqlString = $sqb->getQuery()->getDQL();
 
                 /*trouve les personnages n'ayant pas de lignée*/
@@ -50,10 +53,10 @@ class LigneeAddMembreForm extends AbstractType
             'mapped' => false,
             ))
 
-            ->add('parent1', 'entity', array(
+            ->add('parent1', EntityType::class, array(
             'required' => true,
             'label' => 'Choisissez le parent du membre',
-            'class' => 'LarpManager\Entities\Personnage',
+            'class' => Personnage::class,
             'query_builder' => function(EntityRepository $er) {
                 $qb = $er->createQueryBuilder('p');
                 $qb->orderBy('p.nom', 'ASC');
@@ -68,10 +71,10 @@ class LigneeAddMembreForm extends AbstractType
             'mapped' => false,
             ))
 
-            ->add('parent2', 'entity', array(
+            ->add('parent2', EntityType::class, array(
                 'required' => false,
                 'label' => 'Choisissez le second parent',
-                'class' => 'LarpManager\Entities\Personnage',
+                'class' => Personnage::class,
                 'query_builder' => function(EntityRepository $er) {
                     $qb = $er->createQueryBuilder('p');
                     $qb->orderBy('p.nom', 'ASC');
