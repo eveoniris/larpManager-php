@@ -80,16 +80,52 @@
 								</span>
 							{% endif %}
 						{% endif %}
-						</a>
+							</a>
 					</th>
 					<th>
-						Groupe
+						{% if app.request.get('order_dir') == 'ASC' and app.request.get('order_by') == 'gn' %}
+						<a href="{{ path('debriefing.list', {'order_by': 'gn', 'order_dir': 'DESC'}) }}">
+							{%  else %}
+							<a href="{{ path('debriefing.list', {'order_by': 'gn', 'order_dir': 'ASC'}) }}">
+								{% endif %}
+								GN
+								{% if app.request.get('order_by') == 'gn'  %}
+									{% if app.request.get('order_dir') == 'ASC' %}
+										<span class="caret"></span>
+									{%else%}
+										<span class="dropup">
+	 									<span class="caret"></span>
+								</span>
+									{% endif %}
+								{% endif %}
+							</a>
+					</th>
+					<th>
+						{% if app.request.get('order_dir') == 'ASC' and app.request.get('order_by') == 'groupe' %}
+						<a href="{{ path('debriefing.list', {'order_by': 'groupe', 'order_dir': 'DESC'}) }}">
+							{%  else %}
+							<a href="{{ path('debriefing.list', {'order_by': 'groupe', 'order_dir': 'ASC'}) }}">
+								{% endif %}
+								GN
+								{% if app.request.get('order_by') == 'groupe'  %}
+									{% if app.request.get('order_dir') == 'ASC' %}
+										<span class="caret"></span>
+									{%else%}
+										<span class="dropup">
+	 									<span class="caret"></span>
+								</span>
+									{% endif %}
+								{% endif %}
+							</a>
 					</th>
 					<th>
 						Création
 					</th>
 					<th>
 						Dernière modification
+					</th>
+					<th>
+						Scénariste
 					</th>
 					<th>
 						Auteur
@@ -104,9 +140,23 @@
 				<tr>
 					<td><a href="{{ path('debriefing.update', {'debriefing':debriefing.id}) }}">{{ debriefing.id }}</td>
 					<td><a href="{{ path('debriefing.detail', {'debriefing':debriefing.id}) }}">{{ debriefing.titre }}</td>
+					<td>
+						{% if debriefing.gn is null %}
+							Non renseigné
+						{% else %}
+							{{ debriefing.gn.label }}
+						{% endif %}
+					</td>
 					<td><a href="{{ path('groupe.detail', {'index': debriefing.groupe.id}) }}">{{ debriefing.groupe.nom }}</td>
 					<td>{{ debriefing.creationDate|date('Y-m-d') }}</td>
 					<td>{{ debriefing.updateDate|date('Y-m-d') }}</td>
+					<td>
+						{% if debriefing.groupe.scenariste is null %}
+							Groupe sans scénariste
+						{% else %}
+							{{ debriefing.groupe.scenariste.displayName }}
+						{% endif %}
+					</td>
 					<td>{{ debriefing.user.displayName }}</td>
 					<td>{{ debriefing.visibility|explainVisibility }}</td>
 				</tr>
