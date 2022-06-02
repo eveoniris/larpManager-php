@@ -211,13 +211,13 @@ class DebriefingController
                 $app['session']->getFlashBag()->add('success', 'Le debriefing a été modifié.');
                 return $app->redirect($app['url_generator']->generate('groupe.detail', array('index' => $debriefing->getGroupe()->getId())), 303);
             }
-
+        }
             return $app['twig']->render('admin/debriefing/update.twig', array(
                 'form' => $form->createView(),
                 'debriefing' => $debriefing
             ));
-        }
     }
+
 	
 	/**
 	 * Détail d'un debriefing
@@ -273,7 +273,7 @@ class DebriefingController
      *
      * @param Debriefing $debriefing
      */
-    private function tryDeleteDocument(Debriefing $debriefing)
+    private function tryDeleteDocument(Debriefing $debriefing): void
     {
         try
         {
