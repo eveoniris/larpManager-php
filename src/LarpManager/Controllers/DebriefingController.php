@@ -20,6 +20,8 @@
  
 namespace LarpManager\Controllers;
 
+use Symfony\Component\Form\Form;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Silex\Application;
 use JasonGrimes\Paginator;
@@ -28,6 +30,7 @@ use LarpManager\Entities\Debriefing;
 use LarpManager\Form\Debriefing\DebriefingForm;
 use LarpManager\Form\Debriefing\DebriefingFindForm;
 use LarpManager\Form\Debriefing\DebriefingDeleteForm;
+use LarpManager\Entities\Groupe;
 
 
 /**
@@ -37,7 +40,9 @@ use LarpManager\Form\Debriefing\DebriefingDeleteForm;
  *
  */
 class DebriefingController
-{	
+{
+    public const DOC_PATH = __DIR__.'/../../../private/doc/';
+
 	/**
 	 * Présentation des debriefings
 	 *
@@ -47,7 +52,7 @@ class DebriefingController
 	public function listAction(Request $request, Application $app)
 	{
 		$order_by = $request->get('order_by') ?: 'id';
-		$order_dir = $request->get('order_dir') == 'DESC' ? 'DESC' : 'ASC';
+		$order_dir = $request->get('order_dir') === 'DESC' ? 'DESC' : 'ASC';
 		$limit = (int)($request->get('limit') ?: 50);
 		$page = (int)($request->get('page') ?: 1);
 		$offset = ($page - 1) * $limit;
@@ -102,13 +107,15 @@ class DebriefingController
 	 */
 	public function addAction(Request $request, Application $app)
 	{
-		$debriefing = new \LarpManager\Entities\Debriefing();
+		$debriefing = new Debriefing;
 		$groupeId = $request->get('groupe');
 		
 		if ( $groupeId )
 		{
-			$groupe = $app['orm.em']->find('\LarpManager\Entities\Groupe', $groupeId);
-			if ( $groupe ) $debriefing->setGroupe($groupe);
+			$groupe = $app['orm.em']->find(Groupe::class, $groupeId);
+			if ( $groupe ) {
+                $debriefing->setGroupe($groupe);
+            }
 		}
 		
 		$form = $app['form.factory']->createBuilder(new DebriefingForm(), $debriefing)
@@ -122,15 +129,19 @@ class DebriefingController
 			
 		$form->handleRequest($request);
 			
-		if ( $form->isValid() )
+		if ( $form->isValid() && $form->isSubmitted() )
 		{
 			$debriefing = $form->getData();
 			$debriefing->setUser($app['user']);
-		
-			$app['orm.em']->persist($debriefing);
-			$app['orm.em']->flush();
-			
-			$app['session']->getFlashBag()->add('success', 'Le debriefing a été ajouté.');
+
+            if ($this->handleDocument($request, $app, $form, $debriefing)){
+
+                $app['orm.em']->persist($debriefing);
+                $app['orm.em']->flush();
+
+                $app['session']->getFlashBag()->add('success', 'Le debriefing a été ajouté.');
+
+            }
 			return $app->redirect($app['url_generator']->generate('groupe.detail', array('index' => $debriefing->getGroupe()->getId())),303);
 		}
 		
@@ -177,35 +188,36 @@ class DebriefingController
 	 * @param Application $app
 	 */
 	public function updateAction(Request $request, Application $app, Debriefing $debriefing)
-	{				
-		$form = $app['form.factory']->createBuilder(new DebriefingForm(), $debriefing)
-			->add('visibility','choice', array(
-				'required' => true,
-				'label' =>  'Visibilité',
-				'choices' => $app['larp.manager']->getVisibility(),
-			))
-			->add('save','submit', array('label' => 'Sauvegarder'))
-			->getForm();
-			
-		$form->handleRequest($request);
-			
-		if ( $form->isValid() )
-		{
-			$debriefing = $form->getData();
-			$debriefing->setUpdateDate(new \Datetime('NOW'));
-		
-			$app['orm.em']->persist($debriefing);
-			$app['orm.em']->flush();
-				
-			$app['session']->getFlashBag()->add('success', 'Le debriefing a été ajouté.');
-			return $app->redirect($app['url_generator']->generate('groupe.detail', array('index' => $debriefing->getGroupe()->getId())),303);
-		}
-		
-		return $app['twig']->render('admin/debriefing/update.twig', array(
-				'form' => $form->createView(),
-				'debriefing' => $debriefing
-		));
-	}
+    {
+        $form = $app['form.factory']->createBuilder(new DebriefingForm(), $debriefing)
+            ->add('visibility', 'choice', array(
+                'required' => true,
+                'label' => 'Visibilité',
+                'choices' => $app['larp.manager']->getVisibility(),
+            ))
+            ->add('save', 'submit', array('label' => 'Sauvegarder'))
+            ->getForm();
+
+        $form->handleRequest($request);
+
+        if ($form->isValid() && $form->isSubmitted()) {
+            $debriefing = $form->getData();
+
+            if ($this->handleDocument($request, $app, $form, $debriefing)) {
+
+                $app['orm.em']->persist($debriefing);
+                $app['orm.em']->flush();
+
+                $app['session']->getFlashBag()->add('success', 'Le debriefing a été modifié.');
+                return $app->redirect($app['url_generator']->generate('groupe.detail', array('index' => $debriefing->getGroupe()->getId())), 303);
+            }
+
+            return $app['twig']->render('admin/debriefing/update.twig', array(
+                'form' => $form->createView(),
+                'debriefing' => $debriefing
+            ));
+        }
+    }
 	
 	/**
 	 * Détail d'un debriefing
@@ -219,4 +231,61 @@ class DebriefingController
 				'debriefing' => $debriefing
 		));
 	}
+
+    /**
+     * Gère le document uploadé et renvoie true si il est valide, false sinon
+     *
+     * @param Request $request
+     * @param Application $app
+     * @param Form $form
+     * @param Debriefing $debriefing
+     * @return bool
+     */
+    private function handleDocument(Request $request, Application $app, Form $form, Debriefing $debriefing) : bool
+    {
+        $files = $request->files->get($form->getName());
+        $documentFile = $files['document'];
+        // Si un document est fourni, l'enregistrer
+        if ($documentFile !== null )
+        {
+            $filename = $documentFile->getClientOriginalName();
+            $extension = pathinfo($filename, PATHINFO_EXTENSION);
+
+            if ($extension !== 'pdf') {
+                $app['session']->getFlashBag()->add('error','Désolé, votre document n\'est pas valide. Vérifiez le format de votre document ('.$extension.'), seuls les .pdf sont acceptés.');
+                return false;
+            }
+
+            $documentFilename = hash('md5',$debriefing->getTitre().$filename . time()).'.'.$extension;
+
+            $documentFile->move(self::DOC_PATH,$documentFilename);
+
+            // delete previous language document if it exists
+            $this->tryDeleteDocument($debriefing);
+
+            $debriefing->setDocumentUrl($documentFilename);
+        }
+        return true;
+    }
+
+    /**
+     * Supprime le document spécifié, en cas d'erreur, ne fait rien pour le moment
+     *
+     * @param Debriefing $debriefing
+     */
+    private function tryDeleteDocument(Debriefing $debriefing)
+    {
+        try
+        {
+            if (!empty($debriefing->getDocumentUrl()))
+			{
+				$docFilePath = self::DOC_PATH.$debriefing->getDocumentUrl();
+				unlink($docFilePath);
+			}
+        }
+        catch (FileException $e)
+        {
+            // for now, simply ignore
+        }
+    }
 }
