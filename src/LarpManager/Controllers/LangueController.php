@@ -214,15 +214,15 @@ class LangueController
 	/**
 	 * Supprime le document spécifié, en cas d'erreur, ne fait rien pour le moment
 	 *
-	 * @param string $langueDocumentUrl
+	 * @param Langue $langue
 	 */
-	private function tryDeleteDocument(string $langueDocumentUrl)
+	private function tryDeleteDocument(string $langue)
 	{
 		try 
 		{
-			if (!empty($langue->getDocumentUrl()))
+            if (!empty($langue->getDocumentUrl()))
 			{
-				$docFilePath = self::DOC_PATH.$langue->getDocumentUrl();			
+				$docFilePath = self::DOC_PATH.$langue->getDocumentUrl();
 				unlink($docFilePath);
 			}
 		} 
