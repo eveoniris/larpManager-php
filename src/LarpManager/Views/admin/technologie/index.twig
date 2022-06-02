@@ -34,13 +34,19 @@
 					</td>
 					<td>{{ technologie.competenceFamily.label }}</td>
 					<td style="width: 33%">{{ technologie.description | striptags}}</td>
-					<td style="width: 33%">{% for technologieRessource in technologie.ressources %}
-							{{ technologieRessource.quantite }} {{ technologieRessource.ressource.label }}
-							<a class="btn" data-toggle="tooltip" data-placement="top" title="Retirer {{ technologieRessource.ressource.label }}"
-								href="{{ path('technologie.ressource.remove', {'technologie':technologie.id, 'ressource':technologieRessource.ressource.id, 'ressourceNom':technologieRessource.ressource.label}) }}"
-								onclick="return confirm('Vous vous apprétez à retirer {{ technologieRessource.ressource.label }} de {{ technologie.label }}. Confirmer ?')">
-								<i class="fa fa-trash"></i></a>/
-						{% endfor %}
+					<td style="width: 33%">
+						{% if technologie.ressources|length < 1 %}
+							<span class="text-danger">{{ technologie.label }} ne requiert actuellement aucune Ressource ; Veuillez en ajouter :</span>
+						{% else %}
+							{% for technologieRessource in technologie.ressources %}
+
+									{{ technologieRessource.quantite }} {{ technologieRessource.ressource.label }}
+									<a class="btn" data-toggle="tooltip" data-placement="top" title="Retirer {{ technologieRessource.ressource.label }}"
+										href="{{ path('technologie.ressource.remove', {'technologie':technologie.id, 'ressource':technologieRessource.ressource.id, 'ressourceNom':technologieRessource.ressource.label}) }}"
+										onclick="return confirm('Vous vous apprétez à retirer {{ technologieRessource.ressource.label }} de {{ technologie.label }}. Confirmer ?')">
+										<i class="fa fa-trash"></i></a>/
+							{% endfor %}
+						{% endif %}
 						<a class="btn" data-toggle="tooltip" data-placement="top" title="Ajouter/Modifier une Ressource"
 						   href="{{ path('technologie.ressource.add', {'technologie':technologie.id}) }}">
 							<i class="fa fa-plus"></i>
