@@ -60,7 +60,8 @@ class JoueurRepository extends EntityRepository
 	
 		$qb->select('j')
 			->from('LarpManager\Entities\Joueur','j')
-			->where($qb->expr()->like('j.nom', $qb->expr()->literal('%'.$lastName.'%')))
+			->where($qb->expr()->like('j.nom', $qb->expr()->literal('?1')))
+            ->setParameter(1, '%'.$lastName.'%')
 			->orderBy('j.nom','ASC');
 	
 		$result = $qb->getQuery()->getResult();

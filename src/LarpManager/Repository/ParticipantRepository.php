@@ -45,7 +45,8 @@ class ParticipantRepository extends EntityRepository
 	
 		foreach ( $criteria as $criter )
 		{
-			$qb->andWhere($criter);
+            $qb->andWhere('?1');
+            $qb->setParameter(1, $criter);
 		}
 	
 		return $qb->getQuery()->getSingleScalarResult();
