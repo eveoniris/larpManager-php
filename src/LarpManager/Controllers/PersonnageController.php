@@ -27,6 +27,7 @@ use LarpManager\Entities\PersonnageLignee;
 use LarpManager\Entities\Potion;
 use LarpManager\Entities\Priere;
 use LarpManager\Entities\RenommeHistory;
+use LarpManager\Entities\Technologie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -328,15 +329,31 @@ class PersonnageController
 	 * @param Application $app
 	 * @param Personnage $personnage
 	 */
-	public function adminTechnologieAction(Request $request, Application $app, Personnage $personnage)
+	public function adminUpdateTechnologieAction(Request $request, Application $app, Personnage $personnage)
 	{
+        $technologies = $app['orm.em']->getRepository(Technologie::class)->findAll();
+        $competences = $personnage->getCompetences();
+
+        $competenceFamilies = array();
+        $competencesExpert = array();
+        foreach ($competences as $competence){
+            $competenceFamilies[] = $competence->getCompetenceFamily()->getId();
+        }
+        $competencesNiveaux = array_count_values($competenceFamilies);
+        foreach ($competencesNiveaux as $competence => $count){
+            if ($count > 2) {
+                $competencesExpert [] = $competence;
+            }
+        }
+
+
 		$form = $app['form.factory']->createBuilder(new PersonnageTechnologieForm(), $personnage)
 			->add('valider','submit', array('label' => 'Valider'))
 			->getForm();
 		
 		$form->handleRequest($request);
 		
-		if ( $form->isValid() )
+		if ( $form->isValid() && $form->isSubmitted())
 		{
 			$personnage = $form->getData();
 				
@@ -349,9 +366,64 @@ class PersonnageController
 		
 		return $app['twig']->render('admin/personnage/updateTechnologie.twig', array(
 				'personnage' => $personnage,
+                'technologies' => $technologies,
+                'competenceFamilies' => $competenceFamilies,
+                'competencesExpert' => $competencesExpert,
 				'form' => $form->createView(),
 		));
 	}
+
+    /**
+     * Ajoute une technologie à un personnage
+     *
+     * @param Request $request
+     * @param Application $app
+     * @return RedirectResponse
+     */
+    public function adminAddTechnologieAction(Request $request, Application $app)
+    {
+        $technologieId = $request->get('technologie');
+        $personnage = $request->get('personnage');
+
+        $technologie = $app['orm.em']->getRepository(Technologie::class)
+            ->find($technologieId);
+
+        $nomTechnologie = $technologie->getLabel();
+
+        $personnage->addTechnologie($technologie);
+
+        $app['orm.em']->flush();
+
+        $app['session']->getFlashBag()->add('success', $nomTechnologie.' a été ajoutée.');
+
+        return $app->redirect($app['url_generator']->generate('personnage.technologie.update', array('personnage' => $personnage->getId(), 303)));
+    }
+
+    /**
+     * Retire une priere à un personnage
+     *
+     * @param Request $request
+     * @param Application $app
+     * @return RedirectResponse
+     */
+    public function adminRemoveTechnologieAction(Request $request, Application $app)
+    {
+        $technologieId = $request->get('technologie');
+        $personnage = $request->get('personnage');
+
+        $technologie = $app['orm.em']->getRepository(Technologie::class)
+            ->find($technologieId);
+
+        $nomTechnologie = $technologie->getLabel();
+
+        $personnage->removeTechnologie($technologie);
+
+        $app['orm.em']->flush();
+
+        $app['session']->getFlashBag()->add('success', $nomTechnologie.' a été retirée.');
+
+        return $app->redirect($app['url_generator']->generate('personnage.technologie.update', array('personnage' => $personnage->getId(),303)));
+    }
 
 	public function getLangueMateriel(Personnage $personnage)
 	{
