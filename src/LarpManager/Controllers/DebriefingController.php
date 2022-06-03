@@ -288,4 +288,27 @@ class DebriefingController
             // for now, simply ignore
         }
     }
+
+    /**
+     * Afficher le document lié a un debriefing
+     *
+     * @param Request $request
+     * @param Application $app
+     */
+    public function documentAction(Request $request, Application $app)
+    {
+        $debriefing = $request->get('debriefing');
+        $document = $debriefing->getDocumentUrl();
+        $file = self::DOC_PATH.$document;
+
+        $stream = function () use ($file) {
+            readfile($file);
+        };
+
+        return $app->stream($stream, 200, array(
+            'Content-Type' => 'text/pdf',
+            'Content-length' => filesize($file),
+            'Content-Disposition' => 'attachment; filename="'.$debriefing->getPrintTitre().'.pdf"'
+        ));
+    }
 }
