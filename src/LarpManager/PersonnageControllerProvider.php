@@ -159,14 +159,36 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 			->before($mustBeOrga);
 			
 		/**
-		 * Technologie connue par un personnage
+		 * Modification technologies connue par un personnage
 		 */
-		$controllers->match('/admin/{personnage}/technologie','LarpManager\Controllers\PersonnageController::adminTechnologieAction')
+		$controllers->match('/admin/{personnage}/technologie','LarpManager\Controllers\PersonnageController::adminUpdateTechnologieAction')
 			->assert('personnage', '\d+')
 			->bind("personnage.technologie.update")
 			->method('GET|POST')
 			->convert('personnage', 'converter.personnage:convert')
 			->before($mustBeOrga);
+
+        /**
+         * Ajout d'une technologie (orga)
+         */
+        $controllers->match('/admin/{personnage}/add/technologie','LarpManager\Controllers\PersonnageController::adminAddTechnologieAction')
+            ->assert('personnage', '\d+')
+            ->assert('technologie', '\d+')
+            ->bind("personnage.admin.add.technologie")
+            ->method('GET|POST')
+            ->convert('personnage', 'converter.personnage:convert')
+            ->before($mustBeOrga);
+
+        /**
+         * Retrait d'une technologie (orga)
+         */
+        $controllers->match('/admin/{personnage}/remove/technologie','LarpManager\Controllers\PersonnageController::adminRemoveTechnologieAction')
+            ->assert('personnage', '\d+')
+            ->assert('technologie', '\d+')
+            ->bind("personnage.admin.remove.technologie")
+            ->method('GET|POST')
+            ->convert('personnage', 'converter.personnage:convert')
+            ->before($mustBeOrga);
 			
 		/**
 		 * Detail d'un personnage (orga)
