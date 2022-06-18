@@ -11,10 +11,11 @@
 	</ol>
 
 	<div class="well bs-component">	
-		<form action="{{ path('debriefing.add') }}" method="POST" {{ form_enctype(form) }} novalidate>
+		<form action="{{ path('debriefing.add') }}" method="POST" {{ form_enctype(form) }}  novalidate>
 			<fieldset>
 				<legend>Ajout d'un debriefing</legend>
 				{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+	
 				{{ form(form) }}
 			</fieldset>
 		</form>

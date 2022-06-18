@@ -18,7 +18,6 @@
 				<tr>
 					<th>Nom</th>
 					<th>Niveau</th>
-					<th>Secret</th>
 					<th>Sphère</th>
 					<th>Description</th>
 					<th>Ajouter/Retirer</th>
@@ -29,8 +28,7 @@
 				<tr>
 					<td>{{ priere.label }}</td>
 					<td>{{ priere.niveau }}</td>
-					<td>Non</td>			
-					<td>{{ priere.sphere.label }}</td>		
+					<td>{{ priere.sphere.label }}</td>
 					<td>{{ priere.description}}</td>
 					<td>{% if personnage in priere.personnages  %}
 							<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Retirer cette priere"

@@ -30,9 +30,9 @@
 					<td>{{ sort.label }}</td>
 					<td>{{ sort.niveau }}</td>
 					<td>{% if sort.secret %}
-							<span style="color:red;">Secret</span>
+							<i class="fa fa-user-secret" style="color: #1b8dbb"></i>
 						{% else %}
-							Non
+							-
 						{% endif %}
 					</td>
 					<td>{{ sort.domaine.label }}</td>

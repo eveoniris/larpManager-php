@@ -15,13 +15,13 @@
 	<div class="well bs-component">
 		<table class="table table-striped table-bordered table-condensed">
 			<thead>
-				<tr>
-					<th>Nom</th>
-					<th>Niveau</th>
-					<th>Secret</th>
-					<th>Description</th>
-					<th>Ajouter/Retirer</th>
-				</tr>
+			<tr>
+				<th>Nom</th>
+				<th>Niveau</th>
+				<th>Secret</th>
+				<th>Description</th>
+				<th>Ajouter/Retirer</th>
+			</tr>
 			</thead>
 			<tbody>
 			{% for potion in potions %}
@@ -29,9 +29,9 @@
 					<td>{{ potion.label }}</td>
 					<td>{{ potion.niveau }}</td>
 					<td>{% if potion.secret %}
-							<span style="color:red;">Secret</span>
+							<i class="fa fa-user-secret" style="color: #1b8dbb"></i>
 						{% else %}
-							Non
+							-
 						{% endif %}
 					</td>
 					<td>{{ potion.description |striptags}}</td>

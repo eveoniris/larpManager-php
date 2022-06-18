@@ -72,7 +72,7 @@
 							<ul>
 							{% for document in langue.documents %}
 								<li>
-									<a href="{{ path('document.detail',{'document': document.id}) }}">{{ document.titre }}</a>
+									<a href="{{ path('document.get',{'document': document}) }}">{{ document.titre }}</a>
 								</li>
 							{% endfor %}
 							</ul>
