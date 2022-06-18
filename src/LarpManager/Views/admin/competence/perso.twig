@@ -7,22 +7,12 @@
 	<ol class="breadcrumb">
 		<li><a href="{{ path('homepage') }}">Accueil</a></li>
 		<li><a href="{{ path('competence') }}">Liste des compétences</a></li>
-		<li class="active">Personnages ayant cette compétence</li>
+		<li class="active">Personnages ayant la compétence {{ competence.competenceFamily.label }} - <small>Niveau {{ competence.level.label }} ({{ competence.personnages|length }} personnages)</li>
 	</ol>
-	
 
 <div class="container-fluid">
 	<div class="row">
 		<div class="col-xs-12 col-md-12">
-				<div class="well well-sm">
-				<h4>
-					{{ competence.competenceFamily.label }} - <small>Niveau {{ competence.level.label }}
-					<small>
-						( {{ competence.personnages|length }} personnages )
-					</small>
-				</h4>
-			</div>
-
 			<div class="list-group">
 				{% for participant in competence.personnagesGn(app['larp.manager'].getGnActif.id) %}
 					<a class="list-group-item" href="{{ path('personnage.admin.detail',{'personnage':participant.personnage.id}) }}">{% if participant.personnage.vivant == 0 %}💀 {% endif %}#{{ participant.personnage.id }} - {{ participant.personnage.identity }} -- {{ participant.personnage.classeName }}</a>

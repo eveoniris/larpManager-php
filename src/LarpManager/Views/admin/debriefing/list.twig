@@ -23,7 +23,7 @@
 				<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Ajouter un debriefing" href="{{ path('debriefing.add') }}"><i class="fa fa-plus"></i></a>
 			</div>
 			
-			<form class="form form-inline" action="{{ path('debriefing.list') }}" method="POST" {{ form_enctype(form) }}>
+			<form class="form-inline" action="{{ path('debriefing.list') }}" method="POST" {{ form_enctype(form) }}>
 				{% form_theme form 'Form/bootstrap_3_horizontal_layout.html.twig' %}
 				<div class="form-group">
 					<div class="input-group">
@@ -106,7 +106,7 @@
 							{%  else %}
 							<a href="{{ path('debriefing.list', {'order_by': 'groupe', 'order_dir': 'ASC'}) }}">
 								{% endif %}
-								GN
+								Groupe
 								{% if app.request.get('order_by') == 'groupe'  %}
 									{% if app.request.get('order_dir') == 'ASC' %}
 										<span class="caret"></span>
