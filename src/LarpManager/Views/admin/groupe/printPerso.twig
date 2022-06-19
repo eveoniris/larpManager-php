@@ -119,11 +119,11 @@ table tr td {
 				</td>
 				<td>				
 					{% for document in personnage.documents %}
-						{{ document.code }}&nbsp;{{ document.titre }}<br />
+						{{ document.code }} - {{ document.titre }}<br />
 					{% endfor %}
 
 					{% for item in personnage.items %}
-						{{ item.numero }}&nbsp;{{ item.label }}<br />
+						{{ item.numero }} - {{ item.label }}<br />
 					{% endfor %}
 					{% if personnage.materiel %}{{ personnage.materiel }}<br />{% endif %}
 		
@@ -134,11 +134,11 @@ table tr td {
 					{% for personnageRessource in personnage.personnageRessources %}
 						{{personnageRessource.nombre}} - {{ personnageRessource.ressource }}<br />
 					{% endfor %}
-										
-					{{ personnage.richesse|default(0) }} PA<br />
+
+					{{ personnage.richesse|default(0) }} pièces d'argent<br />
 		
 					{% for technologie in personnage.technologies %}
-						{{ technologie.label }}<br />
+						Technologie - {{ technologie.label }}<br />
 					{% endfor %}
 				</td>
 				<td>

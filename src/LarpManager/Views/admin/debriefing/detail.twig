@@ -21,6 +21,17 @@
 				Visibilité : {{ debriefing.visibility|explainVisibility }}
 			</p>
 			<p class="list-group-item-text">
+				Scénariste : {{ debriefing.user }}
+			</p>
+			<p class="list-group-item-text">
+				Auteur :
+					{% if debriefing.player is null %}
+						Non renseigné
+					{% else %}
+						{{ debriefing.player.displayName }}
+					{% endif %}
+			</p>
+			<p class="list-group-item-text">
 	    		Création  : {{ debriefing.creationDate|date('Y-m-d H:i:s') }}
 	    	</p>
 	    	<p class="list-group-item-text">
