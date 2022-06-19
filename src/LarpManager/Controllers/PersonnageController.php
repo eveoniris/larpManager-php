@@ -400,7 +400,7 @@ class PersonnageController
     }
 
     /**
-     * Retire une priere à un personnage
+     * Retire une technologie à un personnage
      *
      * @param Request $request
      * @param Application $app
@@ -601,6 +601,7 @@ class PersonnageController
 				'form' => $form->createView(),
 		));
 	}
+
     private function getErrorMessages(\Symfony\Component\Form\Form $form) {
         $errors = array();
 
@@ -638,10 +639,7 @@ class PersonnageController
         
         return $app['twig']->render($twigFilePath, $viewParams);
     }
-        
-        
-	
-	
+
 	/**
 	 * Imprimer la liste des personnages
 	 * 
@@ -650,7 +648,7 @@ class PersonnageController
 	 */
 	public function adminPrintAction(Request $request, Application $app)
 	{
-		
+		// TODO
 	}
 	
 	/**
@@ -661,10 +659,8 @@ class PersonnageController
 	 */
 	public function adminDownloadAction(Request $request, Application $app)
 	{
-		
+		// TODO
 	}
-	
-	
 	
 	/**
 	 * Affiche le détail d'un personnage (pour les orgas)
@@ -675,7 +671,7 @@ class PersonnageController
 	public function adminDetailAction(Request $request, Application $app)
 	{
 		$personnage = $request->get('personnage');
-		$personnageLangues = $personnage->getPersonnageLangues();
+		//$personnageLangues = $personnage->getPersonnageLangues();
         $descendants =  $app['orm.em']->getRepository(Personnage::class)->findDescendants($personnage);
 
 		return $app['twig']->render('admin/personnage/detail.twig', array('personnage' => $personnage, 'descendants' => $descendants, 'langueMateriel' => $this->getLangueMateriel($personnage)));
@@ -754,7 +750,6 @@ class PersonnageController
 			$participant = $app['orm.em']->getRepository('\LarpManager\Entities\Participant')->find($participant);
 		}
 		
-		
 		$form = $app['form.factory']->createBuilder(new PersonnageForm(), $personnage)
 			->add('classe','entity', array(
 					'label' =>  'Classes disponibles',
@@ -812,8 +807,7 @@ class PersonnageController
 				$historique->setXpGain($xpAgeBonus);
 				$app['orm.em']->persist($historique);
 			}
-			
-			
+
 			$app['orm.em']->persist($personnage);
 			if ($participant)
 			{
@@ -1123,8 +1117,7 @@ class PersonnageController
 				'form' => $form->createView(),
 				'personnage' => $personnage));
 	}
-	
-	
+
 	/**
 	 * Modification du pugilat d'un personnage
 	 * 
@@ -1239,7 +1232,7 @@ class PersonnageController
 		foreach ($personnage->getParticipants() as $participant)
 		{
 			if ($participant->getGn() != null) {
-				$anneeGN = $participant->getGn()->getDateJeu() +1;
+				$anneeGN = $participant->getGn()->getDateJeu()  + rand(-2, 2);
 			}
 		}
 		$evenement = 'Consommation de Fruits & Légumes';
@@ -2190,12 +2183,12 @@ class PersonnageController
 			$historiqueXP->setExplanation('Suppression de la compétence ' . $lastCompetence->getLabel());
 			$historiqueXP->setPersonnage($personnage);
 
-            //historique renommée
+            // historique renommée
             $competenceNom = $lastCompetence->getCompetenceFamily()->getLabel();
             $competenceNiveau = $lastCompetence->getLevel()->getLabel();
             $competenceId = $lastCompetence->getid();
 
-                //si compétence est Noblesse ou Stratégie(5)
+            //si compétence est Noblesse ou Stratégie(5)
             if ( $competenceId === 151 || $lastCompetence->getCompetenceFamily()->getId() === 26){
                 if ($competenceId === 97){
                     $renomme = -2;

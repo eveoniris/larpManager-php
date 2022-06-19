@@ -391,7 +391,6 @@ class Personnage extends BasePersonnage
 		return false;
 	}
 
-
 	/**
 	 * Vérifie si le personnage connait cette langue
 	 * @param unknown $langue
@@ -425,7 +424,6 @@ class Personnage extends BasePersonnage
      */
     public function getLanguesAnomaliesMessage()
     {
-
         // On compte les langues connues
         $compteLangue = 0;
         $compteLangueAncienne = 0;
@@ -1355,6 +1353,19 @@ class Personnage extends BasePersonnage
 	    return $this->getLastParticipantGnNumber();
 	}
 
-	
+	/**
+	 * Vérifie si le personnage connait cette technologie
+	 *
+	 * @param Technologie $technologie
+	 * @return boolean
+	 */
+	public function isKnownTechnologie(Technologie $t)
+	{
+		foreach ( $this->getTechnologies() as $technologie)
+		{
+			if ( $technologie == $t ) return true;
+		}
+		return false;
+	}	
 	
 }

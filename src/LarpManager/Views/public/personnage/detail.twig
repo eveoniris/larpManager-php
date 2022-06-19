@@ -71,6 +71,9 @@
 							{% if trigger.tag == 'PRETRISE INITIE' %}
 								<li class="list-group-item"><a href="{{ path('participant.personnage.religionDescription', {'participant': participant.id}) }}">Choisir une description de religion</a></li>
 							{% endif %}
+							{% if trigger.tag == 'TECHNOLOGIE' %}
+								<li class="list-group-item"><a href="{{ path('participant.personnage.technologie', {'participant': participant.id}) }}">Choisir une technologie</a></li>
+							{% endif %}
 						{% endfor %}
 						</ul>
 					{% endif %}

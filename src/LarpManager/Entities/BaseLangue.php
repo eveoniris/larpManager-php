@@ -206,6 +206,7 @@ class BaseLangue
      * Get PersonnageLangues entity collection (one to many).
      *
      * @return \Doctrine\Common\Collections\Collection
+     * @OrderBy({"secret" = "ASC", "diffusion" = "DESC", "label" = "ASC"})
      */
     public function getPersonnageLangues()
     {
