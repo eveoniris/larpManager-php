@@ -153,14 +153,14 @@
 					<td><a href="{{ path('groupe.detail', {'index': debriefing.groupe.id}) }}">{{ debriefing.groupe.nom }}</td>
 					<td>{{ debriefing.creationDate|date('Y-m-d') }}</td>
 					<td>{{ debriefing.updateDate|date('Y-m-d') }}</td>
+					<td>{{ debriefing.user.displayName }}</td>
 					<td>
-						{% if debriefing.groupe.scenariste is null %}
-							Groupe sans scénariste
+						{% if debriefing.player is null %}
+							Non renseigné
 						{% else %}
-							{{ debriefing.groupe.scenariste.displayName }}
+							{{ debriefing.player.displayName }}
 						{% endif %}
 					</td>
-					<td>{{ debriefing.user.displayName }}</td>
 					<td>{{ debriefing.visibility|explainVisibility }}</td>
 					<td>
 						{% if debriefing.documentUrl %}

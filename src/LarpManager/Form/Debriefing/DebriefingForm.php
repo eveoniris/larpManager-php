@@ -20,6 +20,8 @@
 
 namespace LarpManager\Form\Debriefing;
 
+use LarpManager\Repository\UserRepository;
+use LarpManager\Repository\GroupeRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
@@ -30,6 +32,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Doctrine\ORM\EntityRepository;
 use LarpManager\Entities\Groupe;
 use LarpManager\Entities\Gn;
+use LarpManager\Entities\User;
 
 /**
  * LarpManager\Form\DebriefingForm
@@ -58,11 +61,28 @@ class DebriefingForm extends AbstractType
 						'class' => 'tinymce',
 						'rows' => 15),
 				))
+				->add('player', EntityType::class, array(
+						'required' => false,
+						'label' => 'Joueur',
+						'class' => User::class,
+						'property' => 'username',
+						'placeholder' => 'Choisissez le joueur qui vous a fourni ce debriefing',
+						'query_builder' => function(UserRepository $p) {
+							$qb = $p->createQueryBuilder('p');
+							$qb->orderBy('p.username', 'ASC');
+							return $qb;
+						}
+				))
 				->add('groupe', EntityType::class, array(
 						'required' => true,
 						'label' => 'Groupe',
 						'class' => Groupe::class,
 						'property' => 'nom',
+						'query_builder' => function(GroupeRepository $g) {
+							$qb = $g->createQueryBuilder('g');
+							$qb->orderBy('g.nom', 'ASC');
+							return $qb;
+						}
 				))
 				->add('gn', EntityType::class, array(
 						'required' => true,

@@ -71,7 +71,6 @@ class LigneesRepository extends EntityRepository
                     $qb->setParameter('value', '%'.$value.'%');
                     break;
             }
-
         }
 
         $qb->setFirstResult($offset);

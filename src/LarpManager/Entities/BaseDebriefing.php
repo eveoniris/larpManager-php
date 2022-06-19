@@ -81,6 +81,12 @@ class BaseDebriefing
     protected $user;
 
     /**
+     * @ManyToOne(targetEntity="User", inversedBy="debriefings")
+     * @JoinColumn(name="player_id", referencedColumnName="id", nullable=false)
+     */
+    protected $player;
+
+    /**
      * @ManyToOne(targetEntity="Gn", inversedBy="debriefings")
      * @JoinColumn(name="gn_id", referencedColumnName="id")
      */
@@ -288,6 +294,29 @@ class BaseDebriefing
     public function getUser()
     {
         return $this->user;
+    }
+
+    /**
+     * Set player User entity (many to one).
+     *
+     * @param User $player
+     * @return Debriefing
+     */
+
+    public function setPlayer(User $player = null)
+    {
+        $this->player = $player;
+
+        return $this;
+    }
+    /**
+     * Get player User entity (many to one).
+     *
+     * @return User
+     */
+    public function getPlayer()
+    {
+        return $this->player;
     }
 
     /**
