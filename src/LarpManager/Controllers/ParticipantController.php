@@ -1514,7 +1514,6 @@ class ParticipantController
 			   ->setContentDisposition(ResponseHeaderBag::DISPOSITION_INLINE, $priere->getPrintLabel().'.pdf');;
 	}
 	
-	
 	/**
 	 * Detail d'une potion
 	 *
@@ -3881,5 +3880,70 @@ class ParticipantController
 				'form' => $form->createView()
 		));
 	}
+
+	/**
+	 * Choix d'une technologie
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function technologieAction(Request $request, Application $app, Participant $participant)
+	{
+		$personnage = $participant->getPersonnage();
+		
+		if ( ! $personnage )
+		{
+			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créé un personnage !');
+			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),303);
+		}
 	
+		if ( ! $personnage->hasTrigger('TECHNOLOGIE') )
+		{
+			$app['session']->getFlashBag()->add('error','Désolé, vous ne pouvez pas choisir de technologie supplémentaire.');
+			return $app->redirect($app['url_generator']->generate('gn.personnage', array('gn' => $participant->getGn()->getId())),303);
+		}
+	
+		$technologies = $app['personnage.manager']->getAvailableTechnologies($personnage);
+	
+		$form = $app['form.factory']->createBuilder()
+		->add('technologies','entity', array(
+				'required' => true,
+				'label' => 'Choisissez votre technologie',
+				'multiple' => false,
+				'expanded' => true,
+				'class' => 'LarpManager\Entities\Technologie',
+				'choices' => $technologies,
+				'choice_label' => 'label'
+		))
+		->add('save','submit', array('label' => 'Valider votre technologie'))
+		->getForm();
+	
+		$form->handleRequest($request);
+	
+		if ( $form->isValid() )
+		{
+			$data = $form->getData();
+			$technologie = $data['technologies'];
+	
+			// Ajout de la technologie au personnage
+			$personnage->addTechnologie($technologie);
+			$app['orm.em']->persist($personnage);
+	
+			// suppression du trigger
+			$trigger = $personnage->getTrigger('TECHNOLOGIE');
+			$app['orm.em']->remove($trigger);
+	
+			$app['orm.em']->flush();
+	
+			$app['session']->getFlashBag()->add('success','Vos modifications ont été enregistrées.');
+			return $app->redirect($app['url_generator']->generate('gn.personnage', array('gn' => $participant->getGn()->getId())),303);
+		}
+	
+		return $app['twig']->render('personnage/technologie.twig', array(
+			'form' => $form->createView(),
+			'personnage' => $personnage,
+			'participant' => $participant,
+			'technologies' => $technologies,
+		));
+	}
 }

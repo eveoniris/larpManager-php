@@ -303,7 +303,6 @@ class PersonnageManager
 		return $availableSorts;
 	}
 	
-	
 	/**
 	 * Trouve tous les domaines de magie non connus d'un personnage 
 	 * @param Personnage $personnage
@@ -376,5 +375,27 @@ class PersonnageManager
 		}
 	
 		return $competence;	
+	}
+
+	/**
+	 * Trouve toutes les technologies non connues d'un personnage
+	 * @param Personnage $personnage
+	 * @param unknown $diffusion
+	 */
+	public function getAvailableTechnologies(Personnage $personnage)
+	{
+		$availableTechnologies = new ArrayCollection();
+	
+		$repo = $this->app['orm.em']->getRepository('\LarpManager\Entities\Technologie');
+		$technologies = $repo->findPublicOrderedByLabel();
+			
+		foreach ( $technologies as $technologie)
+		{
+			if ( ! $personnage->isKnownTechnologie($technologie) )
+			{
+				$availableTechnologies[] = $technologie;
+			}
+		}
+		return $availableTechnologies;
 	}
 }

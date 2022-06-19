@@ -17,7 +17,6 @@ Résultats affichés : <strong>{{ paginator.currentPageFirstItem }} - {{ paginat
 	{% if displayAdminToolbar %}
 		<div class="btn-group" role="group" aria-label="...">
 			<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Ajouter un personnage" href="{{ path('personnage.admin.add') }}"><i class="fa fa-plus"></i></a>
-			<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Faire vieillir les personnages" href="{{ path('personnage.vieillir') }}"><i class="fa fa-users"></i></a>
 			<!-- à remettre quand la fonctionnalité sera implémentée <a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Imprimer la liste" href="{{ path('personnage.admin.print') }}"><i class="fa fa-print"></i></a> -->
 			<!-- à remettre quand la fonctionnalité sera implémentée <a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Télécharger la liste (CSV)" href="{{ path('personnage.admin.download') }}"><i class="fa fa-download"></i></a> -->
 		</div>

@@ -16,7 +16,7 @@
 			<tr>
 				<th>Nom</th>
 				<th>Secret</th>
-				<th>Compétence</th>
+				<th>Expert</th>
 				<th>Description</th>
 				<th>Ressources requises</th>
 				<th>Actions</th>
@@ -27,9 +27,9 @@
 				<tr>
 					<td>{{ technologie.label }}</td>
 					<td>{% if technologie.secret %}
-							<i class="fa fa-user-secret" style="color: #1b8dbb"></i>
+							<span style="color:red;">Secret</span>
 						{% else %}
-							-
+							Non
 						{% endif %}
 					</td>
 					<td>{{ technologie.competenceFamily.label }}</td>
@@ -39,7 +39,6 @@
 							<span class="text-danger">{{ technologie.label }} ne requiert actuellement aucune Ressource ; Veuillez en ajouter :</span>
 						{% else %}
 							{% for technologieRessource in technologie.ressources %}
-
 									{{ technologieRessource.quantite }} {{ technologieRessource.ressource.label }}
 									<a class="btn" data-toggle="tooltip" data-placement="top" title="Retirer {{ technologieRessource.ressource.label }}"
 										href="{{ path('technologie.ressource.remove', {'technologie':technologie.id, 'ressource':technologieRessource.ressource.id, 'ressourceNom':technologieRessource.ressource.label}) }}"
@@ -57,7 +56,7 @@
 							<fieldset>
 								<div class="btn-group" role="group" aria-label="..." >
 									<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Modifier" href="{{ path('technologie.update', {'technologie':technologie.id}) }}"><i class="fa fa-pencil"></i></a>
-									<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Voir Personnages" href="{{ path('technologie.personnages', {'technologie':technologie.id}) }}"><i class="fa fa-users"></i></a>
+									<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Voir Personnages" href="{{ path('technologie.personnages', {'technologie':technologie.id}) }}"><i class="fa fa-users"></i> ({{ technologie.personnages|length }})</a>
 									<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Supprimer" href="{{ path('technologie.delete', {'technologie':technologie.id}) }}"><i class="fa fa-eraser"></i></a>
 								</div>
 							</fieldset>

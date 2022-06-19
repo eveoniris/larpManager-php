@@ -14,7 +14,7 @@ use LarpManager\Entities\BaseTechnologie;
 /**
  * LarpManager\Entities\Technologie
  *
- * @Entity()
+ * @Entity(repositoryClass="LarpManager\Repository\TechnologieRepository")
  */
 class Technologie extends BaseTechnologie
 {

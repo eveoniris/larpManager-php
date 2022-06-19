@@ -642,8 +642,7 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 			->method('GET|POST')
 			->convert('participant', 'converter.participant:convert')
 			->before($mustOwnParticipant);
-				
-			
+
 		/**
 		 * Formulaire d'ajout des langues gagnés grace à litterature initie
 		 * Accessible uniquement au proprietaire du personnage
@@ -666,7 +665,17 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 			->convert('participant', 'converter.participant:convert')
 			->before($mustOwnParticipant);
 		
-
+		/**
+		 * Formulaire de choix de technologie
+		 * Accessible uniquement au proprietaire du personnage
+		 */
+		$controllers->match('/{participant}/personnage/technologie','LarpManager\Controllers\ParticipantController::technologieAction')
+			->assert('personnage', '\d+')
+			->bind("participant.personnage.technologie")
+			->method('GET|POST')
+			->convert('participant', 'converter.participant:convert')
+			->before($mustOwnParticipant);
+				
 		/**
 		 * Formulaire de choix du domaine de magie
 		 * Accessible uniquement au proprietaire du personnage
