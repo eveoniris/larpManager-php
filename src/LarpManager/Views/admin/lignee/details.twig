@@ -70,45 +70,47 @@
                         <th>Parent 2</th>
                         <th>Retirer membre</th>
 
-                         {% for personnageLignee in lignee.personnageLignees %}
-                             <tr>
-                                 <td><a href="{{ path('personnage.admin.detail', {'personnage': personnageLignee.personnage.id}) }}">{{ personnageLignee.personnage.id }}</a> </td>
-                                 <td>
-					    	        {% if personnageLignee.personnage.vivant == 0 %}
-                                        {{ iconPjDead | raw }}
-                                    {% elseif personnageLignee.personnage.isPnj() %}
-                                        {{ iconPnj | raw }}
-                                    {% elseif personnageLignee.personnage.isLastParticipantOnActiveGn() %}
-                                        {{ iconPjConfirmed | raw }}
-                                    {% else %}
-                                        {{ iconPjOld | raw }}
-                                    {% endif %}
-                                 </td>                                 
-                                 <td><a href="{{ path('personnage.admin.detail', {'personnage': personnageLignee.personnage.id}) }}">{{ personnageLignee.personnage.nom}}</a></td>
+                        {% for personnageLignee in lignee.personnageLignees %}
+                            <tr>
+                                <td><a href="{{ path('personnage.admin.detail', {'personnage': personnageLignee.personnage.id}) }}">{{ personnageLignee.personnage.id }}</a> </td>
+                                <td>
+                                {% if personnageLignee.personnage.vivant == 0 %}
+                                    {{ iconPjDead | raw }}
+                                {% elseif personnageLignee.personnage.isPnj() %}
+                                    {{ iconPnj | raw }}
+                                {% elseif personnageLignee.personnage.isLastParticipantOnActiveGn() %}
+                                    {{ iconPjConfirmed | raw }}
+                                {% else %}
+                                    {{ iconPjOld | raw }}
+                                {% endif %}
+                                </td>                                 
+                                <td><a href="{{ path('personnage.admin.detail', {'personnage': personnageLignee.personnage.id}) }}">{{ personnageLignee.personnage.nom}}</a></td>
 
-                                 {% if personnageLignee.personnage.groupe == NULL %}
-                                    <td> - </td>
-                                 {% else %}
-                                    <td><a href="{{ path('groupe.detail',{'index':personnageLignee.personnage.groupe.id}) }}">{{ personnageLignee.personnage.groupe.nom }}</a> </td>
-                                 {% endif %}
+                                {% if personnageLignee.personnage.groupe == NULL %}
+                                <td> - </td>
+                                {% else %}
+                                <td><a href="{{ path('groupe.detail',{'index':personnageLignee.personnage.groupe.id}) }}">{{ personnageLignee.personnage.groupe.nom }}</a> </td>
+                                {% endif %}
 
-                                 <td>{{ personnageLignee.personnage.ageReel }} ans</td>
+                                <td>{{ personnageLignee.personnage.ageReel }} ans</td>
+                                {% if personnageLignee.parent1 == NULL %}
+                                <td> - </td>
+                                {% else %}
+                                <td><a href="{{ path('personnage.admin.detail', {'personnage': personnageLignee.parent1.id}) }}">{{ personnageLignee.parent1.nom }} ({{ personnageLignee.parent1.ageReel }} ans)</a></td>
+                                {% endif %}
+                                {% if personnageLignee.parent2 == NULL %}
+                                <td> - </td>
+                                {% else %}
+                                <td><a href="{{ path('personnage.admin.detail', {'personnage': personnageLignee.parent2.id}) }}">{{ personnageLignee.parent2.nom }} ({{ personnageLignee.parent2.ageReel }} ans)</a></td>
+                                {% endif %}
 
-                                 <td><a href="{{ path('personnage.admin.detail', {'personnage': personnageLignee.parent1.id}) }}">{{ personnageLignee.parent1.nom }} ({{ personnageLignee.parent1.ageReel }} ans)</a></td>
-
-                                 {% if personnageLignee.parent2 == NULL %}
-                                    <td> - </td>
-                                 {% else %}
-                                    <td><a href="{{ path('personnage.admin.detail', {'personnage': personnageLignee.parent2.id}) }}">{{ personnageLignee.parent2.nom }} ({{ personnageLignee.parent2.ageReel }} ans)</a></td>
-                                 {% endif %}
-
-                                 <td>
-                                     <a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Retirer ce membre"
-                                        href="{{ path('lignee.admin.membre.remove',{'membre':personnageLignee.id, 'lignee':lignee.id, 'membreNom':personnageLignee.personnage.nom}) }}"
-                                            onclick="return confirm('Vous vous apprétez à retirer {{ personnageLignee.personnage.nom }} de cette lignée. Confirmer ?')">
-                                         <i class="fa fa-unlink"></i></a>
-                                 </td>
-                             </tr>
+                                <td>
+                                    <a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Retirer ce membre"
+                                    href="{{ path('lignee.admin.membre.remove',{'membre':personnageLignee.id, 'lignee':lignee.id, 'membreNom':personnageLignee.personnage.nom}) }}"
+                                        onclick="return confirm('Vous vous apprétez à retirer {{ personnageLignee.personnage.nom }} de cette lignée. Confirmer ?')">
+                                        <i class="fa fa-unlink"></i></a>
+                                </td>
+                            </tr>
                         {% endfor %}
                     </table>
                 </div>
