@@ -7,7 +7,7 @@
 	<ol class="breadcrumb">
 		<li><a href="{{ path('homepage') }}">Accueil</a></li>
 		<li><a href="{{ path('debriefing.list') }}">Liste des debriefing</a></li>
-		<li class="active">Détail d'un debriefing</li>
+		<li class="active">Détail du debriefing {{ debriefing.titre|default('Pas de titre') }}</li>
 	</ol>
 
 	<div class="list-group">
@@ -32,23 +32,24 @@
 					{% endif %}
 			</p>
 			<p class="list-group-item-text">
-	    		Création  : {{ debriefing.creationDate|date('Y-m-d H:i:s') }}
+	    		Création : {{ debriefing.creationDate|date('Y-m-d H:i:s') }}
 	    	</p>
 	    	<p class="list-group-item-text">
-	    		Dernière modification  : {{ debriefing.updateDate|date('Y-m-d H:i:s') }}
+	    		Dernière modification : {{ debriefing.updateDate|date('Y-m-d H:i:s') }}
 	    	</p>
+			{% if debriefing.documentUrl %}
+	    	<p class="list-group-item-text">
+	    		Document : <a href="{{ path('debriefing.document', {'debriefing': debriefing.id}) }}">{{ debriefing.getPrintTitre }}</a>
+	    	</p>			
+			{% endif %}
 		</div>
 	</div>
 	
 	<div class="panel panel-default">
 		<div class="panel-heading">
 			<h4>{{ debriefing.titre|default('Pas de titre') }}
-				<div class="btn-toolbar pull-right" role="toolbar" aria-label="...">
-					<div class="btn-group" role="group" aria-label="...">
-						<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Modifier" href="{{ path('debriefing.update', {'debriefing': debriefing.id}) }}"><i class="fa fa-pencil"></i></a>
-						<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Supprimer" href="{{ path('debriefing.delete', {'debriefing': debriefing.id}) }}"><i class="fa fa-eraser"></i></a>
-					</div>
-				</div>
+				<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Modifier" href="{{ path('debriefing.update', {'debriefing': debriefing.id}) }}"><i class="fa fa-pencil"></i></a>
+				<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Supprimer" href="{{ path('debriefing.delete', {'debriefing': debriefing.id}) }}"><i class="fa fa-eraser"></i></a>
 			</h4>
 		</div>
 		<div class="panel-body">
