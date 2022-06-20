@@ -47,8 +47,9 @@ class DebriefingFindForm extends AbstractType
 				->add('type','choice', array(
 					'required' => true,
 					'choices' => array(
-						'Auteur' => 'auteur',
-						'Groupe' => 'groupe',
+						'Groupe' => 'Groupe',
+						'Auteur' => 'Auteur',
+						'Scenariste' => 'Scénariste',
 					),
 					'label' => 'Type',
 				));

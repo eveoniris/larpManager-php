@@ -33,7 +33,7 @@
 					<div class="col-md-4">
 						<a href="{{ path('magie.sort.update',{'sort':sort.id}) }}"><i class="fa fa-pencil"></i> Modifier</a>&nbsp;|&nbsp;
 						<a href="{{ path('magie.sort.detail',{'sort':sort.id}) }}"><i class="fa fa-eye"></i> Detail</a>&nbsp;|&nbsp;
-						<a href="{{ path('magie.sort.personnages',{'sort':sort.id}) }}"><i class="fa fa-eye"></i> Personnages</a>&nbsp;|&nbsp;
+						<a href="{{ path('magie.sort.personnages',{'sort':sort.id}) }}"><i class="fa fa-users"></i> Personnages ({{ sort.personnages|length }})</a>&nbsp;|&nbsp;
 						<a href="{{ path('magie.sort.delete',{'sort':sort.id}) }}"><i class="fa fa-eraser"></i> Supprimer</a>
 					</div>
 				</div>

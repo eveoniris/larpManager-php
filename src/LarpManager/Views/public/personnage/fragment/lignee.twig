@@ -1,0 +1,20 @@
+{# Lignée #}
+<div class="header">
+	<h5>Lignée</h5>
+</div>
+
+<div class="list-group">
+	{% for lignage in personnage.personnageLignee %}
+		<li class="list-group-item">{{ lignage.lignee.nom }}</li>
+	{% endfor %}
+
+	{% if descendants|length > 0 %}
+		<li class="list-group-item">
+			<strong>Enfants :</strong>
+		</li>
+
+		{% for descendant in descendants %}
+			<li class="list-group-item">{{ descendant.personnage.nom }}</li>
+		{% endfor %}
+	{% endif %}
+</div>

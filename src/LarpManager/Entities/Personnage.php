@@ -28,10 +28,8 @@
 namespace LarpManager\Entities;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use LarpManager\Entities\BasePersonnage;
-use LarpManager\Entities\PugilatHistory;
-use LarpManager\Entities\HeroismeHistory;
-use Doctrine\Common\Annotations\Annotation\Attribute;
+use Doctrine\ORM\Mapping\Entity;
+
 
 /**
  * LarpManager\Entities\Personnage
@@ -253,13 +251,13 @@ class Personnage extends BasePersonnage
 	    }
 
 	    for($i = 0; $i < 4;$i++) {
-	        error_log("PA " . $expectedByLevel[$i] . " " . $countByLevel[$i]);
+	        // error_log($this->nom . " PA " . $expectedByLevel[$i] . " " . $countByLevel[$i]);
 	        if($litteratureApprenti == null && $expectedByLevel[$i] < $countByLevel[$i]) {
 	            return ($countByLevel[$i] - $expectedByLevel[$i]) . " potion(s) de niveau " . ($i+1) . " en trop à vérifier ";
 	        }
 
 	        if($expectedByLevel[$i] > $countByLevel[$i]) {
-	            return ($expectedByLevel[$i] - $countByLevel[$i]) . " potion(s) de niveau " . ($i+1) . " manquante";
+	            return ($expectedByLevel[$i] - $countByLevel[$i]) . " potion(s) de niveau " . ($i+1) . " manquante(s)";
 	        }
 	    }
 
@@ -393,7 +391,6 @@ class Personnage extends BasePersonnage
 		return false;
 	}
 
-
 	/**
 	 * Vérifie si le personnage connait cette langue
 	 * @param unknown $langue
@@ -427,7 +424,6 @@ class Personnage extends BasePersonnage
      */
     public function getLanguesAnomaliesMessage()
     {
-
         // On compte les langues connues
         $compteLangue = 0;
         $compteLangueAncienne = 0;
@@ -528,16 +524,17 @@ class Personnage extends BasePersonnage
 		return false;
 	}
 
-	/**
-	 * Fourni le niveau d'une compétence d'un personnage
-	 * @param unknown $label
-	 */
-	public function getCompetenceNiveau($label)
-	{
+    /**
+     * Fourni le niveau d'une compétence d'un personnage
+     * @param string $label
+     * @return int
+     */
+	public function getCompetenceNiveau(string $label): int
+    {
 		$niveau = 0;
 		foreach ( $this->getCompetences() as $competence)
 		{
-			if ( $competence->getCompetenceFamily()->getLabel() == $label)
+			if ( $competence->getCompetenceFamily()->getLabel() === $label)
 			{
 				if ( $niveau < $competence->getLevel()->getIndex() )
 					$niveau = $competence->getLevel()->getIndex();
@@ -774,6 +771,22 @@ class Personnage extends BasePersonnage
 
 		return $heroismeHistories;
 	}
+
+    /**
+     * Fourni le score de Renommée
+     * @override BasePersonnage::getRenomme()
+     */
+    public function getRenomme(): int
+    {
+        $renomme = $this->renomme ?? 0;
+
+        foreach ( $this->getRenommeHistories() as $renommeHistory)
+        {
+            $renomme += $renommeHistory->getRenomme();
+        }
+
+        return $renomme;
+    }
 
 	/**
 	 * Fourni le trigger correspondant au tag
@@ -1056,22 +1069,24 @@ class Personnage extends BasePersonnage
 		return $this;
 	}
 
-	/**
-	 * Ajoute des points de renomme à un personnage
-	 * @param unknown $renomme
-	 */
-	public function addRenomme($renomme)
-	{
+    /**
+     * Ajoute des points de renomme à un personnage
+     * @param integer $renomme
+     * @return Personnage
+     */
+	public function addRenomme(int $renomme)
+    {
 		$this->setRenomme($this->getRenomme() + $renomme);
 		return $this;
 	}
 
-	/**
-	 * Retire des points de renomme à un personnage
-	 * @param unknown $renomme
-	 */
-	public function removeRenomme($renomme)
-	{
+    /**
+     * Retire des points de renomme à un personnage
+     * @param integer $renomme
+     * @return Personnage
+     */
+	public function removeRenomme(int $renomme)
+    {
 		$this->setRenomme($this->getRenomme() - $renomme);
 		return $this;
 	}
@@ -1134,11 +1149,223 @@ class Personnage extends BasePersonnage
 	    }
 	    return $s; 
 	}
+	
+	/**
+	 * Retourne le dernier participant du personnage
+	 * 
+	 * @return \LarpManager\Entities\Participant|NULL
+	 */
+	public function getLastParticipant() : ?\LarpManager\Entities\Participant
+	{
+	    if (!$this->getParticipants()->isEmpty())
+	    {
+	        return $this->getParticipants()->last();
+	    }
+	    return null;
+	}
+	
+	/**
+	 * Retourne true si le dernier participant du personnage est sur un gn actif et a un billet
+	 * 
+	 * @return bool
+	 */
+	public function isLastParticipantOnActiveGn() : bool
+	{
+	    $lastParticipant = $this->getLastParticipant();
+	    return ($lastParticipant
+	        && $lastParticipant->getGn()
+	        && $lastParticipant->getGn()->getActif()
+	        && $lastParticipant->getBillet());
+	}
+	
+	/**
+	 * Retourne le gn du dernier participant du personnage
+	 * 
+	 * @return \LarpManager\Entities\Gn|NULL
+	 */
+	public function getLastParticipantGn() : ?\LarpManager\Entities\Gn
+	{
+	    $lastParticipant = $this->getLastParticipant();
+	    if ($lastParticipant)
+	    {
+	        return $lastParticipant->getGn();
+	    }
+	    return null;
+	}
+	
+	/**
+	 * Retourne le numéro du gn du dernier participant du personnage
+	 * 
+	 * @return int
+	 */
+	public function getLastParticipantGnNumber() : int
+	{
+	    $lastParticipantGn = $this->getLastParticipantGn();
+	    if ($lastParticipantGn)
+	    {
+	        return $lastParticipantGn->getNumber();
+	    }
+	    return 0;
+	}
+	
+	/**
+	 * Retourne le groupe du gn du dernier participant du personnage, s'il est bien présent
+	 * 
+	 * @return \LarpManager\Entities\Groupe|NULL
+	 */
+	public function getLastParticipantGnGroupe() : ?\LarpManager\Entities\Groupe
+	{
+	    $lastParticipant = $this->getLastParticipant();   
+	    if ($lastParticipant)
+	    {
+	        $lastParticipantGn = $lastParticipant->getGn();
+	        $lastParticipantGroupeGn = $lastParticipant->getGroupeGn();
+	        if( !empty($lastParticipantGroupeGn)
+	            && $lastParticipantGn->getLabel() == $lastParticipantGroupeGn->getGn()->getLabel())
+            {
+                return $lastParticipantGroupeGn->getGroupe();
+            }
+	    }
+	    return null;
+	}
+	
+	/**
+	 * Retourne le nom du groupe du gn du dernier participant du personnage, s'il est bien présent
+	 * Si pas defini, renvoie 'N\'est pas lié à un groupe''
+	 * 
+	 * @return string
+	 */
+	public function getLastParticipantGnGroupeNom() : string
+	{
+	    $lastParticipantGnGroupe = $this->getLastParticipantGnGroupe();
+	    return ($lastParticipantGnGroupe
+            ? $lastParticipantGnGroupe->getNom()
+	        : 'N\'est pas lié à un groupe');
+	}
+	
+	/**
+	 * Indique si le dernier participant était un PNJ ou non
+	 * 
+	 * @return bool
+	 */
+	public function isPnj() : bool
+	{
+	    $lastParticipant = $this->getLastParticipant();
+	    if ($lastParticipant)
+	    {
+	        return $lastParticipant->isPnj();
+	    }
+	    return false;
+	}
+	
+	/**
+	 * Retourne le nom complet de l'utilisateur (nom prénom)
+	 * @return string|NULL
+	 */
+	public function getUserFullName() : ?string
+	{
+	    if ($this->getUser())
+	    {
+	        return $this->getUser()->getFullName();
+	    }
+	    return null;
+	}
+	
+	/**
+	 * Retourne le nom complet du personnage
+	 * 
+	 * @return string
+	 */
+	public function getFullName() : string
+	{
+	    return $this->getNom().(!empty($this->getSurnom()) ? ' ('.$this->getSurnom().')' : '');
+	}
+	
+	/**
+	 * Retourne true si le personnage a au moins une anomalie
+	 * 
+	 * @return bool
+	 */
+	public function hasAnomalie() : bool
+	{
+	    return (
+            !empty($this->getLanguesAnomaliesMessage())
+            || !empty($this->getPotionAnomalieMessage())
+            || !empty($this->getSortAnomalieMessage())
+            || !empty($this->getPrieresAnomalieMessage())
+        );	    
+	}
+	
+	/**
+	 * Retourne le statut suivant d'un joueur sous forme entier : 
+	 * 0 = Mort
+	 * 1 = PJ vivant 
+	 * 2 = PNJ vivant
+	 * 
+	 * @return int
+	 */
+	public function getStatusCode() : int
+	{
+	    return $this->getVivant() 
+	       ? ($this->isPnj() ? 2 : 1) 
+	       : 0;
+	}
+	
+	/**
+	 * Retourne le statut lié au gn actif d'un joueur sous forme entier :
+	 * 0 = Mort
+	 * 1 = PJ vivant ne participant pas au gn actif
+	 * 2 = PNJ vivant
+	 * 3 = PJ vivant participant au gn actif
+	 * 
+	 * @return int
+	 */
+	public function getStatusOnActiveGnCode() : int
+	{	
+	    return $this->getVivant() 
+	       ? ($this->isPnj() 
+	           ? 2 
+	           : ($this->isLastParticipantOnActiveGn() 
+	               ? 3 
+	               : 1)
+	           )
+	       : 0;
+	}
+	
+	/**
+	 * Retourne le statut d'un joueur sous forme entier prenant en compte le numéro du dernier GN participé :
+	 * -1 = PNJ
+	 * 0 = mort
+	 * 1 .. N = numéro du dernier GN auquel
+	 * 
+	 * @return int
+	 */
+	public function getStatusGnCode() : int
+	{
+	    if (!$this->getVivant())
+	    {
+	        return 0;
+	    }
+	    if ($this->isPnj())
+	    {
+	        return -1;
+	    }
+	    return $this->getLastParticipantGnNumber();
+	}
 
 	/**
-	 * Fourni la liste des descendants directs
+	 * Vérifie si le personnage connait cette technologie
+	 *
+	 * @param Technologie $technologie
+	 * @return boolean
 	 */
-	public function getDescendants()
+	public function isKnownTechnologie(Technologie $t)
 	{
+		foreach ( $this->getTechnologies() as $technologie)
+		{
+			if ( $technologie == $t ) return true;
+		}
+		return false;
 	}	
+	
 }

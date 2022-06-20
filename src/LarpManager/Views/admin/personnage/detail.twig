@@ -1,17 +1,17 @@
 {% extends "layout.twig" %}
 
-{% block title %}Personnages{% endblock title %}
+{% block title %}{{ personnage.nom }} détails{% endblock title %}
 
 {% block content %}
 
 	<ol class="breadcrumb">
 		<li><a href="{{ path('homepage') }}">Accueil</a></li>
 		<li><a href="{{ path('personnage.admin.list') }}">Liste des personnages</a></li>
-		<li class="active">Détail de {{ personnage.publicName }}</li>
+		<li class="active">Détail de {{ personnage.nom }}</li>
 	</ol>
 		
 	<div class="well well-sm">
-		<h3>
+		<h3>{% if personnage.isPnj() %}🎭 PNJ - {% endif %}
 			{{ personnage.nom }}{% if personnage.surnom %} <small>({{ personnage.surnom }})</small>{% endif %}
 			
 			{% if personnage.genre == 'Masculin' %}
@@ -24,20 +24,17 @@
 			
 			<small>{{ personnage.ageReel|default('x') }} ans ({{ personnage.age }})</small>
 			
-			{% if personnage.vivant %}<span class="text-success">Vivant</span>{% else %}<span class="text-danger">Mort</span>{% endif %}
+			{% if personnage.vivant %}<span class="text-success">Vivant</span>{% else %}<span class="text-danger">💀 Mort</span>{% endif %}
 			
 			<div class="pull-right">
 				{{ personnage.classeName }}
 			</div>
 		</h3>
-		
-		
+
 			<div class="row">
 				<div class="col-md-4">		
-				
 					<div class="panel panel-default">
-						
-						<nav class="navbar navbar-default" style="margin-bottom: 0px;">
+						<nav class="navbar navbar-default" style="margin-bottom: 0;">
 	  						<div class="container-fluid">
 	  							<div class="navbar-header">
 	  								<span class="navbar-brand">Informations</span>
@@ -64,11 +61,12 @@
 	  					</nav>
 	  					
 	  					<div class="panel-body">
+						  	<p><strong>Numéro : </strong>{{ personnage.id }}</p> 
 	  						<p><strong>Joueur : </strong>{% if personnage.user %}<a href="{{path('user.view',{'id': personnage.user.id}) }}"> {{ personnage.user.etatCivil.nom }} {{ personnage.user.etatCivil.prenom }}</a>{% else %}Ce personnage n'est pas lié à un joueur</p>{% endif %}
 		  					<p>Ce personnage <strong class="text-success">{% if personnage.intrigue %}participe aux intrigues{% else %}ne participe pas aux intrigues{% endif %}</strong></p>
 		  					
-		  					{# Liste des groupes auquel fait partit ce personnage #}
-							<h6>Groupes</h6>
+		  					{# Liste des groupes auxquels fait partie ce personnage #}
+							<h6>Historique des participations</h6>
 							<div class="list-group">									
 								{% if personnage.user %}
 									{% for participant in personnage.user.participants %}
@@ -77,21 +75,21 @@
 												{% if participant.groupeGn.groupe %}
 													<a class="list-group-item" href="{{ path('groupe.detail', {'index': participant.groupeGn.groupe.id}) }}">{{ participant.personnage.nom }} - {{ participant.gn }} - #{{ participant.groupeGn.groupe.numero }} {{ participant.groupeGn.groupe.nom }}</a>
 												{% else %}
-													<a class="list-group-item">{{ participant.personnage.nom }} - {{ participant.gn }} - Problème de groupe</a>
+													<a class="list-group-item">{{ participant.personnage.nom }} - {{ participant.gn }} - N'est pas lié à un groupe</a>
 												{% endif %}
 											{% else %}
 												<a class="list-group-item">{{ participant.personnage.nom }} - {{ participant.gn }} - N'est pas lié à un groupe</a>
 											{% endif %}
 										{% else %}
 											{% if participant.groupeGn %}
-												<a class="list-group-item">Problème de personnage {{ personnage.nom }} sur le {{ participant.gn }} - #{{ participant.groupeGn.groupe.numero }} {{ participant.groupeGn.groupe.nom }}</a>
+												<a class="list-group-item">Personnage {{ personnage.nom }} non récupéré - {{ participant.gn }} - #{{ participant.groupeGn.groupe.numero }} {{ participant.groupeGn.groupe.nom }}</a>
 											{% else %}
-												<a class="list-group-item">Problème de personnage {{ personnage.nom }} sur le {{ participant.gn }} - Problème de groupe</a>
+												<a class="list-group-item">Personnage {{ personnage.nom }} non récupéré - {{ participant.gn }} - N'est pas lié à un groupe</a>
 											{% endif %}
 										{% endif %}
 									{% endfor %}
 								{% else %}
-									<li class="list-group-item">Ce personnage ne fait pas parti d'un groupe.</li>
+									<li class="list-group-item">Ce personnage ne fait pas partie d'un groupe.</li>
 								{% endif %}
 							</div>
 
@@ -103,6 +101,9 @@
 								{% for membre in personnage.membres %}
 									<a class="list-group-item" href="{{ path('groupeSecondaire.admin.detail', {'groupe': membre.secondaryGroup.id}) }}">{{ membre.secondaryGroup.label }}</a>
 								{% endfor %}
+								{% if personnage.secondaryGroups|length <= 0 and personnage.membres|length <= 0 %}
+									<li class="list-group-item">Ce personnage ne fait pas partie d'un groupe secondaire.</li>
+								{% endif %}
 							</ul>
 
 							{% if personnage.postulants|length > 0 %}
@@ -113,12 +114,11 @@
 								{% endfor %}
 								</ul>
 							{% endif %}
-
 						</div>
 					</div>
 
 					<div class="panel panel-default">
-						<nav class="navbar navbar-default"  style="margin-bottom: 0px;">
+						<nav class="navbar navbar-default" style="margin-bottom: 0;">
 	  						<div class="container-fluid">
 	  							<div class="navbar-header">
 	  								<span class="navbar-brand">Informations de jeu</span>
@@ -265,7 +265,7 @@
 					</div>
 					
 					<div class="panel panel-default">
-						<nav class="navbar navbar-default" style="margin-bottom: 0px;">
+						<nav class="navbar navbar-default" style="margin-bottom: 0;">
 	  						<div class="container-fluid">
 	  							<div class="navbar-header">
 	  								<span class="navbar-brand">Technique</span>
@@ -318,7 +318,7 @@
 				
 				
 					<div class="panel panel-default">
-						<nav class="navbar navbar-default" style="margin-bottom: 0px;">
+						<nav class="navbar navbar-default" style="margin-bottom: 0;">
 	  						<div class="container-fluid">
 	  							<div class="navbar-header">
 	  								<span class="navbar-brand">Photo</span>
@@ -339,17 +339,17 @@
 	  						</div>
 	  					</nav>
 					
-						<div class="panel-body">
+						<div class="thumbnail">
 							{% if personnage.trombineUrl %}
-								<img class="media-object" src="{{ path('personnage.trombine', {'personnage' : personnage.id }) }}" />
+								<img class="media-object" width="200" src="{{ path('personnage.trombine', {'personnage' : personnage.id }) }}" />
 							{% else %}
-								<img class="media-object" src="{{ app.request.basepath }}/img/no_trombine.png" />
+								<img class="media-object" width="200" src="{{ app.request.basepath }}/img/no_trombine.png" />
 							{% endif %}
 						</div>
 					</div>
 				
 					<div class="panel panel-default">
-						<nav class="navbar navbar-default" style="margin-bottom: 0px;">
+						<nav class="navbar navbar-default" style="margin-bottom: 0;">
 	  						<div class="container-fluid">
 	  							<div class="navbar-header">
 	  								<span class="navbar-brand">Enveloppe</span>
@@ -486,7 +486,7 @@
 				<div class="col-md-4">
 				
 					<div class="panel panel-default">
-						<nav class="navbar navbar-default" style="margin-bottom: 0px;">
+						<nav class="navbar navbar-default" style="margin-bottom: 0;">
 	  						<div class="container-fluid">
 	  							<div class="navbar-header">
 	  								<span class="navbar-brand">Compétences <small>({{ personnage.xp|default(0) }} / {{ personnage.xpTotal }} xp)</small></span>
@@ -536,10 +536,10 @@
 
 					{% if personnage.personnageLignee %}
 					<div class="panel panel-default">
-						<nav class="navbar navbar-default" style="margin-bottom: 0px;">
+						<nav class="navbar navbar-default" style="margin-bottom: 0;">
 	  						<div class="container-fluid">
 	  							<div class="navbar-header">
-	  								<span class="navbar-brand">Lignée</span>
+	  								<span class="navbar-brand">Lignée & Généalogie</span>
 	  							</div>
 								{% if personnage.personnageLignee|length == 0 %}
 	  							<div class="collapse navbar-collapse">
@@ -555,6 +555,22 @@
 										</li>
 	  								</ul>
 	  							</div>
+								{% else %}
+								<div class="collapse navbar-collapse">
+									<ul class="nav navbar-nav navbar-right">
+										<li class="dropdown">
+											<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+												Action
+												<span class="caret"></span>
+											</a>
+											{% for lignage in personnage.personnageLignee %}
+											<ul class="dropdown-menu">
+												<li><a href="{{ path('personnage.admin.lignee.delete', {'personnage': personnage.id, 'personnageLignee' : lignage.id }) }}">Retirer</a></li>
+											</ul>
+											{% endfor %}
+										</li>
+									</ul>
+								</div>
 								{% endif %}
 	  						</div>
 	  					</nav>
@@ -563,16 +579,33 @@
 								{# Gestion de la lignée du personnage #}
 								{% if personnage.personnageLignee|length > 0 %}
 									{% for lignage in personnage.personnageLignee %}
-										{% if lignage.lignee %}<div class="list-group-item">Lignee : {{ lignage.lignee.nom }}</div>{% endif %}
-										<div class="list-group-item">Parent : <a href="{{ path('personnage.admin.detail', {'personnage':lignage.parent1.id}) }}">{{ lignage.parent1.identity }}</a></div>
-										{% if lignage.parent2 %}<div class="list-group-item">Parent : <a href="{{ path('personnage.admin.detail', {'personnage':lignage.parent2.id}) }}">{{ lignage.parent2.identity }}</a></div>{% endif %}
-										{% for descendants in lignage.descendants %}
-											<li class="list-group-item">Enfant{% if descendants|length > 1 %}s{% endif %} : <a href="{{ path('personnage.admin.detail', {'personnage':descendants.id}) }}">{{ descendants.identity }}</a></li>
-											{% for descendants2 in descendants.descendants %}
-											<li class="list-group-item">Petit{% if descendants2|length > 1 %}s{% endif %}-Enfant{% if descendants2|length > 1 %}s{% endif %} : <a href="{{ path('personnage.admin.detail', {'personnage':descendants2.id}) }}">{{ descendants2.identity }}</a></li>
+										{% if lignage.lignee %}<div class="list-group-item">
+											Lignée :<a href="{{ path('lignee.admin.details', {'lignee':lignage.lignee.id}) }}"> {{ lignage.lignee.nom }}</a></div>
+										{% endif %}
+										<li class="list-group-item">
+											<strong>Parents :</strong>
+										</li>
+										
+										{% if lignage.parent1 %}
+											<div class="list-group-item">
+												<a href="{{ path('personnage.admin.detail', {'personnage':lignage.parent1.id}) }}">{{ lignage.parent1.identity }}</a> - {{ lignage.parent1.agereel }} ans
+											{% if lignage.parent2 %}<div class="list-group-item">
+												<a href="{{ path('personnage.admin.detail', {'personnage':lignage.parent2.id}) }}">{{ lignage.parent2.identity }}</a> - {{ lignage.parent2.agereel }} ans
+											{% endif %}
+											</div>
+										{% else %}
+											<div class="list-group-item">Ni PJ ou PNJ</div>
+										{% endif %}
+
+										{% if descendants|length > 0 %}
+											<li class="list-group-item">
+												<strong>Enfants :</strong>
+											</li>
+											{% for descendant in descendants %}
+												<div class="list-group-item">
+													<a href="{{ path('personnage.admin.detail', {'personnage':descendant.personnage.id}) }}">{{ descendant.personnage.identity }}</a> - {{ descendant.personnage.agereel }} ans</div>
 											{% endfor %}
-										{% endfor %}
-										<div class="list-group-item"><a href="{{ path('personnage.admin.lignee.delete', {'personnage': personnage.id, 'personnageLignee' : lignage.id }) }}">Supprimer</a></div>
+										{% endif %}
 									{% endfor %}
 								{% else %}
 									<p class="list-group-item-text">
@@ -585,7 +618,7 @@
 					{% endif %}
 
 					<div class="panel panel-default">
-						<nav class="navbar navbar-default" style="margin-bottom: 0px;">
+						<nav class="navbar navbar-default" style="margin-bottom: 0;">
 	  						<div class="container-fluid">
 	  							<div class="navbar-header">
 	  								<span class="navbar-brand">Chronologie</span>
@@ -622,7 +655,7 @@
 					</div>
 					
 					<div class="panel panel-default">
-						<nav class="navbar navbar-default" style="margin-bottom: 0px;">
+						<nav class="navbar navbar-default" style="margin-bottom: 0;">
 	  						<div class="container-fluid">
 	  							<div class="navbar-header">
 	  								<span class="navbar-brand">Background</span>
@@ -662,7 +695,7 @@
 						</div>
 					</div>
 				</div>
-			</div>	
+			</div>
 	</div>
 				
 {% endblock content %}

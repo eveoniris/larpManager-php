@@ -45,6 +45,9 @@ use LarpManager\Entities\Sort;
 class MagieController
 {
 		
+    // liste des colonnes à afficher par défaut sur les vues 'personnages' (l'ordre est pris en compte)
+    private array $defaultPersonnageListColumnKeys = ['colId', 'colStatut', 'colNom', 'colClasse', 'colGroupe', 'colUser'];
+    
 	/**
 	 * Liste des sphere
 	 *
@@ -393,9 +396,31 @@ class MagieController
 	 */
 	public function prierePersonnagesAction(Request $request, Application $app, Priere $priere)
 	{
-		return $app['twig']->render('admin/priere/personnages.twig', array(
-				'priere' => $priere,
-		));
+	    $routeName = 'magie.priere.personnages';
+	    $routeParams = array('priere' => $priere->getId());
+	    $twigFilePath = 'admin/priere/personnages.twig';
+	    $columnKeys = $this->defaultPersonnageListColumnKeys;
+	    $personnages =  $priere->getPersonnages();
+	    $additionalViewParams = array(
+	        'priere' => $priere
+	    );
+	    
+	    // handle the request and return an array containing the parameters for the view
+	    $personnageSearchHandler = $app['personnage.manager']->getSearchHandler();
+	    
+	    $viewParams = $personnageSearchHandler->getSearchViewParameters(
+	        $request,
+	        $routeName,
+	        $routeParams,
+	        $columnKeys,
+	        $additionalViewParams,
+	        $personnages
+	        );
+	    
+	    return $app['twig']->render(
+	        $twigFilePath,
+	        $viewParams
+	        );	    
 	}
 	
 	/**
@@ -433,12 +458,35 @@ class MagieController
 	 *
 	 * @param Request $request
 	 * @param Application $app
+	 * @param Potion
 	 */
 	public function potionPersonnagesAction(Request $request, Application $app, Potion $potion)
 	{
-		return $app['twig']->render('admin/potion/personnages.twig', array(
-				'potion' => $potion,
-		));
+	    $routeName = 'magie.potion.personnages';
+	    $routeParams = array('potion' => $potion->getId());
+	    $twigFilePath = 'admin/potion/personnages.twig';
+	    $columnKeys = $this->defaultPersonnageListColumnKeys;
+	    $personnages =  $potion->getPersonnages();
+	    $additionalViewParams = array(
+	        'potion' => $potion
+	    );
+	    
+	    // handle the request and return an array containing the parameters for the view
+	    $personnageSearchHandler = $app['personnage.manager']->getSearchHandler();
+	    
+	    $viewParams = $personnageSearchHandler->getSearchViewParameters(
+	        $request,
+	        $routeName,
+	        $routeParams,
+	        $columnKeys,
+	        $additionalViewParams,
+	        $personnages
+	        );
+	    
+	    return $app['twig']->render(
+	        $twigFilePath,
+	        $viewParams
+	        );	   	    
 	}
 	
 	/**
@@ -949,12 +997,35 @@ class MagieController
 	 *
 	 * @param Request $request
 	 * @param Application $app
+	 * @param Sort
 	 */
 	public function sortPersonnagesAction(Request $request, Application $app, Sort $sort)
 	{
-		return $app['twig']->render('admin/sort/personnages.twig', array(
-				'sort' => $sort,
-		));
+	    $routeName = 'magie.sort.personnages';
+	    $routeParams = array('sort' => $sort->getId());
+	    $twigFilePath = 'admin/sort/personnages.twig';
+	    $columnKeys = $this->defaultPersonnageListColumnKeys;
+	    $personnages =  $sort->getPersonnages();
+	    $additionalViewParams = array(
+	        'sort' => $sort	        
+	    );
+	    
+	    // handle the request and return an array containing the parameters for the view
+	    $personnageSearchHandler = $app['personnage.manager']->getSearchHandler();
+	    
+	    $viewParams = $personnageSearchHandler->getSearchViewParameters(
+	        $request, 
+	        $routeName, 
+	        $routeParams, 
+	        $columnKeys,
+	        $additionalViewParams,
+	        $personnages
+	        );
+	    
+	    return $app['twig']->render(
+            $twigFilePath, 
+	        $viewParams
+        );	       
 	}
 	
 

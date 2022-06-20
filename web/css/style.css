@@ -75,7 +75,7 @@ body {
 .header
 {
   background: url('../img/header.png') repeat scroll 0% 0% / 100% 100% transparent;
-  padding: 0px 10px;
+  padding: 2px 10px;
   margin: 2px 0px 10px;
   text-align: center;
   border: 0px none;
@@ -149,4 +149,52 @@ ul.forum li
 	height:20px;
 	background-color: orange;
 	border-radius: 15px; 
+}
+
+.invisible {
+	/* already exists in bootstrap but just in case we replace the bootstrap css theme someday, redefine it */
+	visibility: hidden;
+}
+
+.paginator-container {
+	display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.legend {
+	margin: 10px 0px 10px auto
+}
+
+.legend-header  {
+	font-weight: bold;
+}
+
+.form-inline .form-group {
+	margin: 5px;
+}
+
+.form-inline .control-label {	
+	margin-right: 5px;
+}
+
+.btn-toolbar {
+	margin-top: 5px;
+}
+
+.btn-toolbar>.btn, .btn-toolbar>.btn-group, .btn-toolbar>.input-group {
+	margin: 5px;
+}
+
+.pagination {
+	margin: 15px 0px;
+}
+
+
+.personnage-list-column-hasAnomalie,
+.personnage-list-column-status,
+.personnage-list-column-renomme, 
+.personnage-list-column-pugilat,
+.personnage-list-column-heroisme {
+	text-align: center;
 }

@@ -104,7 +104,7 @@ class BasePersonnageLignee
      * @param \LarpManager\Entities\Personnage $personnage
      * @return \LarpManager\Entities\PersonnageLignee
      */
-    public function setParent1(Personnage $parent1)
+    public function setParent1(Personnage $parent1 = null)
     {
         $this->parent1 = $parent1;
 
@@ -150,7 +150,7 @@ class BasePersonnageLignee
      * @param \LarpManager\Entities\Lignee $lignee
      * @return \LarpManager\Entities\PersonnageLignee
      */
-    public function setLignee(Personnage $lignee = null)
+    public function setLignee(Lignee $lignee = null)
     {
         $this->lignee = $lignee;
 
@@ -160,7 +160,7 @@ class BasePersonnageLignee
     /**
      * Get Lignee entity (many to one).
      *
-     * @return \LarpManager\Entities\Personnage
+     * @return \LarpManager\Entities\PersonnageLignee
      */
     public function getLignee()
     {

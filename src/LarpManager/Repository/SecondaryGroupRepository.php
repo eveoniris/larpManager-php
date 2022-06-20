@@ -59,7 +59,8 @@ class SecondaryGroupRepository extends EntityRepository
 
 		foreach ( $criteria as $critere )
 		{
-			$qb->andWhere($critere);
+			$qb->andWhere('?1');
+            $qb->setParameter(1, $critere);
 		}
 
 		$qb->setFirstResult($offset);
@@ -83,7 +84,8 @@ class SecondaryGroupRepository extends EntityRepository
 	
 		foreach ( $criteria as $critere )
 		{
-			$qb->andWhere($critere);
+            $qb->andWhere('?1');
+            $qb->setParameter(1, $critere);
 		}
 	
 		return $qb->getQuery()->getSingleScalarResult();

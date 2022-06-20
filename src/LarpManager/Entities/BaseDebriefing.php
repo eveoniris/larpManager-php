@@ -9,6 +9,17 @@
 
 namespace LarpManager\Entities;
 
+use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\DiscriminatorColumn;
+use Doctrine\ORM\Mapping\DiscriminatorMap;
+use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\Mapping\GeneratedValue;
+use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\InheritanceType;
+use Doctrine\ORM\Mapping\JoinColumn;
+use Doctrine\ORM\Mapping\ManyToOne;
+use Doctrine\ORM\Mapping\Table;
+
 /**
  * LarpManager\Entities\Debriefing
  *
@@ -53,6 +64,11 @@ class BaseDebriefing
     protected $update_date;
 
     /**
+     * @Column (type="string", length=45, nullable=true)
+     */
+    protected $documentUrl;
+
+    /**
      * @ManyToOne(targetEntity="Groupe", inversedBy="debriefings")
      * @JoinColumn(name="groupe_id", referencedColumnName="id", nullable=false)
      */
@@ -63,6 +79,12 @@ class BaseDebriefing
      * @JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
      */
     protected $user;
+
+    /**
+     * @ManyToOne(targetEntity="User", inversedBy="debriefings")
+     * @JoinColumn(name="player_id", referencedColumnName="id", nullable=false)
+     */
+    protected $player;
 
     /**
      * @ManyToOne(targetEntity="Gn", inversedBy="debriefings")
@@ -78,7 +100,7 @@ class BaseDebriefing
      * Set the value of id.
      *
      * @param integer $id
-     * @return \LarpManager\Entities\Debriefing
+     * @return Debriefing
      */
     public function setId($id)
     {
@@ -101,7 +123,7 @@ class BaseDebriefing
      * Set the value of titre.
      *
      * @param string $titre
-     * @return \LarpManager\Entities\Debriefing
+     * @return Debriefing
      */
     public function setTitre($titre)
     {
@@ -124,7 +146,7 @@ class BaseDebriefing
      * Set the value of text.
      *
      * @param string $text
-     * @return \LarpManager\Entities\Debriefing
+     * @return Debriefing
      */
     public function setText($text)
     {
@@ -147,7 +169,7 @@ class BaseDebriefing
      * Set the value of visibility.
      *
      * @param string $visibility
-     * @return \LarpManager\Entities\Debriefing
+     * @return Debriefing
      */
     public function setVisibility($visibility)
     {
@@ -170,7 +192,7 @@ class BaseDebriefing
      * Set the value of creation_date.
      *
      * @param \DateTime $creation_date
-     * @return \LarpManager\Entities\Debriefing
+     * @return Debriefing
      */
     public function setCreationDate($creation_date)
     {
@@ -193,7 +215,7 @@ class BaseDebriefing
      * Set the value of update_date.
      *
      * @param \DateTime $update_date
-     * @return \LarpManager\Entities\Debriefing
+     * @return Debriefing
      */
     public function setUpdateDate($update_date)
     {
@@ -213,10 +235,26 @@ class BaseDebriefing
     }
 
     /**
+     * @return mixed
+     */
+    public function getDocumentUrl()
+    {
+        return $this->documentUrl;
+    }
+
+    /**
+     * @param mixed $documentUrl
+     */
+    public function setDocumentUrl($documentUrl): void
+    {
+        $this->documentUrl = $documentUrl;
+    }
+
+    /**
      * Set Groupe entity (many to one).
      *
-     * @param \LarpManager\Entities\Groupe $groupe
-     * @return \LarpManager\Entities\Debriefing
+     * @param Groupe|null $groupe
+     * @return Debriefing
      */
     public function setGroupe(Groupe $groupe = null)
     {
@@ -228,7 +266,7 @@ class BaseDebriefing
     /**
      * Get Groupe entity (many to one).
      *
-     * @return \LarpManager\Entities\Groupe
+     * @return Groupe
      */
     public function getGroupe()
     {
@@ -238,8 +276,8 @@ class BaseDebriefing
     /**
      * Set User entity (many to one).
      *
-     * @param \LarpManager\Entities\User $user
-     * @return \LarpManager\Entities\Debriefing
+     * @param User $user
+     * @return Debriefing
      */
     public function setUser(User $user = null)
     {
@@ -251,7 +289,7 @@ class BaseDebriefing
     /**
      * Get User entity (many to one).
      *
-     * @return \LarpManager\Entities\User
+     * @return User
      */
     public function getUser()
     {
@@ -259,10 +297,33 @@ class BaseDebriefing
     }
 
     /**
+     * Set player User entity (many to one).
+     *
+     * @param User $player
+     * @return Debriefing
+     */
+
+    public function setPlayer(User $player = null)
+    {
+        $this->player = $player;
+
+        return $this;
+    }
+    /**
+     * Get player User entity (many to one).
+     *
+     * @return User
+     */
+    public function getPlayer()
+    {
+        return $this->player;
+    }
+
+    /**
      * Set Gn entity (many to one).
      *
-     * @param \LarpManager\Entities\Gn $gn
-     * @return \LarpManager\Entities\Debriefing
+     * @param Gn $gn
+     * @return Debriefing
      */
     public function setGn(Gn $gn = null)
     {
@@ -274,7 +335,7 @@ class BaseDebriefing
     /**
      * Get Gn entity (many to one).
      *
-     * @return \LarpManager\Entities\Gn
+     * @return Gn
      */
     public function getGn()
     {

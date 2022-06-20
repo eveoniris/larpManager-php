@@ -46,7 +46,7 @@ class PersonnageLigneeForm extends AbstractType
 		$builder->add('parent1','entity', [
 					'label' => "Choisissez le Parent 1 du personnage",
 					'expanded' => false,
-					'required' => true,
+					'required' => false,
 					'class' => 'LarpManager\Entities\Personnage',
 					'choice_label' => function ($personnage) {
 						return $personnage->getIdentity();
@@ -56,7 +56,7 @@ class PersonnageLigneeForm extends AbstractType
 					}
 				])
 				->add('parent2','entity', [
-					'label' => "Choisissez le Parent 2 du personnage (optionnel)",
+					'label' => "Choisissez le Parent 2 du personnage",
 					'expanded' => false,
 					'required' => false,
 					'empty_data' => null,
@@ -69,7 +69,7 @@ class PersonnageLigneeForm extends AbstractType
 					}
 				])
 				->add('lignee','entity', [
-					'label' => "Choisissez la lignée de votre personnage (optionnel)",
+					'label' => "Choisissez la lignée de votre personnage ",
 					'expanded' => false,
 					'required' => false,
 					'empty_data' => null,

@@ -17,7 +17,7 @@
 		
 			<li class="dropdown">
 				<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-					{% if app.user %}Bienvenu {{ app.user.name }}{% else %}Connectez-vous !{% endif %}<span class="caret"></span>
+					{% if app.user %}Bienvenue {{ app.user.name }}{% else %}Connectez-vous !{% endif %}<span class="caret"></span>
 				</a>
 				<ul class="dropdown-menu">
 					{%  if app.user %}			
@@ -82,6 +82,7 @@
 						<li><a href="{{ path('lieu') }}">Lieux</a></li>
 						<li><a href="{{ path('document') }}">Documents</a></li>
 						<li><a href="{{ path('items') }}">Objets</a></li>
+						<li><a href="{{ path('lignee.admin.list') }}">Lignées</a></li>
 					</ul>
 				</li>
 			{% endif %}
@@ -91,7 +92,6 @@
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Jeu<span class="caret"></span></a>
 					<ul class="dropdown-menu">
 						<li><a href="{{ path('loi') }}">Lois</a></li>
-						<li><a href="{{ path('technologie') }}">Technologies</a></li>
 						<li><a href="{{ path('econnomie') }}">Economie</a></li>
 						<li><a href="{{ path('strategie') }}">Stratégie</a></li>
 						<li><a href="{{ path('groupe.diplomatie') }}">Diplomatie</a></li>
@@ -127,10 +127,11 @@
 						<li><a href="{{ path('genre') }}">Genres</a></li>
 						<li><a href="{{ path('token.list') }}">Jetons</a></li>
 						<li><a href="{{ path('construction') }}">Constructions</a></li>
+						<li><a href="{{ path('technologie') }}">Technologies</a></li>
 						<li><a href="{{ path('magie.domaine.list') }}">Domaine de magie</a></li>
+						<li><a href="{{ path('magie.sphere.list') }}">Sphères</a></li>
 						<li><a href="{{ path('magie.sort.list') }}">Sorts</a></li>
 						<li><a href="{{ path('magie.potion.list') }}">Potions</a></li>
-						<li><a href="{{ path('magie.sphere.list') }}">Sphères</a></li>
 						<li><a href="{{ path('magie.priere.list') }}">Prières</a></li>
 						<li><a href="{{ path('personnageSecondaire.list') }}">Personnage secondaire</a></li>
 					{% endif %}
@@ -169,4 +170,5 @@
 			
 		</ul>
 	</div>
-</div>
+  </div>
+</nav>

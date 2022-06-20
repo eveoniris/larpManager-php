@@ -27,4 +27,9 @@ class Debriefing extends BaseDebriefing
 		$this->setUpdateDate(new \Datetime('NOW'));
 		$this->setCreationDate(new \Datetime('NOW'));
 	}
+
+    public function getPrintTitre()
+    {
+        return preg_replace('/[^a-z0-9]+/', '_', strtolower($this->getTitre()));
+    }
 }

@@ -20,6 +20,7 @@
 
 namespace LarpManager\Repository;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityRepository;
 
 /**
@@ -36,8 +37,9 @@ class SortRepository extends EntityRepository
 	public function findByNiveau($niveau)
 	{
 		$sorts = $this->getEntityManager()
-				->createQuery('SELECT s FROM LarpManager\Entities\Sort s Where s.niveau = '.$niveau.' AND (s.secret = 0 OR s.secret IS NULL) ORDER BY s.label ASC')
-				->getResult();
+				->createQuery('SELECT s FROM LarpManager\Entities\Sort s Where s.niveau = ?1 AND (s.secret = 0 OR s.secret IS NULL) ORDER BY s.label ASC')
+				->setParameter(1, $niveau)
+                ->getResult();
 		
 		return $sorts;
 	}

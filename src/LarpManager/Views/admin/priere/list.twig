@@ -31,7 +31,7 @@
 					<div class="col-md-4">
 						<a href="{{ path('magie.priere.update',{'priere':priere.id}) }}"><i class="fa fa-pencil"></i> Modifier</a>&nbsp;|&nbsp;
 						<a href="{{ path('magie.priere.detail',{'priere':priere.id}) }}"><i class="fa fa-eye"></i> Detail</a>&nbsp;|&nbsp;
-						<a href="{{ path('magie.priere.personnages',{'priere':priere.id}) }}"><i class="fa fa-eye"></i> Personnages</a>&nbsp;|&nbsp;
+						<a href="{{ path('magie.priere.personnages',{'priere':priere.id}) }}"><i class="fa fa-users"></i> Personnages ({{ priere.personnages|length }})</a>&nbsp;|&nbsp;
 						<a href="{{ path('magie.priere.delete',{'priere':priere.id}) }}"><i class="fa fa-eraser"></i> Supprimer</a>
 					</div>
 				</div>

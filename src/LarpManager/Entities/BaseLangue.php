@@ -206,6 +206,7 @@ class BaseLangue
      * Get PersonnageLangues entity collection (one to many).
      *
      * @return \Doctrine\Common\Collections\Collection
+     * @OrderBy({"secret" = "ASC", "diffusion" = "DESC", "label" = "ASC"})
      */
     public function getPersonnageLangues()
     {
@@ -333,7 +334,7 @@ class BaseLangue
     /**
      * Set the value of documentUrl.
      *
-     * @param boolean $documentUrl
+     * @param string $documentUrl
      * @return \LarpManager\Entities\Langue
      */
     public function setDocumentUrl($documentUrl)
@@ -344,9 +345,9 @@ class BaseLangue
     }
 
     /**
-     * Get the value of sedocumentUrlcret.
+     * Get the value of documentUrl.
      *
-     * @return boolean
+     * @return string
      */
     public function getDocumentUrl()
     {

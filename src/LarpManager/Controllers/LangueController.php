@@ -22,10 +22,13 @@ namespace LarpManager\Controllers;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Doctrine\ORM\Query;
 use Silex\Application;
 use LarpManager\Form\LangueForm;
 use LarpManager\Form\GroupeLangueForm;
+use Symfony\Component\Form\Form;
+use LarpManager\Entities\Langue;
 
 /**
  * LarpManager\Controllers\LangueController
@@ -35,6 +38,7 @@ use LarpManager\Form\GroupeLangueForm;
  */
 class LangueController
 {
+	const DOC_PATH = __DIR__.'/../../../private/doc/';
 		
 	/**
 	 * affiche la liste des langues
@@ -85,40 +89,23 @@ class LangueController
 		if ( $form->isValid() )
 		{
 			$langue = $form->getData();
-			$files = $request->files->get($form->getName());
-			// Si un document est fourni, l'enregistrer
-			if ( $files['document'] != null )
+			if (self::handleDocument($request, $app, $form, $langue))
 			{
-				$path = __DIR__.'/../../../private/doc/';
-				$filename = $files['document']->getClientOriginalName();
-				$extension = 'pdf';
-
-				if (!$extension || ! in_array($extension, array('pdf'))) {
-					$app['session']->getFlashBag()->add('error','Désolé, votre document ne semble pas valide (vérifiez le format de votre document)');
+				$app['orm.em']->persist($langue);
+				$app['orm.em']->flush();
+				
+				$app['session']->getFlashBag()->add('success', 'La langue a été ajoutée.');
+					
+				// l'utilisateur est redirigé soit vers la liste des langues, soit vers de nouveau
+				// vers le formulaire d'ajout d'une langue
+				if ( $form->get('save')->isClicked())
+				{
+					return $app->redirect($app['url_generator']->generate('langue'),303);
+				}
+				else if ( $form->get('save_continue')->isClicked())
+				{
 					return $app->redirect($app['url_generator']->generate('langue.add'),303);
 				}
-
-				$documentFilename = hash('md5',$langue->getLabel().$filename . time()).'.'.$extension;
-
-				$files['document']->move($path,$documentFilename);
-
-				$langue->setDocumentUrl($documentFilename);
-			}
-
-			$app['orm.em']->persist($langue);
-			$app['orm.em']->flush();
-			
-			$app['session']->getFlashBag()->add('success', 'La langue a été ajoutée.');
-				
-			// l'utilisateur est redirigé soit vers la liste des langues, soit vers de nouveau
-			// vers le formulaire d'ajout d'une langue
-			if ( $form->get('save')->isClicked())
-			{
-				return $app->redirect($app['url_generator']->generate('langue'),303);
-			}
-			else if ( $form->get('save_continue')->isClicked())
-			{
-				return $app->redirect($app['url_generator']->generate('langue.add'),303);
 			}
 		}
 		
@@ -141,11 +128,18 @@ class LangueController
 		$id = $request->get('index');
 		
 		$langue = $app['orm.em']->find('\LarpManager\Entities\Langue',$id);
+		$hasDocumentUrl = !empty($langue->getDocumentUrl());
+		$canBeDeleted = $langue->getPersonnageLangues()->isEmpty()
+			&& $langue->getTerritoires()->isEmpty()
+			&& $langue->getDocuments()->isEmpty();
+			
+		$deleteTooltip = $canBeDeleted ? '' : 'Cette langue est référencée par '.$langue->getPersonnageLangues()->count().' personnages, '.$langue->getTerritoires()->count().' territoires et '.$langue->getDocuments()->count().' documents et ne peut pas être supprimée';
 		
-		$form = $app['form.factory']->createBuilder(new LangueForm(), $langue)
+		$formBuilder = $app['form.factory']->createBuilder(new LangueForm(), $langue, ['hasDocumentUrl'=>$hasDocumentUrl])
 			->add('update','submit', array('label' => "Sauvegarder"))
-			->add('delete','submit', array('label' => "Supprimer"))
-			->getForm();
+			->add('delete','submit', array('label' => "Supprimer", 'disabled' => !$canBeDeleted, 'attr' => ['title' => $deleteTooltip]));
+		
+		$form = $formBuilder->getForm();
 		
 		$form->handleRequest($request);
 		
@@ -155,34 +149,21 @@ class LangueController
 		
 			if ( $form->get('update')->isClicked())
 			{
-				$files = $request->files->get($form->getName());
-				// Si un document est fourni, l'enregistrer
-				if ( $files['document'] != null )
-				{
-					$path = __DIR__.'/../../../private/doc/';
-					$filename = $files['document']->getClientOriginalName();
-					$extension = 'pdf';
+				if (self::handleDocument($request, $app, $form, $langue))
+				{		
+					$app['orm.em']->persist($langue);
+					$app['orm.em']->flush();
+					$app['session']->getFlashBag()->add('success', 'La langue a été mise à jour.');
 
-					if (!$extension || ! in_array($extension, array('pdf'))) {
-						$app['session']->getFlashBag()->add('error','Désolé, votre document ne semble pas valide (vérifiez le format de votre document)');
-						return $app->redirect($app['url_generator']->generate('langue.detail',array('index' => $id)),303);
-					}
-						
-					$documentFilename = hash('md5',$langue->getLabel().$filename . time()).'.'.$extension;
-
-					$files['document']->move($path,$documentFilename);
-					$langue->setDocumentUrl($documentFilename);
+					return $app->redirect($app['url_generator']->generate('langue.detail',array('index' => $id)),303);
 				}
-				$app['orm.em']->persist($langue);
-				$app['orm.em']->flush();
-				$app['session']->getFlashBag()->add('success', 'La langue a été mise à jour.');
-
-				return $app->redirect($app['url_generator']->generate('langue.detail',array('index' => $id)),303);
 			}
 			else if ( $form->get('delete')->isClicked())
 			{
 				$app['orm.em']->remove($langue);
-				$app['orm.em']->flush();
+				$app['orm.em']->flush();				
+				// delete language document if it exists
+				self::tryDeleteDocument($langue);
 				$app['session']->getFlashBag()->add('success', 'La langue a été supprimée.');
 				return $app->redirect($app['url_generator']->generate('langue'),303);
 			}
@@ -193,9 +174,66 @@ class LangueController
 				'form' => $form->createView(),
 		));
 	}
+	
+	/**
+	 * Gère le document uploadé et renvoie true si il est valide, false sinon
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Form $form
+	 * @param Langue $langue
+	 * @return bool
+	 */
+	private function handleDocument(Request $request, Application $app, Form $form, Langue $langue) : bool
+	{
+		$files = $request->files->get($form->getName());
+		$documentFile = $files['document'];
+		// Si un document est fourni, l'enregistrer
+		if ($documentFile != null )
+		{
+			$filename = $documentFile->getClientOriginalName();
+			$extension = pathinfo($filename, PATHINFO_EXTENSION);
+
+			if (!$extension || ! in_array($extension, array('pdf'))) {
+				$app['session']->getFlashBag()->add('error','Désolé, votre document n\'est pas valide. Vérifiez le format de votre document ('.$extension.'), seuls les .pdf sont acceptés.');
+				return false;
+			}
+				
+			$documentFilename = hash('md5',$langue->getLabel().$filename . time()).'.'.$extension;
+
+			$documentFile->move(self::DOC_PATH,$documentFilename);
+			
+			// delete previous language document if it exists
+			self::tryDeleteDocument($langue);
+			
+			$langue->setDocumentUrl($documentFilename);
+		}
+		return true;
+	}
+	
+	/**
+	 * Supprime le document spécifié, en cas d'erreur, ne fait rien pour le moment
+	 *
+	 * @param Langue $langue
+	 */
+	private function tryDeleteDocument(string $langue)
+	{
+		try 
+		{
+            if (!empty($langue->getDocumentUrl()))
+			{
+				$docFilePath = self::DOC_PATH.$langue->getDocumentUrl();
+				unlink($docFilePath);
+			}
+		} 
+		catch (FileException $e) 
+		{
+			// for now, simply ignore
+		}
+	}
 
 	/**
-	 * Detail d'une langue
+	 * Detail d'un groupe de langue
 	 * 
 	 * @param Request $request
 	 * @param Application $app
@@ -210,7 +248,7 @@ class LangueController
 	}
 	
 	/**
-	 * Ajoute une langue
+	 * Ajoute un groupe de langue
 	 * 
 	 * @param Request $request
 	 * @param Application $app
@@ -229,11 +267,11 @@ class LangueController
 		// si l'utilisateur soumet une nouvelle langue
 		if ( $form->isValid() )
 		{
-			$langue = $form->getData();
+			$groupeLangue = $form->getData();
 			$app['orm.em']->persist($groupeLangue);
 			$app['orm.em']->flush();
 			
-			$app['session']->getFlashBag()->add('success', 'Le groupe de langue a été ajoutée.');
+			$app['session']->getFlashBag()->add('success', 'Le groupe de langue a été ajouté.');
 				
 			// l'utilisateur est redirigé soit vers la liste des langues, soit vers de nouveau
 			// vers le formulaire d'ajout d'une langue
@@ -253,9 +291,8 @@ class LangueController
 	}
 	
 	/**
-	 * Modifie une langue. Si l'utilisateur clique sur "sauvegarder", la langue est sauvegardée et
-	 * l'utilisateur est redirigé vers la liste des langues. 
-	 * Si l'utilisateur clique sur "supprimer", la langue est supprimée et l'utilisateur est
+	 * Modifie un groupe de langue. Si l'utilisateur clique sur "sauvegarder", le groupe de langue est sauvegardé.
+	 * Si l'utilisateur clique sur "supprimer", le groupe de langue est supprimé et l'utilisateur est
 	 * redirigé vers la liste des langues. 
 	 * 
 	 * @param Request $request
@@ -267,30 +304,34 @@ class LangueController
 		
 		$groupeLangue = $app['orm.em']->find('\LarpManager\Entities\GroupeLangue',$id);
 		
-		$form = $app['form.factory']->createBuilder(new GroupeLangueForm(), $groupeLangue)
+		$canBeDeleted = $groupeLangue->getLangues()->isEmpty();
+		$deleteTooltip = $canBeDeleted ? '' : 'Ce groupe est référencé par '.$groupeLangue->getLangues()->count().' langues et ne peut pas être supprimé';
+			
+		$formBuilder = $app['form.factory']->createBuilder(new GroupeLangueForm(), $groupeLangue)
 			->add('update','submit', array('label' => "Sauvegarder"))
-			->add('delete','submit', array('label' => "Supprimer"))
-			->getForm();
+			->add('delete','submit', array('label' => "Supprimer", 'disabled' => !$canBeDeleted, 'attr' => ['title' => $deleteTooltip]));
+			
+		$form =	$formBuilder->getForm();
 		
 		$form->handleRequest($request);
 		
 		if ( $form->isValid() )
 		{
-			$langue = $form->getData();
+			$groupeLangue = $form->getData();
 		
 			if ( $form->get('update')->isClicked())
 			{
 				$app['orm.em']->persist($groupeLangue);
 				$app['orm.em']->flush();
-				$app['session']->getFlashBag()->add('success', 'Le groupe de langue a été mise à jour.');
+				$app['session']->getFlashBag()->add('success', 'Le groupe de langue a été mis à jour.');
 		
 				return $app->redirect($app['url_generator']->generate('langue.detailGroup',array('index' => $id)),303);
 			}
 			else if ( $form->get('delete')->isClicked())
 			{
-				$app['orm.em']->remove($langue);
+				$app['orm.em']->remove($groupeLangue);
 				$app['orm.em']->flush();
-				$app['session']->getFlashBag()->add('success', 'Le groupe de langue a été supprimée.');
+				$app['session']->getFlashBag()->add('success', 'Le groupe de langue a été supprimé.');
 				return $app->redirect($app['url_generator']->generate('langue'),303);
 			}
 		}		
@@ -309,10 +350,9 @@ class LangueController
 	 */
 	public function adminDocumentAction(Request $request, Application $app)
 	{
-		$document = $request->get('document');
 		$langue = $request->get('langue');
-	
-		$file = __DIR__.'/../../../private/doc/'.$document;
+		$document = $langue->getDocumentUrl();
+		$file = self::DOC_PATH.$document;
 	
 		$stream = function () use ($file) {
 			readfile($file);

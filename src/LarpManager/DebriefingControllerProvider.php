@@ -22,6 +22,8 @@ namespace LarpManager;
 
 use Silex\Application;
 use Silex\ControllerProviderInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
  * LarpManager\DebriefingControllerProvider
@@ -34,6 +36,15 @@ class DebriefingControllerProvider implements ControllerProviderInterface
 	public function connect(Application $app)
 	{
 		$controllers = $app['controllers_factory'];
+
+        /**
+         * Vérifie que l'utilisateur dispose du role SCENARISTE
+         */
+        $mustBeScenariste = function(Request $request) use ($app) {
+            if (!$app['security.authorization_checker']->isGranted('ROLE_SCENARISTE')) {
+                throw new AccessDeniedException();
+            }
+        };
 		
 		/**
 		 * Liste des debriefing
@@ -89,6 +100,16 @@ class DebriefingControllerProvider implements ControllerProviderInterface
 			->convert('debriefing', 'converter.debriefing:convert')
 			->bind("debriefing.delete")
 			->method('GET|POST');
+
+        /**
+         * Affichage d'un document
+         */
+        $controllers->match('/admin/{debriefing}/document','LarpManager\Controllers\DebriefingController::documentAction')
+            ->bind("debriefing.document")
+            ->assert('debriefing', '\d+')
+            ->convert('debriefing', 'converter.debriefing:convert')
+            ->method('GET|POST')
+            ->before($mustBeScenariste);
 			
 		return $controllers;
 	}

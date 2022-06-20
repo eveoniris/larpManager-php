@@ -20,6 +20,8 @@
 
 namespace LarpManager\Controllers;
 
+use LarpManager\Entities\TechnologiesRessources;
+use LarpManager\Form\Technologie\TechnologiesRessourcesForm;
 use Symfony\Component\HttpFoundation\Request;
 use Silex\Application;
 use LarpManager\Entities\Technologie;
@@ -36,7 +38,7 @@ class TechnologieController
 	 */
 	public function indexAction(Request $request, Application $app)
 	{
-		$technologies = $app['orm.em']->getRepository('LarpManager\Entities\Technologie')->findAll();
+		$technologies = $app['orm.em']->getRepository(Technologie::class)->findAll();
 		
 		return $app['twig']->render('admin\technologie\index.twig', array(
 			'technologies' => $technologies,	
@@ -52,45 +54,46 @@ class TechnologieController
 	public function addAction(Request $request, Application $app)
 	{				
 		$form = $app['form.factory']->createBuilder(new TechnologieForm(),new Technologie())->getForm();
+
 		$form->handleRequest($request);
 				
-		if ( $form->isValid() )
+		if ( $form->isValid() && $form->isSubmitted() )
 		{
 			$technologie = $form->getData();
 			
 			$app['orm.em']->persist($technologie);
-			$app['orm.em']->flush();
-			
-			$app['session']->getFlashBag()->add('success', 'La technologie a été ajoutée.');
-			return $app->redirect($app['url_generator']->generate('technologie'),303);
+            $app['orm.em']->flush();
+            $app['session']->getFlashBag()->add('success', 'La technologie a été ajoutée.');
+            return $app->redirect($app['url_generator']->generate('technologie'),303);
 		}
 		
 		return $app['twig']->render('admin\technologie\add.twig', array(
-				'form' => $form->createView(),
+            'form' => $form->createView(),
 		));
 	}
-	
-	/**
-	 * Détail d'une technologie
-	 * 
-	 * @param Request $request
-	 * @param Application $app
-	 * @param Billet $billet
-	 */
+
+    /**
+     * Détail d'une technologie
+     *
+     * @param Request $request
+     * @param Application $app
+     * @param Technologie $technologie
+     * @return mixed
+     */
 	public function detailAction(Request $request, Application $app, Technologie $technologie)
 	{
 		return $app['twig']->render('admin\technologie\detail.twig', array(
 				'technologie' => $technologie,
 		));
 	}
-	
-	/**
-	 * Mise à jour d'une technologie
-	 * 
-	 * @param Request $request
-	 * @param Application $app
-	 * @param Billet $billet
-	 */
+
+    /**
+     * Mise à jour d'une technologie
+     *
+     * @param Request $request
+     * @param Application $app
+     * @param Technologie $technologie
+     */
 	public function updateAction(Request $request, Application $app, Technologie $technologie)
 	{
 		$form = $app['form.factory']->createBuilder(new TechnologieForm(), $technologie)
@@ -114,14 +117,14 @@ class TechnologieController
 				'technologie' => $technologie,
 		));
 	}
-	
-	/**
-	 * Suppression d'une technologie
-	 * 
-	 * @param Request $request
-	 * @param Application $app
-	 * @param Billet $billet
-	 */
+
+    /**
+     * Suppression d'une technologie
+     *
+     * @param Request $request
+     * @param Application $app
+     * @param Technologie $technologie
+     */
 	public function deleteAction(Request $request, Application $app, Technologie $technologie)
 	{
 		$form = $app['form.factory']->createBuilder(new TechnologieDeleteForm(), $technologie)
@@ -152,11 +155,106 @@ class TechnologieController
 	 *
 	 * @param Request $request
 	 * @param Application $app
+	 * @param Technologie
 	 */
 	public function personnagesAction(Request $request, Application $app, Technologie $technologie)
 	{
-		return $app['twig']->render('admin/technologie/personnages.twig', array(
-				'technologie' => $technologie,
-		));
-	}	
+	    $routeName = 'technologie.personnages';
+	    $routeParams = array('technologie' => $technologie->getId());
+	    $twigFilePath = 'admin/technologie/personnages.twig';
+	    $columnKeys = ['colId', 'colStatut', 'colNom', 'colClasse', 'colGroupe', 'colUser'];
+	    $personnages =  $technologie->getPersonnages();
+	    $additionalViewParams = array(
+	        'technologie' => $technologie
+	    );
+	    
+	    // handle the request and return an array containing the parameters for the view
+	    $personnageSearchHandler = $app['personnage.manager']->getSearchHandler();
+	    
+	    $viewParams = $personnageSearchHandler->getSearchViewParameters(
+	        $request,
+	        $routeName,
+	        $routeParams,
+	        $columnKeys,
+	        $additionalViewParams,
+	        $personnages
+	        );
+	    
+	    return $app['twig']->render(
+	        $twigFilePath,
+	        $viewParams
+	        );
+	    
+	}
+
+    /**
+     * Ajout d'une ressource à une technologie
+     * @param Request $request
+     * @param Application $app
+     */
+    public function addRessourceAction(Request $request, Application $app)
+    {
+        $technologieId = $request->get('technologie');
+        $technologie = $app['orm.em']->find(Technologie::class,$technologieId);
+        $technologieNom = $technologie->getLabel();
+
+        $form = $app['form.factory']->createBuilder(new TechnologiesRessourcesForm())->getForm();
+
+        $form->handleRequest($request);
+
+        if ($form->isValid() && $form->isSubmitted())
+        {
+            $technologieRessource = $form->getData();
+            $ressourceId = $technologieRessource->getRessource()->getId();
+            $ressourceNom = $technologieRessource->getRessource()->getLabel();
+
+            //recherche une instance de TechnologiesRessources correspondant à la technologie et la ressource sélectionnées
+            $oldRessource = $app['orm.em']->getRepository(TechnologiesRessources::class)
+                ->findOneBy(array('technologie' => $technologieId, 'ressource' => $ressourceId));
+            $newQuantite = $technologieRessource->getQuantite();
+
+            //Si la TechnologiesRessources existe déjà
+            if($oldRessource)
+            {
+                //mise à jour de la Quantite
+                $oldRessource->setQuantite($newQuantite);
+            }else{
+                //création d'une nouvelle entrée TechnologiesRessources
+                $technologieRessource->setTechnologie($technologie);
+                $app['orm.em']->persist($technologieRessource);
+            }
+            $app['orm.em']->flush();
+            $app['session']->getFlashBag()->add('success', $technologieNom.' requiert désormais '.$newQuantite.' '.$ressourceNom);
+            return $app->redirect($app['url_generator']->generate('technologie') ,303);
+        }
+
+        return $app['twig']->render('admin\technologie\addRessource.twig', array(
+            'technologie' => $technologieId,
+            'form' => $form->createView(),
+        ));
+    }
+
+    /**
+     * Retrait d'une ressource à une technologie
+     * @param Request $request
+     * @param Application $app
+     */
+    public function removeRessourceAction(Request $request, Application $app)
+    {
+        $technologieId = $request->get('technologie');
+        $technologie = $app['orm.em']->find(Technologie::class,$technologieId);
+        $technologieNom = $technologie->getLabel();
+        $ressourceNom = $request->get('ressourceNom');
+        $ressource = $request->get('ressource');
+
+        $technologieRessource = $app['orm.em']->getRepository(TechnologiesRessources::class)
+            ->findOneBy(array('technologie' => $technologieId, 'ressource' => $ressource));
+
+        $app['orm.em']->remove($technologieRessource);
+        $app['orm.em']->flush();
+
+        $app['session']->getFlashBag()->add('success', $technologieNom.' ne requiert plus de '.$ressourceNom.'.');
+
+        return $app->redirect($app['url_generator']->generate('technologie') ,303);
+    }
 }

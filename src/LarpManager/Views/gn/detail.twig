@@ -34,6 +34,7 @@
 				
 				<ul>
 					<li><a href="{{ path('gn.participants', {'gn': gn.id}) }}"><i class="fa fa-users"></i> Participants ({{ gn.participants|length }})</a></li>
+					<li><a href="{{ path('gn.participants.pnj', {'gn': gn.id}) }}"><i class="fa fa-users"></i> Participants PNJs ({{ gn.participantspnj|length }})</a></li>
 					<li><a href="{{ path('gn.participants.withoutbillet', {'gn': gn.id}) }}"><i class="fa fa-users"></i> Participants sans billet ({{ gn.participantswithoutbillet|length }})</a></li>
 					<li><a href="{{ path('gn.participants.withoutgroup', {'gn': gn.id}) }}"><i class="fa fa-users"></i> Participants sans groupe (mais avec billet) ({{ gn.participantswithoutgroup|length }})</a></li>
 					<li><a href="{{ path('gn.participants.withoutperso', {'gn': gn.id}) }}"><i class="fa fa-users"></i> Participants sans personnage ({{ gn.participantswithoutperso|length }})</a></li>
@@ -252,7 +253,7 @@
 					{% if participant.personnage %}
 						<li>
 							<a href="{{ path('gn.personnage', {'gn': gn.id}) }}"><i class="fa fa-user" aria-hidden="true"></i>&nbsp;
-				   				{{ participant.personnage.nom }} {{ participant.personnage.surnom }}&nbsp;--&nbsp;{{ participant.personnage.classeName }}
+				   				{{ participant.personnage.nom }} ({{ participant.personnage.surnom }})&nbsp;--&nbsp;{{ participant.personnage.classeName }}
 				   			</a>
 				   		</li>
 					{% else %}
@@ -278,7 +279,7 @@
 					<strong>Groupe principal :</strong>
 					<ul class="list-group">
 						{% if participant.session %}
-							<li class="list-group-item"><a href="{{ path('groupeGn.groupe', {'groupeGn': participant.session.id}) }}"><i class="fa fa-users"></i> Votre groupe {{ participant.session.groupe.nom }}</a></li>
+							<li class="list-group-item"><a href="{{ path('groupeGn.groupe', {'groupeGn': participant.session.id}) }}"><i class="fa fa-users"></i> {{ participant.session.groupe.nom }}</a></li>
 						{% else %}
 							<li class="list-group-item"><a href="{{ path('participant.groupe.join', {'participant': participant.id}) }}"><i class="fa fa-users"></i> Rejoindre un groupe</a></li>
 						{% endif %}

@@ -1,6 +1,6 @@
 {% extends "layout.twig" %}
 
-{% block title %}{{ personnage.publicName }}{% endblock title %}
+{% block title %}{{ personnage.publicName }} liste de sorts{% endblock title %}
 
 {% block content %}
 <div class="container-fluid">
@@ -13,14 +13,44 @@
 	</ol>
 	
 	<div class="well bs-component">
-		<form action="{{ path('personnage.admin.update.sort',{'personnage':personnage.id}) }}" method="POST" {{ form_enctype(form) }}>
-			<fieldset>
-				<legend>Choix des sorts</legend>
-				{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
-	
-				{{ form_row(form.sorts) }}
-				{{ form_rest(form) }}
-			</fieldset>
-		</form>
+		<table class="table table-striped table-bordered table-condensed">
+			<thead>
+				<tr>
+					<th>Nom</th>
+					<th>Niveau</th>
+					<th>Secret</th>
+					<th>Domaine</th>
+					<th>Description</th>
+					<th>Ajouter/Retirer</th>
+				</tr>
+			</thead>
+			<tbody>
+			{% for sort in sorts %}
+				<tr>
+					<td>{{ sort.label }}</td>
+					<td>{{ sort.niveau }}</td>
+					<td>{% if sort.secret %}
+							<span style="color:red;">Secret</span>
+						{% else %}
+							Non
+						{% endif %}
+					</td>
+					<td>{{ sort.domaine.label }}</td>
+					<td>{{ sort.description |striptags}}</td>
+					<td>{% if personnage in sort.personnages  %}
+						<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Retirer ce sort"
+							href="{{ path('personnage.admin.remove.sort',{'personnage':personnage.id, 'sort':sort.id}) }}">
+							<i class="fa fa-minus" style="color: red"></i></a>
+						{% else %}
+							<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Ajouter ce sort"
+							   href="{{ path('personnage.admin.add.sort',{'personnage':personnage.id, 'sort':sort.id}) }}">
+							   <i class="fa fa-plus" style="color: green"></i></a>
+						{% endif %}
+					</td>
+				</tr>
+			{% endfor %}
+			</tbody>
+		</table>
 	</div>
+
 {% endblock content %}

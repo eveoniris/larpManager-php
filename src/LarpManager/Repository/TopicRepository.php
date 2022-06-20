@@ -20,7 +20,9 @@
 
 namespace LarpManager\Repository;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\Parameter;
 use LarpManager\Entities\Topic;
 
 /**
@@ -53,17 +55,15 @@ class TopicRepository extends EntityRepository
 	public function findAllOrderedByCreationDate($topicId = NULL)
 	{
 		$query = $this->getEntityManager()
-				->createQuery('SELECT t FROM LarpManager\Entities\Topic t ORDER BY t.creation_date ASC');
-		
-		if ( NULL == $topicId)
-		{
-			$query->addWhere('t.topic_id IS NULL');
-		}
-		else
-		{
-			$query->addWhere('t.topic_id = :topic_id');
-			$query->setParameter('topic_id', $topicId);
-		}
+				->createQuery('SELECT t FROM LarpManager\Entities\Topic t WHERE t.topic_id'.'?1 ORDER BY t.creation_date ASC' );
+                if ($topicId === NULL){
+                   $query->setParameter(1, 'IS NULL');
+                }else{
+                   $query->setParameters(new ArrayCollection(
+                       [new Parameter(1, '=?2'),
+                       new Parameter(2,$topicId)]
+                   ));
+                }
 		
 		$topics = $query->getResult();
 		

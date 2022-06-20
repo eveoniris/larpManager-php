@@ -10,10 +10,12 @@
 		<li class="active">Personnages ayant {{ priere.label }} - Niveau {{ priere.niveau }}</li>
 	</ol>
 	
-	<div class="list-group">
-		{% for personnage in priere.personnages %}
-			<a class="list-group-item" href="{{ path('personnage.admin.detail', {'personnage': personnage.id}) }}">{% if personnage.vivant == 0 %}💀 {% endif %}#{{ personnage.id }} - {{ personnage.identity }} -- {{ personnage.classeName }}</a>
-		{% endfor %}
-	</div>
-	
+	{{ include('admin/personnage/search.twig',
+		 	{
+			 displayAdminToolbar: false,
+			 displaySearchFilter: false
+		  	}
+  		)
+	}}
+
 {% endblock content %}

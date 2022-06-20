@@ -71,12 +71,18 @@
 							{% if trigger.tag == 'PRETRISE INITIE' %}
 								<li class="list-group-item"><a href="{{ path('participant.personnage.religionDescription', {'participant': participant.id}) }}">Choisir une description de religion</a></li>
 							{% endif %}
+							{% if trigger.tag == 'TECHNOLOGIE' %}
+								<li class="list-group-item"><a href="{{ path('participant.personnage.technologie', {'participant': participant.id}) }}">Choisir une technologie</a></li>
+							{% endif %}
 						{% endfor %}
 						</ul>
 					{% endif %}
 						
 					{% include 'public/personnage/fragment/info.twig' with {'personnage': personnage, 'participant' : participant} %}
 					{% include 'public/personnage/fragment/origine.twig' with {'personnage': personnage, 'participant': participant} %}
+					{% if personnage.personnageLignee|length > 0 %}
+						{% include 'public/personnage/fragment/lignee.twig'%}
+					{% endif%}
 					{% include 'public/personnage/fragment/chronologie.twig' with {'personnage': personnage, 'participant': participant} %}
 					{% include 'public/personnage/fragment/pugilat.twig' with {'personnage': personnage} %}
 					{% include 'public/personnage/fragment/competence.twig' with {'personnage': personnage, 'participant': participant} %}
@@ -86,19 +92,7 @@
 			
 			<div class="col-sm-6">
 				<div class="well well-sm">
-					 <div class="thumbnail">
-			  			{% if participant.personnage.trombineUrl %}
-							<img class="media-object" src="{{ path('personnage.trombine', {'personnage' : participant.personnage.id }) }}" />
-						{% else %}
-							<img class="media-object" src="{{ app.request.basepath }}/img/no_trombine.png" />
-						{% endif %}
-						<div class="caption">
-			        		<h3>Votre photo</h3>
-			        		<p>Si ce n'est pas déjà fait, téléversez votre photo. Elle sera utilisée pour les différents trombinoscopes des groupes auxquels vous appartenez afin que les autres joueurs puissent vous reconnaitre.</p>
-							<p><a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Modifier votre photo" href="{{ path('participant.personnage.trombine', {'participant': participant.id, 'personnage': participant.personnage.id}) }}"><i class="fa fa-camera" aria-hidden="true"></i></a></p>
-						</div>
-					</div>
-
+					{% include 'public/personnage/fragment/trombinoscope.twig' with {'personnage': personnage, 'participant': participant} %}
 					{% include 'public/personnage/fragment/groupe.twig' with {'personnage': personnage, 'participant': participant} %}
 					{% include 'public/personnage/fragment/groupeSecondaireChef.twig' with {'personnage': personnage, 'participant': participant} %}
 					{% include 'public/personnage/fragment/groupeSecondaireMembre.twig' with {'personnage': personnage, 'participant': participant} %}

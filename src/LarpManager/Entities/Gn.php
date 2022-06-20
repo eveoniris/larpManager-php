@@ -163,6 +163,24 @@ class Gn extends BaseGn
 		
 		return $participants;
 	}
+
+	/**
+	 * Fourni la liste de tous les participants à un GN avec un billet
+	 */
+	public function getParticipantsWithBillet()
+	{
+		$participants = new ArrayCollection();
+		
+		foreach( $this->getParticipants() as $participant)
+		{
+			if ( $participant->getBillet() )
+			{
+				$participants[] = $participant;
+			}
+		}
+		
+		return $participants;
+	}
 	
 	/**
 	 * Fourni la liste de tous les participants à un GN ayant un billet mais n'étant pas encore dans un groupe
@@ -212,16 +230,9 @@ class Gn extends BaseGn
 		
 		foreach( $this->getParticipants() as $participant)
 		{
-			if ( $participant->getBillet() )
+			if ( $participant->isPnj() )
 			{
-				if ( $participant->getBillet()->getLabel() ==  'Inscription PNJ')
-				{
-					$participants[] = $participant;
-				}
-				if ( $participant->getBillet()->getLabel() ==  'Gratuit PNJ')
-				{
-					$participants[] = $participant;
-				}
+			    $participants->add($participant);
 			}
 		}
 		
@@ -270,8 +281,20 @@ class Gn extends BaseGn
 		
 		return $result;
 	}	
+	
 	public function getBesoinValidationCi() 
 	{
           return $this->getConditionsInscription() != '' && $this->getConditionsInscription() != null;	
+	}
+	
+	/**
+	 * Retourne le numéro du GN (à partir de son label)
+	 * @return int
+	 */
+	public function getNumber() : int
+	{
+	    $str = preg_replace('/[^0-9.]+/', '', $this->getLabel());	    
+	    $num = (int)$str;	
+	    return $num;
 	}
 }

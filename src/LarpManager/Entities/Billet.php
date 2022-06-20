@@ -98,4 +98,14 @@ class Billet extends BaseBillet
 	{
 		return $this->getGn()->getLabel(). ' - ' . $this->getLabel();
 	}
+	
+	/**
+	 * Indique si le billet est pour un PNJ ou non
+	 * 
+	 * @return bool
+	 */
+	public function isPnj() : bool
+	{
+	    return stripos($this->getLabel(), 'PNJ') > 0; 
+	}
 }
