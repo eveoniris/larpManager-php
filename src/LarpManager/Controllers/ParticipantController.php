@@ -2763,7 +2763,6 @@ class ParticipantController
 					$app['orm.em']->flush();
 				}
 			}
-					
 				
 			// cas special alchimie
 			if ( $competence->getCompetenceFamily()->getLabel() == "Alchimie")
@@ -2876,7 +2875,28 @@ class ParticipantController
 						break;
 				}
 			}
-				
+
+			// cas special artisanat
+			if ( $competence->getCompetenceFamily()->getLabel() == "Artisanat")
+			{
+				switch ($competence->getLevel()->getId())
+				{
+					case 1:
+						break;
+					case 2:
+						break;
+					case 3: // le personnage doit choisir 1 technologie
+					case 4: // le personnage doit choisir 1 technologie
+						$trigger = new \LarpManager\Entities\PersonnageTrigger();
+						$trigger->setPersonnage($personnage);
+						$trigger->setTag('TECHNOLOGIE');
+						$trigger->setDone(false);
+						$app['orm.em']->persist($trigger);
+						$app['orm.em']->flush();
+						break;
+				}
+			}
+
 			// cas special littérature
 			if ( $competence->getCompetenceFamily()->getLabel() == "Littérature")
 			{
