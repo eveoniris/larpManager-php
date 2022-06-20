@@ -75,16 +75,16 @@
 												{% if participant.groupeGn.groupe %}
 													<a class="list-group-item" href="{{ path('groupe.detail', {'index': participant.groupeGn.groupe.id}) }}">{{ participant.personnage.nom }} - {{ participant.gn }} - #{{ participant.groupeGn.groupe.numero }} {{ participant.groupeGn.groupe.nom }}</a>
 												{% else %}
-													<a class="list-group-item">{{ participant.personnage.nom }} - {{ participant.gn }} - Problème de groupe</a>
+													<a class="list-group-item">{{ participant.personnage.nom }} - {{ participant.gn }} - N'est pas lié à un groupe</a>
 												{% endif %}
 											{% else %}
 												<a class="list-group-item">{{ participant.personnage.nom }} - {{ participant.gn }} - N'est pas lié à un groupe</a>
 											{% endif %}
 										{% else %}
 											{% if participant.groupeGn %}
-												<a class="list-group-item">Problème de personnage {{ personnage.nom }} sur le {{ participant.gn }} - #{{ participant.groupeGn.groupe.numero }} {{ participant.groupeGn.groupe.nom }}</a>
+												<a class="list-group-item">Personnage {{ personnage.nom }} non récupéré - {{ participant.gn }} - #{{ participant.groupeGn.groupe.numero }} {{ participant.groupeGn.groupe.nom }}</a>
 											{% else %}
-												<a class="list-group-item">Problème de personnage {{ personnage.nom }} sur le {{ participant.gn }} - Problème de groupe</a>
+												<a class="list-group-item">Personnage {{ personnage.nom }} non récupéré - {{ participant.gn }} - N'est pas lié à un groupe</a>
 											{% endif %}
 										{% endif %}
 									{% endfor %}
@@ -539,7 +539,7 @@
 						<nav class="navbar navbar-default" style="margin-bottom: 0;">
 	  						<div class="container-fluid">
 	  							<div class="navbar-header">
-	  								<span class="navbar-brand">Lignée</span>
+	  								<span class="navbar-brand">Lignée & Généalogie</span>
 	  							</div>
 								{% if personnage.personnageLignee|length == 0 %}
 	  							<div class="collapse navbar-collapse">
@@ -585,20 +585,25 @@
 										<li class="list-group-item">
 											<strong>Parents :</strong>
 										</li>
-										<div class="list-group-item">
-											<a href="{{ path('personnage.admin.detail', {'personnage':lignage.parent1.id}) }}">{{ lignage.parent1.identity }}</a></div>
-										{% if lignage.parent2 %}<div class="list-group-item">
-											<a href="{{ path('personnage.admin.detail', {'personnage':lignage.parent2.id}) }}">{{ lignage.parent2.identity }}</a></div>
+										
+										{% if lignage.parent1 %}
+											<div class="list-group-item">
+												<a href="{{ path('personnage.admin.detail', {'personnage':lignage.parent1.id}) }}">{{ lignage.parent1.identity }}</a> - {{ lignage.parent1.agereel }} ans
+											{% if lignage.parent2 %}<div class="list-group-item">
+												<a href="{{ path('personnage.admin.detail', {'personnage':lignage.parent2.id}) }}">{{ lignage.parent2.identity }}</a> - {{ lignage.parent2.agereel }} ans
+											{% endif %}
+											</div>
+										{% else %}
+											<div class="list-group-item">Ni PJ ou PNJ</div>
 										{% endif %}
 
 										{% if descendants|length > 0 %}
 											<li class="list-group-item">
 												<strong>Enfants :</strong>
 											</li>
-
 											{% for descendant in descendants %}
 												<div class="list-group-item">
-													<a href="{{ path('personnage.admin.detail', {'personnage':descendant.personnage.id}) }}">{{ descendant.personnage.identity }}</a></div>
+													<a href="{{ path('personnage.admin.detail', {'personnage':descendant.personnage.id}) }}">{{ descendant.personnage.identity }}</a> - {{ descendant.personnage.agereel }} ans</div>
 											{% endfor %}
 										{% endif %}
 									{% endfor %}
