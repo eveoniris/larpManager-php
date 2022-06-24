@@ -15,7 +15,7 @@ class PersonnageSearchHandler
     protected $app;
     
     // contient la liste des colonnes 
-    protected array $columnDefinitions = array( 
+    protected $columnDefinitions = array( 
         'colId'=> [ 'label' => '#', 'fieldName' => 'id',  'sortFieldName' => 'id', 'tooltip' => 'Numéro d\'identifiant' ],
         'colStatut' => [ 'label' => 'S', 'fieldName'=> 'status',  'sortFieldName'=> 'status', 'tooltip' => 'Statut' ],
         'colNom'=> [ 'label' => 'Nom', 'fieldName'=> 'nom',  'sortFieldName'=> 'nom', 'tooltip' => 'Nom et surnom du personnage' ],

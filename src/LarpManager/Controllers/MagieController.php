@@ -46,7 +46,7 @@ class MagieController
 {
 		
     // liste des colonnes à afficher par défaut sur les vues 'personnages' (l'ordre est pris en compte)
-    private array $defaultPersonnageListColumnKeys = ['colId', 'colStatut', 'colNom', 'colClasse', 'colGroupe', 'colUser'];
+    private $defaultPersonnageListColumnKeys = ['colId', 'colStatut', 'colNom', 'colClasse', 'colGroupe', 'colUser'];
     
 	/**
 	 * Liste des sphere

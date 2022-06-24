@@ -18,7 +18,7 @@
         <ul class="list-group">
             <li class="list-group-item">
                 <div class="btn-toolbar" role="toolbar" aria-label="...">
-                    <form class="form-inline" action="{{ path('lignee.admin.list') }}" method="POST" {{ form_enctype(form) }}>
+                    <form class="form-inline" action="{{ path('lignee.list') }}" method="POST" {{ form_enctype(form) }}>
                         {% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
                         <div class="form-group">
                             <div class="input-group">
@@ -28,7 +28,7 @@
                                 {{ form_widget(form.type) }}
                                 <div class="input-group-btn">
                                     <button type="submit" class="btn btn-default" data-toggle="tooltup" data-placement="top" title="Lancer la recherche"><i class="fa fa-search"></i></button>
-                                    <a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Reset" href="{{ path('lignee.admin.list') }}"><i class="fa fa-refresh"></i></a>
+                                    <a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Reset" href="{{ path('lignee.list') }}"><i class="fa fa-refresh"></i></a>
                                 </div>
                             </div>
                         </div>
@@ -44,7 +44,7 @@
                 {% endif %}
                 Affiche <strong>{{ paginator.currentPageFirstItem }} - {{ paginator.currentPageLastItem }}</strong>.
 
-                <a href="{{ path('lignee.admin.add') }}">Ajouter une lignée</a>
+                <a href="{{ path('lignee.add') }}">Ajouter une lignée</a>
             </li>
         </ul>
 
@@ -57,9 +57,9 @@
             <tr>
                 <th>
                     {% if app.request.get('order_dir') == 'ASC' and app.request.get('order_by') == 'id' %}
-                        <a href="{{ path('lignee.admin.list', {'order_by': 'id', 'order_dir': 'DESC'}) }}">
+                        <a href="{{ path('lignee.list', {'order_by': 'id', 'order_dir': 'DESC'}) }}">
                     {%  else %}
-                        <a href="{{ path('lignee.admin.list', {'order_by': 'id', 'order_dir': 'ASC'}) }}">
+                        <a href="{{ path('lignee.list', {'order_by': 'id', 'order_dir': 'ASC'}) }}">
                     {% endif %}
                             ID
                     {% if app.request.get('order_by') == 'id'  %}
@@ -77,9 +77,9 @@
 
                 <th>
                     {% if app.request.get('order_dir') == 'ASC' and app.request.get('order_by') == 'nom' %}
-                    <a href="{{ path('lignee.admin.list', {'order_by': 'nom', 'order_dir': 'DESC'}) }}">
+                    <a href="{{ path('lignee.list', {'order_by': 'nom', 'order_dir': 'DESC'}) }}">
                         {%  else %}
-                        <a href="{{ path('lignee.admin.list', {'order_by': 'nom', 'order_dir': 'ASC'}) }}">
+                        <a href="{{ path('lignee.list', {'order_by': 'nom', 'order_dir': 'ASC'}) }}">
                             {% endif %}
                             Nom
                             {% if app.request.get('order_by') == 'nom'  %}
@@ -107,7 +107,7 @@
                     <td>
                         <div class="btn-toolbar pull-right" role="toolbar" aria-label="...">
                             <div class="btn-group" role="group" aria-label="...">
-                                <a class="btn btn-primary" href="{{ path('lignee.admin.details', {'lignee':lignee.id}) }}"><i class="fa fa-eye"></i></a>
+                                <a class="btn btn-primary" href="{{ path('lignee.details', {'lignee':lignee.id}) }}"><i class="fa fa-eye"></i></a>
                             </div>
                         </div>
                     </td>
