@@ -39,36 +39,36 @@ class BaseRessource
      * @Column(type="integer")
      * @GeneratedValue(strategy="AUTO")
      */
-    protected int $id;
+    protected $id;
 
     /**
      * @Column(type="string", length=100)
      */
-    protected string $label;
+    protected $label;
 
     /**
      * @OneToMany(targetEntity="GroupeHasRessource", mappedBy="ressource")
      * @JoinColumn(name="id", referencedColumnName="ressource_id", nullable=false)
      */
-    protected Collection $groupeHasRessources;
+    protected $groupeHasRessources;
 
     /**
      * @OneToMany(targetEntity="PersonnageRessource", mappedBy="ressource")
      * @JoinColumn(name="id", referencedColumnName="ressource_id", nullable=false)
      */
-    protected Collection $personnageRessources;
+    protected $personnageRessources;
 
     /**
      * @OneToMany(targetEntity="TechnologiesRessources", mappedBy="ressource")
      * @JoinColumn(name="id", referencedColumnName="ressource_id", nullable=false)
      */
-    protected Collection $technologiesRessources;
+    protected $technologiesRessources;
 
     /**
      * @ManyToOne(targetEntity="Rarete", inversedBy="ressources")
      * @JoinColumn(name="rarete_id", referencedColumnName="id", nullable=false)
      */
-    protected Rarete $rarete;
+    protected $rarete;
 
     public function __construct()
     {

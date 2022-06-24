@@ -33,30 +33,30 @@ class BaseCompetenceFamily
      * @Column(type="integer")
      * @GeneratedValue(strategy="AUTO")
      */
-    protected int $id;
+    protected $id;
 
     /**
      * @Column(type="string", length=45)
      */
-    protected string $label;
+    protected $label;
 
     /**
      * @Column(type="string", length=450, nullable=true)
      */
-    protected string $description;
+    protected $description;
 
     /**
      * @OneToMany(targetEntity="Technologie", mappedBy="competenceFamily", cascade={"persist"})
      * @JoinColumn (name="id", referencedColumnName="competence_family_id", nullable=false)
      */
 
-    protected Collection $technologies;
+    protected $technologies;
 
     /**
      * @OneToMany(targetEntity="Competence", mappedBy="competenceFamily", cascade={"persist"})
      * @JoinColumn(name="id", referencedColumnName="competence_family_id", nullable=false)
      */
-    protected Collection $competences;
+    protected $competences;
 
     public function __construct()
     {

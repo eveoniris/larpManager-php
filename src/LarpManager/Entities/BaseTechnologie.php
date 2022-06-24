@@ -34,47 +34,47 @@ class BaseTechnologie
      * @Column(type="integer", options={"unsigned":true})
      * @GeneratedValue(strategy="AUTO")
      */
-    protected int $id;
+    protected $id;
 
     /**
      * @Assert\NotBlank()
      * @Assert\NotNull()
      * @Column(type="string", length=45)
      */
-    protected ?string $label = null;
+    protected $label;
 
     /**
      * @Column(type="text", length=450)
      */
-    protected ?string $description = null;
+    protected $description;
 
     /**
      * @Column(type="string", length=45, nullable=true)
      */
-    protected string $documentUrl;
+    protected $documentUrl;
 
     /**
      * @Column(type="boolean", nullable=false, options={"default":0})
      */
-    protected bool $secret = false;
+    protected $secret;
 
     /**
      * @OneToMany(targetEntity="BaseTechnologiesRessources", mappedBy="technologie", cascade={"persist"})
      * @JoinColumn (name="id", referencedColumnName="technology_id", nullable=false)
      */
 
-    protected  $ressources;
+    protected $ressources;
 
     /**
      * @ManyToOne(targetEntity="CompetenceFamily", inversedBy="technologies", cascade={"persist"})
      * @JoinColumn(name="competence_family_id", referencedColumnName="id", nullable=true)
      */
-    protected ?CompetenceFamily $competenceFamily = null;
+    protected $competenceFamily;
 
     /**
      * @ManyToMany(targetEntity="Personnage", mappedBy="technologies")
      */
-    protected Collection $personnages;
+    protected $personnages;
 
     public function __construct()
     {
