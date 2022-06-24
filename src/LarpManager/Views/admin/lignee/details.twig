@@ -6,7 +6,7 @@
 
     <ol class="breadcrumb">
         <li><a href="{{ path('homepage') }}">Accueil</a></li>
-        <li><a href="{{ path('lignee.admin.list') }}">Lignées</a></li>
+        <li><a href="{{ path('lignee.list') }}">Lignées</a></li>
         <li class="active">{{ lignee.nom }} - Détails</li>
     </ol>
 
@@ -26,7 +26,7 @@
                         </div>
                         <div class="collapse navbar-collapse">
                             <ul class="nav navbar-nav navbar-right">
-                                    <li><a href="{{ path('lignee.admin.update', {'lignee':lignee.id}) }}">Modifier/Supprimer</a></li>
+                                    <li><a href="{{ path('lignee.update', {'lignee':lignee.id}) }}">Modifier/Supprimer</a></li>
                             </ul>
                         </div>
                     </div>
@@ -46,7 +46,7 @@
                         </div>
                         <div class="collapse navbar-collapse">
                             <ul class="nav navbar-nav navbar-right">
-                                <li><a href="{{ path('lignee.admin.addMembre', {'lignee':lignee.id} ) }}">Ajouter un membre</a></li>
+                                <li><a href="{{ path('lignee.addMembre', {'lignee':lignee.id} ) }}">Ajouter un membre</a></li>
                             </ul>
                         </div>
                     </div>
@@ -106,7 +106,7 @@
 
                                 <td>
                                     <a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Retirer ce membre"
-                                    href="{{ path('lignee.admin.membre.remove',{'membre':personnageLignee.id, 'lignee':lignee.id, 'membreNom':personnageLignee.personnage.nom}) }}"
+                                    href="{{ path('lignee.membre.remove',{'membre':personnageLignee.id, 'lignee':lignee.id, 'membreNom':personnageLignee.personnage.nom}) }}"
                                         onclick="return confirm('Vous vous apprétez à retirer {{ personnageLignee.personnage.nom }} de cette lignée. Confirmer ?')">
                                         <i class="fa fa-unlink"></i></a>
                                 </td>

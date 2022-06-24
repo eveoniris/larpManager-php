@@ -26,7 +26,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 
 /**
- * LarpManager\AgeControllerProvider
+ * LarpManager\MagieControllerProvider
  * 
  * @author kevin
  */

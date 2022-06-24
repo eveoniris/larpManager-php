@@ -25,7 +25,7 @@ class LigneeController
      * @param Request $request
      * @param Application $app
      */
-    public function adminListAction(Request $request, Application $app)
+    public function listAction(Request $request, Application $app)
     {
         $order_by = $request->get('order_by') ?: 'id';
         $order_dir = $request->get('order_dir') === 'DESC' ? 'DESC' : 'ASC';
@@ -58,7 +58,7 @@ class LigneeController
         $numResults = $repo->findCount($type, $value);
 
         $paginator = new Paginator($numResults, $limit, $page,
-            $app['url_generator']->generate('lignee.admin.list') . '?page=(:num)&limit=' . $limit . '&order_by=' . $order_by . '&order_dir=' . $order_dir
+            $app['url_generator']->generate('lignee.list') . '?page=(:num)&limit=' . $limit . '&order_by=' . $order_by . '&order_dir=' . $order_dir
         );
 
         return $app['twig']->render('admin/lignee/list.twig', array(
@@ -101,7 +101,7 @@ class LigneeController
      * @param Request $request
      * @param Application $app
      */
-    public function adminAddAction(Request $request, Application $app)
+    public function addAction(Request $request, Application $app)
     {
         $lignee = new Lignee();
 
@@ -126,11 +126,11 @@ class LigneeController
              */
             if ( $form->get('save')->isClicked())
             {
-                return $app->redirect($app['url_generator']->generate('lignee.admin.list'),303);
+                return $app->redirect($app['url_generator']->generate('lignee.list'),303);
             }
             else if ( $form->get('save_continue')->isClicked())
             {
-                return $app->redirect($app['url_generator']->generate('lignee.admin.add'),303);
+                return $app->redirect($app['url_generator']->generate('lignee.add'),303);
             }
         }
 
@@ -143,7 +143,7 @@ class LigneeController
      * @param Request $request
      * @param Application $app
      */
-    public function adminUpdateAction(Request $request, Application $app)
+    public function updateAction(Request $request, Application $app)
     {
         $id = $request->get('lignee');
 
@@ -171,7 +171,7 @@ class LigneeController
                 $app['orm.em']->persist($lignee);
                 $app['orm.em']->flush();
                 $app['session']->getFlashBag()->add('success', 'La lignée a été mise à jour.');
-                return $app->redirect($app['url_generator']->generate('lignee.admin.details', array('lignee' => $id)));
+                return $app->redirect($app['url_generator']->generate('lignee.details', array('lignee' => $id)));
             }
             else if ($form->get('delete')->isClicked())
             {
@@ -184,10 +184,8 @@ class LigneeController
                 $app['orm.em']->flush();
 
                 $app['session']->getFlashBag()->add('success', 'La lignée a été supprimée.');
-                return $app->redirect($app['url_generator']->generate('lignee.admin.list'));
+                return $app->redirect($app['url_generator']->generate('lignee.list'));
             }
-
-
         }
 
         return $app['twig']->render('admin/lignee/update.twig', array(
@@ -203,7 +201,7 @@ class LigneeController
      * @param Application $app
      * @param Lignee $lignee
      */
-    public function adminAddMembreAction(Request $request, Application $app)
+    public function addMembreAction(Request $request, Application $app)
     {
         $id = $request->get('lignee');
         $lignee = $app['orm.em']->find(Lignee::class,$id);
@@ -228,7 +226,7 @@ class LigneeController
             $app['orm.em']->flush();
 
             $app['session']->getFlashBag()->add('success', 'le personnage a été ajouté à la lignée.');
-            return $app->redirect($app['url_generator']->generate('lignee.admin.details', array('lignee' => $lignee->getId()),303));
+            return $app->redirect($app['url_generator']->generate('lignee.details', array('lignee' => $lignee->getId()),303));
         }
 
         return $app['twig']->render('admin/lignee/addMembre.twig', array(
@@ -243,7 +241,7 @@ class LigneeController
      * @param Request $request
      * @param Application $app
      */
-    public function adminRemoveMembreAction(Request $request, Application $app)
+    public function removeMembreAction(Request $request, Application $app)
     {
         $lignee = $request->get('lignee');
         $membreNom = $request->get('membreNom');
@@ -256,6 +254,6 @@ class LigneeController
 
         $app['session']->getFlashBag()->add('success', $membreNom.' a été retiré de la lignée.');
 
-        return $app->redirect($app['url_generator']->generate('lignee.admin.details', array('lignee' => $lignee,303)));
+        return $app->redirect($app['url_generator']->generate('lignee.details', array('lignee' => $lignee,303)));
     }
 }
