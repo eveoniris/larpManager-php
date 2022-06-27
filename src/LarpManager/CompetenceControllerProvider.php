@@ -63,7 +63,7 @@ class CompetenceControllerProvider implements ControllerProviderInterface
 		$controllers->match('/','LarpManager\Controllers\CompetenceController::indexAction')
 			->bind("competence")
 			->method('GET')
-			->before($mustBeRegle);
+			;
 			
 		/**
 		 * Liste du métériel necessaire pour les compétences
