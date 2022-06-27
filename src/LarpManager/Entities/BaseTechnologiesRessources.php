@@ -31,7 +31,7 @@ class BaseTechnologiesRessources
      * @Column(type="integer", options={"unsigned":true})
      * @GeneratedValue(strategy="AUTO")
      */
-    protected ?int $id = null;
+    protected $id;
 
     /**
      * @Assert\GreaterThan(0)
@@ -39,19 +39,19 @@ class BaseTechnologiesRessources
      * @Assert\NotBlank()
      * @Column (type="integer")
      */
-    protected ?int $quantite = null;
+    protected $quantite;
 
     /**
      * @ManyToOne(targetEntity="Technologie", inversedBy="technologieRessource", cascade={"persist"})
      * @JoinColumn(name="technologie_id", referencedColumnName="id")
      */
-    protected Technologie $technologie;
+    protected $technologie;
 
     /**
      * @ManyToOne(targetEntity="Ressource", inversedBy="technologieRessource", cascade={"persist"})
      * @JoinColumn(name="ressource_id", referencedColumnName="id")
      */
-    protected ?Ressource $ressource = null;
+    protected $ressource;
 
     /**
      * @return int

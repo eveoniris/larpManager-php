@@ -6,12 +6,12 @@
 
     <ol class="breadcrumb">
         <li><a href="{{ path('homepage') }}">Accueil</a></li>
-        <li><a href="{{ path("lignee.admin.list") }}">Lignées</a></li>
+        <li><a href="{{ path("lignee.list") }}">Lignées</a></li>
         <li class="active">Modification d'une lignée</li>
     </ol>
 
     <div class="well bs-component">
-        <form action="{{ path('lignee.admin.update', {'lignee': lignee.id}) }}" method="POST" {{ form_enctype(form) }} novalidate>
+        <form action="{{ path('lignee.update', {'lignee': lignee.id}) }}" method="POST" {{ form_enctype(form) }} novalidate>
             <fieldset>
                 <legend> {{ lignee.nom }} - Modification</legend>
                 {% form_theme form 'Form/bootstrap_3_layout.html.twig' %}

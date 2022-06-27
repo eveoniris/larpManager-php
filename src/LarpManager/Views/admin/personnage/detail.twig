@@ -580,38 +580,37 @@
 								{% if personnage.personnageLignee|length > 0 %}
 									{% for lignage in personnage.personnageLignee %}
 										{% if lignage.lignee %}<div class="list-group-item">
-											Lignée :<a href="{{ path('lignee.admin.details', {'lignee':lignage.lignee.id}) }}"> {{ lignage.lignee.nom }}</a></div>
+											Lignée :<a href="{{ path('lignee.details', {'lignee':lignage.lignee.id}) }}"> {{ lignage.lignee.nom }}</a></div>
 										{% endif %}
 										<li class="list-group-item">
 											<strong>Parents :</strong>
-										</li>
-										
+											<ul>
 										{% if lignage.parent1 %}
-											<div class="list-group-item">
+											<li>
 												<a href="{{ path('personnage.admin.detail', {'personnage':lignage.parent1.id}) }}">{{ lignage.parent1.identity }}</a> - {{ lignage.parent1.agereel }} ans
 											{% if lignage.parent2 %}<div class="list-group-item">
 												<a href="{{ path('personnage.admin.detail', {'personnage':lignage.parent2.id}) }}">{{ lignage.parent2.identity }}</a> - {{ lignage.parent2.agereel }} ans
 											{% endif %}
-											</div>
-										{% else %}
-											<div class="list-group-item">Ni PJ ou PNJ</div>
-										{% endif %}
-
-										{% if descendants|length > 0 %}
-											<li class="list-group-item">
-												<strong>Enfants :</strong>
 											</li>
-											{% for descendant in descendants %}
-												<div class="list-group-item">
-													<a href="{{ path('personnage.admin.detail', {'personnage':descendant.personnage.id}) }}">{{ descendant.personnage.identity }}</a> - {{ descendant.personnage.agereel }} ans</div>
-											{% endfor %}
+										{% else %}
+											<li>Ni PJ ou PNJ</li>
 										{% endif %}
+										</ul></li>
 									{% endfor %}
 								{% else %}
 									<p class="list-group-item-text">
 										Ce personnage n'a pas de lignée.
 									</p>
 								{% endif %}
+								{% if descendants|length > 0 %}
+									<li class="list-group-item">
+										<strong>Enfants :</strong>
+										<ul>
+									{% for descendant in descendants %}
+										<li><a href="{{ path('personnage.admin.detail', {'personnage':descendant.personnage.id}) }}">{{ descendant.personnage.identity }}</a> - {{ descendant.personnage.agereel }} ans</li>
+									{% endfor %}
+									</ul></li>
+								{% endif %}								
 							</div>
 						</div>
 					</div>
