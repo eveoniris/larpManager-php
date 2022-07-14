@@ -163,12 +163,12 @@ table tr td {
 			<tr>
 				<td>
 					{% for sort in personnage.sorts %}
-						{{ sort.label }} - {{ sort.domaine.label }} - Niveau {{ sort.niveau }}<br />
+						{% if sort.secret %}<strong>Secret</strong> - {% endif %}{{ sort.label }} - {{ sort.domaine.label }} - Niveau {{ sort.niveau }}<br />
 					{% endfor %}
 				</td>
 				<td>
 					{% for potion in personnage.potions %}
-						{{ potion.label }} - Niveau {{ potion.niveau }}<br />
+						{% if potion.secret %}<strong>Secret</strong> - {% endif %}{{ potion.label }} - Niveau {{ potion.niveau }}<br />
 					{% endfor %}
 				</td>
 				<td>

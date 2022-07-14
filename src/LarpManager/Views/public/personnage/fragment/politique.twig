@@ -1,3 +1,4 @@
+{% if personnage.hasCompetence('Politique') %}
 	<div class="header">
 		<h5>Vos connaissances politiques</h5>
 	</div>
@@ -7,7 +8,7 @@
 			{# Liste des relations entre les pays #}
 			{% if personnage.getCompetenceNiveau('Politique') >= 1 %}
 				<p>
-					Votre compétence Politique Apprenti vous permet de connaître les relations entre les fiefs :<br />
+					Votre compétence Politique Apprenti vous permet de connaître les relations entre les fiefs : 
 					<a href="{{ path('participant.personnage.politique', {'participant': participant.id}) }}">Voir les liens politiques entre les différents fiefs</a>
 				</p>
 			{% endif %}
@@ -15,7 +16,7 @@
 			{# Les lois de son pays #}
 			{% if personnage.getCompetenceNiveau('Politique') >= 2 %}
 				<p>
-					Votre compétence Politique Initié vous permet de connaître les lois de votre pays :<br />
+					Votre compétence Politique Initié vous permet de connaître les lois de votre pays :
 					<ul>
 					{% for territoire in participant.groupeGn.groupe.territoires %}
 						{% for fief in territoire.ancestors %}
@@ -33,7 +34,7 @@
 			{# Toutes les lois #}
 			{% if personnage.getCompetenceNiveau('Politique') >= 3 %}
 				<p>
-				Votre compétence Politique Expert vous permet de connaître toutes les lois:<br />
+					Votre compétence Politique Expert vous permet de connaître toutes les lois:
 					<ul>
 						{% for loi in lois %}
 							<li>{{ loi.label }} : <a href="{{ path('loi.document',{'loi' : loi.id}) }}">Téléchargez le document</a></li>
@@ -41,7 +42,6 @@
 					</ul>
 				</p>
 			{% endif %}
-			
-			
 		</div>
 	</div>
+{% endif %}
