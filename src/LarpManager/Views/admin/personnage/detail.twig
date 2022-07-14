@@ -224,7 +224,7 @@
 							<div class="list-group">
 								<div class="list-group-item">
 									{% for sort in personnage.sorts %}
-										<div class="list-group-item-text">{{ sort.label }} - {{ sort.domaine.label }} Niveau {{ sort.niveau }}</div>
+										<div class="list-group-item-text">{% if sort.secret %}<span style="color:red;">Secret</span> - {% endif %}{{ sort.label }} - {{ sort.domaine.label }} Niveau {{ sort.niveau }}</div>
 									{% else %}
 										<div class="list-group-item-text">Aucun</div>
 									{% endfor %}
@@ -239,7 +239,7 @@
 							<div class="list-group">
 								<div class="list-group-item">
 									{% for potion in personnage.potions %}
-										<div class="list-group-item-text">{{ potion.label }} - Niveau {{ potion.niveau }}</div>
+										<div class="list-group-item-text">{% if potion.secret %}<span style="color:red;">Secret</span> - {% endif %}{{ potion.label }} - Niveau {{ potion.niveau }}</div>
 									{% else %}
 										<div class="list-group-item-text">Aucune</div>
 									{% endfor %}

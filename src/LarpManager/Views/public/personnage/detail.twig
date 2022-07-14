@@ -80,9 +80,7 @@
 						
 					{% include 'public/personnage/fragment/info.twig' with {'personnage': personnage, 'participant' : participant} %}
 					{% include 'public/personnage/fragment/origine.twig' with {'personnage': personnage, 'participant': participant} %}
-					{% if personnage.personnageLignee|length > 0 %}
-						{% include 'public/personnage/fragment/lignee.twig'%}
-					{% endif%}
+					{% include 'public/personnage/fragment/lignee.twig'%}
 					{% include 'public/personnage/fragment/chronologie.twig' with {'personnage': personnage, 'participant': participant} %}
 					{% include 'public/personnage/fragment/pugilat.twig' with {'personnage': personnage} %}
 					{% include 'public/personnage/fragment/competence.twig' with {'personnage': personnage, 'participant': participant} %}
@@ -99,15 +97,9 @@
 					{% include 'public/personnage/fragment/alchimie.twig' with {'personnage': personnage, 'participant': participant} %}
 					{% include 'public/personnage/fragment/magie.twig' with {'personnage': personnage, 'participant': participant} %}
 					{% include 'public/personnage/fragment/language.twig' with {'personnage': personnage, 'participant': participant} %}
-					{% if personnage.technologies|length > 0 %}
-						{% include 'public/personnage/fragment/technologie.twig' with {'personnage': personnage, 'participant': participant} %}
-					{% endif %}
-					{% if personnage.items|length > 0 %}
-						{% include 'public/personnage/fragment/item.twig' with {'personnage': personnage, 'participant': participant} %}
-					{% endif %}
-					{% if personnage.hasCompetence('Politique') %}
-						{% include 'public/personnage/fragment/politique.twig' with {'personnage': personnage, 'participant': participant, 'lois': lois} %}
-					{% endif %}
+					{% include 'public/personnage/fragment/technologie.twig' with {'personnage': personnage, 'participant': participant} %}
+					{% include 'public/personnage/fragment/item.twig' with {'personnage': personnage, 'participant': participant} %}
+					{% include 'public/personnage/fragment/politique.twig' with {'personnage': personnage, 'participant': participant, 'lois': lois} %}
 					{% include 'public/personnage/fragment/priere.twig' with {'personnage': personnage, 'participant': participant} %}
 					{% include 'public/personnage/fragment/religion.twig' with {'personnage': personnage, 'participant': participant} %}
 				</div>

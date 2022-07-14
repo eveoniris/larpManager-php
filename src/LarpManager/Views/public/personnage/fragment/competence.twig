@@ -6,18 +6,17 @@
 <h6>{{ personnage.xp|default(0) }} / {{ personnage.xpTotal }} xp</h6>
 
 <ul class="list-group">
-	
 	{% for competence in personnage.competences %}
 		<li class="list-group-item">
 			<strong>{{ competence.competenceFamily.label }}</strong>&nbsp({{ competence.level.label }}) :<br />
 			{{ competence.description|markdown }}
-				<p class="list-group-item-text">
-    				{% if competence.documentUrl %}
-    					<a class="btn btn-default btn-sm" href="{{ path('participant.competence.detail',{'participant': participant.id, 'competence' : competence.id}) }}">
-    						<i class="fa fa-file"></i> Voir l'aide de jeu
-    					</a>
-    				{% endif %}
-    				</p>							
-				</li>
-			{% endfor %}
+			<p class="list-group-item-text">
+				{% if competence.documentUrl %}
+					<a class="btn btn-default btn-sm" href="{{ path('participant.competence.detail',{'participant': participant.id, 'competence' : competence.id}) }}">
+						<i class="fa fa-file"></i> Voir l'aide de jeu
+					</a>
+				{% endif %}
+			</p>							
+		</li>
+	{% endfor %}
 </ul>
