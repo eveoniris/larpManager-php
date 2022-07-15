@@ -427,21 +427,27 @@ class Personnage extends BasePersonnage
         // On compte les langues connues
         $compteLangue = 0;
         $compteLangueAncienne = 0;
+		$maxLangueConnue = 0;
         $label = "";
         foreach ($this->getPersonnageLangues() as $personnageLangue)
-        {
-            $label = $label . " " . $personnageLangue->getLangue();
-            if (strpos($personnageLangue->getLangue(), "Ancien:") === 0)
+		{
+			$label = $label . " " . $personnageLangue->getLangue();
+            if (strpos($personnageLangue->getLangue(), "Ancien") === 0)
             {
                 $compteLangueAncienne += 1;
             } else
             {
                 $compteLangue += 1;
             }
+			$source = $personnageLangue->getSource();
+			$baseSources = array("ORIGINE", "GROUPE", "ORIGINE et GROUPE");
+			if (in_array($source, $baseSources))
+			{
+				$maxLangueConnue +=1;
+			}
         }
 
         // On parcourt les compétences pour compter le nombre de langues & langues anciennes qui devraient être connues.
-        $maxLangueConnue = 2;
         $maxLangueAncienneConnue = 0;
         foreach ($this->getCompetences() as $competence)
         {
@@ -459,22 +465,23 @@ class Personnage extends BasePersonnage
         }
 
         // On génère le message de restitution de l'anomalie.
+		$return = "";
         if ($compteLangue > $maxLangueConnue)
         {
-            return ($compteLangue - $maxLangueConnue) . " langue(s) en trop à vérifier";
+            $return .= ($compteLangue - $maxLangueConnue) . " langue(s) en trop à vérifier";
         } else if ($compteLangue < $maxLangueConnue)
         {
-            return ($maxLangueConnue - $compteLangue) . " langue(s) manquante(s)";
+            $return .= ($maxLangueConnue - $compteLangue) . " langue(s) manquante(s)";
         }
-
+		if ($return != "") $return .= ", ";
         if ($maxLangueAncienneConnue < $compteLangueAncienne)
         {
-            return ($compteLangueAncienne - $maxLangueAncienneConnue) . " langue(s) ancienne(s) en trop à vérifier";
+            $return .= ($compteLangueAncienne - $maxLangueAncienneConnue) . " langue(s) ancienne(s) en trop à vérifier";
         } else if ($maxLangueAncienneConnue > $compteLangueAncienne)
         {
-            return ($maxLangueAncienneConnue - $compteLangueAncienne) . " langue(s) ancienne(s) en manquante(s)";
+            $return .= ($maxLangueAncienneConnue - $compteLangueAncienne) . " langue(s) ancienne(s) en manquante(s)";
 	    }
-	    return "";
+	    return $return;
 	}
 
 
