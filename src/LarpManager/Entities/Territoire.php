@@ -178,7 +178,7 @@ class Territoire extends BaseTerritoire implements \JsonSerializable
 		if ( ! $tresor) $tresor = 0;
 		
 		// gestion de l'état du territoire
-		switch ($this->getStatut() )
+		switch ($this->getStatut())
 		{
 			case 'Normal': return $tresor;
 			case 'Désordre': return round($tresor/ 2);

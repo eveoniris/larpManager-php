@@ -26,12 +26,12 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Silex\Application;
 
 /**
- * LarpManager\Controllers\EconnomieController
+ * LarpManager\Controllers\EconomieController
  *
  * @author kevin
  *
  */
-class EconnomieController
+class EconomieController
 {
 	/**
 	 * Présentation des constructions
@@ -59,10 +59,11 @@ class EconnomieController
 		// recherche le prochain GN
 		$gnRepo = $app['orm.em']->getRepository('\LarpManager\Entities\Gn');
 		$gn = $gnRepo->findNext();
-		
-		
+			
 		$groupeRepo = $app['orm.em']->getRepository('\LarpManager\Entities\Groupe');
 		$groupes = $groupeRepo->findAll();
+
+		$masseMonetaire = 0;
 		
 		foreach ($groupes as $groupe)
 		{
@@ -71,20 +72,13 @@ class EconnomieController
 				foreach ( $groupe->getTerritoires() as $territoire)
 				{
 					$territoires[] = $territoire;
-				}	
-			}
-		}
-				
-		$masseMonetaire = 0;
-		
-		foreach ($groupes as $groupe)
-		{
-			//  les groupes doivent participer au prochain GN
-			if ( $groupe->getGroupeGnById($gn->getId())) {
+				}
+
 				if ( $groupe->getRichesse() )
 				{
 					$masseMonetaire += $groupe->getRichesse();
 				}
+
 				foreach ( $groupe->getGroupeHasRessources() as  $groupeHasRessource)
 				{
 					if ( $ressources->containsKey($groupeHasRessource->getRessource()->getId()) )
@@ -101,6 +95,7 @@ class EconnomieController
 						));
 					}
 				}
+
 				foreach ( $groupe->getGroupeHasIngredients() as  $groupeHasIngredient)
 				{
 					if ( $ingredients->containsKey($groupeHasIngredient->getIngredient()->getId()) )
@@ -178,7 +173,7 @@ class EconnomieController
 				return (int) $first['nombre'] < (int) $second['nombre'] ? 1 : -1;
 			});
 			$ingredients = new ArrayCollection(iterator_to_array($iterator));
-			
+
 			// récupération des constructions
 			foreach ( $territoire->getConstructions() as $construction)
 			{
@@ -207,7 +202,7 @@ class EconnomieController
 			$constructions = new ArrayCollection(iterator_to_array($iterator));
 		}
 		
-		return $app['twig']->render('admin/econnomie/index.twig', array(
+		return $app['twig']->render('admin/economie/index.twig', array(
 				'gn' => $gn,
 				'masseMonetaire' => $masseMonetaire,
 				'ressources' => $ressources,

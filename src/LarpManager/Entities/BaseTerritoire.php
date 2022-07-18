@@ -281,8 +281,8 @@ class BaseTerritoire
         $this->constructions = new ArrayCollection();
         $this->lois = new ArrayCollection();
         $this->ingredients = new ArrayCollection();
-	$this->territoireCibles = new ArrayCollection();
-	$this->territoireStarts = new ArrayCollection();
+        $this->territoireCibles = new ArrayCollection();
+        $this->territoireStarts = new ArrayCollection();
     }
 
     /**
