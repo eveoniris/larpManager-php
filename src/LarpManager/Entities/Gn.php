@@ -297,4 +297,27 @@ class Gn extends BaseGn
 	    $num = (int)$str;	
 	    return $num;
 	}
+
+	/**
+	 * Fourni la liste de tous les participants à partir d'une liste d'id de personnage.
+	 */
+	public function getParticipantsInterGN()
+	{
+		$personnage_ids = [497,1312,3136,2927,1889,3356,3154,77,3134,2631,2005,3209,3127,3688,2430,57,951,400,2839,1103,3870,3614,3860,3873,3626,2079,2899,3387,3868,1823,3265,2051,2970,2544,2030,2817,3254,1344,3426,2783,2047,3322,3097,3062,278,3246,2048,3390,2806,2309,2801,2843,124,3280,1345,3407,742,1332,1340,1587,3296,581,3452,1769,3282,3545,3577,3428,2993,3073,3855,2213,687,3227,3350,3370,1189,181,3194,3459,3400,191,2964,112,2200,2297,1969,2762,2893,1224,2878,2224,2350,2100];
+
+		$participants = new ArrayCollection();
+		
+		foreach( $this->getParticipants() as $participant)
+		{
+			if ( !is_null($participant->getPersonnage()))
+			{
+				if ( in_array($participant->getPersonnage()->getId(), $personnage_ids) )
+				{
+					$participants[] = $participant;
+				}
+			}
+		}
+		
+		return $participants;
+	}	
 }

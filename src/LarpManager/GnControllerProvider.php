@@ -283,17 +283,17 @@ class GnControllerProvider implements ControllerProviderInterface
 			->convert('gn', 'converter.gn:convert')
 			->bind("gn.personnage")
 			->method('GET');
-
 			
 		/**
 		 * Impression des fiches de perso
+		 * Utiliser ::printInterAction si on a une liste de PJs
 		 */
 		$controllers->match('/{gn}/print/perso','LarpManager\Controllers\GnController::printPersoAction')
 			->assert('gn', '\d+')
 			->bind("gn.print.perso")
 			->convert('gn', 'converter.gn:convert')
 			->method('GET')
-			->before($mustBeScenariste);			
+			->before($mustBeAdmin);			
 		return $controllers;
 	}
 }

@@ -747,4 +747,22 @@ class GnController
 				'quetes' => $quetes,
 		));
 	}
+
+	/**
+	 * Impression fiche de perso pour le gn
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Gn $gn
+	 */
+	public function printInterAction(Request $request, Application $app, Gn $gn)
+	{
+		$participants = $gn->getParticipantsInterGN();
+		$quetes = new ArrayCollection();
+		
+		return $app['twig']->render('admin/gn/printInter.twig', array(
+				'participants' => $participants,
+				'quetes' => $quetes,
+		));
+	}    
 }
