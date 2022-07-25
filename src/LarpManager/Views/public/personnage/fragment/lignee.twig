@@ -6,17 +6,32 @@
 
 	<div class="list-group">
 		{% for lignage in personnage.personnageLignee %}
-			<li class="list-group-item">{{ lignage.lignee.nom }}</li>
+			<li class="list-group-item"><strong>Lignée :</strong> {{ lignage.lignee.nom }}</li>
+
+			{% if lignage.parent1 or lignage.parent2 %}
+			<li class="list-group-item">
+				<strong>Parents :</strong>
+				<ul>
+				{% if lignage.parent1 %}
+					<li>{{ lignage.parent1.surnom }}</li>
+				{% endif %}
+				{% if lignage.parent2 %}
+					<li>{{ lignage.parent2.surnom }}</li>
+				{% endif %}
+				</ul>
+				</li>
+			{% endif %}
 		{% endfor %}
 
 		{% if descendants|length > 0 %}
 			<li class="list-group-item">
 				<strong>Enfants :</strong>
+				<ul>
+				{% for descendant in descendants %}
+					<li>{{ descendant.personnage.surnom }}</li>
+				{% endfor %}
+				</ul>
 			</li>
-
-			{% for descendant in descendants %}
-				<li class="list-group-item">{{ descendant.personnage.nom }}</li>
-			{% endfor %}
 		{% endif %}
 	</div>
 {% endif %}
