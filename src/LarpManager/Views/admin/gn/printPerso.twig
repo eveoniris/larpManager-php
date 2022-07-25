@@ -70,7 +70,7 @@ table tr td {
 			 	<td style="text-align: center; width:33%">{{ personnage.xp|default(0) }} / {{ personnage.xpTotal }} xp</td>
 				<td>
 					{% for personnageReligion in personnage.personnagesReligions %}
-						{{ personnageReligion.religion.label }} - {{ personnageReligion.religionLevel.label }}<br />
+						{% if personnageReligion.religion.secret %}<strong>Secret</strong> - {% endif %}{{ personnageReligion.religion.label }} - {{ personnageReligion.religionLevel.label }}<br />
 					{% endfor %}
 				</td>
 				<td>

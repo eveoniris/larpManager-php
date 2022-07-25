@@ -58,8 +58,16 @@ class ReligionController
 	 */
 	public function indexAction(Request $request, Application $app)
 	{
+		
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Religion');
-		$religions = $repo->findAllOrderedByLabel();
+		if ( $app['security.authorization_checker']->isGranted('ROLE_REGLE') )
+		{
+			$religions = $repo->findAllOrderedByLabel();
+		}
+		else
+		{
+			$religions = $repo->findAllPublicOrderedByLabel();
+		}
 		
 		return $app['twig']->render('religion/list.twig', array('religions' => $religions));
 	}

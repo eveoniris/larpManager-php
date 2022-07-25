@@ -1954,7 +1954,7 @@ class PersonnageController
 		$personnageReligion->setPersonnage($personnage);
 		
 		// ne proposer que les religions que le personnage ne pratique pas déjà ...
-		$availableReligions = $app['personnage.manager']->getAvailableReligions($personnage);
+		$availableReligions = $app['personnage.manager']->getAdminAvailableReligions($personnage);
 		
 		if ( $availableReligions->count() == 0 )
 		{

@@ -41,4 +41,17 @@ class ReligionRepository extends EntityRepository
 		
 		return $religions;
 	}
+
+	/**
+	 * Find all public religions ordered by label
+	 * @return ArrayCollection $religions
+	 */
+	public function findAllPublicOrderedByLabel()
+	{
+		$religions = $this->getEntityManager()
+				->createQuery('SELECT r FROM LarpManager\Entities\Religion r WHERE r.secret = 0 ORDER BY r.label ASC')
+				->getResult();
+		
+		return $religions;
+	}	
 }
