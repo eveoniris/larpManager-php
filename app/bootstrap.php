@@ -301,6 +301,7 @@ else
 	$app->mount('/loi', new LarpManager\LoiControllerProvider());
 	$app->mount('/question', new LarpManager\QuestionControllerProvider());
     $app->mount('/lignee', new LarpManager\LigneeControllerProvider());
+    $app->mount('/connaissance', new LarpManager\ConnaissanceControllerProvider());
 		
 
 	/**
@@ -377,7 +378,8 @@ else
 		array('^/token/.*$', 'ROLE_REGLE'),
 		array('^/stock/.*$', 'ROLE_STOCK'),
 		array('^/rule/.*$', 'ROLE_REGLE'),
-		array('^/lignee/.*$', 'ROLE_REGLE'),
+		array('^/lignee/.*$', 'ROLE_SCENARISTE'),
+		array('^/connaissance/.*$', 'ROLE_USER'),
 	);
 }
 

@@ -785,7 +785,7 @@ class MagieController
 	}
 	
 	/**
-	 * Liste des sortilèges
+	 * Liste des sorts
 	 *
 	 * @param Request $request
 	 * @param Application $app
@@ -800,7 +800,7 @@ class MagieController
 	}
 	
 	/**
-	 * Detail d'un sortilèges
+	 * Detail d'un sort
 	 *
 	 * @param Request $request
 	 * @param Application $app
@@ -815,7 +815,7 @@ class MagieController
 	}
 	
 	/**
-	 * Ajoute un sortilège
+	 * Ajoute un sort
 	 *
 	 * @param Request $request
 	 * @param Application $app
@@ -833,8 +833,7 @@ class MagieController
 		if ( $form->isValid() )
 		{
 			$sort = $form->getData();
-				
-			
+
 			// Si un document est fourni, l'enregistrer
 			if ( $files['document'] != null )
 			{
@@ -857,7 +856,7 @@ class MagieController
 			$app['orm.em']->persist($sort);
 			$app['orm.em']->flush();
 				
-			$app['session']->getFlashBag()->add('success','Le sortilége a été ajouté');
+			$app['session']->getFlashBag()->add('success','Le sort a été ajouté');
 			return $app->redirect($app['url_generator']->generate('magie.sort.detail',array('sort'=>$sort->getId())),303);
 		}
 	
@@ -869,7 +868,7 @@ class MagieController
 	}
 	
 	/**
-	 * Met à jour un sortilège
+	 * Met à jour un sort
 	 *
 	 * @param Request $request
 	 * @param Application $app
@@ -946,7 +945,7 @@ class MagieController
 			$app['orm.em']->remove($sort);
 			$app['orm.em']->flush();
 				
-			$app['session']->getFlashBag()->add('success','Le sortilège a été suprimé');
+			$app['session']->getFlashBag()->add('success','Le sort a été supprimé');
 			return $app->redirect($app['url_generator']->generate('magie.sort.list'),303);
 		}
 	
@@ -957,7 +956,7 @@ class MagieController
 	}	
 	
 	/**
-	 * Obtenir le document lié a un sortilège
+	 * Obtenir le document lié a un sort
 	 * 
 	 * @param Request $request
 	 * @param Application $app

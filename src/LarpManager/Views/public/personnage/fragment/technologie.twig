@@ -8,7 +8,7 @@
 			<div class="list-group">
 			{% for technologie in personnage.technologies %}
 				<div class="list-group-item">
-					{% if technologie.secret %}<span style="color:red;">Secret</span> - {% endif %}<div class="list-group-item-heading">{{ technologie.label }}</div>
+					{% if technologie.secret %}<span style="color:red;">Secret</span> - {% endif %}<div class="list-group-item-heading"><strong>{{ technologie.label }}</strong></div>
 					<div class="list-group-item-text">{{ technologie.description|markdown }}</div>
 				</div>
 			{% endfor %}

@@ -1,0 +1,46 @@
+{% extends "layout.twig" %}
+
+{% block title %}Connaissances{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li class="active">Liste des connaissances</li>
+	</ol>
+	
+	<div class="well well-sm">
+	
+		<a href="{{ path('connaissance.add') }}"><i class="fa fa-plus"></i> Ajouter une connaissance</a>
+		
+		<ul class="list-group">
+		{% for connaissance in connaissances %}
+		
+			<li class="list-group-item">
+				<div class="row">
+					<div class="col-md-8">
+						{% if connaissance.secret %}
+						<span style="color:red;">Connaissance secrète</span><br />
+						{% endif %}
+						<strong>{{ connaissance.label }}</strong> - Niveau {{ connaissance.niveau }}
+						{{ connaissance.description|markdown }}
+						{% if connaissance.documentUrl %}
+							<a href="{{ path('connaissance.document', {'connaissance': connaissance.id, 'document': connaissance.documentUrl}) }}">Télécharger le pdf associé</a>
+						{% else %}
+							Pas de document lié.
+						{% endif %}
+					</div>
+					<div class="col-md-4">
+						<a href="{{ path('connaissance.update',{'connaissance':connaissance.id}) }}"><i class="fa fa-pencil"></i> Modifier</a>&nbsp;|&nbsp;
+						<a href="{{ path('connaissance.detail',{'connaissance':connaissance.id}) }}"><i class="fa fa-eye"></i> Detail</a>&nbsp;|&nbsp;
+						<a href="{{ path('connaissance.personnages',{'connaissance':connaissance.id}) }}"><i class="fa fa-users"></i> Personnages ({{ connaissance.personnages|length }})</a>&nbsp;|&nbsp;
+						<a href="{{ path('connaissance.delete',{'connaissance':connaissance.id}) }}"><i class="fa fa-eraser"></i> Supprimer</a>
+					</div>
+				</div>
+		    </li>
+
+		{% endfor %}
+	 	</ul>
+	</div>
+	
+{% endblock %}

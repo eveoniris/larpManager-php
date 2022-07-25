@@ -65,7 +65,7 @@ class BaseReligion
     protected $description_fanatique;
 
     /**
-     * @Column(type="integer")
+     * @Column(type="boolean", nullable=false, options={"default":0})
      */
     protected $secret;
 
@@ -524,6 +524,6 @@ class BaseReligion
 
     public function __sleep()
     {
-        return array('id', 'label', 'description', 'topic_id', 'blason', 'description_orga', 'description_fervent', 'description_pratiquant', 'description_fanatique');
+        return array('id', 'label', 'description', 'topic_id', 'blason', 'description_orga', 'description_fervent', 'description_pratiquant', 'description_fanatique', 'secret');
     }
 }
