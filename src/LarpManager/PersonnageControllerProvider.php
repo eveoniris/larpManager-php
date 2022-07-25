@@ -61,6 +61,7 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 	 *  - personnage.admin.competence.remove
 	 *  - personnage.religion.add
 	 *  - personnage.technologie.update
+     *  - personnage.admin.update.connaissance
 	 *
 	 * @param Application $app
 	 * @return Controllers $controllers
@@ -325,6 +326,38 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 			->before($mustBeOrga);
 			
 		/**
+		 * Page de mise à jour des connaissances (orga)
+		 */
+		$controllers->match('/admin/{personnage}/update/connaissance','LarpManager\Controllers\PersonnageController::adminUpdateConnaissanceAction')
+			->assert('personnage', '\d+')
+			->bind("personnage.admin.update.connaissance")
+			->method('GET|POST')
+			->convert('personnage', 'converter.personnage:convert')
+			->before($mustBeOrga);
+
+        /**
+         * Ajout d'une connaissance (orga)
+         */
+        $controllers->match('/admin/{personnage}/add/connaissance','LarpManager\Controllers\PersonnageController::adminAddConnaissanceAction')
+            ->assert('personnage', '\d+')
+            ->assert('connaissance', '\d+')
+            ->bind("personnage.admin.add.connaissance")
+            ->method('GET|POST')
+            ->convert('personnage', 'converter.personnage:convert')
+            ->before($mustBeOrga);
+
+        /**
+         * Retrait d'une connaissance (orga)
+         */
+        $controllers->match('/admin/{personnage}/remove/connaissance','LarpManager\Controllers\PersonnageController::adminRemoveConnaissanceAction')
+            ->assert('personnage', '\d+')
+            ->assert('connaissance', '\d+')
+            ->bind("personnage.admin.remove.connaissance")
+            ->method('GET|POST')
+            ->convert('personnage', 'converter.personnage:convert')
+            ->before($mustBeOrga);
+
+ 		/**
 		 * Page de mise à jour des sortilèges (orga)
 		 */
 		$controllers->match('/admin/{personnage}/update/sort','LarpManager\Controllers\PersonnageController::adminUpdateSortAction')

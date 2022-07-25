@@ -141,6 +141,7 @@
 												<li><a href="{{ path('personnage.admin.update.sort', {'personnage': personnage.id}) }}">Modifier la liste des sorts</a></li>
 												<li><a href="{{ path('personnage.admin.update.potion', {'personnage': personnage.id}) }}">Modifier la liste des potions</a></li>
 												<li><a href="{{ path('personnage.admin.update.priere', {'personnage': personnage.id}) }}">Modifier la liste des prieres</a></li>
+												<li><a href="{{ path('personnage.admin.update.connaissance', {'personnage': personnage.id}) }}">Modifier la liste des connaissances</a></li>
 											</ul>
 										</li>
 	  								</ul>
@@ -203,7 +204,7 @@
 							{% endif %}
 							<div class="list-group">
 								{% for personnageLangue in personnage.personnageLangues %}
-									<div class="list-group-item"><strong>{{ personnageLangue.langue}}</strong> ({{ personnageLangue.source }}) - <a href="{{ path('personnage.admin.langue.delete', {'personnage': personnage.id, 'personnageLangue' : personnageLangue.id }) }}">Supprimer</a></div>
+									<div class="list-group-item">{% if personnageLangue.langue.secret %}<span style="color:red;">Secret</span> - {% endif %}<strong>{{ personnageLangue.langue}}</strong> ({{ personnageLangue.source }}) - <a href="{{ path('personnage.admin.langue.delete', {'personnage': personnage.id, 'personnageLangue' : personnageLangue.id }) }}">Supprimer</a></div>
 								{% endfor %}
 							</div>
 
@@ -260,7 +261,17 @@
 									{% endfor %}
 								</div>
 							</div>
-								
+
+							<h6>Connaissances :</h6>
+							<div class="list-group">
+								<div class="list-group-item">
+									{% for connaissance in personnage.connaissances %}
+										<div class="list-group-item-text">{% if connaissance.secret %}<span style="color:red;">Secret</span> - {% endif %}{{ connaissance.label }} - Niveau {{ connaissance.niveau }}</div>
+									{% else %}
+										<div class="list-group-item-text">Aucune</div>
+									{% endfor %}
+								</div>
+							</div>								
 						</div>
 					</div>
 					

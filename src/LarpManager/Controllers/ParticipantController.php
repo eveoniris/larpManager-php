@@ -76,6 +76,7 @@ use LarpManager\Entities\Rule;
 use LarpManager\Entities\Question;
 use LarpManager\Entities\Reponse;
 use LarpManager\Entities\Langue;
+use LarpManager\Entities\Connaissance;
 
 
 /**
@@ -2171,6 +2172,66 @@ class ParticipantController
 		$file = __DIR__.'/../../../private/doc/'.$sort->getDocumentUrl();
 		return $app->sendFile($file)
 			    ->setContentDisposition(ResponseHeaderBag::DISPOSITION_INLINE, $sort->getPrintLabel().'.pdf');
+	}
+
+	/**
+	 * Detail d'une connaissance
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Participant $participant
+	 * @param Connaissance $connaissance
+	 */
+	public function connaissanceDetailAction(Request $request, Application $app, Participant $participant, Connaissance $connaissance)
+	{
+		$personnage = $participant->getPersonnage();
+	
+		if ( ! $personnage )
+		{
+			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créé un personnage !');
+			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),303);
+		}
+	
+		if ( ! $personnage->isKnownConnaissance($connaissance) )
+		{
+			$app['session']->getFlashBag()->add('error', 'Vous ne connaissez pas cette connaissance !');
+			return $app->redirect($app['url_generator']->generate('gn.personnage', array('gn' => $participant->getGn()->getId())),303);
+		}
+	
+		return $app['twig']->render('public/connaissance/detail.twig', array(
+				'connaissance' => $connaissance,
+				'participant' => $participant,
+				'filename' => $connaissance->getPrintLabel()	
+		));
+	}
+	
+	/**
+	 * Obtenir le document lié à une connaissance
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Participant $participant
+	 * @param Connaissance $connaissance
+	 */
+	public function connaissanceDocumentAction(Request $request, Application $app, Participant $participant, Connaissance $connaissance)
+	{
+		$personnage = $participant->getPersonnage();
+	
+		if ( ! $personnage )
+		{
+			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créé un personnage !');
+			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),303);
+		}
+	
+		if ( ! $personnage->isKnownConnaissance($connaissance) )
+		{
+			$app['session']->getFlashBag()->add('error', 'Vous ne connaissez pas cette connaissance !');
+			return $app->redirect($app['url_generator']->generate('gn.personnage', array('gn' => $participant->getGn()->getId())),303);
+		}
+			
+		$file = __DIR__.'/../../../private/doc/'.$connaissance->getDocumentUrl();
+		return $app->sendFile($file)
+			    ->setContentDisposition(ResponseHeaderBag::DISPOSITION_INLINE, $connaissance->getPrintLabel().'.pdf');
 	}
 	
 	/**

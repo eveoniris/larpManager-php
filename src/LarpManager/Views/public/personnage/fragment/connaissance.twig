@@ -1,0 +1,24 @@
+{% if personnage.connaissances|length > 0 %}
+	<div class="header">
+		<h5>Vos connaissances</h5>
+	</div>
+	<div class="row">
+		<div class="col-sm-12">
+			<div class="list-group">
+			{% for connaissance in personnage.connaissances %}
+				<div class="list-group-item">
+					{% if connaissance.secret %}<span style="color:red;">Secret</span> - {% endif %}<div class="list-group-item-heading"><strong>{{ connaissance.label }}</strong> - Niveau {{ connaissance.niveau }}</div>
+					<div class="list-group-item-text">{{ connaissance.description|markdown }}</div>
+				</div>
+				<p class="list-group-item-text">
+					{% if connaissance.documentUrl %}
+						<a class="btn btn-default btn-sm" href="{{ path('participant.connaissance.detail',{'participant': participant.id, 'connaissance' : connaissance.id}) }}">
+							<i class="fa fa-file"></i> Voir l'aide de jeu
+						</a>
+					{% endif %}
+				</p>				
+			{% endfor %}
+			</div>
+		</div>
+	</div>	
+{% endif %}

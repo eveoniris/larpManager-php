@@ -265,6 +265,21 @@ class Personnage extends BasePersonnage
 	}
 
 	/**
+	 * Vérifie si le personnage connait cette connaissance
+	 *
+	 * @param Connaissance $connaissance
+	 * @return boolean
+	 */
+	public function isKnownConnaissance(Connaissance $c)
+	{
+		foreach ( $this->getConnaissances() as $connaissance)
+		{
+			if ( $connaissance == $c ) return true;
+		}
+		return false;
+    }
+
+	/**
 	 * Vérifie si le personnage connait ce sort
 	 *
 	 * @param Sort $sort
