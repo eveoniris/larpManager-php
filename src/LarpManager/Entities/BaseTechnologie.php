@@ -88,7 +88,7 @@ class BaseTechnologie
      * @param integer $id
      * @return Technologie
      */
-    public function setId(int $id)
+    public function setId($id)
     {
         $this->id = $id;
 
@@ -100,7 +100,7 @@ class BaseTechnologie
      *
      * @return integer
      */
-    public function getId(): int
+    public function getId()
     {
         return $this->id;
     }
@@ -111,7 +111,7 @@ class BaseTechnologie
      * @param string $label
      * @return Technologie
      */
-    public function setLabel(string $label)
+    public function setLabel($label)
     {
         $this->label = $label;
 
@@ -123,7 +123,7 @@ class BaseTechnologie
      *
      * @return string|null
      */
-    public function getLabel(): ?string
+    public function getLabel()
     {
         return $this->label;
     }
@@ -134,7 +134,7 @@ class BaseTechnologie
      * @param string $description
      * @return Technologie
      */
-    public function setDescription(string $description)
+    public function setDescription($description)
     {
         $this->description = $description;
 
@@ -146,7 +146,7 @@ class BaseTechnologie
      *
      * @return string|null
      */
-    public function getDescription(): ?string
+    public function getDescription()
     {
         return $this->description;
     }
@@ -156,7 +156,7 @@ class BaseTechnologie
      *
      * @return string
      */
-    public function getDocumentUrl(): string
+    public function getDocumentUrl()
     {
         return $this->documentUrl;
     }
@@ -166,7 +166,7 @@ class BaseTechnologie
      *
      * @param string $documentUrl
      */
-    public function setDocumentUrl(string $documentUrl): void
+    public function setDocumentUrl($documentUrl)
     {
         $this->documentUrl = $documentUrl;
     }
@@ -175,7 +175,7 @@ class BaseTechnologie
      * Get the value of secret
      * @return bool
      */
-    public function isSecret(): bool
+    public function isSecret()
     {
         return $this->secret;
     }
@@ -184,7 +184,7 @@ class BaseTechnologie
      * Set the value of secret
      * @param bool $secret
      */
-    public function setSecret(bool $secret): void
+    public function setSecret($secret)
     {
         $this->secret = $secret;
     }
@@ -195,7 +195,7 @@ class BaseTechnologie
      * @param BaseTechnologiesRessources $ressource
      * @return Technologie
      */
-    public function addRessources(BaseTechnologiesRessources $ressource): Technologie
+    public function addRessources($ressource)
     {
         $this->ressources[] = $ressource;
 
@@ -208,7 +208,7 @@ class BaseTechnologie
      * @param BaseTechnologiesRessources $ressource
      * @return Technologie
      */
-    public function removeTechnologie(BaseTechnologiesRessources $ressource): Technologie
+    public function removeTechnologie($ressource)
     {
         $this->ressources->removeElement($ressource);
 
@@ -231,7 +231,7 @@ class BaseTechnologie
      * @param CompetenceFamily|null $competenceFamily
      * @return BaseTechnologie
      */
-    public function setCompetenceFamily(CompetenceFamily $competenceFamily = null)
+    public function setCompetenceFamily($competenceFamily)
     {
         $this->competenceFamily = $competenceFamily;
 
@@ -254,7 +254,7 @@ class BaseTechnologie
      * @param Personnage $personnage
      * @return Technologie
      */
-    public function addPersonnage(Personnage $personnage)
+    public function addPersonnage($personnage)
     {
         $this->personnages[] = $personnage;
 
@@ -267,7 +267,7 @@ class BaseTechnologie
      * @param Personnage $personnage
      * @return Technologie
      */
-    public function removePersonnage(Personnage $personnage)
+    public function removePersonnage($personnage)
     {
         $this->personnages->removeElement($personnage);
 

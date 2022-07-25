@@ -24,6 +24,8 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+use LarpManager\Repository\CompetenceFamilyRepository;
+
 /**
  * LarpManager\Form\Classe\ClasseForm
  *
@@ -79,7 +81,11 @@ class ClasseForm extends AbstractType
 					'multiple' => true,
 					'expanded' => true,
 					'mapped' => true,
-					'class' => 'LarpManager\Entities\CompetenceFamily',	)
+					'class' => 'LarpManager\Entities\CompetenceFamily',
+					'query_builder' => function(CompetenceFamilyRepository $cfr) {
+						return $cfr->createQueryBuilder('cfr')->orderBy('cfr.label', 'ASC');
+					}
+					)
 				)
 				->add('competenceFamilyNormales','entity', array(
 					'label' => "Famille de compétences normales",
@@ -88,7 +94,11 @@ class ClasseForm extends AbstractType
 					'multiple' => true,
 					'expanded' => true,
 					'mapped' => true,
-					'class' => 'LarpManager\Entities\CompetenceFamily',	)
+					'class' => 'LarpManager\Entities\CompetenceFamily',
+					'query_builder' => function(CompetenceFamilyRepository $cfr) {
+						return $cfr->createQueryBuilder('cfr')->orderBy('cfr.label', 'ASC');
+					}
+					)
 				)
 				->add('competenceFamilyCreations','entity', array(
 					'label' => "Famille de compétences acquises à la création",
@@ -97,7 +107,11 @@ class ClasseForm extends AbstractType
 					'multiple' => true,
 					'expanded' => true,
 					'mapped' => true,
-					'class' => 'LarpManager\Entities\CompetenceFamily',	)
+					'class' => 'LarpManager\Entities\CompetenceFamily',
+					'query_builder' => function(CompetenceFamilyRepository $cfr) {
+						return $cfr->createQueryBuilder('cfr')->orderBy('cfr.label', 'ASC');
+					}
+					)
 				);
 	}
 	

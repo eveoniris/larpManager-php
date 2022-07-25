@@ -24,17 +24,17 @@ use Silex\Application;
 use Silex\ControllerProviderInterface;
 
 /**
- * LarpManager\EconnomieControllerProvider
+ * LarpManager\EconomieControllerProvider
  * 
  * @author kevin
  *
  */
-class EconnomieControllerProvider implements ControllerProviderInterface
+class EconomieControllerProvider implements ControllerProviderInterface
 {
 	/**
 	 * Initialise les routes pour l'éconnomie
 	 * Routes :
-	 * 	- econnomie
+	 * 	- economie
 	 *
 	 * @param Application $app
 	 * @return Controllers $controllers
@@ -43,11 +43,11 @@ class EconnomieControllerProvider implements ControllerProviderInterface
 	{
 		$controllers = $app['controllers_factory'];
 		
-		$controllers->match('/','LarpManager\Controllers\EconnomieController::indexAction')
-			->bind("econnomie")
+		$controllers->match('/','LarpManager\Controllers\EconomieController::indexAction')
+			->bind("economie")
 			->method('GET');
 		
-		$controllers->match('/csv','LarpManager\Controllers\EconnomieController::csvAction')
+		$controllers->match('/csv','LarpManager\Controllers\EconomieController::csvAction')
 			->bind("economie.csv")
 			->method('GET');
 					

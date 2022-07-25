@@ -1,18 +1,18 @@
+{% if personnage.technologies|length > 0 %}
 	<div class="header">
 		<h5>Vos technologies</h5>
 	</div>
 	
 	<div class="row">
 		<div class="col-sm-12">
-		
 			<div class="list-group">
 			{% for technologie in personnage.technologies %}
 				<div class="list-group-item">
-					<div class="list-group-item-heading">{{ technologie.label }}</div>
+					{% if technologie.secret %}<span style="color:red;">Secret</span> - {% endif %}<div class="list-group-item-heading">{{ technologie.label }}</div>
 					<div class="list-group-item-text">{{ technologie.description|markdown }}</div>
 				</div>
 			{% endfor %}
 			</div>
-			
 		</div>
 	</div>
+{% endif %}
