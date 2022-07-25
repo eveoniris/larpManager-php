@@ -28,7 +28,7 @@
 	<div class="list-group">
 		{% for religion in religions %}
 			<div class="list-group-item clearfix">
-				<h5 class="list-group-item-heading header">{{ religion.label }}</h5>
+				<h5 class="list-group-item-heading header">{{ religion.label }}{% if religion.secret %}<br/><span style="color:yellow;">(<strong>SECRET</strong>)</span>{% endif %}</h5>
 				<div class="rows clearfix">
 					<div class="col-md-2">
 						{% if religion.blason %}

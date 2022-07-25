@@ -65,6 +65,11 @@ class BaseReligion
     protected $description_fanatique;
 
     /**
+     * @Column(type="integer")
+     */
+    protected $secret;
+
+    /**
      * @OneToMany(targetEntity="PersonnagesReligions", mappedBy="religion")
      * @JoinColumn(name="id", referencedColumnName="religion_id", nullable=false)
      */
@@ -289,6 +294,29 @@ class BaseReligion
     public function getDescriptionFanatique()
     {
         return $this->description_fanatique;
+    }
+
+    /**
+     * Set the value of secret.
+     *
+     * @param integer $secret
+     * @return \LarpManager\Entities\Religion
+     */
+    public function setSecret($secret)
+    {
+        $this->secret = $secret;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of secret.
+     *
+     * @return integer
+     */
+    public function getSecret()
+    {
+        return $this->secret;
     }
 
     /**
