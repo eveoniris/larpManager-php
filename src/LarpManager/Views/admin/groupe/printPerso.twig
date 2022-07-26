@@ -192,7 +192,7 @@ table tr td {
 			<tr>
 				<td>
 					{% for connaissance in personnage.connaissances %}
-						{% if connaissance.secret %}<strong>Secret</strong> - {% endif %}{{ connaissance.label }} - Niveau {{ connaissance.niveau }}<br />
+						{% if connaissance.secret %}<strong>Secret</strong> - {% endif %}{{ connaissance.label }}<br />
 					{% endfor %}
 				</td>
 			</tr>

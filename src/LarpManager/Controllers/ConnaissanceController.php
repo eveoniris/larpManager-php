@@ -86,8 +86,8 @@ class ConnaissanceController
 		if ( $form->isValid() )
 		{
 			$connaissance = $form->getData();
-				
-			
+			$connaissance->setNiveau(1);
+
 			// Si un document est fourni, l'enregistrer
 			if ( $files['document'] != null )
 			{
