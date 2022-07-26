@@ -266,7 +266,7 @@
 							<div class="list-group">
 								<div class="list-group-item">
 									{% for connaissance in personnage.connaissances %}
-										<div class="list-group-item-text">{% if connaissance.secret %}<span style="color:red;">Secret</span> - {% endif %}{{ connaissance.label }} - Niveau {{ connaissance.niveau }}</div>
+										<div class="list-group-item-text">{% if connaissance.secret %}<span style="color:red;">Secret</span> - {% endif %}{{ connaissance.label }}</div>
 									{% else %}
 										<div class="list-group-item-text">Aucune</div>
 									{% endfor %}

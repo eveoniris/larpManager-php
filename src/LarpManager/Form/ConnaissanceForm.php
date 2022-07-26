@@ -26,11 +26,6 @@ class ConnaissanceForm extends AbstractType
 					'required' => true,
 					'label' => 'Label',
 				))
-				->add('niveau','choice', array(
-						'required' => true,
-						'choices' => array("1" => 1,"2" => 2, "3" => 3, "4" => 4),
-						'label' => 'Niveau',
-				))
 				->add('document','file', array(
 						'label' => 'Téléversez un document',
 						'required' => true,

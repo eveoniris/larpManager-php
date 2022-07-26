@@ -17,7 +17,6 @@
 			<thead>
 				<tr>
 					<th>Nom</th>
-					<th>Niveau</th>
 					<th>Secret</th>
 					<th>Description</th>
 					<th>Contraintes</th>
@@ -28,7 +27,6 @@
 			{% for connaissance in connaissances %}
 				<tr>
 					<td>{{ connaissance.label }}</td>
-					<td>{{ connaissance.niveau }}</td>
 					<td>{% if connaissance.secret %}
 							<span style="color:red;">Secret</span>
 						{% else %}
