@@ -19,11 +19,9 @@
 			<li class="list-group-item">
 				<div class="row">
 					<div class="col-md-8">
-						{% if connaissance.secret %}
-						<span style="color:red;">Connaissance secrète</span><br />
-						{% endif %}
-						<strong>{{ connaissance.label }}</strong> - Niveau {{ connaissance.niveau }}
+						{% if connaissance.secret %}<span style="color:red;">Secret</span> - {% endif %}<strong>{{ connaissance.label }}</strong> - Niveau {{ connaissance.niveau }}
 						{{ connaissance.description|markdown }}
+						{% if connaissance.contraintes %}⚠️ <strong>Contraintes :</strong>{{ connaissance.contraintes|markdown }}{% endif %}
 						{% if connaissance.documentUrl %}
 							<a href="{{ path('connaissance.document', {'connaissance': connaissance.id, 'document': connaissance.documentUrl}) }}">Télécharger le pdf associé</a>
 						{% else %}

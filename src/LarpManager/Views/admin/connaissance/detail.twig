@@ -41,5 +41,13 @@
 			<p>{{ connaissance.description|markdown }}</p>
 		</div>
 	</div>
+	{% if connaissance.contraintes %}
+	<div class="panel panel-default">
+		<div class="panel-heading"><h4>Contraintes</h4></div>
+		<div class="panel-body">
+			<p>{{ connaissance.contraintes|markdown }}</p>
+		</div>
+	</div>
+	{% endif %}
 		
 {% endblock content %}

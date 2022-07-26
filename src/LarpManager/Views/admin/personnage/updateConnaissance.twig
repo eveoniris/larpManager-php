@@ -20,6 +20,7 @@
 					<th>Niveau</th>
 					<th>Secret</th>
 					<th>Description</th>
+					<th>Contraintes</th>
 					<th>Ajouter/Retirer</th>
 				</tr>
 			</thead>
@@ -34,7 +35,8 @@
 							Non
 						{% endif %}
 					</td>
-					<td>{{ connaissance.description |striptags}}</td>
+					<td>{{ connaissance.description|markdown}}</td>					
+					<td>{{ connaissance.contraintes|markdown}}</td>
 					<td>{% if personnage in connaissance.personnages  %}
 						<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Retirer cette connaissance"
 							href="{{ path('personnage.admin.remove.connaissance',{'personnage':personnage.id, 'connaissance':connaissance.id}) }}">

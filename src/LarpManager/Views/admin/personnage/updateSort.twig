@@ -36,7 +36,7 @@
 						{% endif %}
 					</td>
 					<td>{{ sort.domaine.label }}</td>
-					<td>{{ sort.description |striptags}}</td>
+					<td>{{ sort.description|markdown}}</td>
 					<td>{% if personnage in sort.personnages  %}
 						<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Retirer ce sort"
 							href="{{ path('personnage.admin.remove.sort',{'personnage':personnage.id, 'sort':sort.id}) }}">

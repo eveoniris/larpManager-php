@@ -35,7 +35,7 @@
 							{% endif %}
 						</td>
 						<td>{{ technologie.competenceFamily.label }}</td>
-						<td>{{ technologie.description |striptags}}</td>
+						<td>{{ technologie.description|markdown}}</td>
 						<td>{% if personnage in technologie.personnages  %}
 								<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Retirer cette technologie"
 								   href="{{ path('personnage.admin.remove.technologie',{'personnage':personnage.id, 'technologie':technologie.id}) }}">
