@@ -6,7 +6,7 @@
 
 <ul class="list-group">
 	{% for groupeSecondaire in personnage.secondaryGroups %}
-		<a class="list-group-item" href="{{ path('participant.groupeSecondaire.detail', {'participant': participant.id, 'groupeSecondaire':groupeSecondaire.id}) }}">{{ groupeSecondaire.label }}</a>
+		<a class="list-group-item" href="{{ path('participant.groupeSecondaire.detail', {'participant': participant.id, 'groupeSecondaire':groupeSecondaire.id}) }}">{% if groupeSecondaire.secret %}<span style="color:red;">Secret</span> - {% endif %}{{ groupeSecondaire.label }}</a>
 	{% endfor %}
 </ul>
 {% endif %}

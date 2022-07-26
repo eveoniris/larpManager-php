@@ -11,7 +11,7 @@
 
 	<div class="well well-sm bs-component">
 		<h4>
-			{{ groupeSecondaire.label }}
+			{% if groupeSecondaire.secret %}<span style="color:red;">Secret</span> - {% endif %}{{ groupeSecondaire.label }}
 		</h4>
 	</div>
 
