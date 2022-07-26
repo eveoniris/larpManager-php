@@ -168,6 +168,24 @@ table tr td {
 			</tr>
 		</tbody>
 	</table>
+	{% if personnage.connaissances %}
+	<table>
+		<thead>
+			<tr>
+				<th>Connaissances</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>
+					{% for connaissance in personnage.connaissances %}
+						{% if connaissance.secret %}<strong>Secret</strong> - {% endif %}{{ connaissance.label }} - Niveau {{ connaissance.niveau }}<br />
+					{% endfor %}
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	{% endif %}	
 	<br />
 	<hr />
 	<br />
