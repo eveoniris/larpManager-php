@@ -33,6 +33,11 @@ class BaseConnaissance
     protected $description;
 
     /**
+     * @Column(type="text", nullable=true)
+     */
+    protected $contraintes;
+
+    /**
      * @Column(type="string", length=45, nullable=true)
      */
     protected $documentUrl;
@@ -124,6 +129,29 @@ class BaseConnaissance
     public function getDescription()
     {
         return $this->description;
+    }
+
+    /**
+     * Set the value of contraintes.
+     *
+     * @param string $contraintes
+     * @return \LarpManager\Entities\Connaissance
+     */
+    public function setContraintes($contraintes)
+    {
+        $this->contraintes = $contraintes;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of contraintes.
+     *
+     * @return string
+     */
+    public function getContraintes()
+    {
+        return $this->contraintes;
     }
 
     /**

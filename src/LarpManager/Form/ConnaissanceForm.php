@@ -41,9 +41,17 @@ class ConnaissanceForm extends AbstractType
 					'label' => 'Description',
 					'attr' => array(
 						'class' => 'tinymce',
-						'rows' => 9
+						'rows' => 5
 					),
 				))
+				->add('contraintes','textarea', array(
+					'required' => false,
+					'label' => 'Contraintes',
+					'attr' => array(
+						'class' => 'tinymce',
+						'rows' => 5
+					),
+				))				
 				->add('secret', 'choice', array(
 					'required' => true,
 					'choices' => array(
