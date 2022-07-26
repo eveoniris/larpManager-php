@@ -6,7 +6,7 @@
 
 	<ul class="list-group">
 		{% for membre in personnage.membres %}
-			<a class="list-group-item" href="{{ path('participant.groupeSecondaire.detail', {'participant': participant.id, 'groupeSecondaire': membre.secondaryGroup.id}) }}">{{ membre.secondaryGroup }}</a>
+			<a class="list-group-item" href="{{ path('participant.groupeSecondaire.detail', {'participant': participant.id, 'groupeSecondaire': membre.secondaryGroup.id}) }}">{% if membre.secondaryGroup.secret %}<span style="color:red;">Secret</span> - {% endif %}{{ membre.secondaryGroup }}</a>
 		{% endfor %}
 		{% for postulant in personnage.postulants %}
 			<div class="list-group-item">{{ postulant.secondaryGroup.label }} -- Postulation en attente de validation</div>

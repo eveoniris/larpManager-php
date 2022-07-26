@@ -129,7 +129,7 @@ table tr td {
 				</td>
 				<td>
 					{% for membre in personnage.membres %}
-						{{ membre.secondaryGroup }}<br />
+						{% if membre.secondaryGroup.secret %}<strong>Secret</strong> - {% endif %}{{ membre.secondaryGroup }}<br />
 					{% endfor %}
 					
 					{% for postulant in personnage.postulants %}

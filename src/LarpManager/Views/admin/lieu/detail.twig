@@ -56,7 +56,7 @@
 							<a href="{{ path('intrigue.detail', {'intrigue' : intrigueHasLieu.intrigue.id})  }}">{{ intrigueHasLieu.intrigue.titre }}</a>
 							<ul>
 								{% for intrigueHasGroupeSecondaire in intrigueHasLieu.intrigue.intrigueHasGroupeSecondaires %}
-									<li><a href="{{ path('groupeSecondaire.admin.detail', {'groupe': intrigueHasGroupeSecondaire.secondaryGroup.id}) }}">{{ intrigueHasGroupeSecondaire.secondaryGroup.label }}</a></li>
+									<li><a href="{{ path('groupeSecondaire.admin.detail', {'groupe': intrigueHasGroupeSecondaire.secondaryGroup.id}) }}">{% if intrigueHasGroupeSecondaire.secondaryGroup.secret %}<span style="color:red;">Secret</span> - {% endif %}{{ intrigueHasGroupeSecondaire.secondaryGroup.label }}</a></li>
 								{% endfor %}
 							</ul>
 						</li>
