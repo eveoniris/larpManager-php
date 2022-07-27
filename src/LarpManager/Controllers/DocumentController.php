@@ -152,7 +152,7 @@ class DocumentController
 	 */
 	public function getAction(Request $request, Application $app, $document)
 	{
-		$filename = __DIR__.'/../../../private/doc/'.$document;
+		$filename = __DIR__.'/../../../private/documents/'.$document;
 		return $app->sendFile($filename);
 	}
 	
