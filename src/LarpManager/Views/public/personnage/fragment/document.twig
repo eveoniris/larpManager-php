@@ -1,0 +1,10 @@
+{% if personnage.documents|length > 0 %}
+	<div class="header">
+		<h5>Vos documents</h5>
+	</div>
+	<div class="list-group">
+		{% for document in personnage.documents %}
+			<a class="list-group-item" href="{{ path('document.get',{'document': document.documentUrl}) }}"><strong>{{ document.code }}</strong> - {{ document.titre }}</a></a>
+		{% endfor %}
+	</div>
+{% endif %}
