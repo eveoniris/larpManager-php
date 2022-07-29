@@ -30,6 +30,19 @@ use Doctrine\ORM\EntityRepository;
 class TerritoireRepository extends EntityRepository
 {
 	/**
+     * Find all territoire ordered by nom
+     * @return ArrayCollection $territoires
+     */
+    public function findAllOrderedByNom()
+    {
+        $territoires = $this->getEntityManager()
+        	->createQuery('SELECT t FROM LarpManager\Entities\Territoire t ORDER BY t.nom ASC')
+        	->getResult();
+        
+        return $territoires;
+    }
+    
+	/**
 	 * Fourni la liste des territoires n'étant pas dépendant d'un autre territoire
 	 * @return \Doctrine\Common\Collections\Collection
 	 */
