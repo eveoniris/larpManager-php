@@ -228,6 +228,7 @@ class BasePersonnage
      *     joinColumns={@JoinColumn(name="personnage_id", referencedColumnName="id", nullable=false)},
      *     inverseJoinColumns={@JoinColumn(name="Document_id", referencedColumnName="id", nullable=false)}
      * )
+     * @OrderBy({"code" = "ASC",})
      */
     protected $documents;
 
