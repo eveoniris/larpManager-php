@@ -65,6 +65,11 @@ class BaseReligion
     protected $description_fanatique;
 
     /**
+     * @Column(type="boolean", nullable=false, options={"default":0})
+     */
+    protected $secret;
+
+    /**
      * @OneToMany(targetEntity="PersonnagesReligions", mappedBy="religion")
      * @JoinColumn(name="id", referencedColumnName="religion_id", nullable=false)
      */
@@ -292,6 +297,29 @@ class BaseReligion
     }
 
     /**
+     * Set the value of secret.
+     *
+     * @param integer $secret
+     * @return \LarpManager\Entities\Religion
+     */
+    public function setSecret($secret)
+    {
+        $this->secret = $secret;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of secret.
+     *
+     * @return integer
+     */
+    public function getSecret()
+    {
+        return $this->secret;
+    }
+
+    /**
      * Add PersonnagesReligions entity to collection (one to many).
      *
      * @param \LarpManager\Entities\PersonnagesReligions $personnagesReligions
@@ -496,6 +524,6 @@ class BaseReligion
 
     public function __sleep()
     {
-        return array('id', 'label', 'description', 'topic_id', 'blason', 'description_orga', 'description_fervent', 'description_pratiquant', 'description_fanatique');
+        return array('id', 'label', 'description', 'topic_id', 'blason', 'description_orga', 'description_fervent', 'description_pratiquant', 'description_fanatique', 'secret');
     }
 }

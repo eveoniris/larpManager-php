@@ -1,0 +1,26 @@
+{% extends "layout.twig" %}
+
+{% block title %}Connaissances{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path('connaissance.list') }}">Liste des connaissances</a></li>
+		<li class="active">Supprimer une connaissance</li>
+	</ol>
+	
+	
+	<div class="well bs-component">
+		<form action="{{ path('connaissance.delete', {'connaissance': connaissance.id}) }}" method="POST" {{ form_enctype(form) }} novalidate>
+			<fieldset>
+				<legend>Supression d'une connaissance</legend>
+					{{ connaissance.label }} -- {{ connaissance.niveau }}
+					{{ connaissance.description|markdown }}
+					{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+					{{ form(form) }}
+			</fieldset>
+		</form>
+	</div>
+				
+{% endblock content %}

@@ -96,10 +96,10 @@
 							<h6>Groupes secondaires</h6>
 							<ul class="list-group">
 								{% for groupeSecondaire in personnage.secondaryGroups %}
-									<li class="list-group-item">{{ groupeSecondaire.label }} (Chef)</li>
+									<li class="list-group-item">{% if groupeSecondaire.secret %}<span style="color:red;">Secret</span> - {% endif %}{{ groupeSecondaire.label }} (Chef)</li>
 								{% endfor %}
 								{% for membre in personnage.membres %}
-									<a class="list-group-item" href="{{ path('groupeSecondaire.admin.detail', {'groupe': membre.secondaryGroup.id}) }}">{{ membre.secondaryGroup.label }}</a>
+									<a class="list-group-item" href="{{ path('groupeSecondaire.admin.detail', {'groupe': membre.secondaryGroup.id}) }}">{% if membre.secondaryGroup.secret %}<span style="color:red;">Secret</span> - {% endif %}{{ membre.secondaryGroup.label }}</a>
 								{% endfor %}
 								{% if personnage.secondaryGroups|length <= 0 and personnage.membres|length <= 0 %}
 									<li class="list-group-item">Ce personnage ne fait pas partie d'un groupe secondaire.</li>
@@ -141,6 +141,7 @@
 												<li><a href="{{ path('personnage.admin.update.sort', {'personnage': personnage.id}) }}">Modifier la liste des sorts</a></li>
 												<li><a href="{{ path('personnage.admin.update.potion', {'personnage': personnage.id}) }}">Modifier la liste des potions</a></li>
 												<li><a href="{{ path('personnage.admin.update.priere', {'personnage': personnage.id}) }}">Modifier la liste des prieres</a></li>
+												<li><a href="{{ path('personnage.admin.update.connaissance', {'personnage': personnage.id}) }}">Modifier la liste des connaissances</a></li>
 											</ul>
 										</li>
 	  								</ul>
@@ -190,7 +191,7 @@
 							<h6>Religions :</h6>
 							<div class="list-group">
 								{% for personnageReligion in personnage.personnagesReligions %}
-									<div class="list-group-item">{{ personnageReligion.religion.label }} - {{ personnageReligion.religionLevel.label }} - <a href="{{ path('personnage.admin.religion.delete', {'personnage': personnage.id, 'personnageReligion': personnageReligion.id }) }}">Supprimer</a></div>
+									<div class="list-group-item">{% if personnageReligion.religion.secret %}<span style="color:red;">Secret</span> - {% endif %}{{ personnageReligion.religion.label }} - {{ personnageReligion.religionLevel.label }} - <a href="{{ path('personnage.admin.religion.delete', {'personnage': personnage.id, 'personnageReligion': personnageReligion.id }) }}">Supprimer</a></div>
 								{% else %}
 									<div class="list-group-item-text">Sans - Fervent</div>
 								{% endfor %}
@@ -203,7 +204,7 @@
 							{% endif %}
 							<div class="list-group">
 								{% for personnageLangue in personnage.personnageLangues %}
-									<div class="list-group-item"><strong>{{ personnageLangue.langue}}</strong> ({{ personnageLangue.source }}) - <a href="{{ path('personnage.admin.langue.delete', {'personnage': personnage.id, 'personnageLangue' : personnageLangue.id }) }}">Supprimer</a></div>
+									<div class="list-group-item">{% if personnageLangue.langue.secret %}<span style="color:red;">Secret</span> - {% endif %}<strong>{{ personnageLangue.langue}}</strong> ({{ personnageLangue.source }}) - <a href="{{ path('personnage.admin.langue.delete', {'personnage': personnage.id, 'personnageLangue' : personnageLangue.id }) }}">Supprimer</a></div>
 								{% endfor %}
 							</div>
 
@@ -260,7 +261,17 @@
 									{% endfor %}
 								</div>
 							</div>
-								
+
+							<h6>Connaissances :</h6>
+							<div class="list-group">
+								<div class="list-group-item">
+									{% for connaissance in personnage.connaissances %}
+										<div class="list-group-item-text">{% if connaissance.secret %}<span style="color:red;">Secret</span> - {% endif %}{{ connaissance.label }}</div>
+									{% else %}
+										<div class="list-group-item-text">Aucune</div>
+									{% endfor %}
+								</div>
+							</div>								
 						</div>
 					</div>
 					
@@ -593,7 +604,7 @@
 											{% endif %}
 											</li>
 										{% else %}
-											<li>Ni PJ ou PNJ</li>
+											<li>Ni PJ, ni PNJ</li>
 										{% endif %}
 										</ul></li>
 									{% endfor %}

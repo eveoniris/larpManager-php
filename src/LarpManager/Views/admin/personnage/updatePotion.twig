@@ -34,7 +34,7 @@
 							Non
 						{% endif %}
 					</td>
-					<td>{{ potion.description |striptags}}</td>
+					<td>{{ potion.description|markdown}}</td>
 					<td>{% if personnage in potion.personnages  %}
 							<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Retirer cette potion"
 							   href="{{ path('personnage.admin.remove.potion',{'personnage':personnage.id, 'potion':potion.id}) }}">

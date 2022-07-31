@@ -228,6 +228,7 @@ class BasePersonnage
      *     joinColumns={@JoinColumn(name="personnage_id", referencedColumnName="id", nullable=false)},
      *     inverseJoinColumns={@JoinColumn(name="Document_id", referencedColumnName="id", nullable=false)}
      * )
+     * @OrderBy({"code" = "ASC",})
      */
     protected $documents;
 
@@ -308,6 +309,16 @@ class BasePersonnage
     protected $sorts;
 
     /**
+     * @ManyToMany(targetEntity="Connaissance", inversedBy="personnages")
+     * @JoinTable(name="personnages_connaissances",
+     *     joinColumns={@JoinColumn(name="personnage_id", referencedColumnName="id", nullable=false)},
+     *     inverseJoinColumns={@JoinColumn(name="connaissance_id", referencedColumnName="id", nullable=false)}
+     * )
+     * @OrderBy({"label" = "ASC", "niveau" = "ASC",})
+     */
+    protected $connaissances;
+
+    /**
      * @OneToMany(targetEntity="PugilatHistory", mappedBy="personnage")
      * @JoinColumn(name="id", referencedColumnName="personnage_id", nullable=false)
      */
@@ -353,6 +364,7 @@ class BasePersonnage
         $this->potions = new ArrayCollection();
         $this->prieres = new ArrayCollection();
         $this->sorts = new ArrayCollection();
+        $this->connaissances = new ArrayCollection();
         $this->pugilatHistories = new ArrayCollection();
         $this->personnageChronologie = new ArrayCollection();
         $this->personnageLignee = new ArrayCollection();
@@ -1770,6 +1782,44 @@ class BasePersonnage
     public function getSorts()
     {
         return $this->sorts;
+    }
+
+    /**
+     * Add Connaissance entity to collection.
+     *
+     * @param \LarpManager\Entities\Connaissance $connaissance
+     * @return \LarpManager\Entities\Personnage
+     */
+    public function addConnaissance(Connaissance $connaissance)
+    {
+        $connaissance->addPersonnage($this);
+        $this->connaissances[] = $connaissance;
+
+        return $this;
+    }
+
+    /**
+     * Remove Connaissance entity from collection.
+     *
+     * @param \LarpManager\Entities\Connaissance $connaissance
+     * @return \LarpManager\Entities\Personnage
+     */
+    public function removeConnaissance(Connaissance $connaissance)
+    {
+        $connaissance->removePersonnage($this);
+        $this->connaissances->removeElement($connaissance);
+
+        return $this;
+    }
+
+    /**
+     * Get Connaissance entity collection.
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getConnaissances()
+    {
+        return $this->connaissances;
     }
 
     /**

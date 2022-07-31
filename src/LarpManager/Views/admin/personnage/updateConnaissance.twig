@@ -1,6 +1,6 @@
 {% extends "layout.twig" %}
 
-{% block title %}{{ personnage.publicName }} liste de sorts{% endblock title %}
+{% block title %}{{ personnage.publicName }} liste de connaissances{% endblock title %}
 
 {% block content %}
 <div class="container-fluid">
@@ -9,7 +9,7 @@
 		<li><a href="{{ path('homepage') }}">Accueil</a></li>
 		<li><a href="{{ path('personnage.admin.list') }}">Liste des personnages</a></li>
 		<li><a href="{{ path('personnage.admin.detail', {'personnage': personnage.id}) }}">Détail de {{ personnage.publicName }}</a></li>
-		<li class="active">Choix des sorts</li>
+		<li class="active">Choix des connaissances</li>
 	</ol>
 	
 	<div class="well bs-component">
@@ -17,33 +17,31 @@
 			<thead>
 				<tr>
 					<th>Nom</th>
-					<th>Niveau</th>
 					<th>Secret</th>
-					<th>Domaine</th>
 					<th>Description</th>
+					<th>Contraintes</th>
 					<th>Ajouter/Retirer</th>
 				</tr>
 			</thead>
 			<tbody>
-			{% for sort in sorts %}
+			{% for connaissance in connaissances %}
 				<tr>
-					<td>{{ sort.label }}</td>
-					<td>{{ sort.niveau }}</td>
-					<td>{% if sort.secret %}
+					<td>{{ connaissance.label }}</td>
+					<td>{% if connaissance.secret %}
 							<span style="color:red;">Secret</span>
 						{% else %}
 							Non
 						{% endif %}
 					</td>
-					<td>{{ sort.domaine.label }}</td>
-					<td>{{ sort.description|markdown}}</td>
-					<td>{% if personnage in sort.personnages  %}
-						<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Retirer ce sort"
-							href="{{ path('personnage.admin.remove.sort',{'personnage':personnage.id, 'sort':sort.id}) }}">
+					<td>{{ connaissance.description|markdown}}</td>					
+					<td>{{ connaissance.contraintes|markdown}}</td>
+					<td>{% if personnage in connaissance.personnages  %}
+						<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Retirer cette connaissance"
+							href="{{ path('personnage.admin.remove.connaissance',{'personnage':personnage.id, 'connaissance':connaissance.id}) }}">
 							<i class="fa fa-minus" style="color: red"></i></a>
 						{% else %}
-							<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Ajouter ce sort"
-							   href="{{ path('personnage.admin.add.sort',{'personnage':personnage.id, 'sort':sort.id}) }}">
+							<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Ajouter cette connaissance"
+							   href="{{ path('personnage.admin.add.connaissance',{'personnage':personnage.id, 'connaissance':connaissance.id}) }}">
 							   <i class="fa fa-plus" style="color: green"></i></a>
 						{% endif %}
 					</td>

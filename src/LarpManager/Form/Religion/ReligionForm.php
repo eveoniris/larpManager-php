@@ -85,7 +85,17 @@ class ReligionForm extends AbstractType
 					'expanded' => true,
 					'class' => 'LarpManager\Entities\Sphere',
 					'choice_label' => 'label',
-				));
+				))
+				->add('secret', 'choice', array(
+					'required' => true,
+					'choices' => array(
+							false => 'Religion publique',
+							true => 'Religion secrète',
+							
+					),
+					'label' => 'Secret'
+				))				
+				;
 	}
 	
 	/**

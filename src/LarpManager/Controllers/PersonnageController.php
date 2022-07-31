@@ -65,6 +65,7 @@ use LarpManager\Form\PersonnageXpForm;
 use LarpManager\Form\TrombineForm;
 use LarpManager\Entities\Sort;
 use LarpManager\Entities\Competence;
+use LarpManager\Entities\Connaissance;
 
 
 /**
@@ -1528,6 +1529,76 @@ class PersonnageController
         return $app->redirect($app['url_generator']->generate('personnage.admin.update.priere', array('personnage' => $personnage->getId(),303)));
     }
 
+    /**
+     * Affiche la liste des connaissances pour modification
+     * @param Request $request
+     * @param Application $app
+     * @return mixed
+     */
+	public function adminUpdateConnaissanceAction(Request $request, Application $app)
+	{
+		$personnage = $request->get('personnage');
+        $connaissances = $app['orm.em']->getRepository(Connaissance::class)->findAllOrderedByLabel();
+		
+		return $app['twig']->render('admin/personnage/updateConnaissance.twig', array(
+				'personnage' => $personnage,
+                'connaissances' => $connaissances,
+		));
+	}
+
+    /**
+     * Ajoute une connaissance à un personnage
+     *
+     * @param Request $request
+     * @param Application $app
+     * @return RedirectResponse
+     */
+    public function adminAddConnaissanceAction(Request $request, Application $app)
+    {
+        $connaissanceID = $request->get('connaissance');
+        $personnage = $request->get('personnage');
+
+        $connaissance = $app['orm.em']->getRepository(Connaissance::class)
+            ->find($connaissanceID);
+
+        $nomConnaissance = $connaissance->getLabel();
+        $niveauConnaissance = $connaissance->getNiveau();
+
+        $personnage->addConnaissance($connaissance);
+
+        $app['orm.em']->flush();
+
+        $app['session']->getFlashBag()->add('success', $nomConnaissance.' '.$niveauConnaissance.' a été ajouté.');
+
+        return $app->redirect($app['url_generator']->generate('personnage.admin.update.connaissance', array('personnage' => $personnage->getId(),303)));
+    }
+
+    /**
+     * Retire une connaissance à un personnage
+     *
+     * @param Request $request
+     * @param Application $app
+     * @return RedirectResponse
+     */
+    public function adminRemoveConnaissanceAction(Request $request, Application $app)
+    {
+        $connaissanceID = $request->get('connaissance');
+        $personnage = $request->get('personnage');
+
+        $connaissance = $app['orm.em']->getRepository(Connaissance::class)
+            ->find($connaissanceID);
+
+        $nomConnaissance = $connaissance->getLabel();
+        $niveauConnaissance = $connaissance->getNiveau();
+
+        $personnage->removeConnaissance($connaissance);
+
+        $app['orm.em']->flush();
+
+        $app['session']->getFlashBag()->add('success', $nomConnaissance.' '.$niveauConnaissance.' a été retiré.');
+
+        return $app->redirect($app['url_generator']->generate('personnage.admin.update.connaissance', array('personnage' => $personnage->getId(),303)));
+    }
 
     /**
      * Affiche la liste des sorts pour modification
@@ -1954,7 +2025,7 @@ class PersonnageController
 		$personnageReligion->setPersonnage($personnage);
 		
 		// ne proposer que les religions que le personnage ne pratique pas déjà ...
-		$availableReligions = $app['personnage.manager']->getAvailableReligions($personnage);
+		$availableReligions = $app['personnage.manager']->getAdminAvailableReligions($personnage);
 		
 		if ( $availableReligions->count() == 0 )
 		{

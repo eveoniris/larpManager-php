@@ -38,6 +38,7 @@ use Nicl\Silex\MarkdownServiceProvider;
 use LarpManager\Services\UserServiceProvider;
 use LarpManager\Services\LarpManagerServiceProvider;
 use LarpManager\Services\NotifyServiceProvider;
+use LarpManager\Services\SnappyServiceProvider;
 use LarpManager\Services\Regexp;
 
 $loader = require_once __DIR__.'/../vendor/autoload.php';
@@ -56,14 +57,7 @@ $app['maintenance'] = file_exists(__DIR__.'/../cache/' . 'maintenance.tag');
 /**
  * Lecture du fichier de configuration
  */
-if(isset($_ENV['env']) && $_ENV['env'] == 'test')
-{
-    $app->register(new DerAlex\Silex\YamlConfigServiceProvider(__DIR__ . '/../config/test_settings_sqlite.yml'));
-}
-else
-{
-    $app->register(new DerAlex\Silex\YamlConfigServiceProvider(__DIR__ . '/../config/settings.yml'));
-}
+$app->register(new DerAlex\Silex\YamlConfigServiceProvider(__DIR__ . '/../config/settings.yml'));
 
 /**
  * Préparation des logs en fonction de l'environnement
@@ -98,7 +92,7 @@ $app->register(new HttpCacheServiceProvider(), array(
 		'http_cache.esi'       => null,
 		'http_cache.options'   => array(
 			'default_ttl' => 0,
-			//'private_headers' => array('Cache-Control:no-cache'),
+			'private_headers' => '',
 			'allow_reload' => true,
 			'allow_revalidate' => true,
 			),
@@ -173,6 +167,15 @@ $app->register(new UrlGeneratorServiceProvider());
 $app->register(new SessionServiceProvider());
 
 
+// PDF
+$app['snappy.pdf_options'] = array(
+	'viewport-size' => "1024x768",
+	'page-size' => 'A4',
+);
+
+//$app['snappy.image_binary'] = __DIR__."/../vendor/wemersonjanuario/wkhtmltopdf-windows/bin/64bit/wkhtmltoimage.exe";
+//$app['snappy.pdf_binary'] = __DIR__."/../vendor/wemersonjanuario/wkhtmltopdf-windows/bin/64bit/wkhtmltopdf.exe";
+$app->register(new SnappyServiceProvider());
 
 /**
  * Définition des routes
@@ -203,24 +206,24 @@ else
 	
 	// Define firewall
 	$app['security.firewalls'] = array(
- 		'public_area' => array(
- 			'pattern' => '^.*$',
- 			'anonymous' => true,
- 			'remember_me' => array(),
- 			'form' => array(
- 				'login_path' => '/user/login',
- 				'check_path' => '/user/login_check',
- 				),
- 			'logout' => array(
- 				'logout_path' => '/user/logout',
- 				),
- 			'users' => $app->share(function($app) { 
- 				return $app['user.manager']; 
- 			   }),
- 		),
+		'public_area' => array(
+			'pattern' => '^.*$',
+			'anonymous' => true,
+			'remember_me' => array(),
+			'form' => array(
+				'login_path' => '/user/login',
+				'check_path' => '/user/login_check',
+				),
+			'logout' => array(
+				'logout_path' => '/user/logout',
+				),
+			'users' => $app->share(function($app) { 
+				return $app['user.manager']; 
+			   }),
+		),
 		'secured_area' => array(	// le reste necessite d'être connecté
-			'pattern' => '^/[annonce|debriefing|objet|strategie|intrigue|rumeur|question|restriction|economie|monnaie|quality|rule|message|notification|statistique|billet|etatCivil|restauration|stock|droit|forum|groupe|gn|groupeGn|personnage|territoire|appelation|langue|ressource|religion|age|genre|level|competence|competenceFamily]/.*$',
-		    'anonymous' => false,
+			'pattern' => '^/[annonce|restriction|monnaie|quality|rule|message|notification|statistique|billet|etatCivil|restauration|stock|droit|forum|groupe|gn|groupeGn|personnage|territoire|appelation|langue|ressource|religion|age|genre|level|competence|competenceFamily]/.*$',
+			'anonymous' => false,
 			'remember_me' => array(),
 			'form' => array(
 					'login_path' => '/user/login',
@@ -237,7 +240,6 @@ else
 	
 	$app->mount('/', new LarpManager\HomepageControllerProvider());
 	$app->mount('/annonce', new LarpManager\AnnonceControllerProvider());
-	$app->mount('/attributeType', new LarpManager\AttributeTypeControllerProvider());
 	$app->mount('/user',  new LarpManager\UserControllerProvider());
 	$app->mount('/droit',  new LarpManager\RightControllerProvider());
 	$app->mount('/stock', new LarpManager\StockControllerProvider());
@@ -254,7 +256,7 @@ else
 	$app->mount('/territoire', new LarpManager\TerritoireControllerProvider());
 	$app->mount('/appelation', new LarpManager\AppelationControllerProvider());
 	$app->mount('/langue', new LarpManager\LangueControllerProvider());
-	$app->mount('/competence', new LarpManager\CompetenceControllerProvider());	
+	$app->mount('/competence', new LarpManager\CompetenceControllerProvider());
 	$app->mount('/competenceFamily', new LarpManager\CompetenceFamilyControllerProvider());
 	$app->mount('/level', new LarpManager\LevelControllerProvider());
 	$app->mount('/classe', new LarpManager\ClasseControllerProvider());
@@ -279,7 +281,6 @@ else
 	$app->mount('/admin', new LarpManager\AdminControllerProvider());
 	$app->mount('/titre', new LarpManager\TitreControllerProvider());
 	$app->mount('/ingredient', new LarpManager\IngredientControllerProvider());
-	$app->mount('/technologie', new LarpManager\TechnologieControllerProvider());
 	$app->mount('/trombinoscope', new LarpManager\TrombinoscopeControllerProvider());
 	$app->mount('/document', new LarpManager\DocumentControllerProvider());
 	$app->mount('/token', new LarpManager\TokenControllerProvider());
@@ -291,17 +292,8 @@ else
 	$app->mount('/rule', new LarpManager\RuleControllerProvider());
 	$app->mount('/monnaie', new LarpManager\MonnaieControllerProvider());
 	$app->mount('/quality', new LarpManager\QualityControllerProvider());
-	$app->mount('/economie', new LarpManager\EconomieControllerProvider());
-	$app->mount('/intrigue', new LarpManager\IntrigueControllerProvider());
-	$app->mount('/rumeur', new LarpManager\RumeurControllerProvider());
-	$app->mount('/strategie', new LarpManager\StrategieControllerProvider());
-	$app->mount('/objet', new LarpManager\ObjetControllerProvider());
-	$app->mount('/pnj', new LarpManager\PnjControllerProvider());
-	$app->mount('/culture', new LarpManager\CultureControllerProvider());
-	$app->mount('/loi', new LarpManager\LoiControllerProvider());
-	$app->mount('/question', new LarpManager\QuestionControllerProvider());
-    $app->mount('/lignee', new LarpManager\LigneeControllerProvider());
-    $app->mount('/connaissance', new LarpManager\ConnaissanceControllerProvider());
+	$app->mount('/lignee', new LarpManager\LigneeControllerProvider());
+	$app->mount('/connaissance', new LarpManager\ConnaissanceControllerProvider());
 		
 
 	/**
@@ -313,7 +305,7 @@ else
 		'ROLE_CARTOGRAPHE' => array('ROLE_USER', 'ROLE_CARTOGRAPHE'),
 		'ROLE_REDACTEUR' => array('ROLE_USER', 'ROLE_REDACTEUR'),
 		'ROLE_STOCK' => array('ROLE_USER', 'ROLE_ORGA', 'ROLE_STOCK'),
-		'ROLE_SCENARISTE' => array('ROLE_USER', 'ROLE_ORGA', 'ROLE_SCENARISTE', 'ROLE_CARTOGRAPHE', 'ROLE_STOCK'),
+		'ROLE_SCENARISTE' => array('ROLE_USER', 'ROLE_ORGA', 'ROLE_SCENARISTE', 'ROLE_CARTOGRAPHE'),
 		'ROLE_REGLE' => array('ROLE_USER', 'ROLE_ORGA', 'ROLE_REGLE'),
 		'ROLE_MODERATOR' => array('ROLE_USER', 'ROLE_ORGA', 'ROLE_MODERATOR'), 
 		'ROLE_ADMIN' => array('ROLE_USER', 'ROLE_ORGA', 'ROLE_STOCK','ROLE_SCENARISTE','ROLE_REGLE','ROLE_MODERATOR','ROLE_CARTOGRAPHE', 'ROLE_REDACTEUR'),
@@ -330,8 +322,6 @@ else
 		array('^/billet/.*$', 'ROLE_ADMIN'),
 		array('^/etatCivil/.*$', 'ROLE_ADMIN'),
 		array('^/restauration/.*$', 'ROLE_ADMIN'),
-		array('^/question/.*$', 'ROLE_ADMIN'),
-		array('^/culture/.*$', 'ROLE_ADMIN'),
 		array('^/groupeGn/.*$', 'ROLE_USER'),
 		array('^/gn/.*$', 'ROLE_USER'),
 		array('^/trombinoscope/.*$', 'ROLE_SCENARISTE'),
@@ -346,11 +336,10 @@ else
 		array('^/personnageSecondaire/.*$', 'ROLE_ADMIN'),
 		array('^/joueur/.*$', 'ROLE_USER'),
 		array('^/notification/.*$', 'ROLE_USER'),
+		array('^/territoire/.*$', 'ROLE_USER'),
 		array('^/religion/.*$', 'ROLE_USER'),
 		array('^/groupeSecondaireType/.*$', 'ROLE_SCENARISTE'),
 		array('^/background/.*$', 'ROLE_USER'),
-		array('^/debriefing/.*$', 'ROLE_USER'),
-		array('^/loi/.*$', 'ROLE_USER'),
 		array('^/age/.*$', 'ROLE_REGLE'),
 		array('^/magie/.*$', 'ROLE_USER'),
 		array('^/genre/.*$', 'ROLE_REGLE'),
@@ -361,19 +350,11 @@ else
 		array('^/langue/.*$', 'ROLE_SCENARISTE'),
 		array('^/ressource/.*$', 'ROLE_SCENARISTE'),
 		array('^/statistique/.*$', 'ROLE_SCENARISTE'),
-		array('^/economie/.*$', 'ROLE_SCENARISTE'),
 		array('^/document/.*$', 'ROLE_SCENARISTE'),
 		array('^/lieu/.*$', 'ROLE_SCENARISTE'),
 		array('^/monnaie/.*$', 'ROLE_SCENARISTE'),
 		array('^/quality/.*$', 'ROLE_SCENARISTE'),
-		array('^/intrigue/.*$', 'ROLE_SCENARISTE'),
-		array('^/rumeur/.*$', 'ROLE_SCENARISTE'),
-		array('^/strategie/.*$', 'ROLE_SCENARISTE'),
-		array('^/objet/.*$', 'ROLE_SCENARISTE'),
-		array('^/pnj/.*$', 'ROLE_SCENARISTE'),
-		array('^/technologie/.*$', 'ROLE_SCENARISTE'),
 		array('^/competenceFamily/.*$', 'ROLE_REGLE'),
-	    array('^/attributeType/.*$', 'ROLE_REGLE'),
 		array('^/level/.*$', 'ROLE_REGLE'),
 		array('^/token/.*$', 'ROLE_REGLE'),
 		array('^/stock/.*$', 'ROLE_STOCK'),
@@ -438,12 +419,5 @@ $app['translator'] = $app->share($app->extend('translator', function($translator
 
 	return $translator;
 }));
-
-
-/**
- * Chargement des modules additionels
- */
- 
-$loader = require_once __DIR__.'/../src/LarpManager/Modules/autoload.php';
 
 return $app;

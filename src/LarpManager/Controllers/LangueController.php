@@ -216,7 +216,7 @@ class LangueController
 	 *
 	 * @param Langue $langue
 	 */
-	private function tryDeleteDocument(string $langue)
+	private function tryDeleteDocument($langue)
 	{
 		try 
 		{

@@ -39,6 +39,7 @@ use LarpManager\Services\Converter\AppelationConverter;
 use LarpManager\Services\Converter\BackgroundConverter;
 use LarpManager\Services\Converter\BilletConverter;
 use LarpManager\Services\Converter\ClasseConverter;
+use LarpManager\Services\Converter\ConnaissanceConverter;
 use LarpManager\Services\Converter\CultureConverter;
 use LarpManager\Services\Converter\CompetenceConverter;
 use LarpManager\Services\Converter\ConstructionConverter;
@@ -436,6 +437,11 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 		// PersonnageLignee converter
 		$app['converter.personnageLignee'] = $app->share(function($app) {
 			return new PersonnageLigneeConverter($app['orm.em']);
+		});
+	
+		// Connaissance converter
+		$app['converter.connaissance'] = $app->share(function($app) {
+			return new ConnaissanceConverter($app['orm.em']);
 		});
 	}
 

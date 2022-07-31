@@ -534,6 +534,30 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 			->before($mustOwnParticipant);
 			
 		/**
+		 * Détail d'une connaissance
+		 */
+		$controllers->match('/{participant}/connaissance/{connaissance}/detail', 'LarpManager\Controllers\ParticipantController::connaissanceDetailAction')
+			->assert('participant', '\d+')
+			->convert('participant', 'connaissance.participant:convert')
+			->assert('connaissance', '\d+')
+			->convert('connaissance', 'converter.connaissance:convert')
+			->bind("participant.connaissance.detail")
+			->method('GET')
+			->before($mustOwnParticipant);
+			
+		/**
+		 * Obtenir le document lié à une connaissance
+		 */
+		$controllers->match('/{participant}/connaissance/{connaissance}/document/{filename}', 'LarpManager\Controllers\ParticipantController::connaissanceDocumentAction')
+			->assert('participant', '\d+')
+			->convert('participant', 'converter.participant:convert')
+			->assert('connaissance', '\d+')
+			->convert('connaissance', 'converter.connaissance:convert')
+			->bind("participant.connaissance.document")
+			->method('GET')
+			->before($mustOwnParticipant);
+			
+		/**
 		 * Page de présentation de la magie, domaine et sortilèges
 		 */
 		$controllers->match('/{participant}/magie','LarpManager\Controllers\ParticipantController::magieAction')

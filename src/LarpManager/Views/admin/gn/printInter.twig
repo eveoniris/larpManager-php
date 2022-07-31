@@ -70,7 +70,7 @@ table tr td {
 			 	<td style="text-align: center; width:33%">{{ personnage.xp|default(0) }} / {{ personnage.xpTotal }} xp</td>
 				<td>
 					{% for personnageReligion in personnage.personnagesReligions %}
-						{{ personnageReligion.religion.label }} - {{ personnageReligion.religionLevel.label }}<br />
+						{% if personnageReligion.religion.secret %}<strong>Secret</strong> - {% endif %}{{ personnageReligion.religion.label }} - {{ personnageReligion.religionLevel.label }}<br />
 					{% endfor %}
 				</td>
 				<td>
@@ -129,7 +129,7 @@ table tr td {
 				</td>
 				<td>
 					{% for membre in personnage.membres %}
-						{{ membre.secondaryGroup }}<br />
+						{% if membre.secondaryGroup.secret %}<strong>Secret</strong> - {% endif %}{{ membre.secondaryGroup }}<br />
 					{% endfor %}
 					
 					{% for postulant in personnage.postulants %}
@@ -168,6 +168,24 @@ table tr td {
 			</tr>
 		</tbody>
 	</table>
+	{% if personnage.connaissances %}
+	<table>
+		<thead>
+			<tr>
+				<th>Connaissances</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>
+					{% for connaissance in personnage.connaissances %}
+						{% if connaissance.secret %}<strong>Secret</strong> - {% endif %}{{ connaissance.label }}<br />
+					{% endfor %}
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	{% endif %}
 	<br />
 	<hr />
 	<br />
