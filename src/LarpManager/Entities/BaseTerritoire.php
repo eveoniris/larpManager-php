@@ -249,6 +249,7 @@ class BaseTerritoire
      *     joinColumns={@JoinColumn(name="territoire_id", referencedColumnName="id", nullable=false)},
      *     inverseJoinColumns={@JoinColumn(name="construction_id", referencedColumnName="id", nullable=false)}
      * )
+     * @OrderBy({"label" = "ASC",})
      */
     protected $constructions;
 
