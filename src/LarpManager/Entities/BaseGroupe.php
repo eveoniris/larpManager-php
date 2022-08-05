@@ -192,6 +192,7 @@ class BaseGroupe
      *     joinColumns={@JoinColumn(name="groupe_id", referencedColumnName="id", nullable=false)},
      *     inverseJoinColumns={@JoinColumn(name="document_id", referencedColumnName="id", nullable=false)}
      * )
+     * @OrderBy({"code" = "ASC",})
      */
     protected $documents;
 
@@ -201,6 +202,7 @@ class BaseGroupe
      *     joinColumns={@JoinColumn(name="groupe_id", referencedColumnName="id", nullable=false)},
      *     inverseJoinColumns={@JoinColumn(name="item_id", referencedColumnName="id", nullable=false)}
      * )
+     * @OrderBy({"label" = "ASC",})
      */
     protected $items;
 

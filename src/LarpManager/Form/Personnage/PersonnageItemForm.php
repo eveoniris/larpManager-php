@@ -50,7 +50,7 @@ class PersonnageItemForm extends AbstractType
 					'expanded' => true,
 					'required' => false,
 					'class' => 'LarpManager\Entities\Item',
-					'property' => 'identite',
+					'property' => 'identitereverse',
 					'query_builder' => function(ItemRepository $er) {
 						return $er->createQueryBuilder('i')->orderBy('i.label', 'ASC');
 					},
