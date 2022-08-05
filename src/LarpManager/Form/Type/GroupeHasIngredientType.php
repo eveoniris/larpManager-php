@@ -42,10 +42,15 @@ class GroupeHasIngredientType extends AbstractType
 					'required' => true
 			))
 			->add('ingredient','entity', array(
-					'label' => 'Choisisez l\'ingredient',
+					'label' => 'Choisissez l\'ingredient',
 					'required' => true,
 					'class' => 'LarpManager\Entities\Ingredient',
 					'property' => 'fullLabel',
+					'query_builder' => function(\LarpManager\Repository\IngredientRepository $er) {
+						$qb = $er->createQueryBuilder('c');
+						$qb->orderBy('c.label', 'ASC')->addOrderBy('c.niveau', 'ASC');
+						return $qb;
+					}
 			));
 	}
 

@@ -32,7 +32,7 @@ use LarpManager\Entities\BaseIngredient;
 /**
  * LarpManager\Entities\Ingredient
  *
- * @Entity()
+ * @Entity(repositoryClass="LarpManager\Repository\IngredientRepository")
  */
 class Ingredient extends BaseIngredient
 {

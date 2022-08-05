@@ -81,7 +81,7 @@
 	<strong>Ingrédients</strong>
 	<ul>
 		{% for personnageIngredient in personnage.personnageIngredients %}
-			<li>{{personnageIngredient.nombre}} - {{ personnageIngredient.ingredient }}</li>
+			<li>{{personnageIngredient.nombre}} - {{ personnageIngredient.ingredient }} ({{ personnageIngredient.ingredient.dose }})</li>
 		{% endfor %}
 	</ul>
 {% endif %}

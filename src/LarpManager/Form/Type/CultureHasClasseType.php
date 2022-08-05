@@ -38,7 +38,7 @@ class CultureHasClasseType extends AbstractType
 	{
 		$builder
 			->add('classe','entity', array(
-					'label' => 'Choisisez la classe',
+					'label' => 'Choisissez la classe',
 					'required' => true,
 					'class' => 'LarpManager\Entities\Classe',
 					'property' => 'label',

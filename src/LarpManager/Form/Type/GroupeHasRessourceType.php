@@ -42,7 +42,7 @@ class GroupeHasRessourceType extends AbstractType
 					'required' => true
 			))
 			->add('ressource','entity', array(
-					'label' => 'Choisisez la ressource',
+					'label' => 'Choisissez la ressource',
 					'required' => true,
 					'class' => 'LarpManager\Entities\Ressource',
 					'property' => 'label',
