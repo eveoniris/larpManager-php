@@ -24,7 +24,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-
+use LarpManager\Repository\IngredientRepository;
 
 /**
  * LarpManager\Form\Type\PersonnageIngredientType
@@ -42,10 +42,15 @@ class PersonnageIngredientType extends AbstractType
 					'required' => true
 			))
 			->add('ingredient','entity', array(
-					'label' => 'Choisisez l\'ingredient',
+					'label' => 'Choisissez l\'ingredient',
 					'required' => true,
 					'class' => 'LarpManager\Entities\Ingredient',
 					'property' => 'fullLabel',
+					'query_builder' => function(IngredientRepository $er) {
+						$qb = $er->createQueryBuilder('c');
+						$qb->orderBy('c.label', 'ASC')->addOrderBy('c.niveau', 'ASC');
+						return $qb;
+					}
 			));
 	}
 

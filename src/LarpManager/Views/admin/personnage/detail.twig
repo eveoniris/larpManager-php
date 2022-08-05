@@ -458,7 +458,7 @@
 								<div class="list-group-item">
 									<h6 class="list-group-item-heading">Ingrédients :</h6>
 									{% for personnageIngredient in personnage.personnageIngredients %}
-										<div class="list-group-item-text">{{personnageIngredient.nombre}} - {{ personnageIngredient.ingredient }}</div>
+										<div class="list-group-item-text">{{personnageIngredient.nombre}} - {{ personnageIngredient.ingredient }} ({{ personnageIngredient.ingredient.dose }})</div>
 									{% else %}
 										<div class="list-group-item-text">Aucun</div>
 									{% endfor %}

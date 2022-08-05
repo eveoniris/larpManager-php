@@ -33,7 +33,7 @@ use LarpManager\Form\IngredientDeleteForm;
 class IngredientController
 {
 	/**
-	 * Liste des titres
+	 * Liste des ingrédients
 	 *
 	 * @param Request $request
 	 * @param Application $app
@@ -41,12 +41,9 @@ class IngredientController
 	public function adminListAction(Request $request, Application $app)
 	{
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Ingredient');
-		$ingredients = $repo->findAll();
-		
-
+		$ingredients = $repo->findAllOrderedByLabel();
 		return $app['twig']->render('admin/ingredient/list.twig', array('ingredients' => $ingredients));
 	}
-	
 	
 	/**
 	 * Detail d'un ingredient

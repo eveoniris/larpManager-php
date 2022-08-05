@@ -34,7 +34,7 @@ use LarpManager\Form\AttributeTypeForm;
 class AttributeTypeController
 {
 	/**
-	 * Liste des types d'attriubte
+	 * Liste des types d'attribut
 	 *
 	 * @param Request $request
 	 * @param Application $app
