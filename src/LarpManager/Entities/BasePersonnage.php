@@ -238,7 +238,7 @@ class BasePersonnage
      *     joinColumns={@JoinColumn(name="personnage_id", referencedColumnName="id", nullable=false)},
      *     inverseJoinColumns={@JoinColumn(name="item_id", referencedColumnName="id", nullable=false)}
      * )
-     * @OrderBy({"numero" = "ASC",})
+     * @OrderBy({"label" = "ASC",})
      */
     protected $items;
 

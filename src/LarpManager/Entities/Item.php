@@ -30,4 +30,9 @@ class Item extends BaseItem
 	{
 		return $this->getNumero().' - '.$this->getLabel();
 	}
+
+	public function getIdentiteReverse()
+	{
+		return $this->getLabel().' ('.$this->getNumero().')';
+	}
 }
