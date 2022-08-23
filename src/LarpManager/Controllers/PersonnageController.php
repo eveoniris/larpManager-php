@@ -1790,7 +1790,7 @@ class PersonnageController
 			 */
 			if ( $random && $random > 0 )
 			{
-				$ingredients = $app['orm.em']->getRepository('LarpManager\Entities\Ingredient')->findAll();
+				$ingredients = $app['orm.em']->getRepository('LarpManager\Entities\Ingredient')->findAllOrderedByLabel();
 				shuffle( $ingredients );
 				$needs = new ArrayCollection(array_slice($ingredients,0,$random));
 					
