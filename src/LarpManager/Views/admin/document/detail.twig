@@ -33,10 +33,16 @@
 						Description : {{ document.description|markdown }}
 					</div>
 					<div class="list-group-item">
-						Groupes : {{ document.groupes|join(', ') }}
+						Groupes : 
+						{% for groupe in document.groupes %}
+							<a href="{{ path('groupe.detail',{'index':groupe.id}) }}">{{ groupe.nom }}</a>, 
+						{% endfor %}
 					</div>
 					<div class="list-group-item">
-						Personnages : {{ document.personnages|join(', ') }}
+						Personnages : 
+						{% for personnage in document.personnages %}
+							<a href="{{ path('personnage.admin.detail',{'personnage':personnage.id}) }}">{% if personnage.vivant == 0 %}💀 {% endif %}{{ personnage.nom }}</a>, 
+						{% endfor %}
 					</div>
 					<div class="list-group-item">
 						Lieux : {{ document.lieus|join(', ') }}

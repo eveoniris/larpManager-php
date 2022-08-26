@@ -56,7 +56,7 @@ class PersonnageIngredientForm extends AbstractType
 					'label' => 'X ingrédients choisis au hasard',
 					'required' => false,
 					'attr' => array(
-							'help' => 'Indiquez combien d\'ingrédient il faut ajouter à ce personnage.'
+						'help' => 'Indiquez combien d\'ingrédient il faut ajouter à ce personnage.'
 					),
 			))
 			->add('valider','submit', array('label' => 'Valider'));
