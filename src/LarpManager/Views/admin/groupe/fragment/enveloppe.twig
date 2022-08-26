@@ -155,7 +155,7 @@ TOTAL : {{ groupe.richesseTotale|default(0) }} pièces d'argent
 				<a href="{{ path('personnage.admin.update.ingredient', {'personnage': participant.personnage.id}) }}">Modifier la liste des ingrédients</a>
 				<ul>
 				{% for personnageIngredient in participant.personnage.personnageIngredients %}
-					<li>{{personnageIngredient.nombre}} - {{ personnageIngredient.ingredient }} ({{ personnageIngredient.ingredient.dose }})</li>
+					<li>{{personnageIngredient.nombre}} {{ personnageIngredient.ingredient }} - {{ personnageIngredient.ingredient.color }} : {{ personnageIngredient.ingredient.dose }}</li>
 				{% else %}
 					<li>Aucun</li>
 				{% endfor %}
@@ -165,7 +165,7 @@ TOTAL : {{ groupe.richesseTotale|default(0) }} pièces d'argent
 				<a href="{{ path('personnage.admin.update.ressource', {'personnage': participant.personnage.id}) }}">Modifier la liste des ressources</a>
 				<ul>
 				{% for personnageRessource in participant.personnage.personnageRessources %}
-					<li>{{personnageRessource.nombre}} - {{ personnageRessource.ressource }}</li>
+					<li>{{personnageRessource.nombre}} {{ personnageRessource.ressource }}</li>
 				{% else %}
 					<li>Aucun</li>
 				{% endfor %}

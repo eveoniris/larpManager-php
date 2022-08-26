@@ -101,7 +101,7 @@ body {
 		<strong>Ingrédients</strong>
 		<ul>
 			{% for personnageIngredient in participant.personnage.personnageIngredients %}
-				<li>{{personnageIngredient.nombre}} - {{ personnageIngredient.ingredient }} ({{ personnageIngredient.ingredient.dose }})</li>
+				<li>{{personnageIngredient.nombre}} {{ personnageIngredient.ingredient }} - {{ personnageIngredient.ingredient.color }} : {{ personnageIngredient.ingredient.dose }}</li>
 			{% endfor %}
 		</ul>
 	{% endif %}
@@ -111,7 +111,7 @@ body {
 		<strong>Ressources</strong>
 		<ul>
 			{% for personnageRessource in participant.personnage.personnageRessources %}
-				<li>{{personnageRessource.nombre}} - {{ personnageRessource.ressource }}</li>
+				<li>{{personnageRessource.nombre}} {{ personnageRessource.ressource }}</li>
 			{% endfor %}
 		</ul>
 	{% endif %}

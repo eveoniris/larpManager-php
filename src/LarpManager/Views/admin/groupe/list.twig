@@ -118,7 +118,6 @@
 					<th>Sessions</th>
 					<th>Statut</th>
 					<th>Scénariste</th>
-					<th />
 				</tr>
 			</thead>
 			<tbody>
@@ -130,13 +129,12 @@
 					<td>
 						<ul>
 						{% for groupeGn in groupe.groupeGns|reverse %}
-							<li><strong>{{ groupeGn.gn.label }}</strong> : {{ groupeGn.participants|length }} / {{ groupe.placeTotal|default(0) }} </li>
+							<li><strong>{{ groupeGn.gn.label }}</strong> : {{ groupeGn.participants|length }} / {{ groupe.placeTotal|default(0) }}</li>
 						{% endfor %}
 						</ul>
 					</td>
 					<td>{% if groupe.lock %}<span class="text-danger">Verrouillé</span>{% else %}Ouvert{% endif %}</td>
-					<td>{% if groupe.scenariste %}{{ groupe.scenariste.username }} {% else %}pas de scénariste{% endif %}</td>
-					<td>
+					<td>{% if groupe.scenariste %}{{ groupe.scenariste.username }}{% else %}pas de scénariste{% endif %}</td>
 					<td>
 						<div class="btn-toolbar pull-right" role="toolbar" aria-label="...">
 							<div class="btn-group" role="group" aria-label="...">
