@@ -23,9 +23,10 @@
 			</tr>
 			</thead>
 			<tbody>
-			{% for technologie in technologies %}
-				{# n'affiche que les technologies accessibles  au personnage #}
-				{% if technologie.competenceFamily.id in competenceFamilies and technologie.competenceFamily.id in competencesExpert %}
+			{% if artisan %}
+				{% for technologie in technologies %}
+					{# n'affiche que les technologies accessibles au personnage #}
+					{# if technologie.competenceFamily.id in competenceFamilies and technologie.competenceFamily.id in competencesExpert #}
 					<tr>
 						<td>{{ technologie.label }}</td>
 						<td>{% if technologie.secret %}
@@ -38,17 +39,23 @@
 						<td>{{ technologie.description|markdown}}</td>
 						<td>{% if personnage in technologie.personnages  %}
 								<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Retirer cette technologie"
-								   href="{{ path('personnage.admin.remove.technologie',{'personnage':personnage.id, 'technologie':technologie.id}) }}">
+									href="{{ path('personnage.admin.remove.technologie',{'personnage':personnage.id, 'technologie':technologie.id}) }}">
 									<i class="fa fa-minus" style="color: red"></i></a>
 							{% else %}
 								<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Ajouter cette technologie"
-								   href="{{ path('personnage.admin.add.technologie',{'personnage':personnage.id, 'technologie':technologie.id}) }}">
+									href="{{ path('personnage.admin.add.technologie',{'personnage':personnage.id, 'technologie':technologie.id}) }}">
 									<i class="fa fa-plus" style="color: green"></i></a>
 							{% endif %}
 						</td>
 					</tr>
-				{% endif %}
-			{% endfor %}
+				{% endfor %}
+			{% else %}
+				<tr>
+					<td colspan="5">
+						Ce personnage n'est pas au moins Initié en Artisanat.
+					</td>
+				</tr>
+			{% endif %}
 			</tbody>
 		</table>
 	</div>
