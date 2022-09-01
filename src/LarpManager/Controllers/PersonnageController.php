@@ -334,9 +334,11 @@ class PersonnageController
 	{
         $technologies = $app['orm.em']->getRepository(Technologie::class)->findAll();
         $competences = $personnage->getCompetences();
-
+		
+		/*
         $competenceFamilies = array();
         $competencesExpert = array();
+		
         foreach ($competences as $competence){
             $competenceFamilies[] = $competence->getCompetenceFamily()->getId();
         }
@@ -346,7 +348,15 @@ class PersonnageController
                 $competencesExpert [] = $competence;
             }
         }
-
+		*/
+		$artisan = FALSE;
+        foreach ($competences as $competence){
+            if ($competence->getCompetenceFamily()->getLabel() == 'Artisanat')
+			{
+				if ($competence->getLevel()->getIndex() >= 2)
+					$artisan = TRUE;
+			}
+        }		
 
 		$form = $app['form.factory']->createBuilder(new PersonnageTechnologieForm(), $personnage)
 			->add('valider','submit', array('label' => 'Valider'))
@@ -368,8 +378,7 @@ class PersonnageController
 		return $app['twig']->render('admin/personnage/updateTechnologie.twig', array(
 				'personnage' => $personnage,
                 'technologies' => $technologies,
-                'competenceFamilies' => $competenceFamilies,
-                'competencesExpert' => $competencesExpert,
+                'artisan' => $artisan,
 				'form' => $form->createView(),
 		));
 	}
