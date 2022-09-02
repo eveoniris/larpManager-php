@@ -349,14 +349,24 @@ class PersonnageController
             }
         }
 		*/
-		$artisan = FALSE;
+		$message = $personnage->getNom()." n'est pas au moins Initié en Artisanat.";
+		$limit = 1;
         foreach ($competences as $competence){
             if ($competence->getCompetenceFamily()->getLabel() == 'Artisanat')
 			{
 				if ($competence->getLevel()->getIndex() >= 2)
-					$artisan = TRUE;
+					$message = FALSE;
+				if ($competence->getLevel()->getIndex() == 3)
+					$limit += 1;
+				if ($competence->getLevel()->getIndex() >= 4)
+					$limit += 1000;
 			}
-        }		
+        }
+
+		if (count($personnage->getTechnologies()) >= $limit)
+		{
+			$message = $personnage->getNom()." connait déjà au moins ".$limit." Technologie(s).";
+		}
 
 		$form = $app['form.factory']->createBuilder(new PersonnageTechnologieForm(), $personnage)
 			->add('valider','submit', array('label' => 'Valider'))
@@ -374,11 +384,11 @@ class PersonnageController
 			$app['session']->getFlashBag()->add('success','Le personnage a été sauvegardé');
 			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),303);
 		}
-		
+
 		return $app['twig']->render('admin/personnage/updateTechnologie.twig', array(
 				'personnage' => $personnage,
                 'technologies' => $technologies,
-                'artisan' => $artisan,
+                'message' => $message,
 				'form' => $form->createView(),
 		));
 	}
