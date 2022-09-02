@@ -23,7 +23,7 @@
 			</tr>
 			</thead>
 			<tbody>
-			{% if artisan %}
+			{% if not message %}
 				{% for technologie in technologies %}
 					{# n'affiche que les technologies accessibles au personnage #}
 					{# if technologie.competenceFamily.id in competenceFamilies and technologie.competenceFamily.id in competencesExpert #}
@@ -52,7 +52,7 @@
 			{% else %}
 				<tr>
 					<td colspan="5">
-						Ce personnage n'est pas au moins Initié en Artisanat.
+						{{ message }}
 					</td>
 				</tr>
 			{% endif %}
