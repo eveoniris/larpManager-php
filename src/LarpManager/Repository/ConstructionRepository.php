@@ -23,35 +23,22 @@ namespace LarpManager\Repository;
 use Doctrine\ORM\EntityRepository;
 
 /**
- * LarpManager\Repository\TechnologieRepository
+ * LarpManager\Repository\ConstructionRepository
  * 
  * @author Kevin F.
  */
-class TechnologieRepository extends EntityRepository
+class ConstructionRepository extends EntityRepository
 {
 	/**
-	 * Find all public technologies ordered by label
-	 * @return ArrayCollection $technologies
-	 */
-	public function findPublicOrderedByLabel()
-	{
-		$technologies = $this->getEntityManager()
-				->createQuery('SELECT r FROM LarpManager\Entities\Technologie r WHERE r.secret = 0 ORDER BY r.label ASC')
-				->getResult();
-		
-		return $technologies;
-	}
-
-	/**
-	 * Find all technologies ordered by label
-	 * @return ArrayCollection $technologies
+	 * Find all constructions ordered by label
+	 * @return ArrayCollection $constructions
 	 */
 	public function findAllOrderedByLabel()
 	{
-		$technologies = $this->getEntityManager()
-				->createQuery('SELECT r FROM LarpManager\Entities\Technologie r ORDER BY r.label ASC')
+		$constructions = $this->getEntityManager()
+				->createQuery('SELECT r FROM LarpManager\Entities\Construction r ORDER BY r.label ASC')
 				->getResult();
 		
-		return $technologies;
+		return $constructions;
 	}
 }
