@@ -332,7 +332,7 @@ class PersonnageController
 	 */
 	public function adminUpdateTechnologieAction(Request $request, Application $app, Personnage $personnage)
 	{
-        $technologies = $app['orm.em']->getRepository(Technologie::class)->findAll();
+        $technologies = $app['orm.em']->getRepository(Technologie::class)->findAllOrderedByLabel();
         $competences = $personnage->getCompetences();
 		
 		/*

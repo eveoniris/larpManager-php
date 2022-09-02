@@ -32,7 +32,7 @@ use LarpManager\Entities\BaseConstruction;
 /**
  * LarpManager\Entities\Construction
  *
- * @Entity()
+ * @Entity(repositoryClass="LarpManager\Repository\ConstructionRepository")
  */
 class Construction extends BaseConstruction
 {

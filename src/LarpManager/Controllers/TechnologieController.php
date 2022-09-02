@@ -38,7 +38,7 @@ class TechnologieController
 	 */
 	public function indexAction(Request $request, Application $app)
 	{
-		$technologies = $app['orm.em']->getRepository(Technologie::class)->findAll();
+		$technologies = $app['orm.em']->getRepository(Technologie::class)->findAllOrderedByLabel();
 		
 		return $app['twig']->render('admin\technologie\index.twig', array(
 			'technologies' => $technologies,	
