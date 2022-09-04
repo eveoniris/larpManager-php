@@ -56,7 +56,7 @@ class LarpManagerManager
 				"6 ressources communes au hasard",
 				"3 ressouces rare au hasard",
 				"2 points de rituel",
-				"2 points de mana",
+				"2 Perles",
 				"1 formule alchimique apprenti ou initié au hasard",
 				"1 sortilège apprenti ou initié au hasard",
 				"2 potions alchimiques apprenti ou initié au hasard",
