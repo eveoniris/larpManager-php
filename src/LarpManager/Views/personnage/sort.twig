@@ -17,7 +17,7 @@
 	<form action="{{ path('participant.personnage.sort',{'participant':participant.id, 'niveau': niveau}) }}" method="POST" {{ form_enctype(form) }}>
 		<fieldset>
 			<blockquote>Votre compétence vous permet de choisir un nouveau sort.</blockquote>
-			<blockquote>Attention ! Un sort dans un domaine que vous ne maitrisez pas necessitera plus mana pour le lancer (la description complète des sorts est disponible en bas de cette page)</blockquote>
+			<blockquote>Attention ! Un sort dans un domaine que vous ne maitrisez pas necessitera plus de Perles pour le lancer (la description complète des sorts est disponible en bas de cette page)</blockquote>
 			{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
 			
 			{{ form_row(form.sorts) }}
@@ -42,22 +42,23 @@
 			</thead>
 			<tbody>
 				<tr>
-					<th>Coût en mana dans le domaine du mage</th>
-					<td>1</td>
-					<td>2</td>
-					<td>3</td>
-					<td>4</td>
-				</tr>
-				<tr>
-					<th>Coût en mana en dehors du domaine du mage</th>
+					<th>Coût en Perles dans le domaine du mage</th>
 					<td>2</td>
 					<td>3</td>
 					<td>4</td>
 					<td>5</td>
 				</tr>
+				<tr>
+					<th>Coût en Perles en dehors du domaine du mage</th>
+					<td>3</td>
+					<td>4</td>
+					<td>5</td>
+					<td>6</td>
+				</tr>
 			</tbody>
 		</table>
-		<p>Exemple : Un sort de niveau 2 coutera 2 points de Mana au mage connaissant le domaine de magie du sort, et 3 points de mana au mage ne connaissant pas le domaine de magie.</p> 
+			
+		<p>Example : Un sort de niveau 2 coutera 3 Perles au mage connaissant le domaine de magie du sort, et 4 Perles au mage ne connaissant pas le domaine de magie.</p> 
 	</div>
 
 	{% for sort in sorts %}
@@ -67,9 +68,9 @@
 			</div>
 			<p>{{ sort.description|markdown }}</p>
 			<p>
-				Coût en mana
-				{% if sort.domaine in personnage.domaines %} {{ sort.niveau }}
-				{% else %} {{ sort.niveau + 1 }}
+				Coût en Perles
+				{% if sort.domaine in personnage.domaines %} {{ sort.niveau + 1}}
+				{% else %} {{ sort.niveau + 2 }}
 				{% endif %}
 			</p>
 		</div>
