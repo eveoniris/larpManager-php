@@ -9,7 +9,7 @@
 			<link rel="shortcut icon" href="{{ app.request.basepath }}/favicon.ico" type="image/x-icon">
 			<link rel="icon" href="{{ app.request.basepath }}/favicon.ico" type="image/x-icon">
 			
-            <link rel="stylesheet" href="{{ app.request.basepath }}/css/normalize.css" />			                        
+            <link rel="stylesheet" href="{{ app.request.basepath }}/css/normalize.css" />
             <link rel="stylesheet" href="{{ app.request.basepath }}/font-awesome-4.6.3/css/font-awesome.min.css" />
             <link rel="stylesheet" href="{{ app.request.basepath }}/css/bootstrap.min.css" />
             <link rel="stylesheet" href="{{ app.request.basepath }}/css/cyborg_bootstrap.min.css" />
@@ -17,15 +17,15 @@
             <link rel="stylesheet" href="{{ app.request.basepath }}/Pnotify/css/pnotify.custom.min.css" />
             
             <link rel="stylesheet" href="{{ app.request.basepath }}/css/style.css" />
-                                    
+
 			{% block style %}{% endblock style %}
-						            
+
             <title>LarpManager - {% block title %}{% endblock title %}</title>
         {% endblock head %}
     </head>
     <body>
 
-    
+		{# menu #}
     	<div id="menu" >
     		{% block menu %}
     			{% include 'menu.twig' %}
@@ -34,7 +34,6 @@
 	
 		{# corps de la page #}
         <div id="content" class="container-fluid">
-        
         	{% for message in app.session.getFlashBag.get('success') %}
     			<div class="notifySuccess">{{ message }}</div>
 			{% endfor %}
@@ -52,24 +51,18 @@
 			
 		{# Pied de page #}
         <footer>
-        
-
 	        <div class="pull-left" style="margin-left: 50px;">
-
 	        		<ul>
 	        			<li><a href="http://www.fedegn.org/">FédéGN</a></li>
 	        			<li><a href="http://www.eveoniris.com/">Eve-oniris</a></li>
 	        		</ul>
 	        </div>
-	        
 	        <div class="pull-right" style="margin-right: 50px;">
 		       	<ul>
 			       	<li><a href="{{ path('legal') }}">Mentions légales</a></li>
 					<li><a href="{{ path('dev') }}">Développement</a></li>
 				</ul>
 	        </div>
-	        
-        
       	</footer>
 
          

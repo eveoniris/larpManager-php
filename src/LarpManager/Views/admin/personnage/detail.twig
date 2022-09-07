@@ -458,7 +458,7 @@
 								<div class="list-group-item">
 									<h6 class="list-group-item-heading">Ingrédients :</h6>
 									{% for personnageIngredient in personnage.personnageIngredients %}
-										<div class="list-group-item-text">{{personnageIngredient.nombre}} - {{ personnageIngredient.ingredient }} ({{ personnageIngredient.ingredient.dose }})</div>
+										<div class="list-group-item-text">{{personnageIngredient.nombre}} {{ personnageIngredient.ingredient }} - {{ personnageIngredient.ingredient.color }} : {{ personnageIngredient.ingredient.dose }} (Niveau {{ personnageIngredient.ingredient.niveau }})</div>
 									{% else %}
 										<div class="list-group-item-text">Aucun</div>
 									{% endfor %}
@@ -467,7 +467,7 @@
 								<div class="list-group-item">
 									<h6 class="list-group-item-heading">Ressources :</h6>
 									{% for personnageRessource in personnage.personnageRessources %}
-										<div class="list-group-item-text">{{personnageRessource.nombre}} - {{ personnageRessource.ressource }}</div>
+										<div class="list-group-item-text">{{personnageRessource.nombre}} {{ personnageRessource.ressource }}</div>
 									{% else %}
 										<div class="list-group-item-text">Aucune</div>
 									{% endfor %}

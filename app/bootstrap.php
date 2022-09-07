@@ -377,7 +377,7 @@ else
 		array('^/level/.*$', 'ROLE_REGLE'),
 		array('^/token/.*$', 'ROLE_REGLE'),
 		array('^/stock/.*$', 'ROLE_STOCK'),
-		array('^/rule/.*$', 'ROLE_REGLE'),
+		array('^/rule/.*$', 'ROLE_USER'),
 		array('^/lignee/.*$', 'ROLE_SCENARISTE'),
 		array('^/connaissance/.*$', 'ROLE_USER'),
 	);

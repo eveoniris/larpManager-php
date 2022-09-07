@@ -12,3 +12,5 @@ composer.json.old
 /.vs
 /private/doc
 /larpmanager-anonymized-202109.sql
+config/normal_settings.yml
+config/settings.yml

@@ -6,7 +6,9 @@
 
 	<div class="list-group">
 		{% for lignage in personnage.personnageLignee %}
+			{% if lignage.lignee %}
 			<li class="list-group-item"><strong>Lignée :</strong> {{ lignage.lignee.nom }}</li>
+			{% endif %}
 
 			{% if lignage.parent1 or lignage.parent2 %}
 			<li class="list-group-item">

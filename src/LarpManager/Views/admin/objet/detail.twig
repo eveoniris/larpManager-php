@@ -81,10 +81,19 @@
 					<li><b>Date de création :</b> {{ item.objet.creationDate|date('Y-m-d H:i:s') }}</li>
 				</ul>
 				<ul>
-					<li><b>Rangement :</b> {% if item.objet.rangement %}{{ item.objet.rangement.adresse }}{%  endif %}</li>
-					<li><b>Etat :</b> {% if item.objet.etat %}{{ item.objet.etat.label }}{%  endif %}</li>
-					<li><b>Proprietaire :</b> {% if item.objet.proprietaire %}{{ item.objet.proprietaire.nom }}{%  endif %}</li>
-					<li><b>Responsable :</b> {% if item.objet.responsable %}{{ item.objet.responsable.username }}{%  endif %}</li>
+					<li><b>Rangement :</b> {% if item.objet.rangement %}{{ item.objet.rangement.adresse }}{% endif %}</li>
+					<li><b>Etat :</b> {% if item.objet.etat %}{{ item.objet.etat.label }}{% endif %}</li>
+					<li><b>Proprietaire :</b> {% if item.objet.proprietaire %}{{ item.objet.proprietaire.nom }}{% endif %}</li>
+					<li><b>Responsable :</b> {% if item.objet.responsable %}{{ item.objet.responsable.username }}{% endif %}</li>
+				</ul>
+				<h5>Information en jeu</h5>
+				<ul>
+					<li><b>Personnages :</b> {% for personnage in item.personnages %}
+							<a href="{{ path('personnage.admin.detail',{'personnage':personnage.id}) }}">{% if personnage.vivant == 0 %}💀 {% endif %}{{ personnage.nom }}</a>, 
+						{% endfor %}</li>
+					<li><b>Groupes :</b> {% for groupe in item.groupes %}
+							<a href="{{ path('groupe.detail',{'index':groupe.id}) }}">{{ groupe.nom }}</a>, 
+						{% endfor %}</li>
 				</ul>
 			</div>
 			

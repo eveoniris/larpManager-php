@@ -43,7 +43,7 @@ class ConstructionController
 	public function indexAction(Request $request, Application $app)
 	{
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Construction');
-		$constructions = $repo->findAll();
+		$constructions = $repo->findAllOrderedByLabel();
 		
 		return $app['twig']->render('admin/construction/index.twig', array(
 				'constructions' => $constructions));

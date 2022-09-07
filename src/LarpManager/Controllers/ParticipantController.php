@@ -630,7 +630,8 @@ class ParticipantController
 		if ( $form->isValid() )
 		{
 			$data = $form->getData();
-			$participant->setPersonnage($data['personnage']);
+			$personnage = $data['personnage'];
+			$participant->setPersonnage($personnage);
 			
 			$territoire = $groupe->getTerritoire();
 			if ( $territoire )
@@ -638,10 +639,10 @@ class ParticipantController
 				$langue = $territoire->getLangue();
 				if ( $langue )
 				{
-					if ( ! $data['personnage']->isKnownLanguage($langue) )
+					if ( ! $personnage->isKnownLanguage($langue) )
 					{
 						$personnageLangue = new \LarpManager\Entities\PersonnageLangues();
-						$personnageLangue->setPersonnage($data['personnage']);
+						$personnageLangue->setPersonnage($personnage);
 						$personnageLangue->setLangue($langue);
 						$personnageLangue->setSource('GROUPE');
 						$app['orm.em']->persist($personnageLangue);
@@ -654,7 +655,72 @@ class ParticipantController
 			$personnageChronologie2 = new \LarpManager\Entities\PersonnageChronologie();
 			$personnageChronologie2->setAnnee($anneeGN2);
 			$personnageChronologie2->setEvenement($evenement2);
-			$personnageChronologie2->setPersonnage($data['personnage']);
+			$personnageChronologie2->setPersonnage($personnage);
+
+			// Activer les triggers automatique pour la Litérature et la Noblesse par exemple.
+			foreach ( $personnage->getCompetences() as $competence)
+			{		
+				// Litterature initié : 1 sort 1 + 1 recette 1
+				if ( $competence->getCompetenceFamily()->getLabel() == "Littérature")
+				{
+					if ($competence->getLevel()->getId() == 2)
+					{
+						$trigger = new \LarpManager\Entities\PersonnageTrigger();
+						$trigger->setPersonnage($personnage);
+						$trigger->setTag('SORT APPRENTI');
+						$trigger->setDone(false);
+						$app['orm.em']->persist($trigger);
+
+						$trigger2 = new \LarpManager\Entities\PersonnageTrigger();
+						$trigger2->setPersonnage($personnage);
+						$trigger2->setTag('ALCHIMIE APPRENTI');
+						$trigger2->setDone(false);
+						$app['orm.em']->persist($trigger2);
+					}
+					// Litterature expert : 1 sort 2 + 1 recette 2
+					if ($competence->getLevel()->getId() == 3)
+					{
+						$trigger3 = new \LarpManager\Entities\PersonnageTrigger();
+						$trigger3->setPersonnage($personnage);
+						$trigger3->setTag('SORT INITIE');
+						$trigger3->setDone(false);
+						$app['orm.em']->persist($trigger3);
+
+						$trigger4 = new \LarpManager\Entities\PersonnageTrigger();
+						$trigger4->setPersonnage($personnage);
+						$trigger4->setTag('ALCHIMIE INITIE');
+						$trigger4->setDone(false);
+						$app['orm.em']->persist($trigger4);
+					}
+					// Litterature maitre : 1 sort 3 + 1 recette 3
+					if ($competence->getLevel()->getId() == 4)
+					{
+						$trigger5 = new \LarpManager\Entities\PersonnageTrigger();
+						$trigger5->setPersonnage($personnage);
+						$trigger5->setTag('SORT EXPERT');
+						$trigger5->setDone(false);
+						$app['orm.em']->persist($trigger5);
+
+						$trigger6 = new \LarpManager\Entities\PersonnageTrigger();
+						$trigger6->setPersonnage($personnage);
+						$trigger6->setTag('ALCHIMIE EXPERT');
+						$trigger6->setDone(false);
+						$app['orm.em']->persist($trigger6);
+					}
+				}
+				// Noblesse expert : +2 Renommee
+				if ( $competence->getCompetenceFamily()->getLabel() == "Noblesse")
+				{
+					if ($competence->getLevel()->getId() == 3)
+					{
+						$renomme_history = new \LarpManager\Entities\RenommeHistory();
+						$renomme_history->setRenomme(2);
+						$renomme_history->setExplication('[Nouvelle participation] Noblesse Expert');
+						$renomme_history->setPersonnage($personnage);
+						$app['orm.em']->persist($renomme_history);
+					}
+				}
+			}
 
 			$app['orm.em']->persist($personnageChronologie2);
 			$app['orm.em']->persist($participant);
@@ -2062,7 +2128,7 @@ class ParticipantController
 					'expanded' => true,
 					'class' => 'LarpManager\Entities\Sort',
 					'choices' => $sorts,
-					'choice_label' => 'label'
+					'choice_label' => 'fullLabel'
 			))
 			->add('save','submit', array('label' => 'Valider votre sort'))
 			->getForm();
@@ -2807,20 +2873,18 @@ class ParticipantController
 					$trigger->setTag('PRETISE INITIE');
 					$trigger->setDone(false);
 					$app['orm.em']->persist($trigger);
-					$app['orm.em']->flush();
 					
-					$trigger = new \LarpManager\Entities\PersonnageTrigger();
-					$trigger->setPersonnage($personnage);
-					$trigger->setTag('PRETISE INITIE');
-					$trigger->setDone(false);
-					$app['orm.em']->persist($trigger);
-					$app['orm.em']->flush();
+					$trigger2 = new \LarpManager\Entities\PersonnageTrigger();
+					$trigger2->setPersonnage($personnage);
+					$trigger2->setTag('PRETISE INITIE');
+					$trigger2->setDone(false);
+					$app['orm.em']->persist($trigger2);
 					
-					$trigger = new \LarpManager\Entities\PersonnageTrigger();
-					$trigger->setPersonnage($personnage);
-					$trigger->setTag('PRETISE INITIE');
-					$trigger->setDone(false);
-					$app['orm.em']->persist($trigger);
+					$trigger3 = new \LarpManager\Entities\PersonnageTrigger();
+					$trigger3->setPersonnage($personnage);
+					$trigger3->setTag('PRETISE INITIE');
+					$trigger3->setDone(false);
+					$app['orm.em']->persist($trigger3);
 					$app['orm.em']->flush();
 				}
 			}
@@ -2836,13 +2900,12 @@ class ParticipantController
 						$trigger->setTag('ALCHIMIE APPRENTI');
 						$trigger->setDone(false);
 						$app['orm.em']->persist($trigger);
-						$app['orm.em']->flush();
 	
-						$trigger = new \LarpManager\Entities\PersonnageTrigger();
-						$trigger->setPersonnage($personnage);
-						$trigger->setTag('ALCHIMIE APPRENTI');
-						$trigger->setDone(false);
-						$app['orm.em']->persist($trigger);
+						$trigger2 = new \LarpManager\Entities\PersonnageTrigger();
+						$trigger2->setPersonnage($personnage);
+						$trigger2->setTag('ALCHIMIE APPRENTI');
+						$trigger2->setDone(false);
+						$app['orm.em']->persist($trigger2);
 						$app['orm.em']->flush();
 						break;
 					case 2: // le personnage doit choisir 1 potion de niveau initie et 1 potion de niveau apprenti
@@ -2851,13 +2914,12 @@ class ParticipantController
 						$trigger->setTag('ALCHIMIE INITIE');
 						$trigger->setDone(false);
 						$app['orm.em']->persist($trigger);
-						$app['orm.em']->flush();
 	
-						$trigger = new \LarpManager\Entities\PersonnageTrigger();
-						$trigger->setPersonnage($personnage);
-						$trigger->setTag('ALCHIMIE APPRENTI');
-						$trigger->setDone(false);
-						$app['orm.em']->persist($trigger);
+						$trigger2 = new \LarpManager\Entities\PersonnageTrigger();
+						$trigger2->setPersonnage($personnage);
+						$trigger2->setTag('ALCHIMIE APPRENTI');
+						$trigger2->setDone(false);
+						$app['orm.em']->persist($trigger2);
 						$app['orm.em']->flush();
 						break;
 					case 3: // le personnage doit choisir 1 potion de niveau expert
@@ -2890,14 +2952,13 @@ class ParticipantController
 						$trigger->setTag('DOMAINE MAGIE');
 						$trigger->setDone(false);
 						$app['orm.em']->persist($trigger);
-						$app['orm.em']->flush();
 	
 						// il obtient aussi la possibilité de choisir un sort de niveau 1
-						$trigger = new \LarpManager\Entities\PersonnageTrigger();
-						$trigger->setPersonnage($personnage);
-						$trigger->setTag('SORT APPRENTI');
-						$trigger->setDone(false);
-						$app['orm.em']->persist($trigger);
+						$trigger2 = new \LarpManager\Entities\PersonnageTrigger();
+						$trigger2->setPersonnage($personnage);
+						$trigger2->setTag('SORT APPRENTI');
+						$trigger2->setDone(false);
+						$app['orm.em']->persist($trigger2);
 						$app['orm.em']->flush();
 						break;
 					case 2:
@@ -2915,14 +2976,13 @@ class ParticipantController
 						$trigger->setTag('DOMAINE MAGIE');
 						$trigger->setDone(false);
 						$app['orm.em']->persist($trigger);
-						$app['orm.em']->flush();
 	
 						// il obtient aussi la possibilité de choisir un sort de niveau 3
-						$trigger = new \LarpManager\Entities\PersonnageTrigger();
-						$trigger->setPersonnage($personnage);
-						$trigger->setTag('SORT EXPERT');
-						$trigger->setDone(false);
-						$app['orm.em']->persist($trigger);
+						$trigger2 = new \LarpManager\Entities\PersonnageTrigger();
+						$trigger2->setPersonnage($personnage);
+						$trigger2->setTag('SORT EXPERT');
+						$trigger2->setDone(false);
+						$app['orm.em']->persist($trigger2);
 						$app['orm.em']->flush();
 						break;
 					case 4:
@@ -2969,13 +3029,12 @@ class ParticipantController
 						$trigger->setTag('LANGUE COURANTE');
 						$trigger->setDone(false);
 						$app['orm.em']->persist($trigger);
-						$app['orm.em']->flush();
 						
-						$trigger = new \LarpManager\Entities\PersonnageTrigger();
-						$trigger->setPersonnage($personnage);
-						$trigger->setTag('LANGUE COURANTE');
-						$trigger->setDone(false);
-						$app['orm.em']->persist($trigger);
+						$trigger2 = new \LarpManager\Entities\PersonnageTrigger();
+						$trigger2->setPersonnage($personnage);
+						$trigger2->setTag('LANGUE COURANTE');
+						$trigger2->setDone(false);
+						$app['orm.em']->persist($trigger2);
 						$app['orm.em']->flush();
 						
 						break;
@@ -2985,35 +3044,31 @@ class ParticipantController
 						$trigger->setTag('LANGUE COURANTE');
 						$trigger->setDone(false);
 						$app['orm.em']->persist($trigger);
-						$app['orm.em']->flush();
 						
-						$trigger = new \LarpManager\Entities\PersonnageTrigger();
-						$trigger->setPersonnage($personnage);
-						$trigger->setTag('LANGUE COURANTE');
-						$trigger->setDone(false);
-						$app['orm.em']->persist($trigger);
-						$app['orm.em']->flush();
+						$trigger2 = new \LarpManager\Entities\PersonnageTrigger();
+						$trigger2->setPersonnage($personnage);
+						$trigger2->setTag('LANGUE COURANTE');
+						$trigger2->setDone(false);
+						$app['orm.em']->persist($trigger2);
 						
-						$trigger = new \LarpManager\Entities\PersonnageTrigger();
-						$trigger->setPersonnage($personnage);
-						$trigger->setTag('LANGUE COURANTE');
-						$trigger->setDone(false);
-						$app['orm.em']->persist($trigger);
-						$app['orm.em']->flush();
+						$trigger3 = new \LarpManager\Entities\PersonnageTrigger();
+						$trigger3->setPersonnage($personnage);
+						$trigger3->setTag('LANGUE COURANTE');
+						$trigger3->setDone(false);
+						$app['orm.em']->persist($trigger3);
 
 						// il obtient aussi la possibilité de choisir un sort de niveau 1
-						$trigger = new \LarpManager\Entities\PersonnageTrigger();
-						$trigger->setPersonnage($personnage);
-						$trigger->setTag('SORT APPRENTI');
-						$trigger->setDone(false);
-						$app['orm.em']->persist($trigger);
-						$app['orm.em']->flush();
+						$trigger4 = new \LarpManager\Entities\PersonnageTrigger();
+						$trigger4->setPersonnage($personnage);
+						$trigger4->setTag('SORT APPRENTI');
+						$trigger4->setDone(false);
+						$app['orm.em']->persist($trigger4);
 
-						$trigger = new \LarpManager\Entities\PersonnageTrigger();
-						$trigger->setPersonnage($personnage);
-						$trigger->setTag('ALCHIMIE APPRENTI');
-						$trigger->setDone(false);
-						$app['orm.em']->persist($trigger);
+						$trigger5 = new \LarpManager\Entities\PersonnageTrigger();
+						$trigger5->setPersonnage($personnage);
+						$trigger5->setTag('ALCHIMIE APPRENTI');
+						$trigger5->setDone(false);
+						$app['orm.em']->persist($trigger5);
 						$app['orm.em']->flush();
 
 						break;
@@ -3023,42 +3078,37 @@ class ParticipantController
 						$trigger->setTag('LANGUE COURANTE');
 						$trigger->setDone(false);
 						$app['orm.em']->persist($trigger);
-						$app['orm.em']->flush();
 						
-						$trigger = new \LarpManager\Entities\PersonnageTrigger();
-						$trigger->setPersonnage($personnage);
-						$trigger->setTag('LANGUE COURANTE');
-						$trigger->setDone(false);
-						$app['orm.em']->persist($trigger);
-						$app['orm.em']->flush();
+						$trigger2 = new \LarpManager\Entities\PersonnageTrigger();
+						$trigger2->setPersonnage($personnage);
+						$trigger2->setTag('LANGUE COURANTE');
+						$trigger2->setDone(false);
+						$app['orm.em']->persist($trigger2);
 						
-						$trigger = new \LarpManager\Entities\PersonnageTrigger();
-						$trigger->setPersonnage($personnage);
-						$trigger->setTag('LANGUE COURANTE');
-						$trigger->setDone(false);
-						$app['orm.em']->persist($trigger);
-						$app['orm.em']->flush();
+						$trigger3 = new \LarpManager\Entities\PersonnageTrigger();
+						$trigger3->setPersonnage($personnage);
+						$trigger3->setTag('LANGUE COURANTE');
+						$trigger3->setDone(false);
+						$app['orm.em']->persist($trigger3);
 						
-						$trigger = new \LarpManager\Entities\PersonnageTrigger();
-						$trigger->setPersonnage($personnage);
-						$trigger->setTag('LANGUE ANCIENNE');
-						$trigger->setDone(false);
-						$app['orm.em']->persist($trigger);
-						$app['orm.em']->flush();
+						$trigger4 = new \LarpManager\Entities\PersonnageTrigger();
+						$trigger4->setPersonnage($personnage);
+						$trigger4->setTag('LANGUE ANCIENNE');
+						$trigger4->setDone(false);
+						$app['orm.em']->persist($trigger4);
 
 						// il obtient aussi la possibilité de choisir un sort et une potion de niveau 2
-						$trigger = new \LarpManager\Entities\PersonnageTrigger();
-						$trigger->setPersonnage($personnage);
-						$trigger->setTag('SORT INITIE');
-						$trigger->setDone(false);
-						$app['orm.em']->persist($trigger);
-						$app['orm.em']->flush();
+						$trigger5 = new \LarpManager\Entities\PersonnageTrigger();
+						$trigger5->setPersonnage($personnage);
+						$trigger5->setTag('SORT INITIE');
+						$trigger5->setDone(false);
+						$app['orm.em']->persist($trigger5);
 
-						$trigger = new \LarpManager\Entities\PersonnageTrigger();
-						$trigger->setPersonnage($personnage);
-						$trigger->setTag('ALCHIMIE INITIE');
-						$trigger->setDone(false);
-						$app['orm.em']->persist($trigger);
+						$trigger6 = new \LarpManager\Entities\PersonnageTrigger();
+						$trigger6->setPersonnage($personnage);
+						$trigger6->setTag('ALCHIMIE INITIE');
+						$trigger6->setDone(false);
+						$app['orm.em']->persist($trigger6);
 						$app['orm.em']->flush();
 						break;
 					case 4: // Sait parler, lire et écrire un autre langage ancien ainsi que trois autres langues vivantes de son choix (courante ou commune) ainsi qu'une langue ancienne
@@ -3067,42 +3117,37 @@ class ParticipantController
 						$trigger->setTag('LANGUE COURANTE');
 						$trigger->setDone(false);
 						$app['orm.em']->persist($trigger);
-						$app['orm.em']->flush();
 						 
-						$trigger = new \LarpManager\Entities\PersonnageTrigger();
-						$trigger->setPersonnage($personnage);
-						$trigger->setTag('LANGUE COURANTE');
-						$trigger->setDone(false);
-						$app['orm.em']->persist($trigger);
-						$app['orm.em']->flush();
+						$trigger2 = new \LarpManager\Entities\PersonnageTrigger();
+						$trigger2->setPersonnage($personnage);
+						$trigger2->setTag('LANGUE COURANTE');
+						$trigger2->setDone(false);
+						$app['orm.em']->persist($trigger2);
 						
-						$trigger = new \LarpManager\Entities\PersonnageTrigger();
-						$trigger->setPersonnage($personnage);
-						$trigger->setTag('LANGUE COURANTE');
-						$trigger->setDone(false);
-						$app['orm.em']->persist($trigger);
-						$app['orm.em']->flush();
+						$trigger3 = new \LarpManager\Entities\PersonnageTrigger();
+						$trigger3->setPersonnage($personnage);
+						$trigger3->setTag('LANGUE COURANTE');
+						$trigger3->setDone(false);
+						$app['orm.em']->persist($trigger3);
 						
-						$trigger = new \LarpManager\Entities\PersonnageTrigger();
-						$trigger->setPersonnage($personnage);
-						$trigger->setTag('LANGUE ANCIENNE');
-						$trigger->setDone(false);
-						$app['orm.em']->persist($trigger);
-						$app['orm.em']->flush();
+						$trigger4 = new \LarpManager\Entities\PersonnageTrigger();
+						$trigger4->setPersonnage($personnage);
+						$trigger4->setTag('LANGUE ANCIENNE');
+						$trigger4->setDone(false);
+						$app['orm.em']->persist($trigger4);
 
 						// il obtient aussi la possibilité de choisir un sort et une potion de niveau 3
-						$trigger = new \LarpManager\Entities\PersonnageTrigger();
-						$trigger->setPersonnage($personnage);
-						$trigger->setTag('SORT EXPERT');
-						$trigger->setDone(false);
-						$app['orm.em']->persist($trigger);
-						$app['orm.em']->flush();
+						$trigger5 = new \LarpManager\Entities\PersonnageTrigger();
+						$trigger5->setPersonnage($personnage);
+						$trigger5->setTag('SORT EXPERT');
+						$trigger5->setDone(false);
+						$app['orm.em']->persist($trigger5);
 
-						$trigger = new \LarpManager\Entities\PersonnageTrigger();
-						$trigger->setPersonnage($personnage);
-						$trigger->setTag('ALCHIMIE EXPERT');
-						$trigger->setDone(false);
-						$app['orm.em']->persist($trigger);
+						$trigger6 = new \LarpManager\Entities\PersonnageTrigger();
+						$trigger6->setPersonnage($personnage);
+						$trigger6->setTag('ALCHIMIE EXPERT');
+						$trigger6->setDone(false);
+						$app['orm.em']->persist($trigger6);
 						$app['orm.em']->flush();
 						break;
 				}

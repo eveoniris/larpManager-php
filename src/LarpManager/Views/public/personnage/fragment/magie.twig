@@ -24,10 +24,10 @@
 		{% for sort in personnage.sorts %}
 			<a class="list-group-item" href="{{ path('participant.sort.detail', {'participant': participant.id, 'sort': sort.id}) }}">
 				{% if sort.secret %}<span style="color:red;">Secret</span> - {% endif %}{{ sort.label }} - {{ sort.domaine.label }} Niveau {{ sort.niveau }} 
-				({% if sort.domaine in personnage.domaines %}{{ sort.niveau }}
-				{% else %}{{ sort.niveau + 1 }}
+				({% if sort.domaine in personnage.domaines %}{{ sort.niveau + 1}}
+				{% else %}{{ sort.niveau + 2 }}
 				{% endif %}
-				Mana)
+				Perles)
 			</a>
 		{% endfor %}
 	</div>

@@ -17,7 +17,7 @@
 			{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}		
 			{{ form_start(form) }}
 			<h4>{{ form_label(form.personnageIngredients) }}</h4>
-			<p>Ajoutez içi les ingredients additionnelles</p>
+			<p>Ajoutez ici les ingredients additionnelles</p>
 			<ul class="list-group personnageIngredients" data-prototype="{{ form_widget(form.personnageIngredients.vars.prototype)|e }}">
 				{% for personnageIngredient in form.personnageIngredients %}
 					<li class="list-group-item">
