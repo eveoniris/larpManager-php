@@ -38,7 +38,7 @@ table tr td {
 	{% if groupe.hasRessource %}
 		{% for territoire in groupe.territoires %}
 			{% for ressource in territoire.exportations %}
-		    	<li><strong>{{ ressource.label }}</strong> fourni par <strong>{{ territoire.nom }}</strong></li>
+		    	<li><strong>3 {{ ressource.label }}</strong> fourni(e)s par <strong>{{ territoire.nom }}</strong></li>
 			{% endfor %}
 		{% endfor %}
 	{% else %}
@@ -53,12 +53,12 @@ table tr td {
 	<ul>
 	{% if groupe.hasRichesse %}
 		{% for territoire in groupe.territoires %}
-			<li><strong>{{ territoire.richesse }} PA</strong> fourni par <strong>{{ territoire.nom }}</strong></li>
+			<li><strong>{{ 3*territoire.richesse }} pièces d'argent</strong> fournies par <strong>{{ territoire.nom }}</strong></li>
 		{% endfor %}
 	{% else %}
 		<li>Aucun</li>
 	{% endif %}
-		<li><strong>{{ groupe.richesse|default(0) }} PA</strong> supplémentaire</li>
+		<li><strong>{{ groupe.richesse|default(0) }} pièces d'argent</strong> supplémentaires</li>
 	</ul>
 	
 	<strong>Ingrédients</strong>
@@ -66,7 +66,7 @@ table tr td {
 	{% if groupe.hasIngredient %}
 		{% for territoire in groupe.territoires %}
 			{% for ingredient in territoire.ingredients %}
-				<li><strong>{{ ingredient.label }}</strong> fourni par <strong>{{ territoire.nom }}</strong></li>
+				<li><strong>5 {{ ingredient.label }}</strong> fourni(e)s par <strong>{{ territoire.nom }}</strong></li>
 		    {% endfor %}
 		{% endfor %}
 	{% else %}

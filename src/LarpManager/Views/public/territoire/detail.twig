@@ -38,7 +38,7 @@
 			    				<li>Resistance de base : <span class="text-success">{{ territoire.resistance|default("non définie") }}</span></li>
 			    				<li>Defense du territoire : <span class="text-success">{{ territoire.defense }}</span> (prend en compte les constructions)</li>
 			    				<li>Statut du territoire :  <span class="text-success">{{ territoire.statut|default("Normal") }}</span></li>
-			    				<li>Richesse : <span class="text-success" data-toggle="tooltip" data-placement="bottom" title="La richesse dépend du statut du territoire, elle est réduite de moité si le statut est Désordre, et est réduite à 1 si le statut est Désolation. La richesse normale de ce territoire est {{ territoire.tresor|default(0) }}">{{ territoire.richesse }}</span></li>
+			    				<li>Richesse : <span class="text-success" data-toggle="tooltip" data-placement="bottom" title="La richesse dépend du statut du territoire, elle est réduite de moité si le statut est Instable. La richesse normale de ce territoire est {{ territoire.tresor|default(0) }}">{{ territoire.richesse }}</span></li>
 			    			</ul>
 			    		</div>
 		    		{% endif %}

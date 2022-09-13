@@ -21,7 +21,16 @@
 			<strong>Richesse : </strong>
 			<ul>
 			    {% for territoire in groupe.territoires %}   				
-				<li><strong>{{ territoire.richesse }} PA</strong> fourni par <strong>{{ territoire.nom }}</strong> (maximum : {{ territoire.tresor|default(0) }})</li>
+				<li><strong>{{ 3*territoire.richesse }} pièces d'argent</strong> fournies par <strong>{{ territoire.nom }}</strong>. Etat {{ territoire.statut|default('stable')|lower }} : {% if territoire.statut == 'Instable' %}0.5 x {% endif %}3 x ( {{ territoire.tresor|default(0) }} [Fief]
+					{% for construction in territoire.constructions %}
+						{% if construction.id == 6 or construction.id == 10 %}
+							+ 5 [{{ construction.label }}]
+						{% endif %}
+						{% if construction.id == 23 %}
+							+ 10 [{{ construction.label }}]
+						{% endif %}
+					{% endfor %})
+				</li>
 			    {% endfor %}
 		       </ul>
 		    				
@@ -29,7 +38,7 @@
 		    <ul>
 				{% for territoire in groupe.territoires %}
 			    	{% for ressource in territoire.exportations %}
-				    	<li><strong>{{ ressource.label }}</strong> fourni par <strong>{{ territoire.nom }}</strong></li>
+				    	<li><strong>5 {{ ressource.label }}</strong> fourni(e)s par <strong>{{ territoire.nom }}</strong></li>
 		    		{% endfor %}
 		    	{% endfor %}
 		    </ul>
@@ -41,7 +50,7 @@
 		    <ul>
 				{% for territoire in groupe.territoires %}
 			    	{% for ingredient in territoire.ingredients %}
-			    		<li><strong>{{ ingredient.label }}</strong> fourni par <strong>{{ territoire.nom }}</strong></li>
+			    		<li><strong>3 {{ ingredient.label }}</strong> fourni(e)s par <strong>{{ territoire.nom }}</strong></li>
 				    {% endfor %}
 			   	{% endfor %}
 			</ul>
