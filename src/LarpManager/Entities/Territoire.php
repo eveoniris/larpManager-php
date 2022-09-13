@@ -170,19 +170,35 @@ class Territoire extends BaseTerritoire implements \JsonSerializable
 	}
 	
 	/**
-	 * Fourni la richesse d'un territoire, en fonction de son statut (1/2 si désordre, 1 pièce si désolation), et des constructions
+	 * Fourni la richesse d'un territoire, en fonction de son statut (1/2 si instable), et des constructions
 	 */
 	public function getRichesse()
 	{
 		$tresor = parent::getTresor();
-		if ( ! $tresor) $tresor = 0;
+		if ( !$tresor) $tresor = 0;
+
+		// TODO ajouter les revenus des bâtiments.
+		foreach ( $this->getConstructions() as $construction)
+		{
+			if ($construction->getId() == 6) /* Comptoir commercial */
+			{
+				$tresor += 5;
+			}
+			if ($construction->getId() == 23) /* Foyer d'orfèvre */
+			{
+				$tresor += 10;
+			}
+			if ($construction->getId() == 10) /* Port */
+			{
+				$tresor += 5;
+			}
+		}	
 		
 		// gestion de l'état du territoire
 		switch ($this->getStatut())
 		{
 			case 'Normal': return $tresor;
-			case 'Désordre': return round($tresor/ 2);
-			case 'Désolation': return 1;
+			case 'Instable': return ceil($tresor/2);
 			default : return $tresor;
 		}
 	}
@@ -593,7 +609,7 @@ class Territoire extends BaseTerritoire implements \JsonSerializable
 	}
 	
 	/**
-	 * Fourni l'indicateur d'ordre/désordre
+	 * Fourni l'indicateur d'ordre/Instable
 	 */
 	public function getStatutIndex()
 	{
@@ -601,10 +617,8 @@ class Territoire extends BaseTerritoire implements \JsonSerializable
 		{
 			case 'Normal' :
 				return 0;
-			case 'Désordre' :
+			case 'Instable' :
 				return 1;
-			case 'Désolation' :
-				return 2;
 			default :
 				return 0;
 		}
