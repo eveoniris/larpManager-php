@@ -37,8 +37,12 @@
 		    <strong>Ressources : </strong>
 		    <ul>
 				{% for territoire in groupe.territoires %}
+					{% set nbRessource = 3 %}
+					{% if territoire.statut == 'Instable' %}
+						{% set nbRessource = 2 %}
+					{% endif %}
 			    	{% for ressource in territoire.exportations %}
-				    	<li><strong>5 {{ ressource.label }}</strong> fourni(e)s par <strong>{{ territoire.nom }}</strong></li>
+				    	<li><strong>{{ nbRessource }} {{ ressource.label }}</strong> fourni(e)s par <strong>{{ territoire.nom }}</strong></li>
 		    		{% endfor %}
 		    	{% endfor %}
 		    </ul>
@@ -49,8 +53,12 @@
 		    {% endif %}
 		    <ul>
 				{% for territoire in groupe.territoires %}
+					{% set nbIngredient = 5 %}
+					{% if territoire.statut == 'Instable' %}
+						{% set nbIngredient = 3 %}
+					{% endif %}
 			    	{% for ingredient in territoire.ingredients %}
-			    		<li><strong>3 {{ ingredient.label }}</strong> fourni(e)s par <strong>{{ territoire.nom }}</strong></li>
+			    		<li><strong>{{ nbIngredient }} {{ ingredient.label }}</strong> fourni(e)s par <strong>{{ territoire.nom }}</strong></li>
 				    {% endfor %}
 			   	{% endfor %}
 			</ul>
