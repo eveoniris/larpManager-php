@@ -33,7 +33,11 @@ TOTAL : {{ groupe.richesseTotale|default(0) }} pièces d'argent
 {% if groupe.hasRessource %}
 	{% for territoire in groupe.territoires %}
 		{% for ressource in territoire.exportations %}
-	    	<li><strong>3 {{ ressource.label }}</strong> fourni(e)s par <strong>{{ territoire.nom }}</strong></li>
+			{% set nbRessource = 3 %}
+			{% if territoire.statut == 'Instable' %}
+				{% set nbRessource = 2 %}
+			{% endif %}
+	    	<li><strong>{{ nbRessource }} {{ ressource.label }}</strong> fourni(e)s par <strong>{{ territoire.nom }}</strong></li>
 		{% endfor %}
 	{% endfor %}
 {% else %}
@@ -54,8 +58,12 @@ TOTAL : {{ groupe.richesseTotale|default(0) }} pièces d'argent
 <ul>
 {% if groupe.hasIngredient %}
 	{% for territoire in groupe.territoires %}
+		{% set nbIngredient = 5 %}
+		{% if territoire.statut == 'Instable' %}
+			{% set nbIngredient = 3 %}
+		{% endif %}
 		{% for ingredient in territoire.ingredients %}
-			<li><strong>5 {{ ingredient.label }}</strong> fourni(e)s par <strong>{{ territoire.nom }}</strong></li>
+			<li><strong>{{ nbIngredient }} {{ ingredient.label }}</strong> fourni(e)s par <strong>{{ territoire.nom }}</strong></li>
 	    {% endfor %}
 	{% endfor %}
 {% else %}
