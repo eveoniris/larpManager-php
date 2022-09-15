@@ -861,7 +861,7 @@ class Personnage extends BasePersonnage
 		if ( $groupeLabel )
 			$identity .= $nomGn.' - '.$groupeLabel;
 		else 
-			$identity .= $nomGn.' - *** GROUPE NON INDENTIFIABLE ***';
+			$identity .= $nomGn.' - *** GROUPE NON IDENTIFIABLE ***';
 		$identity .= ')';
 		return $identity;
 	}
@@ -890,7 +890,7 @@ class Personnage extends BasePersonnage
 		if ( $groupeLabel )
 			$identity .= $nomGn.' - '.$groupeLabel;
 		else 
-			$identity .= $nomGn.' - *** GROUPE NON INDENTIFIABLE ***';
+			$identity .= $nomGn.' - *** GROUPE NON IDENTIFIABLE ***';
 		$identity .= ')';
 		return $identity;
 	}
@@ -934,7 +934,7 @@ class Personnage extends BasePersonnage
 		if ( $groupeLabel )
 			$identity .= $nomGn.' - '.$groupeLabel;
 		else 
-			$identity .= $nomGn.' - *** GROUPE NON INDENTIFIABLE ***';
+			$identity .= $nomGn.' - *** GROUPE NON IDENTIFIABLE ***';
 		$identity .= ')';
 		return $identity;
 	}

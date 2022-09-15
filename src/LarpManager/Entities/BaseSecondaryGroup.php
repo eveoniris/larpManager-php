@@ -63,6 +63,7 @@ class BaseSecondaryGroup
     /**
      * @OneToMany(targetEntity="Membre", mappedBy="secondaryGroup")
      * @JoinColumn(name="id", referencedColumnName="secondary_group_id", nullable=false)
+     * @OrderBy({"id" = "ASC",})
      */
     protected $membres;
 
