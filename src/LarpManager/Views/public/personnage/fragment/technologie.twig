@@ -10,6 +10,13 @@
 				<div class="list-group-item">
 					{% if technologie.secret %}<span style="color:red;">Secret</span> - {% endif %}<div class="list-group-item-heading"><strong>{{ technologie.label }}</strong></div>
 					<div class="list-group-item-text">{{ technologie.description|markdown }}</div>
+					<p class="list-group-item-text">
+					{% if technologie.documentUrl %}
+						<a class="btn btn-default btn-sm" href="{{ path('participant.technologie.document',{'participant': participant.id, 'technologie' : technologie.id, 'filename': technologie.printlabel}) }}">
+							<i class="fa fa-file"></i> Imprimer l'aide de jeu
+						</a>
+					{% endif %}
+					</p>
 				</div>
 			{% endfor %}
 			</div>

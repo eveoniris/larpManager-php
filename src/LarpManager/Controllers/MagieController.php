@@ -1024,8 +1024,7 @@ class MagieController
 	    return $app['twig']->render(
             $twigFilePath, 
 	        $viewParams
-        );	       
+        );
 	}
-	
 
 }

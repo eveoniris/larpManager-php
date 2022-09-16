@@ -58,6 +58,7 @@
 									<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Modifier" href="{{ path('technologie.update', {'technologie':technologie.id}) }}"><i class="fa fa-pencil"></i></a>
 									<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Voir Personnages" href="{{ path('technologie.personnages', {'technologie':technologie.id}) }}"><i class="fa fa-users"></i> ({{ technologie.personnages|length }})</a>
 									<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Supprimer" href="{{ path('technologie.delete', {'technologie':technologie.id}) }}"><i class="fa fa-eraser"></i></a>
+									{% if technologie.documentUrl %}<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Document" href="{{ path('technologie.document',{'technologie': technologie.id, 'document': technologie.documentUrl}) }}"><i class="fa fa-print"></i></a>{% endif %}
 								</div>
 							</fieldset>
 						</div>

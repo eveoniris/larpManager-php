@@ -62,7 +62,11 @@ class TechnologieForm extends AbstractType
                     'label'=> 'Compétence Expert requise',
                     'property' => 'label',
                 ))
-
+				->add('document','file', array(
+					'label' => 'Téléversez un document',
+					'required' => true,
+					'mapped' => false
+				))
                 ->add('secret', CheckboxType::class, array(
                     'label' => 'Technologie secrète ?'
                 ))

@@ -41,7 +41,7 @@ class TechnologieController
 		$technologies = $app['orm.em']->getRepository(Technologie::class)->findAllOrderedByLabel();
 		
 		return $app['twig']->render('admin\technologie\index.twig', array(
-			'technologies' => $technologies,	
+			'technologies' => $technologies,
 		));
 	}
 	
@@ -52,7 +52,7 @@ class TechnologieController
 	 * @param Application $app
 	 */
 	public function addAction(Request $request, Application $app)
-	{				
+	{
 		$form = $app['form.factory']->createBuilder(new TechnologieForm(),new Technologie())->getForm();
 
 		$form->handleRequest($request);
@@ -60,6 +60,26 @@ class TechnologieController
 		if ( $form->isValid() && $form->isSubmitted() )
 		{
 			$technologie = $form->getData();
+
+			$files = $request->files->get($form->getName());
+			// Si un document est fourni, l'enregistrer
+			if ( $files['document'] != null )
+			{
+				$path = __DIR__.'/../../../private/doc/';
+				$filename = $files['document']->getClientOriginalName();
+				$extension = 'pdf';
+					
+				if (!$extension || ! in_array($extension, array('pdf'))) {
+					$app['session']->getFlashBag()->add('error','Désolé, votre document ne semble pas valide (vérifiez le format de votre document)');
+					return $app->redirect($app['url_generator']->generate('technologie'),303);
+				}
+					
+				$documentFilename = hash('md5',$technologie->getLabel().$filename . time()).'.'.$extension;
+					
+				$files['document']->move($path,$documentFilename);
+					
+				$technologie->setDocumentUrl($documentFilename);
+			}
 			
 			$app['orm.em']->persist($technologie);
             $app['orm.em']->flush();
@@ -104,7 +124,26 @@ class TechnologieController
 		if ( $form->isValid() )
 		{
 			$technologie = $form->getData();
-			
+
+			$files = $request->files->get($form->getName());
+			// Si un document est fourni, l'enregistrer
+			if ( $files['document'] != null )
+			{
+				$path = __DIR__.'/../../../private/doc/';
+				$filename = $files['document']->getClientOriginalName();
+				$extension = 'pdf';
+					
+				if (!$extension || ! in_array($extension, array('pdf'))) {
+					$app['session']->getFlashBag()->add('error','Désolé, votre document ne semble pas valide (vérifiez le format de votre document)');
+					return $app->redirect($app['url_generator']->generate('technologie'),303);
+				}
+					
+				$documentFilename = hash('md5',$technologie->getLabel().$filename . time()).'.'.$extension;
+					
+				$files['document']->move($path,$documentFilename);
+					
+				$technologie->setDocumentUrl($documentFilename);
+			}
 			$app['orm.em']->persist($technologie);
 			$app['orm.em']->flush();
 				
@@ -257,4 +296,27 @@ class TechnologieController
 
         return $app->redirect($app['url_generator']->generate('technologie') ,303);
     }
+
+	/**
+	 * Obtenir le document lié a une technologie
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function getTechnologieDocumentAction(Request $request, Application $app)
+	{
+		$technologie = $request->get('technologie');
+		$document = $technologie->getDocumentUrl();
+		$file = __DIR__.'/../../../private/doc/'.$document;
+		
+		$stream = function () use ($file) {
+			readfile($file);
+		};
+		
+		return $app->stream($stream, 200, array(
+				'Content-Type' => 'text/pdf',
+				'Content-length' => filesize($file),
+				'Content-Disposition' => 'attachment; filename="'.$technologie->getPrintLabel().'.pdf"'
+		));
+	}
 }
