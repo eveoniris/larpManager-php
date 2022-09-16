@@ -8,7 +8,7 @@
 		{{ personnageLangue.langue.description|markdown }}
 		{% if personnageLangue.langue.documentUrl %}
 		<a class="btn btn-default btn-sm" href="{{ path('participant.langue.document',{'participant': participant.id, 'langue' : personnageLangue.langue.id, 'filename': personnageLangue.langue.printlabel }) }}">
-			<i class="fa fa-file"></i> Voir l'abécédaire
+			<i class="fa fa-file"></i> Imprimer l'abécédaire
 		</a>
     	{% endif %}
 		</li>

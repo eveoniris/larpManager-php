@@ -119,6 +119,15 @@ class TechnologieControllerProvider implements ControllerProviderInterface
             ->method('GET|POST')
             ->before($mustBeScenariste);
 
+		/**
+		 * Obtenir un document lié à une technologie
+		 */
+		$controllers->match('/{technologie}/document/{document}','LarpManager\Controllers\MagieController::getDocumentAction')
+			->bind("technologie.document")
+			->convert('technologie', 'converter.technologie:convert')
+			->before($mustBeScenariste)
+			->method('GET');
+
 		return $controllers;
 	}
 }
