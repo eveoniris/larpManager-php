@@ -40,6 +40,8 @@ use LarpManager\Form\Territoire\TerritoireCiblesForm;
 use LarpManager\Entities\Territoire;
 use LarpManager\Entities\Loi;
 
+use LarpManager\Repository\ConstructionRepository;
+
 /**
  * LarpManager\Controllers\TerritoireController
  *
@@ -302,6 +304,9 @@ class TerritoireController
 					'label' => 'Choisissez la construction',
 					'required' => true,
 					'class' => 'LarpManager\Entities\Construction',
+					'query_builder' => function(ConstructionRepository $repo) {
+						return $repo->createQueryBuilder('c')->orderBy('c.label', 'ASC');
+					},
 					'property' => 'fullLabel',
 					'expanded' => true,
 			))

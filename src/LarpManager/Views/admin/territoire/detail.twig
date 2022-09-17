@@ -46,11 +46,10 @@
   				<div class="list-group-item">
 			    	<h4 class="list-group-item-heading">Jeu stratégique</h4>
 			    	<ul>
-	    			<li>Resistance de base : {{ territoire.resistance|default("non définie") }}</li>
-	    			<li>Defense du territoire : {{ territoire.defense }} (prend en compte les constructions)</li>
-	    			<li>Trésor : {{ territoire.tresor|default("non définie") }}</li>
-	    			<li>Richesse : {{ territoire.richesse }} (Trésor modulé en fonction du statut du territoire, et de la présence ou non d'une route)</li>
-	    			<li>Ordre social : {{ territoire.ordreSocial }}</li>
+	    			<li>Resistance de base : {{ territoire.resistance|default(0) }}</li>
+	    			<li>Defense du territoire : {{ territoire.defense|default(0) }} (prend en compte les constructions)</li>
+	    			<li>Trésor de base : {{ territoire.tresor|default(0) }}</li>
+	    			<li>Richesse réelle : {{ territoire.richesse|default(0) }} (prend en compte les constructions et le statut du territoire)</li>
 	    			</ul>
 	    			<a href="{{ path('territoire.admin.updateStrategie', {'territoire': territoire.id}) }}">Modifier</a>
 	    		</div>

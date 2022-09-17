@@ -76,14 +76,6 @@ class TerritoireForm extends AbstractType
 					'required' => false,
 					'choices' => array('Normal' => 'Normal', 'Instable' => 'Instable')
 				))
-				->add('ordreSocial','integer', array(
-					'label' => 'Ordre social',
-					'required' => false,
-					'attr' => array(
-							'min' => 1,
-							'max' => 5
-					)
-				))
 				->add('geojson', 'textarea', array(
 					'label' => 'GeoJSON',
 					'required' => false,
