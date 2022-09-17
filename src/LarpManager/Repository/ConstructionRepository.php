@@ -41,4 +41,17 @@ class ConstructionRepository extends EntityRepository
 		
 		return $constructions;
 	}
+
+	/**
+	* Find all constructions ordered by label
+	* @return ArrayCollection $constructions
+	*/
+   public function findAll()
+   {
+	   $constructions = $this->getEntityManager()
+			   ->createQuery('SELECT r FROM LarpManager\Entities\Construction r ORDER BY r.label ASC')
+			   ->getResult();
+	   
+	   return $constructions;
+   }
 }
