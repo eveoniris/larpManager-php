@@ -107,6 +107,7 @@ class TerritoireRepository extends EntityRepository
         if(array_key_exists("tgr.id",$criteria))
             $qb->join('t.groupe','tgr');
         $qb->join('t.territoire','tpr');
+        $qb->leftjoin('tpr.territoire','tp');
         $qb->andWhere('t.territoire IS NOT NULL');
 
         $count = 0;
