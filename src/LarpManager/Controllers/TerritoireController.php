@@ -102,7 +102,7 @@ class TerritoireController
 	{
         $order_by = $request->get('order_by') ?: 'id';
         $order_dir = $request->get('order_dir') == 'DESC' ? 'DESC' : 'ASC';
-        $limit = (int)($request->get('limit') ?: 50);
+        $limit = (int)($request->get('limit') ?: 500);
         $page = (int)($request->get('page') ?: 1);
         $offset = ($page - 1) * $limit;
         $criteria = array();
