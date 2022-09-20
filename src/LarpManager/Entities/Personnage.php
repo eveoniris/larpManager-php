@@ -587,7 +587,7 @@ class Personnage extends BasePersonnage
 	 */
 	public function getPugilat()
 	{
-		$pugilat = 0;
+		$pugilat = 1;
 
 		$pugilat = $this->getCompetencePugilat('Agilité')
 			+ $this->getCompetencePugilat('Armes à distance')
@@ -628,6 +628,11 @@ class Personnage extends BasePersonnage
 	public function getDisplayPugilat()
 	{
 		$pugilatHistories = array();
+
+		$pugilatHistory = new \LarpManager\Entities\PugilatHistory();
+		$pugilatHistory->setPugilat(1);
+		$pugilatHistory->setExplication('Score de base');
+		$pugilatHistories[] = $pugilatHistory;
 
 		foreach ( $this->getPugilatHistories() as $pugilatHistory)
 		{
