@@ -50,9 +50,9 @@ class GroupeItemForm extends AbstractType
 					'expanded' => true,
 					'required' => false,
 					'class' => 'LarpManager\Entities\Item',
-					'property' => 'label',
+					'property' => 'identitereverse',
 					'query_builder' => function(ItemRepository $er) {
-						return $er->createQueryBuilder('i')->orderBy('i.numero', 'ASC');
+						return $er->createQueryBuilder('i')->orderBy('i.label', 'ASC');
 					},
 				));
 	}

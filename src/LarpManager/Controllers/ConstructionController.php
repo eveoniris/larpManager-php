@@ -22,7 +22,7 @@ namespace LarpManager\Controllers;
 
 use Symfony\Component\HttpFoundation\Request;
 use Silex\Application;
-
+use LarpManager\Entities\Construction;
 use LarpManager\Form\ConstructionForm;
 use LarpManager\Form\ConstructionDeleteForm;
 
@@ -43,7 +43,7 @@ class ConstructionController
 	public function indexAction(Request $request, Application $app)
 	{
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Construction');
-		$constructions = $repo->findAll();
+		$constructions = $repo->findAllOrderedByLabel();
 		
 		return $app['twig']->render('admin/construction/index.twig', array(
 				'constructions' => $constructions));
@@ -74,7 +74,7 @@ class ConstructionController
 			
 			$app['session']->getFlashBag()->add('success', 'La construction a été ajoutée.');
 			
-			return $app->redirect($app['url_generator']->generate('construction.detail', array('construction' => $construction->getId())),301);
+			return $app->redirect($app['url_generator']->generate('construction.detail', array('construction' => $construction->getId())),303);
 		}
 				
 		return $app['twig']->render('admin/construction/add.twig', array(
@@ -108,7 +108,7 @@ class ConstructionController
 				
 			$app['session']->getFlashBag()->add('success', 'La construction a été modifié.');
 			
-			return $app->redirect($app['url_generator']->generate('construction.detail', array('construction' => $construction->getId())),301);
+			return $app->redirect($app['url_generator']->generate('construction.detail', array('construction' => $construction->getId())),303);
 		}
 		
 		return $app['twig']->render('admin/construction/update.twig', array(
@@ -118,7 +118,7 @@ class ConstructionController
 	}
 	
 	/**
-	 * Supprimme une construction
+	 * Supprime une construction
 	 *
 	 * @param Request $request
 	 * @param Application $app
@@ -142,7 +142,7 @@ class ConstructionController
 		
 			$app['session']->getFlashBag()->add('success', 'La construction a été supprimée.');
 				
-			return $app->redirect($app['url_generator']->generate('construction'),301);
+			return $app->redirect($app['url_generator']->generate('construction'),303);
 		}
 		
 		return $app['twig']->render('admin/construction/delete.twig', array(
@@ -164,4 +164,17 @@ class ConstructionController
 		return $app['twig']->render('admin/construction/detail.twig', array(
 				'construction' => $construction));
 	}
+
+	/**
+	 * Liste des territoires ayant cette construction
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function personnagesAction(Request $request, Application $app, Construction $construction)
+	{
+		return $app['twig']->render('admin/construction/territoires.twig', array(
+				'construction' => $construction,
+		));
+	}	
 }

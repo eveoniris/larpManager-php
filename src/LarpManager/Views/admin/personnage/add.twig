@@ -11,7 +11,7 @@
 	</ol>
 
 	<div class="well bs-component">	
-		<form action="{{ path('personnage.admin.add', {'participant' : participant.id}) }}" method="POST" {{ form_enctype(form) }}>
+		<form action="{{ path('personnage.admin.add', {'participant' : participant ? participant.id : null}) }}" method="POST" {{ form_enctype(form) }}>
 			<fieldset>
 				<legend>Ajout d'un personnage, pour l'utilisateur {{ participant.user }}</legend>
 				{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}

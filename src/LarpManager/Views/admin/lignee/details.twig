@@ -1,0 +1,119 @@
+{% extends "layout.twig" %}
+
+{% block title %}{{ lignee.nom }}{% endblock %}
+
+{% block content %}
+
+    <ol class="breadcrumb">
+        <li><a href="{{ path('homepage') }}">Accueil</a></li>
+        <li><a href="{{ path('lignee.list') }}">Lignées</a></li>
+        <li class="active">{{ lignee.nom }} - Détails</li>
+    </ol>
+
+    <div class="well well-sm">
+        <h3>
+            Détails de la lignée {{ lignee.nom }}
+        </h3>
+    </div>
+
+    <div class="row">
+        <div class="col-md-5">
+            <div class="panel panel-default">
+                <nav class="navbar navbar-default" style="margin-bottom: 0;">
+                    <div class="container-fluid">
+                        <div class="navbar-header">
+                            <span class="navbar-brand">{{ lignee.nom }} (#{{ lignee.id }})</span>
+                        </div>
+                        <div class="collapse navbar-collapse">
+                            <ul class="nav navbar-nav navbar-right">
+                                    <li><a href="{{ path('lignee.update', {'lignee':lignee.id}) }}">Modifier/Supprimer</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </nav>
+                <div class="panel-body">
+                    <p>{{ lignee.description }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-7">
+            <div class="panel panel-default">
+                <nav class="navbar navbar-default" style="margin-bottom: 0;">
+                    <div class="container-fluid">
+                        <div class="navbar-header">
+                            <span class="navbar-brand">Membres</span>
+                        </div>
+                        <div class="collapse navbar-collapse">
+                            <ul class="nav navbar-nav navbar-right">
+                                <li><a href="{{ path('lignee.addMembre', {'lignee':lignee.id} ) }}">Ajouter un membre</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </nav>
+
+                {% set iconPjConfirmed = '<span title="PJ participant au GN actif">✅</span>' %}
+                {% set iconPjDead = '<span title="Personnage mort">💀</span>' %}
+                {% set iconPnj = '<span title="PNJ">🎭</span>' %}
+                {% set iconPjOld = '<span title="Ancien PJ ne participant pas au GN actif">➖</span>' %}
+
+                <div class="panel-body">
+                    <div class="legend"><span class="legend-header">Légende Statut : </span>{{ iconPjConfirmed | raw }} = PJ Actif, {{ iconPnj | raw }} = PNJ, {{ iconPjOld | raw }} = PJ Non actif, {{ iconPjDead | raw }} = Mort</div>
+                    </div>
+                    <table class="table table-striped table-bordered table-condensed">
+                        <th>ID</th>
+                        <th>Statut</th>
+                        <th>Nom</th>
+                        <th>Groupe</th>
+                        <th>Âge</th>
+                        <th>Parent 1</th>
+                        <th>Parent 2</th>
+                        <th>Retirer membre</th>
+
+                        {% for personnageLignee in lignee.personnageLignees %}
+                            <tr>
+                                <td><a href="{{ path('personnage.admin.detail', {'personnage': personnageLignee.personnage.id}) }}">{{ personnageLignee.personnage.id }}</a> </td>
+                                <td>
+                                {% if personnageLignee.personnage.vivant == 0 %}
+                                    {{ iconPjDead | raw }}
+                                {% elseif personnageLignee.personnage.isPnj() %}
+                                    {{ iconPnj | raw }}
+                                {% elseif personnageLignee.personnage.isLastParticipantOnActiveGn() %}
+                                    {{ iconPjConfirmed | raw }}
+                                {% else %}
+                                    {{ iconPjOld | raw }}
+                                {% endif %}
+                                </td>                                 
+                                <td><a href="{{ path('personnage.admin.detail', {'personnage': personnageLignee.personnage.id}) }}">{{ personnageLignee.personnage.nom}}</a></td>
+
+                                {% if personnageLignee.personnage.groupe == NULL %}
+                                <td> - </td>
+                                {% else %}
+                                <td><a href="{{ path('groupe.detail',{'index':personnageLignee.personnage.groupe.id}) }}">{{ personnageLignee.personnage.groupe.nom }}</a> </td>
+                                {% endif %}
+
+                                <td>{{ personnageLignee.personnage.ageReel }} ans</td>
+                                {% if personnageLignee.parent1 == NULL %}
+                                <td> - </td>
+                                {% else %}
+                                <td><a href="{{ path('personnage.admin.detail', {'personnage': personnageLignee.parent1.id}) }}">{{ personnageLignee.parent1.nom }} ({{ personnageLignee.parent1.ageReel }} ans)</a></td>
+                                {% endif %}
+                                {% if personnageLignee.parent2 == NULL %}
+                                <td> - </td>
+                                {% else %}
+                                <td><a href="{{ path('personnage.admin.detail', {'personnage': personnageLignee.parent2.id}) }}">{{ personnageLignee.parent2.nom }} ({{ personnageLignee.parent2.ageReel }} ans)</a></td>
+                                {% endif %}
+
+                                <td>
+                                    <a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Retirer ce membre"
+                                    href="{{ path('lignee.membre.remove',{'membre':personnageLignee.id, 'lignee':lignee.id, 'membreNom':personnageLignee.personnage.nom}) }}"
+                                        onclick="return confirm('Vous vous apprétez à retirer {{ personnageLignee.personnage.nom }} de cette lignée. Confirmer ?')">
+                                        <i class="fa fa-unlink"></i></a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
+{% endblock %}

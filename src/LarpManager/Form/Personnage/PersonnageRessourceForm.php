@@ -49,7 +49,7 @@ class PersonnageRessourceForm extends AbstractType
 					'label' => 'X ressources communes choisies au hasard',
 					'required' => false,
 					'attr' => array(
-							'help' => 'Indiquez combien de ressources COMMUNES il faut ajouter à ce groupe.'
+							'help' => 'Indiquez combien de ressources COMMUNES il faut ajouter à ce personnage.'
 					),
 			))
 			->add('randomRare','integer', array(
@@ -57,7 +57,7 @@ class PersonnageRessourceForm extends AbstractType
 					'label' => 'X ressources rares choisies au hasard',
 					'required' => false,
 					'attr' => array(
-							'help' => 'Indiquez combien de ressources RARES il faut ajouter à ce groupe.'
+							'help' => 'Indiquez combien de ressources RARES il faut ajouter à ce personnage.'
 					),
 			))
 			->add('personnageRessources', 'collection', array(

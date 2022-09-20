@@ -58,8 +58,16 @@ class ReligionController
 	 */
 	public function indexAction(Request $request, Application $app)
 	{
+		
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Religion');
-		$religions = $repo->findAllOrderedByLabel();
+		if ( $app['security.authorization_checker']->isGranted('ROLE_REGLE') )
+		{
+			$religions = $repo->findAllOrderedByLabel();
+		}
+		else
+		{
+			$religions = $repo->findAllPublicOrderedByLabel();
+		}
 		
 		return $app['twig']->render('religion/list.twig', array('religions' => $religions));
 	}
@@ -143,11 +151,11 @@ class ReligionController
 			// vers le formulaire d'ajout d'une religion
 			if ( $form->get('save')->isClicked())
 			{
-				return $app->redirect($app['url_generator']->generate('religion'),301);
+				return $app->redirect($app['url_generator']->generate('religion'),303);
 			}
 			else if ( $form->get('save_continue')->isClicked())
 			{
-				return $app->redirect($app['url_generator']->generate('religion.add'),301);
+				return $app->redirect($app['url_generator']->generate('religion.add'),303);
 			}
 		}
 		
@@ -208,14 +216,14 @@ class ReligionController
 				$app['orm.em']->flush();
 				$app['session']->getFlashBag()->add('success', 'La religion a été mise à jour.');
 		
-				return $app->redirect($app['url_generator']->generate('religion.detail',array('index' => $id)),301);
+				return $app->redirect($app['url_generator']->generate('religion.detail',array('index' => $id)),303);
 			}
 			else if ( $form->get('delete')->isClicked())
 			{
 				/*$app['orm.em']->remove($religion);
 				$app['orm.em']->flush();
 				$app['session']->getFlashBag()->add('success', 'La religion a été supprimée.');*/
-				return $app->redirect($app['url_generator']->generate('religion'),301);
+				return $app->redirect($app['url_generator']->generate('religion'),303);
 			}
 		}		
 
@@ -251,7 +259,7 @@ class ReligionController
 	
 			if (!$extension || ! in_array($extension, array('png', 'jpg', 'jpeg','bmp'))) {
 				$app['session']->getFlashBag()->add('error','Désolé, votre image ne semble pas valide (vérifiez le format de votre image)');
-				return $app->redirect($app['url_generator']->generate('religion.detail',array('index' => $religion->getId())),301);
+				return $app->redirect($app['url_generator']->generate('religion.detail',array('index' => $religion->getId())),303);
 			}
 				
 			$blasonFilename = hash('md5',$app['user']->getUsername().$filename . time()).'.'.$extension;
@@ -265,7 +273,7 @@ class ReligionController
 			$app['orm.em']->flush();
 				
 			$app['session']->getFlashBag()->add('success','Le blason a été enregistré');
-			return $app->redirect($app['url_generator']->generate('religion.detail',array('index' => $religion->getId())),301);
+			return $app->redirect($app['url_generator']->generate('religion.detail',array('index' => $religion->getId())),303);
 		}
 	
 		return $app['twig']->render('admin/religion/blason.twig', array(
@@ -334,11 +342,11 @@ class ReligionController
 			// vers le formulaire d'ajout d'un niveau de religion
 			if ( $form->get('save')->isClicked())
 			{
-				return $app->redirect($app['url_generator']->generate('religion.level'),301);
+				return $app->redirect($app['url_generator']->generate('religion.level'),303);
 			}
 			else if ( $form->get('save_continue')->isClicked())
 			{
-				return $app->redirect($app['url_generator']->generate('religion.level.add'),301);
+				return $app->redirect($app['url_generator']->generate('religion.level.add'),303);
 			}
 		}
 	
@@ -379,14 +387,14 @@ class ReligionController
 				$app['orm.em']->flush();
 				$app['session']->getFlashBag()->add('success', 'Le niveau de religion a été mise à jour.');
 	
-				return $app->redirect($app['url_generator']->generate('religion.level.detail',array('index' => $id)),301);
+				return $app->redirect($app['url_generator']->generate('religion.level.detail',array('index' => $id)),303);
 			}
 			else if ( $form->get('delete')->isClicked())
 			{
 				$app['orm.em']->remove($religionLevel);
 				$app['orm.em']->flush();
 				$app['session']->getFlashBag()->add('success', 'Le niveau de religion a été supprimée.');
-				return $app->redirect($app['url_generator']->generate('religion.level'),301);
+				return $app->redirect($app['url_generator']->generate('religion.level'),303);
 			}
 		}
 	

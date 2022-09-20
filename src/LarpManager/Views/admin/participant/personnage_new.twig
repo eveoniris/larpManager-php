@@ -9,9 +9,9 @@
 		<div class="col-md-4">
 			<form action="{{ path('participant.admin.personnage.new', {'participant': participant.id}) }}" method="POST" {{ form_enctype(form) }}>
 				<fieldset>
-					<legend>{{ groupe.nom }} - <small>Création d'un personnage</small></legend>
+					<legend>Ajout d'un personnage, pour l'utilisateur {{ participant.user.username }}</legend>
 					{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
-		
+
 					{{ form_row(form.nom) }}
 					{{ form_row(form.surnom) }}
 					{{ form_row(form.age) }}

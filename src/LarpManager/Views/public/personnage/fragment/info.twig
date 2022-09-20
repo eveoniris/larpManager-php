@@ -55,7 +55,7 @@
 				<div class="collapse" id="renommeHistory">
 					<div class="list-group">
 						{% for historique in personnage.renommeHistories %}
-							<div class="list-group-item">{{ historique.date|date("Y-m-d h:i:s") }} : {{ historique.renomme }}  {% if historique.explication %} pour la raison suivante : "{{ historique.explication }}"{% endif %}.</div>
+							<div class="list-group-item">{{ historique.date|date("Y-m-d h:i:s") }} : {% if historique.renomme > 0 %}+{% endif %}{{ historique.renomme }}  {% if historique.explication %} pour la raison suivante : "{{ historique.explication }}"{% endif %}.</div>
 						{% endfor %}
 					</div>
 				</div>
@@ -67,8 +67,8 @@
 				</a>
 				<div class="collapse" id="heroismeHistory">
 					<div class="list-group">
-						{% for historique in personnage.heroismeHistories %}
-							<div class="list-group-item">{{ historique.date|date("Y-m-d h:i:s") }} : {{ historique.heroisme }}  {% if historique.explication %} pour la raison suivante : "{{ historique.explication }}"{% endif %}.</div>
+						{% for historique in personnage.displayHeroisme %}
+							<div class="list-group-item">{{ historique.date|date("Y-m-d h:i:s") }} : {% if historique.heroisme > 0 %}+{% endif %}{{ historique.heroisme }}  {% if historique.explication %} pour la raison suivante : "{{ historique.explication }}"{% endif %}.</div>
 						{% endfor %}
 					</div>
 				</div>

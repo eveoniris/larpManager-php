@@ -22,6 +22,8 @@ namespace LarpManager;
 
 use Silex\Application;
 use Silex\ControllerProviderInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
  * LarpManager\LangueControllerProvider
@@ -45,19 +47,30 @@ class LangueControllerProvider implements ControllerProviderInterface
 	public function connect(Application $app)
 	{
 		$controllers = $app['controllers_factory'];
-		
+
+		/**
+		 * Vérifie que l'utilisateur dispose du role SCENARISTE
+		 */
+		$mustBeScenariste = function(Request $request) use ($app) {
+			if (!$app['security.authorization_checker']->isGranted('ROLE_SCENARISTE')) {
+				throw new AccessDeniedException();
+			}
+		};
+
 		$controllers->match('/','LarpManager\Controllers\LangueController::indexAction')
 			->bind("langue")
 			->method('GET');
 		
 		$controllers->match('/add','LarpManager\Controllers\LangueController::addAction')
 			->bind("langue.add")
-			->method('GET|POST');
+			->method('GET|POST')
+			->before($mustBeScenariste);
 		
 		$controllers->match('/{index}/update','LarpManager\Controllers\LangueController::updateAction')
 			->assert('index', '\d+')
 			->bind("langue.update")
-			->method('GET|POST');
+			->method('GET|POST')
+			->before($mustBeScenariste);
 		
 		$controllers->match('/{index}','LarpManager\Controllers\LangueController::detailAction')
 			->assert('index', '\d+')
@@ -66,18 +79,27 @@ class LangueControllerProvider implements ControllerProviderInterface
 		
 		$controllers->match('/group/add','LarpManager\Controllers\LangueController::addGroupAction')
 			->bind("langue.addGroup")
-			->method('GET|POST');
+			->method('GET|POST')
+			->before($mustBeScenariste);
 		
 		$controllers->match('/group/{index}/update','LarpManager\Controllers\LangueController::updateGroupAction')
 			->assert('index', '\d+')
 			->bind("langue.updateGroup")
-			->method('GET|POST');
+			->method('GET|POST')
+			->before($mustBeScenariste);
 		
 		$controllers->match('/group/{index}','LarpManager\Controllers\LangueController::detailGroupAction')
 			->assert('index', '\d+')
 			->bind("langue.detailGroup")
 			->method('GET');
-					
+
+		$controllers->match('/admin/{langue}/documents','LarpManager\Controllers\LangueController::adminDocumentAction')
+			->bind("langue.admin.document")
+			->assert('langue', '\d+')
+			->convert('langue', 'converter.langue:convert')
+			->method('GET|POST')
+			->before($mustBeScenariste);
+
 		return $controllers;
 	}
 }

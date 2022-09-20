@@ -10,6 +10,7 @@ use LarpManager\Entities\Personnage;
 use LarpManager\Entities\CompetenceFamily;
 use LarpManager\Entities\Competence;
 use LarpManager\Entities\Religion;
+use LarpManager\Services\Personnage\PersonnageSearchHandler;
 
 /**
  * LarpManager\ForumRightManager
@@ -21,6 +22,7 @@ class PersonnageManager
 	/** @var \Silex\Application */
 	protected $app;
 	
+	
 	/**
 	 * Constructeur
 	 *
@@ -30,6 +32,18 @@ class PersonnageManager
 	{
 		$this->app = $app;
 	}
+	
+	/**
+	 * Retourne une nouvelle instance du gestionnaire de recherche de personnage
+	 *
+	 * @return PersonnageSearchHandler
+	 */
+	public function getSearchHandler() : PersonnageSearchHandler
+	{
+	    $handler = new PersonnageSearchHandler($this->app);
+	    return $handler;
+	}
+	
 	
 	/**
 	 * Stock le personnage courant de la session
@@ -140,7 +154,7 @@ class PersonnageManager
 	
 		foreach ( $personnageReligions as $personnageReligion )
 		{
-			if ( $personnageReligion->getReligion() == $religion)
+			if ( $personnageReligion->getReligion() === $religion)
 			{
 				return true;
 			}
@@ -289,7 +303,6 @@ class PersonnageManager
 		return $availableSorts;
 	}
 	
-	
 	/**
 	 * Trouve tous les domaines de magie non connus d'un personnage 
 	 * @param Personnage $personnage
@@ -320,7 +333,7 @@ class PersonnageManager
 		$availableReligions = new ArrayCollection();
 	
 		$repo = $this->app['orm.em']->getRepository('\LarpManager\Entities\Religion');
-		$religions = $repo->findAll();
+		$religions = $repo->findAllPublicOrderedByLabel();
 	
 		foreach ( $religions as $religion)
 		{
@@ -332,7 +345,28 @@ class PersonnageManager
 	
 		return $availableReligions;
 	}
+
+	/**
+	 * Récupére la liste de toutes les religions non connue du personnage, vue admin
+	 * @param Personnage $personnage
+	 */
+	public function getAdminAvailableReligions(Personnage $personnage)
+	{
+		$availableReligions = new ArrayCollection();
 		
+		$repo = $this->app['orm.em']->getRepository('\LarpManager\Entities\Religion');
+		$religions = $repo->findAllOrderedByLabel();
+		
+		foreach ( $religions as $religion)
+		{
+			if ( ! $this->knownReligion($personnage, $religion))
+			{
+				$availableReligions->add($religion);
+			}
+		}
+		
+		return $availableReligions;
+	}
 	
 	/**
 	 * Fourni la dernière compétence acquise par un presonnage
@@ -362,5 +396,27 @@ class PersonnageManager
 		}
 	
 		return $competence;	
+	}
+
+	/**
+	 * Trouve toutes les technologies non connues d'un personnage
+	 * @param Personnage $personnage
+	 * @param unknown $diffusion
+	 */
+	public function getAvailableTechnologies(Personnage $personnage)
+	{
+		$availableTechnologies = new ArrayCollection();
+	
+		$repo = $this->app['orm.em']->getRepository('\LarpManager\Entities\Technologie');
+		$technologies = $repo->findPublicOrderedByLabel();
+			
+		foreach ( $technologies as $technologie)
+		{
+			if ( ! $personnage->isKnownTechnologie($technologie) )
+			{
+				$availableTechnologies[] = $technologie;
+			}
+		}
+		return $availableTechnologies;
 	}
 }

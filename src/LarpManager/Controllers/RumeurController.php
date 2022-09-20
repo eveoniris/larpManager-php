@@ -130,7 +130,7 @@ class RumeurController
 			
 			
 			$app['session']->getFlashBag()->add('success', 'Votre rumeur a été ajoutée.');
-			return $app->redirect($app['url_generator']->generate('rumeur.list'),301);
+			return $app->redirect($app['url_generator']->generate('rumeur.list'),303);
 		}
 		
 		return $app['twig']->render('admin/rumeur/add.twig', array(
@@ -162,7 +162,7 @@ class RumeurController
 			$app['orm.em']->flush();
 							
 			$app['session']->getFlashBag()->add('success', 'Votre rumeur a été modifiée.');
-			return $app->redirect($app['url_generator']->generate('rumeur.detail', array('rumeur' => $rumeur->getId())),301);
+			return $app->redirect($app['url_generator']->generate('rumeur.detail', array('rumeur' => $rumeur->getId())),303);
 		}
 		return $app['twig']->render('admin/rumeur/update.twig', array(
 				'form' => $form->createView(),
@@ -191,7 +191,7 @@ class RumeurController
 			$app['orm.em']->flush();
 			
 			$app['session']->getFlashBag()->add('success', 'La rumeur a été supprimée.');
-			return $app->redirect($app['url_generator']->generate('rumeur.list'),301);
+			return $app->redirect($app['url_generator']->generate('rumeur.list'),303);
 		}
 		
 		return $app['twig']->render('admin/rumeur/delete.twig', array(

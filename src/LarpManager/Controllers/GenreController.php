@@ -74,11 +74,11 @@ class GenreController
 	
 			if ( $form->get('save')->isClicked())
 			{
-				return $app->redirect($app['url_generator']->generate('genre'),301);
+				return $app->redirect($app['url_generator']->generate('genre'),303);
 			}
 			else if ( $form->get('save_continue')->isClicked())
 			{
-				return $app->redirect($app['url_generator']->generate('genre.add'),301);
+				return $app->redirect($app['url_generator']->generate('genre.add'),303);
 			}
 		}
 	

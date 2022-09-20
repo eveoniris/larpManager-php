@@ -23,7 +23,7 @@ namespace LarpManager\Repository;
 use Doctrine\ORM\EntityRepository;
 
 /**
- * LarpManager\Repository\AgeRepository
+ * LarpManager\Repository\AppelationRepository
  *  
  * @author kevin
  */

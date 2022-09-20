@@ -15,6 +15,8 @@
  **/
 namespace LarpManager\Controllers;
 
+use DoctrineProxy\__CG__\LarpManager\Entities\Participant;
+use LarpManager\Entities\Personnage;
 use Symfony\Component\HttpFoundation\Request;
 use Silex\Application;
 use LarpManager\Form\Gn\GnForm;
@@ -24,8 +26,7 @@ use LarpManager\Form\PersonnageFindForm;
 use LarpManager\Entities\Gn;
 use JasonGrimes\Paginator;
 use Doctrine\Common\Collections\ArrayCollection;
-use LarpManager\Repository\LikeExpression;
-use LarpManager\Repository\EqualExpression;
+use LarpManager\Entities\Loi;
 
 /**
  * * LarpManager\Controllers\GnController * * @author kevin *
@@ -60,7 +61,7 @@ class GnController
             // L'utilisateur n'a pas validé les CG.
             return $app->redirect($app['url_generator']->generate('user.gn.validationci', array(
                 'gn' => $gn->getId()
-            )), 307);            
+            )), 303);            
         }
                 
         $repo = $app['orm.em']->getRepository('LarpManager\Entities\Question');
@@ -87,13 +88,15 @@ class GnController
             $app['session']->getFlashBag()->add('error', 'Vous n\'avez pas encore de personnage.');
             return $app->redirect($app['url_generator']->generate('gn.detail', array(
                 'gn' => $gn->getId()
-            )), 301);
+            )), 303);
         }
-        $lois = $app['orm.em']->getRepository('LarpManager\Entities\Loi')->findAll();
+        $lois = $app['orm.em']->getRepository(Loi::class)->findAll();
+        $descendants =  $app['orm.em']->getRepository(Personnage::class)->findDescendants($personnage);
         return $app['twig']->render('public/personnage/detail.twig', array(
             'personnage' => $personnage,
             'participant' => $participant,
-            'lois' => $lois
+            'lois' => $lois,
+            'descendants' => $descendants
         ));
     }
 
@@ -117,11 +120,14 @@ class GnController
             $type = $data['type'];
             $value = $data['value'];
             switch ($type) {
-                case 'nom':
-                    $criteria[] = new LikeExpression("p.name", "%$value%");
-                    break;
-                case 'id':
-                    $criteria[] = new EqualExpression("p.id", "%$value%"); 
+				case 'nom':
+				    // $criteria[] = new LikeExpression("p.nom", "%$value%");
+				    $criteria["nom"] = "LOWER(p.nom) LIKE '%".preg_replace('/[\'"<>=*;]/', '', strtolower($value))."%'";
+					break;
+				case 'id':
+				    // $criteria[] = new EqualExpression("p.id", $value);
+				    $criteria["id"] = "p.id = ".preg_replace('/[^\d]/', '', $value);
+					break;	
             }
         }
         $repo = $app['orm.em']->getRepository('\LarpManager\Entities\Personnage');
@@ -253,7 +259,7 @@ class GnController
             $app['orm.em']->persist($gn);
             $app['orm.em']->flush();
             $app['session']->getFlashBag()->add('success', 'Le gn a été ajouté.');
-            return $app->redirect($app['url_generator']->generate('gn.list'), 301);
+            return $app->redirect($app['url_generator']->generate('gn.list'), 303);
         }
         return $app['twig']->render('gn/add.twig', array(
             'form' => $form->createView()
@@ -722,4 +728,41 @@ class GnController
             'gn' => $gn
         ));
     }
+
+	/**
+	 * Impression fiche de perso pour le gn
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Gn $gn
+	 */
+	public function printPersoAction(Request $request, Application $app, Gn $gn)
+	{
+		$participants = $gn->getParticipantsWithBillet();
+		$quetes = new ArrayCollection();
+		
+		return $app['twig']->render('admin/gn/printPerso.twig', array(
+				'gn' => $gn,
+				'participants' => $participants,
+				'quetes' => $quetes,
+		));
+	}
+
+	/**
+	 * Impression fiche de perso pour le gn
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Gn $gn
+	 */
+	public function printInterAction(Request $request, Application $app, Gn $gn)
+	{
+		$participants = $gn->getParticipantsInterGN();
+		$quetes = new ArrayCollection();
+		
+		return $app['twig']->render('admin/gn/printInter.twig', array(
+				'participants' => $participants,
+				'quetes' => $quetes,
+		));
+	}    
 }

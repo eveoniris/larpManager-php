@@ -132,11 +132,11 @@ class LieuController
 				
 			if ( $form->get('save')->isClicked())
 			{
-				return $app->redirect($app['url_generator']->generate('lieu'),301);
+				return $app->redirect($app['url_generator']->generate('lieu'),303);
 			}
 			else if ( $form->get('save_continue')->isClicked())
 			{
-				return $app->redirect($app['url_generator']->generate('lieu.add'),301);
+				return $app->redirect($app['url_generator']->generate('lieu.add'),303);
 			}
 		}
 		
@@ -180,7 +180,7 @@ class LieuController
 			$app['orm.em']->flush();
 				
 			$app['session']->getFlashBag()->add('success', 'Le lieu a été modifié.');
-			return $app->redirect($app['url_generator']->generate('lieu'),301);
+			return $app->redirect($app['url_generator']->generate('lieu'),303);
 		}
 
 		return $app['twig']->render('admin/lieu/update.twig', array(
@@ -212,7 +212,7 @@ class LieuController
 			$app['orm.em']->flush();
 				
 			$app['session']->getFlashBag()->add('success', 'Le lieu a été supprimé.');
-			return $app->redirect($app['url_generator']->generate('lieu'),301);
+			return $app->redirect($app['url_generator']->generate('lieu'),303);
 		}
 
 		return $app['twig']->render('admin/lieu/delete.twig', array(

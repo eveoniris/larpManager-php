@@ -88,6 +88,12 @@ class ConstructionControllerProvider implements ControllerProviderInterface
 			->bind("construction.delete")
 			->method('GET|POST');
 
+		$controllers->match('/{construction}/territoires','LarpManager\Controllers\ConstructionController::personnagesAction')
+			->assert('construction', '\d+')
+			->convert('construction', 'converter.construction:convert')
+			->bind("construction.territoires")
+			->method('GET');
+
 		return $controllers;
 	}
 }

@@ -61,7 +61,7 @@ class GroupeSecondaireControllerProvider implements ControllerProviderInterface
 		 */		
 		$controllers->match('/admin/list','LarpManager\Controllers\GroupeSecondaireController::adminListAction')
 			->bind("groupeSecondaire.admin.list")
-			->method('GET')
+			->method('GET|POST')
 			->before($mustBeOrga);
 			
 		/**

@@ -3,7 +3,7 @@
 {% block content %}
 
 <div class="print-center">
-	{{ personnage.nom }} {% if personnage.surnom %}<small>alias {{ personnage.surnom }}</small>{% endif %}
+	<h2>{{ personnage.identity }}</h2>
 </div>
 <br />
 {% if personnage.user %}
@@ -23,21 +23,18 @@
 <br />
 <strong>Lié aux compétences</strong>
 <ul>
-{% set displayReligion = 0 %}
+{% set hasMateriel = 0 %}
 {% for competence in personnage.competences %}
-	{% if competence.id == 112 %}
-		{% set displayReligion = 1 %}
-	{% endif %}
 	{% if competence.materiel %}
-		<li><strong>{{ competence.competenceFamily.label }}&nbsp({{ competence.level.label }}) : </strong>
-			{{ competence.materielRaw }}
-		</li>
+		<li><strong>{{ competence.competenceFamily.label }}&nbsp({{ competence.level.label }}) : </strong>{{ competence.materielRaw }}</li>
+		{% set hasMateriel = 1  %}
 	{% endif %}
-{% else %}
-	<li>Aucun matériel</li>
 {% endfor %}
+{% if hasMateriel == 0 %}
+	<li>Aucun matériel</li>
+{% endif %}
 </ul>
-{% if displayReligion == 1 %}
+{% if personnage.hasCompetence('Prêtrise') %}
 	{% set enoughReligion = 0 %}
 	{% for religion in personnage.personnagesReligions %}
 	{% if religion.religionLevel.index >= 2 %}
@@ -60,46 +57,61 @@
 </ul>
 																
 {# documents #}
-<strong>Documents</strong>
-<ul>
-{% for document in personnage.documents %}
-	<li><strong>{{ document.code }}</strong>&nbsp;{{ document.titre }}</li>
-{% endfor %}
-</ul>
-
+{% if personnage.documents|length > 0 %}
+	<strong>Documents</strong>
+	<ul>
+	{% for document in personnage.documents %}
+		<li><strong>{{ document.code }}</strong>&nbsp;{{ document.titre }}</li>
+	{% endfor %}
+	</ul>
+{% endif %}
 
 {# objets #}
-<strong>Objets</strong>
-<ul>
-{% for item in personnage.items %}
-	<li><strong>{{ item.numero }}</strong>&nbsp;{{ item.label }}</li>
-{% endfor %}
-</ul>
+{% if personnage.items|length > 0 %}
+	<strong>Objets</strong>
+	<ul>
+	{% for item in personnage.items %}
+		<li><strong>{{ item.numero }}</strong>&nbsp;{{ item.label }}</li>
+	{% endfor %}
+	</ul>
+{% endif %}
 
 {# ingredients #}
-<strong>Ingrédients</strong>
-<ul>
-	{% for personnageIngredient in personnage.personnageIngredients %}
-		<li>{{personnageIngredient.nombre}} - {{ personnageIngredient.ingredient }}</li>
-	{% endfor %}
-</ul>
+{% if personnage.personnageIngredients|length > 0 %}
+	<strong>Ingrédients</strong>
+	<ul>
+		{% for personnageIngredient in personnage.personnageIngredients %}
+			<li>{{personnageIngredient.nombre}} {{ personnageIngredient.ingredient }} - {{ personnageIngredient.ingredient.color }} : {{ personnageIngredient.ingredient.dose }}</li>
+		{% endfor %}
+	</ul>
+{% endif %}
 
 {# ressources #}
-<strong>Ressources</strong>
-<ul>
-	{% for personnageRessource in personnage.personnageRessources %}
-		<li>{{personnageRessource.nombre}} - {{ personnageRessource.ressource }}</li>
+{% if personnage.personnageRessources|length > 0 %}
+	<strong>Ressources</strong>
+	<ul>
+		{% for personnageRessource in personnage.personnageRessources %}
+			<li>{{personnageRessource.nombre}} {{ personnageRessource.ressource }}</li>
+		{% endfor %}
+	</ul>
+{% endif %}
+
+{# Technologies #}
+{% if personnage.technologies|length > 0 %}
+	<strong>Technologies</strong>
+	<ul>
+	{% for technologie in personnage.technologies %}
+		<li>{{ technologie.label }}</li>
 	{% endfor %}
-</ul>
-	
-<strong>Technologie</strong>
-<ul>
-{% for technologie in personnage.technologies %}
-	<li>{{ technologie.label }}</li>
-{% endfor %}
-</ul>
-	
-<strong>Matériel supplémentaire</strong><br />
-{{ personnage.materiel }}
+	</ul>
+{% endif %}
+
+{# Matériel supplémentaire #}
+{% if personnage.materiel|length > 0 %}
+	<strong>Matériel supplémentaire</strong>
+	<ul>
+		<li>{{ personnage.materiel }}</li>
+	</ul>
+{% endif %}
 
 {% endblock content %}

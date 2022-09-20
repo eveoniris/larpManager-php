@@ -42,12 +42,12 @@ class PersonnageTechnologieForm extends AbstractType
 	{
 		$builder->add('technologies','entity', array(
 					'required' => false,
-					'label' => 'Savoir-faire',
+					'label' => 'Technologie',
 					'class' => 'LarpManager\Entities\Technologie',
 					'multiple' => true,
 					'expanded' => true,
 					'mapped' => true,
-					'property' => 'label',
+					'property' => 'label'
 				));
 	}
 	

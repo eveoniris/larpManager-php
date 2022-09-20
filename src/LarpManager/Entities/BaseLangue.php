@@ -72,6 +72,11 @@ class BaseLangue
      */
     protected $secret;
 
+    /**
+     * @Column(type="string", length=45, nullable=true)
+     */
+    protected $documentUrl;
+
     public function __construct()
     {
         $this->personnageLangues = new ArrayCollection();
@@ -201,6 +206,7 @@ class BaseLangue
      * Get PersonnageLangues entity collection (one to many).
      *
      * @return \Doctrine\Common\Collections\Collection
+     * @OrderBy({"secret" = "ASC", "diffusion" = "DESC", "label" = "ASC"})
      */
     public function getPersonnageLangues()
     {
@@ -323,6 +329,29 @@ class BaseLangue
     public function getSecret()
     {
         return $this->secret;
+    }
+
+    /**
+     * Set the value of documentUrl.
+     *
+     * @param string $documentUrl
+     * @return \LarpManager\Entities\Langue
+     */
+    public function setDocumentUrl($documentUrl)
+    {
+        $this->documentUrl = $documentUrl;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of documentUrl.
+     *
+     * @return string
+     */
+    public function getDocumentUrl()
+    {
+        return $this->documentUrl;
     }
 
     public function __sleep()

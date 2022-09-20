@@ -142,7 +142,7 @@ class CompetenceController
 			
 				if (!$extension || ! in_array($extension, array('pdf'))) {
 					$app['session']->getFlashBag()->add('error','Désolé, votre document ne semble pas valide (vérifiez le format de votre document)');
-					return $app->redirect($app['url_generator']->generate('competence.family'),301);
+					return $app->redirect($app['url_generator']->generate('competence.family'),303);
 				}
 			
 				$documentFilename = hash('md5',$competence->getLabel().$filename . time()).'.'.$extension;
@@ -164,7 +164,7 @@ class CompetenceController
 			}
 			else if ( $form->get('save_continue')->isClicked())
 			{
-				return $app->redirect($app['url_generator']->generate('competence.add'),301);
+				return $app->redirect($app['url_generator']->generate('competence.add'),303);
 			}
 		}
 		
@@ -218,7 +218,7 @@ class CompetenceController
 				
 				if (!$extension || ! in_array($extension, array('pdf'))) {
 					$app['session']->getFlashBag()->add('error','Désolé, votre document ne semble pas valide (vérifiez le format de votre document)');
-					return $app->redirect($app['url_generator']->generate('competence.family'),301);
+					return $app->redirect($app['url_generator']->generate('competence.family'),303);
 				}
 				
 				$documentFilename = hash('md5',$competence->getLabel().$filename . time()).'.'.$extension;

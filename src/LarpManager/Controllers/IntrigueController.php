@@ -196,7 +196,7 @@ class IntrigueController
 				}
 				
 				$app['session']->getFlashBag()->add('success', 'Votre intrigue a été ajouté.');
-				return $app->redirect($app['url_generator']->generate('intrigue.list'),301);
+				return $app->redirect($app['url_generator']->generate('intrigue.list'),303);
 			}
 		}
 		
@@ -405,7 +405,7 @@ class IntrigueController
 			}
 				
 			$app['session']->getFlashBag()->add('success', 'Votre intrigue a été modifiée.');
-			return $app->redirect($app['url_generator']->generate('intrigue.detail', array('intrigue' => $intrigue->getId())),301);
+			return $app->redirect($app['url_generator']->generate('intrigue.detail', array('intrigue' => $intrigue->getId())),303);
 		}
 		return $app['twig']->render('admin/intrigue/update.twig', array(
 				'form' => $form->createView(),
@@ -434,7 +434,7 @@ class IntrigueController
 			$app['orm.em']->flush();
 			
 			$app['session']->getFlashBag()->add('success', 'L\'intrigue a été supprimée.');
-			return $app->redirect($app['url_generator']->generate('intrigue.list'),301);
+			return $app->redirect($app['url_generator']->generate('intrigue.list'),303);
 		}
 		
 		return $app['twig']->render('admin/intrigue/delete.twig', array(
@@ -479,7 +479,7 @@ class IntrigueController
 			}
 				
 			$app['session']->getFlashBag()->add('success', 'Votre relecture a été enregistrée.');
-			return $app->redirect($app['url_generator']->generate('intrigue.detail', array('intrigue' => $intrigue->getId())),301);
+			return $app->redirect($app['url_generator']->generate('intrigue.detail', array('intrigue' => $intrigue->getId())),303);
 		}
 		
 		return $app['twig']->render('admin/intrigue/relecture.twig', array(

@@ -55,7 +55,7 @@ class JoueurController
 	
 			$app['session']->getFlashBag()->add('success', 'Vos informations ont été enregistrés.');
 	
-			return $app->redirect($app['url_generator']->generate('homepage'),301);
+			return $app->redirect($app['url_generator']->generate('homepage'),303);
 		}
 	
 		return $app['twig']->render('joueur/add.twig', array(

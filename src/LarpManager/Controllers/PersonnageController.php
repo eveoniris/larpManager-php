@@ -20,12 +20,19 @@
  
 namespace LarpManager\Controllers;
 
-use LarpManager\Repository\PersonnageRepository;
+use LarpManager\Entities\ExperienceGain;
+use LarpManager\Entities\ExperienceUsage;
+use LarpManager\Entities\PersonnageChronologie;
+use LarpManager\Entities\PersonnageLignee;
+use LarpManager\Entities\Potion;
+use LarpManager\Entities\Priere;
+use LarpManager\Entities\RenommeHistory;
+use LarpManager\Entities\Technologie;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Common\Collections\ArrayCollection;
 
 use Silex\Application;
-use JasonGrimes\Paginator;
 use LarpManager\Entities\Personnage;
 use LarpManager\Entities\PersonnageRessource;
 use LarpManager\Entities\PersonnageIngredient;
@@ -42,26 +49,23 @@ use LarpManager\Form\Personnage\PersonnageUpdateRenommeForm;
 use LarpManager\Form\Personnage\PersonnageUpdateHeroismeForm;
 use LarpManager\Form\Personnage\PersonnageUpdatePugilatForm;
 use LarpManager\Form\Personnage\PersonnageTechnologieForm;
+use LarpManager\Form\Personnage\PersonnageChronologieForm;
+use LarpManager\Form\Personnage\PersonnageLigneeForm;
 
-use LarpManager\Form\PersonnageFindForm;
 use LarpManager\Form\PersonnageForm;
 use LarpManager\Form\TriggerForm;
 use LarpManager\Form\TriggerDeleteForm;
 use LarpManager\Form\PersonnageUpdateForm;
-use LarpManager\Form\PersonnageTransfertForm;
-use LarpManager\Form\PersonnageUpdateSortForm;
-use LarpManager\Form\PersonnageUpdatePotionForm;
 use LarpManager\Form\PersonnageUpdateDomaineForm;
-use LarpManager\Form\PersonnageUpdateLangueForm;
-use LarpManager\Form\PersonnageUpdatePriereForm;
 use LarpManager\Form\PersonnageUpdateAgeForm;
 use LarpManager\Form\PersonnageBackgroundForm;
 use LarpManager\Form\PersonnageStatutForm;
 use LarpManager\Form\PersonnageDeleteForm;
 use LarpManager\Form\PersonnageXpForm;
 use LarpManager\Form\TrombineForm;
-use LarpManager\Repository\LikeExpression;
-use LarpManager\Repository\EqualExpression;
+use LarpManager\Entities\Sort;
+use LarpManager\Entities\Competence;
+use LarpManager\Entities\Connaissance;
 
 
 /**
@@ -83,7 +87,7 @@ class PersonnageController
 	public function selectAction(Request $request, Application $app, Personnage $personnage)
 	{
 		$app['personnage.manager']->setCurrentPersonnage($personnage->getId());		
-		return $app->redirect($app['url_generator']->generate('homepage'),301);
+		return $app->redirect($app['url_generator']->generate('homepage'),303);
 	}
 	
 	/**
@@ -96,7 +100,7 @@ class PersonnageController
 	public function unselectAction(Request $request, Application $app)
 	{
 		$app['personnage.manager']->resetCurrentPersonnage();
-		return $app->redirect($app['url_generator']->generate('homepage'),301);
+		return $app->redirect($app['url_generator']->generate('homepage'),303);
 	}
 		
 	/**
@@ -144,7 +148,7 @@ class PersonnageController
 		
 			if (!$extension || ! in_array($extension, array('png', 'jpg', 'jpeg','bmp'))) {
 				$app['session']->getFlashBag()->add('error','Désolé, votre image ne semble pas valide (vérifiez le format de votre image)');
-				return $app->redirect($app['url_generator']->generate('personnage.admin.detail', array('personnage' => $personnage->getId())),301);
+				return $app->redirect($app['url_generator']->generate('personnage.admin.detail', array('personnage' => $personnage->getId())),303);
 			}
 		
 			$trombineFilename = hash('md5',$app['user']->getUsername().$filename . time()).'.'.$extension;
@@ -158,7 +162,7 @@ class PersonnageController
 			$app['orm.em']->flush();
 		
 			$app['session']->getFlashBag()->add('success','La photo a été enregistrée');
-			return $app->redirect($app['url_generator']->generate('personnage.admin.detail', array('personnage' => $personnage->getId())),301);
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail', array('personnage' => $personnage->getId())),303);
 		}
 		return $app['twig']->render('admin/personnage/trombine.twig', array(
 				'personnage' => $personnage,
@@ -192,7 +196,7 @@ class PersonnageController
 			
 			$app['personnage.manager']->setCurrentPersonnage($personnage);
 			$app['session']->getFlashBag()->add('success', 'Votre personnage a été créé');
-			return $app->redirect($app['url_generator']->generate('homepage'),301);
+			return $app->redirect($app['url_generator']->generate('homepage'),303);
 		}
 		
 		return $app['twig']->render('public/personnage/new.twig', array(
@@ -235,38 +239,51 @@ class PersonnageController
 			if ( ! $token )
 			{
 				$app['session']->getFlashBag()->add('error', 'Le jeton VIEILLESSE n\'existe pas !');
-				return $app->redirect($app['url_generator']->generate('homepage'),301);
+				return $app->redirect($app['url_generator']->generate('homepage'),303);
 			}
 			
 			foreach ( $personnages as $personnage)
 			{
 				// donne un jeton vieillesse
-				$personnageHasToken = new \LarpManager\Entities\PersonnageHasToken();
+				$personnageHasToken = new PersonnageHasToken();
 				$personnageHasToken->setToken($token);
 				$personnageHasToken->setPersonnage($personnage);
 				$personnage->addPersonnageHasToken($personnageHasToken);
 				$app['orm.em']->persist($personnageHasToken);
-				
-				$personnage->setAgeReel($personnage->getAgeReel() + 5); // ajoute 5 ans à l'age réél
-				
-				if ( $personnage->getPersonnageHasTokens()->count() % 2 == 0 )
+
+                if ($personnage->getVivant() == true){
+                    $personnage->setAgeReel($personnage->getAgeReel() + 5); // ajoute 5 ans à l'age réél
+                }
+
+				if ( $personnage->getPersonnageHasTokens()->count() % 2 == 0 && $personnage->getVivant() == true)
 				{
-					if ( $personnage->getAge()->getId() != 5 )
+					if ( $personnage->getAge()->getId() < 5 )
 					{
-						$personnage->setAge($ages[$personnage->getAge()->getId() +1]);
+						$personnage->setAge($ages[$personnage->getAge()->getId()]);
 					}
-					else
+					elseif ( $personnage->getAge()->getId() == 5 )
 					{
-						$personnage->setVivant(false);
+                        $personnage->setVivant(false);
+						foreach ($personnage->getParticipants() as $participant)
+						{
+							if ($participant->getGn() != null) {
+								$anneeGN = $participant->getGn()->getDateJeu() + rand(1, 4);
+							}
+						}
+						$evenement = 'Mort de vieillesse';
+						$personnageChronologie = new PersonnageChronologie();
+						$personnageChronologie->setAnnee($anneeGN);
+						$personnageChronologie->setEvenement($evenement);
+						$personnageChronologie->setPersonnage($personnage);
+						$app['orm.em']->persist($personnageChronologie);
 					}
 				}
-				
 				$app['orm.em']->persist($personnage);
 			}
 			$app['orm.em']->flush();
 			
-			$app['session']->getFlashBag()->add('success', 'Tous les personnages ont reçut un jeton vieillesse.');
-			return $app->redirect($app['url_generator']->generate('homepage'),301);
+			$app['session']->getFlashBag()->add('success', 'Tous les personnages ont reçu un jeton vieillesse.');
+			return $app->redirect($app['url_generator']->generate('homepage'),303);
 		}
 		
 		return $app['twig']->render('admin/personnage/vieillir.twig', array(
@@ -297,7 +314,7 @@ class PersonnageController
 			$app['orm.em']->flush();
 			
 			$app['session']->getFlashBag()->add('success','Le personnage a été sauvegardé');
-			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),303);
 		}
 		
 		return $app['twig']->render('admin/personnage/age.twig', array(
@@ -307,21 +324,57 @@ class PersonnageController
 	}
 	
 	/**
-	 * Modification des savoir-faire d'un personnage
+	 * Modification des technologies d'un personnage
 	 * 
 	 * @param Request $request
 	 * @param Application $app
 	 * @param Personnage $personnage
 	 */
-	public function adminTechnologieAction(Request $request, Application $app, Personnage $personnage)
+	public function adminUpdateTechnologieAction(Request $request, Application $app, Personnage $personnage)
 	{
+        $technologies = $app['orm.em']->getRepository(Technologie::class)->findAllOrderedByLabel();
+        $competences = $personnage->getCompetences();
+		
+		/*
+        $competenceFamilies = array();
+        $competencesExpert = array();
+		
+        foreach ($competences as $competence){
+            $competenceFamilies[] = $competence->getCompetenceFamily()->getId();
+        }
+        $competencesNiveaux = array_count_values($competenceFamilies);
+        foreach ($competencesNiveaux as $competence => $count){
+            if ($count > 2) {
+                $competencesExpert [] = $competence;
+            }
+        }
+		*/
+		$message = $personnage->getNom()." n'est pas au moins Initié en Artisanat.";
+		$limit = 1;
+        foreach ($competences as $competence){
+            if ($competence->getCompetenceFamily()->getLabel() == 'Artisanat')
+			{
+				if ($competence->getLevel()->getIndex() >= 2)
+					$message = FALSE;
+				if ($competence->getLevel()->getIndex() == 3)
+					$limit += 1;
+				if ($competence->getLevel()->getIndex() >= 4)
+					$limit += 1000;
+			}
+        }
+
+		if (count($personnage->getTechnologies()) >= $limit)
+		{
+			$message = $personnage->getNom()." connait déjà au moins ".$limit." Technologie(s).";
+		}
+
 		$form = $app['form.factory']->createBuilder(new PersonnageTechnologieForm(), $personnage)
 			->add('valider','submit', array('label' => 'Valider'))
 			->getForm();
 		
 		$form->handleRequest($request);
 		
-		if ( $form->isValid() )
+		if ( $form->isValid() && $form->isSubmitted())
 		{
 			$personnage = $form->getData();
 				
@@ -329,26 +382,83 @@ class PersonnageController
 			$app['orm.em']->flush();
 				
 			$app['session']->getFlashBag()->add('success','Le personnage a été sauvegardé');
-			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),303);
 		}
-		
+
 		return $app['twig']->render('admin/personnage/updateTechnologie.twig', array(
 				'personnage' => $personnage,
+                'technologies' => $technologies,
+                'message' => $message,
 				'form' => $form->createView(),
 		));
 	}
+
+    /**
+     * Ajoute une technologie à un personnage
+     *
+     * @param Request $request
+     * @param Application $app
+     * @return RedirectResponse
+     */
+    public function adminAddTechnologieAction(Request $request, Application $app)
+    {
+        $technologieId = $request->get('technologie');
+        $personnage = $request->get('personnage');
+
+        $technologie = $app['orm.em']->getRepository(Technologie::class)
+            ->find($technologieId);
+
+        $nomTechnologie = $technologie->getLabel();
+
+        $personnage->addTechnologie($technologie);
+
+        $app['orm.em']->flush();
+
+        $app['session']->getFlashBag()->add('success', $nomTechnologie.' a été ajoutée.');
+
+        return $app->redirect($app['url_generator']->generate('personnage.technologie.update', array('personnage' => $personnage->getId(), 303)));
+    }
+
+    /**
+     * Retire une technologie à un personnage
+     *
+     * @param Request $request
+     * @param Application $app
+     * @return RedirectResponse
+     */
+    public function adminRemoveTechnologieAction(Request $request, Application $app)
+    {
+        $technologieId = $request->get('technologie');
+        $personnage = $request->get('personnage');
+
+        $technologie = $app['orm.em']->getRepository(Technologie::class)
+            ->find($technologieId);
+
+        $nomTechnologie = $technologie->getLabel();
+
+        $personnage->removeTechnologie($technologie);
+
+        $app['orm.em']->flush();
+
+        $app['session']->getFlashBag()->add('success', $nomTechnologie.' a été retirée.');
+
+        return $app->redirect($app['url_generator']->generate('personnage.technologie.update', array('personnage' => $personnage->getId(),303)));
+    }
 
 	public function getLangueMateriel(Personnage $personnage)
 	{
 		$langueMateriel = array();
 		foreach($personnage->getPersonnageLangues() as $langue) {
 			if(!in_array('Bracelet '.$langue->getLangue()->getGroupeLangue()->getCouleur(),$langueMateriel)) {
-				array_push($langueMateriel, 'Bracelet '.$langue->getLangue()->getGroupeLangue()->getCouleur());
+				if ($langue->getLangue()->getGroupeLangue()->getId() != 0 && $langue->getLangue()->getGroupeLangue()->getId() != 6){
+					array_push($langueMateriel, 'Bracelet '.$langue->getLangue()->getGroupeLangue()->getCouleur());
+				}
 			}
 			if($langue->getLangue()->getDiffusion() === 0) {
 				array_push($langueMateriel, 'Alphabet '.$langue->getLangue()->getLabel());
 			}
 		}
+		sort($langueMateriel);
 		return $langueMateriel;
 	}
 	
@@ -386,7 +496,7 @@ class PersonnageController
 			$app['orm.em']->flush();
 			
 			$app['session']->getFlashBag()->add('success','Le personnage a été sauvegardé');
-			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),303);
 		}
 		
 		return $app['twig']->render('admin/personnage/materiel.twig', array(
@@ -414,11 +524,27 @@ class PersonnageController
 		if ( $form->isValid() )
 		{
 			$personnage = $form->getData();
+			
+			if ($personnage->getVivant() == false){
+				$evenement = 'Mort violente';
+			}
+			else {
+				$evenement = 'Résurrection';
+			}
+			// TODO: Trouver comment avoir la date du GN
+			/*
+			$personnageChronologie = new \LarpManager\Entities\PersonnageChronologie();
+			$personnageChronologie->setAnnee($anneeGN);
+			$personnageChronologie->setEvenement($evenement);
+			$personnageChronologie->setPersonnage($personnage);
+			$app['orm.em']->persist($personnageChronologie);
+			*/
+
 			$app['orm.em']->persist($personnage);
 			$app['orm.em']->flush();
 			
 			$app['session']->getFlashBag()->add('success','Le statut du personnage a été modifié');
-			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),303);
 		}
 		
 		return $app['twig']->render('admin/personnage/statut.twig', array(
@@ -453,36 +579,41 @@ class PersonnageController
 		if ( $form->isValid() )
 		{
 			$data = $form->getData();
-			$participant = $data['participant'];
+			$newParticipant = $data['participant'];
+            $oldParticipant = $personnage->getLastParticipant();
 			
-			$personnage->setUser($participant->getUser());
+			$personnage->setUser($newParticipant->getUser());
 						
 			// gestion de l'ancien personnage
-			if ( $participant->getPersonnage() )
+			if ( $newParticipant->getPersonnage() )
 			{
-				$oldPersonnage = $participant->getPersonnage();
-				$oldPersonnage->removeParticipant($participant);
+				$oldPersonnage = $newParticipant->getPersonnage();
+				$oldPersonnage->removeParticipant($newParticipant);
 				$oldPersonnage->setGroupeNull();
 			}
 			
 			// le personnage doit rejoindre le groupe de l'utilisateur
-			if ( $participant->getGroupeGn())
+			if ( $newParticipant->getGroupeGn())
 			{
-				if ( $participant->getGroupeGn()->getGroupe() )
+				if ( $newParticipant->getGroupeGn()->getGroupe() )
 				{
-					$personnage->setGroupe($participant->getGroupeGn()->getGroupe());
+					$personnage->setGroupe($newParticipant->getGroupeGn()->getGroupe());
 				}
 			}
-				
-			$participant->setPersonnage($personnage);
-			$personnage->addParticipant($participant);
-						
-			$app['orm.em']->persist($participant);
+
+            $oldParticipant->setPersonnageNull();
+            $oldParticipant->getUser()->setPersonnage(null);
+			$newParticipant->setPersonnage($personnage);
+            $newParticipant->getUser()->setPersonnage($personnage);
+			$personnage->addParticipant($newParticipant);
+
+            $app['orm.em']->persist($oldParticipant);
+			$app['orm.em']->persist($newParticipant);
 			$app['orm.em']->persist($personnage);
 			$app['orm.em']->flush();
 			
 			$app['session']->getFlashBag()->add('success','Le personnage a été transféré');
-			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),303);
 		}
 		
 		return $app['twig']->render('admin/personnage/transfert.twig', array(
@@ -490,6 +621,7 @@ class PersonnageController
 				'form' => $form->createView(),
 		));
 	}
+
     private function getErrorMessages(\Symfony\Component\Form\Form $form) {
         $errors = array();
 
@@ -509,102 +641,34 @@ class PersonnageController
 
         return $errors;
     }
+    
+    /**
+     * Liste des personnages
+     *
+     * @param Request $request
+     * @param Application $app
+     */
+    public function adminListAction(Request $request, Application $app)
+    {
+        $routeName = 'personnage.admin.list';
+        $twigFilePath = 'admin/personnage/list.twig';
+        
+        // handle the request and return an array containing the parameters for the view
+        $personnageSearchHandler = $app['personnage.manager']->getSearchHandler();
+        $viewParams = $personnageSearchHandler->getSearchViewParameters($request, $routeName);
+        
+        return $app['twig']->render($twigFilePath, $viewParams);
+    }
+
 	/**
-	 * Liste des personnages
-	 * 
-	 * @param Request $request
-	 * @param Application $app
-	 */
-	public function adminListAction(Request $request, Application $app)
-	{
-		$order_by = $request->get('order_by') ?: 'id';
-		$order_dir = $request->get('order_dir') == 'DESC' ? 'DESC' : 'ASC';
-		$limit = (int)($request->get('limit') ?: 50);
-		$page = (int)($request->get('page') ?: 1);
-		$offset = ($page - 1) * $limit;
-		$criteria = array();
-
-		$formData = $request->query->get('personnageFind');
-        $religion = isset($formData['religion'])?$app['orm.em']->find('LarpManager\Entities\Religion',$formData['religion']):null;
-        $competence = isset($formData['competence'])?$app['orm.em']->find('LarpManager\Entities\Competence',$formData['competence']):null;
-        $classe = isset($formData['classe'])?$app['orm.em']->find('LarpManager\Entities\Classe',$formData['classe']):null;
-        $optionalParameters = "";
-
-		$form = $app['form.factory']->createBuilder(
-		    new PersonnageFindForm(),
-            null,
-            array(
-                'data' => [
-                    'religion' => $religion,
-                    'classe' => $classe,
-                    'competence' => $competence,
-                ],
-                'method' => 'get',
-                'csrf_protection' => false
-            )
-        )->getForm();
-
-		$form->handleRequest($request);
-
-		if ( $form->isValid() )
-		{
-			$data = $form->getData();
-			$type = $data['type'];
-			$value = $data['value'];
-			switch ($type){
-				case 'nom':
-				    $criteria[] = new LikeExpression("p.nom", "%$value%");
-				    					
-					break;
-				case 'id':
-				    $criteria[] = new EqualExpression("p.id", $value);									
-			}
-		}
-        if($religion){
-            $criteria["religion"] = "pr.id = {$religion->getId()}";
-            $optionalParameters .= "&personnageFind[religion]={$religion->getId()}";
-        }
-        if($competence){
-            $criteria["competence"] = "cmp.id = {$competence->getId()}";
-            $optionalParameters .= "&personnageFind[competence]={$competence->getId()}";
-        }
-        if($classe){
-            $criteria["classe"] = "cl.id = {$classe->getId()}";
-            $optionalParameters .= "&personnageFind[classe]={$classe->getId()}";
-        }
-
-        /* @var PersonnageRepository $repo */
-		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Personnage');
-		$personnages = $repo->findList(
-            $criteria,
-            array( 'by' =>  $order_by, 'dir' => $order_dir),
-            $limit,
-            $offset
-        );
-		
-		$numResults = $repo->findCount($criteria);
-		
-		$paginator = new Paginator($numResults, $limit, $page,
-				$app['url_generator']->generate('personnage.admin.list') . '?page=(:num)&limit=' . $limit . '&order_by=' . $order_by . '&order_dir=' . $order_dir . $optionalParameters
-				);
-		
-		return $app['twig']->render('admin/personnage/list.twig', array(
-            'personnages' => $personnages,
-            'paginator' => $paginator,
-            'form' => $form->createView(),
-            'optionalParameters' => $optionalParameters
-		));
-	}
-	
-	/**
-	 * Imprimmer la liste des personnages
+	 * Imprimer la liste des personnages
 	 * 
 	 * @param Request $request
 	 * @param Application $app
 	 */
 	public function adminPrintAction(Request $request, Application $app)
 	{
-		
+		// TODO
 	}
 	
 	/**
@@ -615,10 +679,8 @@ class PersonnageController
 	 */
 	public function adminDownloadAction(Request $request, Application $app)
 	{
-		
+		// TODO
 	}
-	
-	
 	
 	/**
 	 * Affiche le détail d'un personnage (pour les orgas)
@@ -629,9 +691,10 @@ class PersonnageController
 	public function adminDetailAction(Request $request, Application $app)
 	{
 		$personnage = $request->get('personnage');
-		$personnageLangues = $personnage->getPersonnageLangues();
+		//$personnageLangues = $personnage->getPersonnageLangues();
+        $descendants =  $app['orm.em']->getRepository(Personnage::class)->findDescendants($personnage);
 
-		return $app['twig']->render('admin/personnage/detail.twig', array('personnage' => $personnage,'langueMateriel' => $this->getLangueMateriel($personnage)));
+		return $app['twig']->render('admin/personnage/detail.twig', array('personnage' => $personnage, 'descendants' => $descendants, 'langueMateriel' => $this->getLangueMateriel($personnage)));
 	}
 	
 	/**
@@ -657,7 +720,7 @@ class PersonnageController
 			$personnage->setXp($xp + $data['xp']);
 				
 			// historique
-			$historique = new \LarpManager\Entities\ExperienceGain();
+			$historique = new ExperienceGain();
 			$historique->setOperationDate(new \Datetime('NOW'));
 			$historique->setXpGain($data['xp']);
 			$historique->setExplanation($data['explanation']);
@@ -668,7 +731,7 @@ class PersonnageController
 			$app['orm.em']->flush();
 				
 			$app['session']->getFlashBag()->add('success','Les points d\'expériences ont été ajoutés');
-			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);			
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),303);			
 		}
 		
 		return $app['twig']->render('admin/personnage/xp.twig', array(
@@ -688,13 +751,24 @@ class PersonnageController
 		$personnage = new \LarpManager\Entities\Personnage();
 		
 		$participant = $request->get('participant');
-		if ( !$participant ) {
-			$participant = $app['user']->getParticipant();
+		if (!$participant) 
+		{
+		    // essaye de récupérer le participant du gn actif		    
+		    $gn = $app['larp.manager']->getGnActif();
+		    if ($gn) 
+		    {
+				$participant = $app['user']->getParticipant($gn);
+		    }
+		    if (!$participant)
+		    {
+				// sinon récupère le dernier dans la liste
+			    $participant = $app['user']->getLastParticipant();
+		    }
 		}
-		else {
+		else 
+		{
 			$participant = $app['orm.em']->getRepository('\LarpManager\Entities\Participant')->find($participant);
 		}
-		
 		
 		$form = $app['form.factory']->createBuilder(new PersonnageForm(), $personnage)
 			->add('classe','entity', array(
@@ -710,17 +784,19 @@ class PersonnageController
 		if ( $form->isValid() )
 		{
 			$personnage = $form->getData();
-			$participant->setPersonnage($personnage);
-			
-			if ( $participant->getGroupe())
+			if ($participant)
 			{
-				$personnage->setGroupe($participant->getGroupe());
+    			$participant->setPersonnage($personnage);
+    			
+    			if ($participant->getGroupe())
+    			{
+    				$personnage->setGroupe($participant->getGroupe());
+    			}
 			}
-			
 			$personnage->setXp($app['larp.manager']->getGnActif()->getXpCreation());
 				
 			// historique
-			$historique = new \LarpManager\Entities\ExperienceGain();
+			$historique = new ExperienceGain();
 			$historique->setExplanation("Création de votre personnage");
 			$historique->setOperationDate(new \Datetime('NOW'));
 			$historique->setPersonnage($personnage);
@@ -744,27 +820,29 @@ class PersonnageController
 			if ( $xpAgeBonus )
 			{
 				$personnage->addXp($xpAgeBonus);
-				$historique = new \LarpManager\Entities\ExperienceGain();
+				$historique = new ExperienceGain();
 				$historique->setExplanation("Bonus lié à l'age");
 				$historique->setOperationDate(new \Datetime('NOW'));
 				$historique->setPersonnage($personnage);
 				$historique->setXpGain($xpAgeBonus);
 				$app['orm.em']->persist($historique);
 			}
-			
-			
+
 			$app['orm.em']->persist($personnage);
-			$app['orm.em']->persist($participant);
+			if ($participant)
+			{
+				$app['orm.em']->persist($participant);
+			}
 			$app['orm.em']->flush();
 			
 			$app['session']->getFlashBag()->add('success','Votre personnage a été sauvegardé.');
-			if ( $participant->getGroupe())
+			if ($participant && $participant->getGroupe())
 			{
-				return $app->redirect($app['url_generator']->generate('groupe.detail', array('index' => $participant->getGroupe()->getId())),301);
+				return $app->redirect($app['url_generator']->generate('groupe.detail', array('index' => $participant->getGroupe()->getId())),303);
 			}
 			else
 			{
-				return $app->redirect($app['url_generator']->generate('homepage'),301);
+				return $app->redirect($app['url_generator']->generate('homepage'),303);
 			}
 		}
 		
@@ -858,7 +936,7 @@ class PersonnageController
 			$app['orm.em']->flush();
 			
 			$app['session']->getFlashBag()->add('success','Le personnage a été supprimé.');
-			return $app->redirect($app['url_generator']->generate('homepage'),301);
+			return $app->redirect($app['url_generator']->generate('homepage'),303);
 		}
 		
 		return $app['twig']->render('admin/personnage/delete.twig', array(
@@ -891,7 +969,7 @@ class PersonnageController
 			$app['orm.em']->flush();
 			
 			$app['session']->getFlashBag()->add('success','Le personnage a été sauvegardé.');
-			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),303);
 		}
 		
 		return $app['twig']->render('admin/personnage/update.twig', array(
@@ -932,7 +1010,7 @@ class PersonnageController
 			$app['orm.em']->flush();
 		
 			$app['session']->getFlashBag()->add('success','Le background a été sauvegardé.');
-			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),303);
 		}
 		
 		return $app['twig']->render('admin/personnage/addBackground.twig', array(
@@ -972,7 +1050,7 @@ class PersonnageController
 			$app['orm.em']->flush();
 		
 			$app['session']->getFlashBag()->add('success','Le background a été sauvegardé.');
-			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),303);
 		}
 		
 		return $app['twig']->render('admin/personnage/updateBackground.twig', array(
@@ -1012,7 +1090,7 @@ class PersonnageController
 			$app['orm.em']->flush();
 				
 			$app['session']->getFlashBag()->add('success','Le personnage a été sauvegardé.');
-			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),303);
 		}
 		
 		return $app['twig']->render('admin/personnage/updateRenomme.twig', array(
@@ -1052,15 +1130,14 @@ class PersonnageController
 			$app['orm.em']->flush();
 		
 			$app['session']->getFlashBag()->add('success','Le personnage a été sauvegardé.');
-			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),303);
 		}
 		
 		return $app['twig']->render('admin/personnage/updateHeroisme.twig', array(
 				'form' => $form->createView(),
 				'personnage' => $personnage));
 	}
-	
-	
+
 	/**
 	 * Modification du pugilat d'un personnage
 	 * 
@@ -1093,7 +1170,7 @@ class PersonnageController
 			$app['orm.em']->flush();
 		
 			$app['session']->getFlashBag()->add('success','Le personnage a été sauvegardé.');
-			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),303);
 		}
 		
 		return $app['twig']->render('admin/personnage/updatePugilat.twig', array(
@@ -1110,7 +1187,7 @@ class PersonnageController
 		$token = $app['orm.em']->getRepository('\LarpManager\Entities\Token')->findOneByTag($token);
 
 		// donne un jeton vieillesse
-		$personnageHasToken = new \LarpManager\Entities\PersonnageHasToken();
+		$personnageHasToken = new PersonnageHasToken();
 		$personnageHasToken->setToken($token);
 		$personnageHasToken->setPersonnage($personnage);
 		$personnage->addPersonnageHasToken($personnageHasToken);
@@ -1125,13 +1202,27 @@ class PersonnageController
 				$age = $app['orm.em']->getRepository('\LarpManager\Entities\Age')->findOneById($personnage->getAge()->getId() + 1);
 				$personnage->setAge($age);
 			}
+			else
+			{
+				$personnage->setVivant(false);
+				foreach ($personnage->getParticipants() as $participant)
+				{
+					if ($participant->getGn() != null) {
+						$anneeGN = $participant->getGn()->getDateJeu() + rand(1, 4);
+					}
+				}
+				$evenement = 'Mort de vieillesse';
+				$personnageChronologie = new PersonnageChronologie();
+				$personnageChronologie->setAnnee($anneeGN);
+				$personnageChronologie->setEvenement($evenement);
+				$personnageChronologie->setPersonnage($personnage);
+				$app['orm.em']->persist($personnageChronologie);
+			}
 		}
-		
 		$app['orm.em']->persist($personnage);
-		$app['orm.em']->flush();
-	
+		$app['orm.em']->flush();	
 		$app['session']->getFlashBag()->add('success','Le jeton '.$token->getTag().' a été ajouté.');
-		return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
+		return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),303);
 	}
 	
 	/**
@@ -1145,14 +1236,36 @@ class PersonnageController
 	public function adminTokenDeleteAction(Request $request, Application $app, Personnage $personnage, PersonnageHasToken $personnageHasToken)
 	{
 		$personnage->removePersonnageHasToken($personnageHasToken);
-		$app['orm.em']->persist($personnage);
+		// $personnage->setAgeReel($personnage->getAgeReel() - 5);
+		if ( $personnage->getPersonnageHasTokens()->count() % 2 != 0 )
+		{
+			if ( $personnage->getAge()->getId() != 5 )
+			{
+				$age = $app['orm.em']->getRepository('\LarpManager\Entities\Age')->findOneById($personnage->getAge()->getId() - 1);
+				$personnage->setAge($age);
+			}
+		}
 		$app['orm.em']->remove($personnageHasToken);
-		
 		$app['orm.em']->persist($personnage);
+
+		// Chronologie : Fruits & Légumes
+		foreach ($personnage->getParticipants() as $participant)
+		{
+			if ($participant->getGn() != null) {
+				$anneeGN = $participant->getGn()->getDateJeu()  + rand(-2, 2);
+			}
+		}
+		$evenement = 'Consommation de Fruits & Légumes';
+		$personnageChronologie = new PersonnageChronologie();
+		$personnageChronologie->setAnnee($anneeGN);
+		$personnageChronologie->setEvenement($evenement);
+		$personnageChronologie->setPersonnage($personnage);
+		$app['orm.em']->persist($personnageChronologie);
+
 		$app['orm.em']->flush();
-		
+
 		$app['session']->getFlashBag()->add('success','Le jeton a été retiré.');
-		return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
+		return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),303);
 	}
 	
 	/**
@@ -1178,7 +1291,7 @@ class PersonnageController
 			$app['orm.em']->flush();
 		
 			$app['session']->getFlashBag()->add('success','Le déclencheur a été ajouté.');
-			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),303);
 		}
 		
 		return $app['twig']->render('admin/personnage/addTrigger.twig', array(
@@ -1208,7 +1321,7 @@ class PersonnageController
 			$app['orm.em']->flush();
 		
 			$app['session']->getFlashBag()->add('success','Le déclencheur a été supprimé.');
-			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),303);
 		}
 		
 		return $app['twig']->render('admin/personnage/deleteTrigger.twig', array(
@@ -1266,7 +1379,7 @@ class PersonnageController
 			$app['orm.em']->flush();
 			
 			$app['session']->getFlashBag()->add('success','Le personnage a été sauvegardé.');
-			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),303);
 		}
 		
 		return $app['twig']->render('admin/personnage/updateDomaine.twig', array(
@@ -1285,7 +1398,7 @@ class PersonnageController
 	{
 		$personnage = $request->get('personnage');
 				
-		$langues = $app['orm.em']->getRepository('LarpManager\Entities\Langue')->findBy(array(), array('secret' => 'ASC', 'label' => 'ASC'));
+		$langues = $app['orm.em']->getRepository('LarpManager\Entities\Langue')->findBy(array(), array('secret' => 'ASC', 'diffusion' => 'DESC', 'label' => 'ASC'));
 			
 		$originalLanguages = array();
 		foreach ( $personnage->getLanguages() as $languages)
@@ -1296,7 +1409,7 @@ class PersonnageController
 		$form = $app['form.factory']->createBuilder()
 			->add('langues','entity', array(
 					'required' => true,
-					'label' => 'Choisissez les langages',
+					'label' => 'Choisissez les langues du personnage',
 					'multiple' => true,
 					'expanded' => true,
 					'class' => 'LarpManager\Entities\Langue',
@@ -1352,13 +1465,12 @@ class PersonnageController
 					}
 				}
 			}
-			
-				
+
 			$app['orm.em']->persist($personnage);
 			$app['orm.em']->flush();
 				
 			$app['session']->getFlashBag()->add('success','Le personnage a été sauvegardé.');
-			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),303);
 		}
 	
 		return $app['twig']->render('admin/personnage/updateLangue.twig', array(
@@ -1366,97 +1478,220 @@ class PersonnageController
 				'personnage' => $personnage,
 		));
 	}
-	
-	/**
-	 * Modifie la liste des prières
-	 * @param Request $request
-	 * @param Application $app
-	 */
+
+    /**
+     * Affiche la liste des prières pour modifications
+     * @param Request $request
+     * @param Application $app
+     * @return mixed
+     */
 	public function adminUpdatePriereAction(Request $request, Application $app)
 	{
 		$personnage = $request->get('personnage');
-			
-		$originalPrieres = new ArrayCollection();
-		foreach ( $personnage->getPrieres() as $priere)
-		{
-			$originalPrieres[] = $priere;
-		}
-		
-		$form = $app['form.factory']->createBuilder(new PersonnageUpdatePriereForm(), $personnage)
-			->add('save','submit', array('label' => 'Valider les modifications'))
-			->getForm();
-	
-		$form->handleRequest($request);
-	
-		if ( $form->isValid() )
-		{
-			$personnage = $form->getData();
-			
-			foreach($personnage->getPrieres() as $priere)
-			{
-				if ( ! $originalPrieres->contains($priere))
-				{
-					$priere->addPersonnage($personnage);
-				}
-			}
-			
-			foreach ( $originalPrieres as $priere)
-			{
-				if ( ! $personnage->getPrieres()->contains($priere))
-				{
-					$priere->removePersonnage($personnage);
-				}
-			}
-	
-			$app['orm.em']->persist($personnage);
-			$app['orm.em']->flush();
-	
-			$app['session']->getFlashBag()->add('success','Le personnage a été sauvegardé.');
-			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
-		}
+        $prieres = $app['orm.em']->getRepository(Priere::class)->findAll();
 	
 		return $app['twig']->render('admin/personnage/updatePriere.twig', array(
-				'form' => $form->createView(),
 				'personnage' => $personnage,
+                'prieres' => $prieres,
 		));
 	}
-	
-	
-	
-	/**
-	 * Modifie la liste des sorts
-	 * @param Request $request
-	 * @param Application $app
-	 */
+
+    /**
+     * Ajoute une priere à un personnage
+     *
+     * @param Request $request
+     * @param Application $app
+     * @return RedirectResponse
+     */
+    public function adminAddPriereAction(Request $request, Application $app)
+    {
+        $priereID = $request->get('priere');
+        $personnage = $request->get('personnage');
+
+        $priere = $app['orm.em']->getRepository(Priere::class)
+            ->find($priereID);
+
+        $nomPriere = $priere->getLabel();
+
+        $priere->addPersonnage($personnage);
+
+        $app['orm.em']->flush();
+
+        $app['session']->getFlashBag()->add('success', $nomPriere.' a été ajoutée.');
+
+        return $app->redirect($app['url_generator']->generate('personnage.admin.update.priere', array('personnage' => $personnage->getId(), 303)));
+    }
+
+    /**
+     * Retire une priere à un personnage
+     *
+     * @param Request $request
+     * @param Application $app
+     * @return RedirectResponse
+     */
+    public function adminRemovePriereAction(Request $request, Application $app)
+    {
+        $priereID = $request->get('priere');
+        $personnage = $request->get('personnage');
+
+        $priere = $app['orm.em']->getRepository(Priere::class)
+            ->find($priereID);
+
+        $nomPriere = $priere->getLabel();
+
+        $priere->removePersonnage($personnage);
+
+        $app['orm.em']->flush();
+
+        $app['session']->getFlashBag()->add('success', $nomPriere.' a été retirée.');
+
+        return $app->redirect($app['url_generator']->generate('personnage.admin.update.priere', array('personnage' => $personnage->getId(),303)));
+    }
+
+    /**
+     * Affiche la liste des connaissances pour modification
+     * @param Request $request
+     * @param Application $app
+     * @return mixed
+     */
+	public function adminUpdateConnaissanceAction(Request $request, Application $app)
+	{
+		$personnage = $request->get('personnage');
+        $connaissances = $app['orm.em']->getRepository(Connaissance::class)->findAllOrderedByLabel();
+		
+		return $app['twig']->render('admin/personnage/updateConnaissance.twig', array(
+				'personnage' => $personnage,
+                'connaissances' => $connaissances,
+		));
+	}
+
+    /**
+     * Ajoute une connaissance à un personnage
+     *
+     * @param Request $request
+     * @param Application $app
+     * @return RedirectResponse
+     */
+    public function adminAddConnaissanceAction(Request $request, Application $app)
+    {
+        $connaissanceID = $request->get('connaissance');
+        $personnage = $request->get('personnage');
+
+        $connaissance = $app['orm.em']->getRepository(Connaissance::class)
+            ->find($connaissanceID);
+
+        $nomConnaissance = $connaissance->getLabel();
+        $niveauConnaissance = $connaissance->getNiveau();
+
+        $personnage->addConnaissance($connaissance);
+
+        $app['orm.em']->flush();
+
+        $app['session']->getFlashBag()->add('success', $nomConnaissance.' '.$niveauConnaissance.' a été ajouté.');
+
+        return $app->redirect($app['url_generator']->generate('personnage.admin.update.connaissance', array('personnage' => $personnage->getId(),303)));
+    }
+
+    /**
+     * Retire une connaissance à un personnage
+     *
+     * @param Request $request
+     * @param Application $app
+     * @return RedirectResponse
+     */
+    public function adminRemoveConnaissanceAction(Request $request, Application $app)
+    {
+        $connaissanceID = $request->get('connaissance');
+        $personnage = $request->get('personnage');
+
+        $connaissance = $app['orm.em']->getRepository(Connaissance::class)
+            ->find($connaissanceID);
+
+        $nomConnaissance = $connaissance->getLabel();
+        $niveauConnaissance = $connaissance->getNiveau();
+
+        $personnage->removeConnaissance($connaissance);
+
+        $app['orm.em']->flush();
+
+        $app['session']->getFlashBag()->add('success', $nomConnaissance.' '.$niveauConnaissance.' a été retiré.');
+
+        return $app->redirect($app['url_generator']->generate('personnage.admin.update.connaissance', array('personnage' => $personnage->getId(),303)));
+    }
+
+    /**
+     * Affiche la liste des sorts pour modification
+     * @param Request $request
+     * @param Application $app
+     * @return mixed
+     */
 	public function adminUpdateSortAction(Request $request, Application $app)
 	{
 		$personnage = $request->get('personnage');
-			
-		$form = $app['form.factory']->createBuilder(new PersonnageUpdateSortForm(), $personnage)
-			->add('save','submit', array('label' => 'Valider les modifications'))
-			->getForm();
-		
-		$form->handleRequest($request);
-				
-		if ( $form->isValid() )
-		{
-			$personnage = $form->getData();
-			
-			$app['orm.em']->persist($personnage);
-			$app['orm.em']->flush();
-			
-			$app['session']->getFlashBag()->add('success','Le personnage a été sauvegardé.');
-			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
-		}
+        $sorts = $app['orm.em']->getRepository(Sort::class)->findAll();
 		
 		return $app['twig']->render('admin/personnage/updateSort.twig', array(
-				'form' => $form->createView(),
 				'personnage' => $personnage,
+                'sorts' => $sorts,
 		));
 	}
+
+    /**
+     * Ajoute un sort à un personnage
+     *
+     * @param Request $request
+     * @param Application $app
+     * @return RedirectResponse
+     */
+    public function adminAddSortAction(Request $request, Application $app)
+    {
+        $sortID = $request->get('sort');
+        $personnage = $request->get('personnage');
+
+        $sort = $app['orm.em']->getRepository(Sort::class)
+            ->find($sortID);
+
+        $nomSort = $sort->getLabel();
+        $niveauSort = $sort->getNiveau();
+
+        $personnage->addSort($sort);
+
+        $app['orm.em']->flush();
+
+        $app['session']->getFlashBag()->add('success', $nomSort.' '.$niveauSort.' a été ajouté.');
+
+        return $app->redirect($app['url_generator']->generate('personnage.admin.update.sort', array('personnage' => $personnage->getId(),303)));
+    }
+
+    /**
+     * Retire un sort à un personnage
+     *
+     * @param Request $request
+     * @param Application $app
+     * @return RedirectResponse
+     */
+    public function adminRemoveSortAction(Request $request, Application $app)
+    {
+        $sortID = $request->get('sort');
+        $personnage = $request->get('personnage');
+
+        $sort = $app['orm.em']->getRepository(Sort::class)
+            ->find($sortID);
+
+        $nomSort = $sort->getLabel();
+        $niveauSort = $sort->getNiveau();
+
+        $personnage->removeSort($sort);
+
+        $app['orm.em']->flush();
+
+        $app['session']->getFlashBag()->add('success', $nomSort.' '.$niveauSort.' a été retiré.');
+
+        return $app->redirect($app['url_generator']->generate('personnage.admin.update.sort', array('personnage' => $personnage->getId(),303)));
+    }
 	
 	/**
-	 * Modifie la liste des potions
+	 * Affiche la liste des potions pour modification
 	 * 
 	 * @param Request $request
 	 * @param Application $app
@@ -1464,29 +1699,65 @@ class PersonnageController
 	public function adminUpdatePotionAction(Request $request, Application $app)
 	{
 		$personnage = $request->get('personnage');
-			
-		$form = $app['form.factory']->createBuilder(new PersonnageUpdatePotionForm(), $personnage)
-			->add('save','submit', array('label' => 'Valider les modifications'))
-			->getForm();
-	
-		$form->handleRequest($request);
-	
-		if ( $form->isValid() )
-		{
-			$personnage = $form->getData();
-				
-			$app['orm.em']->persist($personnage);
-			$app['orm.em']->flush();
-				
-			$app['session']->getFlashBag()->add('success','Le personnage a été sauvegardé.');
-			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
-		}
+        $potions =$app['orm.em']->getRepository(Potion::class)->findAll();
 	
 		return $app['twig']->render('admin/personnage/updatePotion.twig', array(
-				'form' => $form->createView(),
 				'personnage' => $personnage,
+                'potions' => $potions,
 		));
 	}
+
+    /**
+     * Ajoute une potion à un personnage
+     *
+     * @param Request $request
+     * @param Application $app
+     * @return RedirectResponse
+     */
+    public function adminAddPotionAction(Request $request, Application $app)
+    {
+        $potionID = $request->get('potion');
+        $personnage = $request->get('personnage');
+
+        $potion = $app['orm.em']->getRepository(Potion::class)
+            ->find($potionID);
+
+        $nomPotion = $potion->getLabel();
+
+        $personnage->addPotion($potion);
+
+        $app['orm.em']->flush();
+
+        $app['session']->getFlashBag()->add('success', $nomPotion.' a été ajoutée.');
+
+        return $app->redirect($app['url_generator']->generate('personnage.admin.update.potion', array('personnage' => $personnage->getId(),303)));
+    }
+
+    /**
+     * Retire une potion à un personnage
+     *
+     * @param Request $request
+     * @param Application $app
+     * @return RedirectResponse
+     */
+    public function adminRemovePotionAction(Request $request, Application $app)
+    {
+        $potionID = $request->get('potion');
+        $personnage = $request->get('personnage');
+
+        $potion = $app['orm.em']->getRepository(Potion::class)
+            ->find($potionID);
+
+        $nomPotion = $potion->getLabel();
+
+        $personnage->removePotion($potion);
+
+        $app['orm.em']->flush();
+
+        $app['session']->getFlashBag()->add('success', $nomPotion.' a été retirée.');
+
+        return $app->redirect($app['url_generator']->generate('personnage.admin.update.potion', array('personnage' => $personnage->getId(),303)));
+    }
 	
 	/**
 	 * Modifie la liste des ingrédients
@@ -1538,7 +1809,7 @@ class PersonnageController
 			 */
 			if ( $random && $random > 0 )
 			{
-				$ingredients = $app['orm.em']->getRepository('LarpManager\Entities\Ingredient')->findAll();
+				$ingredients = $app['orm.em']->getRepository('LarpManager\Entities\Ingredient')->findAllOrderedByLabel();
 				shuffle( $ingredients );
 				$needs = new ArrayCollection(array_slice($ingredients,0,$random));
 					
@@ -1556,7 +1827,7 @@ class PersonnageController
 			$app['orm.em']->flush();
 	
 			$app['session']->getFlashBag()->add('success','Le personnage a été sauvegardé.');
-			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),303);
 		}
 	
 		return $app['twig']->render('admin/personnage/ingredients.twig', array(
@@ -1654,7 +1925,7 @@ class PersonnageController
 			$app['orm.em']->flush();
 	
 			$app['session']->getFlashBag()->add('success','Le personnage a été sauvegardé.');
-			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),303);
 		}
 	
 		return $app['twig']->render('admin/personnage/ressources.twig', array(
@@ -1683,7 +1954,7 @@ class PersonnageController
 			$app['orm.em']->flush();
 	
 			$app['session']->getFlashBag()->add('success','Le personnage a été sauvegardé.');
-			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),303);
 		}
 	
 		return $app['twig']->render('admin/personnage/richesse.twig', array(
@@ -1713,7 +1984,7 @@ class PersonnageController
 			$app['orm.em']->flush();
 	
 			$app['session']->getFlashBag()->add('success', 'Le document a été ajouté au personnage.');
-			return $app->redirect($app['url_generator']->generate('personnage.admin.detail', array('personnage' => $personnage->getId())),301);
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail', array('personnage' => $personnage->getId())),303);
 		}
 	
 		return $app['twig']->render('admin/personnage/documents.twig', array(
@@ -1743,7 +2014,7 @@ class PersonnageController
 			$app['orm.em']->flush();
 	
 			$app['session']->getFlashBag()->add('success', 'L\'objet a été ajouté au personnage.');
-			return $app->redirect($app['url_generator']->generate('personnage.admin.detail', array('personnage' => $personnage->getId())),301);
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail', array('personnage' => $personnage->getId())),303);
 		}
 	
 		return $app['twig']->render('admin/personnage/items.twig', array(
@@ -1765,20 +2036,20 @@ class PersonnageController
 		// refuser la demande si le personnage est Fanatique
 		if ( $personnage->isFanatique() )
 		{
-			$app['session']->getFlashBag()->add('error','Désolé, le personnage est un Fanatique, il vous est impossible de choisir une nouvelle religion. (Supprimer la religion fanatique qu\'il possède avant)' );
-			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
+			$app['session']->getFlashBag()->add('error','Désolé, le personnage êtes un Fanatique, il vous est impossible de choisir une nouvelle religion. (supprimer la religion fanatique qu\'il possède avant)' );
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),303);
 		}
 		
 		$personnageReligion = new \LarpManager\Entities\PersonnagesReligions();
 		$personnageReligion->setPersonnage($personnage);
 		
 		// ne proposer que les religions que le personnage ne pratique pas déjà ...
-		$availableReligions = $app['personnage.manager']->getAvailableReligions($personnage);
+		$availableReligions = $app['personnage.manager']->getAdminAvailableReligions($personnage);
 		
 		if ( $availableReligions->count() == 0 )
 		{
-			$app['session']->getFlashBag()->add('error','Désolé, il n\'y a plus de religion disponible');
-			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
+			$app['session']->getFlashBag()->add('error','Désolé, il n\'y a plus de religion disponibles');
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),303);
 		}
 		
 		// construit le tableau de choix
@@ -1820,7 +2091,7 @@ class PersonnageController
 				if ( $personnage->isFervent() )
 				{
 					$app['session']->getFlashBag()->add('error','Désolé, vous êtes déjà Fervent d\'une autre religion, il vous est impossible de choisir une nouvelle religion en tant que Fervent. Veuillez contacter votre orga en cas de problème.');
-					return $app->redirect($app['url_generator']->generate('homepage'),301);
+					return $app->redirect($app['url_generator']->generate('homepage'),303);
 				}
 			}
 						
@@ -1828,7 +2099,7 @@ class PersonnageController
 			$app['orm.em']->flush();
 		
 			$app['session']->getFlashBag()->add('success','Le personnage a été sauvegardé.');
-			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),303);
 		}
 		
 		return $app['twig']->render('admin/personnage/addReligion.twig', array(
@@ -1862,7 +2133,7 @@ class PersonnageController
 			$app['orm.em']->flush();
 			
 			$app['session']->getFlashBag()->add('success','Le personnage a été sauvegardé.');
-			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),303);
 		}
 		
 		return $app['twig']->render('admin/personnage/removeReligion.twig', array(
@@ -1897,7 +2168,7 @@ class PersonnageController
 			$app['orm.em']->flush();
 				
 			$app['session']->getFlashBag()->add('success','Le personnage a été sauvegardé.');
-			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),303);
 		}
 		
 		return $app['twig']->render('admin/personnage/removeLangue.twig', array(
@@ -1955,29 +2226,29 @@ class PersonnageController
 			$app['orm.em']->flush();
 		
 			$app['session']->getFlashBag()->add('success','Le personnage a été sauvegardé.');
-			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),303);
 		}
 		
 		return $app['twig']->render('admin/personnage/updateOrigine.twig', array(
 				'form' => $form->createView(),
 				'personnage' => $personnage,
 		));
-	}	
-	
+	}
+
 	/**
 	 * Retire la dernière compétence acquise par un personnage
-	 * 
+	 *
 	 * @param Request $request
 	 * @param Application $app
 	 */
 	public function removeCompetenceAction(Request $request, Application $app)
-	{
+    {
 		$personnage = $request->get('personnage');
 		$lastCompetence = $app['personnage.manager']->getLastCompetence($personnage);
 		
 		if ( ! $lastCompetence ) {
 			$app['session']->getFlashBag()->add('error','Désolé, le personnage n\'a pas encore acquis de compétences');
-			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),303);
 		}
 		
 		$form = $app['form.factory']->createBuilder()
@@ -1986,10 +2257,8 @@ class PersonnageController
 		
 		$form->handleRequest($request);
 				
-		if ( $form->isValid() )
+		if ( $form->isValid() && $form->isSubmitted())
 		{
-			$data = $form->getData();
-			
 			$cout = $app['personnage.manager']->getCompetenceCout($personnage, $lastCompetence);
 			$xp = $personnage->getXp();
 			
@@ -1997,47 +2266,55 @@ class PersonnageController
 			$personnage->removeCompetence($lastCompetence);
 			$lastCompetence->removePersonnage($personnage);
 			
-			// cas special noblesse
-			// noblesse apprentit +2 renomme
-			// noblesse initie  +3 renomme
-			// noblesse expert +2 renomme
-			// TODO : trouver un moyen pour ne pas implémenter les règles spéciales de ce type dans le code.
-			if ( $lastCompetence->getCompetenceFamily()->getLabel() == "Noblesse")
-			{
-				switch ($lastCompetence->getLevel()->getId())
-				{
-					case 1:
-						$personnage->removeRenomme(2);
-						break;
-					case 2:
-						$personnage->removeRenomme(3);
-						break;
-					case 3:
-						$personnage->removeRenomme(2);
-						break;
-					case 4:
-						$personnage->removeRenomme(5);
-						break;
-					case 5:
-						$personnage->removeRenomme(6);
-						break;
-				}
-			}
-			
-			// historique
-			$historique = new \LarpManager\Entities\ExperienceGain();
-			$historique->setOperationDate(new \Datetime('NOW'));
-			$historique->setXpGain($cout);
-			$historique->setExplanation('Suppression de la compétence ' . $lastCompetence->getLabel());
-			$historique->setPersonnage($personnage);
+			// historique xp
+			$historiqueXP = new ExperienceGain;
+			$historiqueXP->setOperationDate(new \Datetime('NOW'));
+			$historiqueXP->setXpGain($cout);
+			$historiqueXP->setExplanation('Suppression de la compétence ' . $lastCompetence->getLabel());
+			$historiqueXP->setPersonnage($personnage);
+
+            // historique renommée
+            $competenceNom = $lastCompetence->getCompetenceFamily()->getLabel();
+            $competenceNiveau = $lastCompetence->getLevel()->getLabel();
+            $competenceId = $lastCompetence->getid();
+
+            //si compétence est Noblesse ou Stratégie(5)
+            if ( $competenceId === 151 || $lastCompetence->getCompetenceFamily()->getId() === 26){
+                if ($competenceId === 97){
+                    $renomme = -2;
+                }
+                if ($competenceId === 98){
+                    $renomme = -3;
+                }
+                if ($competenceId === 99){
+                    $renomme = -2;
+                }
+                if ($competenceId === 100){
+                    $renomme = -5;
+                }
+                if ($competenceId === 101 ){
+                    $renomme = -6;
+                }
+                if ($competenceId === 151){
+                    $renomme = -5;
+                }
+
+                $renommeHistory = new RenommeHistory;
+                $renommeHistory->setDate(new \DateTime('NOW'));
+                $renommeHistory->setPersonnage($personnage);
+                $renommeHistory->setExplication("[Retrait] ".$competenceNom." ".$competenceNiveau);
+                $renommeHistory->setRenomme($renomme);
+
+                $app['orm.em']->persist($renommeHistory);
+            }
 				
 			$app['orm.em']->persist($lastCompetence);
 			$app['orm.em']->persist($personnage);
-			$app['orm.em']->persist($historique);
+			$app['orm.em']->persist($historiqueXP);
 			$app['orm.em']->flush();
 			
 			$app['session']->getFlashBag()->add('success','La compétence a été retirée');
-			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),301);			
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),303);			
 		}
 		
 		return $app['twig']->render('admin/personnage/removeCompetence.twig', array(
@@ -2054,10 +2331,10 @@ class PersonnageController
 		
 		$availableCompetences = $app['personnage.manager']->getAvailableCompetences($personnage);
 		
-		if ( $availableCompetences->count() == 0 )
+		if ( $availableCompetences->count() === 0 )
 		{
 			$app['session']->getFlashBag()->add('error','Désolé, il n\'y a plus de compétence disponible.');
-			return $app->redirect($app['url_generator']->generate('homepage'),301);
+			return $app->redirect($app['url_generator']->generate('homepage'),303);
 		}
 		
 		// construit le tableau de choix
@@ -2077,12 +2354,12 @@ class PersonnageController
 		
 		$form->handleRequest($request);
 			
-		if ( $form->isValid() )
+		if ( $form->isValid() && $form->isSubmitted() )
 		{
 			$data = $form->getData();
 				
 			$competenceId = $data['competenceId'];
-			$competence = $app['orm.em']->find('\LarpManager\Entities\Competence', $competenceId);
+			$competence = $app['orm.em']->find(Competence::class, $competenceId);
 			
 			$cout = $app['personnage.manager']->getCompetenceCout($personnage, $competence);
 			$xp = $personnage->getXp();
@@ -2090,26 +2367,60 @@ class PersonnageController
 			if ( $xp - $cout < 0 )
 			{
 				$app['session']->getFlashBag()->add('error','Vos n\'avez pas suffisement de points d\'expérience pour acquérir cette compétence.');
-				return $app->redirect($app['url_generator']->generate('homepage'),301);
+				return $app->redirect($app['url_generator']->generate('homepage'),303);
 			}
 			$personnage->setXp($xp - $cout);
 			$personnage->addCompetence($competence);
 			$competence->addPersonnage($personnage);
 			
-			// historique
-			$historique = new \LarpManager\Entities\ExperienceUsage();
-			$historique->setOperationDate(new \Datetime('NOW'));
-			$historique->setXpUse($cout);
-			$historique->setCompetence($competence);
-			$historique->setPersonnage($personnage);
-				
+			// historique xp
+			$historiqueXP = new ExperienceUsage;
+			$historiqueXP->setOperationDate(new \Datetime('NOW'));
+			$historiqueXP->setXpUse($cout);
+			$historiqueXP->setCompetence($competence);
+			$historiqueXP->setPersonnage($personnage);
+
+            //historique renommée
+            $competenceNom = $competence->getCompetenceFamily()->getLabel();
+            $competenceNiveau = $competence->getLevel()->getLabel();
+
+                //si la nouvelle compétence est Noblesse ou Stratégie(5)
+            if ( $competenceId === 151 || $competence->getCompetenceFamily()->getId() === 26){
+                if ($competenceId === 97){
+                    $renomme = 2;
+                }
+                if ($competenceId === 98){
+                    $renomme = 3;
+                }
+                if ($competenceId === 99){
+                    $renomme = 2;
+                }
+                if ($competenceId === 100){
+                    $renomme = 5;
+                }
+                if ($competenceId === 101 ){
+                    $renomme = 6;
+                }
+                if ($competenceId === 151){
+                    $renomme = 5;
+                }
+
+                $renommeHistory = new RenommeHistory;
+                $renommeHistory->setDate(new \DateTime('NOW'));
+                $renommeHistory->setPersonnage($personnage);
+                $renommeHistory->setExplication("[Acquisition] ".$competenceNom." ".$competenceNiveau);
+                $renommeHistory->setRenomme($renomme);
+
+                $app['orm.em']->persist($renommeHistory);
+            }
+
 			$app['orm.em']->persist($competence);
 			$app['orm.em']->persist($personnage);
-			$app['orm.em']->persist($historique);
+			$app['orm.em']->persist($historiqueXP);
 			$app['orm.em']->flush();
 				
 			$app['session']->getFlashBag()->add('success','Votre personnage a été sauvegardé.');
-			return $app->redirect($app['url_generator']->generate('personnage.admin.detail', array('personnage' => $personnage->getId())),301);
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail', array('personnage' => $personnage->getId())),303);
 		}
 			
 		return $app['twig']->render('admin/personnage/competence.twig', array(
@@ -2140,6 +2451,160 @@ class PersonnageController
 				'participant' => $participant,
 				'groupe' => $groupe,
 			));
+	}
+	
+	/**
+	 * Ajoute un evenement de chronologie au personnage
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function adminAddChronologieAction(Request $request, Application $app)
+	{
+		$personnage = $request->get('personnage');
+		$personnageChronologie = new PersonnageChronologie();
+		$personnageChronologie->setPersonnage($personnage);
 
+		$form = $app['form.factory']->createBuilder(new PersonnageChronologieForm(), $personnageChronologie)
+			->add('save','submit', array('label' => 'Valider l\'évènement'))
+			->getForm();
+
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
+		{
+			$anneeGN = $form->get('annee')->getData();
+			$evenement = $form->get('evenement')->getData();
+				
+			$personnageChronologie = new PersonnageChronologie();
+				
+			$personnageChronologie->setAnnee($anneeGN);
+			$personnageChronologie->setEvenement($evenement);
+			$personnageChronologie->setPersonnage($personnage);
+
+			$app['orm.em']->persist($personnageChronologie);
+			$app['orm.em']->flush();
+		
+			$app['session']->getFlashBag()->add('success','L\'évènement a été ajouté à la chronologie.');
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),303);
+		}
+		
+		return $app['twig']->render('admin/personnage/updateChronologie.twig', array(
+				'form' => $form->createView(),
+				'personnage' => $personnage,
+				'personnageChronologie' => $personnageChronologie,
+		));
+	}
+
+	/**
+	 * Retire un évènement d'un personnage
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function adminDeleteChronologieAction(Request $request, Application $app)
+	{
+		$personnage = $request->get('personnage');
+		$personnageChronologie = $request->get('personnageChronologie');
+		
+		$form = $app['form.factory']->createBuilder()
+			->add('save','submit', array('label' => 'Retirer l\'évènement'))
+			->getForm();
+		
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
+		{
+			$data = $form->getData();
+				
+			$app['orm.em']->remove($personnageChronologie);
+			$app['orm.em']->flush();
+				
+			$app['session']->getFlashBag()->add('success','L\'évènement a été supprimé de la chronologie.');
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),303);
+		}
+		
+		return $app['twig']->render('admin/personnage/removeChronologie.twig', array(
+				'form' => $form->createView(),
+				'personnage' => $personnage,
+				'personnageChronologie'=> $personnageChronologie,
+		));
+	}
+
+	/**
+	 * Ajoute une lignée au personnage
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function adminAddLigneeAction(Request $request, Application $app)
+	{
+		$personnage = $request->get('personnage');
+		$personnageLignee = new PersonnageLignee();
+		$personnageLignee->setPersonnage($personnage);
+		
+		$form = $app['form.factory']->createBuilder(new PersonnageLigneeForm(), $personnageLignee)
+			->add('save','submit', array('label' => 'Valider les modifications'))
+			->getForm();
+
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$parent1 = $form->get('parent1')->getData();
+			$parent2 = $form->get('parent2')->getData();
+			$lignee = $form->get('lignee')->getData();
+
+			$personnageLignee->setParent1($parent1);
+			$personnageLignee->setParent2($parent2);
+			$personnageLignee->setLignee($lignee);
+
+			$app['orm.em']->persist($personnageLignee);
+			$app['orm.em']->flush();
+		
+			$app['session']->getFlashBag()->add('success','La lignée a été ajoutée.');
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),303);
+		}
+		
+		return $app['twig']->render('admin/personnage/updateLignee.twig', array(
+				'form' => $form->createView(),
+				'personnage' => $personnage,
+				'lignee' => $personnageLignee,
+			));
+	}
+
+	/**
+	 * Retire une lignée d'un personnage
+	 * 
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function adminDeleteLigneeAction(Request $request, Application $app)
+	{
+		$personnage = $request->get('personnage');
+		$personnageLignee = $request->get('personnageLignee');
+		
+		$form = $app['form.factory']->createBuilder()
+			->add('save','submit', array('label' => 'Retirer la lignée'))
+			->getForm();
+		
+		$form->handleRequest($request);
+		
+		if ( $form->isValid() )
+		{
+			$data = $form->getData();
+				
+			$app['orm.em']->remove($personnageLignee);
+			$app['orm.em']->flush();
+				
+			$app['session']->getFlashBag()->add('success','La lignée a été retirée.');
+			return $app->redirect($app['url_generator']->generate('personnage.admin.detail',array('personnage'=>$personnage->getId())),303);
+		}
+		
+		return $app['twig']->render('admin/personnage/removeLignee.twig', array(
+				'form' => $form->createView(),
+				'personnage' => $personnage,
+				'personnageLignee'=> $personnageLignee,
+		));
 	}
 }

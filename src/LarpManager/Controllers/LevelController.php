@@ -73,11 +73,11 @@ class LevelController
 		
 			if ( $form->get('save')->isClicked())
 			{
-				return $app->redirect($app['url_generator']->generate('level'),301);
+				return $app->redirect($app['url_generator']->generate('level'),303);
 			}
 			else if ( $form->get('save_continue')->isClicked())
 			{
-				return $app->redirect($app['url_generator']->generate('level.add'),301);
+				return $app->redirect($app['url_generator']->generate('level.add'),303);
 			}
 		}
 		

@@ -8,7 +8,7 @@
 		<li><a href="{{ path('homepage') }}">Accueil</a></li>
 		<li><a href="{{ path("gn.list") }}">Liste des grandeur nature</a></li>
 		<li><a href="{{ path('gn.detail', {'gn':gn.id}) }}">{{ gn.label }}</a></li>
-		<li class="active">Liste des participants avec un billet mais n'étant pas dans un groupe</li>
+		<li class="active">Liste des participants avec un billet mais n'ayant pas de personnage</li>
 	</ol>
 
 <div class="well well-sm">
@@ -45,7 +45,7 @@
 						{% if participant.groupeGn %}
 							{{ participant.groupeGn.groupe.nom }}
 						{% endif %}
-					</td>						
+					</td>
 					<td>
 						<a href="{{ path('participant.admin.personnage.new', {'participant' : participant.id}) }}">Créer un personnage</a>
 						<a href="{{ path('participant.admin.personnage.old', {'participant' : participant.id}) }}">Récupérer un ancien personnage</a>

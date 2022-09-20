@@ -6,7 +6,7 @@
 <div class="list-group">
 	{% for personnageReligion in personnage.personnagesReligions %}
 		<li class="list-group-item">
-			<h6>{{ personnageReligion.religion.label }} - {{ personnageReligion.religionLevel.label }}</h6>
+			<h6>{% if personnageReligion.religion.secret %}<span style="color:red;">Secret</span> - {% endif %}{{ personnageReligion.religion.label }} - {{ personnageReligion.religionLevel.label }}</h6>
 			<a href="{{ path('forum.topic',{'index': personnageReligion.religion.topic.id }) }}">Forum</a>
 			<p class="list-group-item-text">
 				{{ personnageReligion.religion.description|markdown }}

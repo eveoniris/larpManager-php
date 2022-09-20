@@ -83,7 +83,7 @@ class QualityController
 			$app['orm.em']->flush();
 			
 			$app['session']->getFlashBag()->add('success', 'La quality a été enregistrée.');
-			return $app->redirect($app['url_generator']->generate('quality'),301);
+			return $app->redirect($app['url_generator']->generate('quality'),303);
 		}
 		
 		return $app['twig']->render('admin/quality/add.twig', array(
@@ -141,7 +141,7 @@ class QualityController
 			$app['orm.em']->flush();
 			
 			$app['session']->getFlashBag()->add('success', 'La quality a été enregistrée.');
-			return $app->redirect($app['url_generator']->generate('quality'),301);
+			return $app->redirect($app['url_generator']->generate('quality'),303);
 		}
 			
 		return $app['twig']->render('admin/quality/update.twig', array(
@@ -172,7 +172,7 @@ class QualityController
 			$app['orm.em']->flush();
 			
 			$app['session']->getFlashBag()->add('success', 'La quality a été supprimée.');
-			return $app->redirect($app['url_generator']->generate('quality'),301);
+			return $app->redirect($app['url_generator']->generate('quality'),303);
 		}
 			
 		return $app['twig']->render('admin/quality/delete.twig', array(

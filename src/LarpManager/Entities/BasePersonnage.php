@@ -228,6 +228,7 @@ class BasePersonnage
      *     joinColumns={@JoinColumn(name="personnage_id", referencedColumnName="id", nullable=false)},
      *     inverseJoinColumns={@JoinColumn(name="Document_id", referencedColumnName="id", nullable=false)}
      * )
+     * @OrderBy({"code" = "ASC",})
      */
     protected $documents;
 
@@ -237,7 +238,7 @@ class BasePersonnage
      *     joinColumns={@JoinColumn(name="personnage_id", referencedColumnName="id", nullable=false)},
      *     inverseJoinColumns={@JoinColumn(name="item_id", referencedColumnName="id", nullable=false)}
      * )
-     * @OrderBy({"numero" = "ASC",})
+     * @OrderBy({"label" = "ASC",})
      */
     protected $items;
 
@@ -289,6 +290,10 @@ class BasePersonnage
 
     /**
      * @ManyToMany(targetEntity="Priere", mappedBy="personnages")
+     * @JoinTable(name="personnages_prieres",
+     *     joinColumns={@JoinColumn(name="personnage_id", referencedColumnName="id", nullable=false)},
+     *     inverseJoinColumns={@JoinColumn(name="priere_id", referencedColumnName="id", nullable=false)}
+     * )
      * @OrderBy({"sphere" = "ASC", "niveau" = "ASC",})
      */
     protected $prieres;
@@ -304,11 +309,33 @@ class BasePersonnage
     protected $sorts;
 
     /**
+     * @ManyToMany(targetEntity="Connaissance", inversedBy="personnages")
+     * @JoinTable(name="personnages_connaissances",
+     *     joinColumns={@JoinColumn(name="personnage_id", referencedColumnName="id", nullable=false)},
+     *     inverseJoinColumns={@JoinColumn(name="connaissance_id", referencedColumnName="id", nullable=false)}
+     * )
+     * @OrderBy({"label" = "ASC", "niveau" = "ASC",})
+     */
+    protected $connaissances;
+
+    /**
      * @OneToMany(targetEntity="PugilatHistory", mappedBy="personnage")
      * @JoinColumn(name="id", referencedColumnName="personnage_id", nullable=false)
      */
     protected $pugilatHistories;
 
+    /**
+     * @OneToMany(targetEntity="PersonnageChronologie", mappedBy="personnage")
+     * @JoinColumn(name="id", referencedColumnName="personnage_id", nullable=false)
+     * @OrderBy({"annee" = "ASC", "id" = "ASC",})
+     */
+    protected $personnageChronologie;
+
+    /**
+     * @OneToMany(targetEntity="PersonnageLignee", mappedBy="personnage")
+     * @JoinColumn(name="id", referencedColumnName="personnage_id", nullable=false)
+     */
+    protected $personnageLignee;
 
     public function __construct()
     {
@@ -337,7 +364,10 @@ class BasePersonnage
         $this->potions = new ArrayCollection();
         $this->prieres = new ArrayCollection();
         $this->sorts = new ArrayCollection();
+        $this->connaissances = new ArrayCollection();
         $this->pugilatHistories = new ArrayCollection();
+        $this->personnageChronologie = new ArrayCollection();
+        $this->personnageLignee = new ArrayCollection();
     }
 
     /**
@@ -634,9 +664,11 @@ class BasePersonnage
      *
      * @return integer
      */
+
     public function getHeroisme()
     {
-        return $this->heroisme;
+        // return $this->heroisme;
+        return 0;
     }
 
     /**
@@ -1007,6 +1039,7 @@ class BasePersonnage
      * Get PersonnageLangues entity collection (one to many).
      *
      * @return \Doctrine\Common\Collections\Collection
+     * @OrderBy({"secret"="ASC", "diffusion"="DESC", "label"="ASC"})
      */
     public function getPersonnageLangues()
     {
@@ -1751,6 +1784,64 @@ class BasePersonnage
         return $this->sorts;
     }
 
+    /**
+     * Add Connaissance entity to collection.
+     *
+     * @param \LarpManager\Entities\Connaissance $connaissance
+     * @return \LarpManager\Entities\Personnage
+     */
+    public function addConnaissance(Connaissance $connaissance)
+    {
+        $connaissance->addPersonnage($this);
+        $this->connaissances[] = $connaissance;
+
+        return $this;
+    }
+
+    /**
+     * Remove Connaissance entity from collection.
+     *
+     * @param \LarpManager\Entities\Connaissance $connaissance
+     * @return \LarpManager\Entities\Personnage
+     */
+    public function removeConnaissance(Connaissance $connaissance)
+    {
+        $connaissance->removePersonnage($this);
+        $this->connaissances->removeElement($connaissance);
+
+        return $this;
+    }
+
+    /**
+     * Get Connaissance entity collection.
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getConnaissances()
+    {
+        return $this->connaissances;
+    }
+
+    /**
+     * Get personnageChronologie entity collection.
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getPersonnageChronologie()
+    {
+        return $this->personnageChronologie;
+    }
+
+    /**
+     * Get personnageLignee entity collection.
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getPersonnageLignee()
+    {
+        return $this->personnageLignee;
+    }
+
     public function __sleep()
     {
         return array('id', 'nom', 'surnom', 'intrigue', 'groupe_id', 'classe_id', 'age_id', 'genre_id', 'renomme', 'photo', 'xp', 'territoire_id', 'materiel', 'vivant', 'age_reel', 'trombineUrl', 'user_id', 'richesse', 'heroisme');
@@ -1773,4 +1864,5 @@ class BasePersonnage
         }
         return $prochain;
     }
+
 }

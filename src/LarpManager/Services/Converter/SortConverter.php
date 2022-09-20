@@ -56,7 +56,7 @@ class SortConverter
     	$sort = $this->em->find('\LarpManager\Entities\Sort',(int) $id);
     	
         if (null === $sort) {
-            throw new NotFoundHttpException(sprintf('Le sortilège %d n\'existe pas', $id));
+            throw new NotFoundHttpException(sprintf('Le sort %d n\'existe pas', $id));
         }
 
         return $sort;

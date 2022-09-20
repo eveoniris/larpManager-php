@@ -237,7 +237,7 @@ class AdminController
 		$app['twig']->clearCacheFiles();
 			
 		$app['session']->getFlashBag()->add('success', 'Le cache a été vidé.');
-		return $app->redirect($app['url_generator']->generate('admin'),301);
+		return $app->redirect($app['url_generator']->generate('admin'),303);
 	}
 	
 	/**
@@ -258,7 +258,7 @@ class AdminController
 		@fclose($myTextFileHandle);
 		
 		$app['session']->getFlashBag()->add('success', 'Les logs ont été vidés.');
-		return $app->redirect($app['url_generator']->generate('admin'),301);
+		return $app->redirect($app['url_generator']->generate('admin'),303);
 	}
 	
 	/**

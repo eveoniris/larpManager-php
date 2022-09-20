@@ -132,7 +132,7 @@ class ItemForm extends AbstractType
 					'label' => 'Couleur de l\'étiquette',
 					'choices' => array(
 						'orange' => 'Orange : Ne prendre que l\'etiquette', 
-						'bleu' => 'Bleau: L\'objet peux être pris'),
+						'bleu' => 'Bleu: Cet objet, indissociable de son etiquette, peut être physiquement volé.'),
 					'attr' => array(
 						'help' => 'La couleur de l\'étiquette indique si l\'on peux prendre l\'objet en lui-même ou seulement l\'étiquette',
 					),					

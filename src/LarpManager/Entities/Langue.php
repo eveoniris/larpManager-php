@@ -87,15 +87,35 @@ class Langue extends BaseLangue
 	
 	/**
 	 * Fourni la catégorie de la langue
+	 * @return string
 	 */
-	public function getCategorie()
+	public function getCategorie(): string
 	{
+		$unknown = 'Inconnue';
+		if ($this->getDiffusion() === null)
+		{
+			return $unknown;
+		}
 		switch ( $this->getDiffusion() )
 		{
 			case 2: return 'Commune';
 			case 1: return 'Courante';
-			case 0: return 'Ancienne';
-			default : return 'Inconnue';
+			case 0: return 'Rare';
+			default : return $unknown;
 		}
 	}
+	
+	/**
+	 * Renvoie le libellé de diffusion, incluant la catégorie
+	 * @return string
+	 */
+	public function getDiffusionLabel() : string
+	{
+		return ($this->getDiffusion() !== null ? $this->getDiffusion().' - ' : '').$this->getCategorie();
+	}
+
+	public function getPrintLabel()
+	{
+		return preg_replace('/[^a-z0-9]+/', '_', strtolower($this->getLabel()));
+	}	
 }

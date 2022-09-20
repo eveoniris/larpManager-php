@@ -56,7 +56,7 @@ class LarpManagerManager
 				"6 ressources communes au hasard",
 				"3 ressouces rare au hasard",
 				"2 points de rituel",
-				"2 points de mana",
+				"2 Perles",
 				"1 formule alchimique apprenti ou initié au hasard",
 				"1 sortilège apprenti ou initié au hasard",
 				"2 potions alchimiques apprenti ou initié au hasard",
@@ -229,8 +229,9 @@ class LarpManagerManager
 		$visibility = array(
 			'PRIVATE' => 'Seul les scénaristes peuvent voir ceci',
 			'PUBLIC' => 'Tous les joueurs peuvent voir ceci',
-			'GROUPE_MEMBER' => 'Seul les membres du groupe peuvent voir ceci',
-			'GROUPE_OWNER' => 'Seul le chef de groupe peux voir ceci',
+			'GROUPE_MEMBER' => 'Seuls les membres du groupe peuvent voir ceci',
+			'GROUPE_OWNER' => 'Seul le chef de groupe peut voir ceci',
+            'AUTHOR' => 'Seul l\'auteur peut voir ceci'
 		);
 		return $visibility;
 	}

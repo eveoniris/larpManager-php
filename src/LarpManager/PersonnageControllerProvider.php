@@ -42,16 +42,26 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 	 *  - personnage.admin.detail
 	 *  - personnage.admin.add
 	 *  - personnage.admin.update
+     *  - personnage.admin.update.sort
+     *  - personnage.admin.add.sort
+     *  - personnage.admin.remove.sort
+     *  - personnage.admin.update.priere
+     *  - personnage.admin.add.priere
+     *  - personnage.admin.remove.priere
+     *  - personnage.admin.update.potion
+     *  - personnage.admin.add.potion
+     *  - personnage.admin.remove.potion
 	 *  - personnage.admin.religion.delete
 	 *  - personnage.admin.religion.add
 	 *  - personnage.admin.origine.update
 	 *  - personnage.detail
 	 *  - personnage.update
 	 *  - personnage.delete
-	 *  - personnage.competence.add
-	 *  - personnage.competence.remove
+	 *  - personnage.admin.competence.add
+	 *  - personnage.admin.competence.remove
 	 *  - personnage.religion.add
 	 *  - personnage.technologie.update
+     *  - personnage.admin.update.connaissance
 	 *
 	 * @param Application $app
 	 * @return Controllers $controllers
@@ -150,14 +160,36 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 			->before($mustBeOrga);
 			
 		/**
-		 * Technologie connue par un personnage
+		 * Modification technologies connue par un personnage
 		 */
-		$controllers->match('/admin/{personnage}/technologie','LarpManager\Controllers\PersonnageController::adminTechnologieAction')
+		$controllers->match('/admin/{personnage}/technologie','LarpManager\Controllers\PersonnageController::adminUpdateTechnologieAction')
 			->assert('personnage', '\d+')
 			->bind("personnage.technologie.update")
 			->method('GET|POST')
 			->convert('personnage', 'converter.personnage:convert')
 			->before($mustBeOrga);
+
+        /**
+         * Ajout d'une technologie (orga)
+         */
+        $controllers->match('/admin/{personnage}/add/technologie','LarpManager\Controllers\PersonnageController::adminAddTechnologieAction')
+            ->assert('personnage', '\d+')
+            ->assert('technologie', '\d+')
+            ->bind("personnage.admin.add.technologie")
+            ->method('GET|POST')
+            ->convert('personnage', 'converter.personnage:convert')
+            ->before($mustBeOrga);
+
+        /**
+         * Retrait d'une technologie (orga)
+         */
+        $controllers->match('/admin/{personnage}/remove/technologie','LarpManager\Controllers\PersonnageController::adminRemoveTechnologieAction')
+            ->assert('personnage', '\d+')
+            ->assert('technologie', '\d+')
+            ->bind("personnage.admin.remove.technologie")
+            ->method('GET|POST')
+            ->convert('personnage', 'converter.personnage:convert')
+            ->before($mustBeOrga);
 			
 		/**
 		 * Detail d'un personnage (orga)
@@ -294,17 +326,71 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 			->before($mustBeOrga);
 			
 		/**
-		 * Ajout d'un sortilège (orga)
+		 * Page de mise à jour des connaissances (orga)
+		 */
+		$controllers->match('/admin/{personnage}/update/connaissance','LarpManager\Controllers\PersonnageController::adminUpdateConnaissanceAction')
+			->assert('personnage', '\d+')
+			->bind("personnage.admin.update.connaissance")
+			->method('GET|POST')
+			->convert('personnage', 'converter.personnage:convert')
+			->before($mustBeOrga);
+
+        /**
+         * Ajout d'une connaissance (orga)
+         */
+        $controllers->match('/admin/{personnage}/add/connaissance','LarpManager\Controllers\PersonnageController::adminAddConnaissanceAction')
+            ->assert('personnage', '\d+')
+            ->assert('connaissance', '\d+')
+            ->bind("personnage.admin.add.connaissance")
+            ->method('GET|POST')
+            ->convert('personnage', 'converter.personnage:convert')
+            ->before($mustBeOrga);
+
+        /**
+         * Retrait d'une connaissance (orga)
+         */
+        $controllers->match('/admin/{personnage}/remove/connaissance','LarpManager\Controllers\PersonnageController::adminRemoveConnaissanceAction')
+            ->assert('personnage', '\d+')
+            ->assert('connaissance', '\d+')
+            ->bind("personnage.admin.remove.connaissance")
+            ->method('GET|POST')
+            ->convert('personnage', 'converter.personnage:convert')
+            ->before($mustBeOrga);
+
+ 		/**
+		 * Page de mise à jour des sortilèges (orga)
 		 */
 		$controllers->match('/admin/{personnage}/update/sort','LarpManager\Controllers\PersonnageController::adminUpdateSortAction')
 			->assert('personnage', '\d+')
 			->bind("personnage.admin.update.sort")
 			->method('GET|POST')
 			->convert('personnage', 'converter.personnage:convert')
-			->before($mustBeOrga);			
+			->before($mustBeOrga);
 
-		/**
-		 * Ajout d'une potion (orga)
+        /**
+         * Ajout d'un sortilège (orga)
+         */
+        $controllers->match('/admin/{personnage}/add/sort','LarpManager\Controllers\PersonnageController::adminAddSortAction')
+            ->assert('personnage', '\d+')
+            ->assert('sort', '\d+')
+            ->bind("personnage.admin.add.sort")
+            ->method('GET|POST')
+            ->convert('personnage', 'converter.personnage:convert')
+            ->before($mustBeOrga);
+
+        /**
+         * Retrait d'un sortilège (orga)
+         */
+        $controllers->match('/admin/{personnage}/remove/sort','LarpManager\Controllers\PersonnageController::adminRemoveSortAction')
+            ->assert('personnage', '\d+')
+            ->assert('sort', '\d+')
+            ->bind("personnage.admin.remove.sort")
+            ->method('GET|POST')
+            ->convert('personnage', 'converter.personnage:convert')
+            ->before($mustBeOrga);
+
+        /**
+		 * Page de mise à jours de la liste des potions (orga)
 		 */
 		$controllers->match('/admin/{personnage}/update/potion','LarpManager\Controllers\PersonnageController::adminUpdatePotionAction')
 			->assert('personnage', '\d+')
@@ -312,6 +398,28 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 			->method('GET|POST')
 			->convert('personnage', 'converter.personnage:convert')
 			->before($mustBeOrga);
+
+        /**
+         * Ajout d'une potion (orga)
+         */
+        $controllers->match('/admin/{personnage}/add/potion','LarpManager\Controllers\PersonnageController::adminAddPotionAction')
+            ->assert('personnage', '\d+')
+            ->assert('potion', '\d+')
+            ->bind("personnage.admin.add.potion")
+            ->method('GET|POST')
+            ->convert('personnage', 'converter.personnage:convert')
+            ->before($mustBeOrga);
+
+        /**
+         * Retrait d'une potion (orga)
+         */
+        $controllers->match('/admin/{personnage}/remove/potion','LarpManager\Controllers\PersonnageController::adminRemovePotionAction')
+            ->assert('personnage', '\d+')
+            ->assert('sort', '\d+')
+            ->bind("personnage.admin.remove.potion")
+            ->method('GET|POST')
+            ->convert('personnage', 'converter.personnage:convert')
+            ->before($mustBeOrga);
 			
 		/**
 		 * Modification des ingrédients
@@ -374,7 +482,7 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 			->before($mustBeOrga);
 			
 		/**
-		 * Mise à jours des prieres
+		 * Page de mise à jours des prieres
 		 */
 		$controllers->match('/admin/{personnage}/update/priere','LarpManager\Controllers\PersonnageController::adminUpdatePriereAction')
 			->assert('personnage', '\d+')
@@ -382,9 +490,31 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 			->method('GET|POST')
 			->convert('personnage', 'converter.personnage:convert')
 			->before($mustBeOrga);
+
+        /**
+         * Ajout d'une prière (orga)
+         */
+        $controllers->match('/admin/{personnage}/add/priere','LarpManager\Controllers\PersonnageController::adminAddPriereAction')
+            ->assert('personnage', '\d+')
+            ->assert('priere', '\d+')
+            ->bind("personnage.admin.add.priere")
+            ->method('GET|POST')
+            ->convert('personnage', 'converter.personnage:convert')
+            ->before($mustBeOrga);
+
+        /**
+         * Retrait d'une prière (orga)
+         */
+        $controllers->match('/admin/{personnage}/remove/priere','LarpManager\Controllers\PersonnageController::adminRemovePriereAction')
+            ->assert('personnage', '\d+')
+            ->assert('sort', '\d+')
+            ->bind("personnage.admin.remove.priere")
+            ->method('GET|POST')
+            ->convert('personnage', 'converter.personnage:convert')
+            ->before($mustBeOrga);
 			
 		/**
-		 * Mise à jours des prieres
+		 * Mise à jours des âges
 		 */
 		$controllers->match('/admin/{personnage}/update/age','LarpManager\Controllers\PersonnageController::adminUpdateAgeAction')
 			->assert('personnage', '\d+')
@@ -500,7 +630,55 @@ class PersonnageControllerProvider implements ControllerProviderInterface
 			->method('GET|POST')
 			->convert('personnage', 'converter.personnage:convert')
 			->before($mustBeOrga);
-			
+
+		/**
+		 * Ajoute un evenement de chronologie au personnage
+		 * Accessible uniquement aux orgas
+		 */
+		$controllers->match('/admin/{personnage}/chronologie/add','LarpManager\Controllers\PersonnageController::adminAddChronologieAction')
+			->assert('personnage', '\d+')
+			->bind("personnage.admin.chronologie.add")
+			->method('GET|POST')
+			->convert('personnage', 'converter.personnage:convert')
+			->before($mustBeOrga);
+
+		/**
+		 * Supprime un evenement de chronologie au personnage
+		 * Accessible uniquement aux orgas
+		 */
+		$controllers->match('/admin/{personnage}/chronologie/{personnageChronologie}/delete','LarpManager\Controllers\PersonnageController::adminDeleteChronologieAction')
+			->assert('personnage', '\d+')
+			->assert('personnageChronologie', '\d+')
+			->bind("personnage.admin.chronologie.delete")
+			->method('GET|POST')
+			->convert('personnage', 'converter.personnage:convert')
+			->convert('personnageChronologie', 'converter.personnageChronologie:convert')
+			->before($mustBeOrga);	
+
+		/**
+		 * Ajoute une lignée au personnage
+		 * Accessible uniquement aux orgas
+		 */
+		$controllers->match('/admin/{personnage}/lignee/add','LarpManager\Controllers\PersonnageController::adminAddLigneeAction')
+			->assert('personnage', '\d+')
+			->bind("personnage.admin.lignee.add")
+			->method('GET|POST')
+			->convert('personnage', 'converter.personnage:convert')
+			->before($mustBeOrga);
+
+		/**
+		 * Supprime une lignée au personnage
+		 * Accessible uniquement aux orgas
+		 */
+		$controllers->match('/admin/{personnage}/lignee/{personnageLignee}/delete','LarpManager\Controllers\PersonnageController::adminDeleteLigneeAction')
+			->assert('personnage', '\d+')
+			->assert('personnageLignee', '\d+')
+			->bind("personnage.admin.lignee.delete")
+			->method('GET|POST')
+			->convert('personnage', 'converter.personnage:convert')
+			->convert('personnageLignee', 'converter.personnageLignee:convert')
+			->before($mustBeOrga);	
+
 		/**
 		 * Modifie le background d'un personnage
 		 * Accessible uniquement aux orgas

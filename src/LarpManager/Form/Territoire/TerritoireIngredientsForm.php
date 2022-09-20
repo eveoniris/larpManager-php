@@ -24,6 +24,8 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+use LarpManager\Repository\IngredientRepository;
+
 /**
  * LarpManager\Form\TerritoireIngredientsForm
  *
@@ -48,6 +50,9 @@ class TerritoireIngredientsForm extends AbstractType
 					'expanded' => true,
 					'mapped' => true,
 					'property' => 'label',
+					'query_builder' => function(IngredientRepository $er) {
+						return $er->createQueryBuilder('i')->orderBy('i.label', 'ASC')->groupby('i.label');
+					},
 				));
 	}
 	

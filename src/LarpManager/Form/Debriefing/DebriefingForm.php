@@ -20,10 +20,19 @@
 
 namespace LarpManager\Form\Debriefing;
 
+use LarpManager\Repository\UserRepository;
+use LarpManager\Repository\GroupeRepository;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Doctrine\ORM\EntityRepository;
+use LarpManager\Entities\Groupe;
+use LarpManager\Entities\Gn;
+use LarpManager\Entities\User;
 
 /**
  * LarpManager\Form\DebriefingForm
@@ -41,31 +50,53 @@ class DebriefingForm extends AbstractType
 	 */
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
-		$builder->add('titre','text', array(
+		$builder->add('titre', TextType::class, array(
 					'required' => true,
 					'label' => 'Titre',
 				))
-				->add('text','textarea', array(
+				->add('text', TextareaType::class, array(
 					'required' => true,
 					'label' => 'Contenu',
 					'attr' => array(
 						'class' => 'tinymce',
 						'rows' => 15),
 				))
-				->add('groupe','entity', array(
+				->add('player', EntityType::class, array(
+						'required' => false,
+						'label' => 'Joueur',
+						'class' => User::class,
+						'property' => 'username',
+						'placeholder' => 'Choisissez le joueur qui vous a fourni ce debriefing',
+						'query_builder' => function(UserRepository $p) {
+							$qb = $p->createQueryBuilder('p');
+							$qb->orderBy('p.username', 'ASC');
+							return $qb;
+						}
+				))
+				->add('groupe', EntityType::class, array(
 						'required' => true,
 						'label' => 'Groupe',
-						'class' => 'LarpManager\Entities\Groupe',
+						'class' => Groupe::class,
 						'property' => 'nom',
+						'query_builder' => function(GroupeRepository $g) {
+							$qb = $g->createQueryBuilder('g');
+							$qb->orderBy('g.nom', 'ASC');
+							return $qb;
+						}
 				))
-				->add('gn', 'entity', array(
+				->add('gn', EntityType::class, array(
 						'required' => true,
 						'label' => 'GN',
-						'class' => 'LarpManager\Entities\Gn',
+						'class' => Gn::class,
 						'property' => 'label',
 						'placeholder' => 'Choisissez le GN auquel est lié ce debriefing',
 						'empty_data'  => null
-				));
+				))
+                ->add('document', FileType::class, array(
+                        'label' => 'Téléversez un document PDF',
+                        'required' => false,
+                        'mapped' => false,
+                        'attr' => ['accept' => '.pdf'],));
 	}
 	
 	/**

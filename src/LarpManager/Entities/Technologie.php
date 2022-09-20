@@ -14,8 +14,13 @@ use LarpManager\Entities\BaseTechnologie;
 /**
  * LarpManager\Entities\Technologie
  *
- * @Entity()
+ * @Entity(repositoryClass="LarpManager\Repository\TechnologieRepository")
  */
 class Technologie extends BaseTechnologie
 {
+
+    public function getPrintLabel()
+	{
+		return preg_replace('/[^a-z0-9]+/', '_', strtolower($this->getLabel()));
+	}
 }

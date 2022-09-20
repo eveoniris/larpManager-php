@@ -416,9 +416,6 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 			->convert('groupeSecondaire', 'converter.secondaryGroup:convert')
 			->convert('postulant', 'converter.postulant:convert')
 			->before($mustBeResponsable);
-
-			
-			
 			
 		/**
 		 * Liste des religions
@@ -511,6 +508,18 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 			->bind("participant.potion.document")
 			->method('GET')
 			->before($mustOwnParticipant);
+
+		/**
+		 * Obtenir le document lié à une technologie
+		 */
+		$controllers->match('/{participant}/technologie/{technologie}/document/{filename}', 'LarpManager\Controllers\ParticipantController::technologieDocumentAction')
+			->assert('participant', '\d+')
+			->convert('participant', 'converter.participant:convert')
+			->assert('technologie', '\d+')
+			->convert('technologie', 'converter.technologie:convert')
+			->bind("participant.technologie.document")
+			->method('GET')
+			->before($mustOwnParticipant);			
 		
 		/**
 		 * Détail d'un sort
@@ -533,6 +542,30 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 			->assert('sort', '\d+')
 			->convert('sort', 'converter.sort:convert')
 			->bind("participant.sort.document")
+			->method('GET')
+			->before($mustOwnParticipant);
+			
+		/**
+		 * Détail d'une connaissance
+		 */
+		$controllers->match('/{participant}/connaissance/{connaissance}/detail', 'LarpManager\Controllers\ParticipantController::connaissanceDetailAction')
+			->assert('participant', '\d+')
+			->convert('participant', 'connaissance.participant:convert')
+			->assert('connaissance', '\d+')
+			->convert('connaissance', 'converter.connaissance:convert')
+			->bind("participant.connaissance.detail")
+			->method('GET')
+			->before($mustOwnParticipant);
+			
+		/**
+		 * Obtenir le document lié à une connaissance
+		 */
+		$controllers->match('/{participant}/connaissance/{connaissance}/document/{filename}', 'LarpManager\Controllers\ParticipantController::connaissanceDocumentAction')
+			->assert('participant', '\d+')
+			->convert('participant', 'converter.participant:convert')
+			->assert('connaissance', '\d+')
+			->convert('connaissance', 'converter.connaissance:convert')
+			->bind("participant.connaissance.document")
 			->method('GET')
 			->before($mustOwnParticipant);
 			
@@ -589,6 +622,18 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 			->bind("participant.competence.document")
 			->method('GET')
 			->before($mustOwnParticipant);
+
+		/**
+		 * Obtenir le document lié à une langue
+		 */
+		$controllers->match('/{participant}/langue/{langue}/document/{filename}','LarpManager\Controllers\ParticipantController::langueDocumentAction')
+			->assert('participant', '\d+')
+			->convert('participant', 'converter.participant:convert')
+			->assert('langue', '\d+')
+			->convert('langue', 'converter.langue:convert')
+			->bind("participant.langue.document")
+			->method('GET')
+			->before($mustOwnParticipant);
 			
 		/**
 		 * Détail du personnage
@@ -633,8 +678,7 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 			->method('GET|POST')
 			->convert('participant', 'converter.participant:convert')
 			->before($mustOwnParticipant);
-				
-			
+
 		/**
 		 * Formulaire d'ajout des langues gagnés grace à litterature initie
 		 * Accessible uniquement au proprietaire du personnage
@@ -657,7 +701,17 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 			->convert('participant', 'converter.participant:convert')
 			->before($mustOwnParticipant);
 		
-
+		/**
+		 * Formulaire de choix de technologie
+		 * Accessible uniquement au proprietaire du personnage
+		 */
+		$controllers->match('/{participant}/personnage/technologie','LarpManager\Controllers\ParticipantController::technologieAction')
+			->assert('personnage', '\d+')
+			->bind("participant.personnage.technologie")
+			->method('GET|POST')
+			->convert('participant', 'converter.participant:convert')
+			->before($mustOwnParticipant);
+				
 		/**
 		 * Formulaire de choix du domaine de magie
 		 * Accessible uniquement au proprietaire du personnage

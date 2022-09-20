@@ -1,0 +1,21 @@
+{% extends "layout.twig" %}
+
+{% block title %}Prières{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path('magie.priere.list') }}">Liste des prières</a></li>
+		<li class="active">Personnages ayant {{ priere.label }} - Niveau {{ priere.niveau }}</li>
+	</ol>
+	
+	{{ include('admin/personnage/search.twig',
+		 	{
+			 displayAdminToolbar: false,
+			 displaySearchFilter: false
+		  	}
+  		)
+	}}
+
+{% endblock content %}

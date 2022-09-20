@@ -21,11 +21,11 @@
 					<div class="col-md-8">
 						{{ construction.label }} -- {{ construction.defense }}
 						{{ construction.description|markdown }}
-						
 					</div>
 					<div class="col-md-4">
 						<a href="{{ path('construction.update',{'construction':construction.id}) }}"><i class="fa fa-pencil"></i> Modifier</a>&nbsp;|&nbsp;
 						<a href="{{ path('construction.detail',{'construction':construction.id}) }}"><i class="fa fa-eye"></i> Detail</a>&nbsp;|&nbsp;
+						<a href="{{ path('construction.territoires',{'construction':construction.id}) }}"><i class="fa fa-eye"></i> Territoires ({{ construction.territoires|length }})</a>&nbsp;|&nbsp;
 						<a href="{{ path('construction.delete',{'construction':construction.id}) }}"><i class="fa fa-eraser"></i> Supprimer</a>
 					</div>
 				</div>

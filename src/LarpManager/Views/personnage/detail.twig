@@ -221,7 +221,7 @@
 				</div>
 				
 				<div class="list-group-item">
-					<h6 class="list-group-item-heading">Langages connus</h6>
+					<h6 class="list-group-item-heading">Langues connues</h6>
 					<p class="list-group-item-text">
 						<ul>
 						{% for personnageLangue in personnage.personnageLangues %}
@@ -255,7 +255,7 @@
 				<div class="list-group-item">
 					<h6 class="list-group-item-heading">Groupes secondaires</h6>
 					{% for groupeSecondaire in personnage.secondaryGroups %}
-						<a href="{{ path('groupeSecondaire.admin.detail', {'groupe':groupeSecondaire.id}) }}">{{ groupeSecondaire.label }}</a>
+						<a href="{{ path('groupeSecondaire.admin.detail', {'groupe':groupeSecondaire.id}) }}">{% if groupeSecondaire.secret %}<span style="color:red;">Secret</span> - {% endif %}{{ groupeSecondaire.label }}</a>
 					{% endfor %}
 					{% if personnage.postulants|length > 0 %}
 						{% for postulant in personnage.postulants %}

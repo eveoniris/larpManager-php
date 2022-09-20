@@ -122,11 +122,11 @@ class RestaurationController
 				
 			if ( $form->get('save')->isClicked())
 			{
-				return $app->redirect($app['url_generator']->generate('restauration.list'),301);
+				return $app->redirect($app['url_generator']->generate('restauration.list'),303);
 			}
 			else if ( $form->get('save_continue')->isClicked())
 			{
-				return $app->redirect($app['url_generator']->generate('restauration.add'),301);
+				return $app->redirect($app['url_generator']->generate('restauration.add'),303);
 			}
 		}
 		
@@ -240,7 +240,7 @@ class RestaurationController
 			$app['orm.em']->flush();
 				
 			$app['session']->getFlashBag()->add('success', 'La restauration alimentaire a été modifié.');
-			return $app->redirect($app['url_generator']->generate('restauration.list'),301);
+			return $app->redirect($app['url_generator']->generate('restauration.list'),303);
 		}
 
 		return $app['twig']->render('admin/restauration/update.twig', array(
@@ -272,7 +272,7 @@ class RestaurationController
 			$app['orm.em']->flush();
 				
 			$app['session']->getFlashBag()->add('success', 'Le lieu de restauration a été supprimé.');
-			return $app->redirect($app['url_generator']->generate('restauration.list'),301);
+			return $app->redirect($app['url_generator']->generate('restauration.list'),303);
 		}
 
 		return $app['twig']->render('admin/restauration/delete.twig', array(

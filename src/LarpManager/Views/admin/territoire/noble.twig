@@ -20,7 +20,7 @@
 		<tr>
 			<td>{{ territoire.nom }}</td>
 			<td>{{ territoire.groupes|join(', ') }}</td>
-			<td>{{ territoire.nbrNoble|default(0) }}</td>
+			<td>{{ territoire.nbrNoble|length|default(0) }}</td>
 		</tr>
 	{% endfor %}
 </tbody>

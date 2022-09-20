@@ -170,19 +170,35 @@ class Territoire extends BaseTerritoire implements \JsonSerializable
 	}
 	
 	/**
-	 * Fourni la richesse d'un territoire, en fonction de son statut (1/2 si désordre, 1 pièce si désolation), et des constructions
+	 * Fourni la richesse d'un territoire, en fonction de son statut (1/2 si instable), et des constructions
 	 */
 	public function getRichesse()
 	{
 		$tresor = parent::getTresor();
-		if ( ! $tresor) $tresor = 0;
+		if ( !$tresor) $tresor = 0;
+
+		// TODO ajouter les revenus des bâtiments.
+		foreach ( $this->getConstructions() as $construction)
+		{
+			if ($construction->getId() == 6) /* Comptoir commercial */
+			{
+				$tresor += 5;
+			}
+			if ($construction->getId() == 23) /* Foyer d'orfèvre */
+			{
+				$tresor += 10;
+			}
+			if ($construction->getId() == 10) /* Port */
+			{
+				$tresor += 5;
+			}
+		}	
 		
 		// gestion de l'état du territoire
-		switch ($this->getStatut() )
+		switch ($this->getStatut())
 		{
 			case 'Normal': return $tresor;
-			case 'Désordre': return round($tresor/ 2);
-			case 'Désolation': return 1;
+			case 'Instable': return ceil($tresor/2);
 			default : return $tresor;
 		}
 	}
@@ -204,24 +220,31 @@ class Territoire extends BaseTerritoire implements \JsonSerializable
 	}
 	
 	/**
-	 * Fourni le nombre de personnage noble rataché à ce territoire
+	 * Fourni le nombre de personnages nobles rattachés à ce territoire
 	 */
 	public function getNbrNoble()
 	{
-		$total = 0;
-		foreach ( $this->getGroupes() as $groupe)
+		$nobles= [];
+		foreach ( $this->getGroupesFull() as $groupe)
 		{
 			foreach ( $groupe->getPersonnages() as $personnage )
 			{
-				if ( $personnage->hasCompetence('Noblesse')) $total++;
+				if ( $personnage->hasCompetence('Noblesse')){
+					$nobles[] = $personnage->getId();
+				}
 			}
 		}
 		foreach ($this->getTerritoires() as $territoire)
 		{
-			$total = $total + $territoire->getNbrNoble();			
+			$nobles = array_unique(array_merge($nobles, $territoire->getNbrNoble()));
+			/*
+			echo "<pre>";
+			echo $territoire->getNom()." : ".count($territoire->getNbrNoble())."/".count($nobles);
+			echo "</pre>";
+			echo "<hr />";
+			*/
 		}
-		
-		return $total;
+		return array_unique($nobles);
 	}
 	
 	/**
@@ -250,6 +273,21 @@ class Territoire extends BaseTerritoire implements \JsonSerializable
 		if ( $this->getTerritoire() )
 		{
 			return $this->getTerritoire()->getRoot();	
+		}
+		else
+		{
+			return $this;
+		}		
+	}
+
+	/**
+	 * Fourni l'arbre des territoires'
+	 */
+	public function getTree()
+	{
+		if ( $this->getTerritoire() )
+		{
+			return $this .' --- '. $this->getTerritoire() .' --- '. $this->getTerritoire()->getRoot();	
 		}
 		else
 		{
@@ -518,6 +556,21 @@ class Territoire extends BaseTerritoire implements \JsonSerializable
 		return $this;
 	}
 	
+	public function getGroupesFull()
+	{
+		$groupes = array();
+		if ( $this->getGroupe() )
+		{
+			$groupes[] = $this->getGroupe();
+		}
+		foreach ( $this->getTerritoires() as $territoire )
+		{
+			$groupes = array_merge($groupes,$territoire->getGroupesFull());
+		}
+	
+		return array_unique($groupes);
+	}
+
 	/**
 	 * Fourni le nom de tous les groupes présents dans ce territoire
 	 */ 
@@ -556,7 +609,7 @@ class Territoire extends BaseTerritoire implements \JsonSerializable
 	}
 	
 	/**
-	 * Fourni l'indicateur d'ordre/désordre
+	 * Fourni l'indicateur d'ordre/Instable
 	 */
 	public function getStatutIndex()
 	{
@@ -564,10 +617,8 @@ class Territoire extends BaseTerritoire implements \JsonSerializable
 		{
 			case 'Normal' :
 				return 0;
-			case 'Désordre' :
+			case 'Instable' :
 				return 1;
-			case 'Désolation' :
-				return 2;
 			default :
 				return 0;
 		}

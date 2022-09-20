@@ -1291,7 +1291,7 @@ class GroupeController
 			$app['orm.em']->flush();
 			
 			$app['session']->getFlashBag()->add('success','Le nombre de place disponible a été mis à jour');
-			return $app->redirect($app['url_generator']->generate('groupe.admin.list'),301);
+			return $app->redirect($app['url_generator']->generate('groupe.admin.list'),303);
 		}
 		
 		return $app['twig']->render('admin/groupe/place.twig', array(
@@ -1321,7 +1321,7 @@ class GroupeController
 		if ( $form->isValid() )
 		{
 			$app['session']->getFlashBag()->add('success','Le background du groupe a été créé');
-			return $app->redirect($app['url_generator']->generate('groupe.admin.detail', array('index'=> $groupe->getId()) ),301);
+			return $app->redirect($app['url_generator']->generate('groupe.admin.detail', array('index'=> $groupe->getId()) ),303);
 		}
 		
 		return $app['twig']->render('admin/groupe/background/add.twig', array(
@@ -1356,7 +1356,7 @@ class GroupeController
 			$app['orm.em']->flush();
 			
 			$app['session']->getFlashBag()->add('success','Le background du groupe a été mis à jour');
-			return $app->redirect($app['url_generator']->generate('groupe.admin.detail', array('index'=> $groupe->getId()) ),301);
+			return $app->redirect($app['url_generator']->generate('groupe.admin.detail', array('index'=> $groupe->getId()) ),303);
 		}
 		
 		return $app['twig']->render('admin/groupe/background/update.twig', array(
@@ -1418,11 +1418,11 @@ class GroupeController
 			 */
 			if ( $form->get('save')->isClicked())
 			{
-				return $app->redirect($app['url_generator']->generate('groupe.admin.list'),301);
+				return $app->redirect($app['url_generator']->generate('groupe.admin.list'),303);
 			}
 			else if ( $form->get('save_continue')->isClicked())
 			{
-				return $app->redirect($app['url_generator']->generate('groupe.add'),301);
+				return $app->redirect($app['url_generator']->generate('groupe.add'),303);
 			}
 		}
 		

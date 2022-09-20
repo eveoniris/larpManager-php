@@ -7,7 +7,7 @@
 	<ol class="breadcrumb">
 		<li><a href="{{ path('homepage') }}">Accueil</a></li>
 		<li><a href="{{ path('gn.detail', {'gn' : participant.gn.id}) }}">{{ participant.gn.label }}</a></li>
-		<li><a href="{{ path('gn.personnage', {'gn': participant.gn.id}) }}">{{ participant.personnage.nom }} {{ participant.personnage.surnom }}</a></li>
+		<li><a href="{{ path('gn.personnage', {'gn': participant.gn.id}) }}">{{ participant.personnage.nom }}</a></li>
 		<li><a href="{{ path("participant.groupeSecondaire.detail", {'participant': participant.id, 'groupeSecondaire':groupeSecondaire.id}) }}">{{ groupeSecondaire.label }}</a></li>
 		<li class="active">Refus d'un postulant</li>
 	</ol>
@@ -29,7 +29,7 @@
 				</div>
 				
 				<p>Le message suivant sera envoyé au postulant :</p>
-				<p>"Nous sommes désolés mais le groupe est au complet ou bien nous n'avons pas confiance en vous, nous ne retenons pas votre candidature, mais si vous êtes très motivé, vous pourrez chercher à nous rencontrer en jeu pour en discuter de vive voix"</p>
+				<p>"Nous sommes désolés mais le groupe est au complet ou bien nous n'avons pas confiance en vous et nous ne retenons pas votre candidature. Mais si vous êtes motivé, vous pourrez chercher à nous rencontrer en jeu pour en discuter de vive voix."</p>
 				{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
 				{{ form(form) }}
 			</fieldset>

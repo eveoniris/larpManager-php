@@ -7,7 +7,7 @@
 <ol class="breadcrumb">
 	<li><a href="{{ path('homepage')  }}">Accueil</a></li>
 	<li><a href="{{ path('gn.detail', {'gn' : participant.gn.id}) }}">{{ participant.gn.label }}</a></li>
-	<li><a href="{{ path('gn.personnage', {'gn': participant.gn.id}) }}">{{ participant.personnage.nom }} - {{ participant.personnage.surnom }}</a></li>
+	<li><a href="{{ path('gn.personnage', {'gn': participant.gn.id}) }}">{{ participant.personnage.nom }}</a></li>
 	<li class="active">{{ sort.label }} - {{ sort.domaine.label }} Niveau {{ sort.niveau }}</li>
 </ol>
 
@@ -19,7 +19,7 @@
 	
 	<blockquote>{{ sort.description|markdown }}</blockquote>
 	
-	<center><h6>Coût en Mana : {% if sort.domaine in participant.personnage.domaines %}{{ sort.niveau }}{% else %}{{ sort.niveau + 1 }}{% endif %}</h6></center>
+	<center><h6>Coût en Perles : {% if sort.domaine in participant.personnage.domaines %}{{ sort.niveau + 1 }}{% else %}{{ sort.niveau + 2 }}{% endif %}</h6></center>
 	
 	<object type="application/pdf" width="100%" height="1200px" >
 		<param name="src" value="{{ path('participant.sort.document',{'participant': participant.id, 'sort' :sort.id, 'filename': filename}) }}" />

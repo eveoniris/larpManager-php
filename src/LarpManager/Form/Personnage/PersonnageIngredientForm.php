@@ -49,14 +49,14 @@ class PersonnageIngredientForm extends AbstractType
 				'allow_add' => true,
 				'allow_delete' => true,
 				'by_reference' => false,
-				'type' => new PersonnageIngredientType()
+				'type' => new PersonnageIngredientType()				
 			))
 			->add('random','integer', array(
 					'mapped' => false,
 					'label' => 'X ingrédients choisis au hasard',
 					'required' => false,
 					'attr' => array(
-							'help' => 'Indiquez combien d\'ingrédient il faut ajouter à ce groupe.'
+						'help' => 'Indiquez combien d\'ingrédient il faut ajouter à ce personnage.'
 					),
 			))
 			->add('valider','submit', array('label' => 'Valider'));

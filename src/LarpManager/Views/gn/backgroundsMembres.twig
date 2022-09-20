@@ -16,7 +16,7 @@ body {
 	
 	{% for background in personnage.backgrounds('OWNER') if background.gn.id == gn.id %}
 		<h2>#{{ groupe.numero }} -- {{ groupe.nom }}</h2>
-		<h4>#{{personnage.id }} -- {{ personnage.nom }} {{ personnage.surnom }}</h4>		
+		<h4>#{{personnage.id }} -- {{ personnage.nom }} ({{ personnage.surnom }})</h4>		
 		{{ background.text|markdown }}
 		<hr style="page-break-after: always;" />
 	{% endfor %}

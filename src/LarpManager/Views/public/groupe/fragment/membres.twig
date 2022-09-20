@@ -35,8 +35,7 @@
 				
 						<p>
 							{% if joueur.personnage %}
-								{{ joueur.personnage.nom }} {{ joueur.personnage.surnom }}</a>
-								-- {{ joueur.personnage.classeName }}
+								#{{ joueur.personnage.id }} - {{ joueur.personnage.nom }}{% if joueur.personnage.surnom %} ({{ joueur.personnage.surnom }}){% endif %} - {{ joueur.personnage.classeName }}
 							{% else %}
 								N'a pas encore créé son personnage
 							{% endif %}

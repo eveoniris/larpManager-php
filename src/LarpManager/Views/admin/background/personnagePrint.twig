@@ -8,8 +8,6 @@ body {
 </style>
 {% endblock style %}
 
-
-
 {% block content %}
 
 	{% for groupeGn in groupeGns %}
@@ -19,7 +17,7 @@ body {
 			{% for background in backgrounds if date(background.creationDate) < date('-8 month')%}
 				{% if groupeGn.gn.id == background.gn.id %}
 				<h2>#{{ groupeGn.groupe.numero }} {{ groupeGn.groupe.nom }} ({{ background.gn.label }})</h2>
-				<h3>#{{ background.personnage.id }} {{ background.personnage.nom }}{% if background.personnage.surnom %} alias {{ background.personnage.surnom }}{% endif %}
+				<h3>#{{ background.personnage.id }} {{ background.personnage.nom }}{% if background.personnage.surnom %} ({{ background.personnage.surnom }}){% endif %}
 						
 				{{ background.text|markdown }}
 		

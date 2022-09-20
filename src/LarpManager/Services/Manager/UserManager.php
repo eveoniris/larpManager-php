@@ -463,7 +463,7 @@ class UserManager implements UserProviderInterface
 				if ($user->getId() && $dup->getId() == $user->getId()) {
 					continue;
 				}
-				$errors['email'] = 'An account with that email address already exists.';
+				$errors['email'] = 'Adresse mail indisponible ou invalide, veuillez en choisir une autre.';
 			}
 		}
 	
@@ -474,13 +474,13 @@ class UserManager implements UserProviderInterface
 				if ($user->getId() && $dup->getId() == $user->getId()) {
 					continue;
 				}
-				$errors['username'] = 'An account with that username already exists.';
+				$errors['username'] = 'Pseudonyme invalide, veuillez en choisir un autre.';
 			}
 		}
 	
 		// If username is required, ensure it is set.
 		if ( !$user->getRealUsername()) {
-			$errors['username'] = 'Username is required.';
+			$errors['username'] = 'Pseudonyme requis.';
 		}
 	
 		return $errors;

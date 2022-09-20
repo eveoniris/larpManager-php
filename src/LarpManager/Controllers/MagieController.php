@@ -33,6 +33,8 @@ use LarpManager\Form\PriereDeleteForm;
 use LarpManager\Form\SphereForm;
 use LarpManager\Form\SphereDeleteForm;
 use LarpManager\Entities\Potion;
+use LarpManager\Entities\Priere;
+use LarpManager\Entities\Sort;
 
 /**
  * LarpManager\Controllers\MagieController
@@ -43,6 +45,9 @@ use LarpManager\Entities\Potion;
 class MagieController
 {
 		
+    // liste des colonnes à afficher par défaut sur les vues 'personnages' (l'ordre est pris en compte)
+    private $defaultPersonnageListColumnKeys = ['colId', 'colStatut', 'colNom', 'colClasse', 'colGroupe', 'colUser'];
+    
 	/**
 	 * Liste des sphere
 	 *
@@ -97,7 +102,7 @@ class MagieController
 			$app['orm.em']->flush();
 				
 			$app['session']->getFlashBag()->add('success','La sphere a été ajouté');
-			return $app->redirect($app['url_generator']->generate('magie.sphere.detail',array('sphere'=>$sphere->getId())),301);
+			return $app->redirect($app['url_generator']->generate('magie.sphere.detail',array('sphere'=>$sphere->getId())),303);
 		}
 	
 		return $app['twig']->render('admin/sphere/add.twig', array(
@@ -131,7 +136,7 @@ class MagieController
 			$app['orm.em']->flush();
 				
 			$app['session']->getFlashBag()->add('success','La sphere a été sauvegardé');
-			return $app->redirect($app['url_generator']->generate('magie.sphere.detail',array('sphere'=>$sphere->getId())),301);
+			return $app->redirect($app['url_generator']->generate('magie.sphere.detail',array('sphere'=>$sphere->getId())),303);
 		}
 	
 		return $app['twig']->render('admin/sphere/update.twig', array(
@@ -164,7 +169,7 @@ class MagieController
 			$app['orm.em']->flush();
 				
 			$app['session']->getFlashBag()->add('success','La sphere a été suprimé');
-			return $app->redirect($app['url_generator']->generate('magie.sphere.list'),301);
+			return $app->redirect($app['url_generator']->generate('magie.sphere.list'),303);
 		}
 	
 		return $app['twig']->render('admin/sphere/delete.twig', array(
@@ -232,7 +237,7 @@ class MagieController
 					
 				if (!$extension || ! in_array($extension, array('pdf'))) {
 					$app['session']->getFlashBag()->add('error','Désolé, votre document ne semble pas valide (vérifiez le format de votre document)');
-					return $app->redirect($app['url_generator']->generate('magie.priere.list'),301);
+					return $app->redirect($app['url_generator']->generate('magie.priere.list'),303);
 				}
 					
 				$documentFilename = hash('md5',$priere->getLabel().$filename . time()).'.'.$extension;
@@ -246,7 +251,7 @@ class MagieController
 			$app['orm.em']->flush();
 	
 			$app['session']->getFlashBag()->add('success','La priere a été ajouté');
-			return $app->redirect($app['url_generator']->generate('magie.priere.detail',array('priere'=>$priere->getId())),301);
+			return $app->redirect($app['url_generator']->generate('magie.priere.detail',array('priere'=>$priere->getId())),303);
 		}
 	
 		return $app['twig']->render('admin/priere/add.twig', array(
@@ -288,7 +293,7 @@ class MagieController
 					
 				if (!$extension || ! in_array($extension, array('pdf'))) {
 					$app['session']->getFlashBag()->add('error','Désolé, votre document ne semble pas valide (vérifiez le format de votre document)');
-					return $app->redirect($app['url_generator']->generate('magie.priere.list'),301);
+					return $app->redirect($app['url_generator']->generate('magie.priere.list'),303);
 				}
 					
 				$documentFilename = hash('md5',$priere->getLabel().$filename . time()).'.'.$extension;
@@ -302,7 +307,7 @@ class MagieController
 			$app['orm.em']->flush();
 	
 			$app['session']->getFlashBag()->add('success','La priere a été sauvegardé');
-			return $app->redirect($app['url_generator']->generate('magie.priere.detail',array('priere'=>$priere->getId())),301);
+			return $app->redirect($app['url_generator']->generate('magie.priere.detail',array('priere'=>$priere->getId())),303);
 		}
 	
 		return $app['twig']->render('admin/priere/update.twig', array(
@@ -335,7 +340,7 @@ class MagieController
 			$app['orm.em']->flush();
 	
 			$app['session']->getFlashBag()->add('success','La priere a été suprimé');
-			return $app->redirect($app['url_generator']->generate('magie.priere.list'),301);
+			return $app->redirect($app['url_generator']->generate('magie.priere.list'),303);
 		}
 	
 		return $app['twig']->render('admin/priere/delete.twig', array(
@@ -384,6 +389,41 @@ class MagieController
 	}
 	
 	/**
+	 * Liste des personnages ayant cette prière
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function prierePersonnagesAction(Request $request, Application $app, Priere $priere)
+	{
+	    $routeName = 'magie.priere.personnages';
+	    $routeParams = array('priere' => $priere->getId());
+	    $twigFilePath = 'admin/priere/personnages.twig';
+	    $columnKeys = $this->defaultPersonnageListColumnKeys;
+	    $personnages =  $priere->getPersonnages();
+	    $additionalViewParams = array(
+	        'priere' => $priere
+	    );
+	    
+	    // handle the request and return an array containing the parameters for the view
+	    $personnageSearchHandler = $app['personnage.manager']->getSearchHandler();
+	    
+	    $viewParams = $personnageSearchHandler->getSearchViewParameters(
+	        $request,
+	        $routeName,
+	        $routeParams,
+	        $columnKeys,
+	        $additionalViewParams,
+	        $personnages
+	        );
+	    
+	    return $app['twig']->render(
+	        $twigFilePath,
+	        $viewParams
+	        );	    
+	}
+	
+	/**
 	 * Liste des potions
 	 * 
 	 * @param Request $request
@@ -413,18 +453,40 @@ class MagieController
 		));
 	}
 	
-	
 	/**
 	 * Liste des personnages ayant cette potion
 	 *
 	 * @param Request $request
 	 * @param Application $app
+	 * @param Potion
 	 */
 	public function potionPersonnagesAction(Request $request, Application $app, Potion $potion)
 	{
-		return $app['twig']->render('admin/potion/personnages.twig', array(
-				'potion' => $potion,
-		));
+	    $routeName = 'magie.potion.personnages';
+	    $routeParams = array('potion' => $potion->getId());
+	    $twigFilePath = 'admin/potion/personnages.twig';
+	    $columnKeys = $this->defaultPersonnageListColumnKeys;
+	    $personnages =  $potion->getPersonnages();
+	    $additionalViewParams = array(
+	        'potion' => $potion
+	    );
+	    
+	    // handle the request and return an array containing the parameters for the view
+	    $personnageSearchHandler = $app['personnage.manager']->getSearchHandler();
+	    
+	    $viewParams = $personnageSearchHandler->getSearchViewParameters(
+	        $request,
+	        $routeName,
+	        $routeParams,
+	        $columnKeys,
+	        $additionalViewParams,
+	        $personnages
+	        );
+	    
+	    return $app['twig']->render(
+	        $twigFilePath,
+	        $viewParams
+	        );	   	    
 	}
 	
 	/**
@@ -456,7 +518,7 @@ class MagieController
 					
 				if (!$extension || ! in_array($extension, array('pdf'))) {
 					$app['session']->getFlashBag()->add('error','Désolé, votre document ne semble pas valide (vérifiez le format de votre document)');
-					return $app->redirect($app['url_generator']->generate('magie.potion.list'),301);
+					return $app->redirect($app['url_generator']->generate('magie.potion.list'),303);
 				}
 					
 				$documentFilename = hash('md5',$potion->getLabel().$filename . time()).'.'.$extension;
@@ -470,7 +532,7 @@ class MagieController
 			$app['orm.em']->flush();
 	
 			$app['session']->getFlashBag()->add('success','La potion a été ajouté');
-			return $app->redirect($app['url_generator']->generate('magie.potion.detail',array('potion'=>$potion->getId())),301);
+			return $app->redirect($app['url_generator']->generate('magie.potion.detail',array('potion'=>$potion->getId())),303);
 		}
 	
 		return $app['twig']->render('admin/potion/add.twig', array(
@@ -512,7 +574,7 @@ class MagieController
 					
 				if (!$extension || ! in_array($extension, array('pdf'))) {
 					$app['session']->getFlashBag()->add('error','Désolé, votre document ne semble pas valide (vérifiez le format de votre document)');
-					return $app->redirect($app['url_generator']->generate('magie.potion.list'),301);
+					return $app->redirect($app['url_generator']->generate('magie.potion.list'),303);
 				}
 					
 				$documentFilename = hash('md5',$potion->getLabel().$filename . time()).'.'.$extension;
@@ -526,7 +588,7 @@ class MagieController
 			$app['orm.em']->flush();
 	
 			$app['session']->getFlashBag()->add('success','La potion a été sauvegardé');
-			return $app->redirect($app['url_generator']->generate('magie.potion.detail',array('potion'=>$potion->getId())),301);
+			return $app->redirect($app['url_generator']->generate('magie.potion.detail',array('potion'=>$potion->getId())),303);
 		}
 	
 		return $app['twig']->render('admin/potion/update.twig', array(
@@ -559,7 +621,7 @@ class MagieController
 			$app['orm.em']->flush();
 	
 			$app['session']->getFlashBag()->add('success','La potion a été suprimé');
-			return $app->redirect($app['url_generator']->generate('magie.potion.list'),301);
+			return $app->redirect($app['url_generator']->generate('magie.potion.list'),303);
 		}
 	
 		return $app['twig']->render('admin/potion/delete.twig', array(
@@ -578,18 +640,6 @@ class MagieController
 	{
 		$document = $request->get('document');
 		$potion = $request->get('potion');
-	
-		// on ne peux télécharger que les documents des compétences que l'on connait
-		/*if  ( ! $app['security.authorization_checker']->isGranted('ROLE_REGLE') )
-		{
-		if ( $app['user']->getPersonnage() )
-		{
-		if ( ! $app['user']->getPersonnage()->getCompetences()->contains($competence) )
-		{
-		$app['session']->getFlashBag()->add('error', 'Vous n\'avez pas les droits necessaires');
-		}
-		}
-		}*/
 	
 		$file = __DIR__.'/../../../private/doc/'.$document;
 	
@@ -658,7 +708,7 @@ class MagieController
 			$app['orm.em']->flush();
 			
 			$app['session']->getFlashBag()->add('success','Le domaine de magie a été ajouté');
-			return $app->redirect($app['url_generator']->generate('magie.domaine.detail',array('domaine'=>$domaine->getId())),301);
+			return $app->redirect($app['url_generator']->generate('magie.domaine.detail',array('domaine'=>$domaine->getId())),303);
 		}
 		
 		return $app['twig']->render('admin/domaine/add.twig', array(
@@ -692,7 +742,7 @@ class MagieController
 			$app['orm.em']->flush();
 			
 			$app['session']->getFlashBag()->add('success','Le domaine de magie a été sauvegardé');
-			return $app->redirect($app['url_generator']->generate('magie.domaine.detail',array('domaine'=>$domaine->getId())),301);
+			return $app->redirect($app['url_generator']->generate('magie.domaine.detail',array('domaine'=>$domaine->getId())),303);
 		}
 		
 		return $app['twig']->render('admin/domaine/update.twig', array(
@@ -725,7 +775,7 @@ class MagieController
 			$app['orm.em']->flush();
 			
 			$app['session']->getFlashBag()->add('success','Le domaine de magie a été suprimé');
-			return $app->redirect($app['url_generator']->generate('magie.domaine.list'),301);
+			return $app->redirect($app['url_generator']->generate('magie.domaine.list'),303);
 		}
 		
 		return $app['twig']->render('admin/domaine/delete.twig', array(
@@ -735,7 +785,7 @@ class MagieController
 	}
 	
 	/**
-	 * Liste des sortilèges
+	 * Liste des sorts
 	 *
 	 * @param Request $request
 	 * @param Application $app
@@ -750,7 +800,7 @@ class MagieController
 	}
 	
 	/**
-	 * Detail d'un sortilèges
+	 * Detail d'un sort
 	 *
 	 * @param Request $request
 	 * @param Application $app
@@ -765,7 +815,7 @@ class MagieController
 	}
 	
 	/**
-	 * Ajoute un sortilège
+	 * Ajoute un sort
 	 *
 	 * @param Request $request
 	 * @param Application $app
@@ -783,8 +833,7 @@ class MagieController
 		if ( $form->isValid() )
 		{
 			$sort = $form->getData();
-				
-			
+
 			// Si un document est fourni, l'enregistrer
 			if ( $files['document'] != null )
 			{
@@ -794,7 +843,7 @@ class MagieController
 					
 				if (!$extension || ! in_array($extension, array('pdf'))) {
 					$app['session']->getFlashBag()->add('error','Désolé, votre document ne semble pas valide (vérifiez le format de votre document)');
-					return $app->redirect($app['url_generator']->generate('magie.sort.list'),301);
+					return $app->redirect($app['url_generator']->generate('magie.sort.list'),303);
 				}
 					
 				$documentFilename = hash('md5',$sort->getLabel().$filename . time()).'.'.$extension;
@@ -807,8 +856,8 @@ class MagieController
 			$app['orm.em']->persist($sort);
 			$app['orm.em']->flush();
 				
-			$app['session']->getFlashBag()->add('success','Le sortilége a été ajouté');
-			return $app->redirect($app['url_generator']->generate('magie.sort.detail',array('sort'=>$sort->getId())),301);
+			$app['session']->getFlashBag()->add('success','Le sort a été ajouté');
+			return $app->redirect($app['url_generator']->generate('magie.sort.detail',array('sort'=>$sort->getId())),303);
 		}
 	
 		return $app['twig']->render('admin/sort/add.twig', array(
@@ -819,7 +868,7 @@ class MagieController
 	}
 	
 	/**
-	 * Met à jour un sortilège
+	 * Met à jour un sort
 	 *
 	 * @param Request $request
 	 * @param Application $app
@@ -850,7 +899,7 @@ class MagieController
 					
 				if (!$extension || ! in_array($extension, array('pdf'))) {
 					$app['session']->getFlashBag()->add('error','Désolé, votre document ne semble pas valide (vérifiez le format de votre document)');
-					return $app->redirect($app['url_generator']->generate('magie.sort.list'),301);
+					return $app->redirect($app['url_generator']->generate('magie.sort.list'),303);
 				}
 					
 				$documentFilename = hash('md5',$sort->getLabel().$filename . time()).'.'.$extension;
@@ -863,8 +912,8 @@ class MagieController
 			$app['orm.em']->persist($sort);
 			$app['orm.em']->flush();
 				
-			$app['session']->getFlashBag()->add('success','Le sortilège a été sauvegardé');
-			return $app->redirect($app['url_generator']->generate('magie.sort.detail',array('sort'=>$sort->getId())),301);
+			$app['session']->getFlashBag()->add('success','Le sort a été sauvegardé');
+			return $app->redirect($app['url_generator']->generate('magie.sort.detail',array('sort'=>$sort->getId())),303);
 		}
 	
 		return $app['twig']->render('admin/sort/update.twig', array(
@@ -896,8 +945,8 @@ class MagieController
 			$app['orm.em']->remove($sort);
 			$app['orm.em']->flush();
 				
-			$app['session']->getFlashBag()->add('success','Le sortilège a été suprimé');
-			return $app->redirect($app['url_generator']->generate('magie.sort.list'),301);
+			$app['session']->getFlashBag()->add('success','Le sort a été supprimé');
+			return $app->redirect($app['url_generator']->generate('magie.sort.list'),303);
 		}
 	
 		return $app['twig']->render('admin/sort/delete.twig', array(
@@ -907,7 +956,7 @@ class MagieController
 	}	
 	
 	/**
-	 * Obtenir le document lié a un sortilège
+	 * Obtenir le document lié a un sort
 	 * 
 	 * @param Request $request
 	 * @param Application $app
@@ -938,7 +987,44 @@ class MagieController
 		return $app->stream($stream, 200, array(
 				'Content-Type' => 'text/pdf',
 				'Content-length' => filesize($file),
-				'Content-Disposition' => 'attachment; filename="'.$sort->getLabel().'.pdf"'
+				'Content-Disposition' => 'attachment; filename="'.$sort->getPrintLabel().'.pdf"'
 		));
 	}
+	
+	/**
+	 * Liste des personnages ayant ce sort
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Sort
+	 */
+	public function sortPersonnagesAction(Request $request, Application $app, Sort $sort)
+	{
+	    $routeName = 'magie.sort.personnages';
+	    $routeParams = array('sort' => $sort->getId());
+	    $twigFilePath = 'admin/sort/personnages.twig';
+	    $columnKeys = $this->defaultPersonnageListColumnKeys;
+	    $personnages =  $sort->getPersonnages();
+	    $additionalViewParams = array(
+	        'sort' => $sort	        
+	    );
+	    
+	    // handle the request and return an array containing the parameters for the view
+	    $personnageSearchHandler = $app['personnage.manager']->getSearchHandler();
+	    
+	    $viewParams = $personnageSearchHandler->getSearchViewParameters(
+	        $request, 
+	        $routeName, 
+	        $routeParams, 
+	        $columnKeys,
+	        $additionalViewParams,
+	        $personnages
+	        );
+	    
+	    return $app['twig']->render(
+            $twigFilePath, 
+	        $viewParams
+        );
+	}
+
 }

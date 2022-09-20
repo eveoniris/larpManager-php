@@ -64,7 +64,7 @@ class QuestionController
 			$app['orm.em']->flush();
 			
 			$app['session']->getFlashBag()->add('success', 'La question a été ajoutée.');
-			return $app->redirect($app['url_generator']->generate('question'),301);
+			return $app->redirect($app['url_generator']->generate('question'),303);
 		}
 		
 		return $app['twig']->render('admin\question\add.twig', array(
@@ -108,7 +108,7 @@ class QuestionController
 			$app['orm.em']->flush();
 				
 			$app['session']->getFlashBag()->add('success', 'La question a été mise à jour.');
-			return $app->redirect($app['url_generator']->generate('question'),301);
+			return $app->redirect($app['url_generator']->generate('question'),303);
 		}
 		
 		return $app['twig']->render('admin\question\update.twig', array(
@@ -144,7 +144,7 @@ class QuestionController
 			$app['orm.em']->flush();
 				
 			$app['session']->getFlashBag()->add('success', 'La question a été supprimée.');
-			return $app->redirect($app['url_generator']->generate('question'),301);
+			return $app->redirect($app['url_generator']->generate('question'),303);
 		}
 		
 		return $app['twig']->render('admin\question\delete.twig', array(

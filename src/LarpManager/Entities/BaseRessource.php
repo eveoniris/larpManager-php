@@ -10,6 +10,18 @@
 namespace LarpManager\Entities;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\DiscriminatorColumn;
+use Doctrine\ORM\Mapping\DiscriminatorMap;
+use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\Mapping\GeneratedValue;
+use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\InheritanceType;
+use Doctrine\ORM\Mapping\JoinColumn;
+use Doctrine\ORM\Mapping\ManyToOne;
+use Doctrine\ORM\Mapping\OneToMany;
+use Doctrine\ORM\Mapping\Table;
 
 /**
  * LarpManager\Entities\Ressource
@@ -47,6 +59,12 @@ class BaseRessource
     protected $personnageRessources;
 
     /**
+     * @OneToMany(targetEntity="TechnologiesRessources", mappedBy="ressource")
+     * @JoinColumn(name="id", referencedColumnName="ressource_id", nullable=false)
+     */
+    protected $technologiesRessources;
+
+    /**
      * @ManyToOne(targetEntity="Rarete", inversedBy="ressources")
      * @JoinColumn(name="rarete_id", referencedColumnName="id", nullable=false)
      */
@@ -56,15 +74,16 @@ class BaseRessource
     {
         $this->groupeHasRessources = new ArrayCollection();
         $this->personnageRessources = new ArrayCollection();
+        $this->technologiesRessources= new ArrayCollection();
     }
 
     /**
      * Set the value of id.
      *
      * @param integer $id
-     * @return \LarpManager\Entities\Ressource
+     * @return Ressource
      */
-    public function setId($id)
+    public function setId(int $id): Ressource
     {
         $this->id = $id;
 
@@ -76,7 +95,7 @@ class BaseRessource
      *
      * @return integer
      */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
@@ -85,9 +104,9 @@ class BaseRessource
      * Set the value of label.
      *
      * @param string $label
-     * @return \LarpManager\Entities\Ressource
+     * @return Ressource
      */
-    public function setLabel($label)
+    public function setLabel(string $label): Ressource
     {
         $this->label = $label;
 
@@ -99,7 +118,7 @@ class BaseRessource
      *
      * @return string
      */
-    public function getLabel()
+    public function getLabel(): string
     {
         return $this->label;
     }
@@ -107,10 +126,10 @@ class BaseRessource
     /**
      * Add GroupeHasRessource entity to collection (one to many).
      *
-     * @param \LarpManager\Entities\GroupeHasRessource $groupeHasRessource
-     * @return \LarpManager\Entities\Ressource
+     * @param GroupeHasRessource $groupeHasRessource
+     * @return Ressource
      */
-    public function addGroupeHasRessource(GroupeHasRessource $groupeHasRessource)
+    public function addGroupeHasRessource(GroupeHasRessource $groupeHasRessource): Ressource
     {
         $this->groupeHasRessources[] = $groupeHasRessource;
 
@@ -120,10 +139,10 @@ class BaseRessource
     /**
      * Remove GroupeHasRessource entity from collection (one to many).
      *
-     * @param \LarpManager\Entities\GroupeHasRessource $groupeHasRessource
-     * @return \LarpManager\Entities\Ressource
+     * @param GroupeHasRessource $groupeHasRessource
+     * @return Ressource
      */
-    public function removeGroupeHasRessource(GroupeHasRessource $groupeHasRessource)
+    public function removeGroupeHasRessource(GroupeHasRessource $groupeHasRessource): Ressource
     {
         $this->groupeHasRessources->removeElement($groupeHasRessource);
 
@@ -133,7 +152,7 @@ class BaseRessource
     /**
      * Get GroupeHasRessource entity collection (one to many).
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return Collection
      */
     public function getGroupeHasRessources()
     {
@@ -143,10 +162,10 @@ class BaseRessource
     /**
      * Add PersonnageRessource entity to collection (one to many).
      *
-     * @param \LarpManager\Entities\PersonnageRessource $personnageRessource
-     * @return \LarpManager\Entities\Ressource
+     * @param PersonnageRessource $personnageRessource
+     * @return Ressource
      */
-    public function addPersonnageRessource(PersonnageRessource $personnageRessource)
+    public function addPersonnageRessource(PersonnageRessource $personnageRessource): Ressource
     {
         $this->personnageRessources[] = $personnageRessource;
 
@@ -156,10 +175,10 @@ class BaseRessource
     /**
      * Remove PersonnageRessource entity from collection (one to many).
      *
-     * @param \LarpManager\Entities\PersonnageRessource $personnageRessource
-     * @return \LarpManager\Entities\Ressource
+     * @param PersonnageRessource $personnageRessource
+     * @return Ressource
      */
-    public function removePersonnageRessource(PersonnageRessource $personnageRessource)
+    public function removePersonnageRessource(PersonnageRessource $personnageRessource): Ressource
     {
         $this->personnageRessources->removeElement($personnageRessource);
 
@@ -169,7 +188,7 @@ class BaseRessource
     /**
      * Get PersonnageRessource entity collection (one to many).
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return Collection
      */
     public function getPersonnageRessources()
     {
@@ -177,12 +196,48 @@ class BaseRessource
     }
 
     /**
+     * Add TechnologiesRessources entity to collection (one to many).
+     *
+     * @param TechnologiesRessources $technologieRessource
+     * @return Ressource
+     */
+    public function addTechnologieRessource(TechnologiesRessources $technologieRessource): Ressource
+    {
+        $this->technologiesRessources[] = $technologieRessource;
+
+        return $this;
+    }
+
+    /**
+     * Remove TechnologiesRessources entity from collection (one to many).
+     *
+     * @param TechnologiesRessources $technologieRessource
+     * @return Ressource
+     */
+    public function removeTechnologieRessource(TechnologiesRessources $technologieRessource): Ressource
+    {
+        $this->technologiesRessources->removeElement($technologieRessource);
+
+        return $this;
+    }
+
+    /**
+     * Get TechnologiesRessources entity collection (one to many).
+     *
+     * @return Collection
+     */
+    public function getTechnologiesRessources()
+    {
+        return $this->technologiesRessources;
+    }
+
+    /**
      * Set Rarete entity (many to one).
      *
-     * @param \LarpManager\Entities\Rarete $rarete
-     * @return \LarpManager\Entities\Ressource
+     * @param Rarete|null $rarete
+     * @return Ressource
      */
-    public function setRarete(Rarete $rarete = null)
+    public function setRarete(Rarete $rarete = null): Ressource
     {
         $this->rarete = $rarete;
 
@@ -192,9 +247,9 @@ class BaseRessource
     /**
      * Get Rarete entity (many to one).
      *
-     * @return \LarpManager\Entities\Rarete
+     * @return Rarete
      */
-    public function getRarete()
+    public function getRarete(): Rarete
     {
         return $this->rarete;
     }

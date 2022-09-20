@@ -1,0 +1,22 @@
+{% extends "layout.twig" %}
+
+{% block title %}Technologies{% endblock title %}
+
+{% block content %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path('technologie') }}">Liste des technologies</a></li>
+		<li class="active">Personnages ayant {{ technologie.label }}</li>
+	</ol>
+	
+	{{ include('admin/personnage/search.twig',
+		 	{
+			 displayAdminToolbar: false, 
+			 displaySearchFilter: false,
+			 extraData: 'Artisanat'
+		  	}
+  		)
+	}}
+	
+{% endblock content %}

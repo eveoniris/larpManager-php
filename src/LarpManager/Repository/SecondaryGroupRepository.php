@@ -41,9 +41,36 @@ class SecondaryGroupRepository extends EntityRepository
 	
 		return $groupes;
 	}
-	
+
 	/**
-	 * Trouve les groupes secondaires correspondant aux critères de recherche
+	 * Trouve les groupes secondaires correspondants aux critères de recherche
+	 * 
+	 * @param array $criteria
+	 * @param array $order
+	 * @param unknown $limit
+	 * @param unknown $offset
+	 */
+	public function findList(array $criteria = array(), array $order = array(), $limit, $offset)
+	{
+		$qb = $this->getEntityManager()->createQueryBuilder();
+
+		$qb->select('distinct g');
+		$qb->from('LarpManager\Entities\SecondaryGroup','g');
+
+		foreach ( $criteria as $critere )
+		{
+			$qb->andWhere('?1');
+            $qb->setParameter(1, $critere);
+		}
+
+		$qb->setFirstResult($offset);
+		$qb->setMaxResults($limit);
+		$qb->orderBy('g.'.$order['by'], $order['dir']);
+		return $qb->getQuery()->getResult();
+	}	
+
+	/**
+	 * Compte les groupes secondaires correspondants aux critères de recherche
 	 *
 	 * @param array $criteria
 	 * @param array $options
@@ -55,9 +82,10 @@ class SecondaryGroupRepository extends EntityRepository
 		$qb->select($qb->expr()->count('g'));
 		$qb->from('LarpManager\Entities\SecondaryGroup','g');
 	
-		foreach ( $criteria as $criter )
+		foreach ( $criteria as $critere )
 		{
-			$qb->addWhere($criter);
+            $qb->andWhere('?1');
+            $qb->setParameter(1, $critere);
 		}
 	
 		return $qb->getQuery()->getSingleScalarResult();

@@ -26,7 +26,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 
 /**
- * LarpManager\AgeControllerProvider
+ * LarpManager\MagieControllerProvider
  * 
  * @author kevin
  */
@@ -134,7 +134,17 @@ class MagieControllerProvider implements ControllerProviderInterface
 			->convert('sort', 'converter.sort:convert')
 			->before($mustBeScenariste)
 			->method('GET');
-		
+
+		/**
+		 * Obtenir les personnages possédant ce sort
+		 */
+		$controllers->match('/sort/{sort}/personnages','LarpManager\Controllers\MagieController::sortPersonnagesAction')
+			->assert('sort', '\d+')
+			->bind("magie.sort.personnages")
+			->convert('sort', 'converter.sort:convert')
+			->before($mustBeScenariste)
+			->method('GET|POST');
+			
 		/**
 		 * Ajouter un sortilège
 		 */
@@ -198,7 +208,7 @@ class MagieControllerProvider implements ControllerProviderInterface
 			->bind("magie.potion.personnages")
 			->convert('potion', 'converter.potion:convert')
 			->before($mustBeScenariste)
-			->method('GET');
+			->method('GET|POST');
 			
 		/**
 		 * Ajouter une potion
@@ -254,7 +264,17 @@ class MagieControllerProvider implements ControllerProviderInterface
 			->convert('priere', 'converter.priere:convert')
 			->before($mustBeScenariste)
 			->method('GET');
-			
+	
+		/**
+		 * Obtenir les personnages possédant cette prière
+		 */
+		$controllers->match('/priere/{priere}/personnages','LarpManager\Controllers\MagieController::prierePersonnagesAction')
+		->assert('priere', '\d+')
+		->bind("magie.priere.personnages")
+		->convert('priere', 'converter.priere:convert')
+		->before($mustBeScenariste)
+		->method('GET|POST');
+
 		/**
 		 * Ajouter une priere
 		 */

@@ -73,7 +73,7 @@ class MonnaieController
 			$app['orm.em']->flush();
 			
 			$app['session']->getFlashBag()->add('success', 'La monnaie a été enregistrée.');
-			return $app->redirect($app['url_generator']->generate('monnaie'),301);
+			return $app->redirect($app['url_generator']->generate('monnaie'),303);
 		}
 		
 		return $app['twig']->render('admin/monnaie/add.twig', array(
@@ -103,7 +103,7 @@ class MonnaieController
 			$app['orm.em']->flush();
 			
 			$app['session']->getFlashBag()->add('success', 'La monnaie a été enregistrée.');
-			return $app->redirect($app['url_generator']->generate('monnaie'),301);
+			return $app->redirect($app['url_generator']->generate('monnaie'),303);
 		}
 			
 		return $app['twig']->render('admin/monnaie/update.twig', array(
@@ -134,7 +134,7 @@ class MonnaieController
 			$app['orm.em']->flush();
 			
 			$app['session']->getFlashBag()->add('success', 'La monnaie a été supprimée.');
-			return $app->redirect($app['url_generator']->generate('monnaie'),301);
+			return $app->redirect($app['url_generator']->generate('monnaie'),303);
 		}
 			
 		return $app['twig']->render('admin/monnaie/delete.twig', array(

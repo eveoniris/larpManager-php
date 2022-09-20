@@ -34,7 +34,7 @@ class StrategieControllerProvider implements ControllerProviderInterface
 	/**
 	 * Initialise les routes pour l'éconnomie
 	 * Routes :
-	 * 	- econnomie
+	 * 	- economie
 	 *
 	 * @param Application $app
 	 * @return Controllers $controllers

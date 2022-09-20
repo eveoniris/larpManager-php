@@ -23,6 +23,10 @@ namespace LarpManager\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Doctrine\ORM\EntityRepository;
+use LarpManager\Repository\ClasseRepository;
+use LarpManager\Repository\CompetenceRepository;
+use LarpManager\Repository\GroupeRepository;
 
 /**
  * LarpManager\Form\PersonnageFindForm
@@ -61,22 +65,41 @@ class PersonnageFindForm extends AbstractType
 				))
 				->add('religion', 'entity',  array(
 					'required' => false,
-					'label' => 'Par religion',
+					'label' => '	Par religion : ',
 					'class' => 'LarpManager\Entities\Religion',
-					'property' => 'label'
+					'property' => 'label',
+				    'query_builder' => function(EntityRepository $er) {
+				        return $er->createQueryBuilder('r')->orderBy('r.label', 'ASC');
+				    }
 				))
 				->add('competence', 'entity', array(
 					'required' => false,
-					'label' => 'Par compétence',
+					'label' => '	Par compétence : ',
 					'class' => 'LarpManager\Entities\Competence',
 					'property' => 'label',
+				    'query_builder' => function(CompetenceRepository $cr) {
+				        return $cr->getQueryBuilderFindAllOrderedByLabel();
+				    }
 				))
 				->add('classe','entity',array(
 					'required' => false,
-					'label' => 'Par classe',
+					'label' => '	Par classe : ',
 					'class' => 'LarpManager\Entities\Classe',
-					'property' => 'label',
-				));
+				    'property' => 'label',
+				    'query_builder' => function(ClasseRepository $er) {
+				    return $er->getQueryBuilderFindAllOrderedByLabel();
+				    }
+				))
+				->add('groupe','entity',array(
+					'required' => false,
+					'label' => '	Par groupe : ',
+					'class' => 'LarpManager\Entities\Groupe',
+					'property' => 'nom',
+					'query_builder' => function(GroupeRepository $gr) {
+						return $gr->createQueryBuilder('gr')->orderBy('gr.nom', 'ASC');
+					}
+				))
+				;
 	}
 	
 	/**

@@ -30,6 +30,19 @@ use Doctrine\ORM\EntityRepository;
 class TerritoireRepository extends EntityRepository
 {
 	/**
+     * Find all territoire ordered by nom
+     * @return ArrayCollection $territoires
+     */
+    public function findAllOrderedByNom()
+    {
+        $territoires = $this->getEntityManager()
+        	->createQuery('SELECT t FROM LarpManager\Entities\Territoire t ORDER BY t.nom ASC')
+        	->getResult();
+        
+        return $territoires;
+    }
+    
+	/**
 	 * Fourni la liste des territoires n'étant pas dépendant d'un autre territoire
 	 * @return \Doctrine\Common\Collections\Collection
 	 */
@@ -91,24 +104,24 @@ class TerritoireRepository extends EntityRepository
 
         $qb->select('distinct t');
         $qb->from('LarpManager\Entities\Territoire','t');
-        if(array_key_exists("tgr.id",$criteria)) $qb->join('t.groupe','tgr');
+        if(array_key_exists("tgr.id",$criteria))
+            $qb->join('t.groupe','tgr');
         $qb->join('t.territoire','tpr');
-        $qb->join('tpr.territoire','tp');
+        $qb->leftjoin('tpr.territoire','tp');
         $qb->andWhere('t.territoire IS NOT NULL');
-        $qb->andWhere('tp.territoire IS NULL');
 
         $count = 0;
         foreach ( $criteria as $key => $value )
         {
             if($key == "t.nom")
             {
-                $qb->andWhere($key." LIKE %?$count%")
-                    ->setParameter("$count", $value);
+                $qb->andWhere("LOWER($key) LIKE ?".$count)
+                    ->setParameter($count, "%".preg_replace('/[\'"<>=*;]/', '', strtolower($value))."%");
             }
             else
             {
-                $qb->andWhere($key." = ?$count")
-                    ->setParameter("$count", $value);
+                $qb->andWhere($key." = ?".$count)
+                    ->setParameter($count, $value);
             }
             $count++;
         }
@@ -117,7 +130,6 @@ class TerritoireRepository extends EntityRepository
         $qb->setMaxResults($limit);
         $defaultEntityAlias = strstr($order['by'],'.') ? '' : 't.';
         $qb->orderBy($defaultEntityAlias.$order['by'], $order['dir']);
-
         return $qb->getQuery()->getResult();
     }
     /**

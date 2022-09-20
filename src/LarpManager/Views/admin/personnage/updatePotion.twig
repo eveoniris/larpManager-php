@@ -13,15 +13,41 @@
 	</ol>
 	
 	<div class="well bs-component">
-		<form action="{{ path('personnage.admin.update.potion',{'personnage':personnage.id}) }}" method="POST" {{ form_enctype(form) }}>
-			<fieldset>
-				<legend>{{ personnage.publicName }} - <small>Choix des potions</small></legend>
-				<p>Choisissez les potions du personnage</p>
-				{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
-	
-				{{ form_row(form.potions) }}
-				{{ form_rest(form) }}
-			</fieldset>
-		</form>
+		<table class="table table-striped table-bordered table-condensed">
+			<thead>
+				<tr>
+					<th>Nom</th>
+					<th>Niveau</th>
+					<th>Secret</th>
+					<th>Description</th>
+					<th>Ajouter/Retirer</th>
+				</tr>
+			</thead>
+			<tbody>
+			{% for potion in potions %}
+				<tr>
+					<td>{{ potion.label }}</td>
+					<td>{{ potion.niveau }}</td>
+					<td>{% if potion.secret %}
+							<span style="color:red;">Secret</span>
+						{% else %}
+							Non
+						{% endif %}
+					</td>
+					<td>{{ potion.description|markdown}}</td>
+					<td>{% if personnage in potion.personnages  %}
+							<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Retirer cette potion"
+							   href="{{ path('personnage.admin.remove.potion',{'personnage':personnage.id, 'potion':potion.id}) }}">
+								<i class="fa fa-minus" style="color: red"></i></a>
+						{% else %}
+							<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Ajouter cette potion"
+							   href="{{ path('personnage.admin.add.potion',{'personnage':personnage.id, 'potion':potion.id}) }}">
+								<i class="fa fa-plus" style="color: green"></i></a>
+						{% endif %}
+					</td>
+				</tr>
+			{% endfor %}
+			</tbody>
+		</table>
 	</div>
 {% endblock content %}

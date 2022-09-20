@@ -42,6 +42,8 @@ class TechnologieControllerProvider implements ControllerProviderInterface
 	 *  - technologie.delete
 	 *  - technologie.document
 	 *  - technologie.document.delete
+     *  - technologie.resource.add
+     *  - technologie.ressource.remove
 	 *
 	 * @param Application $app
 	 * @return Controllers $controllers
@@ -63,33 +65,69 @@ class TechnologieControllerProvider implements ControllerProviderInterface
 			->bind("technologie")
 			->method('GET')
 			->before($mustBeScenariste);
-		
+
 		$controllers->match('/add','LarpManager\Controllers\TechnologieController::addAction')
 			->bind("technologie.add")
 			->method('GET|POST')
 			->before($mustBeScenariste);
-				
+
 		$controllers->match('/{technologie}/update','LarpManager\Controllers\TechnologieController::updateAction')
 			->assert('technologie', '\d+')
 			->convert('technologie', 'converter.technologie:convert')
 			->bind("technologie.update")
 			->method('GET|POST')
 			->before($mustBeScenariste);
-		
+
 		$controllers->match('/{technologie}','LarpManager\Controllers\TechnologieController::detailAction')
 			->assert('technologie', '\d+')
 			->convert('technologie', 'converter.technologie:convert')
 			->bind("technologie.detail")
 			->method('GET')
 			->before($mustBeScenariste);
-		
+
 		$controllers->match('/{technologie}/delete','LarpManager\Controllers\TechnologieController::deleteAction')
 			->assert('technologie', '\d+')
 			->convert('technologie', 'converter.technologie:convert')
 			->bind("technologie.delete")
 			->method('GET|POST')
 			->before($mustBeScenariste);
-							
+
+		$controllers->match('/{technologie}/personnages','LarpManager\Controllers\TechnologieController::personnagesAction')
+			->assert('technologie', '\d+')
+			->convert('technologie', 'converter.technologie:convert')
+			->bind("technologie.personnages")
+			->method('GET|POST')
+			->before($mustBeScenariste);
+
+        /**
+         * Ajout d'une ressource requise pour une technologie
+         */
+        $controllers->match('/{technologie}/addRessource','LarpManager\Controllers\TechnologieController::addRessourceAction')
+            ->assert('technologie', '\d+')
+            ->convert('technologie', 'converter.technologie:convert')
+            ->bind('technologie.ressource.add')
+            ->method('GET|POST')
+            ->before($mustBeScenariste);
+
+        /**
+         * Retrait d'une ressource requise pour une technologie
+         */
+        $controllers->match('/{technologie}/removeRessource','LarpManager\Controllers\TechnologieController::removeRessourceAction')
+            ->assert('technologie', '\d+')
+            ->convert('technologie', 'converter.technologie:convert')
+            ->bind('technologie.ressource.remove')
+            ->method('GET|POST')
+            ->before($mustBeScenariste);
+
+		/**
+		 * Obtenir un document lié à une technologie
+		 */
+		$controllers->match('/{technologie}/document/{document}','LarpManager\Controllers\MagieController::getDocumentAction')
+			->bind("technologie.document")
+			->convert('technologie', 'converter.technologie:convert')
+			->before($mustBeScenariste)
+			->method('GET');
+
 		return $controllers;
 	}
 }

@@ -4,20 +4,18 @@
 </div>
 
 <div class="row">
-	<div class="col-sm-6">
+	<div class="col-sm-12">
 		{% if personnage.territoire %}
 			<center>
 				<h4>{{ personnage.territoire.nom }}</h4>
 			</center>
+			<p>
+			{{ personnage.territoire.description|markdown }}		
+			</p>
 		{% else %}
 			<p>
 				<a class="btn btn-default" href="{{ path('participant.origine',{'participant': participant.id}) }}">Choisir une origine</a>
 			</p>
-		{% endif %}
-	</div>
-	<div class="col-sm-6">
-		{% if personnage.territoire %}
-			{{ personnage.territoire.description|markdown }}
 		{% endif %}
 	</div>
 </div>

@@ -7,7 +7,7 @@
 <ol class="breadcrumb">
 	<li><a href="{{ path('homepage')  }}">Accueil</a></li>
 	<li><a href="{{ path('gn.detail', {'gn' : participant.gn.id}) }}">{{ participant.gn.label }}</a></li>
-	<li><a href="{{ path('gn.personnage', {'gn': participant.gn.id}) }}">{{ participant.personnage.nom }} {{ participant.personnage.surnom }}</a></li>
+	<li><a href="{{ path('gn.personnage', {'gn': participant.gn.id}) }}">{{ participant.personnage.nom }}</a></li>
 	<li class="active">{{ groupeSecondaire.label }}</li>
 </ol>
 
@@ -41,7 +41,7 @@
 					<div class="list-group-item-heading">
 						<strong>{{ postulant.personnage.publicName }}</strong>
 						{% if groupeSecondaire.secondaryGroupType.label == 'Religion' %}
-							Religion(s) du postulant :
+							Religions du postulant :
 							<ul>
 							{% for personnageReligion in postulant.personnage.personnagesReligions %}
 								<li>{{ personnageReligion.religion.label }} - {{ personnageReligion.religionLevel.label }}</li>
@@ -69,6 +69,7 @@
 					<a class="btn btn-danger" 
 						href="{{ path('participant.groupeSecondaire.reject', {'participant': participant.id, 'groupeSecondaire': groupeSecondaire.id, 'postulant': postulant.id }) }}">
 						Rejeter</a>
+					<br />
 				</div>
 			{% endfor %}
 			</ul>
@@ -95,38 +96,30 @@
 			<h5>Liste des membres</h5>
 		</div>
 		
-		<div class="list-group">
-		{% for membre in groupeSecondaire.membres %}
-			<div class="list-group-item">
-				<div class="list-group-item-heading">
-					<strong>{{ membre.personnage.publicName }}</strong>
-					&nbsp;
-					{% if membre.personnage.participeTo(participant.gn) %}
-						<span class="text-success">Inscrit à {{ participant.gn.label }}</span>
-					{% else %}
-						<span class="text-info">Personnage pas inscrit à {{ participant.gn.label }}</span>
-					{% endif %}
-					
-					<br />
-					{% if groupeSecondaire.responsable %}&nbsp;<a href="{{ path('message.new', {'to': membre.personnage.user.id }) }}"><i class="fa fa-pencil-square-o"></i>Envoyer un message</a>{% endif %}
-				</div>
-			</div>
-		{% endfor %}
-		</div>
-		
-		<div class="header">
-			<h5>Trombinoscope</h5>
-		</div>
-		
 		<div class="row">
 		{% for membre in groupeSecondaire.membres %}
-			<div class="col-xs-6 col-md-3">
+			<div class="col-md-2">
 				{% if membre.personnage.trombineUrl %}
-					<img width="160" src="{{ path('personnage.trombine', {'personnage' : membre.personnage.id }) }}" />
-					<div class="caption">
-						{{ membre.personnage.publicName }}
-					</div>
+					<img class="media-object" width="160" src="{{ path('personnage.trombine', {'personnage' : membre.personnage.id }) }}" />
+				{% else %}
+					<img class="media-object" width="160" src="{{ app.request.basepath }}/img/no_trombine.png" />
 				{% endif %}
+				<div class="caption">
+					{{ membre.personnage.publicName }}<br />
+					{% if membre.personnage.participeTo(participant.gn) %}
+						<span class="text-success">Inscrit à {{ participant.gn.label }}</span><br />
+					{% else %}
+						<span class="text-info">Personnage pas inscrit à {{ participant.gn.label }}</span><br />
+					{% endif %}
+					{% if groupeSecondaire.responsable == participant.personnage.publicName %}
+						{% if groupeSecondaire.secondaryGroupType.label == 'Religion' %}
+							{% for personnageReligion in membre.personnage.personnagesReligions %}
+								<li>{{ personnageReligion.religion.label }} - {{ personnageReligion.religionLevel.label }}</li>
+							{% endfor %}
+						{% endif %}
+						<a href="{{ path('message.new', {'to': membre.personnage.user.id }) }}"><i class="fa fa-pencil-square-o"></i>Envoyer un message</a><br />
+					{% endif %}
+				</div>
 			</div>
 		{% endfor %}
 		</div>

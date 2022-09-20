@@ -1,6 +1,6 @@
 {% extends "layout.twig" %}
 
-{% block title %}Grandeur nature{% endblock title %}
+{% block title %}{{ gn.label }} Participants sans personnage{% endblock title %}
 
 {% block content %}
 
@@ -8,7 +8,7 @@
 		<li><a href="{{ path('homepage') }}">Accueil</a></li>
 		<li><a href="{{ path("gn.list") }}">Liste des grandeur nature</a></li>
 		<li><a href="{{ path('gn.detail', {'gn':gn.id}) }}">{{ gn.label }}</a></li>
-		<li class="active">Liste des participants avec un billet mais n'étant pas dans un groupe</li>
+		<li class="active">Liste des participants avec un billet mais n'ayant pas de personnage</li>
 	</ol>
 
 <div class="well well-sm">
@@ -26,7 +26,7 @@
 				<th>Email</th>
 				<th>Billet</th>
 				<th>Groupe</th>
-				<th />
+				<th>Actions</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -47,8 +47,27 @@
 						{% endif %}
 					</td>						
 					<td>
-						<a href="{{ path('participant.admin.personnage.new', {'participant' : participant.id}) }}">Créer un personnage</a>
-						<a href="{{ path('participant.admin.personnage.old', {'participant' : participant.id}) }}">Récupérer un ancien personnage</a>
+						{% if participant.groupeGn %}
+							<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Changer de groupe"
+							   href="{{ path('participant.groupe',{'participant':participant.id}) }}">
+								<i class="fa fa-sign-out"></i>
+							</a>
+
+							<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Créer un nouveau personnage"
+							   href="{{ path('participant.admin.personnage.new',{'participant':participant.id}) }}">
+								<i class="fa fa-user-plus"></i>
+							</a>
+
+							<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Sélectionner un ancien personnage"
+							   href="{{ path('participant.admin.personnage.old',{'participant':participant.id}) }}">
+								<i class="fa fa-user"></i>
+							</a>
+						{% else %}
+							<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Ajouter à un groupe"
+							   href="{{ path('participant.groupe',{'participant':participant.id}) }}">
+								<i class="fa fa-users"></i>
+							</a>
+						{% endif %}
 					</td>
 				</tr>
 			{% endfor %}

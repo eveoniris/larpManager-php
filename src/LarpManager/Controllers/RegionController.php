@@ -45,11 +45,11 @@ class RegionController
 			
 			if ( $form->get('save')->isClicked())
 			{
-				return $app->redirect($app['url_generator']->generate('region'),301);
+				return $app->redirect($app['url_generator']->generate('region'),303);
 			}
 			else if ( $form->get('save_continue')->isClicked())
 			{
-				return $app->redirect($app['url_generator']->generate('region.add'),301);
+				return $app->redirect($app['url_generator']->generate('region.add'),303);
 			}
 		}
 		

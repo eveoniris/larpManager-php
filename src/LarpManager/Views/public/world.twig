@@ -430,14 +430,14 @@
 				};
 			},
 
-			// Création de la légende désordre
+			// Création de la légende Instable
 			createDesordreLegend: function() {
 				this.desordreLegend = L.control({position: 'bottomright'});
 				
 				this.desordreLegend.onAdd = function (map) {
 				    var div = L.DomUtil.create('div', 'leaflet-control-layers'), // create a div with a class "info"
-				    	grades = [0, 1, 2],
-			        	labels = ['Normal', 'Désordre','Désolation'];
+				    	grades = [0, 1],
+			        	labels = ['Normal', 'Instable'];
 				    for (var i = 0; i < grades.length; i++) {
 				        div.innerHTML +=
 				            '<i style="color: #000;background-color:' + cartographie.getDesordreColor(grades[i]) + '">'+labels[i]+'</i><br/>';
@@ -661,7 +661,7 @@
 	            };
 			},
 
-			// Affecte une couleur en fonction du degres de désordre
+			// Affecte une couleur en fonction du degres de stabilité
 			getDesordreColor: function(d) {
 			    return d == 2 ? '#800026' :
 			           d == 1  ? '#F4A460' :
@@ -669,7 +669,7 @@
 			                      '#00B030';
 			},
 
-			// style des territoires (affichage du désordre)
+			// style des territoires (affichage de la stabilité)
 			desordreStyle: function(feature) {
 			    return {
 			        fillColor: this.getDesordreColor(feature.properties.desordre),

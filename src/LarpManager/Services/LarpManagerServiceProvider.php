@@ -39,6 +39,7 @@ use LarpManager\Services\Converter\AppelationConverter;
 use LarpManager\Services\Converter\BackgroundConverter;
 use LarpManager\Services\Converter\BilletConverter;
 use LarpManager\Services\Converter\ClasseConverter;
+use LarpManager\Services\Converter\ConnaissanceConverter;
 use LarpManager\Services\Converter\CultureConverter;
 use LarpManager\Services\Converter\CompetenceConverter;
 use LarpManager\Services\Converter\ConstructionConverter;
@@ -54,6 +55,7 @@ use LarpManager\Services\Converter\GroupeGnConverter;
 use LarpManager\Services\Converter\IngredientConverter;
 use LarpManager\Services\Converter\IntrigueConverter;
 use LarpManager\Services\Converter\ItemConverter;
+use LarpManager\Services\Converter\LangueConverter;
 use LarpManager\Services\Converter\LieuConverter;
 use LarpManager\Services\Converter\LoiConverter;
 use LarpManager\Services\Converter\MembreConverter;
@@ -69,6 +71,8 @@ use LarpManager\Services\Converter\PersonnageReligionConverter;
 use LarpManager\Services\Converter\PersonnageSecondaireConverter;
 use LarpManager\Services\Converter\PersonnageTokenConverter;
 use LarpManager\Services\Converter\PersonnageTriggerConverter;
+use LarpManager\Services\Converter\PersonnageChronologieConverter;
+use LarpManager\Services\Converter\PersonnageLigneeConverter;
 use LarpManager\Services\Converter\PostulantConverter;
 use LarpManager\Services\Converter\PotionConverter;
 use LarpManager\Services\Converter\PriereConverter;
@@ -295,6 +299,11 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 			return new ReligionConverter($app['orm.em']);
 		});
 		
+		// langue converter
+		$app['converter.langue'] = $app->share(function($app) {
+			return new LangueConverter($app['orm.em']);
+		});
+
 		// personnageLangue converter
 		$app['converter.personnageLangue'] = $app->share(function($app) {
 			return new PersonnageLangueConverter($app['orm.em']);
@@ -418,6 +427,21 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 		// Intrigue converter
 		$app['converter.intrigue'] = $app->share(function($app) {
 			return new IntrigueConverter($app['orm.em']);
+		});
+		
+		// PersonnageChronologie converter
+		$app['converter.personnageChronologie'] = $app->share(function($app) {
+			return new PersonnageChronologieConverter($app['orm.em']);
+		});
+	
+		// PersonnageLignee converter
+		$app['converter.personnageLignee'] = $app->share(function($app) {
+			return new PersonnageLigneeConverter($app['orm.em']);
+		});
+	
+		// Connaissance converter
+		$app['converter.connaissance'] = $app->share(function($app) {
+			return new ConnaissanceConverter($app['orm.em']);
 		});
 	}
 

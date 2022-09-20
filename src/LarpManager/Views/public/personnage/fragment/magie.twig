@@ -1,29 +1,35 @@
-{% if personnage.hasCompetence('Magie') %}
+{% if personnage.sorts|length > 0 %}
 	<div class="header">
 		<h5>Magie</h5>
 	</div>	
 	
-	<h6>Liste de vos domaines de Magie</h6>
-	<div class="list-group">
-	{% for domaine in personnage.domaines %}
-		<div class="list-group-item">
-			<div class="list-group-item-heading"><strong>{{ domaine.label|markdown }}</strong></div>
-			<div class="list-group-item-text">{{ domaine.description|markdown }}</div>
+	{% if personnage.hasCompetence('Magie') %}
+		<h6>Liste de vos domaines de Magie</h6>
+		<div class="list-group">
+		{% for domaine in personnage.domaines %}
+			<div class="list-group-item">
+				<div class="list-group-item-heading"><strong>{{ domaine.label|markdown }}</strong></div>
+				<div class="list-group-item-text">{{ domaine.description|markdown }}</div>
+			</div>
+		{% endfor %}
 		</div>
-	{% endfor %}
-	</div>
-	
-	<h6>Liste de vos sortilèges</h6>
+	{% endif %}
+
+	{% if not personnage.hasCompetence('Magie') %}
+	<span style="color:red;">Vous n'avez pas les connaissances pour lancer ces sorts et vous ne pouvez pas les recopier sans l'aide adéquate.</span>
+	{% endif %}
+
+	<h6>Liste de vos sorts</h6>
 	<div class="list-group">
 		{% for sort in personnage.sorts %}
 			<a class="list-group-item" href="{{ path('participant.sort.detail', {'participant': participant.id, 'sort': sort.id}) }}">
-				{{ sort.label }} - {{ sort.domaine.label }} Niveau {{ sort.niveau }} 
-				({% if sort.domaine in personnage.domaines %}{{ sort.niveau }}
-				{% else %}{{ sort.niveau + 1 }}
+				{% if sort.secret %}<span style="color:red;">Secret</span> - {% endif %}{{ sort.label }} - {{ sort.domaine.label }} Niveau {{ sort.niveau }} 
+				({% if sort.domaine in personnage.domaines %}{{ sort.niveau + 1}}
+				{% else %}{{ sort.niveau + 2 }}
 				{% endif %}
-				Mana)
+				Perles)
 			</a>
 		{% endfor %}
 	</div>
-	
+
 {% endif %}

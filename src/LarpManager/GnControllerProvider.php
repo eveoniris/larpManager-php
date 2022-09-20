@@ -60,6 +60,15 @@ class GnControllerProvider implements ControllerProviderInterface
 				throw new AccessDeniedException();
 			}
 		};
+
+		/**
+		 * Vérifie que l'utilisateur dispose du role SCENARISTE
+		 */
+		$mustBeScenariste = function(Request $request) use ($app) {
+			if (!$app['security.authorization_checker']->isGranted('ROLE_SCENARISTE')) {
+				throw new AccessDeniedException();
+			}
+		};
 		
 		/**
 		 * Voir la liste des gns
@@ -146,6 +155,15 @@ class GnControllerProvider implements ControllerProviderInterface
 			->assert('gn', '\d+')
 			->convert('gn', 'converter.gn:convert')
 			->bind("gn.participants.withoutperso")
+			->before($mustBeAdmin);
+			
+		/**
+		 * Liste des participants pnj
+		 */
+			$controllers->match('/{gn}/participants/pnj', 'LarpManager\Controllers\GnController::pnjsAction')
+			->assert('gn', '\d+')
+			->convert('gn', 'converter.gn:convert')
+			->bind("gn.participants.pnj")
 			->before($mustBeAdmin);
 			
 		/**
@@ -266,6 +284,16 @@ class GnControllerProvider implements ControllerProviderInterface
 			->bind("gn.personnage")
 			->method('GET');
 			
+		/**
+		 * Impression des fiches de perso
+		 * Utiliser ::printInterAction si on a une liste de PJs
+		 */
+		$controllers->match('/{gn}/print/perso','LarpManager\Controllers\GnController::printPersoAction')
+			->assert('gn', '\d+')
+			->bind("gn.print.perso")
+			->convert('gn', 'converter.gn:convert')
+			->method('GET')
+			->before($mustBeAdmin);			
 		return $controllers;
 	}
 }

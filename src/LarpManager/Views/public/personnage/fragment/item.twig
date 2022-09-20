@@ -1,0 +1,22 @@
+{% if personnage.items|length > 0 or personnage.materiel %}
+	<div class="header">
+		<h5>Vos objets</h5>
+	</div>
+	
+	<div class="row">
+		<div class="col-sm-12">
+			<div class="list-group">
+				{% for item in personnage.items %}
+					<div class="list-group-item">
+						<div class="list-group-item-text"><strong>{{ item.numero }}</strong> - {{ item.label }}</div>
+					</div>
+				{% endfor %}
+				{% if personnage.materiel %}
+					<div class="list-group-item">
+						<div class="list-group-item-text">{{ personnage.materiel }}</div>
+					</div>
+				{% endif %}
+			</div>
+		</div>
+	</div>
+{% endif %}

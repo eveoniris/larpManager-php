@@ -33,7 +33,7 @@ use LarpManager\Form\IngredientDeleteForm;
 class IngredientController
 {
 	/**
-	 * Liste des titres
+	 * Liste des ingrédients
 	 *
 	 * @param Request $request
 	 * @param Application $app
@@ -41,12 +41,9 @@ class IngredientController
 	public function adminListAction(Request $request, Application $app)
 	{
 		$repo = $app['orm.em']->getRepository('\LarpManager\Entities\Ingredient');
-		$ingredients = $repo->findAll();
-		
-
+		$ingredients = $repo->findAllOrderedByLabel();
 		return $app['twig']->render('admin/ingredient/list.twig', array('ingredients' => $ingredients));
 	}
-	
 	
 	/**
 	 * Detail d'un ingredient
@@ -87,7 +84,7 @@ class IngredientController
 			$app['orm.em']->flush();
 	
 			$app['session']->getFlashBag()->add('success','L\'ingredient a été ajouté');
-			return $app->redirect($app['url_generator']->generate('ingredient.admin.detail',array('ingredient'=>$ingredient->getId())),301);
+			return $app->redirect($app['url_generator']->generate('ingredient.admin.detail',array('ingredient'=>$ingredient->getId())),303);
 		}
 	
 		return $app['twig']->render('admin/ingredient/add.twig', array(
@@ -120,7 +117,7 @@ class IngredientController
 			$app['orm.em']->flush();
 	
 			$app['session']->getFlashBag()->add('success','L\'ingredient a été sauvegardé');
-			return $app->redirect($app['url_generator']->generate('ingredient.admin.detail',array('ingredient'=>$ingredient->getId())),301);
+			return $app->redirect($app['url_generator']->generate('ingredient.admin.detail',array('ingredient'=>$ingredient->getId())),303);
 		}
 	
 		return $app['twig']->render('admin/ingredient/update.twig', array(
@@ -153,7 +150,7 @@ class IngredientController
 			$app['orm.em']->flush();
 	
 			$app['session']->getFlashBag()->add('success','L\'ingredient a été suprimé');
-			return $app->redirect($app['url_generator']->generate('ingredient.admin.list'),301);
+			return $app->redirect($app['url_generator']->generate('ingredient.admin.list'),303);
 		}
 	
 		return $app['twig']->render('admin/ingredient/delete.twig', array(

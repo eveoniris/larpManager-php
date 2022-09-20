@@ -47,6 +47,7 @@ class Classe extends BaseClasse
 	 *     joinColumns={@JoinColumn(name="classe_id", referencedColumnName="id")},
 	 *     inverseJoinColumns={@JoinColumn(name="competence_family_id", referencedColumnName="id")}
 	 * )
+     * @OrderBy({"label" = "ASC"})
 	 */
 	protected $competenceFamilyFavorites;
 	
@@ -56,6 +57,7 @@ class Classe extends BaseClasse
 	 *     joinColumns={@JoinColumn(name="classe_id", referencedColumnName="id")},
 	 *     inverseJoinColumns={@JoinColumn(name="competence_family_id", referencedColumnName="id")}
 	 * )
+     * @OrderBy({"label" = "ASC"})
 	 */
 	protected $competenceFamilyNormales;
 	
@@ -65,6 +67,7 @@ class Classe extends BaseClasse
 	 *     joinColumns={@JoinColumn(name="classe_id", referencedColumnName="id")},
 	 *     inverseJoinColumns={@JoinColumn(name="competence_family_id", referencedColumnName="id")}
 	 * )
+     * @OrderBy({"label" = "ASC"})
 	 */
 	protected $competenceFamilyCreations;
 	

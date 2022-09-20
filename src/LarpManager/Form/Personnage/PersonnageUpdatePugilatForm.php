@@ -27,14 +27,13 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * LarpManager\Form\PersonnageUpdatePugilatForm
  *
- * @author kevin
+ * @author Kevin F.
  *
  */
 class PersonnageUpdatePugilatForm extends AbstractType
 {
 	/**
 	 * Construction du formulaire
-	 * Seul les éléments ne dépendant pas des points d'expérience sont modifiables
 	 *
 	 * @param FormBuilderInterface $builder
 	 * @param array $options
@@ -52,7 +51,6 @@ class PersonnageUpdatePugilatForm extends AbstractType
 					'mapped' => false,
 					'label' => 'Donnez une explication',
 				));
-
 	}
 
 	/**

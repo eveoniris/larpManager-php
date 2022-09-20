@@ -9,7 +9,7 @@
 	<ol class="breadcrumb">
 		<li><a href="{{ path('homepage')  }}">Accueil</a></li>
 		<li><a href="{{ path('gn.detail', {'gn' : participant.gn.id}) }}">{{ participant.gn.label }}</a></li>
-		<li><a href="{{ path('gn.personnage', {'gn': participant.gn.id}) }}">{{ participant.personnage.nom }} {{ participant.personnage.surnom }}</a></li>
+		<li><a href="{{ path('gn.personnage', {'gn': participant.gn.id}) }}">{{ participant.personnage.nom }}</a></li>
 		<li class="active">Choix d'un domaine de magie</li>
 	</ol>
 	
@@ -25,61 +25,61 @@
 	</form>
 	</div>
 	
-				<div class="well well-sm">
-				<div class="header">
-					<h5>Coût de lancement des sort</h5>
-				</div>
-				<table class="table table-condensed table-bordered">
-					<thead>
-						<tr>
-							<th>Niveau du sortilège</th>
-							<th>1</th>
-							<th>2</th>
-							<th>3</th>
-							<th>4</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<th>Coût en mana dans le domaine du mage</th>
-							<td>1</td>
-							<td>2</td>
-							<td>3</td>
-							<td>4</td>
-						</tr>
-						<tr>
-							<th>Coût en mana en dehors du domaine du mage</th>
-							<td>2</td>
-							<td>3</td>
-							<td>4</td>
-							<td>5</td>
-						</tr>
-					</tbody>
-				</table>
-				
-				<p>Example : Un sort de niveau 2 coutera 2 points de Mana au mage connaissant le domaine de magie du sortilège, et 3 points de mana au mage ne connaissant pas le domaine de magie.</p> 
-			</div>
+	<div class="well well-sm">
+		<div class="header">
+			<h5>Coût de lancement des sort</h5>
+		</div>
+		<table class="table table-condensed table-bordered">
+			<thead>
+				<tr>
+					<th>Niveau du sort</th>
+					<th>1</th>
+					<th>2</th>
+					<th>3</th>
+					<th>4</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<th>Coût en Perles dans le domaine du mage</th>
+					<td>2</td>
+					<td>3</td>
+					<td>4</td>
+					<td>5</td>
+				</tr>
+				<tr>
+					<th>Coût en Perles en dehors du domaine du mage</th>
+					<td>3</td>
+					<td>4</td>
+					<td>5</td>
+					<td>6</td>
+				</tr>
+			</tbody>
+		</table>
+			
+		<p>Example : Un sort de niveau 2 coutera 3 Perles au mage connaissant le domaine de magie du sort, et 4 Perles au mage ne connaissant pas le domaine de magie.</p>
+	</div>
 	
 	{% for domaine in domaines %}
 			
-				<div class="well well-sm">
-					<div class="header">
-						<h5>{{ domaine.label }}</h5>
-					</div>
-					<p>{{ domaine.description|markdown }}</p>
-					<div class="list-group">
-						{% for sort in domaine.sorts %}
-							{% if sort.niveau <= personnage.competenceNiveau('Magie') %}
-								<div class="list-group-item">
-									<div class="list-group-item-heading">{{ sort.label }} - Niveau {{ sort.niveau }}</div>
-									<div class="list-group-item-text">{{ sort.description|markdown }}</div>
-								</div>
-							{% endif %}
-						{% endfor %}
-					</div>
-				</div>
+		<div class="well well-sm">
+			<div class="header">
+				<h5>{{ domaine.label }}</h5>
+			</div>
+			<p>{{ domaine.description|markdown }}</p>
+			<div class="list-group">
+				{% for sort in domaine.sorts %}
+					{% if sort.niveau <= personnage.competenceNiveau('Magie') %}
+						<div class="list-group-item">
+							<div class="list-group-item-heading">{{ sort.label }} - Niveau {{ sort.niveau }}</div>
+							<div class="list-group-item-text">{{ sort.description|markdown }}</div>
+						</div>
+					{% endif %}
+				{% endfor %}
+			</div>
+		</div>
 
-			{% endfor %}
+	{% endfor %}
 </div>
 
 {% endblock content %}

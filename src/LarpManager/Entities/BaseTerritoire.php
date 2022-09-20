@@ -249,6 +249,7 @@ class BaseTerritoire
      *     joinColumns={@JoinColumn(name="territoire_id", referencedColumnName="id", nullable=false)},
      *     inverseJoinColumns={@JoinColumn(name="construction_id", referencedColumnName="id", nullable=false)}
      * )
+     * @OrderBy({"label" = "ASC",})
      */
     protected $constructions;
 
@@ -281,8 +282,8 @@ class BaseTerritoire
         $this->constructions = new ArrayCollection();
         $this->lois = new ArrayCollection();
         $this->ingredients = new ArrayCollection();
-	$this->territoireCibles = new ArrayCollection();
-	$this->territoireStarts = new ArrayCollection();
+        $this->territoireCibles = new ArrayCollection();
+        $this->territoireStarts = new ArrayCollection();
     }
 
     /**

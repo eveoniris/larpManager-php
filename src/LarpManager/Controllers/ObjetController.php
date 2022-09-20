@@ -224,7 +224,7 @@ class ObjetController
 			$identification = $item->getIdentification();
 			switch ($identification){
 				case 1:
-					$identification = mt_rand(1,10);
+					$identification = sprintf('%02d',mt_rand(1,10));
 					$item->setIdentification($identification);
 					break;
 				case 11:
@@ -241,7 +241,7 @@ class ObjetController
 			$app['orm.em']->flush();
 			
 			$app['session']->getFlashBag()->add('success', 'L\'objet de jeu a été créé');
-			return $app->redirect($app['url_generator']->generate('items'),301);
+			return $app->redirect($app['url_generator']->generate('items'),303);
 		}
 		
 		return $app['twig']->render('admin/objet/new.twig', array(
@@ -287,7 +287,7 @@ class ObjetController
 			$identification = $item->getIdentification();
 			switch ($identification){
 				case 1:
-					$identification = mt_rand(1,10);
+					$identification = sprintf('%02d',mt_rand(1,10));
 					$item->setIdentification($identification);
 					break;
 				case 11:
@@ -301,7 +301,7 @@ class ObjetController
 			}
 				
 			$app['session']->getFlashBag()->add('success', 'L\'objet de jeu a été sauvegardé');
-			return $app->redirect($app['url_generator']->generate('items'),301);
+			return $app->redirect($app['url_generator']->generate('items'),303);
 		}
 		
 		return $app['twig']->render('admin/objet/update.twig', array(
@@ -329,7 +329,7 @@ class ObjetController
 			$app['orm.em']->flush();
 				
 			$app['session']->getFlashBag()->add('success', 'L\'objet de jeu a été supprimé');
-			return $app->redirect($app['url_generator']->generate('items'),301);
+			return $app->redirect($app['url_generator']->generate('items'),303);
 			
 		}
 		
@@ -359,7 +359,7 @@ class ObjetController
 			$app['orm.em']->flush();
 				
 			$app['session']->getFlashBag()->add('success', 'L\'objet de jeu a été créé');
-			return $app->redirect($app['url_generator']->generate('objet'),301);
+			return $app->redirect($app['url_generator']->generate('objet'),303);
 		}
 		
 		return $app['twig']->render('admin/objet/link.twig', array(

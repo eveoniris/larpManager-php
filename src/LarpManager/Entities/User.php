@@ -30,6 +30,7 @@ namespace LarpManager\Entities;
 use LarpManager\Entities\BaseUser;
 use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 use Doctrine\Common\Collections\ArrayCollection;
+use LarpManager;
 
 /**
  * LarpManager\Entities\User
@@ -111,8 +112,9 @@ class User extends BaseUser implements AdvancedUserInterface, \Serializable
 	 * Fourni les informations de participation à un jeu
 	 * 
 	 * @param Gn $gn
+	 * @return \LarpManager\Entities\Participant|NULL
 	 */
-	public function getParticipant(Gn $gn)
+	public function getParticipant(Gn $gn) : ?\LarpManager\Entities\Participant
 	{
 		foreach ( $this->getParticipants() as $participant )
 		{
@@ -124,6 +126,21 @@ class User extends BaseUser implements AdvancedUserInterface, \Serializable
 		return null;
 	}
 		
+	
+	/**
+	 * Retourne le dernier participant de l'utilisateur
+	 * 
+	 * @return \LarpManager\Entities\Participant|NULL
+	 */
+	public function getLastParticipant(): ?\LarpManager\Entities\Participant
+	{
+	    if (!$this->getParticipants()->isEmpty())
+	    {
+	        return $this->getParticipants()->last();
+	    }
+	    return null;
+	}
+	
 	
 	/**
 	 * Fourni tous les billets d'un utilisateur
@@ -575,5 +592,14 @@ class User extends BaseUser implements AdvancedUserInterface, \Serializable
 	    }
 
 	    return $last->getPersonnage();
+	}
+	
+	/**
+	 * Retourne le nom complet de l'utilisateur (nom prénom)
+	 * @return string
+	 */
+	public function getFullName() : string
+	{
+	    return $this->getEtatCivil()->getFullName();
 	}
 }

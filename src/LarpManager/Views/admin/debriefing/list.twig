@@ -23,7 +23,7 @@
 				<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Ajouter un debriefing" href="{{ path('debriefing.add') }}"><i class="fa fa-plus"></i></a>
 			</div>
 			
-			<form class="form form-inline" action="{{ path('debriefing.list') }}" method="POST" {{ form_enctype(form) }}>
+			<form class="form-inline" action="{{ path('debriefing.list') }}" method="POST" {{ form_enctype(form) }}>
 				{% form_theme form 'Form/bootstrap_3_horizontal_layout.html.twig' %}
 				<div class="form-group">
 					<div class="input-group">
@@ -32,7 +32,7 @@
 					<div class="input-group">					
 						{{ form_widget(form.type) }}
 						<div class="input-group-btn">
-							<button type="submit" class="btn btn-default" data-toggle="tooltup" data-placement="top" title="Lancer la recherche"><i class="fa fa-search"></i></button>
+							<button type="submit" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Lancer la recherche"><i class="fa fa-search"></i></button>
 							<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Reset" href="{{ path('debriefing.list') }}"><i class="fa fa-refresh"></i></a>
 						</div>
 					</div>
@@ -80,10 +80,43 @@
 								</span>
 							{% endif %}
 						{% endif %}
-						</a>
+							</a>
 					</th>
 					<th>
-						Groupe
+						{% if app.request.get('order_dir') == 'ASC' and app.request.get('order_by') == 'gn' %}
+						<a href="{{ path('debriefing.list', {'order_by': 'gn', 'order_dir': 'DESC'}) }}">
+							{%  else %}
+							<a href="{{ path('debriefing.list', {'order_by': 'gn', 'order_dir': 'ASC'}) }}">
+								{% endif %}
+								GN
+								{% if app.request.get('order_by') == 'gn'  %}
+									{% if app.request.get('order_dir') == 'ASC' %}
+										<span class="caret"></span>
+									{%else%}
+										<span class="dropup">
+	 									<span class="caret"></span>
+								</span>
+									{% endif %}
+								{% endif %}
+							</a>
+					</th>
+					<th>
+						{% if app.request.get('order_dir') == 'ASC' and app.request.get('order_by') == 'groupe' %}
+						<a href="{{ path('debriefing.list', {'order_by': 'groupe', 'order_dir': 'DESC'}) }}">
+							{%  else %}
+							<a href="{{ path('debriefing.list', {'order_by': 'groupe', 'order_dir': 'ASC'}) }}">
+								{% endif %}
+								Groupe
+								{% if app.request.get('order_by') == 'groupe'  %}
+									{% if app.request.get('order_dir') == 'ASC' %}
+										<span class="caret"></span>
+									{%else%}
+										<span class="dropup">
+	 									<span class="caret"></span>
+								</span>
+									{% endif %}
+								{% endif %}
+							</a>
 					</th>
 					<th>
 						Création
@@ -92,10 +125,16 @@
 						Dernière modification
 					</th>
 					<th>
+						Scénariste
+					</th>
+					<th>
 						Auteur
 					</th>
 					<th>
 						Visibilité
+					</th>
+					<th>
+						Document
 					</th>
 				</tr>
 			</thead>
@@ -104,11 +143,34 @@
 				<tr>
 					<td><a href="{{ path('debriefing.update', {'debriefing':debriefing.id}) }}">{{ debriefing.id }}</td>
 					<td><a href="{{ path('debriefing.detail', {'debriefing':debriefing.id}) }}">{{ debriefing.titre }}</td>
+					<td>
+						{% if debriefing.gn is null %}
+							Non renseigné
+						{% else %}
+							{{ debriefing.gn.label }}
+						{% endif %}
+					</td>
 					<td><a href="{{ path('groupe.detail', {'index': debriefing.groupe.id}) }}">{{ debriefing.groupe.nom }}</td>
 					<td>{{ debriefing.creationDate|date('Y-m-d') }}</td>
 					<td>{{ debriefing.updateDate|date('Y-m-d') }}</td>
 					<td>{{ debriefing.user.displayName }}</td>
+					<td>
+						{% if debriefing.player is null %}
+							Non renseigné
+						{% else %}
+							{{ debriefing.player.displayName }}
+						{% endif %}
+					</td>
 					<td>{{ debriefing.visibility|explainVisibility }}</td>
+					<td>
+						{% if debriefing.documentUrl %}
+							<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Télécharger document" href="{{ path('debriefing.document', {'debriefing': debriefing.id}) }}">
+								<i class="fa fa-download"></i>
+							</a>
+						{% else %}
+							-
+						{% endif %}
+					</td>
 				</tr>
 				{% endfor %}
 			</tbody>

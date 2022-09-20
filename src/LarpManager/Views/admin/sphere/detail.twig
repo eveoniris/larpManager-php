@@ -35,7 +35,7 @@
 		<div class="panel-body">
 			<ul>
 			{% for religion in sphere.religions %}
-				<li><a href="{{ path('religion.detail', {'index': religion.id}) }}">{{ religion.label }}</a></li>
+				<li>{% if religion.secret %}<span style="color:red;">Secret</span> - {% endif %}<a href="{{ path('religion.detail', {'index': religion.id}) }}">{{ religion.label }}</a></li>
 			{% endfor %}
 			</ul>
 		</div>

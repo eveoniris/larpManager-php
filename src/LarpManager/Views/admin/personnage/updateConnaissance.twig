@@ -1,0 +1,54 @@
+{% extends "layout.twig" %}
+
+{% block title %}{{ personnage.publicName }} liste de connaissances{% endblock title %}
+
+{% block content %}
+<div class="container-fluid">
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('homepage') }}">Accueil</a></li>
+		<li><a href="{{ path('personnage.admin.list') }}">Liste des personnages</a></li>
+		<li><a href="{{ path('personnage.admin.detail', {'personnage': personnage.id}) }}">Détail de {{ personnage.publicName }}</a></li>
+		<li class="active">Choix des connaissances</li>
+	</ol>
+	
+	<div class="well bs-component">
+		<table class="table table-striped table-bordered table-condensed">
+			<thead>
+				<tr>
+					<th>Nom</th>
+					<th>Secret</th>
+					<th>Description</th>
+					<th>Contraintes</th>
+					<th>Ajouter/Retirer</th>
+				</tr>
+			</thead>
+			<tbody>
+			{% for connaissance in connaissances %}
+				<tr>
+					<td>{{ connaissance.label }}</td>
+					<td>{% if connaissance.secret %}
+							<span style="color:red;">Secret</span>
+						{% else %}
+							Non
+						{% endif %}
+					</td>
+					<td>{{ connaissance.description|markdown}}</td>					
+					<td>{{ connaissance.contraintes|markdown}}</td>
+					<td>{% if personnage in connaissance.personnages  %}
+						<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Retirer cette connaissance"
+							href="{{ path('personnage.admin.remove.connaissance',{'personnage':personnage.id, 'connaissance':connaissance.id}) }}">
+							<i class="fa fa-minus" style="color: red"></i></a>
+						{% else %}
+							<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Ajouter cette connaissance"
+							   href="{{ path('personnage.admin.add.connaissance',{'personnage':personnage.id, 'connaissance':connaissance.id}) }}">
+							   <i class="fa fa-plus" style="color: green"></i></a>
+						{% endif %}
+					</td>
+				</tr>
+			{% endfor %}
+			</tbody>
+		</table>
+	</div>
+
+{% endblock content %}

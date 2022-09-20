@@ -45,7 +45,8 @@ class BackgroundRepository extends EntityRepository
 		
 		foreach ( $criteria as $criter )
 		{
-			$qb->addWhere($criter);
+			$qb->andWhere('?1');
+            $qb->setParameter(1, $criter);
 		}
 		
 		return $qb->getQuery()->getSingleScalarResult();
@@ -55,7 +56,8 @@ class BackgroundRepository extends EntityRepository
 	{
 		
 		$backgrounds = $this->getEntityManager()
-			->createQuery("SELECT b FROM LarpManager\Entities\Background b JOIN b.gn gn JOIN b.groupe g WHERE gn.id = $gnId ORDER BY g.numero ASC")
+			->createQuery("SELECT b FROM LarpManager\Entities\Background b JOIN b.gn gn JOIN b.groupe g WHERE gn.id = ?1 ORDER BY g.numero ASC")
+            ->setParameter(1, $gnId)
 			->getResult();
 		
 		return $backgrounds;

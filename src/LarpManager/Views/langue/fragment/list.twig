@@ -5,38 +5,25 @@
 			<h4 class="list-group-item-heading">Ajouter une langue</h4>
 		</a>
 	{%  endif %}
+
+	{# ajout de la liste de langues courantes #}
 	{%  for langue in langues %}
-	<li class="list-group-item">
-		<h4 class="list-group-item-heading">
-			{{ langue.label }} -- <small>langue {{ langue.categorie }}</small>
-			<div class="btn-group pull-right" role="group" aria-label="...">
-				<a href="{{ path('langue.detail', {index: langue.id}) }}" class="btn btn-primary" role="button">Détail</a>
-			    <a href="{{ path('langue.update', {index: langue.id}) }}" class="btn btn-default" role="button">Modifier</a>
-			</div>
-		</h4>
-		<p class="list-group-item-text">		
-			{% if langue.description %}
-				<p class="text-default">{{ langue.description|slice(0,500) }} ...</p>
-			{% else %}
-				<p class="text-warning">Attention, cette langue n'a pas de description</p>
-			{%  endif %}
-		</p>
-		
-		<p class="list-group-item-text">
-			{%  if langue.territoires|length > 0 %}
-				Cette langue est la langue principale des territoires suivants : {{ langue.territoires|join(', ') }}				
-			{% else %}
-				Cette langue n'est la langue principale d'aucun territoire.	
-			{% endif %}
-		</p>
-		
-		<p class="list-group-item-text">
-			{%  if langue.territoireSecondaires|length > 0 %}
-				Cette langue est parlée dans les territoires suivants : {{ langue.territoireSecondaires|join(', ') }}
-			{% else %}
-				Cette langue n'est la langue secondaire d'aucun territoire.
-			{% endif %}
-		</p>
-	</li>
-	{%  endfor %}
+		{% if langue.groupeLangue.id !=0 %}
+			{{ include("langue/fragment/listDetail.twig") }}
+		{%endif%}
+	{% endfor %}
+
+	{# ajout de la liste de langues secrètes #}
+	{%  for langue in langues %}
+		{% if langue.secret %}
+			{{ include("langue/fragment/listDetail.twig") }}
+		{%endif%}
+	{% endfor %}
+
+	{# ajout de la liste de langues anciennes #}
+	{%  for langue in langues %}
+		 {% if langue.secret == false and langue.groupeLangue.id ==0 %}
+			 {{ include("langue/fragment/listDetail.twig") }}
+		{%endif%}
+	{% endfor %}
 </ul>

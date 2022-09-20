@@ -39,6 +39,8 @@
 					<th>Territoire</th>
 					<th>Groupe</th>
 					<th>Défense</th>
+					<th>Espion(s)</th>
+					<th>Navire(s)</th>
 					<th>Constructions</th>
 			</thead>
 			<tbody>
@@ -48,13 +50,15 @@
 				<td>{{ territoire.root }}</td>
 				<td>
 					{% if territoire.groupe %}
-						{{ territoire.groupe.nom }}
+						<a href="{{ path('groupe.detail', {'index':territoire.groupe.id}) }}">{{ territoire.groupe.nom }}</a>
 					{% else %}
 						Aucun groupe ne contrôle ce territoire
 					{% endif %}
 				</td>
 				<td>{{ territoire.defense }}</td>
-				<td>{{ territoire.constructions|join(',') }}</td>
+				<td>En cours de developpement</td>
+				<td>En cours de developpement</td>
+				<td>{{ territoire.constructions|join(', ') }}</td>
 			</tr>
 		{% endfor %}
 			</tbody>

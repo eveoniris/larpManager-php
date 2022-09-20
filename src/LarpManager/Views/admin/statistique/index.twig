@@ -87,6 +87,36 @@
 				</div>
 			</div>
 		</div>
+		<div class="col-sm-4">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					Répartition des compétences par personnage.
+				</div>
+				<div class="panel-body">
+					<canvas id="myChartCompetencesFamily"></canvas>
+				</div>
+			</div>
+		</div>
+		<div class="col-sm-4">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					Répartition des compétences par personnage et par niveau.
+				</div>
+				<div class="panel-body">
+					<canvas id="myChartCompetences"></canvas>
+				</div>
+			</div>
+		</div>
+		<div class="col-sm-4">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					Répartition des constructions par territoires.
+				</div>
+				<div class="panel-body">
+					<canvas id="myChartConstructions"></canvas>
+				</div>
+			</div>
+		</div>
 	</div>
 	
 {% endblock %}
@@ -120,6 +150,36 @@
 
 		var data = {{ genres|raw }};
 		var ctx = document.getElementById("myChartGenres").getContext("2d");
+		var myNewChart = new Chart(ctx).Pie(data, {
+			animation: true,
+			animationSteps: 60,
+			animationEasing: "easeOutQuart",
+			segmentShowStroke : true,
+			segmentStrokeColor : "#fff",
+			});
+
+		var data = {{ competences|raw }};
+		var ctx = document.getElementById("myChartCompetences").getContext("2d");
+		var myNewChart = new Chart(ctx).Pie(data, {
+			animation: true,
+			animationSteps: 60,
+			animationEasing: "easeOutQuart",
+			segmentShowStroke : true,
+			segmentStrokeColor : "#fff",
+			});
+
+		var data = {{ competencesFamily|raw }};
+		var ctx = document.getElementById("myChartCompetencesFamily").getContext("2d");
+		var myNewChart = new Chart(ctx).Pie(data, {
+			animation: true,
+			animationSteps: 60,
+			animationEasing: "easeOutQuart",
+			segmentShowStroke : true,
+			segmentStrokeColor : "#fff",
+			});
+
+		var data = {{ constructions|raw }};
+		var ctx = document.getElementById("myChartConstructions").getContext("2d");
 		var myNewChart = new Chart(ctx).Pie(data, {
 			animation: true,
 			animationSteps: 60,

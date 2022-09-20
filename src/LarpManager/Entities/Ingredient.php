@@ -32,7 +32,7 @@ use LarpManager\Entities\BaseIngredient;
 /**
  * LarpManager\Entities\Ingredient
  *
- * @Entity()
+ * @Entity(repositoryClass="LarpManager\Repository\IngredientRepository")
  */
 class Ingredient extends BaseIngredient
 {
@@ -43,8 +43,26 @@ class Ingredient extends BaseIngredient
 	
 	public function fullLabel()
 	{
-		return $this->getLabel() .' - Niveau '.  $this->getNiveau();
+		return $this->getLabel() .' - '. $this->getColor() .' (Niveau '.  $this->getNiveau(). ') : '.  $this->getDose();
 	}
-			
-	
+
+	public function getColor()
+	{
+		$color = 'Blanc';
+		switch ($this->getNiveau()) {
+			case 1:
+				$color = 'Jaune';
+				break;
+			case 2:
+				$color = 'Bleu';
+				break;
+			case 3:
+				$color = 'Rouge';
+				break;
+			case 4:
+				$color = 'Gris';
+				break;
+		}
+		return $color;	
+	}	
 }

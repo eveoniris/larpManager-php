@@ -219,7 +219,7 @@ else
  			   }),
  		),
 		'secured_area' => array(	// le reste necessite d'être connecté
-			'pattern' => '^/[annonce|debriefing|objet|strategie|intrigue|rumeur|question|restriction|econnomie|monnaie|quality|rule|message|notification|statistique|billet|etatCivil|restauration|stock|droit|forum|groupe|gn|groupeGn|personnage|territoire|appelation|langue|ressource|religion|age|genre|level|competence|competenceFamily]/.*$',
+			'pattern' => '^/[annonce|debriefing|objet|strategie|intrigue|rumeur|question|restriction|economie|monnaie|quality|rule|message|notification|statistique|billet|etatCivil|restauration|stock|droit|forum|groupe|gn|groupeGn|personnage|territoire|appelation|langue|ressource|religion|age|genre|level|competence|competenceFamily]/.*$',
 		    'anonymous' => false,
 			'remember_me' => array(),
 			'form' => array(
@@ -291,7 +291,7 @@ else
 	$app->mount('/rule', new LarpManager\RuleControllerProvider());
 	$app->mount('/monnaie', new LarpManager\MonnaieControllerProvider());
 	$app->mount('/quality', new LarpManager\QualityControllerProvider());
-	$app->mount('/econnomie', new LarpManager\EconnomieControllerProvider());
+	$app->mount('/economie', new LarpManager\EconomieControllerProvider());
 	$app->mount('/intrigue', new LarpManager\IntrigueControllerProvider());
 	$app->mount('/rumeur', new LarpManager\RumeurControllerProvider());
 	$app->mount('/strategie', new LarpManager\StrategieControllerProvider());
@@ -300,6 +300,8 @@ else
 	$app->mount('/culture', new LarpManager\CultureControllerProvider());
 	$app->mount('/loi', new LarpManager\LoiControllerProvider());
 	$app->mount('/question', new LarpManager\QuestionControllerProvider());
+    $app->mount('/lignee', new LarpManager\LigneeControllerProvider());
+    $app->mount('/connaissance', new LarpManager\ConnaissanceControllerProvider());
 		
 
 	/**
@@ -359,7 +361,7 @@ else
 		array('^/langue/.*$', 'ROLE_SCENARISTE'),
 		array('^/ressource/.*$', 'ROLE_SCENARISTE'),
 		array('^/statistique/.*$', 'ROLE_SCENARISTE'),
-		array('^/econnomie/.*$', 'ROLE_SCENARISTE'),
+		array('^/economie/.*$', 'ROLE_SCENARISTE'),
 		array('^/document/.*$', 'ROLE_SCENARISTE'),
 		array('^/lieu/.*$', 'ROLE_SCENARISTE'),
 		array('^/monnaie/.*$', 'ROLE_SCENARISTE'),
@@ -375,8 +377,9 @@ else
 		array('^/level/.*$', 'ROLE_REGLE'),
 		array('^/token/.*$', 'ROLE_REGLE'),
 		array('^/stock/.*$', 'ROLE_STOCK'),
-		array('^/rule/.*$', 'ROLE_REGLE'),
-
+		array('^/rule/.*$', 'ROLE_USER'),
+		array('^/lignee/.*$', 'ROLE_SCENARISTE'),
+		array('^/connaissance/.*$', 'ROLE_USER'),
 	);
 }
 

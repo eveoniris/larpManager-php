@@ -30,7 +30,7 @@
 		<tbody>
 			{% for participant in participants %}
 				<tr>
-					<td>{{ participant.user.etatCivil.nom }} {{ participant.user.etatCivil.prenom }}</td>
+					<td>{{ participant.user.etatCivil }}</td>
 					<td>{{ participant.user.email }}</td>
 					<td>
 						<div class="btn-toolbar pull-right" role="toolbar" aria-label="...">

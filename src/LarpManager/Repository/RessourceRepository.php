@@ -52,4 +52,16 @@ class RessourceRepository extends EntityRepository
 
 		return $ressources;
 	}
+	
+	/**
+	 * Fourni la liste des ressources par ordre alphabétique
+	 * @return \Doctrine\Common\Collections\Collection
+	 */
+	public function findAllOrderByLabel()
+	{
+		$query = $this->getEntityManager()->createQuery('SELECT r FROM LarpManager\Entities\Ressource r ORDER BY r.label ASC');
+		$ressources = $query->getResult();
+
+		return $ressources;
+	}
 }

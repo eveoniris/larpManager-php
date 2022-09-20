@@ -28,8 +28,8 @@
 namespace LarpManager\Entities;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use LarpManager\Entities\BasePersonnage;
-use Doctrine\Common\Annotations\Annotation\Attribute;
+use Doctrine\ORM\Mapping\Entity;
+
 
 /**
  * LarpManager\Entities\Personnage
@@ -251,18 +251,33 @@ class Personnage extends BasePersonnage
 	    }
 
 	    for($i = 0; $i < 4;$i++) {
-	        error_log("PA " . $expectedByLevel[$i] . " " . $countByLevel[$i]);
+	        // error_log($this->nom . " PA " . $expectedByLevel[$i] . " " . $countByLevel[$i]);
 	        if($litteratureApprenti == null && $expectedByLevel[$i] < $countByLevel[$i]) {
 	            return ($countByLevel[$i] - $expectedByLevel[$i]) . " potion(s) de niveau " . ($i+1) . " en trop à vérifier ";
 	        }
 
 	        if($expectedByLevel[$i] > $countByLevel[$i]) {
-	            return ($expectedByLevel[$i] - $countByLevel[$i]) . " potion(s) de niveau " . ($i+1) . " manquante";
+	            return ($expectedByLevel[$i] - $countByLevel[$i]) . " potion(s) de niveau " . ($i+1) . " manquante(s)";
 	        }
 	    }
 
 	    return "";
 	}
+
+	/**
+	 * Vérifie si le personnage connait cette connaissance
+	 *
+	 * @param Connaissance $connaissance
+	 * @return boolean
+	 */
+	public function isKnownConnaissance(Connaissance $c)
+	{
+		foreach ( $this->getConnaissances() as $connaissance)
+		{
+			if ( $connaissance == $c ) return true;
+		}
+		return false;
+    }
 
 	/**
 	 * Vérifie si le personnage connait ce sort
@@ -391,7 +406,6 @@ class Personnage extends BasePersonnage
 		return false;
 	}
 
-
 	/**
 	 * Vérifie si le personnage connait cette langue
 	 * @param unknown $langue
@@ -425,25 +439,30 @@ class Personnage extends BasePersonnage
      */
     public function getLanguesAnomaliesMessage()
     {
-
         // On compte les langues connues
         $compteLangue = 0;
         $compteLangueAncienne = 0;
+		$maxLangueConnue = 0;
         $label = "";
         foreach ($this->getPersonnageLangues() as $personnageLangue)
-        {
-            $label = $label . " " . $personnageLangue->getLangue();
-            if (strpos($personnageLangue->getLangue(), "Ancien:") === 0)
+		{
+			$label = $label . " " . $personnageLangue->getLangue();
+            if (strpos($personnageLangue->getLangue(), "Ancien") === 0)
             {
                 $compteLangueAncienne += 1;
             } else
             {
                 $compteLangue += 1;
             }
+			$source = $personnageLangue->getSource();
+			$baseSources = array("ORIGINE", "GROUPE", "ORIGINE et GROUPE");
+			if (in_array($source, $baseSources))
+			{
+				$maxLangueConnue +=1;
+			}
         }
 
         // On parcourt les compétences pour compter le nombre de langues & langues anciennes qui devraient être connues.
-        $maxLangueConnue = 2;
         $maxLangueAncienneConnue = 0;
         foreach ($this->getCompetences() as $competence)
         {
@@ -461,22 +480,23 @@ class Personnage extends BasePersonnage
         }
 
         // On génère le message de restitution de l'anomalie.
+		$return = "";
         if ($compteLangue > $maxLangueConnue)
         {
-            return ($compteLangue - $maxLangueConnue) . " langue(s) en trop à vérifier";
+            $return .= ($compteLangue - $maxLangueConnue) . " langue(s) en trop à vérifier";
         } else if ($compteLangue < $maxLangueConnue)
         {
-            return ($maxLangueConnue - $compteLangue) . " langue(s) manquante(s)";
+            $return .= ($maxLangueConnue - $compteLangue) . " langue(s) manquante(s)";
         }
-
+		if ($return != "") $return .= ", ";
         if ($maxLangueAncienneConnue < $compteLangueAncienne)
         {
-            return ($compteLangueAncienne - $maxLangueAncienneConnue) . " langue(s) ancienne(s) en trop à vérifier";
+            $return .= ($compteLangueAncienne - $maxLangueAncienneConnue) . " langue(s) ancienne(s) en trop à vérifier";
         } else if ($maxLangueAncienneConnue > $compteLangueAncienne)
         {
-            return ($maxLangueAncienneConnue - $compteLangueAncienne) . " langue(s) ancienne(s) en manquante(s)";
+            $return .= ($maxLangueAncienneConnue - $compteLangueAncienne) . " langue(s) ancienne(s) en manquante(s)";
 	    }
-	    return "";
+	    return $return;
 	}
 
 
@@ -526,16 +546,17 @@ class Personnage extends BasePersonnage
 		return false;
 	}
 
-	/**
-	 * Fourni le niveau d'une compétence d'un personnage
-	 * @param unknown $label
-	 */
-	public function getCompetenceNiveau($label)
-	{
+    /**
+     * Fourni le niveau d'une compétence d'un personnage
+     * @param string $label
+     * @return int
+     */
+	public function getCompetenceNiveau(string $label): int
+    {
 		$niveau = 0;
 		foreach ( $this->getCompetences() as $competence)
 		{
-			if ( $competence->getCompetenceFamily()->getLabel() == $label)
+			if ( $competence->getCompetenceFamily()->getLabel() === $label)
 			{
 				if ( $niveau < $competence->getLevel()->getIndex() )
 					$niveau = $competence->getLevel()->getIndex();
@@ -566,7 +587,7 @@ class Personnage extends BasePersonnage
 	 */
 	public function getPugilat()
 	{
-		$pugilat = 0;
+		$pugilat = 1;
 
 		$pugilat = $this->getCompetencePugilat('Agilité')
 			+ $this->getCompetencePugilat('Armes à distance')
@@ -602,6 +623,200 @@ class Personnage extends BasePersonnage
 	}
 
 	/**
+	 * Fourni le détail de pugilat à afficher
+	 */
+	public function getDisplayPugilat()
+	{
+		$pugilatHistories = array();
+
+		$pugilatHistory = new \LarpManager\Entities\PugilatHistory();
+		$pugilatHistory->setPugilat(1);
+		$pugilatHistory->setExplication('Score de base');
+		$pugilatHistories[] = $pugilatHistory;
+
+		foreach ( $this->getPugilatHistories() as $pugilatHistory)
+		{
+			$pugilatHistories[] = $pugilatHistory;
+		}
+		
+		if ($this->getCompetencePugilat('Agilité') > 0){
+			$pugilatHistory = new \LarpManager\Entities\PugilatHistory();
+			$pugilatHistory->setPugilat($this->getCompetencePugilat('Agilité'));
+			$pugilatHistory->setExplication('Compétence Agilité niveau '.$this->getCompetenceNiveau('Agilité'));
+			$pugilatHistories[] = $pugilatHistory;
+		}
+		if ($this->getCompetencePugilat('Armes à distance') > 0){
+			$pugilatHistory = new \LarpManager\Entities\PugilatHistory();
+			$pugilatHistory->setPugilat($this->getCompetencePugilat('Armes à distance'));
+			$pugilatHistory->setExplication('Compétence Armes à distance niveau '.$this->getCompetenceNiveau('Armes à distance'));
+			$pugilatHistories[] = $pugilatHistory;
+		}
+		if ($this->getCompetencePugilat('Armes à 1 main') > 0){
+			$pugilatHistory = new \LarpManager\Entities\PugilatHistory();
+			$pugilatHistory->setPugilat($this->getCompetencePugilat('Armes à 1 main'));
+			$pugilatHistory->setExplication('Compétence Armes à 1 main niveau '.$this->getCompetenceNiveau('Armes à 1 main'));
+			$pugilatHistories[] = $pugilatHistory;
+		}
+		if ($this->getCompetencePugilat('Armes à 2 mains') > 0){
+			$pugilatHistory = new \LarpManager\Entities\PugilatHistory();
+			$pugilatHistory->setPugilat($this->getCompetencePugilat('Armes à 2 mains'));
+			$pugilatHistory->setExplication('Compétence Armes à 2 mains niveau '.$this->getCompetenceNiveau('Armes à 2 mains'));
+			$pugilatHistories[] = $pugilatHistory;
+		}
+		if ($this->getCompetencePugilat('Armes d\'hast') > 0){
+			$pugilatHistory = new \LarpManager\Entities\PugilatHistory();
+			$pugilatHistory->setPugilat($this->getCompetencePugilat('Armes d\'hast'));
+			$pugilatHistory->setExplication('Compétence Armes d\'hast niveau '.$this->getCompetenceNiveau('Armes d\'hast'));
+			$pugilatHistories[] = $pugilatHistory;
+		}
+		if ($this->getCompetencePugilat('Armure') > 0){
+			$pugilatHistory = new \LarpManager\Entities\PugilatHistory();
+			$pugilatHistory->setPugilat($this->getCompetencePugilat('Armure'));
+			$pugilatHistory->setExplication('Compétence Armure niveau '.$this->getCompetenceNiveau('Armure'));
+			$pugilatHistories[] = $pugilatHistory;
+		}
+		if ( $this->getCompetenceNiveau('Armurerie') >= 2 ) {
+			$pugilatHistory = new \LarpManager\Entities\PugilatHistory();
+			$pugilatHistory->setPugilat(5);
+			$pugilatHistory->setExplication('Compétence Armurerie niveau '.$this->getCompetenceNiveau('Armurerie'));
+			$pugilatHistories[] = $pugilatHistory;
+		}
+		if ($this->getCompetencePugilat('Attaque sournoise') > 0){
+			$pugilatHistory = new \LarpManager\Entities\PugilatHistory();
+			$pugilatHistory->setPugilat($this->getCompetencePugilat('Attaque sournoise'));
+			$pugilatHistory->setExplication('Compétence Attaque sournoise niveau '.$this->getCompetenceNiveau('Attaque sournoise'));
+			$pugilatHistories[] = $pugilatHistory;
+		}
+		if ($this->getCompetencePugilat('Protection') > 0){
+			$pugilatHistory = new \LarpManager\Entities\PugilatHistory();
+			$pugilatHistory->setPugilat($this->getCompetencePugilat('Protection'));
+			$pugilatHistory->setExplication('Compétence Protection niveau '.$this->getCompetenceNiveau('Protection'));
+			$pugilatHistories[] = $pugilatHistory;
+		}
+		if ($this->getCompetencePugilat('Résistance') > 0){
+			$pugilatHistory = new \LarpManager\Entities\PugilatHistory();
+			$pugilatHistory->setPugilat($this->getCompetencePugilat('Résistance'));
+			$pugilatHistory->setExplication('Compétence Résistance niveau '.$this->getCompetenceNiveau('Résistance'));
+			$pugilatHistories[] = $pugilatHistory;
+		}
+		if ($this->getCompetencePugilat('Sauvagerie') > 0){
+			$pugilatHistory = new \LarpManager\Entities\PugilatHistory();
+			$extra = 0;
+			if ( $this->getCompetenceNiveau('Sauvagerie') >= 2 ) {
+				$extra = 5;
+			}
+			$pugilatHistory->setPugilat($extra+$this->getCompetencePugilat('Sauvagerie'));
+			$pugilatHistory->setExplication('Compétence Sauvagerie niveau '.$this->getCompetenceNiveau('Sauvagerie'));
+			$pugilatHistories[] = $pugilatHistory;
+		}
+		if ($this->getCompetencePugilat('Stratégie') > 0){
+			$pugilatHistory = new \LarpManager\Entities\PugilatHistory();
+			$pugilatHistory->setPugilat($this->getCompetencePugilat('Stratégie'));
+			$pugilatHistory->setExplication('Compétence Stratégie niveau '.$this->getCompetenceNiveau('Stratégie'));
+			$pugilatHistories[] = $pugilatHistory;
+		}
+		if ($this->getCompetencePugilat('Survie') > 0){
+			$pugilatHistory = new \LarpManager\Entities\PugilatHistory();
+			$pugilatHistory->setPugilat($this->getCompetencePugilat('Survie'));
+			$pugilatHistory->setExplication('Compétence Survie niveau '.$this->getCompetenceNiveau('Survie'));
+			$pugilatHistories[] = $pugilatHistory;
+		}
+		return $pugilatHistories;
+	}
+
+	/**
+	 * Fourni le score d'héroïsme
+	 */
+	public function getHeroisme()
+	{
+		$heroisme = 0;
+
+		if ( $this->getCompetenceNiveau('Agilité') >= 2 ) $heroisme++;
+		if ( $this->getCompetenceNiveau('Armes à 1 main') >= 3 ) $heroisme++;
+		if ( $this->getCompetenceNiveau('Armes à 2 mains') >= 2 ) $heroisme++;
+		if ( $this->getCompetenceNiveau('Armurerie') >= 4 ) $heroisme++;
+		if ( $this->getCompetenceNiveau('Protection') >= 4 ) $heroisme++;
+		if ( $this->getCompetenceNiveau('Sauvagerie') >= 1 ) $heroisme++;
+
+		foreach ( $this->getHeroismeHistories() as $heroismeHistory)
+		{
+			$heroisme = $heroisme + $heroismeHistory->getHeroisme();
+		}		
+
+		return $heroisme;
+	}
+
+	/**
+	 * Fourni le détail d'héroïsme à afficher
+	 */
+	public function getDisplayHeroisme()
+	{
+		$heroismeHistories = array();
+
+		foreach ( $this->getHeroismeHistories() as $heroismeHistory)
+		{
+			$heroismeHistories[] = $heroismeHistory;
+		}
+
+		if ( $this->getCompetenceNiveau('Agilité') >= 2 ) {
+			$heroismeHistory = new \LarpManager\Entities\HeroismeHistory();
+			$heroismeHistory->setHeroisme(1);
+			$heroismeHistory->setExplication('Compétence Agilité niveau '.$this->getCompetenceNiveau('Agilité'));
+			$heroismeHistories[] = $heroismeHistory;
+		}
+
+		if ( $this->getCompetenceNiveau('Armes à 1 main') >= 3 ) {
+			$heroismeHistory = new \LarpManager\Entities\HeroismeHistory();
+			$heroismeHistory->setHeroisme(1);
+			$heroismeHistory->setExplication('Compétence Armes à 1 main niveau '.$this->getCompetenceNiveau('Armes à 1 main'));
+			$heroismeHistories[] = $heroismeHistory;
+		}
+		if ( $this->getCompetenceNiveau('Armes à 2 mains') >= 2 ) {
+			$heroismeHistory = new \LarpManager\Entities\HeroismeHistory();
+			$heroismeHistory->setHeroisme(1);
+			$heroismeHistory->setExplication('Compétence Armes à 2 mains niveau '.$this->getCompetenceNiveau('Armes à 2 mains'));
+			$heroismeHistories[] = $heroismeHistory;
+		}
+		if ( $this->getCompetenceNiveau('Armurerie') >= 4 ) {
+			$heroismeHistory = new \LarpManager\Entities\HeroismeHistory();
+			$heroismeHistory->setHeroisme(1);
+			$heroismeHistory->setExplication('Compétence Armurerie niveau '.$this->getCompetenceNiveau('Armurerie'));
+			$heroismeHistories[] = $heroismeHistory;
+		}
+		if ( $this->getCompetenceNiveau('Protection') >= 4 ) {
+			$heroismeHistory = new \LarpManager\Entities\HeroismeHistory();
+			$heroismeHistory->setHeroisme(1);
+			$heroismeHistory->setExplication('Compétence Protection niveau '.$this->getCompetenceNiveau('Protection'));
+			$heroismeHistories[] = $heroismeHistory;
+		}
+		if ( $this->getCompetenceNiveau('Sauvagerie') >= 1 ) {
+			$heroismeHistory = new \LarpManager\Entities\HeroismeHistory();
+			$heroismeHistory->setHeroisme(1);
+			$heroismeHistory->setExplication('Compétence Sauvagerie niveau '.$this->getCompetenceNiveau('Sauvagerie'));
+			$heroismeHistories[] = $heroismeHistory;
+		}
+
+		return $heroismeHistories;
+	}
+
+    /**
+     * Fourni le score de Renommée
+     * @override BasePersonnage::getRenomme()
+     */
+    public function getRenomme(): int
+    {
+        // $renomme = $this->renomme ?? 0;
+        $renomme = 0;
+
+        foreach ( $this->getRenommeHistories() as $renommeHistory)
+        {
+            $renomme += $renommeHistory->getRenomme();
+        }
+
+        return $renomme;
+    }
+
+	/**
 	 * Fourni le trigger correspondant au tag
 	 * @param unknown $tag
 	 */
@@ -632,10 +847,55 @@ class Personnage extends BasePersonnage
 	 */
 	public function getIdentity()
 	{
-		$groupe = $this->getGroupe();
-
+		$groupeLabel = null;
+		$nomGn = '???';
+		if ( $this->getUser() )
+		{
+			foreach ( $this->getUser()->getParticipants() as $participant )
+			{
+				if( $participant->getPersonnage() == $this )
+				{
+					$nomGn = $participant->getGn()->getLabel();
+					$groupeGn = $participant->getGroupeGn();
+					if ($groupeGn != null)
+						$groupeLabel = $groupeGn->getGroupe()->getNom();
+				}
+			}
+		}
 		$identity = $this->getNom().' - '.$this->getSurnom().' (';
-		if ( $groupe ) $identity .= $groupe->getNom();
+		if ( $groupeLabel )
+			$identity .= $nomGn.' - '.$groupeLabel;
+		else 
+			$identity .= $nomGn.' - *** GROUPE NON IDENTIFIABLE ***';
+		$identity .= ')';
+		return $identity;
+	}
+
+	/**
+	 * Fourni l'identité publique d'un personnage
+	 */
+	public function getPublicIdentity()
+	{
+		$groupeLabel = null;
+		$nomGn = '???';
+		if ( $this->getUser() )
+		{
+			foreach ( $this->getUser()->getParticipants() as $participant )
+			{
+				if( $participant->getPersonnage() == $this )
+				{
+					$nomGn = $participant->getGn()->getLabel();
+					$groupeGn = $participant->getGroupeGn();
+					if ($groupeGn != null)
+						$groupeLabel = $groupeGn->getGroupe()->getNom();
+				}
+			}
+		}
+		$identity = $this->getPublicName().' (';
+		if ( $groupeLabel )
+			$identity .= $nomGn.' - '.$groupeLabel;
+		else 
+			$identity .= $nomGn.' - *** GROUPE NON IDENTIFIABLE ***';
 		$identity .= ')';
 		return $identity;
 	}
@@ -660,6 +920,7 @@ class Personnage extends BasePersonnage
 	public function getIdentityByLabel($gnLabel)
 	{
 		$groupeLabel = null;
+		$nomGn = $gnLabel;
 		if ( $this->getUser() )
 		{
 			foreach ( $this->getUser()->getParticipants() as $participant )
@@ -669,13 +930,16 @@ class Personnage extends BasePersonnage
 					&& $participant->getPersonnage() == $this )
 				{
 					$groupeGn = $participant->getGroupeGn();
-					$groupeLabel = $groupeGn->getGroupe()->getNom();
+					if ($groupeGn != null)
+						$groupeLabel = $groupeGn->getGroupe()->getNom();
 				}
 			}
 		}
-
-		$identity = $this->getNom().' - '.$this->getSurnom().' (';
-		if ( $groupeLabel ) $identity .= $groupeLabel;
+		$identity = $this->getPublicName().' (';
+		if ( $groupeLabel )
+			$identity .= $nomGn.' - '.$groupeLabel;
+		else 
+			$identity .= $nomGn.' - *** GROUPE NON IDENTIFIABLE ***';
 		$identity .= ')';
 		return $identity;
 	}
@@ -833,22 +1097,24 @@ class Personnage extends BasePersonnage
 		return $this;
 	}
 
-	/**
-	 * Ajoute des points de renomme à un personnage
-	 * @param unknown $renomme
-	 */
-	public function addRenomme($renomme)
-	{
+    /**
+     * Ajoute des points de renomme à un personnage
+     * @param integer $renomme
+     * @return Personnage
+     */
+	public function addRenomme(int $renomme)
+    {
 		$this->setRenomme($this->getRenomme() + $renomme);
 		return $this;
 	}
 
-	/**
-	 * Retire des points de renomme à un personnage
-	 * @param unknown $renomme
-	 */
-	public function removeRenomme($renomme)
-	{
+    /**
+     * Retire des points de renomme à un personnage
+     * @param integer $renomme
+     * @return Personnage
+     */
+	public function removeRenomme(int $renomme)
+    {
 		$this->setRenomme($this->getRenomme() - $renomme);
 		return $this;
 	}
@@ -911,4 +1177,223 @@ class Personnage extends BasePersonnage
 	    }
 	    return $s; 
 	}
+	
+	/**
+	 * Retourne le dernier participant du personnage
+	 * 
+	 * @return \LarpManager\Entities\Participant|NULL
+	 */
+	public function getLastParticipant() : ?\LarpManager\Entities\Participant
+	{
+	    if (!$this->getParticipants()->isEmpty())
+	    {
+	        return $this->getParticipants()->last();
+	    }
+	    return null;
+	}
+	
+	/**
+	 * Retourne true si le dernier participant du personnage est sur un gn actif et a un billet
+	 * 
+	 * @return bool
+	 */
+	public function isLastParticipantOnActiveGn() : bool
+	{
+	    $lastParticipant = $this->getLastParticipant();
+	    return ($lastParticipant
+	        && $lastParticipant->getGn()
+	        && $lastParticipant->getGn()->getActif()
+	        && $lastParticipant->getBillet());
+	}
+	
+	/**
+	 * Retourne le gn du dernier participant du personnage
+	 * 
+	 * @return \LarpManager\Entities\Gn|NULL
+	 */
+	public function getLastParticipantGn() : ?\LarpManager\Entities\Gn
+	{
+	    $lastParticipant = $this->getLastParticipant();
+	    if ($lastParticipant)
+	    {
+	        return $lastParticipant->getGn();
+	    }
+	    return null;
+	}
+	
+	/**
+	 * Retourne le numéro du gn du dernier participant du personnage
+	 * 
+	 * @return int
+	 */
+	public function getLastParticipantGnNumber() : int
+	{
+	    $lastParticipantGn = $this->getLastParticipantGn();
+	    if ($lastParticipantGn)
+	    {
+	        return $lastParticipantGn->getNumber();
+	    }
+	    return 0;
+	}
+	
+	/**
+	 * Retourne le groupe du gn du dernier participant du personnage, s'il est bien présent
+	 * 
+	 * @return \LarpManager\Entities\Groupe|NULL
+	 */
+	public function getLastParticipantGnGroupe() : ?\LarpManager\Entities\Groupe
+	{
+	    $lastParticipant = $this->getLastParticipant();   
+	    if ($lastParticipant)
+	    {
+	        $lastParticipantGn = $lastParticipant->getGn();
+	        $lastParticipantGroupeGn = $lastParticipant->getGroupeGn();
+	        if( !empty($lastParticipantGroupeGn)
+	            && $lastParticipantGn->getLabel() == $lastParticipantGroupeGn->getGn()->getLabel())
+            {
+                return $lastParticipantGroupeGn->getGroupe();
+            }
+	    }
+	    return null;
+	}
+	
+	/**
+	 * Retourne le nom du groupe du gn du dernier participant du personnage, s'il est bien présent
+	 * Si pas defini, renvoie 'N\'est pas lié à un groupe''
+	 * 
+	 * @return string
+	 */
+	public function getLastParticipantGnGroupeNom() : string
+	{
+	    $lastParticipantGnGroupe = $this->getLastParticipantGnGroupe();
+	    return ($lastParticipantGnGroupe
+            ? $lastParticipantGnGroupe->getNom()
+	        : 'N\'est pas lié à un groupe');
+	}
+	
+	/**
+	 * Indique si le dernier participant était un PNJ ou non
+	 * 
+	 * @return bool
+	 */
+	public function isPnj() : bool
+	{
+	    $lastParticipant = $this->getLastParticipant();
+	    if ($lastParticipant)
+	    {
+	        return $lastParticipant->isPnj();
+	    }
+	    return false;
+	}
+	
+	/**
+	 * Retourne le nom complet de l'utilisateur (nom prénom)
+	 * @return string|NULL
+	 */
+	public function getUserFullName() : ?string
+	{
+	    if ($this->getUser())
+	    {
+	        return $this->getUser()->getFullName();
+	    }
+	    return null;
+	}
+	
+	/**
+	 * Retourne le nom complet du personnage
+	 * 
+	 * @return string
+	 */
+	public function getFullName() : string
+	{
+	    return $this->getNom().(!empty($this->getSurnom()) ? ' ('.$this->getSurnom().')' : '');
+	}
+	
+	/**
+	 * Retourne true si le personnage a au moins une anomalie
+	 * 
+	 * @return bool
+	 */
+	public function hasAnomalie() : bool
+	{
+	    return (
+            !empty($this->getLanguesAnomaliesMessage())
+            || !empty($this->getPotionAnomalieMessage())
+            || !empty($this->getSortAnomalieMessage())
+            || !empty($this->getPrieresAnomalieMessage())
+        );	    
+	}
+	
+	/**
+	 * Retourne le statut suivant d'un joueur sous forme entier : 
+	 * 0 = Mort
+	 * 1 = PJ vivant 
+	 * 2 = PNJ vivant
+	 * 
+	 * @return int
+	 */
+	public function getStatusCode() : int
+	{
+	    return $this->getVivant() 
+	       ? ($this->isPnj() ? 2 : 1) 
+	       : 0;
+	}
+	
+	/**
+	 * Retourne le statut lié au gn actif d'un joueur sous forme entier :
+	 * 0 = Mort
+	 * 1 = PJ vivant ne participant pas au gn actif
+	 * 2 = PNJ vivant
+	 * 3 = PJ vivant participant au gn actif
+	 * 
+	 * @return int
+	 */
+	public function getStatusOnActiveGnCode() : int
+	{	
+	    return $this->getVivant() 
+	       ? ($this->isPnj() 
+	           ? 2 
+	           : ($this->isLastParticipantOnActiveGn() 
+	               ? 3 
+	               : 1)
+	           )
+	       : 0;
+	}
+	
+	/**
+	 * Retourne le statut d'un joueur sous forme entier prenant en compte le numéro du dernier GN participé :
+	 * -1 = PNJ
+	 * 0 = mort
+	 * 1 .. N = numéro du dernier GN auquel
+	 * 
+	 * @return int
+	 */
+	public function getStatusGnCode() : int
+	{
+	    if (!$this->getVivant())
+	    {
+	        return 0;
+	    }
+	    if ($this->isPnj())
+	    {
+	        return -1;
+	    }
+	    return $this->getLastParticipantGnNumber();
+	}
+
+	/**
+	 * Vérifie si le personnage connait cette technologie
+	 *
+	 * @param Technologie $technologie
+	 * @return boolean
+	 */
+	public function isKnownTechnologie(Technologie $t)
+	{
+		foreach ( $this->getTechnologies() as $technologie)
+		{
+			if ( $technologie == $t ) return true;
+		}
+		return false;
+	}	
+	
 }

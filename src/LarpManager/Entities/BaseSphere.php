@@ -46,6 +46,7 @@ class BaseSphere
      *     joinColumns={@JoinColumn(name="sphere_id", referencedColumnName="id", nullable=false)},
      *     inverseJoinColumns={@JoinColumn(name="religion_id", referencedColumnName="id", nullable=false)}
      * )
+     * @OrderBy({"label" = "ASC",})
      */
     protected $religions;
 
