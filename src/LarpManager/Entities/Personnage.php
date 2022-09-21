@@ -587,9 +587,8 @@ class Personnage extends BasePersonnage
 	 */
 	public function getPugilat()
 	{
-		$pugilat = 1;
-
-		$pugilat = $this->getCompetencePugilat('Agilité')
+		$pugilat = 1
+			+ $this->getCompetencePugilat('Agilité')
 			+ $this->getCompetencePugilat('Armes à distance')
 			+ $this->getCompetencePugilat('Armes à 1 main')
 			+ $this->getCompetencePugilat('Armes à 2 mains')
