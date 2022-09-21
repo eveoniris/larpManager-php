@@ -1,0 +1,17 @@
+env:
+	env: prod
+	
+database:
+    driver: pdo_mysql
+    host: larpmdbmysql
+    dbname: larpm
+    user: admin
+    password: password
+    
+swiftmailler:
+   host: host
+   port: 25
+   username: username
+   password: password
+   encryption: null
+   auth_mode: null
