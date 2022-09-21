@@ -1225,12 +1225,17 @@ class ParticipantController
 		{
 				$data = $form->getData();
 				$code = $data['code'];
-				$groupeGn = $app['orm.em']->getRepository('\LarpManager\Entities\GroupeGn')->findOneByCode($code);
-				$groupe = $groupeGn->getGroupe();
-				
-				if ( ! $groupe )
+				$groupeGn = $app['orm.em']->getRepository('\LarpManager\Entities\GroupeGn')->findOneByCode($code);								
+				if ( ! $groupeGn )
 				{
 					$app['session']->getFlashBag()->add('error','Désolé, le code que vous utilisez ne correspond à aucun groupe');
+					return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),303);
+				}
+				$groupe = $groupeGn->getGroupe();
+				if ( ! $groupe )
+				{
+					// Il est possible que ce cas ne puisse pas arriver.
+					$app['session']->getFlashBag()->add('error','Désolé, le code que vous utilisez correspond à un groupe mal paramétré');
 					return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),303);
 				}
 				
