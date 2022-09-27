@@ -77,6 +77,7 @@ use LarpManager\Entities\Question;
 use LarpManager\Entities\Reponse;
 use LarpManager\Entities\Langue;
 use LarpManager\Entities\Connaissance;
+use LarpManager\Entities\Technologie;
 
 
 /**
@@ -1224,12 +1225,17 @@ class ParticipantController
 		{
 				$data = $form->getData();
 				$code = $data['code'];
-				$groupeGn = $app['orm.em']->getRepository('\LarpManager\Entities\GroupeGn')->findOneByCode($code);
-				$groupe = $groupeGn->getGroupe();
-				
-				if ( ! $groupe )
+				$groupeGn = $app['orm.em']->getRepository('\LarpManager\Entities\GroupeGn')->findOneByCode($code);								
+				if ( ! $groupeGn )
 				{
 					$app['session']->getFlashBag()->add('error','Désolé, le code que vous utilisez ne correspond à aucun groupe');
+					return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),303);
+				}
+				$groupe = $groupeGn->getGroupe();
+				if ( ! $groupe )
+				{
+					// Il est possible que ce cas ne puisse pas arriver.
+					$app['session']->getFlashBag()->add('error','Désolé, le code que vous utilisez correspond à un groupe mal paramétré');
 					return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),303);
 				}
 				
@@ -1579,6 +1585,35 @@ class ParticipantController
 		$file = __DIR__.'/../../../private/doc/'.$priere->getDocumentUrl();
 		return $app->sendFile($file)
 			   ->setContentDisposition(ResponseHeaderBag::DISPOSITION_INLINE, $priere->getPrintLabel().'.pdf');;
+	}
+
+	/**
+	 * Obtenir le document lié à une technologie
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Participant $participant
+	 * @param Technologie $technologie
+	 */
+	public function technologieDocumentAction(Request $request, Application $app, Participant $participant, Technologie $technologie)
+	{
+		$personnage = $participant->getPersonnage();
+	
+		if ( ! $personnage )
+		{
+			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créé un personnage !');
+			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),303);
+		}
+	
+		if ( ! $personnage->isKnownTechnologie($technologie) )
+		{
+			$app['session']->getFlashBag()->add('error', 'Vous ne connaissez pas cette technologie !');
+			return $app->redirect($app['url_generator']->generate('gn.personnage', array('gn' => $participant->getGn()->getId())),303);
+		}
+			
+		$file = __DIR__.'/../../../private/doc/'.$technologie->getDocumentUrl();
+		return $app->sendFile($file)
+			   ->setContentDisposition(ResponseHeaderBag::DISPOSITION_INLINE, $technologie->getPrintLabel().'.pdf');;
 	}
 	
 	/**

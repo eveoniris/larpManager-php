@@ -38,7 +38,7 @@ class StatistiqueController
 		$repo = $app['orm.em']->getRepository('LarpManager\Entities\Langue');
 		$langues = $repo->findAll();
 		$stats = array();
-		foreach( $langues as $langue)
+		foreach($langues as $langue)
 		{
 			$colors = RandomColor::many(2, array(
 					'luminosity' => array('light', 'bright'),
@@ -56,8 +56,7 @@ class StatistiqueController
 		$repo = $app['orm.em']->getRepository('LarpManager\Entities\Classe');
 		$classes = $repo->findAll();
 		$statClasses = array();
-				
-		foreach( $classes as $classe)
+		foreach($classes as $classe)
 		{
 			$colors = RandomColor::many(2, array(
 					'luminosity' => array('light', 'bright'),
@@ -70,6 +69,58 @@ class StatistiqueController
 					'label' => $classe->getLabel(),
 			);
 		}
+		
+		$repo = $app['orm.em']->getRepository('LarpManager\Entities\Construction');
+		$constructions = $repo->findAll();
+		$statConstructions = array();
+		foreach($constructions as $construction)
+		{
+			$colors = RandomColor::many(2, array(
+					'luminosity' => array('light', 'bright'),
+					'hue' => 'random'
+			));
+			$statConstructions[] = array(
+					'value' => $construction->getTerritoires()->count(),
+					'color' => $colors[0],
+					'highlight' => $colors[1],
+					'label' => $construction->getLabel(),
+			);
+		}
+
+		$repo = $app['orm.em']->getRepository('LarpManager\Entities\Competence');
+		$competences = $repo->findAllOrderedByLabel();
+		$statCompetences = array();
+		$statCompetencesFamily = array();
+		$valueFamily = 0;
+		$previousFamily = '';
+		foreach($competences as $competence)
+		{
+			$colors = RandomColor::many(2, array(
+					'luminosity' => array('light', 'bright'),
+					'hue' => 'random'
+			));
+			$statCompetences[] = array(
+					'value' => $competence->getPersonnages()->count(),
+					'color' => $colors[0],
+					'highlight' => $colors[1],
+					'label' => $competence->getCompetenceFamily()->getLabel() ." - ".$competence->getLevel()->getLabel(),
+			);
+			
+			if ($previousFamily != $competence->getCompetenceFamily()->getLabel()){
+				$statCompetencesFamily[] = array(
+					'value' => $valueFamily,
+					'color' => $colors[0],
+					'highlight' => $colors[1],
+					'label' => $previousFamily,
+				);
+				$valueFamily = $competence->getPersonnages()->count();
+				$previousFamily = $competence->getCompetenceFamily()->getLabel();
+			}
+			else {
+				$valueFamily += $competence->getPersonnages()->count();
+			}
+
+		}		
 		
 		$repo = $app['orm.em']->getRepository('LarpManager\Entities\Personnage');
 		$personnages = $repo->findAll();
@@ -91,8 +142,7 @@ class StatistiqueController
 		$repo = $app['orm.em']->getRepository('LarpManager\Entities\Genre');
 		$genres = $repo->findAll();
 		$statGenres = array();
-		
-		foreach( $genres as $genre)
+		foreach($genres as $genre)
 		{
 			$colors = RandomColor::many(2, array(
 					'luminosity' => array('light', 'bright'),
@@ -110,6 +160,9 @@ class StatistiqueController
 				'langues' => json_encode($stats),
 				'classes' => json_encode($statClasses),
 				'genres' => json_encode($statGenres),
+				'competences' => json_encode($statCompetences),
+				'competencesFamily' => json_encode($statCompetencesFamily),
+				'constructions' => json_encode($statConstructions),
 				'personnageCount' => count($personnages),
 				'userCount' => count($users),
 				'participantCount' => count($participants), 

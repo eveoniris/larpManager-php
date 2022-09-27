@@ -24,6 +24,11 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+use LarpManager\Repository\TerritoireRepository;
+use LarpManager\Repository\ReligionRepository;
+use LarpManager\Repository\RessourceRepository;
+use LarpManager\Repository\LangueRepository;
+
 /**
  * LarpManager\Form\TerritoireForm
  *
@@ -69,20 +74,16 @@ class TerritoireForm extends AbstractType
 				->add('statut','choice', array(
 					'label' => 'Statut',
 					'required' => false,
-					'choices' => array('Normal' => 'Normal', 'Désordre' => 'Désordre', 'Désolation' => 'Désolation')
-				))
-				->add('ordreSocial','integer', array(
-					'label' => 'Ordre social',
-					'required' => false,
-					'attr' => array(
-							'min' => 1,
-							'max' => 5
-					)
+					'choices' => array('Normal' => 'Normal', 'Instable' => 'Instable')
 				))
 				->add('geojson', 'textarea', array(
 					'label' => 'GeoJSON',
 					'required' => false,
 					'attr' => array('rows' => 10),
+				))
+				->add('color', 'text', array(
+					'label' => "Couleur",
+					'required' => false
 				))
 				->add('capitale','text', array(
 					'label' => 'Capitale',
@@ -150,7 +151,9 @@ class TerritoireForm extends AbstractType
 					'multiple' => true,
 					'expanded' => true,
 					'mapped' => true,
-					'property' => 'label', 						
+					'property' => 'label',
+					'query_builder' => function(RessourceRepository $rr) {
+						return $rr->createQueryBuilder('rr')->orderBy('rr.label', 'ASC');} 						
 				))
 				->add('exportations','entity', array(
 					'required' => false,
@@ -160,6 +163,8 @@ class TerritoireForm extends AbstractType
 					'expanded' => true,
 					'mapped' => true,
 					'property' => 'label',
+					'query_builder' => function(RessourceRepository $rr) {
+						return $rr->createQueryBuilder('rr')->orderBy('rr.label', 'ASC');}
 				))
 				->add('languePrincipale','entity', array(
 					'required' => false,
@@ -168,6 +173,8 @@ class TerritoireForm extends AbstractType
 					'multiple' => false,
 					'mapped' => true,
 					'property' => 'label',
+					'query_builder' => function(LangueRepository $lr) {
+						return $lr->createQueryBuilder('lr')->orderBy('lr.label', 'ASC');}
 				))
 				->add('langues','entity', array(
 					'required' => false,
@@ -177,6 +184,8 @@ class TerritoireForm extends AbstractType
 					'expanded' => true,
 					'mapped' => true,
 					'property' => 'label',
+					'query_builder' => function(LangueRepository $lr) {
+						return $lr->createQueryBuilder('lr')->orderBy('lr.label', 'ASC');}
 				))
 				->add('religionPrincipale','entity', array(
 					'required' => false,
@@ -185,6 +194,8 @@ class TerritoireForm extends AbstractType
 					'multiple' => false,
 					'mapped' => true,
 					'property' => 'label',
+					'query_builder' => function(ReligionRepository $rr) {
+						return $rr->createQueryBuilder('rr')->orderBy('rr.label', 'ASC');}
 				))
 				->add('religions','entity', array(
 					'required' => false,
@@ -194,6 +205,8 @@ class TerritoireForm extends AbstractType
 					'expanded' => true,
 					'mapped' => true,
 					'property' => 'label',
+					'query_builder' => function(ReligionRepository $rr) {
+						return $rr->createQueryBuilder('rr')->orderBy('rr.label', 'ASC');}
 				))
 				->add('territoire','entity', array(
 					'required' => false,
@@ -201,10 +214,14 @@ class TerritoireForm extends AbstractType
 					'class' => 'LarpManager\Entities\Territoire',
 					'property' => 'nom',
 					'empty_value' => 'Aucun, territoire indépendant',
-					'empty_data'  => null
+					'empty_data'  => null,
+					'mapped' => true,
+					'query_builder' => function(TerritoireRepository $tr) {
+						return $tr->createQueryBuilder('tr')->orderBy('tr.nom', 'ASC');
+					}
 				));
 	}
-	
+
 	/**
 	 * Définition de l'entité concerné
 	 * 

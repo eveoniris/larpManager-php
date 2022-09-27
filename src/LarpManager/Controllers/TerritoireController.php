@@ -40,6 +40,8 @@ use LarpManager\Form\Territoire\TerritoireCiblesForm;
 use LarpManager\Entities\Territoire;
 use LarpManager\Entities\Loi;
 
+use LarpManager\Repository\ConstructionRepository;
+
 /**
  * LarpManager\Controllers\TerritoireController
  *
@@ -100,7 +102,7 @@ class TerritoireController
 	{
         $order_by = $request->get('order_by') ?: 'id';
         $order_dir = $request->get('order_dir') == 'DESC' ? 'DESC' : 'ASC';
-        $limit = (int)($request->get('limit') ?: 50);
+        $limit = (int)($request->get('limit') ?: 500);
         $page = (int)($request->get('page') ?: 1);
         $offset = ($page - 1) * $limit;
         $criteria = array();
@@ -302,6 +304,9 @@ class TerritoireController
 					'label' => 'Choisissez la construction',
 					'required' => true,
 					'class' => 'LarpManager\Entities\Construction',
+					'query_builder' => function(ConstructionRepository $repo) {
+						return $repo->createQueryBuilder('c')->orderBy('c.label', 'ASC');
+					},
 					'property' => 'fullLabel',
 					'expanded' => true,
 			))

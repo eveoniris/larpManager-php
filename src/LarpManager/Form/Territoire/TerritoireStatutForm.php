@@ -43,7 +43,7 @@ class TerritoireStatutForm extends AbstractType
 		$builder->add('statut','choice', array(
 					'label' => 'Statut',
 					'required' => false,
-					'choices' => array('Normal' => 'Normal', 'Désordre' => 'Désordre', 'Désolation' => 'Désolation')
+					'choices' => array('Normal' => 'Normal', 'Instable' => 'Instable')
 				));
 	}
 	

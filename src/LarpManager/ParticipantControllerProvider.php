@@ -508,6 +508,18 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 			->bind("participant.potion.document")
 			->method('GET')
 			->before($mustOwnParticipant);
+
+		/**
+		 * Obtenir le document lié à une technologie
+		 */
+		$controllers->match('/{participant}/technologie/{technologie}/document/{filename}', 'LarpManager\Controllers\ParticipantController::technologieDocumentAction')
+			->assert('participant', '\d+')
+			->convert('participant', 'converter.participant:convert')
+			->assert('technologie', '\d+')
+			->convert('technologie', 'converter.technologie:convert')
+			->bind("participant.technologie.document")
+			->method('GET')
+			->before($mustOwnParticipant);			
 		
 		/**
 		 * Détail d'un sort

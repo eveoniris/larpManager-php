@@ -587,9 +587,8 @@ class Personnage extends BasePersonnage
 	 */
 	public function getPugilat()
 	{
-		$pugilat = 0;
-
-		$pugilat = $this->getCompetencePugilat('Agilité')
+		$pugilat = 1
+			+ $this->getCompetencePugilat('Agilité')
 			+ $this->getCompetencePugilat('Armes à distance')
 			+ $this->getCompetencePugilat('Armes à 1 main')
 			+ $this->getCompetencePugilat('Armes à 2 mains')
@@ -628,6 +627,11 @@ class Personnage extends BasePersonnage
 	public function getDisplayPugilat()
 	{
 		$pugilatHistories = array();
+
+		$pugilatHistory = new \LarpManager\Entities\PugilatHistory();
+		$pugilatHistory->setPugilat(1);
+		$pugilatHistory->setExplication('Score de base');
+		$pugilatHistories[] = $pugilatHistory;
 
 		foreach ( $this->getPugilatHistories() as $pugilatHistory)
 		{
@@ -861,7 +865,7 @@ class Personnage extends BasePersonnage
 		if ( $groupeLabel )
 			$identity .= $nomGn.' - '.$groupeLabel;
 		else 
-			$identity .= $nomGn.' - *** GROUPE NON INDENTIFIABLE ***';
+			$identity .= $nomGn.' - *** GROUPE NON IDENTIFIABLE ***';
 		$identity .= ')';
 		return $identity;
 	}
@@ -890,7 +894,7 @@ class Personnage extends BasePersonnage
 		if ( $groupeLabel )
 			$identity .= $nomGn.' - '.$groupeLabel;
 		else 
-			$identity .= $nomGn.' - *** GROUPE NON INDENTIFIABLE ***';
+			$identity .= $nomGn.' - *** GROUPE NON IDENTIFIABLE ***';
 		$identity .= ')';
 		return $identity;
 	}
@@ -934,7 +938,7 @@ class Personnage extends BasePersonnage
 		if ( $groupeLabel )
 			$identity .= $nomGn.' - '.$groupeLabel;
 		else 
-			$identity .= $nomGn.' - *** GROUPE NON INDENTIFIABLE ***';
+			$identity .= $nomGn.' - *** GROUPE NON IDENTIFIABLE ***';
 		$identity .= ')';
 		return $identity;
 	}

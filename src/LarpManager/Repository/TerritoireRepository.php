@@ -30,6 +30,19 @@ use Doctrine\ORM\EntityRepository;
 class TerritoireRepository extends EntityRepository
 {
 	/**
+     * Find all territoire ordered by nom
+     * @return ArrayCollection $territoires
+     */
+    public function findAllOrderedByNom()
+    {
+        $territoires = $this->getEntityManager()
+        	->createQuery('SELECT t FROM LarpManager\Entities\Territoire t ORDER BY t.nom ASC')
+        	->getResult();
+        
+        return $territoires;
+    }
+    
+	/**
 	 * Fourni la liste des territoires n'étant pas dépendant d'un autre territoire
 	 * @return \Doctrine\Common\Collections\Collection
 	 */
@@ -91,13 +104,11 @@ class TerritoireRepository extends EntityRepository
 
         $qb->select('distinct t');
         $qb->from('LarpManager\Entities\Territoire','t');
-        if(array_key_exists("tgr.id",$criteria)) $qb->join('t.groupe','tgr');
+        if(array_key_exists("tgr.id",$criteria))
+            $qb->join('t.groupe','tgr');
         $qb->join('t.territoire','tpr');
-        $qb->join('tpr.territoire','tp');
+        $qb->leftjoin('tpr.territoire','tp');
         $qb->andWhere('t.territoire IS NOT NULL');
-        // TODO: Voir pourquoi ça a été initialement fait comme ça et pourquoi ça ne marche pas comme attendu (Exemple avec Punt)
-        // http://localhost:8080/territoire/fief?fief%5Bvalue%5D=&fief%5Btype%5D=&fief%5Bpays%5D=88&fief%5Bprovince%5D=&fief%5Bgroupe%5D=
-        $qb->andWhere('tp.territoire IS NULL');
 
         $count = 0;
         foreach ( $criteria as $key => $value )

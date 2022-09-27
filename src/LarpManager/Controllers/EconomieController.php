@@ -232,7 +232,7 @@ class EconomieController
 				array(
 						utf8_decode('fief'),
 						utf8_decode('groupe'),
-						utf8_decode('Niveau d\'ordre social'),
+						utf8_decode('Statut'),
 						utf8_decode('Constructions'),
 						utf8_decode('Constructions ajoutées'),
 						utf8_decode('Ressources'),

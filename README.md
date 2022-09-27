@@ -43,6 +43,9 @@ vendor/bin/doctrine orm:schema-tool:create
 php -S localhost:8080 -t web
 ```
 
+# Install with Docker.
+Please refer to docker/readme.md
+
 # Developpment
 
 ## ORM
