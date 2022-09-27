@@ -289,7 +289,7 @@
 					<ul class="list-group">
 						{% if participant.personnage %}
 							{% for membre in participant.personnage.membres %}
-								<li class="list-group-item"><a href="{{ path('participant.groupeSecondaire.detail', {'participant': participant.id, 'groupeSecondaire': membre.secondaryGroup.id}) }}">{{ membre.secondaryGroup }}</a></li>
+								<li class="list-group-item">{% if membre.secondaryGroup.secret %}<span style="color:red;">Secret</span> - {% endif %}<a href="{{ path('participant.groupeSecondaire.detail', {'participant': participant.id, 'groupeSecondaire': membre.secondaryGroup.id}) }}">{{ membre.secondaryGroup }}</a></li>
 							{% endfor %}
 							{% for postulant in participant.personnage.postulants %}
 								<li class="list-group-item">{{ postulant.secondaryGroup }} -- En attente</li>

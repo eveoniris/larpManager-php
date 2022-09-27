@@ -118,7 +118,7 @@ class DocumentController
 			$lieux = '';
 			foreach ( $document->getLieus() as $lieu)
 			{
-				$lieux .= utf8_decode($lieu->getLabel()). ', ';
+				$lieux .= utf8_decode($lieu->getNom()). ', ';
 			}
 			$line[] = $lieux;
 			
@@ -135,6 +135,10 @@ class DocumentController
 				$personnages .= utf8_decode($personnage->getNom()). ', ';
 			}
 			$line[] = $personnages;
+
+			$line[] = $document->getUser();
+			$line[] = $document->getCreationDate()->format('Y-m-d H:i:s');
+			$line[] = $document->getUpdateDate()->format('Y-m-d H:i:s');
 			
 			fputcsv($output, $line, ';');
 		}
