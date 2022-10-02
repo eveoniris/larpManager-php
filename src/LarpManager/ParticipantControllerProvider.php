@@ -638,12 +638,12 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 		/**
 		 * Détail du personnage
 		 */
-		$controllers->match('/{participant}/personnage','LarpManager\Controllers\ParticipantController::personnageAction')
+		/*$controllers->match('/{participant}/personnage','LarpManager\Controllers\ParticipantController::personnageAction')
 			->assert('participant', '\d+')
 			->convert('participant', 'converter.participant:convert')
 			->bind("participant.personnage")
 			->method('GET')
-			->before($mustOwnParticipant);
+			->before($mustOwnParticipant);*/
 		
 		/**
 		 * Formulaire de choix d'une nouvelle potion
