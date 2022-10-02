@@ -6,19 +6,26 @@
         	<meta http-equiv="X-UA-Compatible" content="IE=edge">
         	<meta name="viewport" content="width=device-width, initial-scale=1">
 			
+			<link rel="shortcut icon" href="{{ app.request.basepath }}/favicon.ico" type="image/x-icon">
+			<link rel="icon" href="{{ app.request.basepath }}/favicon.ico" type="image/x-icon">
 			
-			<link rel="stylesheet" href="{{ app.request.basepath }}/css/style.css" />
-            <link rel="stylesheet" href="{{ app.request.basepath }}/css/normalize.css" />			                        
-            <link rel="stylesheet" href="{{ app.request.basepath }}/css/font-awesome.min.css" />
+            <link rel="stylesheet" href="{{ app.request.basepath }}/css/normalize.css" />
+            <link rel="stylesheet" href="{{ app.request.basepath }}/font-awesome-4.6.3/css/font-awesome.min.css" />
             <link rel="stylesheet" href="{{ app.request.basepath }}/css/bootstrap.min.css" />
             <link rel="stylesheet" href="{{ app.request.basepath }}/css/cyborg_bootstrap.min.css" />
+            <link rel="stylesheet" href="{{ app.request.basepath }}/bootstrap-select-1.11.0/css/bootstrap-select.min.css" />
+            <link rel="stylesheet" href="{{ app.request.basepath }}/Pnotify/css/pnotify.custom.min.css" />
 
-            
-            <title>{% block title %}{% endblock title %} - LarpManager</title>
+            <link rel="stylesheet" href="{{ app.request.basepath }}/css/style.css" />
+
+			{% block style %}{% endblock style %}
+
+            <title>LarpManager - {% block title %}{% endblock title %}</title>
         {% endblock head %}
     </head>
     <body>
-	
+
+		{# menu #}
 	<nav class="navbar navbar-default">
 	  <div class="container-fluid">
 	  
@@ -33,22 +40,37 @@
 	      <a class="navbar-brand" href="{{ path('homepage') }}">LarpManager</a>
 	    </div>
 	    </div>
-	   </nav>
-	
+	   </nav>	
+		{# corps de la page #}
         <div id="content" class="container-fluid">
         	{% block content %}{% endblock content %}
         </div>
-			
+
+		{# Pied de page #}
+        <footer>
+	        <div class="pull-left" style="margin-left: 50px;">
+	        		<ul>
+	        			<li><a href="http://www.fedegn.org/">FédéGN</a></li>
+	        			<li><a href="http://www.eveoniris.com/">Eve-oniris</a></li>
+	        		</ul>
+	        </div>
+	        <div class="pull-right" style="margin-right: 50px;">
+		       	<ul>
+			       	<li><a href="{{ path('legal') }}">Mentions légales</a></li>
+					<li><a href="{{ path('dev') }}">Développement</a></li>
+				</ul>
+	        </div>
+      	</footer>			
          
-         {% block javascript %}
-	         <script src="{{ app.request.basepath }}/js/jquery-1.11.3.min.js"></script>
-	         <script src="{{ app.request.basepath }}/js/bootstrap.min.js"></script>
-	         <script src="{{ app.request.basepath }}/js/jquery.bootgrid.min.js"></script>
-	         <script src="{{ app.request.basepath }}/js/jquery.bootgrid.fa.min.js"></script>
-	         <script src="{{ app.request.basepath }}/js/moment.js"></script>
-	         <script>
-	         	moment.locale('fr');
-	         </script>
+		{% block javascript %}
+			<script src="{{ app.request.basepath }}/js/jquery-1.11.3.min.js"></script>
+			<script src="{{ app.request.basepath }}/js/bootstrap.min.js"></script>
+			<script src="{{ app.request.basepath }}/js/jquery.bootgrid.min.js"></script>
+			<script src="{{ app.request.basepath }}/js/jquery.bootgrid.fa.min.js"></script>
+			<script src="{{ app.request.basepath }}/js/moment.js"></script>
+			<script>
+				moment.locale('fr');
+			</script>
 		{% endblock javascript %}
     </body>
 </html>
