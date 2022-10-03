@@ -87,5 +87,15 @@ class SecondaryGroup extends BaseSecondaryGroup
 		}
 		return false;
 	}
-		
+
+	public function getActifs(Gn $gn)
+	{
+		$count_actifs = 0;
+		foreach ($this->getMembres() as $membre)
+		{
+			if ( $membre->getPersonnage()->participeTo($gn) === true )
+				$count_actifs++;
+		}
+		return $count_actifs;
+	}
 }

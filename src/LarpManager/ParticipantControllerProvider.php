@@ -550,7 +550,7 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 		 */
 		$controllers->match('/{participant}/connaissance/{connaissance}/detail', 'LarpManager\Controllers\ParticipantController::connaissanceDetailAction')
 			->assert('participant', '\d+')
-			->convert('participant', 'connaissance.participant:convert')
+			->convert('participant', 'converter.participant:convert')
 			->assert('connaissance', '\d+')
 			->convert('connaissance', 'converter.connaissance:convert')
 			->bind("participant.connaissance.detail")
