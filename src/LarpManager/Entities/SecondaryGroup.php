@@ -93,8 +93,7 @@ class SecondaryGroup extends BaseSecondaryGroup
 		$count_actifs = 0;
 		foreach ($this->getMembres() as $membre)
 		{
-			if ( $membre->getPersonnage()->participeTo($gn) === true )
-				$count_actifs++;
+			$count_actifs += intval($membre->getPersonnage()->participeTo($gn));
 		}
 		return $count_actifs;
 	}
