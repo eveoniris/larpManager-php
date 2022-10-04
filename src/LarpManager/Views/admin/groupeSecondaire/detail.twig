@@ -112,7 +112,7 @@
 				{% for membre in groupeSecondaire.membres %}
 					<div class="list-group-item">
 						<div class="list-group-item-heading">
-							<h6 class="list-group-item-heading"><a href="{{ path('personnage.admin.detail', {'personnage': membre.personnage.id}) }}">{{ membre.personnage.identityByLabel(gn.getLabel()) }}</a></h6>
+							<h6 class="list-group-item-heading">{% if membre.personnage.vivant == 0 %}💀 {% endif %}<a href="{{ path('personnage.admin.detail', {'personnage': membre.personnage.id}) }}">{{ membre.personnage.identityByLabel(gn.getLabel()) }}</a></h6>
 							{% if membre.personnage.participeTo(gn) %}
 							<span class="text-success">Inscrit à {{ gn.label }}</span><br />
 							{% else %}
