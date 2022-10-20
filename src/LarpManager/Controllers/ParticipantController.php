@@ -197,6 +197,13 @@ class ParticipantController
 	 */
 	public function groupeAction(Application $app, Request $request, Participant $participant)
 	{
+		// il faut un billet pour rejoindre un groupe
+		if ( ! $participant->getBillet() )
+		{
+			$app['session']->getFlashBag()->add('error','Désolé, le joueur doit obtenir un billet avant de pouvoir rejoindre un groupe');
+			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),303);
+		}		
+		
 		$form = $app['form.factory']->createBuilder(new ParticipantGroupeForm(), $participant, array('gnId' => $participant->getGn()->getId()))
 			->add('save','submit', array('label' => 'Sauvegarder'))
 			->getForm();
