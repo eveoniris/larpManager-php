@@ -49,7 +49,7 @@
 	    					<span class="text-notice">Le jeu est terminé</span>
 	    				{% endif %}
 						{% if participant.personnage  %}
-							// <a href="{{ path('gn.personnage',{'gn': participant.gn.id}) }}">{{ participant.personnage.nom }} ({{ participant.personnage.surnom }})</a> 
+							// <a href="{{ path('gn.personnage',{'gn': participant.gn.id}) }}">{{ participant.personnage.nom }}{% if participant.personnage.surnom %} ({{ participant.personnage.surnom }}){% endif %}</a> 
 						{% else %}
 							// Vous n'avez pas de personnage actif pour ce jeu.
 						{% endif %}
