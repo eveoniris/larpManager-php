@@ -47,8 +47,8 @@
 						{% endif %}
 					</td>
 					<td>
-						<a href="{{ path('participant.admin.personnage.new', {'participant' : participant.id}) }}">Créer un personnage</a>
 						<a href="{{ path('participant.admin.personnage.old', {'participant' : participant.id}) }}">Récupérer un ancien personnage</a>
+						<a href="{{ path('participant.admin.personnage.new', {'participant' : participant.id}) }}">Créer un nouveau personnage</a>
 					</td>
 				</tr>
 			{% endfor %}

@@ -253,12 +253,16 @@
 					{% if participant.personnage %}
 						<li>
 							<a href="{{ path('gn.personnage', {'gn': gn.id}) }}"><i class="fa fa-user" aria-hidden="true"></i>&nbsp;
-				   				{{ participant.personnage.nom }} ({{ participant.personnage.surnom }})&nbsp;--&nbsp;{{ participant.personnage.classeName }}
+				   				{{ participant.personnage.nom }}{% if participant.personnage.surnom %} ({{ participant.personnage.surnom }}){% endif %}&nbsp;--&nbsp;{{ participant.personnage.classeName }}
 				   			</a>
 				   		</li>
 					{% else %}
-						<li><a href="{{ path('participant.personnage.new', {'participant': participant.id}) }}"><i class="fa fa-plus" aria-hidden="true"></i> Créer un personnage</a></li>
-						<li><a href="{{ path('participant.personnage.old', {'participant': participant.id}) }}"><i class="fa fa-plus" aria-hidden="true"></i> Reprendre un personnage</a></li>
+						{% if participant.session %}
+							<li><a href="{{ path('participant.personnage.old', {'participant': participant.id}) }}"><i class="fa fa-plus" aria-hidden="true"></i> Reprendre un ancien personnage</a></li>
+							<li><a href="{{ path('participant.personnage.new', {'participant': participant.id}) }}"><i class="fa fa-plus" aria-hidden="true"></i> Créer un nouveau personnage</a></li>
+						{% else %}
+							<li>Vous devez <strong>rejoindre un groupe</strong> avant d'accéder à votre personnage.</li>
+						{% endif %}
 					{% endif %}
 					
 					{% if participant.personnageSecondaire %}
@@ -267,7 +271,9 @@
 	 					<li>Vous n'avez pas de personne secondaire, choisissez-en !</li>
 					{% endif %}
 						<li><a href="{{ path('participant.personnageSecondaire', {'participant': participant.id}) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Modifier votre personnage secondaire</a></li>
+					{% if participant.session %}
 						<li><a href="{{ path('participant.background', {'participant': participant.id}) }}"><i class="fa fa-book" aria-hidden="true"></i> Votre background</a></li>
+					{% endif %}
 					</ul>
 				</div>
 			</div>
