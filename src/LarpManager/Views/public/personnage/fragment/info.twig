@@ -28,9 +28,22 @@
 				{% if personnage.intrigue %}
 					Participe aux intrigues
 				{% else %}
-					Ne participe pas aux intrigues
+					Ne participe pas aux intrigues.
 				{% endif %}
 			</li>
+			{% if personnage.isSensible %}
+			<li class="list-group-item">
+				Ce personnage est sensible.
+				<a role="button" data-toggle="collapse" href="#sensibility" aria-expanded="false" aria-controls="collapseExample">
+					<i class="fa fa-question" aria-hidden="true"></i>
+				</a>
+				<div class="collapse" id="sensibility">
+					<div class="list-group">
+						<strong>Pas de violence excessive dans les gestes ou les mots, pas de drague, de propositions d'alcool, etc.)</strong>
+					</div>
+				</div>				
+			</li>
+			{% endif %}
 			<li class="list-group-item">
 				<strong>Expérience :</strong> {{ personnage.xp|default(0) }}
 				<a role="button" data-toggle="collapse" href="#xpHistory" aria-expanded="false" aria-controls="collapseExample">

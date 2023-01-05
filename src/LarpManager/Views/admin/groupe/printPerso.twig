@@ -48,6 +48,7 @@ table tr td {
 							Téléphone : {{ personnage.user.etatCivil.telPap }}<br />
 							Problèmes médicaux : {{ personnage.user.etatCivil.problemeMedicaux }} 
 						{% endif %}
+						{% if personnage.isSensible %}<br />Ce personnage est <strong>sensible</strong>.{% endif %}
 					{% endif %}
 				</td>
 			</tr>
@@ -139,6 +140,8 @@ table tr td {
 					{% for technologie in personnage.technologies %}
 						Technologie - {{ technologie.label }}<br />
 					{% endfor %}
+
+					{% if personnage.isSensible %}Brassard jaune avec un poing gravé<br /.{% endif %}
 				</td>
 				<td>
 					{% for membre in personnage.membres %}

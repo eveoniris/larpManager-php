@@ -76,6 +76,11 @@ class PersonnageUpdateForm extends AbstractType
 					'required' => true,
 					'choices' => array(true => 'Oui', false => 'Non'),
 					'label' => 'Participer aux intrigues'
+				))
+				->add('sensible','choice', array(
+						'required' => true,
+						'choices' => array(false => 'Non', true => 'Oui'),
+						'label' => 'Personnage sensible'
 				));
 	}
 	
