@@ -873,7 +873,7 @@ class ParticipantController
 			->getForm();
 			
 		$form->handleRequest($request);
-	
+
 		if ( $form->isValid() )
 		{
 			$personnage = $form->getData();
@@ -955,14 +955,11 @@ class ParticipantController
 			$langue = $personnage->getOrigine()->getLangue();
 			if ( $langue )
 			{
-				if ( ! $personnage->isKnownLanguage($langue) )
-				{
-					$personnageLangue = new \LarpManager\Entities\PersonnageLangues();
-					$personnageLangue->setPersonnage($personnage);
-					$personnageLangue->setLangue($langue);
-					$personnageLangue->setSource('ORIGINE');
-					$app['orm.em']->persist($personnageLangue);
-				}
+				$personnageLangue = new \LarpManager\Entities\PersonnageLangues();
+				$personnageLangue->setPersonnage($personnage);
+				$personnageLangue->setLangue($langue);
+				$personnageLangue->setSource('ORIGINE');
+				$app['orm.em']->persist($personnageLangue);
 			}
 			
 			// Ajout des langues secondaires lié à l'origine du personnage
@@ -973,7 +970,7 @@ class ParticipantController
 					$personnageLangue = new \LarpManager\Entities\PersonnageLangues();
 					$personnageLangue->setPersonnage($personnage);
 					$personnageLangue->setLangue($langue);
-					$personnageLangue->setSource('ORIGINE');
+					$personnageLangue->setSource('ORIGINE SECONDAIRE');
 					$app['orm.em']->persist($personnageLangue);
 				}
 			}
@@ -1120,7 +1117,7 @@ class ParticipantController
 					$personnageLangue = new \LarpManager\Entities\PersonnageLangues();
 					$personnageLangue->setPersonnage($personnage);
 					$personnageLangue->setLangue($langue);
-					$personnageLangue->setSource('ORIGINE');
+					$personnageLangue->setSource('ORIGINE SECONDAIRE');
 					$app['orm.em']->persist($personnageLangue);
 				}
 			}
