@@ -1394,5 +1394,12 @@ class Personnage extends BasePersonnage
 		}
 		return false;
 	}	
-	
+
+	/**
+	 * Indique si le personnage est sensible
+	 */
+	public function isSensible()
+	{
+		return $this->getSensible();
+	}	
 }

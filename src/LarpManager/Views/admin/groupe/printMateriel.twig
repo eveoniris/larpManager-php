@@ -133,7 +133,14 @@ body {
 			<li>{{ participant.personnage.materiel }}</li>
 		</ul>
 	{% endif %}
-	
+
+	{% if personnage.isSensible %}
+		<strong>Personnage sensible</strong>
+		<ul>
+			<li>Brassard jaune avec un poing gravé</li>
+		</ul>
+	{% endif %}
+
 	<hr class="print-page-break" />
 
 {% else %}

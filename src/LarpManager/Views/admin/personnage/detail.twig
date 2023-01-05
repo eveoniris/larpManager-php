@@ -63,8 +63,17 @@
 	  					<div class="panel-body">
 						  	<p><strong>Numéro : </strong>{{ personnage.id }}</p> 
 	  						<p><strong>Joueur : </strong>{% if personnage.user %}<a href="{{path('user.view',{'id': personnage.user.id}) }}"> {{ personnage.user.etatCivil.nom }} {{ personnage.user.etatCivil.prenom }}</a>{% else %}Ce personnage n'est pas lié à un joueur</p>{% endif %}
-		  					<p>Ce personnage <strong class="text-success">{% if personnage.intrigue %}participe aux intrigues{% else %}ne participe pas aux intrigues{% endif %}</strong></p>
-		  					
+		  					<p>Ce personnage {% if personnage.intrigue %}<strong class="text-success">participe aux intrigues</strong>{% else %}<strong class="text-danger">ne participe pas aux intrigues{% endif %}</strong>.</p>
+							{% if personnage.isSensible %}<p>Ce personnage est <strong class="text-success">sensible</strong>.
+							<a role="button" data-toggle="collapse" href="#sensibility" aria-expanded="false" aria-controls="collapseExample">
+								<i class="fa fa-question" aria-hidden="true"></i>
+							</a>
+							<div class="collapse" id="sensibility">
+								<div class="list-group">
+									<strong>Pas de violence excessive dans les gestes ou les mots, pas de drague, de propositions d'alcool, etc.)</strong>
+								</div>
+							</div>
+							</p>{% endif %}		  					
 		  					{# Liste des groupes auxquels fait partie ce personnage #}
 							<h6>Historique des participations</h6>
 							<div class="list-group">									
