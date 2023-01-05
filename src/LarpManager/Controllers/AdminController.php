@@ -128,7 +128,7 @@ class AdminController
 		$logTotalSpace = $this->getSymbolByQuantity($this->foldersize(__DIR__.'/../../../logs'));
 		
 		// taille des documents
-		$docTotalSpace = $this->getSymbolByQuantity($this->foldersize(__DIR__.'/../../../private'));
+		$docTotalSpace = $this->getSymbolByQuantity($this->foldersize(__DIR__.'/../../../private/doc'));
 		
 		return $app['twig']->render('admin/index.twig', array(
 				'phpVersion' => $phpVersion,
