@@ -860,7 +860,7 @@ class ParticipantController
 		$personnage = new \LarpManager\Entities\Personnage();
 		$classes = $app['orm.em']->getRepository('\LarpManager\Entities\Classe')->findAllCreation();
 	
-		// j'ajoute içi certain champs du formulaires (les classes)
+		// j'ajoute ici certains champs du formulaires (les classes)
 		// car j'ai besoin des informations du groupe pour les alimenter
 		$form = $app['form.factory']->createBuilder(new PersonnageForm(), $personnage)
 			->add('classe','entity', array(
@@ -869,7 +869,7 @@ class ParticipantController
 				'class' => 'LarpManager\Entities\Classe',
 				'choices' => array_unique($classes),
 			))
-			->add('save','submit', array('label' => 'Valider mon personnage'))
+			->add('save','submit', array('label' => 'Valider mon personnage', 'attr' => array('onclick'=> 'return confirm(\'Confirmez vous le personnage ?\')')))
 			->getForm();
 			
 		$form->handleRequest($request);
@@ -955,11 +955,14 @@ class ParticipantController
 			$langue = $personnage->getOrigine()->getLangue();
 			if ( $langue )
 			{
-				$personnageLangue = new \LarpManager\Entities\PersonnageLangues();
-				$personnageLangue->setPersonnage($personnage);
-				$personnageLangue->setLangue($langue);
-				$personnageLangue->setSource('ORIGINE');
-				$app['orm.em']->persist($personnageLangue);
+				if ( ! $personnage->isKnownLanguage($langue) )
+				{
+					$personnageLangue = new \LarpManager\Entities\PersonnageLangues();
+					$personnageLangue->setPersonnage($personnage);
+					$personnageLangue->setLangue($langue);
+					$personnageLangue->setSource('ORIGINE');
+					$app['orm.em']->persist($personnageLangue);
+				}
 			}
 			
 			// Ajout des langues secondaires lié à l'origine du personnage

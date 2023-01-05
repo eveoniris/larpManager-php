@@ -32,8 +32,8 @@
     						{{ participant.personnage.nom }} ({{ participant.personnage.surnom }})&nbsp;--&nbsp;{{ participant.personnage.classeName }}
     					</a>
 					{% else %}
-						<a href="{{ path('participant.personnage.new', {'participant': participant.id}) }}"><i class="fa fa-plus" aria-hidden="true"></i> Créer un personnage</a>&nbsp;/&nbsp;
-						<a href="{{ path('participant.personnage.old', {'participant': participant.id}) }}"><i class="fa fa-plus" aria-hidden="true"></i> Reprendre un personnage</a>
+						<a href="{{ path('participant.personnage.old', {'participant': participant.id}) }}"><i class="fa fa-plus" aria-hidden="true"></i> Reprendre un ancien personnage</a>
+						<a href="{{ path('participant.personnage.new', {'participant': participant.id}) }}"><i class="fa fa-plus" aria-hidden="true"></i> Créer un nouveau personnage</a>
 					{% endif %}
 				</li>
 
