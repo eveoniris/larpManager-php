@@ -63,6 +63,9 @@
 						</a>
 					</th>
 					<th>
+						Secret
+					</th>
+					<th>
 						{% if app.request.get('order_dir') == 'ASC' and app.request.get('order_by') == 'label' %}
 							<a href="{{ path('groupeSecondaire.admin.list', {'order_by': 'label', 'order_dir': 'DESC'}) }}">
 						{%  else %}
@@ -87,7 +90,7 @@
 						Type
 					</th>
 					<th>
-						Secret
+						Membres
 					</th>
 				</tr>
 			</thead>
@@ -95,10 +98,11 @@
 			{% for groupeSecondaire in groupeSecondaires %}
 				<tr>
 					<td><a href="{{ path('groupeSecondaire.admin.update', {'groupe':groupeSecondaire.id}) }}">{{ groupeSecondaire.id }}</td>
+					<td>{% if groupeSecondaire.secret %}<span style="color:red;">Secret</span>{% else %} -- {% endif %}</td>
 					<td><a href="{{ path('groupeSecondaire.admin.detail', {'groupe':groupeSecondaire.id}) }}">{{ groupeSecondaire.label }}</td>
 					<td>{{ groupeSecondaire.description|markdown }}</td>
 					<td>{{ groupeSecondaire.secondaryGroupType.label }}</td>
-					<td>{% if groupeSecondaire.secret %}<span style="color:red;">Secret</span>{% else %} -- {% endif %}</td>
+					<td>{{ groupeSecondaire.membres|length }}</td>
 				</tr>
 			{% endfor %}
 			</tbody>

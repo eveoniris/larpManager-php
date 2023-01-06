@@ -197,6 +197,14 @@ class ParticipantController
 	 */
 	public function groupeAction(Application $app, Request $request, Participant $participant)
 	{
+		// il faut un billet pour rejoindre un groupe
+		/* Commenté parce que ça gène la manière de faire d'Edaelle.
+		if ( ! $participant->getBillet() )
+		{
+			$app['session']->getFlashBag()->add('error','Désolé, le joueur doit obtenir un billet avant de pouvoir rejoindre un groupe');
+			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),303);
+		}		
+		*/
 		$form = $app['form.factory']->createBuilder(new ParticipantGroupeForm(), $participant, array('gnId' => $participant->getGn()->getId()))
 			->add('save','submit', array('label' => 'Sauvegarder'))
 			->getForm();
@@ -852,7 +860,7 @@ class ParticipantController
 		$personnage = new \LarpManager\Entities\Personnage();
 		$classes = $app['orm.em']->getRepository('\LarpManager\Entities\Classe')->findAllCreation();
 	
-		// j'ajoute içi certain champs du formulaires (les classes)
+		// j'ajoute ici certains champs du formulaires (les classes)
 		// car j'ai besoin des informations du groupe pour les alimenter
 		$form = $app['form.factory']->createBuilder(new PersonnageForm(), $personnage)
 			->add('classe','entity', array(
@@ -861,11 +869,11 @@ class ParticipantController
 				'class' => 'LarpManager\Entities\Classe',
 				'choices' => array_unique($classes),
 			))
-			->add('save','submit', array('label' => 'Valider mon personnage'))
+			->add('save','submit', array('label' => 'Valider mon personnage', 'attr' => array('onclick'=> 'return confirm(\'Confirmez vous le personnage ?\')')))
 			->getForm();
 			
 		$form->handleRequest($request);
-	
+
 		if ( $form->isValid() )
 		{
 			$personnage = $form->getData();
@@ -962,7 +970,7 @@ class ParticipantController
 					$personnageLangue = new \LarpManager\Entities\PersonnageLangues();
 					$personnageLangue->setPersonnage($personnage);
 					$personnageLangue->setLangue($langue);
-					$personnageLangue->setSource('ORIGINE');
+					$personnageLangue->setSource('ORIGINE SECONDAIRE');
 					$app['orm.em']->persist($personnageLangue);
 				}
 			}
@@ -1109,7 +1117,7 @@ class ParticipantController
 					$personnageLangue = new \LarpManager\Entities\PersonnageLangues();
 					$personnageLangue->setPersonnage($personnage);
 					$personnageLangue->setLangue($langue);
-					$personnageLangue->setSource('ORIGINE');
+					$personnageLangue->setSource('ORIGINE SECONDAIRE');
 					$app['orm.em']->persist($personnageLangue);
 				}
 			}

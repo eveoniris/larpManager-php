@@ -90,6 +90,11 @@ class BasePersonnage
     protected $heroisme;
 
     /**
+     * @Column(type="boolean", nullable=true)
+     */
+    protected $sensible;    
+
+    /**
      * @OneToMany(targetEntity="ExperienceGain", mappedBy="personnage")
      * @JoinColumn(name="id", referencedColumnName="personnage_id", nullable=false)
      */
@@ -460,6 +465,29 @@ class BasePersonnage
     public function getIntrigue()
     {
         return $this->intrigue;
+    }
+
+    /**
+     * Set the value of sensible.
+     *
+     * @param boolean $sensible
+     * @return \LarpManager\Entities\Personnage
+     */
+    public function setSensible($sensible)
+    {
+        $this->sensible = $sensible;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of sensible.
+     *
+     * @return boolean
+     */
+    public function getSensible()
+    {
+        return $this->sensible;
     }
 
     /**

@@ -38,6 +38,11 @@
 							Ne participe pas aux intrigues
 						{% endif %}
 					</p>
+					{% if personnage.isSensible %}
+					<p class="list-group-item-text">
+						Le personnage est sensible (pas de violence excessive dans les gestes ou les mots, pas de drague, de propositions d'alcool, etc.).
+					</p>
+					{% endif %}
 					<p class="list-group-item-text">
 						<strong>Groupe :</strong>
 						{% if personnage.groupe %}

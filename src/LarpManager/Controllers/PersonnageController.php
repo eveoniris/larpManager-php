@@ -2204,7 +2204,7 @@ class PersonnageController
 			// et récupérer les langue de sa nouvelle origine
 			foreach( $personnage->getPersonnageLangues() as $personnageLangue )
 			{
-				if ($personnageLangue->getSource() == 'ORIGINE')
+				if ($personnageLangue->getSource() == 'ORIGINE' || $personnageLangue->getSource() == 'ORIGINE SECONDAIRE')
 				{
 					$personnage->removePersonnageLangues($personnageLangue);
 					$app['orm.em']->remove($personnageLangue);
@@ -2215,7 +2215,7 @@ class PersonnageController
 			{
 				$personnageLangue = new \LarpManager\Entities\PersonnageLangues();
 				$personnageLangue->setPersonnage($personnage);
-				$personnageLangue->setSource('ORIGINE');
+				$personnageLangue->setSource('ORIGINE SECONDAIRE');
 				$personnageLangue->setLangue($langue);
 				
 				$app['orm.em']->persist($personnageLangue);

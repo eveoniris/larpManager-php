@@ -104,7 +104,7 @@
 	</div>
 	
 	<div class="panel panel-default">
-		<div class="panel-heading">Liste des membres ({{groupeSecondaire.membres|length}})</div>
+		<div class="panel-heading">Liste des membres ({{groupeSecondaire.getActifs(gn)}}/{{groupeSecondaire.membres|length}})</div>
 		
 		<div class="panel-body">					
 			<a href="{{ path('groupeSecondaire.admin.newMembre', {'groupeSecondaire': groupeSecondaire.id}) }}">Ajouter un membre</a>
@@ -112,7 +112,7 @@
 				{% for membre in groupeSecondaire.membres %}
 					<div class="list-group-item">
 						<div class="list-group-item-heading">
-							<h6 class="list-group-item-heading"><a href="{{ path('personnage.admin.detail', {'personnage': membre.personnage.id}) }}">{{ membre.personnage.identityByLabel(gn.getLabel()) }}</a></h6>
+							<h6 class="list-group-item-heading">{% if membre.personnage.vivant == 0 %}💀 {% endif %}<a href="{{ path('personnage.admin.detail', {'personnage': membre.personnage.id}) }}">{{ membre.personnage.identityByLabel(gn.getLabel()) }}</a></h6>
 							{% if membre.personnage.participeTo(gn) %}
 							<span class="text-success">Inscrit à {{ gn.label }}</span><br />
 							{% else %}
@@ -123,12 +123,12 @@
 							{% if membre.secret %}
 								<p class="text-danger">A accès aux secrets du groupe</p>
 								<a href="{{ path('groupeSecondaire.admin.secret.off', {'groupe': groupeSecondaire.id , 'membre':membre.id}) }}">
-									Retirer l'accés aux secrets
+									Retirer l'accès aux secrets
 								</a>
 							{% else %}
 								<p>N'a pas accès aux secrets du groupe</p>
 								<a href="{{ path('groupeSecondaire.admin.secret.on', {'groupe': groupeSecondaire.id , 'membre':membre.id}) }}">
-									Donner accés aux secrets
+									Donner accès aux secrets
 								</a>
 							{% endif %}
 						</div>

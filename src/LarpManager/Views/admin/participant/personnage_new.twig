@@ -11,46 +11,58 @@
 				<fieldset>
 					<legend>Ajout d'un personnage, pour l'utilisateur {{ participant.user.username }}</legend>
 					{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
-
 					{{ form_row(form.nom) }}
 					{{ form_row(form.surnom) }}
 					{{ form_row(form.age) }}
 					{{ form_row(form.genre) }}
+					{{ form_row(form.sensible) }}
 					{{ form_row(form.territoire) }}
 					{{ form_row(form.intrigue) }}
 					{{ form_row(form.classe) }}
+					<p><strong class="text-danger">ATTENTION !</strong> Toute validation du personnage est définitive.</p>
 					{{ form_rest(form) }}
 				</fieldset>
 			</form>
 		</div>
 		<div class="col-md-8">
 			<blockquote>
-				Lors de la création d'un personnage vous recevez {{ participant.gn.xpCreation }} points d'expériences qui vous serviront à obtenir des compétences.
+				Lors de la création d'un personnage vous recevez {{ participant.gn.xpCreation }} points d'expériences (XP) qui vous serviront à obtenir des compétences.
 			</blockquote>
-			
-			<button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseAge" aria-expanded="false" aria-controls="collapseAge">
-  				Aide pour choisir l'age de votre personnage
-			</button>
 
-			<button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseClasse" aria-expanded="false" aria-controls="collapseClasse">
-  				Aide pour choisir la classe de votre personnage
-			</button>
-
-			<button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseOrigine" aria-expanded="false" aria-controls="collapseOrigine">
-  				Aide pour choisir l'origine de votre personnage
-			</button>
-
+			<p><button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseAge" aria-expanded="false" aria-controls="collapseAge">
+  				Aide pour choisir l'age
+			</button></p>
 			<div class="collapse" id="collapseAge">
 				{{ include("public/age/fragment/info.twig", {'ages' : ages}) }}
 			</div>
-						
-			<div class="collapse" id="collapseClasse">
-				{{ include("public/classe/fragment/info.twig", {'classes' : classes}) }}
+
+			<p><button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseSensible" aria-expanded="false" aria-controls="collapseSensible">
+				Aide pour choisir votre Sensibilité
+			</button></p>
+			<div class="collapse" id="collapseSensible">
+				<div class="header">
+					<h5>La Sensibilité</h5>
+				</div>
+				<blockquote>
+					<p>Défini si vous acceptez d'être témoin ou victime des violences physiques et morales liées à l'univers des Légendes d'Hyborée, de drague, de propositions d'alcool, etc.<p>
+					<p>Par défaut, les joueurs mineurs doivent être notés comme Sensible.</p>
+				</blockquote>
 			</div>
-						
+
 			<div class="collapse" id="collapseOrigine">
 				{{ include("public/territoire/fragment/info.twig", {'territoires' : territoires}) }}
 			</div>
+			<p><button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseClasse" aria-expanded="false" aria-controls="collapseClasse">
+				Aide pour choisir la classe
+			</button></p>
+
+			<p><button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseOrigine" aria-expanded="false" aria-controls="collapseOrigine">
+				Aide pour choisir l'origine
+			</button></p>
+			<div class="collapse" id="collapseClasse">
+				{{ include("public/classe/fragment/info.twig", {'classes' : classes}) }}
+			</div>
+
 		</div>
 	</div>		
 </div>

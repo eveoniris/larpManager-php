@@ -1394,5 +1394,23 @@ class Personnage extends BasePersonnage
 		}
 		return false;
 	}	
-	
+
+	/**
+	 * Indique si le personnage est sensible
+	 */
+	public function isSensible()
+	{
+		$naissance = $this->getUser()->getEtatCivil()->getDateNaissance();
+		foreach ($this->participants as $p) {
+			$gn_date = $p->getGn()->getDateDebut();
+		}
+		$interval = date_diff($gn_date, $naissance);
+
+		if (intval($interval->format('%y')) < 18) {
+			return true;
+		}
+		else {
+			return $this->getSensible();
+		}
+	}	
 }

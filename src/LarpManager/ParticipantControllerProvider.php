@@ -550,7 +550,7 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 		 */
 		$controllers->match('/{participant}/connaissance/{connaissance}/detail', 'LarpManager\Controllers\ParticipantController::connaissanceDetailAction')
 			->assert('participant', '\d+')
-			->convert('participant', 'connaissance.participant:convert')
+			->convert('participant', 'converter.participant:convert')
 			->assert('connaissance', '\d+')
 			->convert('connaissance', 'converter.connaissance:convert')
 			->bind("participant.connaissance.detail")
@@ -638,12 +638,12 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 		/**
 		 * Détail du personnage
 		 */
-		/*$controllers->match('/{participant}/personnage','LarpManager\Controllers\ParticipantController::personnageAction')
+		$controllers->match('/{participant}/personnage','LarpManager\Controllers\ParticipantController::personnageAction')
 			->assert('participant', '\d+')
 			->convert('participant', 'converter.participant:convert')
 			->bind("participant.personnage")
 			->method('GET')
-			->before($mustOwnParticipant);*/
+			->before($mustOwnParticipant);
 		
 		/**
 		 * Formulaire de choix d'une nouvelle potion

@@ -3,6 +3,14 @@
 		<div class="col-md-4">
 	   		<h6><i class="fa fa-circle"></i> {{ session.gn }}</h6>
 
+			<p>
+			{% if not session.code %}
+			Le groupe n'a pas encore de code.
+			{% else %}
+			Le code du groupe est : <strong>{{ session.code }}</strong>
+			{% endif %}
+			</p>
+
 	   		<div class="white-box">
 	   		{% for participant in session.participants %}
 	   			{{ participant.user.email }},&nbsp;
