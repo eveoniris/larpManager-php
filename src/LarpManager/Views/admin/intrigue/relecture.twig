@@ -30,6 +30,28 @@
 					</ul>
 				</div>
 				
+				<h6><i class="fa fa-circle"></i>&nbsp;Documents concernés</h6>
+				<div class="white-box">
+					<ul>
+					{% for intrigueHasDocument in intrigue.intrigueHasDocuments %}
+						<li><a href="{{ path('document.detail', {'document': intrigueHasDocument.document.id}) }}">{{ intrigueHasDocument.document.titre }}</a></li> 
+					{% else %}
+						<li>Aucun</li>
+					{% endfor %}
+					</ul>
+				</div>
+		
+				<h6><i class="fa fa-circle"></i>&nbsp;Instances concernées</h6>
+				<div class="white-box">
+					<ul>
+					{% for intrigueHasLieu in intrigue.intrigueHasLieus %}
+						<li><a href="{{ path('lieu.detail', {'lieu': intrigueHasLieu.lieu.id}) }}">{{ intrigueHasLieu.lieu.nom }}</a></li>
+					{% else %}
+						<li>Aucune</li>
+					{% endfor %}
+					</ul>
+				</div>
+				
 				<h6><i class="fa fa-circle"></i>&nbsp;Evénements</h6>
 				<div class="white-box">
 					<ul>
