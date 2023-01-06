@@ -158,6 +158,14 @@ class IntrigueController
 				}
 				
 				/**
+				 * Pour tous les documents de l'intrigue
+				 */
+				foreach ($intrigue->getIntrigueHasDocuments() as $intrigueHasDocument)
+				{
+					$intrigueHasDocument->setIntrigue($intrigue);
+				}
+				
+				/**
 				 * Pour tous les lieux de l'intrigue
 				 */
 				foreach ($intrigue->getIntrigueHasLieus() as $intrigueHasLieu)
@@ -218,6 +226,7 @@ class IntrigueController
 		$originalIntrigueHasGroupeSecondaires = new ArrayCollection();
 		$originalIntrigueHasEvenements = new ArrayCollection();
 		$originalIntrigueHasObjectifs = new ArrayCollection();
+		$originalIntrigueHasDocuments = new ArrayCollection();
 		$originalIntrigueHasLieus = new ArrayCollection();
 		
 		/**
@@ -250,6 +259,14 @@ class IntrigueController
 		foreach ($intrigue->getIntrigueHasObjectifs() as $intrigueHasObjectif)
 		{
 			$originalIntrigueHasObjectifs->add($intrigueHasObjectif);
+		}
+		
+		/**
+		 *  Crée un tableau contenant les objets IntrigueHasDocument de l'intrigue
+		 */
+		foreach ($intrigue->getIntrigueHasDocuments() as $intrigueHasDocument)
+		{
+			$originalIntrigueHasDocuments->add($intrigueHasDocument);
 		}
 		
 		/**
@@ -308,6 +325,14 @@ class IntrigueController
 			}
 			
 			/**
+			 * Pour tous les documents de l'intrigue
+			 */
+			foreach ($intrigue->getIntrigueHasDocuments() as $intrigueHasDocument)
+			{
+				$intrigueHasDocument->setIntrigue($intrigue);
+			}
+
+			/**
 			 * Pour tous les lieus de l'intrigue
 			 */
 			foreach ($intrigue->getIntrigueHasLieus() as $intrigueHasLieu)
@@ -348,6 +373,15 @@ class IntrigueController
 			foreach ($originalIntrigueHasObjectifs as $intrigueHasObjectif) {
 				if ($intrigue->getIntrigueHasObjectifs()->contains($intrigueHasObjectif) == false) {
 					$app['orm.em']->remove($intrigueHasObjectif);
+				}
+			}
+			
+			/**
+			 *  supprime la relation entre intrigueHasDocument et l'intrigue
+			 */
+			foreach ($originalIntrigueHasDocuments as $intrigueHasDocument) {
+				if ($intrigue->getIntrigueHasDocuments()->contains($intrigueHasDocument) == false) {
+					$app['orm.em']->remove($intrigueHasDocument);
 				}
 			}
 			

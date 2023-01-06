@@ -89,6 +89,12 @@ class BaseIntrigue
     protected $intrigueHasLieus;
 
     /**
+     * @OneToMany(targetEntity="intrigueHasDocument", mappedBy="intrigue", cascade={"persist", "remove"})
+     * @JoinColumn(name="id", referencedColumnName="intrigue_id", nullable=false)
+     */
+    protected $intrigueHasDocuments;
+
+    /**
      * @OneToMany(targetEntity="IntrigueHasModification", mappedBy="intrigue", cascade={"persist", "remove"})
      * @JoinColumn(name="id", referencedColumnName="intrigue_id", nullable=false)
      */
@@ -118,6 +124,7 @@ class BaseIntrigue
         $this->intrigueHasGroupes = new ArrayCollection();
         $this->intrigueHasGroupeSecondaires = new ArrayCollection();
         $this->intrigueHasLieus = new ArrayCollection();
+        $this->intrigueHasDocuments = new ArrayCollection();
         $this->intrigueHasModifications = new ArrayCollection();
         $this->intrigueHasObjectifs = new ArrayCollection();
         $this->relectures = new ArrayCollection();
@@ -451,6 +458,41 @@ class BaseIntrigue
         return $this->intrigueHasLieus;
     }
 
+    /**
+     * Add IntrigueHasDocument entity to collection (one to many).
+     *
+     * @param \LarpManager\Entities\IntrigueHasDocument $intrigueHasDocument
+     * @return \LarpManager\Entities\Intrigue
+     */
+    public function addIntrigueHasDocument(IntrigueHasDocument $intrigueHasDocument)
+    {
+        $this->intrigueHasDocuments[] = $intrigueHasDocument;
+
+        return $this;
+    }
+
+    /**
+     * Remove IntrigueHasDocument entity from collection (one to many).
+     *
+     * @param \LarpManager\Entities\IntrigueHasDocument $intrigueHasDocument
+     * @return \LarpManager\Entities\Intrigue
+     */
+    public function removeIntrigueHasDocument(IntrigueHasDocument $intrigueHasDocument)
+    {
+        $this->intrigueHasDocuments->removeElement($intrigueHasDocument);
+
+        return $this;
+    }
+
+    /**
+     * Get IntrigueHasDocument entity collection (one to many).
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getIntrigueHasDocuments()
+    {
+        return $this->intrigueHasDocuments;
+    }
     /**
      * Add IntrigueHasModification entity to collection (one to many).
      *
