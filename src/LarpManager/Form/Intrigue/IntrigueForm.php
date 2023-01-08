@@ -27,6 +27,7 @@ use Doctrine\ORM\EntityRepository;
 
 use LarpManager\Form\Type\IntrigueHasGroupeType;
 use LarpManager\Form\Type\IntrigueHasGroupeSecondaireType;
+use LarpManager\Form\Type\IntrigueHasDocumentType;
 use LarpManager\Form\Type\IntrigueHasLieuType;
 use LarpManager\Form\Type\IntrigueHasEvenementType;
 use LarpManager\Form\Type\IntrigueHasObjectifType;
@@ -66,6 +67,14 @@ class IntrigueForm extends AbstractType
 						'allow_delete' => true,
 						'by_reference' => false,
 						'type' => new IntrigueHasGroupeSecondaireType()
+				))
+				->add('intrigueHasDocuments', 'collection', array(
+						'label' => "Documents concernées",
+						'required' => false,
+						'allow_add' => true,
+						'allow_delete' => true,
+						'by_reference' => false,
+						'type' => new IntrigueHasDocumentType()
 				))
 				->add('intrigueHasLieus', 'collection', array(
 						'label' => "Instances concernées",
