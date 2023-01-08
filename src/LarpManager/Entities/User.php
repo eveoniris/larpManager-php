@@ -602,4 +602,15 @@ class User extends BaseUser implements AdvancedUserInterface, \Serializable
 	{
 	    return $this->getEtatCivil()->getFullName();
 	}
+
+	public function getPersonnagesVivants()
+    {
+        $personnages_vivants = [];
+		foreach ($this->personnages as $personnage) {
+			if ($personnage->getVivant()) {
+				$personnages_vivants[] = $personnage;
+			}
+		}
+		return $personnages_vivants;
+    }
 }

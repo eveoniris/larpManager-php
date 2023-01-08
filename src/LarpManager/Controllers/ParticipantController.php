@@ -628,7 +628,7 @@ class ParticipantController
 					'label' =>  'Choisissez votre personnage',
 					'property' => 'resumeParticipations',
 					'class' => 'LarpManager\Entities\Personnage',
-					'choices' => array_unique($participant->getUser()->getPersonnages()->toArray()),
+					'choices' => array_unique($participant->getUser()->getPersonnagesVivants()),
 			        'data' => $default
 			))
 			->add('save','submit', array('label' => 'Valider'))
