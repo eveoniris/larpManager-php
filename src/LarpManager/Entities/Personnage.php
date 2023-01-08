@@ -1157,23 +1157,30 @@ class Personnage extends BasePersonnage
 	}
 	
 	public function getResumeParticipations() {
-	    $s = $this->getNom() ;
+	    $s = '';
+		if (!$this->getVivant()){
+			$s = "💀 ";
+		}
+
+		$s = $s . $this->getFullName();
 	    
 	    if ( $this->getUser() ) {
 	       $first = true;
     	    foreach ($this->getUser()->getParticipants() as $participant) {
     	        if($participant->getPersonnage() != null && $participant->getPersonnage()->getId() == $this->getId()) {
     	            if($first) {
-    	                $s = $s . " (";
+    	                $s = $s . " [";
     	                $first = false;
     	            }
     	           $s = $s . " " . $participant->getGn()->getLabel();
     	        }
     	    }
     	    if ( !$first ) {
-    	        $s = $s . " )";
+    	        $s = $s . " ]";
     	    }
 	    }
+
+		$s = $s . " - " . $this->getClasseName();
 	    return $s; 
 	}
 	
