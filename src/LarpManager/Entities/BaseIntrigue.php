@@ -89,7 +89,7 @@ class BaseIntrigue
     protected $intrigueHasLieus;
 
     /**
-     * @OneToMany(targetEntity="intrigueHasDocument", mappedBy="intrigue", cascade={"persist", "remove"})
+     * @OneToMany(targetEntity="IntrigueHasDocument", mappedBy="intrigue", cascade={"persist", "remove"})
      * @JoinColumn(name="id", referencedColumnName="intrigue_id", nullable=false)
      */
     protected $intrigueHasDocuments;
