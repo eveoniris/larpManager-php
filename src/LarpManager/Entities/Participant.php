@@ -147,4 +147,12 @@ class Participant extends BaseParticipant
 	    
 	}
 	
+	public function getAgeJoueur() : int
+	{
+		$gn_date = $this->getGn()->getDateFin();
+		$naissance = $this->getUser()->getEtatCivil()->getDateNaissance();
+		$interval = date_diff($gn_date, $naissance);
+
+		return intval($interval->format('%y'));
+	}
 }
