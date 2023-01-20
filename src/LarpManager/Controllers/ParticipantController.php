@@ -938,13 +938,21 @@ class ParticipantController
 				}
 			}
 	
-			// Ajout des points d'expérience gagné grace à l'age
-			$xpAgeBonus = $personnage->getAge()->getBonus();
+			// Ajout des points d'expérience gagné grace à l'age du personnage ou perdu à cause de l'age du joueur
+			$age_joueur = $participant->getAgeJoueur();
+			if ( $age_joueur >= 16 )
+				$xpAgeBonus = $personnage->getAge()->getBonus();
+			elseif ( $age_joueur >= 12 )
+				$xpAgeBonus = -3;
+			elseif ( $age_joueur >= 9 )
+				$xpAgeBonus = -6;
+			else
+				$xpAgeBonus = -10;
 			if ( $xpAgeBonus )
 			{
 				$personnage->addXp($xpAgeBonus);
 				$historique = new \LarpManager\Entities\ExperienceGain();
-				$historique->setExplanation("Bonus lié à l'age");
+				$historique->setExplanation("Modification liée à l'age");
 				$historique->setOperationDate(new \Datetime('NOW'));
 				$historique->setPersonnage($personnage);
 				$historique->setXpGain($xpAgeBonus);
