@@ -1411,6 +1411,10 @@ class Personnage extends BasePersonnage
 		foreach ($this->participants as $p) {
 			$gn_date = $p->getGn()->getDateDebut();
 		}
+
+		if (!isset($gn_date))
+			return $this->getSensible();
+
 		$interval = date_diff($gn_date, $naissance);
 
 		if (intval($interval->format('%y')) < 18) {
