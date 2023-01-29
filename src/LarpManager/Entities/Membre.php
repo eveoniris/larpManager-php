@@ -45,5 +45,5 @@ class Membre extends BaseMembre
 		if ( $chef == $this->getPersonnage() ) return true;
 		return false;
 	}
-	
+
 }
