@@ -447,7 +447,7 @@ class GroupeSecondaireController
 			$app['orm.em']->remove($postulant);
 			$app['orm.em']->flush();
 				
-			//$app['user.mailer']->sendGroupeSecondaireAcceptMessage($personnage->getUser(), $groupeSecondaire);
+			$app['user.mailer']->sendGroupeSecondaireAcceptMessage($personnage->getUser(), $groupeSecondaire);
 				
 			$app['session']->getFlashBag()->add('success', 'la candidature a été accepté.');
 		}
