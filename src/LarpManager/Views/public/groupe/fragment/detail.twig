@@ -21,10 +21,20 @@
 {% endif %}
 		
 <div class="header">
+	<h5>Scénariste</h5>
+</div>
+
+{% if groupe.scenariste %}
+	{ groupe.scenariste.etatCivil }}&nbsp;({{ groupe.scenariste.email }})
+{% else %}
+	<span class="fa fa-exclamation-triangle" aria-hidden="true"></span>&nbsp;Attention, ce groupe n'a pas de scénariste.
+{% endif %}
+
+<div class="header">
 	<h5>Description</h5>
 </div>
 
-{% if groupe.description %}		
+{% if groupe.description %}
 	{{ groupe.description|markdown }}
 {% else %}
 	Ce groupe n'a pas de description.

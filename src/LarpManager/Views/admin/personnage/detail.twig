@@ -73,7 +73,23 @@
 									<strong>Pas de violence excessive dans les gestes ou les mots, pas de drague, de propositions d'alcool, etc.</strong>
 								</div>
 							</div>
-							</p>{% endif %}		  					
+							</p>{% endif %}
+							<p><strong>Scénariste :</strong>
+							{% if personnage.user %}
+								{% set participant = personnage.user.participants|last %}
+								{% if participant.personnage %}
+									{% if participant.groupeGn %}
+										{% if participant.groupeGn.groupe %}
+											{% if not participant.groupeGn.groupe.scenariste %}
+												<span class="fa fa-exclamation-triangle" aria-hidden="true"></span>&nbsp;Attention, ce personnage n'a pas de scénariste.
+											{% else %}
+												{{ participant.groupeGn.groupe.scenariste.etatCivil }}&nbsp;({{ participant.groupeGn.groupe.scenariste.email }})
+											{% endif %}
+										{% endif %}
+									{% endif %}
+								{% endif %}
+							{% endif %}
+							</p>
 		  					{# Liste des groupes auxquels fait partie ce personnage #}
 							<h6>Historique des participations</h6>
 							<div class="list-group">									
