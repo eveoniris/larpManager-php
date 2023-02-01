@@ -19,7 +19,7 @@ Vous êtes responsable de ce groupe.
 		<li class="list-group-item"><strong>Responsable : </strong>{{ groupe.responsable.username }} / {{ groupe.responsable.email }}</li>
 	{% endif %}
 	{% if groupe.scenariste %}
-		<li class="list-group-item"><strong>Scénariste : </strong>{{ groupe.scenariste.username }} / {{ groupe.scenariste.email }}</li>
+		<li class="list-group-item"><strong>Scénariste : </strong>{{ groupe.scenariste.etatCivil }} / {{ groupe.scenariste.email }}</li>
 	{% endif %}
 	
 	<li class="list-group-item">
