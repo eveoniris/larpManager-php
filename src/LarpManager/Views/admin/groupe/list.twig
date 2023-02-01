@@ -134,7 +134,7 @@
 						</ul>
 					</td>
 					<td>{% if groupe.lock %}<span class="text-danger">Verrouillé</span>{% else %}Ouvert{% endif %}</td>
-					<td>{% if groupe.scenariste %}{{ groupe.scenariste.username }}{% else %}pas de scénariste{% endif %}</td>
+					<td>{% if groupe.scenariste %}{{ groupe.scenariste.etatCivil }}{% else %}pas de scénariste{% endif %}</td>
 					<td>
 						<div class="btn-toolbar pull-right" role="toolbar" aria-label="...">
 							<div class="btn-group" role="group" aria-label="...">
