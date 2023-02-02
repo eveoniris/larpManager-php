@@ -27,11 +27,13 @@ use Silex\Application;
 use LarpManager\Form\GroupeGn\GroupeGnForm;
 use LarpManager\Form\GroupeGn\GroupeGnResponsableForm;
 use LarpManager\Form\GroupeGn\GroupeGnPlaceAvailableForm;
+use LarpManager\Form\GroupeGn\GroupeGnOrdreForm;
 
 use LarpManager\Repository\ParticipantRepository;
 
 use LarpManager\Entities\Groupe;
 use LarpManager\Entities\GroupeGn;
+use LarpManager\Entities\GroupeGnOrdre;
 use LarpManager\Entities\Participant;
 
 
@@ -401,5 +403,37 @@ class GroupeGnController
 		));
 	}
 	
+	/**
+	 * Modification du jeu de domaine du groupe
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Groupe $groupe
+	 * @param GroupeGn $groupeGn
+	 */
+	public function jeudedomaineAction(Request $request, Application $app, Groupe $groupe, GroupeGn $groupeGn)
+	{
+		$form = $app['form.factory']->createBuilder(new GroupeGnOrdreForm(), $groupeGn, ['groupeGnId' => $groupeGn->getId()] )
+			->add('submit','submit', array('label' => 'Enregistrer'))
+			->getForm();
 	
+		$form->handleRequest($request);
+			
+		if ( $form->isValid() )
+		{
+			$groupeGn = $form->getData();
+			$app['orm.em']->persist($groupeGn);
+			$app['orm.em']->flush();
+	
+			$app['session']->getFlashBag()->add('success', 'Le jeu de domaine a été enregistré.');
+			return $app->redirect($app['url_generator']->generate('groupe.detail', array('index' => $groupe->getId())));
+		}
+	
+		return $app['twig']->render('admin/groupeGn/jeudedomaine.twig', array(
+				'groupe' => $groupe,
+				'groupeGn' => $groupeGn,
+				'form' => $form->createView(),
+		));
+	}
+
 }

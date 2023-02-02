@@ -20,7 +20,7 @@
 		<div class="white-box">
 			<strong>Richesse : </strong>
 			<ul>
-			    {% for territoire in groupe.territoires %}   				
+			    {% for territoire in groupe.territoires %}
 				<li><strong>{{ 3*territoire.richesse }} pièces d'argent</strong> fournies par <strong>{{ territoire.nom }}</strong>. Etat {{ territoire.statut|default('stable')|lower }} : {% if territoire.statut == 'Instable' %}0.5 x {% endif %}3 x ( {{ territoire.tresor|default(0) }} [Fief]
 					{% for construction in territoire.constructions %}
 						{% if construction.id == 6 or construction.id == 10 %}

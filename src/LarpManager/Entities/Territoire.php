@@ -380,7 +380,7 @@ class Territoire extends BaseTerritoire implements \JsonSerializable
 		
 		if ( $this->getGroupe() )
 		{
-			$string .= ' ( Appartient à #'.$this->getGroupe()->getNumero(). ' ' .$this->getGroupe()->getNom() . ' )';			
+			$string .= ' (#'.$this->getGroupe()->getNumero(). ' ' .$this->getGroupe()->getNom() . ')';			
 		}
 				
 		return $string;
