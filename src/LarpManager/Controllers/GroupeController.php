@@ -1046,10 +1046,7 @@ class GroupeController
 				'guerres' => $guerres,
 				'demandePaix' => $demandePaix,
 		));
-	}
-	
-	
-	
+	}	
 	
 	/**
 	 * Liste des groupes
@@ -1260,10 +1257,7 @@ class GroupeController
 				'form' => $form->createView(),
 		));
 	}
-	
-	
 
-	
 	/**
 	 * Modification du nombre de place disponibles dans un groupe
 	 * 
@@ -1453,7 +1447,6 @@ class GroupeController
 			$originalGroupeClasses->add($groupeClasse);
 		}
 		
-		
 		/**
 		 * Crée un tableau contenant les territoires que ce groupe posséde
 		 */
@@ -1461,8 +1454,6 @@ class GroupeController
 		{
 			$originalTerritoires->add($territoire);
 		}
-		
-		
 		
 		$form = $app['form.factory']->createBuilder(new GroupeForm(), $groupe)
 			->add('update','submit', array('label' => "Sauvegarder"))
@@ -1505,7 +1496,6 @@ class GroupeController
 				if ( $groupe->getTerritoires()->contains($territoire) == false)
 					$territoire->setGroupe(null);
 			}
-			
 			
 			/**
 			 * Si l'utilisateur a cliquer sur "update", on met à jour le groupe
@@ -1559,7 +1549,6 @@ class GroupeController
 				return $app->redirect($app['url_generator']->generate('groupe.admin.list'));
 			}
 		
-			
 		}
 			
 		return $app['twig']->render('admin/groupe/update.twig', array(
