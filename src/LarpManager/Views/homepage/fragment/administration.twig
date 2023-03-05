@@ -1,6 +1,13 @@
 <div class="header">
 	<h5>Administratif</h5>
 </div>
+<div class="list-group-item">
+	{% if not (user.etatCivil.prenom or user.etatCivil.nom) %}
+		<span class="text-danger">COMPLÉTEZ VOS INFORMATIONS ADMINISTRATIVES !</span>
+	{% else %}
+		Bonjour {{ user.etatCivil.prenom }}.
+	{% endif %}
+</div>
 <ul class="list-group">
 	<li class="list-group-item"><i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;<a href="{{ path('user.etatCivil') }}">Modifier mes informations administratives</a></li>
 	<li class="list-group-item"><i class="fa fa-ban" aria-hidden="true"></i>&nbsp;<a href="{{ path('user.restriction') }}">Mes restrictions alimentaires</a></li>

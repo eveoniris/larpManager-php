@@ -659,8 +659,6 @@ class UserController
 		));
 	}
 	
-	
-
 	/**
 	 * Confirmation de l'adresse email
 	 *
@@ -686,7 +684,7 @@ class UserController
 		
 		$app['user.manager']->loginAsUser($user);
 		$app['session']->getFlashBag()->set('alert', 'Merci ! Votre compte a été activé.');
-		return $app->redirect($app['url_generator']->generate('user.view', array('id' => $user->getId())));
+		return $app->redirect($app['url_generator']->generate('newUser.step1', array('id' => $user->getId())));
 	}
 	
 	/**
