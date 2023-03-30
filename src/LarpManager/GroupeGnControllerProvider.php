@@ -154,7 +154,6 @@ class GroupeGnControllerProvider implements ControllerProviderInterface
 			->method('GET|POST')
 			->before($mustBeAdmin);
 		
-			
 		/**
 		 * détail d'un groupe
 		 */
@@ -178,7 +177,18 @@ class GroupeGnControllerProvider implements ControllerProviderInterface
 			->method('GET|POST')
 			->before($mustBeResponsable)
 			->before($mustHaveBillet);		
-			
+
+		/**
+		 * Modifie le jeu de domaine d'un groupe
+		 */
+		$controllers->match('/{groupe}/jeu/{groupeGn}/jeudedomaine','LarpManager\Controllers\GroupeGnController::jeudedomaineAction')
+			->assert('groupe', '\d+')
+			->convert('groupe', 'converter.groupe:convert')
+			->assert('groupeGn', '\d+')
+			->convert('groupeGn', 'converter.groupeGn:convert')
+			->bind("groupeGn.jeudedomaine")
+			->method('GET|POST')
+			->before($mustBeAdmin);
 			
 		return $controllers;
 	}

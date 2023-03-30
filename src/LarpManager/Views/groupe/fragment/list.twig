@@ -20,7 +20,7 @@
 			<ul>
 				<li>
 				{% if groupe.scenariste %}
-					<strong>Scénariste : </strong>{{ groupe.scenariste.username }}
+					<strong>Scénariste : </strong>{{ groupe.scenariste.etatCivil }}
 				{% else %}
 					<span class="text-warning">Attention, ce groupe n'a pas de scénariste.</span>
 				{% endif %}

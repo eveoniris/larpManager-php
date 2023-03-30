@@ -63,4 +63,15 @@ class GroupeGn extends BaseGroupeGn
 		return $personnages;
 	}
 	
+	public function addAgent()
+	{
+		$this->agents = $this->agents + 1;
+        return $this;
+	}
+	
+	public function addBateau()
+	{
+		$this->bateaux = $this->bateaux + 1;
+        return $this;
+	}
 }

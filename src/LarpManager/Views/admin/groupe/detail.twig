@@ -24,6 +24,7 @@
 	    						<li role="presentation" class="active"><a href="#detail" aria-controls="detail" role="tab" data-toggle="tab">Détail</a></li>
 	    						<li role="presentation"><a href="#membres" aria-controls="membres" role="tab" data-toggle="tab">Membres</a></li>
 	    						<li role="presentation"><a href="#enveloppe" aria-controls="enveloppe" role="tab" data-toggle="tab">Enveloppe</a></li>
+	    						<li role="presentation"><a href="#domaine" aria-controls="domaine" role="tab" data-toggle="tab">Jeu de domaine</a></li>
 	    					</ul>
 	    					
 	    					<!-- Tab panes -->
@@ -36,6 +37,9 @@
 								</div>
 								<div role="tabpanel" class="tab-pane" id="enveloppe">
 									{% include 'admin/groupe/fragment/enveloppe.twig' with {'groupe': groupe} %}
+								</div>
+								<div role="tabpanel" class="tab-pane" id="domaine">
+									{% include 'admin/groupe/fragment/domaine.twig' with {'groupe': groupe} %}
 								</div>
 							</div>
 						</div>

@@ -1403,6 +1403,21 @@ class Personnage extends BasePersonnage
 	}	
 
 	/**
+	 * Vérifie si le personnage connait ce document
+	 *
+	 * @param Document $document
+	 * @return boolean
+	 */
+	public function isKnownDocument(Document $d)
+	{
+		foreach ( $this->getDocuments() as $document)
+		{
+			if ( $document == $d ) return true;
+		}
+		return false;
+	}	
+
+	/**
 	 * Indique si le personnage est sensible
 	 */
 	public function isSensible()
@@ -1411,6 +1426,10 @@ class Personnage extends BasePersonnage
 		foreach ($this->participants as $p) {
 			$gn_date = $p->getGn()->getDateDebut();
 		}
+
+		if (!isset($gn_date))
+			return $this->getSensible();
+
 		$interval = date_diff($gn_date, $naissance);
 
 		if (intval($interval->format('%y')) < 18) {

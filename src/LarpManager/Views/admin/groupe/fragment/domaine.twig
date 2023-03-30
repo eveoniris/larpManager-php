@@ -1,0 +1,134 @@
+<div class="row">
+	{% for session in groupe.groupeGns|reverse %}
+		<div class="col-md-4">
+	   		<h6><i class="fa fa-circle"></i> {{ session.gn }}</h6>
+
+	   		<ul class="media-list">
+                <li class="media">
+                    <div class="media-center">
+		    			<h6>Suzerain</h6>
+                        {% if session.suzerain %}
+                            <p><a href="{{ path('personnage.admin.detail', {'personnage': session.suzerain.id}) }}">{{ session.suzerain.nom }}</a> - {{ session.suzerain.renomme }} de Renommée</p>
+                            {% if groupe.territoires|length == 1 and session.suzerain.renomme <= 5 %}
+                                <p>La Renommée du Suzerain est trop faible, ses fiefs doivent être <strong class="text-danger">Instables</strong>.
+                            {% elseif groupe.territoires|length == 2 and session.suzerain.renomme <= 8 %}
+                                <p>La Renommée du Suzerain est trop faible, ses fiefs doivent être <strong class="text-danger">Instables</strong>.
+                            {% elseif groupe.territoires|length == 3 and session.suzerain.renomme <= 11 %}
+                                <p>La Renommée du Suzerain est trop faible, ses fiefs doivent être <strong class="text-danger">Instables</strong>.
+                            {% elseif groupe.territoires|length == 4 and session.suzerain.renomme <= 15 %}
+                                <p>La Renommée du Suzerain est trop faible, ses fiefs doivent être <strong class="text-danger">Instables</strong>.
+                            {% elseif groupe.territoires|length >= 5 and session.suzerain.renomme <= 20 %}
+                                <p>La Renommée du Suzerain est trop faible, ses fiefs doivent être <strong class="text-danger">Instables</strong>.
+                            {% else %}
+                                <p>La Renommée du Suzerain est suffisante pour maintenir ses fiefs <strong class="text-success">Stables</strong> (même si d'autres éléments de jeu peuvent les rendre Instables).
+                            {% endif %}
+                        {% else %}
+                            <p>Ce domaine n'a pas de Suzerain, ses fiefs doivent être <strong class="text-danger">Instables</strong>.
+                        {% endif %}
+                        <a role="button" data-toggle="collapse" href="#renommee-{{ session.gn }}" aria-expanded="false" aria-controls="collapseExample">
+                            <i class="fa fa-info-circle" aria-hidden="true"></i>
+                        </a></p>
+                        <div class="collapse" id="renommee-{{ session.gn }}">
+                            <div class="list-group">
+                                <table class="list-group-item">
+                                    <thead>
+                                        <tr>
+                                            <th>Nombre de fiefs du domaine</th>
+                                            <th>Renommée requise pour ne pas que tous ses fiefs soient instables</th>
+                                        </tr>
+                                    </thead>
+                                    <tboby>
+                                        <tr>
+                                            <td>1</td>
+                                            <td>5</td>
+                                        </tr>
+                                        <tr>
+                                            <td>2</td>
+                                            <td>8</td>
+                                        </tr>
+                                        <tr>
+                                            <td>3</td>
+                                            <td>11</td>
+                                        </tr>
+                                        <tr>
+                                            <td>4</td>
+                                            <td>15</td>
+                                        </tr>
+                                        <tr>
+                                            <td>5+</td>
+                                            <td>20</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>                        
+                    </div>
+                </li>
+                <li class="media">
+                    <div class="media-center">
+		    			<h6>Nombre de Fiefs : {{ groupe.territoires|length }} <a role="button" data-toggle="collapse" href="#fiefs-{{ session.gn }}" aria-expanded="false" aria-controls="collapseExample">
+                            <i class="fa fa-info-circle" aria-hidden="true"></i>
+                        </a></h6>
+                        <div class="collapse" id="fiefs-{{ session.gn }}">
+                            <div class="list-group">
+                                <strong>
+                                    {% for fief in groupe.territoires %}
+                                    <p class="list-group-item">{{ fief.nom }}</p>
+                                    {% endfor %}
+                                </strong>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li class="media">
+                    <div class="media-center">
+		    			<h6>Initiative : {{ session.initiative }} <a role="button" data-toggle="collapse" href="#initiative-{{ session.gn }}" aria-expanded="false" aria-controls="collapseExample">
+                            <i class="fa fa-info-circle" aria-hidden="true"></i>
+                        </a></h6>
+                        <div class="collapse" id="initiative-{{ session.gn }}">
+                            <div class="list-group">
+                                <p class="list-group-item">1 point d’initiative par carte ressource (les Poissons comptent double), carte d'Ingrédient ou pièce d’or inutilisée à autre chose dans l’enveloppe de retour du groupe.</p>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li class="media">
+                    <div class="media-center">
+		    			<h6>Nombre d'Armes de Siège : {{ session.sieges }}</h6>
+                    </div>
+                </li>
+                <li class="media">
+                    <div class="media-center">
+		    			<h6>Nombre d'Agents : {{ session.agents }}</h6>
+                    </div>
+                </li>
+                <li class="media">
+                    <div class="media-center">
+		    			<h6>Nombre de Bateaux : {{ session.bateaux }}<a role="button" data-toggle="collapse" href="#bateaux-{{ session.gn }}" aria-expanded="false" aria-controls="collapseExample">
+                            <i class="fa fa-info-circle" aria-hidden="true"></i>
+                        </a></h6>
+                        <div class="collapse" id="bateaux-{{ session.gn }}">
+                            <div class="list-group">
+                                <p class="list-group-item">Fonctionnalité pour obtenir le détail et la position des bateaux en cours de développement.</p>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li class="media">
+                    <div class="media-center">
+		    			<h6>Ordres</h6>
+                        <div class="list-group">
+                        {% if session.getGroupeGnOrdres|length > 0 %}
+                            {% for ordre in session.getGroupeGnOrdres %}
+                                <p class="list-group-item"><strong>{{ ordre.ordre }}</strong> => {{ ordre.cible.nomComplet }} {% if ordre.ordre == 'CONSTRUCTION' or ordre.ordre == 'DESTRUCTION' %} => <strong>{{ ordre.extra }}</strong>{% endif %}</p>
+                            {% endfor %}
+                        {% else %}
+                            <p class="list-group-item">Pas d'ordres passés ou historisés pour le {{ session.gn }}.</p>
+                        {% endif %}
+                        </div>
+                    </div>
+                </li>
+			</ul>
+		</div>
+	{% endfor %}
+</div>

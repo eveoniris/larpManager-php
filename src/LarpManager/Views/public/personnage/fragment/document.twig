@@ -4,7 +4,7 @@
 	</div>
 	<div class="list-group">
 		{% for document in personnage.documents %}
-			<a class="list-group-item" href="{{ path('document.get',{'document': document.documentUrl}) }}"><strong>{{ document.code }}</strong> - {{ document.titre }}</a></a>
+			<a class="list-group-item" href="{{ path('participant.document.detail',{'participant': participant.id, 'document' : document.id}) }}"><strong>{{ document.code }}</strong> - {{ document.titre }}</a>
 		{% endfor %}
 	</div>
 {% endif %}

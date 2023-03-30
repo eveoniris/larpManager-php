@@ -66,14 +66,30 @@
 		  					<p>Ce personnage {% if personnage.intrigue %}<strong class="text-success">participe aux intrigues</strong>{% else %}<strong class="text-danger">ne participe pas aux intrigues{% endif %}</strong>.</p>
 							{% if personnage.isSensible %}<p>Ce personnage est <strong class="text-success">sensible</strong>.
 							<a role="button" data-toggle="collapse" href="#sensibility" aria-expanded="false" aria-controls="collapseExample">
-								<i class="fa fa-question" aria-hidden="true"></i>
+								<i class="fa fa-info-circle" aria-hidden="true"></i>
 							</a>
 							<div class="collapse" id="sensibility">
 								<div class="list-group">
 									<strong>Pas de violence excessive dans les gestes ou les mots, pas de drague, de propositions d'alcool, etc.</strong>
 								</div>
 							</div>
-							</p>{% endif %}		  					
+							</p>{% endif %}
+							<p><strong>Scénariste :</strong>
+							{% if personnage.user %}
+								{% set participant = personnage.user.participants|last %}
+								{% if participant.personnage %}
+									{% if participant.groupeGn %}
+										{% if participant.groupeGn.groupe %}
+											{% if not participant.groupeGn.groupe.scenariste %}
+												<span class="fa fa-exclamation-triangle" aria-hidden="true"></span>&nbsp;Attention, ce personnage n'a pas de scénariste.
+											{% else %}
+												{{ participant.groupeGn.groupe.scenariste.etatCivil }}&nbsp;({{ participant.groupeGn.groupe.scenariste.email }})
+											{% endif %}
+										{% endif %}
+									{% endif %}
+								{% endif %}
+							{% endif %}
+							</p>
 		  					{# Liste des groupes auxquels fait partie ce personnage #}
 							<h6>Historique des participations</h6>
 							<div class="list-group">									
@@ -82,18 +98,18 @@
 										{% if participant.personnage %}
 											{% if participant.groupeGn %}
 												{% if participant.groupeGn.groupe %}
-													<a class="list-group-item" href="{{ path('groupe.detail', {'index': participant.groupeGn.groupe.id}) }}">{{ participant.personnage.nom }} - {{ participant.gn }} - #{{ participant.groupeGn.groupe.numero }} {{ participant.groupeGn.groupe.nom }}</a>
+													<a class="list-group-item" href="{{ path('groupe.detail', {'index': participant.groupeGn.groupe.id}) }}">#{{ participant.personnage.id}} {{ participant.personnage.nom }} - {{ participant.gn }} - #{{ participant.groupeGn.groupe.numero }} {{ participant.groupeGn.groupe.nom }}</a>
 												{% else %}
 													<a class="list-group-item">{{ participant.personnage.nom }} - {{ participant.gn }} - N'est pas lié à un groupe</a>
 												{% endif %}
 											{% else %}
-												<a class="list-group-item">{{ participant.personnage.nom }} - {{ participant.gn }} - N'est pas lié à un groupe</a>
+												<a class="list-group-item">#{{ participant.personnage.id}} {{ participant.personnage.nom }} - {{ participant.gn }} - N'est pas lié à un groupe</a>
 											{% endif %}
 										{% else %}
 											{% if participant.groupeGn %}
-												<a class="list-group-item">Personnage {{ personnage.nom }} non récupéré - {{ participant.gn }} - #{{ participant.groupeGn.groupe.numero }} {{ participant.groupeGn.groupe.nom }}</a>
+												<a class="list-group-item">Personnage #{{ personnage.id }} {{ personnage.nom }} non récupéré - {{ participant.gn }} - #{{ participant.groupeGn.groupe.numero }} {{ participant.groupeGn.groupe.nom }}</a>
 											{% else %}
-												<a class="list-group-item">Personnage {{ personnage.nom }} non récupéré - {{ participant.gn }} - N'est pas lié à un groupe</a>
+												<a class="list-group-item">Personnage #{{ personnage.id }} {{ personnage.nom }} non récupéré - {{ participant.gn }} - N'est pas lié à un groupe</a>
 											{% endif %}
 										{% endif %}
 									{% endfor %}
@@ -150,6 +166,7 @@
 												<li><a href="{{ path('personnage.admin.update.sort', {'personnage': personnage.id}) }}">Modifier la liste des sorts</a></li>
 												<li><a href="{{ path('personnage.admin.update.potion', {'personnage': personnage.id}) }}">Modifier la liste des potions</a></li>
 												<li><a href="{{ path('personnage.admin.update.priere', {'personnage': personnage.id}) }}">Modifier la liste des prieres</a></li>
+												<li><a href="{{ path('personnage.technologie.update', {'personnage': personnage.id}) }}">Modifier la liste des technologies</a></li>
 												<li><a href="{{ path('personnage.admin.update.connaissance', {'personnage': personnage.id}) }}">Modifier la liste des connaissances</a></li>
 											</ul>
 										</li>
@@ -271,6 +288,17 @@
 								</div>
 							</div>
 
+							<h6>Technologies :</h6>
+							<div class="list-group">
+								<div class="list-group-item">
+									{% for technologie in participant.personnage.technologies %}
+										<div class="list-group-item-text">{% if technologie.secret %}<span style="color:red;">Secret</span> - {% endif %}{{ technologie.label }}</div>
+									{% else %}
+										<div class="list-group-item-text">Aucune</div>
+									{% endfor %}
+								</div>
+							</div>
+
 							<h6>Connaissances :</h6>
 							<div class="list-group">
 								<div class="list-group-item">
@@ -280,7 +308,7 @@
 										<div class="list-group-item-text">Aucune</div>
 									{% endfor %}
 								</div>
-							</div>								
+							</div>							
 						</div>
 					</div>
 					
@@ -387,7 +415,6 @@
 												<li><a href="{{ path('personnage.admin.update.ingredient', {'personnage': personnage.id}) }}">Modifier la liste des ingrédients</a></li>
 												<li><a href="{{ path('personnage.admin.update.ressource', {'personnage': personnage.id}) }}">Modifier la liste des ressources</a></li>
 												<li><a href="{{ path('personnage.admin.update.richesse', {'personnage': personnage.id}) }}">Modifier la richesse</a></li>
-												<li><a href="{{ path('personnage.technologie.update', {'personnage': personnage.id}) }}">Modifier les technologies</a></li>
 												<li><a href="{{ path('personnage.materiel.update', {'personnage': personnage.id}) }}">Modifier le matériel</a></li>
 												<li><a href="{{ path('personnage.enveloppe.print', {'personnage':personnage.id}) }}">Imprimer l'enveloppe</a></li>
 											</ul>
@@ -401,10 +428,6 @@
 							
 								<div class="list-group-item">
 									<h6 class="list-group-item-heading">Renommée : {{ personnage.renomme|default(0) }}</h6>
-								</div>
-								
-								<div class="list-group-item">
-									<h6 class="list-group-item-heading">Héroïsme : {{ personnage.heroisme|default(0) }}</h6>
 								</div>
 					
 								<div class="list-group-item">
@@ -477,15 +500,6 @@
 									<h6 class="list-group-item-heading">Ressources :</h6>
 									{% for personnageRessource in personnage.personnageRessources %}
 										<div class="list-group-item-text">{{personnageRessource.nombre}} {{ personnageRessource.ressource }}</div>
-									{% else %}
-										<div class="list-group-item-text">Aucune</div>
-									{% endfor %}
-								</div>
-								
-								<div class="list-group-item">
-									<h6 class="list-group-item-heading">Technologies :</h6>
-									{% for technologie in personnage.technologies %}
-										<div class="list-group-item-text">{{ technologie.label }}</div>
 									{% else %}
 										<div class="list-group-item-text">Aucune</div>
 									{% endfor %}

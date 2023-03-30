@@ -18,10 +18,12 @@
 	</div>
 		
 	{{ connaissance.description|markdown }}
-	
-	<object type="application/pdf" width="100%" height="1200px" >
-		<param name="src" value="{{ path('participant.connaissance.document',{'participant': participant.id, 'connaissance' :connaissance.id, 'filename': filename}) }}" />
-		<p>Si le PDF n'apparait pas correctement dans votre navigateur, <a href="{{ path('participant.connaissance.document',{'participant': participant.id, 'connaissance': connaissance.id, 'filename': filename}) }}">cliquez ici</a> pour télécharger le fichier.</p>
+
+	<div class="list-group-item">
+		Si le PDF n'apparait pas correctement dans votre navigateur, <a href="{{ path('participant.connaissance.document',{'participant': participant.id, 'connaissance': connaissance.id, 'filename': filename}) }}">cliquez ici</a> pour télécharger le fichier.
+	</div>
+
+	<object type="application/pdf" width="100%" height="1200px" data="{{ path('participant.connaissance.document',{'participant': participant.id, 'connaissance' :connaissance.id, 'filename': filename}) }}">
 	</object>
 
 </div>

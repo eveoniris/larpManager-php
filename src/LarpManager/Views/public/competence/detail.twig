@@ -15,11 +15,10 @@
 	<div class="header">
 		<h5>{{ competence.competenceFamily.label }} ({{ competence.level.label }})</h5>
 	</div>
-
-	<object type="application/pdf" width="100%" height="1200px">
-		<param name="src" value="{{ path('participant.competence.document',{'participant': participant.id, 'competence': competence.id, 'filename': filename}) }}" />
-		<p>Si le PDF n'apparait pas correctement dans votre navigateur, <a href="{{ path('participant.competence.document',{'participant': participant.id, 'competence': competence.id, 'filename': filename}) }}">cliquez ici</a> pour télécharger le fichier.</p>
+	<div class="list-group-item">
+		Si le PDF n'apparait pas correctement dans votre navigateur, <a href="{{ path('participant.competence.document',{'participant': participant.id, 'competence': competence.id, 'filename': filename}) }}">cliquez ici</a> pour télécharger le fichier.
+	</div>
+	<object type="application/pdf" width="100%" height="1200px" data="{{ path('participant.competence.document',{'participant': participant.id, 'competence': competence.id, 'filename': filename}) }}">
 	</object>
-
 </div>
 {% endblock content %}

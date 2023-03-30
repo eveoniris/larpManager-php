@@ -78,6 +78,7 @@ use LarpManager\Entities\Reponse;
 use LarpManager\Entities\Langue;
 use LarpManager\Entities\Connaissance;
 use LarpManager\Entities\Technologie;
+use LarpManager\Entities\Document;
 
 
 /**
@@ -938,13 +939,21 @@ class ParticipantController
 				}
 			}
 	
-			// Ajout des points d'expérience gagné grace à l'age
-			$xpAgeBonus = $personnage->getAge()->getBonus();
+			// Ajout des points d'expérience gagné grace à l'age du personnage ou perdu à cause de l'age du joueur
+			$age_joueur = $participant->getAgeJoueur();
+			if ( $age_joueur >= 16 )
+				$xpAgeBonus = $personnage->getAge()->getBonus();
+			elseif ( $age_joueur >= 12 )
+				$xpAgeBonus = -3;
+			elseif ( $age_joueur >= 9 )
+				$xpAgeBonus = -6;
+			else
+				$xpAgeBonus = -10;
 			if ( $xpAgeBonus )
 			{
 				$personnage->addXp($xpAgeBonus);
 				$historique = new \LarpManager\Entities\ExperienceGain();
-				$historique->setExplanation("Bonus lié à l'age");
+				$historique->setExplanation("Modification liée à l'age");
 				$historique->setOperationDate(new \Datetime('NOW'));
 				$historique->setPersonnage($personnage);
 				$historique->setXpGain($xpAgeBonus);
@@ -2414,7 +2423,36 @@ class ParticipantController
 				'filename' => $competence->getPrintLabel()
 		));
 	}
-
+	
+	/**
+	 * Detail d'un document
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Participant $participant
+	 * @param Document $document
+	 */
+	public function documentDetailAction(Request $request, Application $app, Participant $participant, Document $document)
+	{
+		$personnage = $participant->getPersonnage();
+		if ( ! $personnage )
+		{
+			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créé un personnage !');
+			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),303);
+		}
+	
+		if ( ! $personnage->isKnownDocument($document) )
+		{
+			$app['session']->getFlashBag()->add('error', 'Vous ne connaissez pas ce document !');
+			return $app->redirect($app['url_generator']->generate('gn.personnage', array('gn' => $participant->getGn()->getId())),303);
+		}
+	
+		return $app['twig']->render('public/document/detail.twig', array(
+				'document' => $document,
+				'participant' => $participant,
+				'filename' => $document->getPrintLabel()
+		));
+	}
 
 	/**
 	 * Liste des classes pour le joueur
@@ -2461,6 +2499,34 @@ class ParticipantController
 			   ->setContentDisposition(ResponseHeaderBag::DISPOSITION_INLINE, $competence->getPrintLabel().'.pdf');;
 	}
 	
+	/**
+	 * Obtenir le document lié à un document
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 * @param Participant $participant
+	 * @param Document $document
+	 */
+	public function documentDocumentAction(Request $request, Application $app, Participant $participant, Document $document)
+	{
+		$personnage = $participant->getPersonnage();
+	
+		if ( ! $personnage )
+		{
+			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créé un personnage !');
+			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),303);
+		}
+	
+		if ( ! $personnage->isKnownDocument($document) )
+		{
+			$app['session']->getFlashBag()->add('error', 'Vous ne connaissez pas ce document !');
+			return $app->redirect($app['url_generator']->generate('gn.personnage', array('gn' => $participant->getGn()->getId())),303);
+		}
+			
+		$file = __DIR__.'/../../../private/documents/'.$document->getDocumentUrl();
+		return $app->sendFile($file)
+			   ->setContentDisposition(ResponseHeaderBag::DISPOSITION_INLINE, $document->getPrintLabel().'.pdf');;
+	}	
 	/**
 	 * Liste des groupes secondaires public (pour les joueurs)
 	 *

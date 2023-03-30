@@ -1,0 +1,24 @@
+{% extends "layout.twig" %}
+
+{% block title %}Document {{ document.code }} - {{ document.titre }}{% endblock title %}
+
+{% block content %}
+
+<ol class="breadcrumb">
+	<li><a href="{{ path('homepage')  }}">Accueil</a></li>
+	<li><a href="{{ path('gn.detail', {'gn' : participant.gn.id}) }}">{{ participant.gn.label }}</a></li>
+	<li><a href="{{ path('gn.personnage', {'gn' : participant.gn.id}) }}">{{ participant.personnage.nom }}</a></li>
+	<li class="active">{{ document.code }} - {{ document.titre }}</li>
+</ol>
+
+<div class="well well-sm">
+	<div class="header">
+		<h5><{{ document.code }} - {{ document.titre }}</h5>
+	</div>
+	<div class="list-group-item">
+		Si le PDF n'apparait pas correctement dans votre navigateur, <a href="{{ path('participant.document.document',{'participant': participant.id, 'document': document.id, 'filename': filename}) }}">cliquez ici</a> pour télécharger le fichier.
+	</div>
+	<object type="application/pdf" width="100%" height="1200px" data="{{ path('participant.document.document',{'participant': participant.id, 'document': document.id, 'filename': filename}) }}">
+	</object>
+</div>
+{% endblock content %}

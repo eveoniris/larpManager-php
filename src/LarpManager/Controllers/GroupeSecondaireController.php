@@ -325,7 +325,7 @@ class GroupeSecondaireController
 	}
 	
 	/**
-	 * Construit le contexte pour la page détail de groupe seconaire (pour les orgas)
+	 * Construit le contexte pour la page détail de groupe secondaire (pour les orgas)
 	 * @param Application $app
 	 * @param SecondaryGroup $groupeSecondaire
 	 * @return array of 
@@ -376,6 +376,13 @@ class GroupeSecondaireController
 			//$personnage = $data['personnage'];
 			
 			$membre = new \LarpManager\Entities\Membre();
+
+			if ($groupeSecondaire->isMembre($personnage))
+			{
+				$app['session']->getFlashBag()->add('warning', 'le personnage est déjà membre du groupe secondaire.');
+				return $app->redirect($app['url_generator']->generate('groupeSecondaire.admin.detail', array('groupe' => $groupeSecondaire->getId())),303);
+			}
+
 			$membre->setPersonnage($personnage);
 			$membre->setSecondaryGroup($groupeSecondaire);
 			$membre->setSecret(false);
@@ -430,15 +437,20 @@ class GroupeSecondaireController
 		$membre->setPersonnage($personnage);
 		$membre->setSecondaryGroup($groupeSecondaire);
 		$membre->setSecret(false);
-		
-		$app['orm.em']->persist($membre);
-		$app['orm.em']->remove($postulant);
-		$app['orm.em']->flush();
-			
-		$app['user.mailer']->sendGroupeSecondaireAcceptMessage($personnage->getUser(), $groupeSecondaire);
-			
-		$app['session']->getFlashBag()->add('success', 'la candidature a été accepté.');
-	
+
+		if ($groupeSecondaire->isMembre($personnage))
+		{
+			$app['session']->getFlashBag()->add('warning', 'le personnage est déjà membre du groupe secondaire.');
+		}		
+		else {
+			$app['orm.em']->persist($membre);
+			$app['orm.em']->remove($postulant);
+			$app['orm.em']->flush();
+				
+			$app['user.mailer']->sendGroupeSecondaireAcceptMessage($personnage->getUser(), $groupeSecondaire);
+				
+			$app['session']->getFlashBag()->add('success', 'la candidature a été accepté.');
+		}
 		return $app['twig']->render('admin/groupeSecondaire/detail.twig',
 		    $this->buildContextDetailTwig($app, $groupeSecondaire)
 		);

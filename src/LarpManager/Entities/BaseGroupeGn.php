@@ -55,6 +55,26 @@ class BaseGroupeGn
     protected $place_available;
 
     /**
+     * @Column(type="integer", nullable=false)
+     */
+    protected $agents;
+
+    /**
+     * @Column(type="integer", nullable=false)
+     */
+    protected $bateaux;
+
+    /**
+     * @Column(type="integer", nullable=false)
+     */
+    protected $sieges;
+
+    /**
+     * @Column(type="integer", nullable=false)
+     */
+    protected $initiative;
+
+    /**
      * @OneToMany(targetEntity="Participant", mappedBy="groupeGn")
      * @JoinColumn(name="id", referencedColumnName="groupe_gn_id", nullable=false)
      */
@@ -77,10 +97,27 @@ class BaseGroupeGn
      * @JoinColumn(name="responsable_id", referencedColumnName="id")
      */
     protected $participant;
+    
+    /**
+     * @ManyToOne(targetEntity="Personnage", inversedBy="groupeGns")
+     * @JoinColumn(name="suzerain_id", referencedColumnName="id")
+     */
+    protected $suzerain;
+    
+    /**
+     * @ManyToMany(targetEntity="GroupeGnOrdre", inversedBy="groupeGns")
+     * @JoinTable(name="groupe_gn_ordre",
+     *     joinColumns={@JoinColumn(name="groupe_gn_id", referencedColumnName="id", nullable=false)},
+     *     inverseJoinColumns={@JoinColumn(name="id", referencedColumnName="id", nullable=false)}
+     * )
+     * @OrderBy({"ordre" = "ASC",})
+     */
+    protected $groupeGnOrdres;
 
     public function __construct()
     {
         $this->participants = new ArrayCollection();
+        $this->groupeGnOrdres = new ArrayCollection();
     }
 
     /**
@@ -222,6 +259,98 @@ class BaseGroupeGn
     }
 
     /**
+     * Set the value of agents.
+     *
+     * @param integer $agents
+     * @return \LarpManager\Entities\GroupeGn
+     */
+    public function setAgents($agents)
+    {
+        $this->agents = $agents;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of agents.
+     *
+     * @return integer
+     */
+    public function getAgents()
+    {
+        return $this->agents;
+    }
+
+    /**
+     * Set the value of bateaux.
+     *
+     * @param integer $bateaux
+     * @return \LarpManager\Entities\GroupeGn
+     */
+    public function setBateaux($bateaux)
+    {
+        $this->bateaux = $bateaux;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of bateaux.
+     *
+     * @return integer
+     */
+    public function getBateaux()
+    {
+        return $this->bateaux;
+    }
+
+    /**
+     * Set the value of sieges.
+     *
+     * @param integer $sieges
+     * @return \LarpManager\Entities\GroupeGn
+     */
+    public function setSieges($sieges)
+    {
+        $this->sieges = $sieges;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of sieges.
+     *
+     * @return integer
+     */
+    public function getSieges()
+    {
+        return $this->sieges;
+    }
+
+    /**
+     * Set the value of initiative.
+     *
+     * @param integer $initiative
+     * @return \LarpManager\Entities\GroupeGn
+     */
+    public function setInitiative($initiative)
+    {
+        $this->initiative = $initiative;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of initiative.
+     *
+     * @return integer
+     */
+    public function getInitiative()
+    {
+        return $this->initiative;
+    }
+
+    /**
      * Add Participant entity to collection (one to many).
      *
      * @param \LarpManager\Entities\Participant $participant
@@ -325,6 +454,67 @@ class BaseGroupeGn
     {
         return $this->participant;
     }
+
+    /**
+     * Set Personnage entity (many to one).
+     *
+     * @param \LarpManager\Entities\Personnage $suzerain
+     * @return \LarpManager\Entities\GroupeGn
+     */
+    public function setSuzerain(Personnage $suzerain = null)
+    {
+        $this->suzerain = $suzerain;
+
+        return $this;
+    }
+
+    /**
+     * Get Personnage entity (many to one).
+     *
+     * @return \LarpManager\Entities\Personnage
+     */
+    public function getSuzerain()
+    {
+        return $this->suzerain;
+    }
+
+    /**
+     * Add GroupeGnOrdre entity to collection.
+     *
+     * @param \LarpManager\Entities\GroupeGnOrdre $groupeGnOrdre
+     * @return \LarpManager\Entities\GroupeGn
+     */
+    public function addGroupeGnOrdre(GroupeGnOrdre $groupeGnOrdre)
+    {
+        $groupeGnOrdre->addGroupeGn($this);
+        $this->groupeGnOrdres[] = $groupeGnOrdre;
+
+        return $this;
+    }
+
+    /**
+     * Remove GroupeGnOrdre entity from collection.
+     *
+     * @param \LarpManager\Entities\GroupeGnOrdre $groupeGnOrdre
+     * @return \LarpManager\Entities\GroupeGn
+     */
+    public function removeGroupeGnOrdre(GroupeGnOrdre $groupeGnOrdre)
+    {
+        $groupeGnOrdre->removeGroupeGn($this);
+        $this->groupeGnOrdres->removeElement($groupeGnOrdre);
+
+        return $this;
+    }
+
+    /**
+     * Get GroupeGnOrdre entity collection.
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getGroupeGnOrdres()
+    {
+        return $this->groupeGnOrdres;
+    }    
 
     public function __sleep()
     {
