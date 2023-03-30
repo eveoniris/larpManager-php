@@ -28,7 +28,6 @@ body {
 	<br />
 		
 	<strong>Renommée :</strong> {{ participant.personnage.renomme|default(0) }}<br />
-	<strong>Héroïsme :</strong> {{ participant.personnage.heroisme|default(0) }}<br />
 	<strong>Richesse :</strong> {{ participant.personnage.richesse|default(0) }} pièces d'argent<br />
 	<strong>Lié aux compétences :</strong>
 	<ul>
@@ -53,7 +52,7 @@ body {
 			{% endif %}
 		{% endfor %}
 		{% if enoughReligion == 0 %}
-			CE PRÊTRE N'A PAS ASSEZ DE FERVEUR
+			CE PRÊTRE N'A PAS ASSEZ DE FERVEUR<br />
 		{% endif %}
 	{% endif %}
 
@@ -116,16 +115,6 @@ body {
 		</ul>
 	{% endif %}
 	
-	{# Technologies #}
-	{% if participant.personnage.technologies|length > 0 %}
-		<strong>Technologies</strong>
-		<ul>
-		{% for technologie in participant.personnage.technologies %}
-			<li>{{ technologie.label }}</li>
-		{% endfor %}
-		</ul>
-	{% endif %}
-	
 	{# Matériel supplémentaire #}
 	{% if participant.personnage.materiel|length > 0 %}
 		<strong>Matériel supplémentaire</strong>
@@ -134,7 +123,7 @@ body {
 		</ul>
 	{% endif %}
 
-	{% if personnage.isSensible %}
+	{% if participant.personnage.isSensible %}
 		<strong>Personnage sensible</strong>
 		<ul>
 			<li>Brassard jaune avec un poing gravé</li>

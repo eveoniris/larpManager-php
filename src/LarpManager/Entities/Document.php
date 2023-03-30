@@ -66,4 +66,9 @@ class Document extends BaseDocument
 	{
 		return $this->getCode(). ' ' .$this->getTitre();
 	}
+
+	public function getPrintLabel()
+	{
+		return preg_replace('/[^a-z0-9]+/', '_', strtolower($this->getCode()));
+	}		
 }

@@ -1403,6 +1403,21 @@ class Personnage extends BasePersonnage
 	}	
 
 	/**
+	 * Vérifie si le personnage connait ce document
+	 *
+	 * @param Document $document
+	 * @return boolean
+	 */
+	public function isKnownDocument(Document $d)
+	{
+		foreach ( $this->getDocuments() as $document)
+		{
+			if ( $document == $d ) return true;
+		}
+		return false;
+	}	
+
+	/**
 	 * Indique si le personnage est sensible
 	 */
 	public function isSensible()

@@ -60,6 +60,7 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 	 *  - participant.competence.list
 	 *  - participant.competence.detail
 	 *  - participant.competence.document
+	 *  - participant.document.document
 	 *  - participant.groupe.join
 	 *  - participant.groupe.list
 	 *  - participant.groupe.detail
@@ -610,7 +611,18 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 			->bind("participant.competence.detail")
 			->method('GET')
 			->before($mustOwnParticipant);
-			
+
+		/**
+		 * Détail d'un document
+		 */
+		$controllers->match('/{participant}/document/{document}/detail','LarpManager\Controllers\ParticipantController::documentDetailAction')
+			->assert('participant', '\d+')
+			->convert('participant', 'converter.participant:convert')
+			->assert('document', '\d+')
+			->convert('document', 'converter.document:convert')
+			->bind("participant.document.detail")
+			->method('GET')
+			->before($mustOwnParticipant);			
 		/**
 		 * Obtenir le document lié à une compétence
 		 */
@@ -620,6 +632,18 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 			->assert('competence', '\d+')
 			->convert('competence', 'converter.competence:convert')
 			->bind("participant.competence.document")
+			->method('GET')
+			->before($mustOwnParticipant);		
+
+		/**
+		 * Obtenir le document lié à un document de jeu
+		 */
+		$controllers->match('/{participant}/document/{document}/document/{filename}','LarpManager\Controllers\ParticipantController::documentDocumentAction')
+			->assert('participant', '\d+')
+			->convert('participant', 'converter.participant:convert')
+			->assert('document', '\d+')
+			->convert('document', 'converter.document:convert')
+			->bind("participant.document.document")
 			->method('GET')
 			->before($mustOwnParticipant);
 

@@ -18,7 +18,6 @@
 {% endif %}
 <br/>
 <strong>Renommée :</strong> {{ personnage.renomme|default(0) }}<br />
-<strong>Héroïsme :</strong> {{ personnage.heroisme|default(0) }}<br />
 <strong>Richesse :</strong> {{ personnage.richesse|default(0) }} pièces d'argent<br />
 <br />
 <strong>Lié aux compétences</strong>
@@ -93,16 +92,6 @@
 		{% for personnageRessource in personnage.personnageRessources %}
 			<li>{{personnageRessource.nombre}} {{ personnageRessource.ressource }}</li>
 		{% endfor %}
-	</ul>
-{% endif %}
-
-{# Technologies #}
-{% if personnage.technologies|length > 0 %}
-	<strong>Technologies</strong>
-	<ul>
-	{% for technologie in personnage.technologies %}
-		<li>{{ technologie.label }}</li>
-	{% endfor %}
 	</ul>
 {% endif %}
 

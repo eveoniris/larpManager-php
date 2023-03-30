@@ -166,6 +166,7 @@
 												<li><a href="{{ path('personnage.admin.update.sort', {'personnage': personnage.id}) }}">Modifier la liste des sorts</a></li>
 												<li><a href="{{ path('personnage.admin.update.potion', {'personnage': personnage.id}) }}">Modifier la liste des potions</a></li>
 												<li><a href="{{ path('personnage.admin.update.priere', {'personnage': personnage.id}) }}">Modifier la liste des prieres</a></li>
+												<li><a href="{{ path('personnage.technologie.update', {'personnage': personnage.id}) }}">Modifier la liste des technologies</a></li>
 												<li><a href="{{ path('personnage.admin.update.connaissance', {'personnage': personnage.id}) }}">Modifier la liste des connaissances</a></li>
 											</ul>
 										</li>
@@ -287,6 +288,17 @@
 								</div>
 							</div>
 
+							<h6>Technologies :</h6>
+							<div class="list-group">
+								<div class="list-group-item">
+									{% for technologie in participant.personnage.technologies %}
+										<div class="list-group-item-text">{% if technologie.secret %}<span style="color:red;">Secret</span> - {% endif %}{{ technologie.label }}</div>
+									{% else %}
+										<div class="list-group-item-text">Aucune</div>
+									{% endfor %}
+								</div>
+							</div>
+
 							<h6>Connaissances :</h6>
 							<div class="list-group">
 								<div class="list-group-item">
@@ -296,7 +308,7 @@
 										<div class="list-group-item-text">Aucune</div>
 									{% endfor %}
 								</div>
-							</div>								
+							</div>							
 						</div>
 					</div>
 					
@@ -403,7 +415,6 @@
 												<li><a href="{{ path('personnage.admin.update.ingredient', {'personnage': personnage.id}) }}">Modifier la liste des ingrédients</a></li>
 												<li><a href="{{ path('personnage.admin.update.ressource', {'personnage': personnage.id}) }}">Modifier la liste des ressources</a></li>
 												<li><a href="{{ path('personnage.admin.update.richesse', {'personnage': personnage.id}) }}">Modifier la richesse</a></li>
-												<li><a href="{{ path('personnage.technologie.update', {'personnage': personnage.id}) }}">Modifier les technologies</a></li>
 												<li><a href="{{ path('personnage.materiel.update', {'personnage': personnage.id}) }}">Modifier le matériel</a></li>
 												<li><a href="{{ path('personnage.enveloppe.print', {'personnage':personnage.id}) }}">Imprimer l'enveloppe</a></li>
 											</ul>
@@ -417,10 +428,6 @@
 							
 								<div class="list-group-item">
 									<h6 class="list-group-item-heading">Renommée : {{ personnage.renomme|default(0) }}</h6>
-								</div>
-								
-								<div class="list-group-item">
-									<h6 class="list-group-item-heading">Héroïsme : {{ personnage.heroisme|default(0) }}</h6>
 								</div>
 					
 								<div class="list-group-item">
@@ -493,15 +500,6 @@
 									<h6 class="list-group-item-heading">Ressources :</h6>
 									{% for personnageRessource in personnage.personnageRessources %}
 										<div class="list-group-item-text">{{personnageRessource.nombre}} {{ personnageRessource.ressource }}</div>
-									{% else %}
-										<div class="list-group-item-text">Aucune</div>
-									{% endfor %}
-								</div>
-								
-								<div class="list-group-item">
-									<h6 class="list-group-item-heading">Technologies :</h6>
-									{% for technologie in personnage.technologies %}
-										<div class="list-group-item-text">{{ technologie.label }}</div>
 									{% else %}
 										<div class="list-group-item-text">Aucune</div>
 									{% endfor %}
