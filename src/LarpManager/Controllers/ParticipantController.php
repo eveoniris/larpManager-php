@@ -2523,7 +2523,7 @@ class ParticipantController
 			return $app->redirect($app['url_generator']->generate('gn.personnage', array('gn' => $participant->getGn()->getId())),303);
 		}
 			
-		$file = __DIR__.'/../../../private/doc/'.$document->getDocumentUrl();
+		$file = __DIR__.'/../../../private/documents/'.$document->getDocumentUrl();
 		return $app->sendFile($file)
 			   ->setContentDisposition(ResponseHeaderBag::DISPOSITION_INLINE, $document->getPrintLabel().'.pdf');;
 	}	
