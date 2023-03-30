@@ -146,9 +146,9 @@ table tr td {
 	<table>
 		<thead>
 			<tr>
-				<th>Sorts</th>
-				<th>Potions</th>
-				<th>Prières</th>
+				<th>{% if personnage.sorts|length > 0 %}Sorts{% endif %}</th>
+				<th>{% if personnage.potions|length > 0 %}Potions{% endif %}</th>
+				<th>{% if personnage.prieres|length > 0 %}Prières{% endif %}</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -171,7 +171,7 @@ table tr td {
 			</tr>
 		</tbody>
 	</table>
-	{% if personnage.connaissances %}
+	{% if personnage.connaissances|length > 0 %}
 	<table>
 		<thead>
 			<tr>
