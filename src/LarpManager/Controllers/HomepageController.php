@@ -20,6 +20,7 @@
 
 namespace LarpManager\Controllers;
 
+use LarpManager\Entities\Restriction;
 use Symfony\Component\HttpFoundation\Request;
 use Silex\Application;
 use LarpManager\Form\GroupeInscriptionForm;
