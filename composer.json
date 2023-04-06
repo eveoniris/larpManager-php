@@ -27,7 +27,7 @@
 		"nicl/silex-markdown" : "1.1.0",
 		"jasongrimes/paginator" : "1.0",
 		"neutron/silex-imagine-provider" : "~0.1",
-		"tecnickcom/tcpdf" : "6.2.22",
+		"tecnickcom/tcpdf" : "6.2.12",
 		"spipu/html2pdf" : "4.6"
 	},
 	"autoload" : {
