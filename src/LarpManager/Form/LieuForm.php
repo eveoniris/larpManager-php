@@ -23,6 +23,8 @@ namespace LarpManager\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 /**
  * LarpManager\Form\LieuForm
@@ -41,7 +43,12 @@ class LieuForm extends AbstractType
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
 		$builder->add('nom','text', array(
-					'required' => true,	
+					'required' => true,
+                    'attr' => ['maxlength' => 45],
+                    'constraints' => [
+                            new Length(['max' => 45]),
+                            new NotBlank(),
+                        ],
 				))
 				->add('description','textarea', array(
 					'required' => true,

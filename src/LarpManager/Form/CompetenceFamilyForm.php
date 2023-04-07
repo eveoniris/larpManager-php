@@ -22,7 +22,9 @@ namespace LarpManager\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\Validator\Constraints\Length;
 
 /**
  * LarpManager\Form\CompetenceFamilyForm
@@ -32,22 +34,31 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
  */
 class CompetenceFamilyForm extends AbstractType
 {
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults(['sanitize_html' => true]);
+    }
+
 	/**
 	 * Construction du formulaire
-	 * 
+	 *
 	 * @param FormBuilderInterface $builder
 	 * @param array $options
 	 */
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
 		$builder->add('label','text', array(
-					'required' => true,	
+					'required' => true,
+                    'attr' => ['maxlength' => 45],
+                    'constraints' => [new Length(['max' => 45])],
 				))
 				->add('description','textarea', array(
-					'required' => false,	
+					'required' => false,
+                    'constraints' => [new Length(['max' => 450])],
 					'attr' => array(
 							'class' => 'tinymce',
 							'row' => 9,
+                            'maxlength' => 450,
 					)
 				));
 	}

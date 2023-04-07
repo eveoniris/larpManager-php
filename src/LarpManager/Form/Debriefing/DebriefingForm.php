@@ -33,6 +33,8 @@ use Doctrine\ORM\EntityRepository;
 use LarpManager\Entities\Groupe;
 use LarpManager\Entities\Gn;
 use LarpManager\Entities\User;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 /**
  * LarpManager\Form\DebriefingForm
@@ -44,7 +46,7 @@ class DebriefingForm extends AbstractType
 {
 	/**
 	 * Construction du formulaire
-	 * 
+	 *
 	 * @param FormBuilderInterface $builder
 	 * @param array $options
 	 */
@@ -53,13 +55,22 @@ class DebriefingForm extends AbstractType
 		$builder->add('titre', TextType::class, array(
 					'required' => true,
 					'label' => 'Titre',
+                    'attr' => ['maxlength' => 45],
+                    'constraints' => [
+                        new Length(['max' => 45]),
+                        new NotBlank(),
+                    ],
 				))
 				->add('text', TextareaType::class, array(
 					'required' => true,
 					'label' => 'Contenu',
 					'attr' => array(
 						'class' => 'tinymce',
-						'rows' => 15),
+						'rows' => 15
+                    ),
+                    'constraints' => [
+                        new NotBlank(),
+                    ],
 				))
 				->add('player', EntityType::class, array(
 						'required' => false,
@@ -71,7 +82,10 @@ class DebriefingForm extends AbstractType
 							$qb = $p->createQueryBuilder('p');
 							$qb->orderBy('p.username', 'ASC');
 							return $qb;
-						}
+						},
+                        'constraints' => [
+                            new NotBlank(),
+                        ],
 				))
 				->add('groupe', EntityType::class, array(
 						'required' => true,
@@ -98,10 +112,10 @@ class DebriefingForm extends AbstractType
                         'mapped' => false,
                         'attr' => ['accept' => '.pdf'],));
 	}
-	
+
 	/**
 	 * Définition de l'entité concerné
-	 * 
+	 *
 	 * @param OptionsResolver $resolver
 	 */
 	public function configureOptions(OptionsResolver $resolver)
@@ -110,7 +124,7 @@ class DebriefingForm extends AbstractType
 				'data_class' => 'LarpManager\Entities\Debriefing',
 		));
 	}
-	
+
 	/**
 	 * Nom du formulaire
 	 */
