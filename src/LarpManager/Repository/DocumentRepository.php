@@ -31,7 +31,7 @@ class DocumentRepository extends EntityRepository
 {
 	/**
 	 * Find all classes ordered by label
-     * @deprecated
+	 * @deprecated
 	 * @return ArrayCollection $classes
 	 */
 	public function findAllOrderedByCode()
@@ -48,7 +48,7 @@ class DocumentRepository extends EntityRepository
      *
      * @param array $criteria
      */
-    public function findCount(array $criteria = [])
+    public function findCount(array $criteria = []): array
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
 
