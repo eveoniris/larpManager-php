@@ -21,6 +21,7 @@
 namespace LarpManager\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\QueryBuilder;
 
 /**
  * LarpManager\Repository\DocumentRepository
@@ -46,20 +47,12 @@ class DocumentRepository extends EntityRepository
     /**
      * Trouve le nombre de documents correspondant aux critères de recherche
      *
-     * @param array $criteria
+     * @param ?string $type
      */
-    public function findCount(array $criteria = []): array
+    public function findCount(?string $type, $value)
     {
-        $qb = $this->getEntityManager()->createQueryBuilder();
-
+        $qb = $this->getQueryBuilder($type, $value);
         $qb->select($qb->expr()->count('d'));
-        $qb->from('LarpManager\Entities\Document','d');
-
-        foreach ( $criteria as $criter )
-        {
-            $qb->andWhere('?1');
-            $qb->setParameter(1, $criter);
-        }
 
         return $qb->getQuery()->getSingleScalarResult();
     }
@@ -67,12 +60,26 @@ class DocumentRepository extends EntityRepository
     /**
      * Trouve les documents correspondant aux critères de recherche
      *
-     * @param array $criteria
      * @param array $order
      * @param int $limit
      * @param int $offset
      */
     public function findList(?string $type, $value, array $order = ['by' =>  'titre', 'dir' => 'ASC'], int $limit = 50, int $offset = 0)
+    {
+        $qb = $this->getQueryBuilder($type, $value);
+        $qb->setFirstResult($offset);
+        $qb->setMaxResults($limit);
+        $qb->orderBy('d.'.$order['by'], $order['dir']);
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @param string|null $type
+     * @param $value
+     * @return QueryBuilder
+     */
+    protected function getQueryBuilder(?string $type, $value): QueryBuilder
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
 
@@ -110,10 +117,6 @@ class DocumentRepository extends EntityRepository
             }
         }
 
-        $qb->setFirstResult($offset);
-        $qb->setMaxResults($limit);
-        $qb->orderBy('d.'.$order['by'], $order['dir']);
-
-        return $qb->getQuery()->getResult();
+        return $qb;
     }
 }
