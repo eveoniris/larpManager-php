@@ -22,33 +22,17 @@ namespace LarpManager\Repository;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 
 /**
- * LarpManager\Repository\PotionRepository
+ * LarpManager\Repository\SortRepository
  * 
- * @author kevin
+ * @author Gectou4
  */
-class PotionRepository extends EntityRepository
+class PriereRepository extends EntityRepository
 {
-	/**
-	 * Trouve toute les potions en fonction de leur niveau
-	 * 
-	 * @return ArrayCollection $sorts
-	 */
-	public function findByNiveau($niveau)
-	{
-		$potions = $this->getEntityManager()
-				->createQuery('SELECT p FROM LarpManager\Entities\Potion p Where p.niveau = ?1 and (p.secret = false or p.secret is null) ORDER BY p.label ASC')
-                ->setParameter(1, $niveau)
-				->getResult();
-		
-		return $potions;
-	}
-
     /**
-     * Trouve le nombre de potions correspondant aux critères de recherche
+     * Trouve le nombre de prières correspondant aux critères de recherche
      *
      * @param ?string $type
      */
@@ -61,7 +45,7 @@ class PotionRepository extends EntityRepository
     }
 
     /**
-     * Trouve les potions correspondant aux critères de recherche
+     * Trouve les prières correspondant aux critères de recherche
      *
      * @param ?string $type
      * @param array $order
@@ -88,7 +72,7 @@ class PotionRepository extends EntityRepository
         $qb = $this->getEntityManager()->createQueryBuilder();
 
         $qb->select('p');
-        $qb->from('LarpManager\Entities\Potion','p');
+        $qb->from('LarpManager\Entities\Priere','p');
 
         // retire les caractères non imprimable d'une chaine UTF-8
         $value = preg_replace('/[\x00-\x1F\x7F\xA0]/u', '', htmlspecialchars($value));
@@ -100,13 +84,18 @@ class PotionRepository extends EntityRepository
                     $qb->andWhere('p.label LIKE :value');
                     $qb->setParameter('value', '%'.$value.'%');
                     break;
+                case 'annonce':
+                    $qb->andWhere('p.annonce LIKE :value');
+                    $qb->setParameter('value', '%'.$value.'%');
+                    break;
+                case 'sphere':
+                    $qb->join('p.sphere','s');
+                    $qb->andWhere('s.label LIKE :value');
+                    $qb->setParameter('value', '%'.$value.'%');
+                    break;
                 case 'description':
                     $qb->andWhere('p.description LIKE :value');
                     $qb->setParameter('value', '%'.$value.'%');
-                    break;
-                case 'numero':
-                    $qb->andWhere('p.numero = :value');
-                    $qb->setParameter('value', (int) $value);
                     break;
                 case 'id':
                     $qb->andWhere('p.id = :value');
