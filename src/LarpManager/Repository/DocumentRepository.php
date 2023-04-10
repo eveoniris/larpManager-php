@@ -31,6 +31,7 @@ class DocumentRepository extends EntityRepository
 {
 	/**
 	 * Find all classes ordered by label
+     * @deprecated
 	 * @return ArrayCollection $classes
 	 */
 	public function findAllOrderedByCode()
@@ -41,4 +42,78 @@ class DocumentRepository extends EntityRepository
 		
 		return $documents;
 	}
+
+    /**
+     * Trouve le nombre de documents correspondant aux critères de recherche
+     *
+     * @param array $criteria
+     */
+    public function findCount(array $criteria = [])
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+
+        $qb->select($qb->expr()->count('d'));
+        $qb->from('LarpManager\Entities\Document','d');
+
+        foreach ( $criteria as $criter )
+        {
+            $qb->andWhere('?1');
+            $qb->setParameter(1, $criter);
+        }
+
+        return $qb->getQuery()->getSingleScalarResult();
+    }
+
+    /**
+     * Trouve les documents correspondant aux critères de recherche
+     *
+     * @param array $criteria
+     * @param array $order
+     * @param int $limit
+     * @param int $offset
+     */
+    public function findList(?string $type, $value, array $order = ['by' =>  'titre', 'dir' => 'ASC'], int $limit = 50, int $offset = 0)
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+
+        $qb->select('d');
+        $qb->from('LarpManager\Entities\Document','d');
+
+        // retire les caractères non imprimable d'une chaine UTF-8
+        $value = preg_replace('/[\x00-\x1F\x7F\xA0]/u', '', htmlspecialchars($value));
+
+        if ($type && $value)
+        {
+            switch ($type){
+                case 'titre':
+                    $qb->andWhere('d.titre LIKE :value');
+                    $qb->setParameter('value', '%'.$value.'%');
+                    break;
+                case 'description':
+                    $qb->andWhere('d.description LIKE :value');
+                    $qb->setParameter('value', '%'.$value.'%');
+                    break;
+                case 'code':
+                    $qb->andWhere('d.code LIKE :value');
+                    $qb->setParameter('value', '%'.$value.'%');
+                    break;
+                case 'auteur':
+                    $qb->andWhere('d.auteur LIKE :value');
+                    $qb->setParameter('value', '%'.$value.'%');
+                    break;
+                case 'id':
+                    $qb->andWhere('d.id = :value');
+                    $qb->setParameter('value', (int) $value);
+                    break;
+                default:
+                    throw new \InvalidArgumentException(sprintf('Type "%s" inconnu', $type));
+            }
+        }
+
+        $qb->setFirstResult($offset);
+        $qb->setMaxResults($limit);
+        $qb->orderBy('d.'.$order['by'], $order['dir']);
+
+        return $qb->getQuery()->getResult();
+    }
 }

@@ -52,7 +52,7 @@ class DocumentControllerProvider implements ControllerProviderInterface
 		 */
 		$controllers->match('/','LarpManager\Controllers\DocumentController::indexAction')
 			->bind("document")
-			->method('GET');
+			->method('GET|POST');
 			
 		/**
 		 * Imprimer la liste des documents

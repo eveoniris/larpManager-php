@@ -20,6 +20,8 @@
  
 namespace LarpManager\Controllers;
 
+use JasonGrimes\Paginator;
+use LarpManager\Form\DocumentFindForm;
 use Symfony\Component\HttpFoundation\Request;
 use Silex\Application;
 
@@ -43,10 +45,50 @@ class DocumentController
 	 */
 	public function indexAction(Request $request, Application $app)
 	{
-		$documents = $app['orm.em']->getRepository('\LarpManager\Entities\Document')->findAllOrderedByCode();
-		
-		return $app['twig']->render('admin/document/index.twig', array('documents' => $documents));
-	}
+        $order_by = $request->get('order_by', 'titre');
+        $order_dir = $request->get('order_dir', 'ASC') === 'DESC' ? 'DESC' : 'ASC';
+        $limit = (int) ($request->get('limit', 50));
+        $page = (int) ($request->get('page', 1));
+        $offset = (int) (($page - 1) * $limit);
+        $criteria = [];
+        $type= null;
+        $value = null;
+
+        $form = $app['form.factory']->createBuilder(new DocumentFindForm())->getForm();
+
+        $form->handleRequest($request);
+
+        if ( $form->isValid() )
+        {
+            $data = $form->getData();
+            $type = $data['type'];
+            $value = $data['value'];
+        }
+
+        $repo = $app['orm.em']->getRepository('\LarpManager\Entities\Document');
+        $documents = $repo->findList(
+            $type,
+            $value,
+            ['by' =>  $order_by, 'dir' => $order_dir],
+            $limit,
+            $offset
+        );
+
+        $numResults = $repo->findCount($criteria);
+
+        $paginator = new Paginator($numResults, $limit, $page,
+            $app['url_generator']->generate('document') . '?page=(:num)&limit=' . $limit . '&order_by=' . $order_by . '&order_dir=' . $order_dir
+        );
+
+        return $app['twig']->render(
+            'admin/document/index.twig',
+            [
+                'documents' => $documents,
+                'paginator' => $paginator,
+                'form' => $form->createView(),
+            ]
+        );
+    }
 	
 	/**
 	 * Imprimer la liste des documents

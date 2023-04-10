@@ -10,20 +10,74 @@
 	</ol>
 
 	<div class="well well-sm">
-	
-		<div class="btn-toolbar" role="toolbar" aria-label="...">
-			<div class="btn-group" role="group" aria-label="...">
-				<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Ajouter un document" href="{{ path('document.add') }}"><i class="fa fa-plus"></i></a>
-				<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Imprimer la liste" href="{{ path('document.print') }}"><i class="fa fa-print"></i></a>
-				<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Télécharger la liste (CSV)" href="{{ path('document.download') }}"><i class="fa fa-download"></i></a>
-			</div>
-		</div>
-	</div>	
-	
+
+        <div class="header">
+            <h5>Liste des documents</h5>
+        </div>
+
+        <ul class="list-group">
+            <li class="list-group-item">
+                <div class="btn-toolbar" role="toolbar" aria-label="...">
+
+                    <form class="form-inline" action="{{ path('document') }}" method="POST" {{ form_enctype(form) }}>
+                        {% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+                        <div class="form-group">
+                            <div class="input-group">
+                                {{ form_widget(form.value) }}
+                            </div>
+                            <div class="input-group">
+                                {{ form_widget(form.type) }}
+                                <div class="input-group-btn">
+                                    <button type="submit" class="btn btn-default" data-toggle="tooltup" data-placement="top" title="Lancer la recherche"><i class="fa fa-search"></i></button>
+                                    <a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Reset" href="{{ path('document') }}"><i class="fa fa-refresh"></i></a>
+                                    <a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Ajouter un document" href="{{ path('document.add') }}"><i class="fa fa-plus"></i></a>
+                                    <a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Imprimer la liste" href="{{ path('document.print') }}"><i class="fa fa-print"></i></a>
+                                    <a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Télécharger la liste (CSV)" href="{{ path('document.download') }}"><i class="fa fa-download"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                        {{ form_rest(form) }}
+                    </form>
+
+
+                </div>
+            </li>
+
+            <li class="list-group-item">
+                {% if paginator.totalItems == 1 %}
+                    <strong>1</strong> document trouvé.
+                {% else %}
+                    <strong>{{ paginator.totalItems }}</strong> documents trouvés.
+                {% endif %}
+
+                Montre <strong>{{ paginator.currentPageFirstItem }} - {{ paginator.currentPageLastItem }}</strong>.
+            </li>
+        </ul>
+	</div>
+
+    <!--{ paginator|raw }-->
+
 		<table class="table table-condensed table-striped table-bordered">
 			<thead>
 				<tr>
-					<th>Titre</th>
+					<th>
+						{% if app.request.get('order_dir') == 'ASC' and app.request.get('order_by') == 'titre' %}
+						    <a href="{{ path('document', {'order_by': 'titre', 'order_dir': 'DESC'}) }}">
+						{%  else %}
+							<a href="{{ path('document', {'order_by': 'titre', 'order_dir': 'ASC'}) }}">
+						{% endif %}
+                        Titre
+                        {% if app.request.get('order_by') == 'titre'  %}
+                            {% if app.request.get('order_dir') == 'ASC' %}
+                                <span class="caret"></span>
+                            {%else%}
+                                <span class="dropup">
+                                    <span class="caret"></span>
+                                </span>
+                            {% endif %}
+                        {% endif %}
+                        </a>
+					</th>
 					<th>Impression</th>
 					<th>Description</th>
 					<th>Langues</th>
@@ -31,8 +85,42 @@
 					<th>Groupes</th>
 					<th>Personnages</th>
 					<th>Créateur</th>
-					<th>Date de création</th>
-					<th>Date de mise à jour</th>
+					<th>
+                        {% if app.request.get('order_dir') == 'ASC' and app.request.get('order_by') == 'creation_date' %}
+                            <a href="{{ path('document', {'order_by': 'creation_date', 'order_dir': 'DESC'}) }}">
+                        {%  else %}
+                            <a href="{{ path('document', {'order_by': 'creation_date', 'order_dir': 'ASC'}) }}">
+                        {% endif %}
+                        Date de création
+                        {% if app.request.get('order_by') == 'creation_date'  %}
+                            {% if app.request.get('order_dir') == 'ASC' %}
+                                <span class="caret"></span>
+                            {%else%}
+                                <span class="dropup">
+                                    <span class="caret"></span>
+                                </span>
+                            {% endif %}
+                        {% endif %}
+                        </a>
+                    </th>
+					<th>
+                        {% if app.request.get('order_dir') == 'ASC' and app.request.get('order_by') == 'update_date' %}
+                            <a href="{{ path('document', {'order_by': 'update_date', 'order_dir': 'DESC'}) }}">
+                        {%  else %}
+                        <a href="{{ path('document', {'order_by': 'update_date', 'order_dir': 'ASC'}) }}">
+                            {% endif %}
+                        Date de mise à jour
+                        {% if app.request.get('order_by') == 'update_date'  %}
+                            {% if app.request.get('order_dir') == 'ASC' %}
+                                <span class="caret"></span>
+                            {%else%}
+                                <span class="dropup">
+                                    <span class="caret"></span>
+                                </span>
+                            {% endif %}
+                        {% endif %}
+                        </a>
+                    </th>
 					<th />
 				</tr>
 			</thead>
@@ -64,5 +152,5 @@
 			</tbody>
 		</table>
 
-	
+
 {% endblock %}
