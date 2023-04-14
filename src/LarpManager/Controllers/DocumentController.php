@@ -74,7 +74,7 @@ class DocumentController
             $offset
         );
 
-        $numResults = $repo->findCount($criteria);
+        $numResults = $repo->findCount($type, $value);
 
         $paginator = new Paginator($numResults, $limit, $page,
             $app['url_generator']->generate('document') . '?page=(:num)&limit=' . $limit . '&order_by=' . $order_by . '&order_dir=' . $order_dir

@@ -622,14 +622,17 @@
 										{% if lignage.parent1 %}
 											<li>
 												<a href="{{ path('personnage.admin.detail', {'personnage':lignage.parent1.id}) }}">{{ lignage.parent1.identity }}</a> - {{ lignage.parent1.agereel }} ans
-											{% if lignage.parent2 %}<div class="list-group-item">
+											</li>												
+											{% if lignage.parent2 %}
+											<li>
 												<a href="{{ path('personnage.admin.detail', {'personnage':lignage.parent2.id}) }}">{{ lignage.parent2.identity }}</a> - {{ lignage.parent2.agereel }} ans
-											{% endif %}
 											</li>
+											{% endif %}
 										{% else %}
 											<li>Ni PJ, ni PNJ</li>
 										{% endif %}
-										</ul></li>
+											</ul>
+										</li>
 									{% endfor %}
 								{% else %}
 									<p class="list-group-item-text">
