@@ -106,7 +106,7 @@ class BaseGroupeGn
     
     /**
      * @ManyToMany(targetEntity="GroupeGnOrdre", inversedBy="groupeGns")
-     * @JoinTable(name="groupe_gn_ordres",
+     * @JoinTable(name="groupe_gn_ordre",
      *     joinColumns={@JoinColumn(name="groupe_gn_id", referencedColumnName="id", nullable=false)},
      *     inverseJoinColumns={@JoinColumn(name="id", referencedColumnName="id", nullable=false)}
      * )
