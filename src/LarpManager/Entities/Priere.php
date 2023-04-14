@@ -32,7 +32,7 @@ use LarpManager\Entities\BasePriere;
 /**
  * LarpManager\Entities\Priere
  *
- * @Entity()
+ * @Entity(repositoryClass="LarpManager\Repository\PriereRepository")
  */
 class Priere extends BasePriere
 {

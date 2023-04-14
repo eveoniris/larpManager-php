@@ -13,13 +13,107 @@
 	</ol>
 
 	<div class="well bs-component">
+
+		<div class="header">
+			<h5>Choix des prières</h5>
+		</div>
+
+		<ul class="list-group">
+			<li class="list-group-item">
+				<div class="btn-toolbar" role="toolbar" aria-label="...">
+
+					<form class="form-inline" action="{{ path('personnage.admin.update.priere',{'personnage':personnage.id}) }}" method="POST" {{ form_enctype(form) }}>
+						{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+						<div class="form-group">
+							<div class="input-group">
+								{{ form_widget(form.value) }}
+							</div>
+							<div class="input-group">
+								{{ form_widget(form.type) }}
+								<div class="input-group-btn">
+									<button type="submit" class="btn btn-default" data-toggle="tooltup" data-placement="top" title="Lancer la recherche"><i class="fa fa-search"></i></button>
+									<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Reset" href="{{ path('personnage.admin.update.priere',{'personnage':personnage.id}) }}"><i class="fa fa-refresh"></i></a>
+									<a href="{{ path('magie.priere.add') }}"><i class="fa fa-plus"></i> Ajouter une prière</a>
+								</div>
+							</div>
+						</div>
+						{{ form_rest(form) }}
+					</form>
+
+				</div>
+			</li>
+
+			<li class="list-group-item">
+				{% if paginator.totalItems == 1 %}
+					<strong>1</strong> prière trouvé.
+				{% else %}
+					<strong>{{ paginator.totalItems }}</strong> prières trouvés.
+				{% endif %}
+
+				Montre <strong>{{ paginator.currentPageFirstItem }} - {{ paginator.currentPageLastItem }}</strong>.
+			</li>
+		</ul>
+
+		{{ paginator|raw }}
+
 		<table class="table table-striped table-bordered table-condensed">
 			<thead>
 				<tr>
-					<th>Nom</th>
-					<th>Niveau</th>
+					<th>
+						{% if app.request.get('order_dir') == 'ASC' and app.request.get('order_by') == 'label' %}
+							<a href="{{ path('personnage.admin.update.priere', {'personnage':personnage.id, 'order_by': 'label', 'order_dir': 'DESC'}) }}">
+						{%  else %}
+						<a href="{{ path('personnage.admin.update.priere', {'personnage':personnage.id, 'order_by': 'label', 'order_dir': 'ASC'}) }}">
+						{% endif %}
+						Nom
+						{% if app.request.get('order_by') == 'label'  %}
+							{% if app.request.get('order_dir') == 'ASC' %}
+								<span class="caret"></span>
+							{%else%}
+								<span class="dropup">
+									<span class="caret"></span>
+								</span>
+							{% endif %}
+						{% endif %}
+						</a>
+					</th>
+					<th>
+						{% if app.request.get('order_dir') == 'ASC' and app.request.get('order_by') == 'niveau' %}
+							<a href="{{ path('personnage.admin.update.priere', {'personnage':personnage.id, 'order_by': 'niveau', 'order_dir': 'DESC'}) }}">
+						{%  else %}
+							<a href="{{ path('personnage.admin.update.priere', {'personnage':personnage.id, 'order_by': 'niveau', 'order_dir': 'ASC'}) }}">
+						{% endif %}
+						Niveau
+						{% if app.request.get('order_by') == 'niveau'  %}
+							{% if app.request.get('order_dir') == 'ASC' %}
+								<span class="caret"></span>
+							{%else%}
+								<span class="dropup">
+									<span class="caret"></span>
+								</span>
+							{% endif %}
+						{% endif %}
+						</a>
+					</th>
 					<th>Secret</th>
-					<th>Sphère</th>
+					<th>
+						{% if app.request.get('order_dir') == 'ASC' and app.request.get('order_by') == 'sphere' %}
+						<a href="{{ path('personnage.admin.update.priere', {'personnage':personnage.id, 'order_by': 'sphere', 'order_dir': 'DESC'}) }}">
+						{%  else %}
+						<a href="{{ path('personnage.admin.update.priere', {'personnage':personnage.id, 'order_by': 'sphere', 'order_dir': 'ASC'}) }}">
+						{% endif %}
+							Sphère
+						{% if app.request.get('order_by') == 'sphere_id'  %}
+							{% if app.request.get('order_dir') == 'ASC' %}
+								<span class="caret"></span>
+							{%else%}
+								<span class="dropup">
+									<span class="caret"></span>
+								</span>
+							{% endif %}
+						{% endif %}
+						</a>
+					</th>
 					<th>Description</th>
 					<th>Ajouter/Retirer</th>
 				</tr>
@@ -31,7 +125,7 @@
 					<td>{{ priere.niveau }}</td>
 					<td>Non</td>			
 					<td>{{ priere.sphere.label }}</td>		
-					<td>{{ priere.description}}</td>
+					<td>{{ priere.description|markdown}}</td>
 					<td>{% if personnage in priere.personnages  %}
 							<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Retirer cette priere"
 							   href="{{ path('personnage.admin.remove.priere',{'personnage':personnage.id, 'priere':priere.id}) }}">
