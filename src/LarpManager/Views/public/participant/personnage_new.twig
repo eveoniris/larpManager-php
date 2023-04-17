@@ -49,18 +49,20 @@
 				</blockquote>
 			</div>
 
-			<div class="collapse" id="collapseOrigine">
-				{{ include("public/territoire/fragment/info.twig", {'territoires' : territoires}) }}
-			</div>
 			<p><button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseClasse" aria-expanded="false" aria-controls="collapseClasse">
 				Aide pour choisir la classe
 			</button></p>
 
+			<div class="collapse" id="collapseClasse">
+				{{ include("public/classe/fragment/info.twig", {'classes' : classes}) }}
+			</div>
+
 			<p><button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseOrigine" aria-expanded="false" aria-controls="collapseOrigine">
 				Aide pour choisir l'origine
 			</button></p>
-			<div class="collapse" id="collapseClasse">
-				{{ include("public/classe/fragment/info.twig", {'classes' : classes}) }}
+
+			<div class="collapse" id="collapseOrigine">
+				{{ include("public/territoire/fragment/info.twig", {'territoires' : territoires}) }}
 			</div>
 
 		</div>

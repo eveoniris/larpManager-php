@@ -21,6 +21,7 @@
 
 namespace LarpManager\Controllers;
 
+use LarpManager\Services\Manager\PersonnageManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Silex\Application;
@@ -917,27 +918,13 @@ class ParticipantController
 			$app['orm.em']->persist($historique);
 					
 			// ajout des compétences acquises à la création
-			foreach ($personnage->getClasse()->getCompetenceFamilyCreations() as $competenceFamily)
-			{
-				$firstCompetence = $competenceFamily->getFirstCompetence();
-				if ( $firstCompetence )
-				{
-					$personnage->addCompetence($firstCompetence);
-					$firstCompetence->addPersonnage($personnage);
-					$app['orm.em']->persist($firstCompetence);
-				}
-				
-				if ( $competenceFamily->getLabel() == "Noblesse")
-				{
-					$personnage->addRenomme(2);
-					$renomme_history = new \LarpManager\Entities\RenommeHistory();
-						
-					$renomme_history->setRenomme(2);
-					$renomme_history->setExplication('Compétence Noblesse niveau 1');
-					$renomme_history->setPersonnage($personnage);
-					$app['orm.em']->persist($renomme_history);
-				}
-			}
+            /** @var PersonnageManager $personnageManager */
+            $personnageManager = $app['personnage.manager'];
+            $competenceHandler = $personnageManager->addClasseCompetencesFamilyCreation($personnage);
+            if ($competenceHandler && $competenceHandler->hasErrors()) {
+                $app['session']->getFlashBag()->add('error', $competenceHandler->getErrorsAsString());
+                return $app->redirect($app['url_generator']->generate('homepage'), 303);
+            }
 	
 			// Ajout des points d'expérience gagné grace à l'age du personnage ou perdu à cause de l'age du joueur
 			$age_joueur = $participant->getAgeJoueur();
@@ -1071,28 +1058,14 @@ class ParticipantController
 			$historique->setXpGain($participant->getGn()->getXpCreation());
 			$app['orm.em']->persist($historique);
 
-			// ajout des compétences acquises à la création
-			foreach ($personnage->getClasse()->getCompetenceFamilyCreations() as $competenceFamily)
-			{
-				$firstCompetence = $competenceFamily->getFirstCompetence();
-				if ( $firstCompetence )
-				{
-					$personnage->addCompetence($firstCompetence);
-					$firstCompetence->addPersonnage($personnage);
-					$app['orm.em']->persist($firstCompetence);
-				}
-
-				if ( $competenceFamily->getLabel() == "Noblesse")
-				{
-					$personnage->addRenomme(2);
-					$renomme_history = new \LarpManager\Entities\RenommeHistory();
-
-					$renomme_history->setRenomme(2);
-					$renomme_history->setExplication('Compétence Noblesse niveau 1');
-					$renomme_history->setPersonnage($personnage);
-					$app['orm.em']->persist($renomme_history);
-				}
-			}
+            // ajout des compétences acquises à la création
+            /** @var PersonnageManager $personnageManager */
+            $personnageManager = $app['personnage.manager'];
+            $competenceHandler = $personnageManager->addClasseCompetencesFamilyCreation($personnage);
+            if ($competenceHandler && $competenceHandler->hasErrors()) {
+                $app['session']->getFlashBag()->add('error', $competenceHandler->getErrorsAsString());
+                return $app->redirect($app['url_generator']->generate('homepage'), 303);
+            }
 
 			// Ajout des points d'expérience gagné grace à l'age
 			$xpAgeBonus = $personnage->getAge()->getBonus();
@@ -2872,407 +2845,14 @@ class ParticipantController
 				
 			$competenceId = $data['competenceId'];
 			$competence = $app['orm.em']->find('\LarpManager\Entities\Competence', $competenceId);
-	
-			$cout = $app['personnage.manager']->getCompetenceCout($personnage, $competence);
-			$xp = $personnage->getXp();
-				
-			if ( $xp - $cout < 0 )
-			{
-				$app['session']->getFlashBag()->add('error','Vos n\'avez pas suffisement de points d\'expérience pour acquérir cette compétence.');
-				return $app->redirect($app['url_generator']->generate('homepage'),303);
-			}
-			$personnage->setXp($xp - $cout);
-			$personnage->addCompetence($competence);
-			$competence->addPersonnage($personnage);
-				
-			// cas special noblesse
-			// noblesse apprentit +2 renomme
-			// noblesse initie  +3 renomme
-			// noblesse expert +2 renomme
-			// TODO : trouver un moyen pour ne pas implémenter les règles spéciales de ce type dans le code.
-			if ( $competence->getCompetenceFamily()->getLabel() == "Noblesse")
-			{
-				switch ($competence->getLevel()->getId())
-				{
-					case 1:
-						$personnage->addRenomme(2);
-						$renomme_history = new \LarpManager\Entities\RenommeHistory();
-						
-						$renomme_history->setRenomme(2);
-						$renomme_history->setExplication('Compétence Noblesse niveau 1');
-						$renomme_history->setPersonnage($personnage);
-						$app['orm.em']->persist($renomme_history);
-						break;
-					case 2:
-						$personnage->addRenomme(3);
-						$renomme_history = new \LarpManager\Entities\RenommeHistory();
-						
-						$renomme_history->setRenomme(3);
-						$renomme_history->setExplication('Compétence Noblesse niveau 2');
-						$renomme_history->setPersonnage($personnage);
-						$app['orm.em']->persist($renomme_history);
-						break;
-					case 3:
-						$personnage->addRenomme(2);
-						$renomme_history = new \LarpManager\Entities\RenommeHistory();
-						
-						$renomme_history->setRenomme(2);
-						$renomme_history->setExplication('Compétence Noblesse niveau 3');
-						$renomme_history->setPersonnage($personnage);
-						$app['orm.em']->persist($renomme_history);
-						break;
-					case 4:
-						$personnage->addRenomme(5);
-						$renomme_history = new \LarpManager\Entities\RenommeHistory();
-						
-						$renomme_history->setRenomme(5);
-						$renomme_history->setExplication('Compétence Noblesse niveau 4');
-						$renomme_history->setPersonnage($personnage);
-						$app['orm.em']->persist($renomme_history);
-						break;
-					case 5:
-						$personnage->addRenomme(6);
-						$renomme_history = new \LarpManager\Entities\RenommeHistory();
-						
-						$renomme_history->setRenomme(6);
-						$renomme_history->setExplication('Compétence Noblesse niveau 5');
-						$renomme_history->setPersonnage($personnage);
-						$app['orm.em']->persist($renomme_history);
-						break;
-				}
-			}
-				
-			// cas special prêtrise
-			if ( $competence->getCompetenceFamily()->getLabel() == "Prêtrise")
-			{
-				// le personnage doit avoir une religion au niveau fervent ou fanatique
-				if ( $personnage->isFervent() || $personnage->isFanatique() )
-				{
-					// ajoute toutes les prières de niveau de sa compétence liés aux sphère de sa religion fervente ou fanatique
-					$religion = $personnage->getMainReligion();
-					foreach ( $religion->getSpheres() as $sphere)
-					{
-						foreach ( $sphere->getPrieres() as $priere)
-						{
-							if ( $priere->getNiveau() == $competence->getLevel()->getId() )
-							{
-								if ( ! $personnage->hasPriere($priere) )
-								{
-									$priere->addPersonnage($personnage);
-									$personnage->addPriere($priere);
-								}
-							}
-						}
-					}
-				}
-				else
-				{
-					$app['session']->getFlashBag()->add('error','Pour obtenir la compétence Prêtrise, vous devez être FERVENT ou FANATIQUE');
-					return $app->redirect($app['url_generator']->generate('gn.personnage', array('gn' => $participant->getGn()->getId())),303);
-				}
-			}
-			
-			// case special prêtrise initié
-			if ( $competence->getCompetenceFamily()->getLabel() == "Prêtrise")
-			{
-				if (  $competence->getLevel()->getId() >= 2 )
-				{
-					$trigger = new \LarpManager\Entities\PersonnageTrigger();
-					$trigger->setPersonnage($personnage);
-					$trigger->setTag('PRETISE INITIE');
-					$trigger->setDone(false);
-					$app['orm.em']->persist($trigger);
-					
-					$trigger2 = new \LarpManager\Entities\PersonnageTrigger();
-					$trigger2->setPersonnage($personnage);
-					$trigger2->setTag('PRETISE INITIE');
-					$trigger2->setDone(false);
-					$app['orm.em']->persist($trigger2);
-					
-					$trigger3 = new \LarpManager\Entities\PersonnageTrigger();
-					$trigger3->setPersonnage($personnage);
-					$trigger3->setTag('PRETISE INITIE');
-					$trigger3->setDone(false);
-					$app['orm.em']->persist($trigger3);
-					$app['orm.em']->flush();
-				}
-			}
-				
-			// cas special alchimie
-			if ( $competence->getCompetenceFamily()->getLabel() == "Alchimie")
-			{
-				switch ($competence->getLevel()->getId())
-				{
-					case 1: // le personnage doit choisir 2 potions de niveau apprenti
-						$trigger = new \LarpManager\Entities\PersonnageTrigger();
-						$trigger->setPersonnage($personnage);
-						$trigger->setTag('ALCHIMIE APPRENTI');
-						$trigger->setDone(false);
-						$app['orm.em']->persist($trigger);
-	
-						$trigger2 = new \LarpManager\Entities\PersonnageTrigger();
-						$trigger2->setPersonnage($personnage);
-						$trigger2->setTag('ALCHIMIE APPRENTI');
-						$trigger2->setDone(false);
-						$app['orm.em']->persist($trigger2);
-						$app['orm.em']->flush();
-						break;
-					case 2: // le personnage doit choisir 1 potion de niveau initie et 1 potion de niveau apprenti
-						$trigger = new \LarpManager\Entities\PersonnageTrigger();
-						$trigger->setPersonnage($personnage);
-						$trigger->setTag('ALCHIMIE INITIE');
-						$trigger->setDone(false);
-						$app['orm.em']->persist($trigger);
-	
-						$trigger2 = new \LarpManager\Entities\PersonnageTrigger();
-						$trigger2->setPersonnage($personnage);
-						$trigger2->setTag('ALCHIMIE APPRENTI');
-						$trigger2->setDone(false);
-						$app['orm.em']->persist($trigger2);
-						$app['orm.em']->flush();
-						break;
-					case 3: // le personnage doit choisir 1 potion de niveau expert
-						$trigger = new \LarpManager\Entities\PersonnageTrigger();
-						$trigger->setPersonnage($personnage);
-						$trigger->setTag('ALCHIMIE EXPERT');
-						$trigger->setDone(false);
-						$app['orm.em']->persist($trigger);
-						$app['orm.em']->flush();
-						break;
-					case 4: // le personnage doit choisir 1 potion de niveau maitre
-						$trigger = new \LarpManager\Entities\PersonnageTrigger();
-						$trigger->setPersonnage($personnage);
-						$trigger->setTag('ALCHIMIE MAITRE');
-						$trigger->setDone(false);
-						$app['orm.em']->persist($trigger);
-						$app['orm.em']->flush();
-						break;
-				}
-			}
-				
-			// cas special magie
-			if ( $competence->getCompetenceFamily()->getLabel() == "Magie")
-			{
-				switch ($competence->getLevel()->getId())
-				{
-					case 1: // le personnage doit choisir un domaine de magie
-						$trigger = new \LarpManager\Entities\PersonnageTrigger();
-						$trigger->setPersonnage($personnage);
-						$trigger->setTag('DOMAINE MAGIE');
-						$trigger->setDone(false);
-						$app['orm.em']->persist($trigger);
-	
-						// il obtient aussi la possibilité de choisir un sort de niveau 1
-						$trigger2 = new \LarpManager\Entities\PersonnageTrigger();
-						$trigger2->setPersonnage($personnage);
-						$trigger2->setTag('SORT APPRENTI');
-						$trigger2->setDone(false);
-						$app['orm.em']->persist($trigger2);
-						$app['orm.em']->flush();
-						break;
-					case 2:
-						// il obtient aussi la possibilité de choisir un sort de niveau 2
-						$trigger = new \LarpManager\Entities\PersonnageTrigger();
-						$trigger->setPersonnage($personnage);
-						$trigger->setTag('SORT INITIE');
-						$trigger->setDone(false);
-						$app['orm.em']->persist($trigger);
-						$app['orm.em']->flush();
-						break;
-					case 3: // le personnage peut choisir un nouveau domaine de magie
-						$trigger = new \LarpManager\Entities\PersonnageTrigger();
-						$trigger->setPersonnage($personnage);
-						$trigger->setTag('DOMAINE MAGIE');
-						$trigger->setDone(false);
-						$app['orm.em']->persist($trigger);
-	
-						// il obtient aussi la possibilité de choisir un sort de niveau 3
-						$trigger2 = new \LarpManager\Entities\PersonnageTrigger();
-						$trigger2->setPersonnage($personnage);
-						$trigger2->setTag('SORT EXPERT');
-						$trigger2->setDone(false);
-						$app['orm.em']->persist($trigger2);
-						$app['orm.em']->flush();
-						break;
-					case 4:
-						// il obtient aussi la possibilité de choisir un sort de niveau 4
-						$trigger = new \LarpManager\Entities\PersonnageTrigger();
-						$trigger->setPersonnage($personnage);
-						$trigger->setTag('SORT MAITRE');
-						$trigger->setDone(false);
-						$app['orm.em']->persist($trigger);
-						$app['orm.em']->flush();
-						break;
-				}
-			}
 
-			// cas special artisanat
-			if ( $competence->getCompetenceFamily()->getLabel() == "Artisanat")
-			{
-				switch ($competence->getLevel()->getId())
-				{
-					case 1:
-						break;
-					case 2:
-						break;
-					case 3: // le personnage doit choisir 1 technologie
-					case 4: // le personnage doit choisir 1 technologie
-						$trigger = new \LarpManager\Entities\PersonnageTrigger();
-						$trigger->setPersonnage($personnage);
-						$trigger->setTag('TECHNOLOGIE');
-						$trigger->setDone(false);
-						$app['orm.em']->persist($trigger);
-						$app['orm.em']->flush();
-						break;
-				}
-			}
-
-			// cas special littérature
-			if ( $competence->getCompetenceFamily()->getLabel() == "Littérature")
-			{
-				switch ($competence->getLevel()->getId())
-				{
-					case 1: // 2 langues commune supplémentaires de son choix
-						$trigger = new \LarpManager\Entities\PersonnageTrigger();
-						$trigger->setPersonnage($personnage);
-						$trigger->setTag('LANGUE COURANTE');
-						$trigger->setDone(false);
-						$app['orm.em']->persist($trigger);
-						
-						$trigger2 = new \LarpManager\Entities\PersonnageTrigger();
-						$trigger2->setPersonnage($personnage);
-						$trigger2->setTag('LANGUE COURANTE');
-						$trigger2->setDone(false);
-						$app['orm.em']->persist($trigger2);
-						$app['orm.em']->flush();
-						
-						break;
-					case 2: //  Sait parler, lire et écrire trois autres langues vivantes (courante ou commune) de son choix.
-						$trigger = new \LarpManager\Entities\PersonnageTrigger();
-						$trigger->setPersonnage($personnage);
-						$trigger->setTag('LANGUE COURANTE');
-						$trigger->setDone(false);
-						$app['orm.em']->persist($trigger);
-						
-						$trigger2 = new \LarpManager\Entities\PersonnageTrigger();
-						$trigger2->setPersonnage($personnage);
-						$trigger2->setTag('LANGUE COURANTE');
-						$trigger2->setDone(false);
-						$app['orm.em']->persist($trigger2);
-						
-						$trigger3 = new \LarpManager\Entities\PersonnageTrigger();
-						$trigger3->setPersonnage($personnage);
-						$trigger3->setTag('LANGUE COURANTE');
-						$trigger3->setDone(false);
-						$app['orm.em']->persist($trigger3);
-
-						// il obtient aussi la possibilité de choisir un sort de niveau 1
-						$trigger4 = new \LarpManager\Entities\PersonnageTrigger();
-						$trigger4->setPersonnage($personnage);
-						$trigger4->setTag('SORT APPRENTI');
-						$trigger4->setDone(false);
-						$app['orm.em']->persist($trigger4);
-
-						$trigger5 = new \LarpManager\Entities\PersonnageTrigger();
-						$trigger5->setPersonnage($personnage);
-						$trigger5->setTag('ALCHIMIE APPRENTI');
-						$trigger5->setDone(false);
-						$app['orm.em']->persist($trigger5);
-						$app['orm.em']->flush();
-
-						break;
-					case 3: // Sait parler, lire et écrire un langage ancien ainsi que trois autres langues vivantes (courante ou commune) de son choix ainsi qu'une langue ancienne
-						$trigger = new \LarpManager\Entities\PersonnageTrigger();
-						$trigger->setPersonnage($personnage);
-						$trigger->setTag('LANGUE COURANTE');
-						$trigger->setDone(false);
-						$app['orm.em']->persist($trigger);
-						
-						$trigger2 = new \LarpManager\Entities\PersonnageTrigger();
-						$trigger2->setPersonnage($personnage);
-						$trigger2->setTag('LANGUE COURANTE');
-						$trigger2->setDone(false);
-						$app['orm.em']->persist($trigger2);
-						
-						$trigger3 = new \LarpManager\Entities\PersonnageTrigger();
-						$trigger3->setPersonnage($personnage);
-						$trigger3->setTag('LANGUE COURANTE');
-						$trigger3->setDone(false);
-						$app['orm.em']->persist($trigger3);
-						
-						$trigger4 = new \LarpManager\Entities\PersonnageTrigger();
-						$trigger4->setPersonnage($personnage);
-						$trigger4->setTag('LANGUE ANCIENNE');
-						$trigger4->setDone(false);
-						$app['orm.em']->persist($trigger4);
-
-						// il obtient aussi la possibilité de choisir un sort et une potion de niveau 2
-						$trigger5 = new \LarpManager\Entities\PersonnageTrigger();
-						$trigger5->setPersonnage($personnage);
-						$trigger5->setTag('SORT INITIE');
-						$trigger5->setDone(false);
-						$app['orm.em']->persist($trigger5);
-
-						$trigger6 = new \LarpManager\Entities\PersonnageTrigger();
-						$trigger6->setPersonnage($personnage);
-						$trigger6->setTag('ALCHIMIE INITIE');
-						$trigger6->setDone(false);
-						$app['orm.em']->persist($trigger6);
-						$app['orm.em']->flush();
-						break;
-					case 4: // Sait parler, lire et écrire un autre langage ancien ainsi que trois autres langues vivantes de son choix (courante ou commune) ainsi qu'une langue ancienne
-						$trigger = new \LarpManager\Entities\PersonnageTrigger();
-						$trigger->setPersonnage($personnage);
-						$trigger->setTag('LANGUE COURANTE');
-						$trigger->setDone(false);
-						$app['orm.em']->persist($trigger);
-						 
-						$trigger2 = new \LarpManager\Entities\PersonnageTrigger();
-						$trigger2->setPersonnage($personnage);
-						$trigger2->setTag('LANGUE COURANTE');
-						$trigger2->setDone(false);
-						$app['orm.em']->persist($trigger2);
-						
-						$trigger3 = new \LarpManager\Entities\PersonnageTrigger();
-						$trigger3->setPersonnage($personnage);
-						$trigger3->setTag('LANGUE COURANTE');
-						$trigger3->setDone(false);
-						$app['orm.em']->persist($trigger3);
-						
-						$trigger4 = new \LarpManager\Entities\PersonnageTrigger();
-						$trigger4->setPersonnage($personnage);
-						$trigger4->setTag('LANGUE ANCIENNE');
-						$trigger4->setDone(false);
-						$app['orm.em']->persist($trigger4);
-
-						// il obtient aussi la possibilité de choisir un sort et une potion de niveau 3
-						$trigger5 = new \LarpManager\Entities\PersonnageTrigger();
-						$trigger5->setPersonnage($personnage);
-						$trigger5->setTag('SORT EXPERT');
-						$trigger5->setDone(false);
-						$app['orm.em']->persist($trigger5);
-
-						$trigger6 = new \LarpManager\Entities\PersonnageTrigger();
-						$trigger6->setPersonnage($personnage);
-						$trigger6->setTag('ALCHIMIE EXPERT');
-						$trigger6->setDone(false);
-						$app['orm.em']->persist($trigger6);
-						$app['orm.em']->flush();
-						break;
-				}
-			}
-				
-			// historique
-			$historique = new \LarpManager\Entities\ExperienceUsage();
-			$historique->setOperationDate(new \Datetime('NOW'));
-			$historique->setXpUse($cout);
-			$historique->setCompetence($competence);
-			$historique->setPersonnage($personnage);
-				
-			$app['orm.em']->persist($competence);
-			$app['orm.em']->persist($personnage);
-			$app['orm.em']->persist($historique);
-			$app['orm.em']->flush();
+            /** @var PersonnageManager $personnageManager */
+            $personnageManager = $app['personnage.manager'];
+            $competenceHandler = $personnageManager->addCompetence($personnage, $competence);
+            if ($competenceHandler->hasErrors()) {
+                $app['session']->getFlashBag()->add('error', $competenceHandler->getErrorsAsString());
+                return $app->redirect($app['url_generator']->generate('gn.personnage', array('gn' => $participant->getGn()->getId())),303);
+            }
 				
 			$app['session']->getFlashBag()->add('success','Votre personnage a été sauvegardé.');
 			return $app->redirect($app['url_generator']->generate('gn.personnage', array('gn' => $participant->getGn()->getId())),303);

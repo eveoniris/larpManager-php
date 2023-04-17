@@ -36,6 +36,13 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class Competence extends BaseCompetence
 {
+    public const PRETRISE = 'Prêtrise';
+    public const NOBLESSE = 'Noblesse';
+    public const ALCHIMIE = 'Alchimie';
+    public const MAGIE = 'Magie';
+    public const ARTISANAT = 'Artisanat';
+    public const LITTERATURE = 'Littérature';
+
 	public function __toString()
 	{
 		return $this->getLabel();	

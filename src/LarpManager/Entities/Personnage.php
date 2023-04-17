@@ -38,6 +38,8 @@ use Doctrine\ORM\Mapping\Entity;
  */
 class Personnage extends BasePersonnage
 {
+    protected bool $isCreation = false;
+
 	/**
 	 * Constructeur
 	 */
@@ -1448,5 +1450,15 @@ class Personnage extends BasePersonnage
 		else {
 			return $this->getSensible();
 		}
-	}	
+	}
+
+    public function isCreation(): bool
+    {
+        return $this->isCreation;
+    }
+
+    public function setIsCreation(bool $isCreation): void
+    {
+        $this->isCreation = $isCreation;
+    }
 }

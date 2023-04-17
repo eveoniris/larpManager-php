@@ -144,11 +144,8 @@ class LarpManagerServiceProvider implements ServiceProviderInterface
 		});
 		
 		// Personnage manager
-		$app['personnage.manager'] = $app->share(function($app) {
-			$personnageManager = new PersonnageManager($app);
-			return $personnageManager;
-		});
-				
+        $app['personnage.manager'] = $app->share(static fn($app) => new PersonnageManager($app));
+
 		// age converter
 		$app['converter.age'] = $app->share(function($app) {
 			return new AgeConverter($app['orm.em']);

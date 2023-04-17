@@ -4,17 +4,17 @@ namespace LarpManager\Personnage;
 
 use Silex\Application;
 use Silex\ServiceProviderInterface;
-use LarpManager\Personnage\PersonnageManager;
 
-
+/**
+ * May be deprecated
+ */
 class PersonnageServiceProvider implements ServiceProviderInterface
 {
 	public function register(Application $app)
 	{
 		// Personnage manager
 		$app['personnage.manager'] = $app->share(function($app) {
-			$personnageManager = new PersonnageManager($app);
-			return $personnageManager;
+			return new \LarpManager\Services\Manager\PersonnageManager($app);
 		});
 
 	}
