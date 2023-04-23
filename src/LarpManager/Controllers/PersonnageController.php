@@ -2573,6 +2573,7 @@ class PersonnageController
 		return $app['twig']->render('admin/personnage/print.twig', array(
 				'personnage' => $personnage,
 				'participant' => $participant,
+                'langueMateriel' => $this->getLangueMateriel($personnage),
 				'groupe' => $groupe,
 			));
 	}

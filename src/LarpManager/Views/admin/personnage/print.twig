@@ -89,6 +89,15 @@ table tr td {
 						<strong>{{ personnageLangue.langue}}</strong> ({{ personnageLangue.source }})<br />
 					{% endfor %}
 				</td>
+				<td>
+					<ul>
+						{% for materiel in langueMateriel %}
+							<li><strong>{{ materiel }}</strong></li>
+						{% else %}
+							<li>Aucun matériel</li>
+						{% endfor %}
+					</ul>
+				</td>
 			</tr>
 		</tbody>
 	</table>		
