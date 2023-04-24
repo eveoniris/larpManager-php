@@ -37,13 +37,15 @@ class PretriseHandler extends CompetenceHandler
             foreach ($sphere->getPrieres() as $priere) {
                 if (
                     !$this->personnage->hasPriere($priere)
-                    && $priere->getNiveau() === $this->competence->getLevel()->getId()
+                    && $priere->getNiveau() === $this->competence->getLevel()->getIndex()
                 ) {
                     $priere->addPersonnage($this->personnage);
                     $this->personnage->addPriere($priere);
                 }
             }
         }
+
+        // TODO Filter by available
 
         $this->applyRules(
             [

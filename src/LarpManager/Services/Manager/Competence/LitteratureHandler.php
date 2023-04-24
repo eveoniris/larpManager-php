@@ -11,6 +11,7 @@ class LitteratureHandler extends CompetenceHandler
 
     public function give(): void
     {
+        // Todo filter if personnage know all of them or will reach more than exists
         $this->applyRules(
             [
                 // 2 langues communes supplémentaires de son choix

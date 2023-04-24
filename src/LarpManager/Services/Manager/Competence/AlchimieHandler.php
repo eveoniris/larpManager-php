@@ -11,6 +11,7 @@ class AlchimieHandler extends CompetenceHandler
 
     public function give(): void
     {
+        // TODO FILTER if personnage know all
         $this->applyRules(
             [
                 // le personnage doit choisir 2 potions de niveau apprenti

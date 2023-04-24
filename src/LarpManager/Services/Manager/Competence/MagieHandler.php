@@ -4,13 +4,31 @@ namespace LarpManager\Services\Manager\Competence;
 
 use LarpManager\Entities\Level;
 use LarpManager\Entities\PersonnageTrigger;
+use LarpManager\Repository\SortRepository;
 
 class MagieHandler extends CompetenceHandler
 {
     protected bool $hasBonus = true;
 
+    public function canGetBonus(): bool
+    {
+        // TODO by competence LEVEL
+        // Todo Domaine magie ?
+        $personnageNbSorts = $this->personnage->getSorts()->count();
+        $availableSorts = $this->app['orm.em']->getRepository('\LarpManager\Entities\Sort')->count();
+
+        // Plus de sorts à apprendre
+        if ($personnageNbSorts >= $availableSorts) {
+            return false;
+        }
+
+        return parent::canGetBonus();
+    }
+
     public function give(): void
     {
+        // TODO filter Domaine if Personnage know all domaine;
+        // TODO Filter SORT tag if Personnage know all Sort of given Level
         $this->applyRules([
             // le personnage doit choisir un domaine de magie et un sort de niveau 1
             Level::NIVEAU_1 => [
