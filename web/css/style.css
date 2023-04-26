@@ -156,10 +156,33 @@ ul.forum li
 	visibility: hidden;
 }
 
-.paginator-container {
+.paginator-container, .flex-container {
 	display: flex;
     align-items: center;
     justify-content: space-between;
+}
+
+.flex-item, .flex-item-center {
+	display: flex;
+	flex-grow: 1;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.flex-item-center {
+	justify-content: center;
+}
+
+.flex-column {
+	flex-direction: column;
+}
+
+.right {
+	justify-content: right;
+}
+
+.flex-item + .flex-item {
+	margin-left: 2%;
 }
 
 .legend {
