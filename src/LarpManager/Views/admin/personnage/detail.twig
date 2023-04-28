@@ -291,11 +291,16 @@
 							<h6>Technologies :</h6>
 							<div class="list-group">
 								<div class="list-group-item">
-									{% for technologie in participant.personnage.technologies %}
-										<div class="list-group-item-text">{% if technologie.secret %}<span style="color:red;">Secret</span> - {% endif %}{{ technologie.label }}</div>
-									{% else %}
-										<div class="list-group-item-text">Aucune</div>
-									{% endfor %}
+									{% if personnage.user %}
+										{% set participant = personnage.user.participants|last %}
+										{%  if participant %}
+											{% for technologie in participant.personnage.technologies %}
+												<div class="list-group-item-text">{% if technologie.secret %}<span style="color:red;">Secret</span> - {% endif %}{{ technologie.label }}</div>
+											{% else %}
+												<div class="list-group-item-text">Aucune</div>
+											{% endfor %}
+										{% endif %}
+									{% endif %}
 								</div>
 							</div>
 
