@@ -22,6 +22,8 @@ namespace LarpManager;
 
 use Silex\Application;
 use Silex\ControllerProviderInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
  * LarpManager\ReligionControllerProvider
@@ -34,10 +36,20 @@ class PnjControllerProvider implements ControllerProviderInterface
 	public function connect(Application $app)
 	{
 		$controllers = $app['controllers_factory'];
+
+		/**
+		 * Vérifie que l'utilisateur dispose du role ADMIN
+		 */
+		$mustBeAdmin = function(Request $request) use ($app) {
+			if (!$app['security.authorization_checker']->isGranted('ROLE_ADMIN')) {
+				throw new AccessDeniedException();
+			}
+		};
 		
 		$controllers->match('/','LarpManager\Controllers\PnjController::listAction')
 			->bind("pnj.list")
-			->method('GET');
+			->method('GET')
+			->before($mustBeAdmin);
 		
 		return $controllers;
 	}
