@@ -57,7 +57,7 @@ class ObjetRepository extends EntityRepository
     }
 
     /**
-     * Trouve les potions correspondant aux critères de recherche
+     * Trouve les objets correspondant aux critères de recherche
      */
     public function findList(array $criteria, array $order = [], int $limit = 50, int $offset = 0)
     {

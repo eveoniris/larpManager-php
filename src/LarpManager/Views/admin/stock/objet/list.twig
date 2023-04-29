@@ -112,9 +112,9 @@
 	 			<tr>
 	 				<th>
 						{% if app.request.get('order_dir') == 'ASC' and app.request.get('order_by') == 'nom' %}
-							<a href="{{ path('stock_objet_index', {'order_by': 'nom', 'order_dir': 'DESC', 'tag':tag, 'rangeemnt': rangement}) }}">
+							<a href="{{ path('stock_objet_index', {'order_by': 'nom', 'order_dir': 'DESC', 'tag':tag, 'rangement': rangement}) }}">
 						{%  else %}
-							<a href="{{ path('stock_objet_index', {'order_by': 'nom', 'order_dir': 'ASC', 'tag':tag, 'rangeemnt': rangement}) }}">
+							<a href="{{ path('stock_objet_index', {'order_by': 'nom', 'order_dir': 'ASC', 'tag':tag, 'rangement': rangement}) }}">
 						{% endif %}
 							Nom
 						{% if app.request.get('order_by') == 'nom'  %}
@@ -131,6 +131,7 @@
 	 				<th>Photo</th>
 	 				<th>Description</th>
 	 				<th>Tags</th>
+	 				<th>Rangement</th>
 	 				<th>Objet de jeu</th>
 	 				<th>Action</th>
 	 			</tr>
@@ -154,6 +155,7 @@
 			  			</td>
 	 					<td>{{ objet.description }}</td>
 	 					<td>{{ objet.tags|join(', ') }}</td>
+	 					<td>{{ objet.rangement.adresse }}</td>
 	 					<td>
 		 					{% for item in objet.items %}
 			  					<span class="text-info"><strong>{{ item.numero }} - {{ item.label }}</strong></span> 
