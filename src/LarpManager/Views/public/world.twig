@@ -164,15 +164,18 @@
 
 	var cartographie = {
 			// Url du tileset
-			mapUrl: 'img/map/{z}/{x}/{y}.jpg',
+			mapUrl: 'img/map/{z}/{x}/{y}.png',
 
 			mapCleanUrl: 'img/map_clean/{z}/{x}/{y}.png',
 			
 			// Zoom minimal
 			mapMinZoom: 2,
 				
-			// zoom maximal
+			// zoom maximal affiché
 			mapMaxZoom : 5,
+			
+			// zoom maximal fichiers
+			mapMaxZ : 6,
 
 			// zoom au chargement de la carte
 			mapNormalZoom: 3,
@@ -310,8 +313,8 @@
 			// Création des limites de la carte
 			createMapBounds: function() {
 				this.mapBounds = new L.LatLngBounds(
-						this.map.unproject([1,11535], this.mapMaxZoom),
-						this.map.unproject([16383,1], this.mapMaxZoom)	    
+						this.map.unproject([1,11535], this.mapMaxZ),
+						this.map.unproject([16383,1], this.mapMaxZ)	    
 					);
 				this.map.setMaxBounds(this.mapBounds);
 			},
@@ -369,7 +372,7 @@
 			// Applique les limites de la carte à la carte
 			fitMap: function() {
 				this.map.fitBounds(this.mapBounds);
-				var _mapCenter = this.map.unproject([16384/2, 11536/2], this.mapMaxZoom);
+				var _mapCenter = this.map.unproject([16384/2, 11536/2], this.mapMaxZ);
 				this.map.setView(_mapCenter, this.mapNormalZoom);
 			},
 
