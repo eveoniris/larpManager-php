@@ -16,70 +16,122 @@
 		<li><a href="{{ path('homepage') }}">Accueil</a></li>
 		<li class="active">Objets</li>
 	</ol>
-	
-	
+
 	<nav class="navbar navbar-default" style="padding-right: 5px;">
-		<div class="navbar-header">
-			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-2" aria-expanded="false">
-		        <span class="sr-only">Toggle navigation</span>
-		        <span class="icon-bar"></span>
-		        <span class="icon-bar"></span>
-		        <span class="icon-bar"></span>
-			</button>
-			<span class="navbar-brand">
-				{% if tag %}
-					Vous listez les objets correspondant au tag <strong>{{tag.nom }}</strong>&nbsp;<small>{{ objets|length }} objet(s)</small>
-				{% elseif tagId == -1 %}
-					Vous listez tous les objets sans tags&nbsp;<small>{{ objets|length }} objet(s)</small>
-				{% elseif rangement %}
-					Vous listez les objets correspondant au rangement <strong>{{rangement.label }}</strong>&nbsp;<small>{{ objets|length }} objet(s)</small>
-				{% elseif rangementId == -1 %}
-					Vous listez tous les objets sans rangement&nbsp;<small>{{ objets|length }} objet(s)</small>
-				{% else %}
-					Vous listez tous les objets&nbsp;<small>{{ objets|length }} objet(s)</small>
-				{% endif %}
-			</span>
+
+		<div class="flex-container">
+
+			<div class="flex-item">
+				<form class="form-inline" action="{{ path('stock_objet_index', {'order_by': 'nom', 'order_dir': 'DESC'}) }}" method="POST" {{ form_enctype(form) }}>
+					{% form_theme form 'Form/bootstrap_3_layout.html.twig' %}
+					<div class="form-group">
+						<div class="input-group">
+							{{ form_widget(form.value) }}
+						</div>
+						<div class="input-group">
+							{{ form_widget(form.type) }}
+							<div class="input-group-btn">
+								<button type="submit" class="btn btn-default" data-toggle="tooltup" data-placement="top" title="Lancer la recherche"><i class="fa fa-search"></i></button>
+								<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Reset" href="{{ path('stock_objet_index', {'order_by': 'nom', 'order_dir': 'DESC'}) }}"><i class="fa fa-refresh"></i></a>
+							</div>
+						</div>
+					</div>
+					{{ form_rest(form) }}
+				</form>
+
+
+			</div>
+
+			<div class="flex-item-center flex-column">
+				<div  class="flex-item-center">
+					{{ paginator|raw }}
+				</div>
+
+				<div class="flex-item-center">
+
+						{% if paginator.totalItems == 1 %}
+							<strong>1</strong>&nbsp;objet trouvé
+						{% else %}
+							<strong>{{ paginator.totalItems }}</strong>&nbsp;objets trouvés
+						{% endif %}
+
+						{% if paginator.totalItems >= 1 %}
+						&nbsp;Montre&nbsp;<strong>{{ paginator.currentPageFirstItem }} - {{ paginator.currentPageLastItem }}</strong>
+						{% endif %}
+
+						{% if tag == -1 %}
+							&nbsp;- Sans tag
+						{% endif %}
+
+						{% if rangement == -1 %}
+							&nbsp;- sans rangement
+						{% endif %}
+
+				</div>
+			</div>
+
+			<div class="flex-item-right">
+				<div id="bs-example-navbar-collapse-2" class="collapse navbar-collapse">
+					<ul class="nav navbar-nav navbar-right">
+						<li role="presentation" class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								Tags
+								<span class="caret"></span>
+							</a>
+							<ul class="dropdown-menu">
+								{% for tag in tags %}
+									<li><a href="{{ path('stock_objet_index', {'tag':tag.id, 'rangement':rangement}) }}">{{ tag.nom }}&nbsp</a></li>
+								{% endfor %}
+								<li><a href="{{ path('stock_objet_index', {'tag':-1, 'rangement':rangement}) }}">Objets sans tag&nbsp;({{ objetsWithoutTagCount }})</a></li>
+							</ul>
+						</li>
+						<li role="presentation" class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								Rangements
+								<span class="caret"></span>
+							</a>
+							<ul class="dropdown-menu">
+								{% for rangement in rangements %}
+									<li><a href="{{ path('stock_objet_index', {'rangement':rangement.id, 'tag':tag}) }}">{{ rangement.label }}</a></li>
+								{% endfor %}
+								<li><a href="{{ path('stock_objet_index', {'rangement':-1, 'tag':tag}) }}">Objets sans rangement&nbsp;{{ objetsWithoutRangementCount }}</a></li>
+							</ul>
+						</li>
+						<a href="{{ path('stock_objet_add') }}" class="btn btn-primary navbar-btn">Créer un nouvel objet</a>
+					</ul>
+				</div>
+			</div>
+
 		</div>
-		<div id="bs-example-navbar-collapse-2" class="collapse navbar-collapse">
-			<ul class="nav navbar-nav navbar-right">
-				<li role="presentation" class="dropdown">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-	      				Tags
-	      				<span class="caret"></span>
-	    			</a>
-	    			<ul class="dropdown-menu">
-		    			{% for tag in tags %}
-							<li><a href="{{ path('stock_objet_index', {'tag':tag.id}) }}">{{ tag.nom }}&nbsp;({{ tag.objets|length }})</a></li>
-						{% endfor %}
-						<li><a href="{{ path('stock_objet_index', {'tag':-1}) }}">Objets sans tag&nbsp;({{ objetsWithoutTagCount }})</a></li>
-					</ul>
-	    		</li>
-	    		<li role="presentation" class="dropdown">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-	      				Rangements
-	      				<span class="caret"></span>
-	    			</a>
-	    			<ul class="dropdown-menu">
-	    				{% for rangement in rangements %}
-							<li><a href="{{ path('stock_objet_index', {'rangement':rangement.id}) }}">{{ rangement.label }}&nbsp;{{ rangement.objets|length }}</a></li>
-						{% endfor %}
-						<li><a href="{{ path('stock_objet_index', {'rangement':-1}) }}">Objets sans rangement&nbsp;{{ objetsWithoutRangementCount }}</a></li>
-					</ul>
-	    		</li>
-	    		<a href="{{ path('stock_objet_add') }}" class="btn btn-primary navbar-btn">Créer un nouvel objet</a>
-	    	</ul>
-	    </div>
-	</nav> 
-			
+
+	</nav>
 			
 	<div class="well well-sm">
 	 	<table class="table">
 	 		<thead>
 	 			<tr>
-	 				<th>Nom</th>
+	 				<th>
+						{% if app.request.get('order_dir') == 'ASC' and app.request.get('order_by') == 'nom' %}
+							<a href="{{ path('stock_objet_index', {'order_by': 'nom', 'order_dir': 'DESC', 'tag':tag, 'rangement': rangement}) }}">
+						{%  else %}
+							<a href="{{ path('stock_objet_index', {'order_by': 'nom', 'order_dir': 'ASC', 'tag':tag, 'rangement': rangement}) }}">
+						{% endif %}
+							Nom
+						{% if app.request.get('order_by') == 'nom'  %}
+							{% if app.request.get('order_dir') == 'ASC' %}
+								<span class="caret"></span>
+							{% else %}
+								<span class="dropup">
+									<span class="caret"></span>
+								</span>
+							{% endif %}
+						{% endif %}
+						</a>
+					</th>
 	 				<th>Photo</th>
 	 				<th>Description</th>
 	 				<th>Tags</th>
+	 				<th>Rangement</th>
 	 				<th>Objet de jeu</th>
 	 				<th>Action</th>
 	 			</tr>
@@ -103,6 +155,7 @@
 			  			</td>
 	 					<td>{{ objet.description }}</td>
 	 					<td>{{ objet.tags|join(', ') }}</td>
+	 					<td>{{ objet.rangement.adresse }}</td>
 	 					<td>
 		 					{% for item in objet.items %}
 			  					<span class="text-info"><strong>{{ item.numero }} - {{ item.label }}</strong></span> 

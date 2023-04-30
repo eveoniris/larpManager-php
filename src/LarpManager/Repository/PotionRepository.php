@@ -22,6 +22,8 @@ namespace LarpManager\Repository;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query;
+use Doctrine\ORM\QueryBuilder;
 
 /**
  * LarpManager\Repository\PotionRepository
@@ -44,4 +46,75 @@ class PotionRepository extends EntityRepository
 		
 		return $potions;
 	}
+
+    /**
+     * Trouve le nombre de potions correspondant aux critères de recherche
+     *
+     * @param ?string $type
+     */
+    public function findCount(?string $type, $value)
+    {
+        $qb = $this->getQueryBuilder($type, $value);
+        $qb->select($qb->expr()->count('p'));
+
+        return $qb->getQuery()->getSingleScalarResult();
+    }
+
+    /**
+     * Trouve les potions correspondant aux critères de recherche
+     *
+     * @param ?string $type
+     * @param array $order
+     * @param int $limit
+     * @param int $offset
+     */
+    public function findList(?string $type, $value, array $order = [], int $limit = 50, int $offset = 0)
+    {
+        $qb = $this->getQueryBuilder($type, $value);
+        $qb->setFirstResult($offset);
+        $qb->setMaxResults($limit);
+        $qb->orderBy('p.'.$order['by'], $order['dir']);
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @param string|null $type
+     * @param $value
+     * @return QueryBuilder
+     */
+    protected function getQueryBuilder(?string $type, $value): QueryBuilder
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+
+        $qb->select('p');
+        $qb->from('LarpManager\Entities\Potion','p');
+
+        // retire les caractères non imprimable d'une chaine UTF-8
+        $value = preg_replace('/[\x00-\x1F\x7F\xA0]/u', '', htmlspecialchars($value));
+
+        if ($type && $value)
+        {
+            switch ($type){
+                case 'label':
+                    $qb->andWhere('p.label LIKE :value');
+                    $qb->setParameter('value', '%'.$value.'%');
+                    break;
+                case 'description':
+                    $qb->andWhere('p.description LIKE :value');
+                    $qb->setParameter('value', '%'.$value.'%');
+                    break;
+                case 'numero':
+                    $qb->andWhere('p.numero = :value');
+                    $qb->setParameter('value', (int) $value);
+                    break;
+                case 'id':
+                    $qb->andWhere('p.id = :value');
+                    $qb->setParameter('value', (int) $value);
+                    break;
+            }
+        }
+
+        return $qb;
+    }
 }

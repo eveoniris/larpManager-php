@@ -20,12 +20,15 @@
 
 namespace LarpManager\Controllers;
 
+use JasonGrimes\Paginator;
+use LarpManager\Form\ObjetFindForm;
 use LarpManager\Form\Stock\ObjetForm;
 use LarpManager\Form\Stock\ObjetDeleteForm;
 use LarpManager\Form\Stock\ObjetTagForm;
 
 use LarpManager\Entities\Objet;
 
+use LarpManager\Repository\ObjetRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Silex\Application;
 
@@ -50,79 +53,73 @@ class StockObjetController
 		
 		$repoTag = $app['orm.em']->getRepository('\LarpManager\Entities\Tag');
 		$tags = $repoTag->findAll();
-		
+
 		$repoObjet = $app['orm.em']->getRepository('\LarpManager\Entities\Objet');
-		
-		$objetsWithoutTag = $repoObjet->findWithoutTag();
-		$objetsWithoutTagCount = 0;
-		if ( $objetsWithoutTag ) $objetsWithoutTagCount = count($objetsWithoutTag); 
-		
-		$objetsWithoutRangement = $repoObjet->findWithoutRangement();
-		$objetsWithoutRangementCount = 0;
-		if ( $objetsWithoutRangement ) $objetsWithoutRangementCount = count($objetsWithoutRangement);
-		
-			
-		$tagId = $request->get('tag');
-		$tag = null;
-		$rangementId = $request->get('rangement');
-		$rangement = null;
-		
-		if ( $tagId )
-		{
-			if ( $tagId == -1 ) // recherche les objets n'ayant pas de tag
-			{
-				$objets = $objetsWithoutTag;
-			}
-			else
-			{
-				$tag = $repoTag->find($tagId);
-				if ( $tag )
-				{
-					$objets = $repoObjet->findByTag($tag);
-				}
-				else
-				{
-					$objets = $repoObjet->findAll();
-				}
-			}
-		}
-		else {
-			if ( $rangementId )
-			{
-				if ( $rangementId == -1 ) // recherche les objets n'ayant pas de tag
-				{
-					$objets = $objetsWithoutRangement;
-				}
-				else
-				{
-					$rangement = $repoRangement->find($rangementId);
-					if ( $rangement )
-					{
-						$objets = $repoObjet->findByRangement($rangement);
-					}
-					else
-					{
-						$objets = $repoObjet->findAll();
-					}
-				}
-			}
-			else {
-				$objets = $repoObjet->findAll();
-			}
-		}
-		
-		
+
+        $objetsWithoutTagCount = $repoObjet->findCount(['tag' => ObjetRepository::CRIT_WITHOUT]);
+		$objetsWithoutRangementCount = $repoObjet->findCount(['rangement' => ObjetRepository::CRIT_WITHOUT]);
+
+        $criteria = [];
+
+        // tag: null => no search based on tag;
+        // tag: -1 or ObjetRepository::CRIT_WITHOUT => search object without
+        // tag: [a-Z]+ => search object with this tag name
+        $criteria['tag'] = $request->get('tag');
+
+        // rangement: null => no search based on rangement;
+        // rangement: -1 or ObjetRepository::CRIT_WITHOUT => search object without
+        // rangement: [a-Z]+ => search object with this rangement name
+        $criteria['rangement'] = $request->get('rangement');
+
+        $order_by = $request->get('order_by', 'nom');
+        $order_dir = $request->get('order_dir') === 'DESC' ? 'DESC' : 'ASC';
+        $limit = (int) ($request->get('limit', 50));
+        $page = (int) ($request->get('page', 1));
+        $offset = ($page - 1) * $limit;
+
+        $form = $app['form.factory']->createBuilder(new ObjetFindForm())->getForm();
+
+        $form->handleRequest($request);
+
+        if ( $form->isValid() ) {
+            $data = $form->getData();
+            $criteria[$data['type']] = $data['value'];
+        }
+
+        $objets = $repoObjet->findList(
+            $criteria,
+            ['by' =>  $order_by, 'dir' => $order_dir],
+            $limit,
+            $offset
+        );
+
+        $url = $app['url_generator']->generate('stock_objet_index');
+
+		$paginator = new Paginator(
+            $repoObjet->findCount($criteria),
+			$limit,
+			$page,
+			$url . '?page=(:num)&' . http_build_query(
+                [
+                    'limit' => $limit,
+                    'order_by' => $order_by,
+                    'order_dir' => $order_dir,
+                    'tag' => $criteria['tag'],
+                    'rangement' => $criteria['rangement'],
+                ]
+            )
+		);
 
 		return $app['twig']->render('admin/stock/objet/list.twig', array(
 				'objets' => $objets,
+				'tag' => $criteria['tag'],
 				'tags' => $tags,
-				'tag' => $tag,
-				'tagId' => $tagId,
+                'form' => $form->createView(),
 				'objetsWithoutTagCount' => $objetsWithoutTagCount,
 				'objetsWithoutRangementCount' => $objetsWithoutRangementCount,
+				'paginator' => $paginator,
 				'rangements' => $rangements,
-				'rangement' => $rangement,
-				'rangementId' => $rangementId,
+				'rangement' => $criteria['rangement'],
 		));
 	}
 	
