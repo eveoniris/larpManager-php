@@ -1422,12 +1422,22 @@ class Personnage extends BasePersonnage
 	 */
 	public function isSensible()
 	{
-		$naissance = $this->getUser()->getEtatCivil()->getDateNaissance();
+        $user  = $this->getUser();
+        $participant = $this->getLastParticipant();
+        if (!$user && $participant) {
+            $user = $participant->getUser();
+        }
+
+        $naissance = null;
+        if ($user) {
+		    $naissance = $user->getEtatCivil()->getDateNaissance();
+        }
+
 		foreach ($this->participants as $p) {
 			$gn_date = $p->getGn()->getDateDebut();
 		}
 
-		if (!isset($gn_date))
+		if (!isset($gn_date) || !$naissance)
 			return $this->getSensible();
 
 		$interval = date_diff($gn_date, $naissance);
