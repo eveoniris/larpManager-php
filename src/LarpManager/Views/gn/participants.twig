@@ -90,9 +90,7 @@
 						{% endif %}
 					</td>
 					<td>
-						{% if participant.personnage is empty and participant.user.personnage %}
-							<a href="{{ path('personnage.admin.detail', {'personnage': participant.user.personnage.id}) }}">{{ participant.user.personnage.nom }}</a>
-						{% elseif participant.user.personnage is empty and participant.personnage %}
+						{% if participant.personnage %}
 							<a href="{{ path('personnage.admin.detail', {'personnage': participant.personnage.id}) }}">{{ participant.personnage.nom }}</a>
 						{% else %}
 							<span class="text-danger">Aucun personnage sélectionné</span>
