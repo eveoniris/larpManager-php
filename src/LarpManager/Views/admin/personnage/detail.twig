@@ -291,7 +291,7 @@
 							<h6>Technologies :</h6>
 							<div class="list-group">
 								<div class="list-group-item">
-									{% for technologie in participant.personnage.technologies %}
+									{% for technologie in personnage.technologies %}
 										<div class="list-group-item-text">{% if technologie.secret %}<span style="color:red;">Secret</span> - {% endif %}{{ technologie.label }}</div>
 									{% else %}
 										<div class="list-group-item-text">Aucune</div>
