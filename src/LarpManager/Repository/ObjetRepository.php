@@ -97,15 +97,15 @@ class ObjetRepository extends EntityRepository
 
                 if ($criter === -1) {
                     $qb->leftjoin('o.tags', 't');
-                    $qb->where('t.id is null');
+                    $qb->andWhere('t.id is null');
                 } else {
                     $qb->join('o.tags', 't');
-                    $qb->where('t.id = :tag');
+                    $qb->andWhere('t.id = :tag');
                     $qb->setParameter('tag', $criter);
                 }
             } else {
                 $qb->join('o.tags', 't');
-                $qb->where('t.nom LIKE :tag');
+                $qb->andWhere('t.nom LIKE :tag');
                 $qb->setParameter('tag', $criter);
             }
         }
@@ -122,14 +122,14 @@ class ObjetRepository extends EntityRepository
                 $criter = (int)$criter;
                 if ($criter === -1) {
                     $qb->leftjoin('o.rangement', 'r');
-                    $qb->where('r.id is null');
+                    $qb->andWhere('r.id is null');
                 } else {
-                    $qb->where('o.rangement = :rangement');
+                    $qb->andWhere('o.rangement = :rangement');
                     $qb->setParameter('rangement', $criter);
                 }
             } else {
                 $qb->join('o.rangement', 'r');
-                $qb->where('r.label LIKE :rangement');
+                $qb->andWhere('r.label LIKE :rangement');
                 $qb->setParameter('rangement', $criter);
             }
         }
