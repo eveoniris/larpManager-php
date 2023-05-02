@@ -695,10 +695,20 @@ class PersonnageController
 	public function adminDetailAction(Request $request, Application $app)
 	{
 		$personnage = $request->get('personnage');
-		//$personnageLangues = $personnage->getPersonnageLangues();
-				$descendants =  $app['orm.em']->getRepository(Personnage::class)->findDescendants($personnage);
+        $descendants =  $app['orm.em']->getRepository(Personnage::class)->findDescendants($personnage);
 
-		return $app['twig']->render('admin/personnage/detail.twig', array('personnage' => $personnage, 'descendants' => $descendants, 'langueMateriel' => $this->getLangueMateriel($personnage)));
+        // Use Database order : meilleur que celui de Twig
+        $personnageLangues = $app['orm.em']->getRepository(Personnage::class)->findOrderedLangages($personnage);
+
+		return $app['twig']->render(
+            'admin/personnage/detail.twig',
+            array(
+                'personnage' => $personnage,
+                'personnageLangues' => $personnageLangues,
+                'descendants' => $descendants,
+                'langueMateriel' => $this->getLangueMateriel($personnage),
+            )
+        );
 	}
 
 	/**
