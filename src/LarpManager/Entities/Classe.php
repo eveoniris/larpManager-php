@@ -170,9 +170,8 @@ class Classe extends BaseClasse
 	 * Add Competence entity to collection.
 	 *
 	 * @param \LarpManager\Entities\CompetenceFamily $competenceFamily
-	 * @return \LarpManager\Entities\Classe
 	 */
-	public function addCompetenceFamilyCreation(CompetenceFamily $competenceFamily)
+	public function addCompetenceFamilyCreation(CompetenceFamily $competenceFamily): self
 	{
 		$competenceFamily->addClasseCreation($this);
 		$this->competenceFamilyCreations[] = $competenceFamily;

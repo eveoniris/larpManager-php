@@ -36,4 +36,9 @@ use LarpManager\Entities\BaseLevel;
  */
 class Level extends BaseLevel
 {
+    public const NIVEAU_1 = 1;
+    public const NIVEAU_2 = 2;
+    public const NIVEAU_3 = 3;
+    public const NIVEAU_4 = 4;
+    public const NIVEAU_5 = 5;
 }

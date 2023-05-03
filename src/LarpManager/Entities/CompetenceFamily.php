@@ -59,7 +59,9 @@ class CompetenceFamily extends BaseCompetenceFamily
 		$this->classeFavorites = new ArrayCollection();
 		$this->classeNormales = new ArrayCollection();
 		$this->classeCreations = new ArrayCollection();
-		
+        $this->label ??= ''; // getLabel() do not allow null
+        $this->description ??= ''; // getDescription() do not allow null
+
 		parent::__construct();
 	}
 	
