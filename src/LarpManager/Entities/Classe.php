@@ -28,15 +28,14 @@
 namespace LarpManager\Entities;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use LarpManager\Entities\BaseClasse;
 
 /**
  * Je définie les relations ManyToMany içi au lieu de le faire dans Mysql Workbench
- * car l'exporteur ne sait pas gérer correctement plusieurs relations ManyToMany entre 
+ * car l'exporteur ne sait pas gérer correctement plusieurs relations ManyToMany entre
  * les mêmes entities (c'est dommage ...)
- * 
+ *
  * LarpManager\Entities\Classe
- * 
+ *
  * @Entity(repositoryClass="LarpManager\Repository\ClasseRepository")
  */
 class Classe extends BaseClasse
@@ -50,7 +49,7 @@ class Classe extends BaseClasse
      * @OrderBy({"label" = "ASC"})
 	 */
 	protected $competenceFamilyFavorites;
-	
+
 	/**
 	 * @ManyToMany(targetEntity="CompetenceFamily", inversedBy="classeNormales")
 	 * @JoinTable(name="classe_competence_family_normale",
@@ -60,7 +59,7 @@ class Classe extends BaseClasse
      * @OrderBy({"label" = "ASC"})
 	 */
 	protected $competenceFamilyNormales;
-	
+
 	/**
 	 * @ManyToMany(targetEntity="CompetenceFamily", inversedBy="classeCreations")
 	 * @JoinTable(name="classe_competence_family_creation",
@@ -70,8 +69,8 @@ class Classe extends BaseClasse
      * @OrderBy({"label" = "ASC"})
 	 */
 	protected $competenceFamilyCreations;
-	
-	
+
+
 	public function __construct()
 	{
 		$this->competenceFamilyFavorites = new ArrayCollection();
@@ -79,18 +78,48 @@ class Classe extends BaseClasse
 		$this->competenceFamilyCreations = new ArrayCollection();
 		parent::__construct();
 	}
-	
+
 	public function __toString()
 	{
-		return $this->getLabel();	
+		return $this->getLabel();
 	}
-	
-	public function getLabel()
+
+    public function getCompetenceFamilyLabelsInCommons(): array
+    {
+        $competenceFamilyInCommons = [];
+        $competenceFamilyInCommonsIntersect = array_intersect(
+            $this->competenceFamilyFavorites->toArray(),
+            $this->competenceFamilyNormales->toArray()
+        );
+
+        foreach($competenceFamilyInCommonsIntersect as $competenceFamilyInCommon) {
+            $competenceFamilyInCommons[] = $competenceFamilyInCommon->getLabel();
+        }
+
+        return $competenceFamilyInCommons;
+    }
+
+    public function getCompetenceFamilyCreationLabelsInNotInFavorites(): array
+    {
+        $competenceFamiliesLabels = [];
+        $competenceFamiliesIntersect = array_diff(
+            $this->competenceFamilyCreations->toArray(),
+            $this->competenceFamilyFavorites->toArray()
+        );
+
+        foreach($competenceFamiliesIntersect as $competenceFamilyIntersect) {
+            $competenceFamiliesLabels[] = $competenceFamilyIntersect->getLabel();
+        }
+
+        return $competenceFamiliesLabels;
+    }
+
+    public function getLabel(): string
 	{
 		return $this->getLabelFeminin().' / '.$this->getLabelMasculin();
 	}
-	
-	/**
+
+    /**
 	 * Add Competence entity to collection.
 	 *
 	 * @param \LarpManager\Entities\Competence $competence
@@ -100,10 +129,10 @@ class Classe extends BaseClasse
 	{
 		$competenceFamily->addClasseFavorite($this);
 		$this->competenceFamilyFavorites[] = $competenceFamily;
-	
+
 		return $this;
 	}
-	
+
 	/**
 	 * Remove Competence entity from collection.
 	 *
@@ -114,10 +143,10 @@ class Classe extends BaseClasse
 	{
 		$competenceFamily->removeClasseFavorite($this);
 		$this->$competenceFamilyFavorites->removeElement($competenceFamily);
-	
+
 		return $this;
 	}
-	
+
 	/**
 	 * Get Competence entity collection.
 	 *
@@ -127,7 +156,7 @@ class Classe extends BaseClasse
 	{
 		return $this->competenceFamilyFavorites;
 	}
-	
+
 	/**
 	 * Add Competence entity to collection.
 	 *
@@ -138,10 +167,10 @@ class Classe extends BaseClasse
 	{
 		$competenceFamily->addClasseNormale($this);
 		$this->competenceFamilyNormales[] = $competenceFamily;
-	
+
 		return $this;
 	}
-	
+
 	/**
 	 * Remove Competence entity from collection.
 	 *
@@ -152,10 +181,10 @@ class Classe extends BaseClasse
 	{
 		$competenceFamily->removeClasseNormale($this);
 		$this->$competenceFamilyNormales->removeElement($competenceFamily);
-	
+
 		return $this;
 	}
-	
+
 	/**
 	 * Get Competence entity collection.
 	 *
@@ -165,7 +194,7 @@ class Classe extends BaseClasse
 	{
 		return $this->competenceFamilyNormales;
 	}
-	
+
 	/**
 	 * Add Competence entity to collection.
 	 *
@@ -176,10 +205,10 @@ class Classe extends BaseClasse
 	{
 		$competenceFamily->addClasseCreation($this);
 		$this->competenceFamilyCreations[] = $competenceFamily;
-	
+
 		return $this;
 	}
-	
+
 	/**
 	 * Remove Competence entity from collection.
 	 *
@@ -190,10 +219,10 @@ class Classe extends BaseClasse
 	{
 		$competenceFamily->removeClasseCreation($this);
 		$this->$competenceFamilyCreations->removeElement($competenceFamily);
-	
+
 		return $this;
 	}
-	
+
 	/**
 	 * Get Competence entity collection.
 	 *

@@ -24,6 +24,8 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Doctrine\ORM\EntityRepository;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 /**
  * LarpManager\Form\GroupeLangueForm
@@ -44,10 +46,20 @@ class GroupeLangueForm extends AbstractType
 		$builder->add('label','text', array(
 					'label' => 'Label',
 					'required' => true,
+                    'attr' => ['maxlength' => 45],
+                    'constraints' => [
+                        new Length(['max' => 45]),
+                        new NotBlank(),
+                    ],
 				))
 				->add('couleur','text', array(
 					'label' => 'Couleur',
 					'required' => true,
+                    'attr' => ['maxlength' => 45],
+                    'constraints' => [
+                        new Length(['max' => 45]),
+                        new NotBlank(),
+                    ],
 				));
 	}
 	
