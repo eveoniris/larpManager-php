@@ -229,7 +229,7 @@
 							<div class="text-warning">{{languesAnomalie}}</div>
 							{% endif %}
 							<div class="list-group">
-								{% for personnageLangue in personnage.personnageLangues %}
+								{% for personnageLangue in personnageLangues %}
 									<div class="list-group-item">{% if personnageLangue.langue.secret %}<span style="color:red;">Secret</span> - {% endif %}<strong>{{ personnageLangue.langue}}</strong> ({{ personnageLangue.source }}) - <a href="{{ path('personnage.admin.langue.delete', {'personnage': personnage.id, 'personnageLangue' : personnageLangue.id }) }}">Supprimer</a></div>
 								{% endfor %}
 							</div>

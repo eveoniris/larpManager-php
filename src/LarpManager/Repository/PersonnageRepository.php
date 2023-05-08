@@ -21,6 +21,8 @@
 namespace LarpManager\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use LarpManager\Entities\Personnage;
+use LarpManager\Entities\PersonnageLangues;
 use LarpManager\Entities\PersonnageLignee;
 use Doctrine\ORM\QueryBuilder;
 
@@ -212,7 +214,26 @@ LEFT JOIN p2.participants pa2
 
         return $qb->getQuery()->getResult();
     }
-    
+
+    /**
+     * Fourni la liste des langues du personnage selon l'ordre :
+     * Secret Non/Oui, Diffusion décroissante, libellé de A à Z.
+     */
+    public function findOrderedLangages(Personnage $personnage): array
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+
+        $qb->select('pl');
+        $qb->from(PersonnageLangues::class, 'pl');
+        $qb->join('pl.langue','l');
+        $qb->where('pl.personnage = :personnage_id');
+        $qb->orderBy('l.secret','ASC');
+        $qb->addOrderBy('l.diffusion','DESC');
+        $qb->addOrderBy('l.label','ASC');
+        $qb->setParameter('personnage_id', $personnage->getId());
+
+        return $qb->getQuery()->getResult();
+    }
   
 }
 

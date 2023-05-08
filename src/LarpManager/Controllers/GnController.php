@@ -94,6 +94,7 @@ class GnController
         $descendants =  $app['orm.em']->getRepository(Personnage::class)->findDescendants($personnage);
         return $app['twig']->render('public/personnage/detail.twig', array(
             'personnage' => $personnage,
+            'personnageLangues' => $app['orm.em']->getRepository(Personnage::class)->findOrderedLangages($personnage),
             'participant' => $participant,
             'lois' => $lois,
             'descendants' => $descendants
