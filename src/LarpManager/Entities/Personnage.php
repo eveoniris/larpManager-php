@@ -1415,38 +1415,34 @@ class Personnage extends BasePersonnage
 			if ( $document == $d ) return true;
 		}
 		return false;
-	}	
+	}
 
 	/**
 	 * Indique si le personnage est sensible
+	 * @return boolean
 	 */
 	public function isSensible()
 	{
-        $user  = $this->getUser();
-        $participant = $this->getLastParticipant();
-        if (!$user && $participant) {
-            $user = $participant->getUser();
-        }
-
-        $naissance = null;
-        if ($user) {
-		    $naissance = $user->getEtatCivil()->getDateNaissance();
-        }
-
-		foreach ($this->participants as $p) {
-			$gn_date = $p->getGn()->getDateDebut();
-		}
-
-		if (!isset($gn_date) || !$naissance)
-			return $this->getSensible();
-
-		$interval = date_diff($gn_date, $naissance);
-
-		if (intval($interval->format('%y')) < 18) {
+		$user = $this->getUser();
+		if (!$user) return $this->getSensible();	
+		if ($user->getAgeJoueur() < 18) {
 			return true;
 		}
 		else {
 			return $this->getSensible();
 		}
-	}	
+	}
+
+	/**
+	 * Retourne le score d'energie vitale
+	 * 
+	 * @return int
+	 */
+	public function getEnergieVitale() : int
+	{
+        $user = $this->getUser();
+		if (!$user) return 1;
+		if ($user->getAgeJoueur() < 18) return 0;
+		return 1;
+	}
 }
