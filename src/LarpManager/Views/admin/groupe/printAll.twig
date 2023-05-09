@@ -33,6 +33,21 @@ table tr td {
 	{% endfor %}
 	</ul>	
 		
+	{% if groupe.hasRichesse or groupe.richesse|default(0) > 0 %}
+	<strong>Richesse</strong>
+	<ul>
+	{% if groupe.hasRichesse %}
+		{% for territoire in groupe.territoires %}
+			<li><strong>{{ 3*territoire.richesse }} pièces d'argent</strong> fournies par <strong>{{ territoire.nom }}</strong></li>
+		{% endfor %}
+	{% endif %}
+		{% if groupe.richesse|default(0) > 0 %}
+			<li><strong>{{ groupe.richesse|default(0) }} pièces d'argent</strong> supplémentaires</li>
+		{% endif %}
+	</ul>
+	{% endif %}
+		
+	{% if groupe.hasRessource or groupe.groupeHasRessources|length > 0 %}
 	<strong>Ressources</strong>
 	<ul>
 	{% if groupe.hasRessource %}
@@ -45,26 +60,14 @@ table tr td {
 		    	<li><strong>{{ nbRessource }} {{ ressource.label }}</strong> fourni(e)s par <strong>{{ territoire.nom }}</strong></li>
 			{% endfor %}
 		{% endfor %}
-	{% else %}
-		<li>Aucun</li>
 	{% endif %}
 	{% for groupeHasRessource in groupe.groupeHasRessources %}
-        	<li><strong>{{ groupeHasRessource.quantite }} {{ groupeHasRessource.ressource.label }}</strong></li>
+        <li><strong>{{ groupeHasRessource.quantite }} {{ groupeHasRessource.ressource.label }}</strong> supplémentaires</li>
 	{% endfor %}
-	</ul>	
-	
-	<strong>Richesse</strong>
-	<ul>
-	{% if groupe.hasRichesse %}
-		{% for territoire in groupe.territoires %}
-			<li><strong>{{ 3*territoire.richesse }} pièces d'argent</strong> fournies par <strong>{{ territoire.nom }}</strong></li>
-		{% endfor %}
-	{% else %}
-		<li>Aucun</li>
-	{% endif %}
-		<li><strong>{{ groupe.richesse|default(0) }} pièces d'argent</strong> supplémentaires</li>
 	</ul>
+	{% endif %}
 	
+	{% if groupe.hasIngredient or groupe.groupeHasIngredients|length > 0 %}
 	<strong>Ingrédients</strong>
 	<ul>
 	{% if groupe.hasIngredient %}
@@ -77,38 +80,51 @@ table tr td {
 				<li><strong>{{ nbIngredient }} {{ ingredient.label }}</strong> fourni(e)s par <strong>{{ territoire.nom }}</strong></li>
 		    {% endfor %}
 		{% endfor %}
-	{% else %}
-		<li>Aucune</li>
 	{% endif %}
 	{% for groupeHasIngredient in groupe.groupeHasIngredients %}
-        	<li><strong>{{ groupeHasIngredient.quantite }} {{ groupeHasIngredient.ingredient.fullLabel }}</strong></li>
+        <li><strong>{{ groupeHasIngredient.quantite }} {{ groupeHasIngredient.ingredient.fullLabel }}</strong> supplémentaires</li>
 	{% endfor %}
 	</ul>
+	{% endif %}
 	
+	{% if groupe.documents|length > 0 %}
 	<strong>Documents</strong>
 	<ul>
 	{% for document in groupe.documents %}
 		<li>{{ document.code }} -- {{ document.titre }}</li>
 	{% endfor %}
 	</ul>
-	
+	{% endif %}
+
+	{% if groupe.items|length > 0 %}
 	<strong>Objets</strong>
 	<ul>
 	{% for objet in groupe.items %}
 		<li>{{ objet.numero }} - {{ objet.label }}</li>
 	{% endfor %}
 	</ul>
+	{% endif %}
 	
 	<strong>Matériel</strong>
-	<p>{{ groupe.materielRaw }}</p>
-	
-	<strong>Jeu maritime</strong>
-	{% if groupe.nextSession.jeuMaritime %}
-	Participe au jeu maritime
-	{% else %}
-	Ne participe pas au jeu maritime
-	{% endif %}
+	<ul>
+		<li>Livret de règles de sécurité</li>
+		<li>1 sac poubelle transparent (déchets recyclables)</li>
+		<li>1 sac poubelle noir (déchets non recyclables)</li>
+		<li>Bons douche</li>
+		<li>1 Etiquette bannière</li>
+		<li>1 Fiche retour de groupe</li>
+		{% if groupe.territoires|length > 0 %}
+			{% for territoire in groupe.territoires %}
+				<li>1 Feuille du fief <strong>{{ territoire }}</strong></li>
+			{% endfor %}
+			<li>Lot des titres du domaine</li>
+		{% endif %}
 
+		{% if groupe.materielRaw %}
+		<li>{{ groupe.materielRaw }}</li>
+		{% endif %}
+	</ul>
+	
 	<hr class="print-page-break" />
 
 	<div>
@@ -116,9 +132,9 @@ table tr td {
         <p>La route commerciale doit partir de <strong>{% if groupe.territoire %}{{ groupe.territoire.nom }}{% else %}INCONNU{% endif %}</strong> et parvenir à <strong>{% if quete.cible %}{{ quete.cible.nom }}{% else %}INCONNU{% endif %}</strong></p>
         <strong>Les ressources demandées sont :</strong>
         <ul>
-        	{% for ressource in quete.needs %}
-            	<li>{{ ressource.label }}</li>
-            {% endfor %}
+		{% for ressource in quete.needs %}
+			<li>{{ ressource.label }}</li>
+		{% endfor %}
 		</ul>
         <strong>Récompenses : </strong>{{ quete.recompenses|join(', ') }}
 	</div>
