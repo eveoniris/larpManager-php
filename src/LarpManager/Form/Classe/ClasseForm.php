@@ -96,7 +96,7 @@ class ClasseForm extends AbstractType
                     'expanded' => true,
                     'mapped' => true,
                     'class' => 'LarpManager\Entities\CompetenceFamily',
-                    'query_builder' => static fn(CompetenceFamilyRepository $cfr) => $cfr->createQueryBuilder('cfr')->orderBy('cfr.label', 'ASC'),
+                    'query_builder' => function(CompetenceFamilyRepository $cfr) { return $cfr->createQueryBuilder('cfr')->orderBy('cfr.label', 'ASC'); }
                 )
             )
             ->add('competenceFamilyNormales', 'entity', array(
@@ -107,7 +107,7 @@ class ClasseForm extends AbstractType
                     'expanded' => true,
                     'mapped' => true,
                     'class' => 'LarpManager\Entities\CompetenceFamily',
-                    'query_builder' => static fn(CompetenceFamilyRepository $cfr) => $cfr->createQueryBuilder('cfr')->orderBy('cfr.label', 'ASC')
+                    'query_builder' => function(CompetenceFamilyRepository $cfr) { return $cfr->createQueryBuilder('cfr')->orderBy('cfr.label', 'ASC'); }
                 )
             )
             ->add('competenceFamilyCreations', 'entity', array(
@@ -118,7 +118,7 @@ class ClasseForm extends AbstractType
                     'expanded' => true,
                     'mapped' => true,
                     'class' => 'LarpManager\Entities\CompetenceFamily',
-                    'query_builder' => static fn(CompetenceFamilyRepository $cfr) => $cfr->createQueryBuilder('cfr')->orderBy('cfr.label', 'ASC')
+                    'query_builder' => function(CompetenceFamilyRepository $cfr) { return $cfr->createQueryBuilder('cfr')->orderBy('cfr.label', 'ASC'); }
                 )
             );
     }
