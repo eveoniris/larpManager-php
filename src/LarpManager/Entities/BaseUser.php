@@ -120,6 +120,12 @@ class BaseUser
     protected $groupeRelatedByScenaristeIds;
 
     /**
+     * @OneToMany(targetEntity="SecondaryGroup", mappedBy="userRelatedByScenaristeId")
+     * @JoinColumn(name="id", referencedColumnName="scenariste_id", nullable=false)
+     */
+    protected $secondaryGroupRelatedByScenaristeIds;
+
+    /**
      * @OneToMany(targetEntity="Groupe", mappedBy="userRelatedByResponsableId")
      * @JoinColumn(name="id", referencedColumnName="responsable_id", nullable=false)
      */
@@ -262,6 +268,7 @@ class BaseUser
         $this->documents = new ArrayCollection();
         $this->groupeRelatedByScenaristeIds = new ArrayCollection();
         $this->groupeRelatedByResponsableIds = new ArrayCollection();
+        $this->secondaryGroupRelatedByScenaristeIds = new ArrayCollection();
         $this->intrigues = new ArrayCollection();
         $this->intrigueHasModifications = new ArrayCollection();
         $this->messageRelatedByAuteurs = new ArrayCollection();
@@ -759,6 +766,42 @@ class BaseUser
     public function getGroupeRelatedByScenaristeIds()
     {
         return $this->groupeRelatedByScenaristeIds;
+    }
+
+    /**
+     * Add Groupe entity related by `scenariste_id` to collection (one to many).
+     *
+     * @param \LarpManager\Entities\SecondaryGroup $secondaryGroupe
+     * @return \LarpManager\Entities\User
+     */
+    public function addSecondaryGroupeRelatedByScenaristeId(SecondaryGroup $secondaryGroupe)
+    {
+        $this->secondaryGroupRelatedByScenaristeIds[] = $secondaryGroupe;
+
+        return $this;
+    }
+
+    /**
+     * Remove Groupe entity related by `scenariste_id` from collection (one to many).
+     *
+     * @param \LarpManager\Entities\SecondaryGroup $secondaryGroupe
+     * @return \LarpManager\Entities\User
+     */
+    public function removeSecondaryGroupeRelatedByScenaristeId(SecondaryGroup $secondaryGroupe)
+    {
+        $this->secondaryGroupRelatedByScenaristeIds->removeElement($secondaryGroupe);
+
+        return $this;
+    }
+
+    /**
+     * Get Groupe entity related by `scenariste_id` collection (one to many).
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getSecondaryGroupeRelatedByScenaristeIds()
+    {
+        return $this->secondaryGroupRelatedByScenaristeIds;
     }
 
     /**

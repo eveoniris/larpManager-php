@@ -57,18 +57,33 @@ class GroupeSecondaireForm extends AbstractType
 								'class' => 'tinymce',
 								'help' => 'les secrets ne sont accessibles qu\'aux membres selectionnés par le scénariste')
 				))
-				->add('responsable', 'entity', array(
-						'required' => false,
-						'label' => 'Chef du groupe',
-						'class' => 'LarpManager\Entities\Personnage',
-						'query_builder' => function(EntityRepository $er) {
-							$qb = $er->createQueryBuilder('u');
-							$qb->orderBy('u.nom', 'ASC');
-							$qb->addOrderBy('u.surnom', 'ASC');
-							return $qb;
-						},
-						'property' => 'identity',
-				))
+                ->add('scenariste', 'entity', array(
+                    'required' => false,
+                    'label' => 'Scénariste',
+                    'class' => 'LarpManager\Entities\User',
+                    'query_builder' => function(EntityRepository $er) {
+                        $qb = $er->createQueryBuilder('u');
+                        $qb->orderBy('u.nom', 'ASC');
+                        $qb->orderBy('u.surnom', 'ASC');
+                        return $qb;
+                    },
+                    'property' => 'etatCivil',
+                ))
+                ->add('scenariste','entity', array(
+                    'label' => 'Scénariste',
+                    'required' => false,
+                    'class' => 'LarpManager\Entities\User',
+                    'property' => 'name',
+                    'query_builder' => function(EntityRepository $er) {
+                        $qb = $er->createQueryBuilder('u');
+                        $qb->join('u.etatCivil', 'ec');
+                        $qb->where($qb->expr()->orX(
+                            $qb->expr()->like('u.rights', $qb->expr()->literal('%ROLE_SCENARISTE%')),
+                            $qb->expr()->like('u.rights', $qb->expr()->literal('%ROLE_ADMIN%'))));
+                        $qb->orderBy('ec.nom', 'ASC');
+                        return $qb;
+                    }
+                ))
 				->add('secondaryGroupType','entity', array(
 						'label' => 'Type',
 						'required' => true,
