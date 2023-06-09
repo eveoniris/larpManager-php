@@ -92,6 +92,12 @@
 					<th>
 						Membres
 					</th>
+					<th>
+						Responsable
+					</th>
+					<th>
+						Scénariste
+					</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -103,6 +109,14 @@
 					<td>{{ groupeSecondaire.description|markdown }}</td>
 					<td>{{ groupeSecondaire.secondaryGroupType.label }}</td>
 					<td>{{ groupeSecondaire.membres|length }}</td>
+					<td>{{ groupeSecondaire.responsable }}</td>
+					<td>
+						{% if groupeSecondaire.scenariste is null %}
+							-
+						{% else %}
+							{{ groupeSecondaire.scenariste.etatCivil }}
+						{% endif %}
+					</td>
 				</tr>
 			{% endfor %}
 			</tbody>
