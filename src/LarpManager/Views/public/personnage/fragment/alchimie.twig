@@ -3,9 +3,21 @@
 		<h5>Alchimie</h5>
 	</div>
 	{% if not personnage.hasCompetence('Alchimie') %}
-	<span style="color:red;">Vous n'avez pas les connaissances pour préparer ces potions et vous ne pouvez pas les recopier sans l'aide adéquate.</span>
-	{% endif %}		
-	<h6>Liste de vos potions</h6>
+		<span style="color:red;">Vous n'avez pas les connaissances pour préparer ces potions et vous ne pouvez pas les recopier sans l'aide adéquate.</span>
+	{% else %}
+		<h6>Liste de vos potions de départ</h6>
+		<div class="list-group">
+			{% for niveau in 1..personnage.getCompetenceNiveau('Alchimie') %}
+				{% set potion = participant.hasPotionsDepartByLevel(niveau) %}
+				{% if potion %}
+					<a class="list-group-item" href="{{ path('participant.potion.detail', {'participant': participant.id, 'potion': potion.id}) }}">{% if potion.secret %}<span style="color:red;">Secret</span> - {% endif %}{{ potion.label }} - Niveau {{ potion.niveau }}</a>
+				{% else %}
+					<a class="list-group-item">Vous n'avez pas choisi de potion de niveau {{ niveau }}.</a>
+				{% endif %}
+			{% endfor %}
+		</div>
+	{% endif %}
+	<h6>Liste de vos potions connues</h6>
 	<div class="list-group">
 		{% for potion in personnage.potions %}
 			<a class="list-group-item" href="{{ path('participant.potion.detail', {'participant': participant.id, 'potion': potion.id}) }}">{% if potion.secret %}<span style="color:red;">Secret</span> - {% endif %}{{ potion.label }} - Niveau {{ potion.niveau }}</a>

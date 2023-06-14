@@ -81,9 +81,23 @@ body {
 	</ul>
 	{% endif %}
 
+	{# Potions #}
+	{% if participant.personnage.hasCompetence('Alchimie') %}
+		<strong>Potions :</strong>
+		<ul>
+		{% for potion in participant.potionsenveloppe %}
+			{% if potion %}
+				<li><strong>{{ potion.numero }}</strong> - {{ potion.label }} (Niveau {{ potion.niveau }})</li>
+			{% else %}
+				<li>Le personnage n'a pas choisi de potion de ce niveau.
+			{% endif %}
+		{% endfor %}
+		</ul>		
+	{% endif %}
+
 	{# documents #}
 	{% if participant.personnage.documents|length > 0 %}
-		<strong>Documents</strong>
+		<strong>Documents :</strong>
 		<ul>
 		{% for document in participant.personnage.documents %}
 			<li><strong>{{ document.code }}</strong> - {{ document.titre }}</li>
@@ -93,7 +107,7 @@ body {
 
 	{# objets #}
 	{% if participant.personnage.items|length > 0 %}
-		<strong>Objets</strong>
+		<strong>Objets :</strong>
 		<ul>
 		{% for item in participant.personnage.items %}
 			<li><strong>{{ item.numero }}</strong> - {{ item.label }}</li>
@@ -103,7 +117,7 @@ body {
 
 	{# ingredients #}
 	{% if participant.personnage.personnageIngredients|length > 0 %}
-		<strong>Ingrédients</strong>
+		<strong>Ingrédients :</strong>
 		<ul>
 			{% for personnageIngredient in participant.personnage.personnageIngredients %}
 				<li>{{personnageIngredient.nombre}} {{ personnageIngredient.ingredient }} - {{ personnageIngredient.ingredient.color }} : {{ personnageIngredient.ingredient.dose }}</li>
@@ -113,7 +127,7 @@ body {
 	
 	{# ressources #}
 	{% if participant.personnage.personnageRessources|length > 0 %}
-		<strong>Ressources</strong>
+		<strong>Ressources :</strong>
 		<ul>
 			{% for personnageRessource in participant.personnage.personnageRessources %}
 				<li>{{personnageRessource.nombre}} {{ personnageRessource.ressource }}</li>
@@ -122,7 +136,7 @@ body {
 	{% endif %}
 	
 	{# Matériel supplémentaire #}
-	<strong>Matériel supplémentaire</strong>
+	<strong>Matériel supplémentaire :</strong>
 	<ul>
 		<li>1 Bandeau blanc</li>
 		<li>1 Bandeau rougeâtre (ou blanc tâché de rouge)</li>
@@ -134,7 +148,7 @@ body {
 	</ul>
 
 	{% if participant.personnage.isSensible %}
-		<strong>Personnage sensible</strong>
+		<strong>Personnage sensible :</strong>
 		<ul>
 			<li>Brassard jaune avec un poing gravé</li>
 		</ul>
