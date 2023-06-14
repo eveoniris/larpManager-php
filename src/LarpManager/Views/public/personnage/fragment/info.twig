@@ -52,10 +52,10 @@
 				<div class="collapse" id="xpHistory">
 					<div class="list-group">		
 					{% for historique in personnage.experienceGains %}
-						<div class="list-group-item">{{ historique.operationDate|date("Y-m-d h:i:s") }} : + {{ historique.xpGain }} xp {% if historique.explanation %} pour la raison suivante : "{{ historique.explanation }}"{% endif %}.</div>
+						<div class="list-group-item">{{ historique.operationDate|date("Y-m-d H:i:s") }} : + {{ historique.xpGain }} xp {% if historique.explanation %} pour la raison suivante : "{{ historique.explanation }}"{% endif %}.</div>
 					{% endfor %}
 					{% for historique in personnage.experienceUsages %}
-						<div class="list-group-item">{{ historique.operationDate|date("Y-m-d h:i:s") }} : - {{ historique.xpUse }} xp pour acquérir {{ historique.competence.label }}.</div>
+						<div class="list-group-item">{{ historique.operationDate|date("Y-m-d H:i:s") }} : - {{ historique.xpUse }} xp pour acquérir {{ historique.competence.label }}.</div>
 					{% endfor %}
 					</div>
 				</div>
@@ -68,7 +68,7 @@
 				<div class="collapse" id="renommeHistory">
 					<div class="list-group">
 						{% for historique in personnage.renommeHistories %}
-							<div class="list-group-item">{{ historique.date|date("Y-m-d h:i:s") }} : {% if historique.renomme > 0 %}+{% endif %}{{ historique.renomme }}  {% if historique.explication %} pour la raison suivante : "{{ historique.explication }}"{% endif %}.</div>
+							<div class="list-group-item">{{ historique.date|date("Y-m-d H:i:s") }} : {% if historique.renomme > 0 %}+{% endif %}{{ historique.renomme }}  {% if historique.explication %} pour la raison suivante : "{{ historique.explication }}"{% endif %}.</div>
 						{% endfor %}
 					</div>
 				</div>
@@ -81,7 +81,7 @@
 				<div class="collapse" id="heroismeHistory">
 					<div class="list-group">
 						{% for historique in personnage.displayHeroisme %}
-							<div class="list-group-item">{{ historique.date|date("Y-m-d h:i:s") }} : {% if historique.heroisme > 0 %}+{% endif %}{{ historique.heroisme }}  {% if historique.explication %} pour la raison suivante : "{{ historique.explication }}"{% endif %}.</div>
+							<div class="list-group-item">{{ historique.date|date("Y-m-d H:i:s") }} : {% if historique.heroisme > 0 %}+{% endif %}{{ historique.heroisme }}  {% if historique.explication %} pour la raison suivante : "{{ historique.explication }}"{% endif %}.</div>
 						{% endfor %}
 					</div>
 				</div>

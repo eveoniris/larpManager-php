@@ -251,10 +251,10 @@
 				<div class="list-group-item">
 					<h6 class="list-group-item-heading">Historique</h6>		
 					{% for historique in personnage.experienceGains %}
-						<p class="list-group-item-text">{{ historique.operationDate|date("Y-m-d h:i:s") }} : + {{ historique.xpGain }} xp {% if historique.explanation %} pour la raison suivante : "{{ historique.explanation }}"{% endif %}.</p>
+						<p class="list-group-item-text">{{ historique.operationDate|date("Y-m-d H:i:s") }} : + {{ historique.xpGain }} xp {% if historique.explanation %} pour la raison suivante : "{{ historique.explanation }}"{% endif %}.</p>
 					{% endfor %}
 					{% for historique in personnage.experienceUsages %}
-						<p class="list-group-item-text">{{ historique.operationDate|date("Y-m-d h:i:s") }} : - {{ historique.xpUse }} xp pour acquérir {{ historique.competence.label }}.</p>
+						<p class="list-group-item-text">{{ historique.operationDate|date("Y-m-d H:i:s") }} : - {{ historique.xpUse }} xp pour acquérir {{ historique.competence.label }}.</p>
 					{% endfor %}
 				</div>
 				<div class="list-group-item">
