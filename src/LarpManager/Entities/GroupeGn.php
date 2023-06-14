@@ -19,7 +19,12 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class GroupeGn extends BaseGroupeGn
 {
-	/**
+    public function __construct()
+    {
+
+    }
+
+    /**
 	 * Défini le responsable de cette session de jeu
 	 * 
 	 * @param Participant $participant

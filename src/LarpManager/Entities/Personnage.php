@@ -210,7 +210,7 @@ class Personnage extends BasePersonnage
 	/**
 	 * Vérifie si le personnage connait cette potion
 	 *
-	 * @param Potion $priere
+	 * @param Potion $potion
 	 * @return boolean
 	 */
 	public function isKnownPotion(Potion $p)
@@ -220,6 +220,24 @@ class Personnage extends BasePersonnage
 			if ( $potion == $p ) return true;
 		}
 		return false;
+	}
+
+	/**
+	 * 
+	 * @param Potion $potion
+	 * @return boolean
+	 */
+	public function getPotionsNiveau($niveau)
+	{
+		$potions = array();
+		foreach ( $this->getPotions() as $potion)
+		{
+			if ($potion->getNiveau() == $niveau)
+			{
+				$potions[] = $potion;
+			}
+		}
+		return $potions;
 	}
 
 	/**
@@ -1415,28 +1433,34 @@ class Personnage extends BasePersonnage
 			if ( $document == $d ) return true;
 		}
 		return false;
-	}	
+	}
 
 	/**
 	 * Indique si le personnage est sensible
+	 * @return boolean
 	 */
 	public function isSensible()
 	{
-		$naissance = $this->getUser()->getEtatCivil()->getDateNaissance();
-		foreach ($this->participants as $p) {
-			$gn_date = $p->getGn()->getDateDebut();
-		}
-
-		if (!isset($gn_date))
-			return $this->getSensible();
-
-		$interval = date_diff($gn_date, $naissance);
-
-		if (intval($interval->format('%y')) < 18) {
+		$user = $this->getUser();
+		if (!$user) return $this->getSensible();	
+		if ($user->getAgeJoueur() < 18) {
 			return true;
 		}
 		else {
 			return $this->getSensible();
 		}
-	}	
+	}
+
+	/**
+	 * Retourne le score d'energie vitale
+	 * 
+	 * @return int
+	 */
+	public function getEnergieVitale() : int
+	{
+        $user = $this->getUser();
+		if (!$user) return 1;
+		if ($user->getAgeJoueur() < 18) return 0;
+		return 1;
+	}
 }

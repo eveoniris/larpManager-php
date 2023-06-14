@@ -98,7 +98,7 @@ class DocumentForm extends AbstractType
 						'choices' => array(false => 'Non imprimé', true => 'Imprimé'),
 						'label' => 'Indiquez si le document a été imprimé',
 						'attr' => array(
-							'help' => 'Le responsable des documents devra indiqué pour chacun des documents s\ils ont été imprimés ou pas.',
+							'help' => 'Le responsable des documents devra indiqué pour chacun des documents s\'ils ont été imprimés ou pas.',
 						),
 				))
 				->add('document','file', array(

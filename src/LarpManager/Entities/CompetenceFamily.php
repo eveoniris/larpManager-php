@@ -29,6 +29,8 @@ namespace LarpManager\Entities;
 
 use LarpManager\Entities\BaseCompetenceFamily;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Mapping\ClassMetadata;
 
 /**
  * LarpManager\Entities\CompetenceFamily
@@ -67,8 +69,24 @@ class CompetenceFamily extends BaseCompetenceFamily
 	{
 		return $this->getLabel();
 	}
-	
-	/**
+
+    /**
+     * Surcharge pour gérer le cas ou le parent retourne une valeur null pour un String attendu
+     */
+    public function getLabel(): string
+    {
+        return (string) $this->label;
+    }
+
+    /**
+     * Surcharge pour gérer le cas ou le parent retourne une valeur null pour un String attendu
+     */
+    public function getDescription(): string
+    {
+        return (string) $this->description;
+    }
+
+    /**
 	 * Fourni la compétence de premier niveau d'une famille de compétence
 	 * @return Competence $competenceFirst
 	 */

@@ -80,7 +80,7 @@ table tr td {
 		</thead>
 		<tbody>
 			<tr>
-				<td style="text-align: center; width: 25%;">{{ personnage.xp|default(0) }} / {{ personnage.xpTotal }} xp</td>
+				<td>{{ personnage.xp|default(0) }} / {{ personnage.xpTotal }} xp</td>
 				<td>
 					{% for personnageReligion in personnage.personnagesReligions %}
 						{% if personnageReligion.religion.secret %}<strong>Secret</strong> - {% endif %}{{ personnageReligion.religion.label }} - {{ personnageReligion.religionLevel.label }}<br />
@@ -93,10 +93,17 @@ table tr td {
 				</td>
 				<td>
 					<ul>
-						{% for materiel in langueMateriel %}
-							<strong>{{ materiel }}</strong><br />
+						{% set bracelets = [] %}
+						{% for personnageLangue in personnage.personnageLangues %}
+							{% if personnageLangue.langue.diffusion > 0 and personnageLangue.langue.secret == 0 %}
+								{% set mykey = personnageLangue.langue.groupeLangue.couleur %}
+								{% if mykey not in bracelets|keys %}
+									{% set bracelets = bracelets|merge({(mykey): (personnageLangue.langue.label)}) %}
+									<strong>Bracelet {{ personnageLangue.langue.groupeLangue.couleur }}</strong><br />
+								{% endif %}
+							{% endif %}
 						{% else %}
-							Aucun matériel
+							Aucun bracelet
 						{% endfor %}
 					</ul>
 				</td>
@@ -233,11 +240,20 @@ table tr td {
 	<hr />
 	<br />
 	<div class="print-center">
-		<p>Partie à découper et à remettre au PC Joueur par votre meurtrier en cas de mort du personnage.</p>
+		<p>Partie à découper et à remettre au PC Joueur par votre meurtrier en cas de mort de votre personnage.</p>
 		<strong>Numéro du personnage :</strong> #{{ personnage.id }}<br />
 		<strong>Identité du personnage :</strong> {{ personnage.identity }}<br />
 		<h3>MORT</h3>
 	</div>
-	
+	<hr />
+	<div class="print-center">
+		<p>Si cette partie venait à être détachée, le niveau de santé maximum de votre personnage serait au mieux à l'état Blessé jusqu'à la fin du GN, sans qu'une quelconque compétence ne puisse le faire revenir à l'état "En pleine santé".</p>
+	</div>
+	<hr />
+	<div class="print-center">
+		<p>Partie à découper et à remettre à la personne qui vous la demandera.</p>
+		<strong>Numéro du personnage :</strong> #{{ personnage.id }}<br />
+		<strong>Valeur :</strong> {{ personnage.energievitale }}
+	</div>	
 	
 {% endblock content %}

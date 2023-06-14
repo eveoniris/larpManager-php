@@ -155,4 +155,58 @@ class Participant extends BaseParticipant
 
 		return intval($interval->format('%y'));
 	}
+
+	public function hasPotionsDepartByLevel($niveau=1)
+	{
+		$return = false;
+		foreach ( $this->getPotionsDepart() as $potion)
+		{
+			if ($potion->getNiveau() == $niveau)
+			{
+				$return = $potion;
+			}
+		}
+		return $return;
+	}
+
+	public function getPotionsDepartByLevel($niveau=1)
+	{
+		$return = false;
+		foreach ( $this->getPotionsDepart() as $potion)
+		{
+			if ($potion->getNiveau() == $niveau)
+			{
+				$return = $potion;
+			}
+		}
+		if ($return === false) $return = $this->getPotionsRandomByLevel($niveau);
+		return $return;
+	}
+
+	public function getPotionsRandomByLevel($niveau=1)
+	{
+		$potions = array();
+		foreach ( $this->getPersonnage()->getPotions() as $potion)
+		{
+			if ($potion->getNiveau() == $niveau)
+			{
+				$potions[] = $potion;
+			}
+		}
+
+		return $potions[rand(0, count($potions)-1)];
+	}	
+
+	public function getPotionsEnveloppe()
+	{
+		$niveauMax = $this->getPersonnage()->getCompetenceNiveau('Alchimie');
+		$i = 1;
+		$potions = array();
+		while ($i <= $niveauMax)
+		{
+			$potions[] = $this->getPotionsDepartByLevel($i);
+			$i++;
+		}
+		return $potions;
+	}
 }

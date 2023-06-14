@@ -89,6 +89,14 @@
 			{# <li class="list-group-item">
 				<strong>Titre :</strong> {{ app['personnage.manager'].titre(personnage)|default('Aucun') }}
 			</li> #}
+			<li class="list-group-item">
+				<strong>Personnage secondaire :</strong>
+					{% if participant.personnageSecondaire %}
+						{{ participant.personnageSecondaire.classe.label }}
+					{% else %}
+						<a href="{{ path('participant.personnageSecondaire', {'participant': participant.id}) }}">Choisir son personnage secondaire</a>
+					{% endif %}
+			</li>
 		</ul>
 	</div>
 	

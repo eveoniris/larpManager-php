@@ -28,6 +28,12 @@ class DebriefingForm extends AbstractType
 						'help' => 'A quel GN correspond ce debriefing ?',
 					),
 				))
+            ->add('gn', 'entity', array(
+                'required' => true,
+                'attr'=> array(
+                    'help' => 'A quel GN correspond ce debriefing ?',
+                ),
+            ))
 				->add('text','textarea', array(
 					'required' => true,
 					'attr' => array(

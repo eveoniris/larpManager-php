@@ -12,7 +12,9 @@ body {
 
 {% for participant in participants if participant.personnage %}
 
-	<h2>#{{ participant.personnage.id }} - {{ participant.personnage.identity }}</h2>
+	<div class="print-center">
+		<h2>#{{ participant.personnage.id }} - {{ participant.personnage.identity }}</h2>
+	</div>
 	<h3>Groupe {{groupe.numero }} - {{ groupe.nom }}</h3>
 	
 	{% for participantHasRestauration in participant.participantHasRestaurations %}
@@ -26,9 +28,15 @@ body {
 		PAS DE PERSONNAGE SECONDAIRE
 	{% endif %}
 	<br />
-		
+	
+	{% if participant.personnage.renomme|default(0) > 4 %}
 	<strong>Renommée :</strong> {{ participant.personnage.renomme|default(0) }}<br />
+	{% endif %}
+
+	{% if participant.personnage.richesse|default(0) > 0 %}
 	<strong>Richesse :</strong> {{ participant.personnage.richesse|default(0) }} pièces d'argent<br />
+	{% endif %}
+
 	<strong>Lié aux compétences :</strong>
 	<ul>
 	{% set hasMateriel = 0 %}
@@ -66,38 +74,50 @@ body {
 				{% set mykey = personnageLangue.langue.groupeLangue.couleur %}
 				{% if mykey not in bracelets|keys %}
 					{% set bracelets = bracelets|merge({(mykey): (personnageLangue.langue.label)}) %}
-					<li>{{ personnageLangue.langue.groupeLangue.couleur }} ({{ personnageLangue.langue.label }})</li>
+					<li>Bracelet {{ personnageLangue.langue.groupeLangue.couleur }} ({{ personnageLangue.langue.label }})</li>
 				{% endif %}
 			{% endif %}
-		{% else %}
-			<li>Aucun matériel</li>
 		{% endfor %}
 	</ul>
 	{% endif %}
 
+	{# Potions #}
+	{% if participant.personnage.hasCompetence('Alchimie') %}
+		<strong>Potions :</strong>
+		<ul>
+		{% for potion in participant.potionsenveloppe %}
+			{% if potion %}
+				<li><strong>{{ potion.numero }}</strong> - {{ potion.label }} (Niveau {{ potion.niveau }})</li>
+			{% else %}
+				<li>Le personnage n'a pas choisi de potion de ce niveau.
+			{% endif %}
+		{% endfor %}
+		</ul>		
+	{% endif %}
+
 	{# documents #}
 	{% if participant.personnage.documents|length > 0 %}
-		<strong>Documents</strong>
+		<strong>Documents :</strong>
 		<ul>
 		{% for document in participant.personnage.documents %}
-			<li><strong>{{ document.code }}</strong>&nbsp;{{ document.titre }}</li>
+			<li><strong>{{ document.code }}</strong> - {{ document.titre }}</li>
 		{% endfor %}
 		</ul>
 	{% endif %}
 
 	{# objets #}
 	{% if participant.personnage.items|length > 0 %}
-		<strong>Objets</strong>
+		<strong>Objets :</strong>
 		<ul>
 		{% for item in participant.personnage.items %}
-			<li><strong>{{ item.numero }}</strong>&nbsp;{{ item.label }}</li>
+			<li><strong>{{ item.numero }}</strong> - {{ item.label }}</li>
 		{% endfor %}
 		</ul>
 	{% endif %}
 
 	{# ingredients #}
 	{% if participant.personnage.personnageIngredients|length > 0 %}
-		<strong>Ingrédients</strong>
+		<strong>Ingrédients :</strong>
 		<ul>
 			{% for personnageIngredient in participant.personnage.personnageIngredients %}
 				<li>{{personnageIngredient.nombre}} {{ personnageIngredient.ingredient }} - {{ personnageIngredient.ingredient.color }} : {{ personnageIngredient.ingredient.dose }}</li>
@@ -107,7 +127,7 @@ body {
 	
 	{# ressources #}
 	{% if participant.personnage.personnageRessources|length > 0 %}
-		<strong>Ressources</strong>
+		<strong>Ressources :</strong>
 		<ul>
 			{% for personnageRessource in participant.personnage.personnageRessources %}
 				<li>{{personnageRessource.nombre}} {{ personnageRessource.ressource }}</li>
@@ -116,15 +136,19 @@ body {
 	{% endif %}
 	
 	{# Matériel supplémentaire #}
-	{% if participant.personnage.materiel|length > 0 %}
-		<strong>Matériel supplémentaire</strong>
-		<ul>
-			<li>{{ participant.personnage.materiel }}</li>
-		</ul>
-	{% endif %}
+	<strong>Matériel supplémentaire :</strong>
+	<ul>
+		<li>1 Bandeau blanc</li>
+		<li>1 Bandeau rougeâtre (ou blanc tâché de rouge)</li>
+		<li>1 Fiche de personnage (dans une pochette plastifiée)</li>
+		<li>1 Fiche retour de personnage</li>
+		{% if participant.personnage.materiel|length > 0 %}
+		<li>{{ participant.personnage.materiel }}</li>
+		{% endif %}
+	</ul>
 
 	{% if participant.personnage.isSensible %}
-		<strong>Personnage sensible</strong>
+		<strong>Personnage sensible :</strong>
 		<ul>
 			<li>Brassard jaune avec un poing gravé</li>
 		</ul>
@@ -133,8 +157,7 @@ body {
 	<hr class="print-page-break" />
 
 {% else %}
-	Attention ! Pas de personnage.
-	
+	Attention ! Pas de personnage.	
 	<hr class="print-page-break" />
 {% endfor %}
 

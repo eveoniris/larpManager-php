@@ -98,11 +98,22 @@ class BaseParticipant
      */
     protected $groupeGn;
 
+    /**
+     * @ManyToMany(targetEntity="Potion", inversedBy="personnages")
+     * @JoinTable(name="participant_potions_depart",
+     *     joinColumns={@JoinColumn(name="participant_id", referencedColumnName="id", nullable=false)},
+     *     inverseJoinColumns={@JoinColumn(name="potion_id", referencedColumnName="id", nullable=false)}
+     * )
+     * @OrderBy({"label" = "ASC", "niveau" = "ASC",})
+     */
+    protected $potions_depart;
+
     public function __construct()
     {
         $this->groupeGns = new ArrayCollection();
         $this->participantHasRestaurations = new ArrayCollection();
         $this->reponses = new ArrayCollection();
+        $this->potions_depart = new ArrayCollection();        
     }
 
     /**
@@ -442,6 +453,40 @@ class BaseParticipant
     {
         return $this->groupeGn;
     }
+
+    /**
+     * Add Potion entity to collection.
+     *
+     * @param \LarpManager\Entities\Potion $potion
+     * @return \LarpManager\Entities\Participant
+     */
+    public function addPotionDepart(Potion $potion)
+    {
+        $this->potions_depart[] = $potion;
+        return $this;
+    }
+
+    /**
+     * Remove Potion entity from collection.
+     *
+     * @param \LarpManager\Entities\Potion $potion
+     * @return \LarpManager\Entities\Participant
+     */
+    public function removePotionDepart(Potion $potion)
+    {
+        $this->potions_depart->removeElement($potion);
+        return $this;
+    }
+
+    /**
+     * Get Potion entity collection.
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getPotionsDepart()
+    {
+        return $this->potions_depart;
+    }    
 
     public function __sleep()
     {

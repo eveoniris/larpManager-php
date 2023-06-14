@@ -613,4 +613,18 @@ class User extends BaseUser implements AdvancedUserInterface, \Serializable
 		}
 		return $personnages_vivants;
     }
+
+	/**
+	 * Retourne l'age du joueur
+	 * @return int
+	 */	
+	public function getAgeJoueur() : int
+	{
+		$etat_civil = $this->getEtatCivil();
+		if(!$etat_civil) return 33;
+		$naissance = $etat_civil->getDateNaissance();
+		$gn_date = $this->getLastParticipant()->getGn()->getDateDebut();
+		$interval = date_diff($gn_date, $naissance);
+		return intval($interval->format('%y'));
+	}
 }
