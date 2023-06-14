@@ -1782,7 +1782,72 @@ class ParticipantController
 				'niveau' => $niveau,
 		));
 	}
+
+	/**
+	 * Choix d'une nouvelle potion de départ
+	 *
+	 * @param Request $request
+	 * @param Application $app
+	 */
+	public function potiondepartAction(Request $request, Application $app, Participant $participant)
+	{
+		$personnage = $participant->getPersonnage();
+		
+		if ( ! $personnage )
+		{
+			$app['session']->getFlashBag()->add('error', 'Vous devez avoir créé un personnage !');
+			return $app->redirect($app['url_generator']->generate('gn.detail', array('gn' => $participant->getGn()->getId())),303);
+		}
+		
+		$niveau = $request->get('niveau');
 	
+		if ( $participant->hasPotionsDepartByLevel($niveau))
+		{
+			$app['session']->getFlashBag()->add('error','Désolé, vous ne pouvez pas choisir de potions de départ supplémentaires.');
+			return $app->redirect($app['url_generator']->generate('gn.personnage', array('gn' => $participant->getGn()->getId())),303);
+		}
+
+		$potions = $personnage->getPotionsNiveau($niveau);
+	
+		$form = $app['form.factory']->createBuilder()
+		->add('potions','entity', array(
+				'required' => true,
+				'label' => 'Choisissez votre potion de départ',
+				'multiple' => false,
+				'expanded' => true,
+				'class' => 'LarpManager\Entities\Potion',
+				'choices' => $potions,
+				'choice_label' => 'fullLabel'
+		))
+		->add('save','submit', array('label' => 'Valider votre potion de départ'))
+		->getForm();
+	
+		$form->handleRequest($request);
+	
+		if ( $form->isValid() )
+		{
+			$data = $form->getData();
+			$potion = $data['potions'];
+	
+			// Ajout de la potion au personnage
+			$participant->addPotionDepart($potion);
+			$app['orm.em']->persist($participant);
+	
+			$app['orm.em']->flush();
+	
+			$app['session']->getFlashBag()->add('success','Vos modifications ont été enregistrées.');
+			return $app->redirect($app['url_generator']->generate('gn.personnage', array('gn' => $participant->getGn()->getId())),303);
+		}
+	
+		return $app['twig']->render('personnage/potiondepart.twig', array(
+				'form' => $form->createView(),
+				'personnage' => $personnage,
+				'participant' => $participant,
+				'potions' => $potions,
+				'niveau' => $niveau,
+		));
+	}
+
 	/**
 	 * Choix d'une nouvelle description de religion
 	 * 

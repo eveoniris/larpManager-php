@@ -56,6 +56,7 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 	 *  - participant.priere.document
 	 *  - participant.potion.detail
 	 *  - participant.potion.document
+	 *  - participant.potiondepart
 	 *  - participant.magie
 	 *  - participant.competence.list
 	 *  - participant.competence.detail
@@ -677,6 +678,18 @@ class ParticipantControllerProvider implements ControllerProviderInterface
 			->assert('niveau', '\d+')
 			->assert('participant', '\d+')
 			->bind("participant.personnage.potion")
+			->method('GET|POST')
+			->convert('participant', 'converter.participant:convert')
+			->before($mustOwnParticipant);
+
+		/**
+		 * Formulaire de choix d'une nouvelle potion de départ
+		 * Accessible uniquement au proprietaire du personnage
+		 */
+		$controllers->match('/{participant}/potiondepart/{niveau}','LarpManager\Controllers\ParticipantController::potiondepartAction')
+			->assert('niveau', '\d+')
+			->assert('participant', '\d+')
+			->bind("participant.potiondepart")
 			->method('GET|POST')
 			->convert('participant', 'converter.participant:convert')
 			->before($mustOwnParticipant);

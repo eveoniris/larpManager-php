@@ -210,7 +210,7 @@ class Personnage extends BasePersonnage
 	/**
 	 * Vérifie si le personnage connait cette potion
 	 *
-	 * @param Potion $priere
+	 * @param Potion $potion
 	 * @return boolean
 	 */
 	public function isKnownPotion(Potion $p)
@@ -220,6 +220,24 @@ class Personnage extends BasePersonnage
 			if ( $potion == $p ) return true;
 		}
 		return false;
+	}
+
+	/**
+	 * 
+	 * @param Potion $potion
+	 * @return boolean
+	 */
+	public function getPotionsNiveau($niveau)
+	{
+		$potions = array();
+		foreach ( $this->getPotions() as $potion)
+		{
+			if ($potion->getNiveau() == $niveau)
+			{
+				$potions[] = $potion;
+			}
+		}
+		return $potions;
 	}
 
 	/**
