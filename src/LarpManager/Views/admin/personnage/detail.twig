@@ -717,7 +717,7 @@
 									{# Gestion du background du personnage #}
 									{% if personnage.personnageBackgrounds|length > 0 %}
 										{% for background in personnage.personnageBackgrounds %}
-											<h6 class="list-group-item-heading">Background - <strong>{{ background.visibility|explainVisibility }}</strong></h6>
+											<h6 class="list-group-item-heading">Background ({{ background.gn.label }}) - <strong>{{ background.visibility|explainVisibility }}</strong></h6>
 											<a href="{{ path('personnage.admin.background.update', {'personnage': personnage.id, 'background': background.id}) }}">Modifier le background</a>
 											{{ background.text|markdown }}
 										{% endfor %}
