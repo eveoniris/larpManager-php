@@ -75,13 +75,15 @@
 								<li class="list-group-item"><a href="{{ path('participant.personnage.technologie', {'participant': participant.id}) }}">Choisir une technologie</a></li>
 							{% endif %}
 						{% endfor %}
-							{% if personnage.hasCompetence('Alchimie') %}
-								{% for niveau in 1..personnage.getCompetenceNiveau('Alchimie') %}
-									{% if not participant.hasPotionsDepartByLevel(niveau) %}
-										<li class="list-group-item"><a href="{{ path('participant.potiondepart', {'niveau' : niveau, 'participant' : participant.id}) }}">Choisir votre potion de niveau {{ niveau }} à ajouter à votre enveloppe de départ</a></li>
-									{% endif %}
-								{% endfor %}
+						</ul>
+					{% endif %}
+					{% if personnage.hasCompetence('Alchimie') %}
+						<ul class="list-group">
+						{% for niveau in 1..personnage.getCompetenceNiveau('Alchimie') %}
+							{% if not participant.hasPotionsDepartByLevel(niveau) %}
+								<li class="list-group-item"><a href="{{ path('participant.potiondepart', {'niveau' : niveau, 'participant' : participant.id}) }}">Choisir votre potion de niveau {{ niveau }} à ajouter à votre enveloppe de départ</a></li>
 							{% endif %}
+						{% endfor %}
 						</ul>
 					{% endif %}
 						
