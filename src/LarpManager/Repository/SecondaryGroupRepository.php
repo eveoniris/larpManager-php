@@ -50,13 +50,12 @@ class SecondaryGroupRepository extends EntityRepository
 	 * @param unknown $limit
 	 * @param unknown $offset
 	 */
-	public function findList(array $criteria = array(), array $order = array(), $limit, $offset)
+	public function findList(array $criteria = array(), array $order = array(), $limit = 50, $offset = 0)
 	{
 		$qb = $this->getEntityManager()->createQueryBuilder();
 
 		$qb->select('distinct g');
 		$qb->from('LarpManager\Entities\SecondaryGroup','g');
-
 		foreach ( $criteria as $critere )
 		{
 			$qb->andWhere('?1');

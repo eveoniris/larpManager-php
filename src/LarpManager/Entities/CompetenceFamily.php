@@ -67,7 +67,7 @@ class CompetenceFamily extends BaseCompetenceFamily
 	
 	public function __toString()
 	{
-		return $this->getLabel();
+		return $this->getLabel() ?? '';
 	}
 
     /**

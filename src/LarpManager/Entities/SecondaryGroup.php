@@ -59,7 +59,28 @@ class SecondaryGroup extends BaseSecondaryGroup
 		$this->setPersonnage($personnage);
 		return $this;
 	}
-	
+
+
+    /**
+     * Get User entity related by `scenariste_id` (many to one).
+     *
+     * @return \LarpManager\Entities\User
+     */
+    public function getScenariste()
+    {
+        return $this->getUserRelatedByScenaristeId();
+    }
+
+    /**
+     * Set User entity related by `scenariste_id` (many to one).
+     *
+     * @param \LarpManager\Entities\User $user
+     * @return \LarpManager\Entities\SecondaryGroup
+     */
+    public function setScenariste($user)
+    {
+        return $this->setUserRelatedByScenaristeId($user);
+    }
 	/**
 	 * Vérifie si un personnage est membre du groupe
 	 * 
