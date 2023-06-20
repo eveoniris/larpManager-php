@@ -238,7 +238,7 @@ table tr td {
 	{% endif %}
 	<br />
 	<hr />
-	<br />
+	<hr />
 	<div class="print-center">
 		<p>Partie à découper et à remettre au PC Joueur par votre meurtrier en cas de mort de votre personnage.</p>
 		<strong>Numéro du personnage :</strong> #{{ personnage.id }}<br />
@@ -247,11 +247,13 @@ table tr td {
 	</div>
 	<hr />
 	<div class="print-center">
-		<p>Si cette partie venait à être détachée, le niveau de santé maximum de votre personnage serait au mieux à l'état Blessé jusqu'à la fin du GN, sans qu'une quelconque compétence ne puisse le faire revenir à l'état "En pleine santé".</p>
+		<p>Si la partie en dessous venait à être détachée, le niveau de santé maximum de votre personnage serait au mieux à l'état "Blessé" jusqu'à la fin du GN, sans qu'une quelconque compétence ne puisse le faire revenir à l'état "En pleine santé".</p>
 	</div>
+	<hr />
 	<hr />
 	<div class="print-center">
 		<p>Partie à découper et à remettre à la personne qui vous la demandera.</p>
+		<h3>VITALITÉ</h3>
 		<strong>Numéro du personnage :</strong> #{{ personnage.id }}<br />
 		<strong>Valeur :</strong> {{ personnage.energievitale }}
 	</div>	
