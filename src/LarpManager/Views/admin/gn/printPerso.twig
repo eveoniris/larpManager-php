@@ -199,6 +199,14 @@ table tr td {
 		<h3>MORT</h3>
 	</div>
 	<hr />
+	<hr />
+	<div class="print-center">
+		<p>Partie à découper et à remettre à la personne qui vous la demandera.</p>
+		<h3>VITALITÉ</h3>
+		<strong>Numéro du personnage :</strong> #{{ personnage.id }}<br />
+		<strong>Valeur :</strong> {{ personnage.energievitale }}
+	</div>
+	<hr />
 	<div class="print-page-break"></div>
 {% else %}
 {{ participant.user.etatCivil }} ({{ participant.user.username }}): ce participant ne dispose pas de personnages.<hr />
