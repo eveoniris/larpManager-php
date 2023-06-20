@@ -1,4 +1,4 @@
-FROM php:7.4-cli
+FROM php:7.1-cli
 LABEL "name"="larpmanager"
 LABEL "version"="1.0"
 COPY . /usr/src/larpmanager
