@@ -619,8 +619,8 @@ class Personnage extends BasePersonnage
 			+ $this->getCompetencePugilat('Stratégie')
 			+ $this->getCompetencePugilat('Survie');
 
-		// Armurerie au niveau Initié ajoute 5 points
-		if ( $this->getCompetenceNiveau('Armurerie') >= 2 )
+		// Forge au niveau Initié ajoute 5 points
+		if ( $this->getCompetenceNiveau('Forge') >= 2 )
 		{
 			$pugilat = $pugilat + 5;
 		}
@@ -692,10 +692,10 @@ class Personnage extends BasePersonnage
 			$pugilatHistory->setExplication('Compétence Armure niveau '.$this->getCompetenceNiveau('Armure'));
 			$pugilatHistories[] = $pugilatHistory;
 		}
-		if ( $this->getCompetenceNiveau('Armurerie') >= 2 ) {
+		if ( $this->getCompetenceNiveau('Forge') >= 2 ) {
 			$pugilatHistory = new \LarpManager\Entities\PugilatHistory();
 			$pugilatHistory->setPugilat(5);
-			$pugilatHistory->setExplication('Compétence Armurerie niveau '.$this->getCompetenceNiveau('Armurerie'));
+			$pugilatHistory->setExplication('Compétence Forge niveau '.$this->getCompetenceNiveau('Forge'));
 			$pugilatHistories[] = $pugilatHistory;
 		}
 		if ($this->getCompetencePugilat('Attaque sournoise') > 0){
@@ -751,7 +751,7 @@ class Personnage extends BasePersonnage
 		if ( $this->getCompetenceNiveau('Agilité') >= 2 ) $heroisme++;
 		if ( $this->getCompetenceNiveau('Armes à 1 main') >= 3 ) $heroisme++;
 		if ( $this->getCompetenceNiveau('Armes à 2 mains') >= 2 ) $heroisme++;
-		if ( $this->getCompetenceNiveau('Armurerie') >= 4 ) $heroisme++;
+		if ( $this->getCompetenceNiveau('Forge') >= 4 ) $heroisme++;
 		if ( $this->getCompetenceNiveau('Protection') >= 4 ) $heroisme++;
 		if ( $this->getCompetenceNiveau('Sauvagerie') >= 1 ) $heroisme++;
 
@@ -794,10 +794,10 @@ class Personnage extends BasePersonnage
 			$heroismeHistory->setExplication('Compétence Armes à 2 mains niveau '.$this->getCompetenceNiveau('Armes à 2 mains'));
 			$heroismeHistories[] = $heroismeHistory;
 		}
-		if ( $this->getCompetenceNiveau('Armurerie') >= 4 ) {
+		if ( $this->getCompetenceNiveau('Forge') >= 4 ) {
 			$heroismeHistory = new \LarpManager\Entities\HeroismeHistory();
 			$heroismeHistory->setHeroisme(1);
-			$heroismeHistory->setExplication('Compétence Armurerie niveau '.$this->getCompetenceNiveau('Armurerie'));
+			$heroismeHistory->setExplication('Compétence Forge niveau '.$this->getCompetenceNiveau('Forge'));
 			$heroismeHistories[] = $heroismeHistory;
 		}
 		if ( $this->getCompetenceNiveau('Protection') >= 4 ) {
