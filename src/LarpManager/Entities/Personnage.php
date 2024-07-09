@@ -751,7 +751,6 @@ class Personnage extends BasePersonnage
 		if ( $this->getCompetenceNiveau('Agilité') >= 2 ) $heroisme++;
 		if ( $this->getCompetenceNiveau('Armes à 1 main') >= 3 ) $heroisme++;
 		if ( $this->getCompetenceNiveau('Armes à 2 mains') >= 2 ) $heroisme++;
-		if ( $this->getCompetenceNiveau('Forge') >= 4 ) $heroisme++;
 		if ( $this->getCompetenceNiveau('Protection') >= 4 ) $heroisme++;
 		if ( $this->getCompetenceNiveau('Sauvagerie') >= 1 ) $heroisme++;
 
