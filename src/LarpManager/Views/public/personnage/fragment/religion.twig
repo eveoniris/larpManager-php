@@ -37,32 +37,46 @@
 	<div class="header">
 		<h5>Vos connaissances religieuses</h5>
 	</div>
-	
+
 	<div class="list-group">
 		{# accés à toutes les descriptions pour pratiquants des religions de leur pays #}
 	 	{% if personnage.getCompetenceNiveau('Prêtrise') >= 1 %}
 	 		Votre compétence Prêtrise Apprenti vous permet de connaitre les descriptions des religions de votre pays.
-	 		
+
 	 		{%  if  personnage.territoire.religion %}
 		 		<h6>{{ personnage.territoire.religion.label }}</h6>
 		 		<p class="list-group-item-text">
 		 			{{ personnage.territoire.religion.descriptionPratiquant|markdown }}
 		 		</p>
+				{# LH 7 : Apprenti - Vous connaissez le niveau Fervent de toutes les Religions liées à votre Origine.#}
+                {% if personnage.getCompetenceNiveau('Prêtrise') >= 1 %}
+                    <p class="list-group-item-text">
+                        <h6>{{ personnage.territoire.religion.label }} - Informations supplémentaires pour les prêtres :</h6>
+                        {{ personnage.territoire.religion.descriptionFervent|markdown }}
+                    </p>
+                {% endif %}
 		 	{% else %}
 		 		<h6>Votre pays ne dispose pas de religion principale</h6>
 		 	{% endif %}
-	 		
+
 	 		{% for religion in personnage.territoire.religions %}
 	 			<h6>{{ religion.label }}</h6>
 	 			<p class="list-group-item-text">
 	 				{{ religion.descriptionPratiquant|markdown }}
 	 			</p>
+				{% if personnage.getCompetenceNiveau('Prêtrise') >= 1 %}
+					<p class="list-group-item-text">
+						<h6>{{ religion.label }} - Informations supplémentaires pour les prêtres</h6>
+						{{ religion.descriptionFervent|markdown }}
+					</p>
+				{% endif %}
 	 		{% else %}
 	 			<h6>Votre pays ne dispose pas de religions secondaires</h6>
 	 		{% endfor %}
 	 	{% endif %}
-	 	
+
 	 	{# Peuvent choisir 3 religions pour acceder à leur description pour pratiquants #}
+		{# LH7 prêtre initié : Vous connaissez le niveau fervent  d'une Religion supplémentaire. #}
 	 	{% if personnage.getCompetenceNiveau('Prêtrise') >= 2 %}
 	 		Votre connaissance de Prêtrise vous permet de connaitre des descriptions de religions supplémentaires.
 	 		{% for religion in personnage.religions %}
@@ -70,6 +84,9 @@
 	 			<p class="list-group-item-text">
 	 				{{ religion.descriptionPratiquant|markdown }}
 	 			</p>
+				<p class="list-group-item-text">
+					{{ religion.descriptionFervent|markdown }}
+				</p>
 	 		{% endfor %}
 	 	{% endif %}
 	</div>
