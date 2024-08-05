@@ -48,13 +48,12 @@
 		 		<p class="list-group-item-text">
 		 			{{ personnage.territoire.religion.descriptionPratiquant|markdown }}
 		 		</p>
-				{# LH 7 : Apprenti - Vous connaissez le niveau Fervent de toutes les Religions liées à votre Origine.#}
-                {% if personnage.getCompetenceNiveau('Prêtrise') >= 1 %}
-                    <p class="list-group-item-text">
-                        <h6>{{ personnage.territoire.religion.label }} - Informations supplémentaires pour les prêtres :</h6>
-                        {{ personnage.territoire.religion.descriptionFervent|markdown }}
-                    </p>
-                {% endif %}
+				{# LH7 : Apprenti - Vous connaissez le niveau Fervent de toutes les Religions liées à votre Origine.#}
+				<h6>{{ personnage.territoire.religion.label }} - Informations supplémentaires pour les prêtres :</h6>
+				<p class="list-group-item-text">
+					{{ personnage.territoire.religion.descriptionFervent|markdown }}
+				</p>
+
 		 	{% else %}
 		 		<h6>Votre pays ne dispose pas de religion principale</h6>
 		 	{% endif %}
@@ -64,12 +63,11 @@
 	 			<p class="list-group-item-text">
 	 				{{ religion.descriptionPratiquant|markdown }}
 	 			</p>
-				{% if personnage.getCompetenceNiveau('Prêtrise') >= 1 %}
-					<p class="list-group-item-text">
-						<h6>{{ religion.label }} - Informations supplémentaires pour les prêtres</h6>
-						{{ religion.descriptionFervent|markdown }}
-					</p>
-				{% endif %}
+
+				<h6>{{ religion.label }} - Informations supplémentaires pour les prêtres</h6>
+				<p class="list-group-item-text">
+				{{ religion.descriptionFervent|markdown }}
+                </p>
 	 		{% else %}
 	 			<h6>Votre pays ne dispose pas de religions secondaires</h6>
 	 		{% endfor %}
