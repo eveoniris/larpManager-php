@@ -3,7 +3,7 @@
 	<h5>Langues connues</h5>
 </div>
 <ul class="list-group">
-	{% for personnageLangue in personnage.personnageLangues %}
+	{% for personnageLangue in personnageLangues %}
 		<li class="list-group-item">{% if personnageLangue.langue.secret %}<span style="color:red;">Secret</span> - {% endif %}<strong>{{ personnageLangue.langue }}</strong>&nbsp;<small>(obtenu grace à votre {{ personnageLangue.source }})</small><br />
 		{{ personnageLangue.langue.description|markdown }}
 		{% if personnageLangue.langue.documentUrl %}
