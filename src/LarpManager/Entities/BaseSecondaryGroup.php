@@ -91,6 +91,12 @@ class BaseSecondaryGroup
      */
     protected $topic;
 
+    /**
+     * @ManyToOne(targetEntity="User", inversedBy="secondaryGroupRelatedByScenaristeIds")
+     * @JoinColumn(name="scenariste_id", referencedColumnName="id")
+     */
+    protected $userRelatedByScenaristeId;
+
     public function __construct()
     {
         $this->intrigueHasGroupeSecondaires = new ArrayCollection();
@@ -411,6 +417,29 @@ class BaseSecondaryGroup
     public function getTopic()
     {
         return $this->topic;
+    }
+
+    /**
+     * Set User entity related by `scenariste_id` (many to one).
+     *
+     * @param \LarpManager\Entities\User $user
+     * @return \LarpManager\Entities\SecondaryGroup
+     */
+    public function setUserRelatedByScenaristeId(User $user = null)
+    {
+        $this->userRelatedByScenaristeId = $user;
+
+        return $this;
+    }
+
+    /**
+     * Get User entity related by `scenariste_id` (many to one).
+     *
+     * @return \LarpManager\Entities\User
+     */
+    public function getUserRelatedByScenaristeId()
+    {
+        return $this->userRelatedByScenaristeId;
     }
 
     public function __sleep()

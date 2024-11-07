@@ -13,7 +13,16 @@
 
 <div class="panel panel-default">
 	<div class="panel-body">
-	
+
+		<div class="header">
+			<h5>Scénariste</h5>
+		</div>
+		{% if groupeSecondaire.scenariste is null %}
+			<p>Aucun</p>
+		{% else %}
+			<p>{{ groupeSecondaire.scenariste.etatCivil }}&nbsp;({{ groupeSecondaire.scenariste.email }})</p>
+		{% endif %}
+
 		<div class="header">
 			<h5>Description</h5>
 		</div>

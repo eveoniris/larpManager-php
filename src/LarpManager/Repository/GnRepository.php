@@ -41,7 +41,7 @@ class GnRepository extends EntityRepository
 			->createQuery('SELECT g FROM LarpManager\Entities\Gn g WHERE g.actif = true ORDER BY g.date_debut DESC')
 			->getResult();
 		
-		return $gns[0];
+		return $gns[0] ?? null;
 	}
 	
 	/**

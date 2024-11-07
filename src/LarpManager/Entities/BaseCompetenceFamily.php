@@ -107,7 +107,7 @@ class BaseCompetenceFamily
      */
     public function getLabel(): string
     {
-        return $this->label;
+        return $this->label ?? '';
     }
 
     /**
@@ -130,7 +130,7 @@ class BaseCompetenceFamily
      */
     public function getDescription(): string
     {
-        return $this->description;
+        return $this->description ?? '';
     }
 
     /**
