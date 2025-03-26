@@ -1,10 +1,10 @@
 {# Background #}
 <div class="header">
-	<h5>Background</h5>
+		<h5>Background</h5>
 </div>
 
 {% if personnage.backgrounds('OWNER')|length > 0 %}
-	{% for background in personnage.personnageBackgrounds %}
+	{% for background in personnage.backgrounds('OWNER') %}
 		<h6 class="list-group-item-heading">Background</h6>
 		{{ background.text|markdown }}
 	{% endfor %}
